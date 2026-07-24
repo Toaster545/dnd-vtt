@@ -1,0 +1,36 @@
+<div class="list-page">
+  <div class="list-header">
+    <a routerLink="/dashboard" class="back-link">← Dashboard</a>
+    <h1>My Characters</h1>
+    <a routerLink="/characters/new" class="btn-primary">+ New Character</a>
+  </div>
+
+  <div class="list-content">
+    @if (loading()) {
+      <p class="loading">Loading characters…</p>
+    } @else if (error()) {
+      <div class="error-banner">{{ error() }}</div>
+    } @else if (characters().length === 0) {
+      <div class="empty-state">
+        <p>No characters yet.</p>
+        <a routerLink="/characters/new" class="btn-primary">Create your first character</a>
+      </div>
+    } @else {
+      <div class="character-grid">
+        @for (char of characters(); track char.id) {
+          <div class="character-card">
+            <div class="char-info">
+              <h3>{{ char.name }}</h3>
+              <p>{{ char.race }} · {{ char.class }} · Level {{ char.level }}</p>
+              <p class="char-hp">HP: {{ char.current_hp }} / {{ char.max_hp }}</p>
+            </div>
+            <div class="char-actions">
+              <a [routerLink]="['/characters', char.id]" class="btn-edit">Edit</a>
+              <button class="btn-delete" (click)="delete(char.id!)">Delete</button>
+            </div>
+          </div>
+        }
+      </div>
+    }
+  </div>
+</div>

@@ -1,0 +1,36 @@
+<div class="dashboard">
+  <header class="dashboard-header">
+    <h1>D&D Campaign</h1>
+    <div class="header-right">
+      <span class="username">{{ auth.profile()?.username }}</span>
+      @if (auth.isAdmin()) {
+        <span class="badge badge-admin">DM</span>
+      }
+      <button class="btn-ghost" (click)="auth.signOut()">Sign Out</button>
+    </div>
+  </header>
+
+  <main class="dashboard-content">
+    <section class="card-grid">
+      <a routerLink="/characters" class="nav-card">
+        <div class="nav-card-icon">⚔️</div>
+        <h3>My Characters</h3>
+        <p>Create and manage your adventurers</p>
+      </a>
+
+      <a routerLink="/battle-map" class="nav-card">
+        <div class="nav-card-icon">🗺️</div>
+        <h3>Battle Maps</h3>
+        <p>View the current encounter</p>
+      </a>
+
+      @if (auth.isAdmin()) {
+        <a routerLink="/admin/maps" class="nav-card nav-card-admin">
+          <div class="nav-card-icon">🛡️</div>
+          <h3>Map Manager</h3>
+          <p>Upload and manage battle maps</p>
+        </a>
+      }
+    </section>
+  </main>
+</div>

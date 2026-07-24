@@ -1,0 +1,62 @@
+<div class="manager-page">
+  <div class="manager-header">
+    <a routerLink="/dashboard" class="back-link">← Dashboard</a>
+    <h1>Map Manager</h1>
+    <span class="badge-admin">DM Only</span>
+  </div>
+
+  <div class="manager-content">
+    <section class="upload-card">
+      <h2>Upload Map</h2>
+      <p class="hint">Export your Dungeondraft map as a PNG, then upload it here.</p>
+
+      @if (error()) {
+        <div class="error-banner">{{ error() }}</div>
+      }
+
+      <div class="upload-fields">
+        <div class="field">
+          <label>Map Name</label>
+          <input [(ngModel)]="newMapName" type="text" placeholder="e.g. Goblin Cave Level 1" />
+        </div>
+
+        <div class="field">
+          <label>Grid Cell Size (px in source image)</label>
+          <input [(ngModel)]="newGridSize" type="number" min="20" max="200" />
+        </div>
+
+        <div class="field">
+          <label>Map Image (PNG/WebP)</label>
+          <input type="file" accept="image/png,image/webp,image/jpeg" (change)="onFileChange($event)" />
+        </div>
+
+        <button class="btn-upload" (click)="upload()" [disabled]="uploading() || !selectedFile || !newMapName">
+          {{ uploading() ? 'Uploading…' : 'Upload Map' }}
+        </button>
+      </div>
+    </section>
+
+    <section class="maps-list">
+      <h2>Uploaded Maps</h2>
+
+      @if (loading()) {
+        <p class="loading">Loading maps…</p>
+      } @else if (maps().length === 0) {
+        <p class="hint">No maps uploaded yet.</p>
+      } @else {
+        <div class="map-grid">
+          @for (map of maps(); track map.id) {
+            <div class="map-card">
+              <img [src]="map.image_url" [alt]="map.name" class="map-thumb" />
+              <div class="map-card-info">
+                <h3>{{ map.name }}</h3>
+                <p>Grid: {{ map.grid_size }}px</p>
+              </div>
+              <a [routerLink]="['/battle-map', map.id]" class="btn-open">Open in VTT →</a>
+            </div>
+          }
+        </div>
+      }
+    </section>
+  </div>
+</div>
