@@ -1,0 +1,9 @@
+{
+  "index": "entertainer",
+  "name": "Entertainer",
+  "skill_proficiencies": ["Acrobatics", "Performance"],
+  "tool_proficiencies": ["Disguise kit", "One type of musical instrument"],
+  "languages": "None",
+  "starting_equipment": ["Musical instrument", "Favor of an admirer (love letter, lock of hair, trinket)", "Costume", "Belt pouch with 15 gp"],
+  "feature": "By Popular Demand"
+}

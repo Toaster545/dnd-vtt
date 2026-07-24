@@ -1,0 +1,65 @@
+{
+  "index": "bard",
+  "name": "Bard",
+  "hit_die": 8,
+  "saving_throws": ["dexterity", "charisma"],
+  "armor_training": ["Light Armor"],
+  "weapon_proficiencies": ["Simple Weapons", "Hand Crossbows", "Longswords", "Rapiers", "Shortswords"],
+  "tool_proficiencies": ["Three musical instruments of your choice"],
+  "skill_choices": {
+    "count": 3,
+    "from": []
+  },
+  "starting_equipment": [
+    { "choice": true, "options": ["Rapier", "Longsword", "Any simple weapon"] },
+    { "choice": true, "options": ["Diplomat's pack", "Entertainer's pack"] },
+    { "choice": true, "options": ["Lute", "Any musical instrument"] },
+    { "fixed": ["Leather armor", "Dagger"] }
+  ],
+  "spellcasting_ability": "charisma",
+  "subclass_level": 3,
+  "subclasses": [
+    {
+      "index": "lore",
+      "name": "College of Lore",
+      "description": "Plumb the depths of magical knowledge, hoarding spells and secrets to gain more power.",
+      "levels": [
+        { "level": 3,  "features": ["Bonus Proficiencies", "Cutting Words"] },
+        { "level": 6,  "features": ["Additional Magical Secrets"] },
+        { "level": 14, "features": ["Peerless Skill"] }
+      ]
+    },
+    {
+      "index": "valor",
+      "name": "College of Valor",
+      "description": "Inspire others by telling the tales of great heroes, and become a great hero yourself.",
+      "levels": [
+        { "level": 3,  "features": ["Bonus Proficiencies", "Combat Inspiration"] },
+        { "level": 6,  "features": ["Extra Attack"] },
+        { "level": 14, "features": ["Battle Magic"] }
+      ]
+    }
+  ],
+  "levels": [
+    { "level": 1,  "proficiency_bonus": 2, "features": ["Spellcasting", "Bardic Inspiration (d6)"],                    "cantrips_known": 2,  "spells_known": 4,  "spell_slots": { "1": 2 } },
+    { "level": 2,  "proficiency_bonus": 2, "features": ["Jack of All Trades", "Song of Rest (d6)"],                   "cantrips_known": 2,  "spells_known": 5,  "spell_slots": { "1": 3 } },
+    { "level": 3,  "proficiency_bonus": 2, "features": ["Bard College", "Expertise"],                                 "cantrips_known": 2,  "spells_known": 6,  "spell_slots": { "1": 4, "2": 2 } },
+    { "level": 4,  "proficiency_bonus": 2, "features": ["Ability Score Improvement"],                                 "cantrips_known": 3,  "spells_known": 7,  "spell_slots": { "1": 4, "2": 3 } },
+    { "level": 5,  "proficiency_bonus": 3, "features": ["Bardic Inspiration (d8)", "Font of Inspiration"],            "cantrips_known": 3,  "spells_known": 8,  "spell_slots": { "1": 4, "2": 3, "3": 2 } },
+    { "level": 6,  "proficiency_bonus": 3, "features": ["Countercharm", "Bard College Feature"],                      "cantrips_known": 3,  "spells_known": 9,  "spell_slots": { "1": 4, "2": 3, "3": 3 } },
+    { "level": 7,  "proficiency_bonus": 3, "features": [],                                                            "cantrips_known": 3,  "spells_known": 10, "spell_slots": { "1": 4, "2": 3, "3": 3, "4": 1 } },
+    { "level": 8,  "proficiency_bonus": 3, "features": ["Ability Score Improvement"],                                 "cantrips_known": 3,  "spells_known": 11, "spell_slots": { "1": 4, "2": 3, "3": 3, "4": 2 } },
+    { "level": 9,  "proficiency_bonus": 4, "features": ["Song of Rest (d8)"],                                         "cantrips_known": 3,  "spells_known": 12, "spell_slots": { "1": 4, "2": 3, "3": 3, "4": 3, "5": 1 } },
+    { "level": 10, "proficiency_bonus": 4, "features": ["Bardic Inspiration (d10)", "Expertise", "Magical Secrets"],  "cantrips_known": 4,  "spells_known": 14, "spell_slots": { "1": 4, "2": 3, "3": 3, "4": 3, "5": 2 } },
+    { "level": 11, "proficiency_bonus": 4, "features": [],                                                            "cantrips_known": 4,  "spells_known": 15, "spell_slots": { "1": 4, "2": 3, "3": 3, "4": 3, "5": 2, "6": 1 } },
+    { "level": 12, "proficiency_bonus": 4, "features": ["Ability Score Improvement"],                                 "cantrips_known": 4,  "spells_known": 15, "spell_slots": { "1": 4, "2": 3, "3": 3, "4": 3, "5": 2, "6": 1 } },
+    { "level": 13, "proficiency_bonus": 5, "features": ["Song of Rest (d10)"],                                        "cantrips_known": 4,  "spells_known": 16, "spell_slots": { "1": 4, "2": 3, "3": 3, "4": 3, "5": 2, "6": 1, "7": 1 } },
+    { "level": 14, "proficiency_bonus": 5, "features": ["Magical Secrets", "Bard College Feature"],                   "cantrips_known": 4,  "spells_known": 18, "spell_slots": { "1": 4, "2": 3, "3": 3, "4": 3, "5": 2, "6": 1, "7": 1 } },
+    { "level": 15, "proficiency_bonus": 5, "features": ["Bardic Inspiration (d12)"],                                  "cantrips_known": 4,  "spells_known": 19, "spell_slots": { "1": 4, "2": 3, "3": 3, "4": 3, "5": 2, "6": 1, "7": 1, "8": 1 } },
+    { "level": 16, "proficiency_bonus": 5, "features": ["Ability Score Improvement"],                                 "cantrips_known": 4,  "spells_known": 19, "spell_slots": { "1": 4, "2": 3, "3": 3, "4": 3, "5": 2, "6": 1, "7": 1, "8": 1 } },
+    { "level": 17, "proficiency_bonus": 6, "features": ["Song of Rest (d12)"],                                        "cantrips_known": 4,  "spells_known": 20, "spell_slots": { "1": 4, "2": 3, "3": 3, "4": 3, "5": 2, "6": 1, "7": 1, "8": 1, "9": 1 } },
+    { "level": 18, "proficiency_bonus": 6, "features": ["Magical Secrets"],                                           "cantrips_known": 4,  "spells_known": 22, "spell_slots": { "1": 4, "2": 3, "3": 3, "4": 3, "5": 3, "6": 1, "7": 1, "8": 1, "9": 1 } },
+    { "level": 19, "proficiency_bonus": 6, "features": ["Ability Score Improvement"],                                 "cantrips_known": 4,  "spells_known": 22, "spell_slots": { "1": 4, "2": 3, "3": 3, "4": 3, "5": 3, "6": 2, "7": 1, "8": 1, "9": 1 } },
+    { "level": 20, "proficiency_bonus": 6, "features": ["Superior Inspiration"],                                      "cantrips_known": 4,  "spells_known": 22, "spell_slots": { "1": 4, "2": 3, "3": 3, "4": 3, "5": 3, "6": 2, "7": 2, "8": 1, "9": 1 } }
+  ]
+}

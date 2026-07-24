@@ -1,0 +1,29 @@
+{
+  "index": "elf",
+  "name": "Elf",
+  "speed": 30,
+  "size": "Medium",
+  "ability_bonuses": [{ "ability": "dexterity", "bonus": 2 }],
+  "traits": ["Darkvision (60 ft)", "Keen Senses", "Fey Ancestry", "Trance"],
+  "languages": ["Common", "Elvish"],
+  "subraces": [
+    {
+      "index": "high-elf",
+      "name": "High Elf",
+      "ability_bonuses": [{ "ability": "intelligence", "bonus": 1 }],
+      "traits": ["Elf Weapon Training", "Cantrip", "Extra Language"]
+    },
+    {
+      "index": "wood-elf",
+      "name": "Wood Elf",
+      "ability_bonuses": [{ "ability": "wisdom", "bonus": 1 }],
+      "traits": ["Elf Weapon Training", "Fleet of Foot (35 ft speed)", "Mask of the Wild"]
+    },
+    {
+      "index": "dark-elf",
+      "name": "Dark Elf (Drow)",
+      "ability_bonuses": [{ "ability": "charisma", "bonus": 1 }],
+      "traits": ["Superior Darkvision (120 ft)", "Sunlight Sensitivity", "Drow Magic", "Drow Weapon Training"]
+    }
+  ]
+}

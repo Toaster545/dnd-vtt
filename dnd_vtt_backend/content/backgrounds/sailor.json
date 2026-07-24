@@ -1,0 +1,9 @@
+{
+  "index": "sailor",
+  "name": "Sailor",
+  "skill_proficiencies": ["Athletics", "Perception"],
+  "tool_proficiencies": ["Navigator's tools", "Vehicles (water)"],
+  "languages": "None",
+  "starting_equipment": ["Belaying pin (club)", "50 ft of silk rope", "Lucky charm (rabbit's foot or similar)", "Common clothes", "Belt pouch with 10 gp"],
+  "feature": "Ship's Passage"
+}

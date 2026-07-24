@@ -4,14 +4,17 @@ import {
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import Konva from 'konva';
 import { Subscription } from 'rxjs';
+import { FormsModule } from '@angular/forms';
+import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { BattleMapService } from '../../core/services/battle-map.service';
 import { AuthService } from '../../core/services/auth.service';
 import { MapToken, BattleMap } from '../../core/models/campaign.model';
-import { FormsModule } from '@angular/forms';
+import { ConfirmService } from '../../shared/confirm.service';
 
 @Component({
   selector: 'app-battle-map',
-  imports: [RouterLink, FormsModule],
+  imports: [RouterLink, FormsModule, MatIconModule, MatTooltipModule],
   templateUrl: './battle-map.html',
   styleUrl: './battle-map.scss',
 })
@@ -21,6 +24,7 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
   mapService = inject(BattleMapService);
   auth = inject(AuthService);
   private route = inject(ActivatedRoute);
+  private confirm = inject(ConfirmService);
 
   map = signal<BattleMap | null>(null);
   tokens = signal<MapToken[]>([]);
@@ -28,7 +32,6 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
   error = signal<string | null>(null);
 
   newToken = { label: 'Token', color: '#e74c3c', size: 1, is_player: false };
-  selectedTokenId = signal<string | null>(null);
 
   private stage?: Konva.Stage;
   private mapLayer?: Konva.Layer;
@@ -40,7 +43,6 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
   async ngOnInit() {
     this.mapId = this.route.snapshot.paramMap.get('id') ?? '';
     if (!this.mapId) { this.loading.set(false); return; }
-
     try {
       const map = await this.mapService.getMap(this.mapId);
       this.map.set(map);
@@ -71,16 +73,13 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
       const h = img.height * scale;
 
       this.stage = new Konva.Stage({ container, width: container.clientWidth, height: container.clientHeight });
-
       this.mapLayer = new Konva.Layer();
       this.gridLayer = new Konva.Layer();
       this.tokenLayer = new Konva.Layer();
-
       this.stage.add(this.mapLayer, this.gridLayer, this.tokenLayer);
 
       const konvaImg = new Konva.Image({ image: img, x: 0, y: 0, width: w, height: h });
       this.mapLayer.add(konvaImg);
-
       this.drawGrid(w, h, gridSize * scale);
 
       this.stage.on('click tap', (e) => {
@@ -116,14 +115,11 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
   private renderTokens(tokens: MapToken[], cellSize: number) {
     const layer = this.tokenLayer!;
     layer.destroyChildren();
-
     for (const token of tokens) {
       const r = (cellSize * token.size) / 2;
       const cx = token.x * cellSize + r;
       const cy = token.y * cellSize + r;
-
       const group = new Konva.Group({ x: cx, y: cy, draggable: this.auth.isAdmin() });
-
       group.add(new Konva.Circle({ radius: r - 3, fill: token.color, stroke: '#fff', strokeWidth: 2 }));
       group.add(new Konva.Text({
         text: token.label.substring(0, 3).toUpperCase(),
@@ -131,46 +127,34 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
         fill: '#fff',
         align: 'center',
         verticalAlign: 'middle',
-        offsetX: r * 0.7 / 2 * 1.5,
+        offsetX: (r * 0.7 / 2) * 1.5,
         offsetY: r * 0.7 / 2,
       }));
-
-      if (token.max_hp != null) {
-        const hpRatio = (token.hp ?? token.max_hp) / token.max_hp;
-        group.add(new Konva.Rect({ x: -r, y: r - 6, width: cellSize * token.size - 6, height: 5, fill: '#333', cornerRadius: 2 }));
-        group.add(new Konva.Rect({ x: -r, y: r - 6, width: (cellSize * token.size - 6) * hpRatio, height: 5, fill: hpRatio > 0.5 ? '#27ae60' : hpRatio > 0.25 ? '#f39c12' : '#e74c3c', cornerRadius: 2 }));
-      }
-
       if (this.auth.isAdmin()) {
         group.on('dragend', async () => {
           const pos = group.position();
-          const col = Math.floor(pos.x / cellSize);
-          const row = Math.floor(pos.y / cellSize);
-          await this.mapService.upsertToken({ ...token, x: col, y: row });
+          await this.mapService.upsertToken({ ...token, x: Math.floor(pos.x / cellSize), y: Math.floor(pos.y / cellSize) });
         });
-
-        group.on('contextmenu', async (e) => {
-          e.evt.preventDefault();
-          await this.mapService.deleteToken(token.id!, this.mapId);
-        });
+        group.on('contextmenu', (e) => { e.evt.preventDefault(); this.removeToken(token); });
       }
-
       layer.add(group);
     }
-
     layer.draw();
   }
 
+  async removeToken(token: MapToken) {
+    if (!await this.confirm.confirm(`Remove "${token.label ?? 'this token'}" from the map?`, 'Remove Token', 'Remove')) return;
+    await this.mapService.deleteToken(token.id!, this.mapId);
+  }
+
   private async addTokenAt(col: number, row: number, _cellSize: number) {
-    const token: MapToken = {
+    await this.mapService.upsertToken({
       map_id: this.mapId,
       label: this.newToken.label,
       color: this.newToken.color,
-      x: col,
-      y: row,
+      x: col, y: row,
       size: this.newToken.size,
       is_player: this.newToken.is_player,
-    };
-    await this.mapService.upsertToken(token);
+    });
   }
 }

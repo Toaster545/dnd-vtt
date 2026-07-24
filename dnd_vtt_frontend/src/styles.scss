@@ -1,18 +1,148 @@
-*, *::before, *::after { box-sizing: border-box; }
+@use '@angular/material' as mat;
+@use './tokens' as t;
 
-html, body {
-  margin: 0;
-  padding: 0;
-  font-family: 'Inter', system-ui, sans-serif;
-  font-size: 16px;
-  background: #1a1a2e;
-  color: #e8e8e8;
-  -webkit-font-smoothing: antialiased;
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+// Keep minimal Material theme for MatDialog, MatSnackBar, MatTooltip tokens
+html {
+  @include mat.theme((
+    color: mat.$violet-palette,
+    typography: (brand-family: t.$font-brand, plain-family: t.$font-body),
+    density: 0,
+  ));
+  @include t.apply();
 }
 
-::-webkit-scrollbar { width: 6px; height: 6px; }
-::-webkit-scrollbar-track { background: #111; }
-::-webkit-scrollbar-thumb { background: #444; border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: #666; }
+@layer base {
+  *, *::before, *::after { box-sizing: border-box; }
+  html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    -webkit-font-smoothing: antialiased;
+  }
+}
 
-select option { background: #16213e; color: #e8e8e8; }
+@layer components {
+  // ── Buttons ─────────────────────────────────────────────────
+  .btn {
+    @apply inline-flex items-center gap-2 px-4 py-2 rounded font-medium text-sm
+           transition-colors duration-150 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer
+           border-0 outline-none;
+    font-family: inherit;
+  }
+  .btn-primary {
+    @apply btn bg-gold text-black hover:bg-gold-bright active:bg-gold-dim;
+  }
+  .btn-outline {
+    @apply btn border border-white/20 text-parchment hover:border-white/40 hover:bg-white/5;
+  }
+  .btn-ghost {
+    @apply btn text-parchment hover:bg-white/10;
+  }
+  .btn-danger {
+    @apply btn border border-danger/50 text-danger hover:bg-danger/10;
+  }
+  .btn-icon {
+    @apply inline-flex items-center justify-center w-9 h-9 rounded
+           text-slate hover:text-parchment hover:bg-white/10 transition-colors
+           border-0 outline-none cursor-pointer;
+    background: transparent;
+  }
+
+  // ── Cards ────────────────────────────────────────────────────
+  .card {
+    @apply bg-surface rounded-md border border-white/10;
+  }
+  .card-body {
+    @apply p-5;
+  }
+  .card-header {
+    @apply px-5 pt-5 pb-3;
+  }
+
+  // ── Toolbar ──────────────────────────────────────────────────
+  .app-toolbar {
+    @apply flex items-center gap-2 h-14 px-3 bg-surface border-b border-white/10 flex-shrink-0;
+  }
+  .toolbar-title {
+    @apply font-brand text-lg text-parchment;
+  }
+  .toolbar-badge {
+    @apply text-xs font-bold px-2 py-0.5 rounded bg-gold-container text-gold-bright uppercase tracking-wider flex-shrink-0;
+  }
+
+  // ── Form fields ───────────────────────────────────────────────
+  .field {
+    @apply flex flex-col gap-1;
+  }
+  .field-label {
+    @apply text-xs font-semibold text-slate uppercase tracking-wide;
+  }
+  .field-input {
+    @apply w-full bg-elevated border border-white/10 rounded px-3 py-2 text-parchment text-sm
+           focus:outline-none focus:border-gold/50 focus:ring-1 focus:ring-gold/20 transition-colors;
+    font-family: inherit;
+    color-scheme: dark;
+  }
+  .field-input::placeholder {
+    @apply text-coal;
+  }
+  .field-error {
+    @apply text-danger text-xs;
+  }
+
+  // ── Nav items ─────────────────────────────────────────────────
+  .nav-item {
+    @apply flex items-center gap-3 w-full px-4 py-2.5 text-sm font-medium text-slate
+           hover:text-parchment hover:bg-elevated cursor-pointer transition-colors text-left
+           border-0 border-l-2 border-transparent outline-none;
+    background: transparent;
+    font-family: inherit;
+  }
+  .nav-item.active {
+    @apply text-gold bg-elevated border-l-2 border-gold;
+    padding-left: 14px;
+  }
+
+  // ── Spinners ──────────────────────────────────────────────────
+  .spinner {
+    @apply inline-block w-5 h-5 border-2 border-current border-t-transparent rounded-full animate-spin;
+  }
+  .spinner-sm {
+    @apply inline-block w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin;
+  }
+  .spinner-lg {
+    @apply block w-10 h-10 border-2 border-gold border-t-transparent rounded-full animate-spin;
+  }
+
+  // ── Tags / chips ──────────────────────────────────────────────
+  .tag {
+    @apply inline-block text-xs font-medium px-2.5 py-0.5 rounded-full
+           bg-elevated border border-white/20 text-slate;
+  }
+}
+
+// Native select arrow
+select.field-input {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24'%3E%3Cpath fill='%239e9b91' d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  padding-right: 2rem;
+}
+
+textarea.field-input {
+  resize: vertical;
+}
+
+// Material dialog — override panel background
+.mat-mdc-dialog-container .mdc-dialog__surface {
+  background: #252641 !important;
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 8px !important;
+}

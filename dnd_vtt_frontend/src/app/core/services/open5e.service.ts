@@ -1,41 +1,60 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, map } from 'rxjs';
+import { firstValueFrom } from 'rxjs';
 
 const BASE = 'https://api.open5e.com/v1';
 
-interface ListResponse<T> {
-  results: T[];
+export interface O5eRace {
+  name: string;
+  slug: string;
+  asi: { attributes: string[]; value: number }[];
+  speed: { walk: number };
+  size_raw: string;
+  subraces: { name: string; slug: string }[];
 }
+
+export interface O5eClass {
+  name: string;
+  slug: string;
+  hit_dice: string;
+  prof_saving_throws: string;
+  prof_skills: string;
+  archetypes: { name: string; slug: string }[];
+  spellcasting_ability: string;
+}
+
+export interface O5eBackground {
+  name: string;
+  slug: string;
+  skill_proficiencies: string | null;
+}
+
+interface ListResponse<T> { count: number; results: T[] }
 
 @Injectable({ providedIn: 'root' })
 export class Open5eService {
   private http = inject(HttpClient);
+  private cache = new Map<string, unknown>();
 
-  getRaces(): Observable<string[]> {
-    return this.http
-      .get<ListResponse<{ name: string }>>(`${BASE}/races/?limit=50`)
-      .pipe(map(r => r.results.map(x => x.name)));
+  private async fetch<T>(url: string): Promise<T> {
+    if (this.cache.has(url)) return this.cache.get(url) as T;
+    const data = await firstValueFrom(this.http.get<T>(url));
+    this.cache.set(url, data);
+    return data;
   }
 
-  getClasses(): Observable<string[]> {
-    return this.http
-      .get<ListResponse<{ name: string }>>(`${BASE}/classes/?limit=50`)
-      .pipe(map(r => r.results.map(x => x.name)));
+  async getRaces(): Promise<O5eRace[]> {
+    const res = await this.fetch<ListResponse<O5eRace>>(`${BASE}/races/?limit=50`);
+    return res.results;
   }
 
-  getBackgrounds(): Observable<string[]> {
-    return this.http
-      .get<ListResponse<{ name: string }>>(`${BASE}/backgrounds/?limit=50`)
-      .pipe(map(r => r.results.map(x => x.name)));
+  async getClasses(): Promise<O5eClass[]> {
+    const res = await this.fetch<ListResponse<O5eClass>>(`${BASE}/classes/?document__slug=wotc-srd&limit=20`);
+    return res.results;
   }
 
-  getSpells(className?: string): Observable<{ name: string; level: number }[]> {
-    const url = className
-      ? `${BASE}/spells/?limit=500&dnd_class=${className}`
-      : `${BASE}/spells/?limit=500`;
-    return this.http
-      .get<ListResponse<{ name: string; spell_level: number }>>(url)
-      .pipe(map(r => r.results.map(x => ({ name: x.name, level: x.spell_level }))));
+  async getBackgrounds(): Promise<O5eBackground[]> {
+    const res = await this.fetch<ListResponse<O5eBackground>>(`${BASE}/backgrounds/?limit=50`);
+    return res.results;
   }
 }

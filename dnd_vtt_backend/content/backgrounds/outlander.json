@@ -1,0 +1,9 @@
+{
+  "index": "outlander",
+  "name": "Outlander",
+  "skill_proficiencies": ["Athletics", "Survival"],
+  "tool_proficiencies": ["One type of musical instrument"],
+  "languages": "One of your choice",
+  "starting_equipment": ["Staff", "Hunting trap", "Trophy from an animal you killed", "Traveler's clothes", "Belt pouch with 10 gp"],
+  "feature": "Wanderer"
+}

@@ -81,6 +81,16 @@ export class DatabaseService implements OnModuleInit {
     `);
 
     await this.db.execute(`
+      CREATE TABLE IF NOT EXISTS sessions (
+        id          TEXT PRIMARY KEY,
+        name        TEXT NOT NULL,
+        description TEXT NOT NULL DEFAULT '',
+        dm_id       TEXT NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
+        created_at  TEXT NOT NULL DEFAULT (datetime('now'))
+      )
+    `);
+
+    await this.db.execute(`
       CREATE TABLE IF NOT EXISTS map_tokens (
         id         TEXT PRIMARY KEY,
         map_id     TEXT NOT NULL REFERENCES battle_maps(id) ON DELETE CASCADE,

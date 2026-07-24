@@ -1,0 +1,229 @@
+<div class="flex flex-col h-full">
+  @if (loading()) {
+    <div class="flex-1 flex items-center justify-center">
+      <span class="spinner-lg"></span>
+    </div>
+  } @else {
+
+    <!-- Step tabs -->
+    <div class="flex border-b border-white/10 overflow-x-auto flex-shrink-0">
+      @for (label of steps; track $index) {
+        <button
+          class="flex items-center gap-2 px-5 py-3.5 text-sm font-medium whitespace-nowrap border-b-2 transition-colors border-0 cursor-pointer"
+          [class]="activeStep() === $index
+            ? 'border-gold text-gold'
+            : 'border-transparent text-slate hover:text-parchment'"
+          (click)="activeStep.set($index)"
+          style="background: transparent; font-family: inherit;"
+        >
+          <span class="flex items-center justify-center w-5 h-5 rounded-full text-xs font-bold flex-shrink-0"
+            [class]="activeStep() === $index ? 'bg-gold text-black' : 'bg-white/10 text-slate'">
+            {{ $index + 1 }}
+          </span>
+          {{ label }}
+        </button>
+      }
+    </div>
+
+    <!-- Step content -->
+    <div class="flex-1 overflow-y-auto p-6">
+
+      <!-- Step 0: Race -->
+      @if (activeStep() === 0) {
+        <h2 class="font-brand text-xl text-parchment mb-4">Choose Your Race</h2>
+        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+          @for (race of races(); track race.index) {
+            <button
+              class="text-left p-4 rounded-md border transition-all cursor-pointer"
+              [class]="selectedRace()?.index === race.index
+                ? 'border-gold/60 bg-gold/5 text-parchment'
+                : 'border-white/10 text-slate hover:border-white/25 hover:text-parchment'"
+              (click)="selectedRace.set(race)"
+              style="background: var(--tw-bg, transparent); font-family: inherit;"
+            >
+              <p class="font-semibold text-sm mb-1.5 m-0" [class]="selectedRace()?.index === race.index ? 'text-parchment' : ''">{{ race.name }}</p>
+              <div class="flex gap-1 flex-wrap mb-1.5">
+                <span class="text-xs border border-white/15 rounded px-1.5 py-0.5">{{ race.size }}</span>
+                <span class="text-xs border border-white/15 rounded px-1.5 py-0.5">{{ race.speed }}ft</span>
+              </div>
+              @if (race.ability_bonuses.length) {
+                <p class="text-xs text-success m-0">{{ raceASISummary(race) }}</p>
+              }
+              @if (race.subraces.length) {
+                <p class="text-xs text-coal italic m-0 mt-0.5">{{ race.subraces.length }} subrace(s)</p>
+              }
+            </button>
+          }
+        </div>
+      }
+
+      <!-- Step 1: Class -->
+      @if (activeStep() === 1) {
+        <h2 class="font-brand text-xl text-parchment mb-4">Choose Your Class</h2>
+        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+          @for (cls of classes(); track cls.index) {
+            <button
+              class="text-left p-4 rounded-md border transition-all cursor-pointer"
+              [class]="selectedClass()?.index === cls.index
+                ? 'border-gold/60 bg-gold/5 text-parchment'
+                : 'border-white/10 text-slate hover:border-white/25 hover:text-parchment'"
+              (click)="selectedClass.set(cls)"
+              style="background: transparent; font-family: inherit;"
+            >
+              <p class="font-semibold text-sm mb-1.5 m-0" [class]="selectedClass()?.index === cls.index ? 'text-parchment' : ''">{{ cls.name }}</p>
+              <span class="text-xs border border-white/15 rounded px-1.5 py-0.5">d{{ cls.hit_die }}</span>
+              @if (cls.saving_throws.length) {
+                <p class="text-xs text-slate m-0 mt-1.5">Saves: {{ cls.saving_throws.join(', ') }}</p>
+              }
+            </button>
+          }
+        </div>
+      }
+
+      <!-- Step 2: Background -->
+      @if (activeStep() === 2) {
+        <h2 class="font-brand text-xl text-parchment mb-4">Choose Your Background</h2>
+        <div class="flex flex-col gap-1.5 max-w-2xl">
+          @for (bg of backgrounds(); track bg.index) {
+            <button
+              class="flex items-baseline justify-between px-4 py-3 rounded-md border transition-all cursor-pointer text-left w-full"
+              [class]="selectedBackground()?.index === bg.index
+                ? 'border-gold/60 bg-gold/5'
+                : 'border-white/10 hover:border-white/25'"
+              (click)="selectedBackground.set(bg)"
+              style="background: transparent; font-family: inherit;"
+            >
+              <span class="font-medium text-sm" [class]="selectedBackground()?.index === bg.index ? 'text-parchment' : 'text-slate'">{{ bg.name }}</span>
+              <span class="text-xs text-coal ml-4 flex-shrink-0">{{ bg.skill_proficiencies.join(', ') }}</span>
+            </button>
+          }
+        </div>
+      }
+
+      <!-- Step 3: Abilities -->
+      @if (activeStep() === 3) {
+        <h2 class="font-brand text-xl text-parchment mb-1">Assign Ability Scores</h2>
+        <p class="text-sm text-slate mb-4">Assign each value from the standard array exactly once.</p>
+        <div class="flex gap-2 flex-wrap mb-6">
+          @for (v of standardArray; track v) {
+            <span class="text-sm font-mono font-bold px-3 py-1 rounded border"
+              [class]="isValueAssigned(v)
+                ? 'border-gold/25 text-gold/40 line-through'
+                : 'border-white/20 text-parchment bg-elevated'">
+              {{ v }}
+            </span>
+          }
+        </div>
+        <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 max-w-lg">
+          @for (ab of abilities; track ab) {
+            <div class="flex flex-col gap-1">
+              <label class="text-xs font-bold text-slate uppercase tracking-wide">{{ abilityShort[ab] }}</label>
+              <select class="field-input" [ngModel]="assignments()[ab]" (ngModelChange)="assign(ab, $event)" [name]="ab">
+                <option [ngValue]="null">—</option>
+                @for (v of optionsFor(ab); track v) {
+                  <option [ngValue]="v">{{ v }}</option>
+                }
+              </select>
+              <div class="flex items-center justify-between text-xs mt-0.5">
+                @if (asiFor(ab) > 0) {
+                  <span class="text-success">+{{ asiFor(ab) }}</span>
+                } @else {
+                  <span></span>
+                }
+                @if (assignments()[ab] !== null) {
+                  <span class="font-semibold text-parchment">= {{ finalScores()[ab] }}
+                    <span class="text-gold ml-1">{{ mod(finalScores()[ab]) }}</span>
+                  </span>
+                } @else {
+                  <span class="text-coal">—</span>
+                }
+              </div>
+            </div>
+          }
+        </div>
+      }
+
+      <!-- Step 4: Details -->
+      @if (activeStep() === 4) {
+        <h2 class="font-brand text-xl text-parchment mb-4">Character Details</h2>
+        <div class="flex gap-6 flex-wrap items-start">
+          <!-- Form fields -->
+          <div class="flex flex-col gap-4 flex-1 min-w-64">
+            <div class="field">
+              <label class="field-label">Character Name</label>
+              <input class="field-input" [(ngModel)]="characterName" placeholder="Unnamed Character" name="charName" />
+            </div>
+            <div class="flex gap-3">
+              <div class="field flex-1">
+                <label class="field-label">Level</label>
+                <input class="field-input" type="number" [ngModel]="level()" (ngModelChange)="level.set(+$event)" min="1" max="20" name="level" />
+              </div>
+              <div class="field flex-1">
+                <label class="field-label">Alignment</label>
+                <select class="field-input" [(ngModel)]="alignment" name="alignment">
+                  @for (a of alignments; track a) { <option [value]="a">{{ a }}</option> }
+                </select>
+              </div>
+            </div>
+            @if (subclassOptions().length && level() >= 3) {
+              <div class="field">
+                <label class="field-label">Subclass</label>
+                <select class="field-input" [(ngModel)]="subclass" name="subclass">
+                  <option value="">— None —</option>
+                  @for (s of subclassOptions(); track s) { <option [value]="s">{{ s }}</option> }
+                </select>
+              </div>
+            }
+          </div>
+
+          <!-- Stats panel -->
+          <div class="card w-48 flex-shrink-0">
+            <div class="p-4">
+              <h3 class="font-brand text-sm text-parchment mb-3 m-0">Derived Stats</h3>
+              <div class="grid grid-cols-2 gap-2 text-center">
+                <div class="bg-elevated rounded p-2">
+                  <p class="text-xl font-bold text-gold m-0">{{ maxHP() }}</p>
+                  <p class="text-xs text-slate m-0 mt-0.5">Max HP</p>
+                </div>
+                <div class="bg-elevated rounded p-2">
+                  <p class="text-xl font-bold text-gold m-0">{{ armorClass() }}</p>
+                  <p class="text-xs text-slate m-0 mt-0.5">AC</p>
+                </div>
+                <div class="bg-elevated rounded p-2">
+                  <p class="text-xl font-bold text-gold m-0">{{ speed() }}</p>
+                  <p class="text-xs text-slate m-0 mt-0.5">Speed</p>
+                </div>
+                <div class="bg-elevated rounded p-2">
+                  <p class="text-xl font-bold text-gold m-0">+{{ profBonus() }}</p>
+                  <p class="text-xs text-slate m-0 mt-0.5">Prof</p>
+                </div>
+              </div>
+              @if (selectedRace() || selectedClass() || selectedBackground()) {
+                <div class="flex flex-col gap-1 mt-3">
+                  @if (selectedRace()) { <span class="tag">{{ selectedRace()!.name }}</span> }
+                  @if (selectedClass()) { <span class="tag">{{ selectedClass()!.name }}</span> }
+                  @if (selectedBackground()) { <span class="tag">{{ selectedBackground()!.name }}</span> }
+                </div>
+              }
+            </div>
+          </div>
+        </div>
+      }
+
+    </div>
+
+    <!-- Persistent footer -->
+    <div class="flex items-center justify-between px-6 py-4 border-t border-white/10 flex-shrink-0 bg-canvas">
+      <button class="btn-ghost" (click)="cancelled.emit()">{{ isEditing() ? 'Close' : 'Cancel' }}</button>
+      <div class="flex gap-2">
+        <button class="btn-outline" [disabled]="saving()" (click)="save()">
+          @if (saving()) { <span class="spinner-sm"></span> } @else { Save Progress }
+        </button>
+        <button class="btn-primary" [disabled]="saving()" (click)="saveAndClose()">
+          {{ isEditing() ? 'Save & Close' : 'Create Character' }}
+        </button>
+      </div>
+    </div>
+
+  }
+</div>

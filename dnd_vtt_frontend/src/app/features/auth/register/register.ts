@@ -1,6 +1,6 @@
 import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { RouterLink } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
@@ -12,7 +12,6 @@ import { AuthService } from '../../../core/services/auth.service';
 export class RegisterComponent {
   private fb = inject(FormBuilder);
   private auth = inject(AuthService);
-  private router = inject(Router);
 
   form = this.fb.nonNullable.group({
     username: ['', [Validators.required, Validators.minLength(3)]],
@@ -25,15 +24,11 @@ export class RegisterComponent {
   success = signal(false);
 
   async submit() {
-    if (this.form.invalid) return;
+    if (this.form.invalid) { this.form.markAllAsTouched(); return; }
     this.loading.set(true);
     this.error.set(null);
     try {
-      await this.auth.signUp(
-        this.form.value.email!,
-        this.form.value.password!,
-        this.form.value.username!
-      );
+      await this.auth.signUp(this.form.value.email!, this.form.value.password!, this.form.value.username!);
       this.success.set(true);
     } catch (e: any) {
       this.error.set(e.message);

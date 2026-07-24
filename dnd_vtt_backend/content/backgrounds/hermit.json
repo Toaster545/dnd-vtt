@@ -1,0 +1,9 @@
+{
+  "index": "hermit",
+  "name": "Hermit",
+  "skill_proficiencies": ["Medicine", "Religion"],
+  "tool_proficiencies": ["Herbalism kit"],
+  "languages": "One of your choice",
+  "starting_equipment": ["Scroll case with notes", "Winter blanket", "Common clothes", "Herbalism kit", "5 gp"],
+  "feature": "Discovery"
+}

@@ -1,0 +1,133 @@
+{
+  "index": "wizard",
+  "name": "Wizard",
+  "hit_die": 6,
+  "saving_throws": ["intelligence", "wisdom"],
+  "armor_training": [],
+  "weapon_proficiencies": ["Daggers", "Darts", "Slings", "Quarterstaffs", "Light Crossbows"],
+  "tool_proficiencies": [],
+  "skill_choices": {
+    "count": 2,
+    "from": ["Arcana", "History", "Insight", "Investigation", "Medicine", "Religion"]
+  },
+  "starting_equipment": [
+    { "choice": true, "options": ["Quarterstaff", "Dagger"] },
+    { "choice": true, "options": ["Component pouch", "Arcane focus"] },
+    { "choice": true, "options": ["Scholar's pack", "Explorer's pack"] },
+    { "fixed": ["Spellbook"] }
+  ],
+  "spellcasting_ability": "intelligence",
+  "subclass_level": 2,
+  "subclasses": [
+    {
+      "index": "abjuration",
+      "name": "School of Abjuration",
+      "description": "Master protective magic to ward allies and resist the spells of enemies.",
+      "levels": [
+        { "level": 2,  "features": ["Abjuration Savant", "Arcane Ward"] },
+        { "level": 6,  "features": ["Projected Ward"] },
+        { "level": 10, "features": ["Improved Abjuration"] },
+        { "level": 14, "features": ["Spell Resistance"] }
+      ]
+    },
+    {
+      "index": "conjuration",
+      "name": "School of Conjuration",
+      "description": "Summon creatures and objects, and teleport across the battlefield.",
+      "levels": [
+        { "level": 2,  "features": ["Conjuration Savant", "Minor Conjuration"] },
+        { "level": 6,  "features": ["Benign Transposition"] },
+        { "level": 10, "features": ["Focused Conjuration"] },
+        { "level": 14, "features": ["Durable Summons"] }
+      ]
+    },
+    {
+      "index": "divination",
+      "name": "School of Divination",
+      "description": "Peer into the future to gain foreknowledge and manipulate fate.",
+      "levels": [
+        { "level": 2,  "features": ["Divination Savant", "Portent"] },
+        { "level": 6,  "features": ["Expert Divination"] },
+        { "level": 10, "features": ["The Third Eye"] },
+        { "level": 14, "features": ["Greater Portent"] }
+      ]
+    },
+    {
+      "index": "enchantment",
+      "name": "School of Enchantment",
+      "description": "Charm and beguile others, manipulating their minds to follow your will.",
+      "levels": [
+        { "level": 2,  "features": ["Enchantment Savant", "Hypnotic Gaze"] },
+        { "level": 6,  "features": ["Instinctive Charm"] },
+        { "level": 10, "features": ["Split Enchantment"] },
+        { "level": 14, "features": ["Alter Memories"] }
+      ]
+    },
+    {
+      "index": "evocation",
+      "name": "School of Evocation",
+      "description": "Wield the raw power of fire, lightning, and thunder to devastate your foes.",
+      "levels": [
+        { "level": 2,  "features": ["Evocation Savant", "Sculpt Spells"] },
+        { "level": 6,  "features": ["Potent Cantrip"] },
+        { "level": 10, "features": ["Empowered Evocation"] },
+        { "level": 14, "features": ["Overchannel"] }
+      ]
+    },
+    {
+      "index": "illusion",
+      "name": "School of Illusion",
+      "description": "Weave illusions to deceive the senses and create false realities.",
+      "levels": [
+        { "level": 2,  "features": ["Illusion Savant", "Improved Minor Illusion"] },
+        { "level": 6,  "features": ["Malleable Illusions"] },
+        { "level": 10, "features": ["Illusory Self"] },
+        { "level": 14, "features": ["Illusory Reality"] }
+      ]
+    },
+    {
+      "index": "necromancy",
+      "name": "School of Necromancy",
+      "description": "Tap into the power of life and death, animating the dead to serve you.",
+      "levels": [
+        { "level": 2,  "features": ["Necromancy Savant", "Grim Harvest"] },
+        { "level": 6,  "features": ["Undead Thralls"] },
+        { "level": 10, "features": ["Inured to Undeath"] },
+        { "level": 14, "features": ["Command Undead"] }
+      ]
+    },
+    {
+      "index": "transmutation",
+      "name": "School of Transmutation",
+      "description": "Alter the properties of matter and energy, transforming objects and creatures.",
+      "levels": [
+        { "level": 2,  "features": ["Transmutation Savant", "Minor Alchemy"] },
+        { "level": 6,  "features": ["Transmuter's Stone"] },
+        { "level": 10, "features": ["Shapechanger"] },
+        { "level": 14, "features": ["Master Transmuter"] }
+      ]
+    }
+  ],
+  "levels": [
+    { "level": 1,  "proficiency_bonus": 2, "features": ["Spellcasting", "Arcane Recovery"],       "cantrips_known": 3, "spells_known": 6,  "spell_slots": { "1": 2 } },
+    { "level": 2,  "proficiency_bonus": 2, "features": ["Arcane Tradition"],                      "cantrips_known": 3, "spells_known": 8,  "spell_slots": { "1": 3 } },
+    { "level": 3,  "proficiency_bonus": 2, "features": [],                                        "cantrips_known": 3, "spells_known": 10, "spell_slots": { "1": 4, "2": 2 } },
+    { "level": 4,  "proficiency_bonus": 2, "features": ["Ability Score Improvement"],             "cantrips_known": 4, "spells_known": 12, "spell_slots": { "1": 4, "2": 3 } },
+    { "level": 5,  "proficiency_bonus": 3, "features": [],                                        "cantrips_known": 4, "spells_known": 14, "spell_slots": { "1": 4, "2": 3, "3": 2 } },
+    { "level": 6,  "proficiency_bonus": 3, "features": ["Arcane Tradition Feature"],              "cantrips_known": 4, "spells_known": 16, "spell_slots": { "1": 4, "2": 3, "3": 3 } },
+    { "level": 7,  "proficiency_bonus": 3, "features": [],                                        "cantrips_known": 4, "spells_known": 18, "spell_slots": { "1": 4, "2": 3, "3": 3, "4": 1 } },
+    { "level": 8,  "proficiency_bonus": 3, "features": ["Ability Score Improvement"],             "cantrips_known": 4, "spells_known": 20, "spell_slots": { "1": 4, "2": 3, "3": 3, "4": 2 } },
+    { "level": 9,  "proficiency_bonus": 4, "features": [],                                        "cantrips_known": 4, "spells_known": 22, "spell_slots": { "1": 4, "2": 3, "3": 3, "4": 3, "5": 1 } },
+    { "level": 10, "proficiency_bonus": 4, "features": ["Arcane Tradition Feature"],              "cantrips_known": 5, "spells_known": 24, "spell_slots": { "1": 4, "2": 3, "3": 3, "4": 3, "5": 2 } },
+    { "level": 11, "proficiency_bonus": 4, "features": [],                                        "cantrips_known": 5, "spells_known": 26, "spell_slots": { "1": 4, "2": 3, "3": 3, "4": 3, "5": 2, "6": 1 } },
+    { "level": 12, "proficiency_bonus": 4, "features": ["Ability Score Improvement"],             "cantrips_known": 5, "spells_known": 28, "spell_slots": { "1": 4, "2": 3, "3": 3, "4": 3, "5": 2, "6": 1 } },
+    { "level": 13, "proficiency_bonus": 5, "features": [],                                        "cantrips_known": 5, "spells_known": 30, "spell_slots": { "1": 4, "2": 3, "3": 3, "4": 3, "5": 2, "6": 1, "7": 1 } },
+    { "level": 14, "proficiency_bonus": 5, "features": ["Arcane Tradition Feature"],              "cantrips_known": 5, "spells_known": 32, "spell_slots": { "1": 4, "2": 3, "3": 3, "4": 3, "5": 2, "6": 1, "7": 1 } },
+    { "level": 15, "proficiency_bonus": 5, "features": [],                                        "cantrips_known": 5, "spells_known": 34, "spell_slots": { "1": 4, "2": 3, "3": 3, "4": 3, "5": 2, "6": 1, "7": 1, "8": 1 } },
+    { "level": 16, "proficiency_bonus": 5, "features": ["Ability Score Improvement"],             "cantrips_known": 5, "spells_known": 36, "spell_slots": { "1": 4, "2": 3, "3": 3, "4": 3, "5": 2, "6": 1, "7": 1, "8": 1 } },
+    { "level": 17, "proficiency_bonus": 6, "features": [],                                        "cantrips_known": 5, "spells_known": 38, "spell_slots": { "1": 4, "2": 3, "3": 3, "4": 3, "5": 2, "6": 1, "7": 1, "8": 1, "9": 1 } },
+    { "level": 18, "proficiency_bonus": 6, "features": ["Spell Mastery"],                         "cantrips_known": 5, "spells_known": 40, "spell_slots": { "1": 4, "2": 3, "3": 3, "4": 3, "5": 3, "6": 1, "7": 1, "8": 1, "9": 1 } },
+    { "level": 19, "proficiency_bonus": 6, "features": ["Ability Score Improvement"],             "cantrips_known": 5, "spells_known": 42, "spell_slots": { "1": 4, "2": 3, "3": 3, "4": 3, "5": 3, "6": 2, "7": 1, "8": 1, "9": 1 } },
+    { "level": 20, "proficiency_bonus": 6, "features": ["Signature Spells"],                      "cantrips_known": 5, "spells_known": 44, "spell_slots": { "1": 4, "2": 3, "3": 3, "4": 3, "5": 3, "6": 2, "7": 2, "8": 1, "9": 1 } }
+  ]
+}

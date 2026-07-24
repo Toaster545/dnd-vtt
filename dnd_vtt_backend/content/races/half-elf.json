@@ -1,0 +1,13 @@
+{
+  "index": "half-elf",
+  "name": "Half-Elf",
+  "speed": 30,
+  "size": "Medium",
+  "ability_bonuses": [
+    { "ability": "charisma", "bonus": 2 },
+    { "ability": "two ability scores of your choice", "bonus": 1 }
+  ],
+  "traits": ["Darkvision (60 ft)", "Fey Ancestry", "Skill Versatility (2 skills of choice)", "Extra Language"],
+  "languages": ["Common", "Elvish", "One extra language of your choice"],
+  "subraces": []
+}

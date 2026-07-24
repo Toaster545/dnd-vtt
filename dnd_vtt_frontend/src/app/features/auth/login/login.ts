@@ -23,12 +23,12 @@ export class LoginComponent {
   loading = signal(false);
 
   async submit() {
-    if (this.form.invalid) return;
+    if (this.form.invalid) { this.form.markAllAsTouched(); return; }
     this.loading.set(true);
     this.error.set(null);
     try {
-      await this.auth.signIn(this.form.value.email!, this.form.value.password!);
-      this.router.navigate(['/dashboard']);
+      const res = await this.auth.signIn(this.form.value.email!, this.form.value.password!);
+      this.router.navigate([res.profile.role === 'admin' ? '/dm' : '/dashboard']);
     } catch (e: any) {
       this.error.set(e.message);
     } finally {

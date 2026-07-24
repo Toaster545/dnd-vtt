@@ -1,0 +1,67 @@
+{
+  "index": "ranger",
+  "name": "Ranger",
+  "hit_die": 10,
+  "saving_throws": ["strength", "dexterity"],
+  "armor_training": ["Light Armor", "Medium Armor", "Shields"],
+  "weapon_proficiencies": ["Simple Weapons", "Martial Weapons"],
+  "tool_proficiencies": [],
+  "skill_choices": {
+    "count": 3,
+    "from": ["Animal Handling", "Athletics", "Insight", "Investigation", "Nature", "Perception", "Stealth", "Survival"]
+  },
+  "starting_equipment": [
+    { "choice": true, "options": ["Scale mail", "Leather armor"] },
+    { "choice": true, "options": ["Two shortswords", "Two simple melee weapons"] },
+    { "choice": true, "options": ["Dungeoneer's pack", "Explorer's pack"] },
+    { "fixed": ["Longbow", "Quiver of 20 arrows"] }
+  ],
+  "spellcasting_ability": "wisdom",
+  "subclass_level": 3,
+  "subclasses": [
+    {
+      "index": "hunter",
+      "name": "Hunter",
+      "description": "Learn techniques to hunt a wide variety of enemies with devastating effectiveness.",
+      "levels": [
+        { "level": 3,  "features": ["Hunter's Prey"] },
+        { "level": 7,  "features": ["Defensive Tactics"] },
+        { "level": 11, "features": ["Multiattack"] },
+        { "level": 15, "features": ["Superior Hunter's Defense"] }
+      ]
+    },
+    {
+      "index": "beast-master",
+      "name": "Beast Master",
+      "description": "Form a deep bond with an animal companion that fights alongside you.",
+      "levels": [
+        { "level": 3,  "features": ["Ranger's Companion"] },
+        { "level": 7,  "features": ["Exceptional Training"] },
+        { "level": 11, "features": ["Bestial Fury"] },
+        { "level": 15, "features": ["Share Spells"] }
+      ]
+    }
+  ],
+  "levels": [
+    { "level": 1,  "proficiency_bonus": 2, "features": ["Favored Enemy", "Natural Explorer"],                          "spell_slots": {} },
+    { "level": 2,  "proficiency_bonus": 2, "features": ["Fighting Style", "Spellcasting"],                             "spell_slots": { "1": 2 } },
+    { "level": 3,  "proficiency_bonus": 2, "features": ["Ranger Archetype", "Primeval Awareness"],                     "spell_slots": { "1": 3 } },
+    { "level": 4,  "proficiency_bonus": 2, "features": ["Ability Score Improvement"],                                  "spell_slots": { "1": 3 } },
+    { "level": 5,  "proficiency_bonus": 3, "features": ["Extra Attack"],                                               "spell_slots": { "1": 4, "2": 2 } },
+    { "level": 6,  "proficiency_bonus": 3, "features": ["Favored Enemy Improvement", "Natural Explorer Improvement"],  "spell_slots": { "1": 4, "2": 2 } },
+    { "level": 7,  "proficiency_bonus": 3, "features": ["Ranger Archetype Feature"],                                   "spell_slots": { "1": 4, "2": 3 } },
+    { "level": 8,  "proficiency_bonus": 3, "features": ["Ability Score Improvement", "Land's Stride"],                 "spell_slots": { "1": 4, "2": 3 } },
+    { "level": 9,  "proficiency_bonus": 4, "features": [],                                                             "spell_slots": { "1": 4, "2": 3, "3": 2 } },
+    { "level": 10, "proficiency_bonus": 4, "features": ["Natural Explorer Improvement", "Hide in Plain Sight"],        "spell_slots": { "1": 4, "2": 3, "3": 2 } },
+    { "level": 11, "proficiency_bonus": 4, "features": ["Ranger Archetype Feature"],                                   "spell_slots": { "1": 4, "2": 3, "3": 3 } },
+    { "level": 12, "proficiency_bonus": 4, "features": ["Ability Score Improvement"],                                  "spell_slots": { "1": 4, "2": 3, "3": 3 } },
+    { "level": 13, "proficiency_bonus": 5, "features": [],                                                             "spell_slots": { "1": 4, "2": 3, "3": 3, "4": 1 } },
+    { "level": 14, "proficiency_bonus": 5, "features": ["Favored Enemy Improvement", "Vanish"],                        "spell_slots": { "1": 4, "2": 3, "3": 3, "4": 1 } },
+    { "level": 15, "proficiency_bonus": 5, "features": ["Ranger Archetype Feature"],                                   "spell_slots": { "1": 4, "2": 3, "3": 3, "4": 2 } },
+    { "level": 16, "proficiency_bonus": 5, "features": ["Ability Score Improvement"],                                  "spell_slots": { "1": 4, "2": 3, "3": 3, "4": 2 } },
+    { "level": 17, "proficiency_bonus": 6, "features": [],                                                             "spell_slots": { "1": 4, "2": 3, "3": 3, "4": 3, "5": 1 } },
+    { "level": 18, "proficiency_bonus": 6, "features": ["Feral Senses"],                                               "spell_slots": { "1": 4, "2": 3, "3": 3, "4": 3, "5": 1 } },
+    { "level": 19, "proficiency_bonus": 6, "features": ["Ability Score Improvement"],                                  "spell_slots": { "1": 4, "2": 3, "3": 3, "4": 3, "5": 2 } },
+    { "level": 20, "proficiency_bonus": 6, "features": ["Foe Slayer"],                                                 "spell_slots": { "1": 4, "2": 3, "3": 3, "4": 3, "5": 2 } }
+  ]
+}

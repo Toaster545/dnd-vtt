@@ -1,0 +1,182 @@
+// ╔══════════════════════════════════════════════════════════════╗
+// ║  D&D Campaign — Design Tokens                               ║
+// ║                                                              ║
+// ║  Single source of truth for the app's visual design.        ║
+// ║  Edit this file to retheme the entire application.          ║
+// ╚══════════════════════════════════════════════════════════════╝
+
+
+// ── Color Palette ──────────────────────────────────────────────
+//    Core brand colors. Everything else derives from these.
+
+$gold:              #c9a227;   // primary accent — buttons, links, active states
+$gold-container:    #3a2c00;   // background behind gold text/icons
+$gold-on-container: #f5d67a;   // text/icon on gold-container
+
+$crimson:           #8b1a1a;   // danger/destructive accent (secondary use)
+
+$bg-base:           #0d0e16;   // ← page background
+$bg-surface:        #171822;   // cards, panels, sidebars
+$bg-raised:         #1e2033;   // elevated items, hover targets
+$bg-overlay:        #252641;   // dialogs, dropdowns
+
+$text-primary:      #ede9df;   // headings and body text
+$text-secondary:    #9e9b91;   // captions, placeholders, muted labels
+$text-disabled:     #4e4d49;   // disabled controls
+
+$outline:           rgba(255, 255, 255, 0.08);   // subtle borders
+$outline-strong:    rgba(255, 255, 255, 0.18);   // focused / visible borders
+
+$error:             #e05252;
+$error-on:          #ffffff;
+$error-container:   #3b1111;
+
+$success:           #4caf82;
+
+
+// ── Typography ─────────────────────────────────────────────────
+
+$font-brand: 'Cinzel, serif';      // titles, wizard headings, toolbar name
+$font-body:  'Nunito, sans-serif'; // all UI text, labels, body copy
+
+
+// ── Spacing ────────────────────────────────────────────────────
+//    Use these in component SCSS as var(--space-N) for consistency.
+
+$space-1:   0.25rem;   //  4px
+$space-2:   0.5rem;    //  8px
+$space-3:   0.75rem;   // 12px
+$space-4:   1rem;      // 16px
+$space-6:   1.5rem;    // 24px
+$space-8:   2rem;      // 32px
+$space-12:  3rem;      // 48px
+
+
+// ── Shape ──────────────────────────────────────────────────────
+
+$radius-sm:  4px;
+$radius-md:  8px;
+$radius-lg:  8px;
+$radius-xl:  8px;
+
+$radius-button:   6px;    // ← toolbar buttons, flat/outlined/text buttons
+$radius-nav-item: 6px;    // ← sidenav list item active indicator
+
+
+// ── Elevation / Shadows ────────────────────────────────────────
+
+$shadow-sm:  0 1px 4px  rgba(0, 0, 0, 0.50);
+$shadow-md:  0 3px 12px rgba(0, 0, 0, 0.60);
+$shadow-lg:  0 8px 28px rgba(0, 0, 0, 0.75);
+
+
+// ══════════════════════════════════════════════════════════════
+//  apply() — include this inside your html {} rule after
+//  mat.theme() to wire the tokens into Material's system.
+// ══════════════════════════════════════════════════════════════
+
+@mixin apply() {
+  color-scheme: dark;
+
+  // ── Material system token overrides ──────────────────────
+  //    Material components read --mat-sys-* CSS vars at runtime.
+  //    These declarations override whatever mat.theme() generated.
+
+  --mat-sys-primary:               #{$gold};
+  --mat-sys-on-primary:            #000000;
+  --mat-sys-primary-container:     #{$gold-container};
+  --mat-sys-on-primary-container:  #{$gold-on-container};
+
+  --mat-sys-secondary:             #{$gold-on-container};
+  --mat-sys-on-secondary:          #000000;
+  --mat-sys-secondary-container:   #{$bg-raised};
+  --mat-sys-on-secondary-container:#{$text-primary};
+
+  --mat-sys-tertiary:              #{$success};
+  --mat-sys-on-tertiary:           #000000;
+  --mat-sys-tertiary-container:    #0d2b1e;
+  --mat-sys-on-tertiary-container: #{$success};
+
+  --mat-sys-background:            #{$bg-base};
+  --mat-sys-on-background:         #{$text-primary};
+
+  --mat-sys-surface:               #{$bg-surface};
+  --mat-sys-on-surface:            #{$text-primary};
+  --mat-sys-surface-variant:       #{$bg-raised};
+  --mat-sys-on-surface-variant:    #{$text-secondary};
+  --mat-sys-surface-container:     #{$bg-surface};
+  --mat-sys-surface-container-low: #{$bg-base};
+  --mat-sys-surface-container-high:#{$bg-raised};
+  --mat-sys-surface-bright:        #{$bg-overlay};
+  --mat-sys-inverse-surface:       #{$text-primary};
+  --mat-sys-inverse-on-surface:    #{$bg-base};
+  --mat-sys-inverse-primary:       #{$gold-container};
+
+  --mat-sys-outline:               #{$outline-strong};
+  --mat-sys-outline-variant:       #{$outline};
+
+  --mat-sys-error:                 #{$error};
+  --mat-sys-on-error:              #{$error-on};
+  --mat-sys-error-container:       #{$error-container};
+  --mat-sys-on-error-container:    #{$error};
+
+  --mat-sys-scrim:                 rgba(0, 0, 0, 0.60);
+  --mat-sys-shadow:                rgba(0, 0, 0, 0.80);
+
+  // ── Brand CSS custom properties ──────────────────────────
+  //    Available in all component SCSS files and inline styles.
+
+  // Colors
+  --dnd-gold:           #{$gold};
+  --dnd-crimson:        #{$crimson};
+  --dnd-bg-base:        #{$bg-base};
+  --dnd-bg-surface:     #{$bg-surface};
+  --dnd-bg-raised:      #{$bg-raised};
+  --dnd-bg-overlay:     #{$bg-overlay};
+  --dnd-text:           #{$text-primary};
+  --dnd-text-muted:     #{$text-secondary};
+  --dnd-text-disabled:  #{$text-disabled};
+  --dnd-outline:        #{$outline};
+  --dnd-outline-strong: #{$outline-strong};
+  --dnd-error:          #{$error};
+  --dnd-success:        #{$success};
+
+  // Typography
+  --dnd-font-brand:     #{$font-brand};
+  --dnd-font-body:      #{$font-body};
+
+  // Spacing
+  --space-1:  #{$space-1};
+  --space-2:  #{$space-2};
+  --space-3:  #{$space-3};
+  --space-4:  #{$space-4};
+  --space-6:  #{$space-6};
+  --space-8:  #{$space-8};
+  --space-12: #{$space-12};
+
+  // Shape
+  --radius-sm: #{$radius-sm};
+  --radius-md: #{$radius-md};
+  --radius-lg: #{$radius-lg};
+  --radius-xl: #{$radius-xl};
+
+  // Shadows
+  --shadow-sm: #{$shadow-sm};
+  --shadow-md: #{$shadow-md};
+  --shadow-lg: #{$shadow-lg};
+
+  // ── Component shape overrides ─────────────────────────────
+  //    Material M3 defaults: buttons = pill (9999px), nav items = large (16px).
+  //    Override with $radius-button and $radius-nav-item above.
+
+  // Buttons (filled, text, outlined, icon)
+  --mdc-filled-button-container-shape:    #{$radius-button};
+  --mdc-text-button-container-shape:      #{$radius-button};
+  --mdc-outlined-button-container-shape:  #{$radius-button};
+  --mdc-protected-button-container-shape: #{$radius-button};
+  --mdc-icon-button-state-layer-shape:    #{$radius-button};
+  --mat-sys-corner-full:                  #{$radius-button};
+
+  // Sidenav / nav-list active indicator
+  --mat-list-active-indicator-shape:      #{$radius-nav-item};
+}

@@ -1,0 +1,13 @@
+{
+  "index": "tiefling",
+  "name": "Tiefling",
+  "speed": 30,
+  "size": "Medium",
+  "ability_bonuses": [
+    { "ability": "intelligence", "bonus": 1 },
+    { "ability": "charisma",     "bonus": 2 }
+  ],
+  "traits": ["Darkvision (60 ft)", "Hellish Resistance (fire)", "Infernal Legacy (Thaumaturgy, Hellish Rebuke, Darkness)"],
+  "languages": ["Common", "Infernal"],
+  "subraces": []
+}

@@ -1,0 +1,9 @@
+{
+  "index": "noble",
+  "name": "Noble",
+  "skill_proficiencies": ["History", "Persuasion"],
+  "tool_proficiencies": ["One type of gaming set"],
+  "languages": "One of your choice",
+  "starting_equipment": ["Fine clothes", "Signet ring", "Scroll of pedigree", "Purse with 25 gp"],
+  "feature": "Position of Privilege"
+}

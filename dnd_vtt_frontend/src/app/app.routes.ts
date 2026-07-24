@@ -47,6 +47,11 @@ export const routes: Routes = [
     loadComponent: () => import('./features/battle-map/battle-map').then(m => m.BattleMapComponent),
   },
   {
+    path: 'dm',
+    canActivate: [authGuard, adminGuard],
+    loadComponent: () => import('./features/dm/dm-shell').then(m => m.DmShellComponent),
+  },
+  {
     path: 'admin/maps',
     canActivate: [authGuard, adminGuard],
     loadComponent: () => import('./features/admin/map-manager').then(m => m.MapManagerComponent),

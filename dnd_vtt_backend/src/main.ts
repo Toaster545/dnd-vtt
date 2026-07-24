@@ -22,8 +22,12 @@ async function bootstrap() {
   const server = app.getHttpAdapter().getInstance();
 
   // Register directly on the raw Express instance to guarantee order
+  const staticOpts = process.env.DEV_BYPASS === 'true'
+    ? { setHeaders: (res: any) => res.setHeader('Cache-Control', 'no-store') }
+    : {};
+
   server.use('/uploads', express.static(join(process.cwd(), 'uploads')));
-  server.use(express.static(distPath));
+  server.use(express.static(distPath, staticOpts));
   server.use((req: any, res: any, next: any) => {
     if (req.path.startsWith('/api') || req.path.startsWith('/socket.io')) return next();
     res.sendFile(indexPath);

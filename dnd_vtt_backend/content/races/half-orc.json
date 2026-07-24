@@ -1,0 +1,13 @@
+{
+  "index": "half-orc",
+  "name": "Half-Orc",
+  "speed": 30,
+  "size": "Medium",
+  "ability_bonuses": [
+    { "ability": "strength",     "bonus": 2 },
+    { "ability": "constitution", "bonus": 1 }
+  ],
+  "traits": ["Darkvision (60 ft)", "Menacing (Intimidation proficiency)", "Relentless Endurance", "Savage Attacks"],
+  "languages": ["Common", "Orc"],
+  "subraces": []
+}

@@ -1,34 +1,38 @@
-<div class="auth-page">
-  <div class="auth-card">
-    <h1>D&D Campaign</h1>
-    <h2>Sign In</h2>
-
-    <form [formGroup]="form" (ngSubmit)="submit()">
-      <div class="field">
-        <label for="email">Email</label>
-        <input id="email" type="email" formControlName="email" autocomplete="email" />
-        @if (form.controls.email.touched && form.controls.email.invalid) {
-          <span class="field-error">Valid email required</span>
+<div class="min-h-screen flex items-center justify-center p-4 bg-canvas">
+  <div class="card w-full max-w-sm">
+    <div class="card-header border-b border-white/10">
+      <h1 class="font-brand text-2xl text-parchment">D&amp;D Campaign</h1>
+      <p class="text-sm text-slate mt-1">Sign In</p>
+    </div>
+    <div class="card-body">
+      <form [formGroup]="form" (ngSubmit)="submit()" class="flex flex-col gap-4">
+        <div class="field">
+          <label class="field-label">Email</label>
+          <input class="field-input" type="email" formControlName="email" autocomplete="email" />
+          @if (form.controls.email.touched && form.controls.email.hasError('required')) {
+            <p class="field-error">Email is required</p>
+          }
+          @if (form.controls.email.touched && form.controls.email.hasError('email')) {
+            <p class="field-error">Enter a valid email</p>
+          }
+        </div>
+        <div class="field">
+          <label class="field-label">Password</label>
+          <input class="field-input" type="password" formControlName="password" autocomplete="current-password" />
+          @if (form.controls.password.touched && form.controls.password.invalid) {
+            <p class="field-error">Password required (min 6 chars)</p>
+          }
+        </div>
+        @if (error()) {
+          <p class="text-danger text-sm">{{ error() }}</p>
         }
-      </div>
-
-      <div class="field">
-        <label for="password">Password</label>
-        <input id="password" type="password" formControlName="password" autocomplete="current-password" />
-        @if (form.controls.password.touched && form.controls.password.invalid) {
-          <span class="field-error">Password required (min 6 chars)</span>
-        }
-      </div>
-
-      @if (error()) {
-        <div class="error-banner">{{ error() }}</div>
-      }
-
-      <button type="submit" [disabled]="loading()">
-        {{ loading() ? 'Signing in…' : 'Sign In' }}
-      </button>
-    </form>
-
-    <p class="auth-link">No account? <a routerLink="/auth/register">Register</a></p>
+        <button type="submit" class="btn-primary w-full justify-center h-11 mt-1 text-base" [disabled]="loading()">
+          @if (loading()) { <span class="spinner-sm"></span> } @else { Sign In }
+        </button>
+      </form>
+    </div>
+    <div class="px-5 pb-5 text-center text-sm text-slate">
+      No account? <a routerLink="/auth/register" class="text-gold hover:text-gold-bright">Register</a>
+    </div>
   </div>
 </div>

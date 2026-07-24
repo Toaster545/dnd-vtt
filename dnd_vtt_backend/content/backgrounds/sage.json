@@ -1,0 +1,9 @@
+{
+  "index": "sage",
+  "name": "Sage",
+  "skill_proficiencies": ["Arcana", "History"],
+  "tool_proficiencies": [],
+  "languages": "Two of your choice",
+  "starting_equipment": ["Bottle of black ink", "Quill", "Small knife", "Letter with an unanswered question", "Common clothes", "Belt pouch with 10 gp"],
+  "feature": "Researcher"
+}

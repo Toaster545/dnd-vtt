@@ -1,36 +1,26 @@
-<div class="dashboard">
-  <header class="dashboard-header">
-    <h1>D&D Campaign</h1>
-    <div class="header-right">
-      <span class="username">{{ auth.profile()?.username }}</span>
-      @if (auth.isAdmin()) {
-        <span class="badge badge-admin">DM</span>
-      }
-      <button class="btn-ghost" (click)="auth.signOut()">Sign Out</button>
-    </div>
+<div class="flex flex-col h-screen">
+  <header class="app-toolbar">
+    <span class="toolbar-title flex-1">D&amp;D Campaign</span>
+    <span class="text-sm text-slate mr-2">{{ auth.profile()?.username }}</span>
+    <button class="btn-icon" (click)="auth.signOut()" matTooltip="Sign out">
+      <mat-icon>logout</mat-icon>
+    </button>
   </header>
 
-  <main class="dashboard-content">
-    <section class="card-grid">
-      <a routerLink="/characters" class="nav-card">
-        <div class="nav-card-icon">⚔️</div>
-        <h3>My Characters</h3>
-        <p>Create and manage your adventurers</p>
+  <main class="flex-1 p-6 overflow-auto">
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-2xl">
+      <a routerLink="/characters"
+         class="card p-6 flex flex-col items-center gap-3 hover:border-white/25 transition-colors cursor-pointer no-underline">
+        <mat-icon class="text-gold" style="font-size: 2.5rem; width: 2.5rem; height: 2.5rem;">person</mat-icon>
+        <h3 class="font-brand text-parchment m-0">My Characters</h3>
+        <p class="text-sm text-slate text-center m-0">Create and manage your adventurers</p>
       </a>
-
-      <a routerLink="/battle-map" class="nav-card">
-        <div class="nav-card-icon">🗺️</div>
-        <h3>Battle Maps</h3>
-        <p>View the current encounter</p>
+      <a routerLink="/battle-map"
+         class="card p-6 flex flex-col items-center gap-3 hover:border-white/25 transition-colors cursor-pointer no-underline">
+        <mat-icon class="text-gold" style="font-size: 2.5rem; width: 2.5rem; height: 2.5rem;">map</mat-icon>
+        <h3 class="font-brand text-parchment m-0">Battle Map</h3>
+        <p class="text-sm text-slate text-center m-0">View the current encounter</p>
       </a>
-
-      @if (auth.isAdmin()) {
-        <a routerLink="/admin/maps" class="nav-card nav-card-admin">
-          <div class="nav-card-icon">🛡️</div>
-          <h3>Map Manager</h3>
-          <p>Upload and manage battle maps</p>
-        </a>
-      }
-    </section>
+    </div>
   </main>
 </div>

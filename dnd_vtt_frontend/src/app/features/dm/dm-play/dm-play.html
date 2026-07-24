@@ -1,0 +1,48 @@
+<div class="flex h-full overflow-hidden">
+  <!-- Session list -->
+  <aside class="w-60 border-r border-white/10 overflow-y-auto flex-shrink-0">
+    <p class="px-4 pt-3 pb-1 text-xs font-semibold text-slate uppercase tracking-wider">Sessions</p>
+    <ul class="py-1">
+      @for (session of sessions(); track session.id) {
+        <li>
+          <button
+            class="w-full px-4 py-2.5 text-left text-sm transition-colors border-l-2"
+            [class]="selected()?.id === session.id
+              ? 'border-gold text-parchment bg-elevated'
+              : 'border-transparent text-slate hover:text-parchment hover:bg-elevated'"
+            (click)="selected.set(session)"
+          >
+            <p class="font-medium">{{ session.name }}</p>
+            <p class="text-xs text-coal mt-0.5">{{ formatDate(session.created_at) }}</p>
+          </button>
+        </li>
+      } @empty {
+        <p class="px-4 py-3 text-sm text-slate">
+          No sessions yet. Create one in the <strong class="text-parchment">Create</strong> tab.
+        </p>
+      }
+    </ul>
+  </aside>
+
+  <!-- Detail panel -->
+  <div class="flex-1 p-6 overflow-auto">
+    @if (selected(); as session) {
+      <div class="card max-w-2xl">
+        <div class="card-header">
+          <h2 class="font-brand text-lg text-parchment m-0">{{ session.name }}</h2>
+          @if (session.description) {
+            <p class="text-sm text-slate mt-1 mb-0">{{ session.description }}</p>
+          }
+        </div>
+        <div class="card-body border-t border-white/10">
+          <p class="text-sm text-slate m-0">Encounters will appear here.</p>
+        </div>
+      </div>
+    } @else {
+      <div class="flex flex-col items-center justify-center h-full gap-3 text-slate opacity-50">
+        <mat-icon style="font-size: 3rem; width: 3rem; height: 3rem;">mouse</mat-icon>
+        <p class="m-0">Select a session to begin.</p>
+      </div>
+    }
+  </div>
+</div>

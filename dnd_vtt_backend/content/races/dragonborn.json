@@ -1,0 +1,13 @@
+{
+  "index": "dragonborn",
+  "name": "Dragonborn",
+  "speed": 30,
+  "size": "Medium",
+  "ability_bonuses": [
+    { "ability": "strength", "bonus": 2 },
+    { "ability": "charisma", "bonus": 1 }
+  ],
+  "traits": ["Draconic Ancestry", "Breath Weapon", "Damage Resistance"],
+  "languages": ["Common", "Draconic"],
+  "subraces": []
+}

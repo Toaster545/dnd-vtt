@@ -1,0 +1,9 @@
+{
+  "index": "criminal",
+  "name": "Criminal",
+  "skill_proficiencies": ["Deception", "Stealth"],
+  "tool_proficiencies": ["One type of gaming set", "Thieves' tools"],
+  "languages": "None",
+  "starting_equipment": ["Crowbar", "Dark common clothes with hood", "Belt pouch with 15 gp"],
+  "feature": "Criminal Contact"
+}

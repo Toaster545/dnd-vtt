@@ -1,0 +1,23 @@
+{
+  "index": "dwarf",
+  "name": "Dwarf",
+  "speed": 25,
+  "size": "Medium",
+  "ability_bonuses": [{ "ability": "constitution", "bonus": 2 }],
+  "traits": ["Darkvision (60 ft)", "Dwarven Resilience", "Dwarven Combat Training", "Tool Proficiency", "Stonecunning"],
+  "languages": ["Common", "Dwarvish"],
+  "subraces": [
+    {
+      "index": "hill-dwarf",
+      "name": "Hill Dwarf",
+      "ability_bonuses": [{ "ability": "wisdom", "bonus": 1 }],
+      "traits": ["Dwarven Toughness"]
+    },
+    {
+      "index": "mountain-dwarf",
+      "name": "Mountain Dwarf",
+      "ability_bonuses": [{ "ability": "strength", "bonus": 2 }],
+      "traits": ["Dwarven Armor Training"]
+    }
+  ]
+}

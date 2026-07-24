@@ -1,32 +1,43 @@
-<div class="list-page">
-  <div class="list-header">
-    <a routerLink="/dashboard" class="back-link">← Dashboard</a>
-    <h1>My Characters</h1>
-    <a routerLink="/characters/new" class="btn-primary">+ New Character</a>
-  </div>
+<div class="flex flex-col h-screen">
+  <header class="app-toolbar">
+    <button class="btn-icon" routerLink="/dashboard" matTooltip="Back to dashboard">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+    <span class="toolbar-title flex-1">My Characters</span>
+    <button class="btn-primary" routerLink="/characters/new">
+      <mat-icon>add</mat-icon> New Character
+    </button>
+  </header>
 
-  <div class="list-content">
+  <div class="flex-1 overflow-auto p-6">
     @if (loading()) {
-      <p class="loading">Loading characters…</p>
+      <div class="flex justify-center mt-16"><span class="spinner-lg"></span></div>
     } @else if (error()) {
-      <div class="error-banner">{{ error() }}</div>
+      <div class="card card-body text-danger">{{ error() }}</div>
     } @else if (characters().length === 0) {
-      <div class="empty-state">
-        <p>No characters yet.</p>
-        <a routerLink="/characters/new" class="btn-primary">Create your first character</a>
+      <div class="flex flex-col items-center justify-center gap-4 mt-16 text-slate">
+        <mat-icon style="font-size: 3.5rem; width: 3.5rem; height: 3.5rem; opacity: 0.35;">person_off</mat-icon>
+        <p class="m-0">No characters yet.</p>
+        <button class="btn-primary" routerLink="/characters/new">Create your first character</button>
       </div>
     } @else {
-      <div class="character-grid">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         @for (char of characters(); track char.id) {
-          <div class="character-card">
-            <div class="char-info">
-              <h3>{{ char.name }}</h3>
-              <p>{{ char.race }} · {{ char.class }} · Level {{ char.level }}</p>
-              <p class="char-hp">HP: {{ char.current_hp }} / {{ char.max_hp }}</p>
+          <div class="card">
+            <div class="card-header">
+              <h3 class="font-brand text-parchment m-0">{{ char.name }}</h3>
+              <p class="text-sm text-slate m-0 mt-1">{{ char.race }} · {{ char.class }} · Level {{ char.level }}</p>
             </div>
-            <div class="char-actions">
-              <a [routerLink]="['/characters', char.id]" class="btn-edit">Edit</a>
-              <button class="btn-delete" (click)="delete(char.id!)">Delete</button>
+            <div class="px-5 py-3 border-t border-white/10 text-sm text-slate">
+              HP: {{ char.current_hp }} / {{ char.max_hp }} &nbsp;|&nbsp; AC: {{ char.armor_class }}
+            </div>
+            <div class="px-3 py-2 flex gap-1 border-t border-white/10">
+              <button class="btn-ghost text-sm" [routerLink]="['/characters', char.id]">
+                <mat-icon class="text-base">edit</mat-icon> Edit
+              </button>
+              <button class="btn-danger text-sm" (click)="delete(char.id!)">
+                <mat-icon class="text-base">delete</mat-icon> Delete
+              </button>
             </div>
           </div>
         }

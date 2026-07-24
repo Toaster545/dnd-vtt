@@ -1,0 +1,92 @@
+{
+  "index": "rogue",
+  "name": "Rogue",
+  "hit_die": 8,
+  "saving_throws": ["dexterity", "intelligence"],
+  "armor_training": ["Light Armor"],
+  "weapon_proficiencies": ["Simple Weapons", "Hand Crossbows", "Longswords", "Rapiers", "Shortswords"],
+  "tool_proficiencies": ["Thieves' tools"],
+  "skill_choices": {
+    "count": 4,
+    "from": ["Acrobatics", "Athletics", "Deception", "Insight", "Intimidation", "Investigation", "Perception", "Performance", "Persuasion", "Sleight of Hand", "Stealth"]
+  },
+  "starting_equipment": [
+    { "choice": true, "options": ["Rapier", "Shortsword"] },
+    { "choice": true, "options": ["Shortbow and quiver of 20 arrows", "Shortsword"] },
+    { "choice": true, "options": ["Burglar's pack", "Dungeoneer's pack", "Explorer's pack"] },
+    { "fixed": ["Leather armor", "2 daggers", "Thieves' tools"] }
+  ],
+  "spellcasting_ability": null,
+  "subclass_level": 3,
+  "subclasses": [
+    {
+      "index": "thief",
+      "name": "Thief",
+      "description": "Hone your skills of stealth and agility to become a master of larceny.",
+      "levels": [
+        { "level": 3,  "features": ["Fast Hands", "Second-Story Work"] },
+        { "level": 9,  "features": ["Supreme Sneak"] },
+        { "level": 13, "features": ["Use Magic Device"] },
+        { "level": 17, "features": ["Thief's Reflexes"] }
+      ]
+    },
+    {
+      "index": "assassin",
+      "name": "Assassin",
+      "description": "Focus on ambush and disguise to eliminate targets before they know you're there.",
+      "levels": [
+        { "level": 3,  "features": ["Bonus Proficiencies", "Assassinate"] },
+        { "level": 9,  "features": ["Infiltration Expertise"] },
+        { "level": 13, "features": ["Impostor"] },
+        { "level": 17, "features": ["Death Strike"] }
+      ]
+    },
+    {
+      "index": "arcane-trickster",
+      "name": "Arcane Trickster",
+      "description": "Enhance your roguish abilities with magic from the wizard spell list.",
+      "levels": [
+        { "level": 3,  "features": ["Spellcasting", "Mage Hand Legerdemain"],  "spell_slots": { "1": 2 } },
+        { "level": 4,  "features": [],                                          "spell_slots": { "1": 3 } },
+        { "level": 5,  "features": [],                                          "spell_slots": { "1": 3 } },
+        { "level": 6,  "features": [],                                          "spell_slots": { "1": 3 } },
+        { "level": 7,  "features": ["Magical Ambush"],                          "spell_slots": { "1": 4, "2": 2 } },
+        { "level": 8,  "features": [],                                          "spell_slots": { "1": 4, "2": 2 } },
+        { "level": 9,  "features": [],                                          "spell_slots": { "1": 4, "2": 2 } },
+        { "level": 10, "features": [],                                          "spell_slots": { "1": 4, "2": 3 } },
+        { "level": 11, "features": [],                                          "spell_slots": { "1": 4, "2": 3 } },
+        { "level": 12, "features": [],                                          "spell_slots": { "1": 4, "2": 3 } },
+        { "level": 13, "features": ["Versatile Trickster"],                     "spell_slots": { "1": 4, "2": 3, "3": 2 } },
+        { "level": 14, "features": [],                                          "spell_slots": { "1": 4, "2": 3, "3": 2 } },
+        { "level": 15, "features": [],                                          "spell_slots": { "1": 4, "2": 3, "3": 2 } },
+        { "level": 16, "features": [],                                          "spell_slots": { "1": 4, "2": 3, "3": 3 } },
+        { "level": 17, "features": ["Spell Thief"],                             "spell_slots": { "1": 4, "2": 3, "3": 3 } },
+        { "level": 18, "features": [],                                          "spell_slots": { "1": 4, "2": 3, "3": 3 } },
+        { "level": 19, "features": [],                                          "spell_slots": { "1": 4, "2": 3, "3": 3, "4": 1 } },
+        { "level": 20, "features": [],                                          "spell_slots": { "1": 4, "2": 3, "3": 3, "4": 1 } }
+      ]
+    }
+  ],
+  "levels": [
+    { "level": 1,  "proficiency_bonus": 2, "features": ["Expertise", "Sneak Attack", "Thieves' Cant"],  "class_specific": { "sneak_attack": "1d6" } },
+    { "level": 2,  "proficiency_bonus": 2, "features": ["Cunning Action"],                              "class_specific": { "sneak_attack": "1d6" } },
+    { "level": 3,  "proficiency_bonus": 2, "features": ["Roguish Archetype"],                           "class_specific": { "sneak_attack": "2d6" } },
+    { "level": 4,  "proficiency_bonus": 2, "features": ["Ability Score Improvement"],                   "class_specific": { "sneak_attack": "2d6" } },
+    { "level": 5,  "proficiency_bonus": 3, "features": ["Uncanny Dodge"],                               "class_specific": { "sneak_attack": "3d6" } },
+    { "level": 6,  "proficiency_bonus": 3, "features": ["Expertise"],                                   "class_specific": { "sneak_attack": "3d6" } },
+    { "level": 7,  "proficiency_bonus": 3, "features": ["Evasion"],                                     "class_specific": { "sneak_attack": "4d6" } },
+    { "level": 8,  "proficiency_bonus": 3, "features": ["Ability Score Improvement"],                   "class_specific": { "sneak_attack": "4d6" } },
+    { "level": 9,  "proficiency_bonus": 4, "features": ["Roguish Archetype Feature"],                   "class_specific": { "sneak_attack": "5d6" } },
+    { "level": 10, "proficiency_bonus": 4, "features": ["Ability Score Improvement"],                   "class_specific": { "sneak_attack": "5d6" } },
+    { "level": 11, "proficiency_bonus": 4, "features": ["Reliable Talent"],                             "class_specific": { "sneak_attack": "6d6" } },
+    { "level": 12, "proficiency_bonus": 4, "features": ["Ability Score Improvement"],                   "class_specific": { "sneak_attack": "6d6" } },
+    { "level": 13, "proficiency_bonus": 5, "features": ["Roguish Archetype Feature"],                   "class_specific": { "sneak_attack": "7d6" } },
+    { "level": 14, "proficiency_bonus": 5, "features": ["Blindsense"],                                  "class_specific": { "sneak_attack": "7d6" } },
+    { "level": 15, "proficiency_bonus": 5, "features": ["Slippery Mind"],                               "class_specific": { "sneak_attack": "8d6" } },
+    { "level": 16, "proficiency_bonus": 5, "features": ["Ability Score Improvement"],                   "class_specific": { "sneak_attack": "8d6" } },
+    { "level": 17, "proficiency_bonus": 6, "features": ["Roguish Archetype Feature"],                   "class_specific": { "sneak_attack": "9d6" } },
+    { "level": 18, "proficiency_bonus": 6, "features": ["Elusive"],                                     "class_specific": { "sneak_attack": "9d6" } },
+    { "level": 19, "proficiency_bonus": 6, "features": ["Ability Score Improvement"],                   "class_specific": { "sneak_attack": "10d6" } },
+    { "level": 20, "proficiency_bonus": 6, "features": ["Stroke of Luck"],                              "class_specific": { "sneak_attack": "10d6" } }
+  ]
+}

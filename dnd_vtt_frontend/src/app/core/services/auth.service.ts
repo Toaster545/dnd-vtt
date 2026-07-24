@@ -5,6 +5,8 @@ import { firstValueFrom } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { UserProfile } from '../models/user.model';
 
+export type AuthReady = Promise<void>;
+
 const API = environment.apiUrl;
 
 interface LoginResponse {
@@ -23,8 +25,21 @@ export class AuthService {
   readonly isAdmin = computed(() => this._profile()?.role === 'admin');
   readonly isLoggedIn = computed(() => !!this._profile());
 
+  readonly ready: AuthReady;
+
   constructor() {
-    if (localStorage.getItem('auth_token')) this.loadProfile();
+    if (environment.devBypass) {
+      localStorage.setItem('auth_token', 'dev');
+      // Set a stub admin profile immediately so guards never block,
+      // then replace it with real data from the backend in the background.
+      this._profile.set({ id: 'dev', email: '', username: 'Dev DM', role: 'admin', created_at: '' });
+      this.ready = Promise.resolve();
+      this.loadProfile();
+    } else if (localStorage.getItem('auth_token')) {
+      this.ready = this.loadProfile();
+    } else {
+      this.ready = Promise.resolve();
+    }
   }
 
   async signUp(email: string, password: string, username: string) {
@@ -48,7 +63,7 @@ export class AuthService {
     this.router.navigate(['/auth/login']);
   }
 
-  private async loadProfile() {
+  private async loadProfile(): Promise<void> {
     try {
       const profile = await firstValueFrom(
         this.http.get<UserProfile>(`${API}/auth/me`)

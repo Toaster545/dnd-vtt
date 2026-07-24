@@ -1,0 +1,17 @@
+{
+  "index": "human",
+  "name": "Human",
+  "speed": 30,
+  "size": "Medium",
+  "ability_bonuses": [
+    { "ability": "strength",     "bonus": 1 },
+    { "ability": "dexterity",    "bonus": 1 },
+    { "ability": "constitution", "bonus": 1 },
+    { "ability": "intelligence", "bonus": 1 },
+    { "ability": "wisdom",       "bonus": 1 },
+    { "ability": "charisma",     "bonus": 1 }
+  ],
+  "traits": ["Extra Language"],
+  "languages": ["Common", "One extra language of your choice"],
+  "subraces": []
+}

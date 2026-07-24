@@ -1,0 +1,23 @@
+{
+  "index": "halfling",
+  "name": "Halfling",
+  "speed": 25,
+  "size": "Small",
+  "ability_bonuses": [{ "ability": "dexterity", "bonus": 2 }],
+  "traits": ["Lucky", "Brave", "Halfling Nimbleness"],
+  "languages": ["Common", "Halfling"],
+  "subraces": [
+    {
+      "index": "lightfoot",
+      "name": "Lightfoot Halfling",
+      "ability_bonuses": [{ "ability": "charisma", "bonus": 1 }],
+      "traits": ["Naturally Stealthy"]
+    },
+    {
+      "index": "stout",
+      "name": "Stout Halfling",
+      "ability_bonuses": [{ "ability": "constitution", "bonus": 1 }],
+      "traits": ["Stout Resilience"]
+    }
+  ]
+}

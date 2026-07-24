@@ -1,0 +1,27 @@
+{
+  "name": "dnd",
+  "version": "1.0.0",
+  "description": "A self-hosted web-based Virtual Tabletop (VTT) for D&D 5e campaigns. Players can create and manage their characters, and the Dungeon Master can run combat encounters on battle maps exported from [Dungeondraft](https://dungeondraft.net/).",
+  "main": "index.js",
+  "scripts": {
+    "dev": "concurrently --names \"api,web\" --prefix-colors \"yellow,cyan\" \"npm run dev:api\" \"npm run dev:web\"",
+    "dev:api": "cd dnd_vtt_backend && npm run start:dev",
+    "dev:web": "cd dnd_vtt_frontend && npm run watch",
+    "build": "cd dnd_vtt_frontend && npm run build && cd ../dnd_vtt_backend && npm run build",
+    "start": "cd dnd_vtt_backend && npm run start:prod"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Toaster545/dnd-vtt.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Toaster545/dnd-vtt/issues"
+  },
+  "homepage": "https://github.com/Toaster545/dnd-vtt#readme",
+  "devDependencies": {
+    "concurrently": "^10.0.3"
+  }
+}

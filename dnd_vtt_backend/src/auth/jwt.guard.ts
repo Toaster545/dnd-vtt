@@ -14,9 +14,22 @@ export class JwtGuard implements CanActivate {
     const auth = req.headers['authorization'] as string | undefined;
     if (!auth?.startsWith('Bearer ')) throw new UnauthorizedException();
 
+    const token = auth.slice(7);
+
+    // Dev bypass: accept the literal token "dev" outside of production
+    if (token === 'dev' && process.env.DEV_BYPASS === 'true') {
+      const result = await this.db.execute(
+        "SELECT id, email, username, role FROM profiles WHERE role = 'admin' LIMIT 1",
+      );
+      const user = result.rows[0];
+      if (!user) throw new UnauthorizedException('No admin account found — register one first');
+      req.user = user;
+      return true;
+    }
+
     let payload: { sub: string };
     try {
-      payload = this.jwt.verify(auth.slice(7));
+      payload = this.jwt.verify(token);
     } catch {
       throw new UnauthorizedException('Invalid or expired token');
     }

@@ -1,143 +1,146 @@
-<div class="sheet-page">
-  <div class="sheet-header">
-    <a routerLink="/characters" class="back-link">← My Characters</a>
-    <h1>{{ form.value.name || 'New Character' }}</h1>
-    <button class="btn-save" (click)="save()" [disabled]="saving()">
-      {{ saving() ? 'Saving…' : 'Save Character' }}
+<div class="flex flex-col h-screen">
+  <header class="app-toolbar">
+    <button class="btn-icon" routerLink="/characters" matTooltip="Back">
+      <mat-icon>arrow_back</mat-icon>
     </button>
-  </div>
+    <span class="toolbar-title flex-1">{{ form.value.name || 'New Character' }}</span>
+    <button class="btn-primary" (click)="save()" [disabled]="saving()">
+      @if (saving()) { <span class="spinner-sm"></span> } @else { Save }
+    </button>
+  </header>
 
   @if (loading()) {
-    <div class="loading">Loading character…</div>
+    <div class="flex justify-center mt-16"><span class="spinner-lg"></span></div>
   } @else {
-    <form [formGroup]="form" class="sheet-form">
-      @if (error()) {
-        <div class="error-banner">{{ error() }}</div>
-      }
+    <form [formGroup]="form" class="flex-1 overflow-auto">
+      <div class="flex flex-col gap-5 p-6 max-w-4xl mx-auto">
 
-      <!-- Identity -->
-      <section class="sheet-section">
-        <h2>Identity</h2>
-        <div class="field-row">
-          <div class="field">
-            <label>Character Name *</label>
-            <input formControlName="name" type="text" />
-          </div>
-          <div class="field">
-            <label>Level</label>
-            <input formControlName="level" type="number" min="1" max="20" />
-          </div>
-        </div>
+        @if (error()) {
+          <div class="card card-body text-danger border-danger/30">{{ error() }}</div>
+        }
 
-        <div class="field-row">
-          <div class="field">
-            <label>Race *</label>
-            <select formControlName="race">
-              <option value="">— Select —</option>
-              @for (race of (races$ | async) ?? []; track race) {
-                <option [value]="race">{{ race }}</option>
-              }
-            </select>
+        <!-- Identity -->
+        <div class="card">
+          <div class="card-header border-b border-white/10">
+            <h3 class="font-brand text-parchment m-0">Identity</h3>
           </div>
-          <div class="field">
-            <label>Class *</label>
-            <select formControlName="class">
-              <option value="">— Select —</option>
-              @for (cls of (classes$ | async) ?? []; track cls) {
-                <option [value]="cls">{{ cls }}</option>
-              }
-            </select>
-          </div>
-          <div class="field">
-            <label>Subclass</label>
-            <input formControlName="subclass" type="text" />
-          </div>
-        </div>
-
-        <div class="field-row">
-          <div class="field">
-            <label>Background *</label>
-            <select formControlName="background">
-              <option value="">— Select —</option>
-              @for (bg of (backgrounds$ | async) ?? []; track bg) {
-                <option [value]="bg">{{ bg }}</option>
-              }
-            </select>
-          </div>
-          <div class="field">
-            <label>Alignment</label>
-            <select formControlName="alignment">
-              @for (a of alignments; track a) {
-                <option [value]="a">{{ a }}</option>
-              }
-            </select>
-          </div>
-        </div>
-      </section>
-
-      <!-- Ability Scores -->
-      <section class="sheet-section" formGroupName="ability_scores">
-        <h2>Ability Scores</h2>
-        <div class="ability-grid">
-          @for (stat of ['strength','dexterity','constitution','intelligence','wisdom','charisma']; track stat) {
-            <div class="ability-box">
-              <label>{{ stat | slice:0:3 | uppercase }}</label>
-              <input [formControlName]="stat" type="number" min="1" max="30" />
-              <span class="mod">{{ formatMod(getAbilityScore(stat)) }}</span>
+          <div class="card-body flex flex-col gap-4">
+            <div class="flex gap-3 flex-wrap">
+              <div class="field flex-[2] min-w-40">
+                <label class="field-label">Character Name</label>
+                <input class="field-input" formControlName="name" />
+              </div>
+              <div class="field min-w-24">
+                <label class="field-label">Level</label>
+                <input class="field-input" type="number" formControlName="level" min="1" max="20" />
+              </div>
             </div>
-          }
+            <div class="flex gap-3 flex-wrap">
+              <div class="field flex-1 min-w-32">
+                <label class="field-label">Race</label>
+                <select class="field-input" formControlName="race">
+                  <option value="">— Select —</option>
+                  @for (r of races; track r) { <option [value]="r">{{ r }}</option> }
+                </select>
+              </div>
+              <div class="field flex-1 min-w-32">
+                <label class="field-label">Class</label>
+                <select class="field-input" formControlName="class">
+                  <option value="">— Select —</option>
+                  @for (c of classes; track c) { <option [value]="c">{{ c }}</option> }
+                </select>
+              </div>
+              <div class="field flex-1 min-w-32">
+                <label class="field-label">Subclass</label>
+                <input class="field-input" formControlName="subclass" />
+              </div>
+            </div>
+            <div class="flex gap-3 flex-wrap">
+              <div class="field flex-1 min-w-32">
+                <label class="field-label">Background</label>
+                <select class="field-input" formControlName="background">
+                  <option value="">— Select —</option>
+                  @for (b of backgrounds; track b) { <option [value]="b">{{ b }}</option> }
+                </select>
+              </div>
+              <div class="field flex-1 min-w-32">
+                <label class="field-label">Alignment</label>
+                <select class="field-input" formControlName="alignment">
+                  @for (a of alignments; track a) { <option [value]="a">{{ a }}</option> }
+                </select>
+              </div>
+            </div>
+          </div>
         </div>
-      </section>
 
-      <!-- Combat Stats -->
-      <section class="sheet-section">
-        <h2>Combat</h2>
-        <div class="field-row">
-          <div class="field field-sm">
-            <label>Max HP</label>
-            <input formControlName="max_hp" type="number" min="1" />
+        <!-- Ability Scores -->
+        <div class="card" formGroupName="ability_scores">
+          <div class="card-header border-b border-white/10">
+            <h3 class="font-brand text-parchment m-0">Ability Scores</h3>
           </div>
-          <div class="field field-sm">
-            <label>Current HP</label>
-            <input formControlName="current_hp" type="number" min="0" />
-          </div>
-          <div class="field field-sm">
-            <label>Armor Class</label>
-            <input formControlName="armor_class" type="number" min="1" />
-          </div>
-          <div class="field field-sm">
-            <label>Speed (ft)</label>
-            <input formControlName="speed" type="number" min="0" />
-          </div>
-          <div class="field field-sm">
-            <label>Prof. Bonus</label>
-            <input formControlName="proficiency_bonus" type="number" min="2" max="6" />
+          <div class="card-body">
+            <div class="grid grid-cols-3 sm:grid-cols-6 gap-3">
+              @for (stat of abilityStats; track stat) {
+                <div class="flex flex-col items-center gap-1">
+                  <span class="text-xs font-bold text-slate uppercase tracking-wide">{{ stat | slice:0:3 | uppercase }}</span>
+                  <input class="field-input text-center" type="number" [formControlName]="stat" min="1" max="30" />
+                  <span class="text-sm font-semibold text-gold">{{ formatMod(getAbilityScore(stat)) }}</span>
+                </div>
+              }
+            </div>
           </div>
         </div>
-      </section>
 
-      <!-- Skill Proficiencies -->
-      <section class="sheet-section">
-        <h2>Skill Proficiencies</h2>
-        <div class="skills-grid">
-          @for (skill of skills; track skill) {
-            <label class="skill-row">
-              <input
-                type="checkbox"
-                [checked]="skillProficiencies[skill]"
-                (change)="toggleSkill(skill)"
-              />
-              <span>{{ skill }}</span>
-            </label>
-          }
+        <!-- Combat -->
+        <div class="card">
+          <div class="card-header border-b border-white/10">
+            <h3 class="font-brand text-parchment m-0">Combat</h3>
+          </div>
+          <div class="card-body">
+            <div class="flex gap-3 flex-wrap">
+              @for (f of combatFields; track f.key) {
+                <div class="field min-w-28">
+                  <label class="field-label">{{ f.label }}</label>
+                  <input class="field-input" type="number" [formControlName]="f.key" />
+                </div>
+              }
+            </div>
+          </div>
         </div>
-      </section>
 
-      <!-- Notes -->
-      <section class="sheet-section">
-        <h2>Notes & Backstory</h2>
-        <textarea formControlName="notes" rows="6" placeholder="Character backstory, notes, personality…"></textarea>
-      </section>
+        <!-- Skills -->
+        <div class="card">
+          <div class="card-header border-b border-white/10">
+            <h3 class="font-brand text-parchment m-0">Skill Proficiencies</h3>
+          </div>
+          <div class="card-body">
+            <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
+              @for (skill of skills; track skill) {
+                <label class="flex items-center gap-2 cursor-pointer text-sm">
+                  <input type="checkbox" class="accent-gold w-4 h-4"
+                         [checked]="skillProficiencies[skill]"
+                         (change)="toggleSkill(skill)" />
+                  <span class="text-parchment">{{ skill }}</span>
+                </label>
+              }
+            </div>
+          </div>
+        </div>
+
+        <!-- Notes -->
+        <div class="card">
+          <div class="card-header border-b border-white/10">
+            <h3 class="font-brand text-parchment m-0">Notes &amp; Backstory</h3>
+          </div>
+          <div class="card-body">
+            <div class="field">
+              <textarea class="field-input" formControlName="notes" rows="6"
+                        placeholder="Character backstory, personality…"></textarea>
+            </div>
+          </div>
+        </div>
+
+      </div>
     </form>
   }
 </div>
