@@ -1,1 +1,22 @@
 .claude/
+
+# Angular
+/dist/
+/out-tsc/
+/tmp/
+/coverage/
+/.angular/
+.angular/
+
+# Node
+/node_modules/
+/package-lock.json
+/yarn.lock
+
+# Environment
+/.env
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
