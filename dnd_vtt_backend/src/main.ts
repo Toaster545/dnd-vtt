@@ -2,6 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { join } from 'path';
+import * as express from 'express';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
@@ -9,15 +10,24 @@ async function bootstrap() {
 
   app.setGlobalPrefix('api');
 
-  // In production requests are same-origin (NestJS serves the Angular build).
-  // CORS is only needed for local development (ng serve on :4200 → API on :3000).
-  if (process.env.NODE_ENV !== 'production') {
-    app.enableCors({ origin: 'http://localhost:4200', credentials: true });
-  }
-
-  app.useStaticAssets(join(process.cwd(), 'uploads'), { prefix: '/uploads' });
+  const origins = (process.env.CORS_ORIGINS ?? 'http://localhost:4200')
+    .split(',')
+    .map(o => o.trim());
+  app.enableCors({ origin: origins, credentials: true });
 
   app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
+
+  const distPath = join(process.cwd(), '..', 'dnd_vtt_frontend', 'dist', 'dnd-app', 'browser');
+  const indexPath = join(distPath, 'index.html');
+  const server = app.getHttpAdapter().getInstance();
+
+  // Register directly on the raw Express instance to guarantee order
+  server.use('/uploads', express.static(join(process.cwd(), 'uploads')));
+  server.use(express.static(distPath));
+  server.use((req: any, res: any, next: any) => {
+    if (req.path.startsWith('/api') || req.path.startsWith('/socket.io')) return next();
+    res.sendFile(indexPath);
+  });
 
   await app.listen(process.env.PORT ?? 3000, '0.0.0.0');
   console.log(`Running at http://0.0.0.0:${process.env.PORT ?? 3000}`);
