@@ -38,6 +38,7 @@ dnd-vtt/
 │   │   ├── maps/           # Map + token endpoints, WebSocket gateway
 │   │   └── common/         # DatabaseService, CurrentUser decorator
 │   ├── data/               # SQLite database file (auto-created)
+│   ├── scripts/            # Utility scripts (e.g. make-admin)
 │   ├── uploads/            # Uploaded map images (served as static files)
 │   └── .env.example
 └── dnd_vtt_frontend/       # Angular app
@@ -69,13 +70,13 @@ cp .env.example .env
 npm install
 ```
 
-Edit `.env` — the only required change is setting a strong `JWT_SECRET`:
+Edit `.env`:
 
 ```env
 PORT=3000
 JWT_SECRET=some-long-random-string
-FRONTEND_URL=http://localhost:4200
-BACKEND_URL=http://localhost:3000
+FRONTEND_URL=http://<your-server-ip>:4200
+BACKEND_URL=http://<your-server-ip>:3000
 DB_PATH=./data/dnd.db
 ```
 
@@ -89,22 +90,33 @@ The SQLite database and schema are created automatically on first run at `data/d
 
 ### 2. Set up the frontend
 
+Edit `src/environments/environment.ts` to point to your server IP:
+
+```ts
+export const environment = {
+  production: false,
+  apiUrl: 'http://<your-server-ip>:3000/api',
+  wsUrl: 'http://<your-server-ip>:3000',
+};
+```
+
+Then install and serve, binding to all interfaces so other devices on your network can connect:
+
 ```bash
 cd dnd_vtt_frontend
 npm install
-npx ng serve
+npx ng serve --host 0.0.0.0
 ```
 
-Open [http://localhost:4200](http://localhost:4200).
+The app will be reachable at `http://<your-server-ip>:4200` from any device on your local network.
 
-The frontend points to `http://localhost:3000` by default. To change it, edit `src/environments/environment.ts`.
+### 3. Create the admin (DM) account
 
-### 3. Make yourself admin (DM)
+Register your DM account through the app at `http://<your-server-ip>:4200/auth/register`, then run the promote script from the backend directory:
 
-After registering your account through the app, update your role directly in the database using any SQLite client (e.g. [DB Browser for SQLite](https://sqlitebrowser.org/)):
-
-```sql
-UPDATE profiles SET role = 'admin' WHERE email = 'your@email.com';
+```bash
+cd dnd_vtt_backend
+node scripts/make-admin.mjs your@email.com
 ```
 
 Only admin accounts can upload maps, place/move tokens, and access the Map Manager.
