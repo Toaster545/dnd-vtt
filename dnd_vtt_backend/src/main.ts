@@ -9,8 +9,18 @@ async function bootstrap() {
 
   app.setGlobalPrefix('api');
 
+  // Accept a comma-separated list of allowed origins, e.g.:
+  // CORS_ORIGINS=http://localhost:4200,http://192.168.86.151:4200
+  const allowedOrigins = (process.env.CORS_ORIGINS ?? 'http://localhost:4200')
+    .split(',')
+    .map(o => o.trim());
+
   app.enableCors({
-    origin: process.env.FRONTEND_URL ?? 'http://localhost:4200',
+    origin: (origin, cb) => {
+      // Allow requests with no origin (curl, Postman, server-to-server)
+      if (!origin || allowedOrigins.includes(origin)) return cb(null, true);
+      cb(new Error(`CORS: origin ${origin} not allowed`));
+    },
     credentials: true,
   });
 
