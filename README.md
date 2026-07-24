@@ -2,7 +2,7 @@
 
 A self-hosted web-based Virtual Tabletop (VTT) for D&D 5e campaigns. Players can create and manage their characters, and the Dungeon Master can run combat encounters on battle maps exported from [Dungeondraft](https://dungeondraft.net/).
 
-No cloud account required — everything runs locally.
+No cloud account required — everything runs locally and is exposed via a [Cloudflare Tunnel](https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/).
 
 ## Features
 
@@ -31,7 +31,7 @@ No cloud account required — everything runs locally.
 
 ```
 dnd-vtt/
-├── dnd_vtt_backend/        # NestJS API server
+├── dnd_vtt_backend/        # NestJS API server (also serves the Angular build)
 │   ├── src/
 │   │   ├── auth/           # JWT guard, admin guard, login/register endpoints
 │   │   ├── characters/     # Character CRUD endpoints
@@ -56,13 +56,34 @@ dnd-vtt/
             └── dashboard/  # home screen
 ```
 
+## Architecture
+
+NestJS runs on port 3000 and serves everything:
+
+- `GET /api/**` — REST API
+- `GET /uploads/**` — uploaded map images
+- `/socket.io` — WebSocket connections
+- Everything else — Angular SPA (`index.html` + static assets)
+
+A single Cloudflare Tunnel forwards `yourdomain.com → localhost:3000`.
+
 ## Getting Started
 
 ### Prerequisites
 
-- Node.js 18+ (project uses [fnm](https://github.com/Schniz/fnm))
+- Node.js 18+
 
-### 1. Set up the backend
+### 1. Build the frontend
+
+```bash
+cd dnd_vtt_frontend
+npm install
+npx ng build
+```
+
+This compiles the Angular app into `dnd_vtt_frontend/dist/dnd-app/browser/`, which NestJS will serve.
+
+### 2. Set up and start the backend
 
 ```bash
 cd dnd_vtt_backend
@@ -75,8 +96,7 @@ Edit `.env`:
 ```env
 PORT=3000
 JWT_SECRET=some-long-random-string
-FRONTEND_URL=http://<your-server-ip>:4200
-BACKEND_URL=http://<your-server-ip>:3000
+CORS_ORIGINS=http://localhost:4200,https://yourdomain.com
 DB_PATH=./data/dnd.db
 ```
 
@@ -88,38 +108,29 @@ npm run start:dev
 
 The SQLite database and schema are created automatically on first run at `data/dnd.db`.
 
-### 2. Set up the frontend
-
-Edit `src/environments/environment.ts` to point to your server IP:
-
-```ts
-export const environment = {
-  production: false,
-  apiUrl: 'http://<your-server-ip>:3000/api',
-  wsUrl: 'http://<your-server-ip>:3000',
-};
-```
-
-Then install and serve, binding to all interfaces so other devices on your network can connect:
-
-```bash
-cd dnd_vtt_frontend
-npm install
-npx ng serve --host 0.0.0.0
-```
-
-The app will be reachable at `http://<your-server-ip>:4200` from any device on your local network.
+The app is now available at `http://localhost:3000`.
 
 ### 3. Create the admin (DM) account
 
-Register your DM account through the app at `http://<your-server-ip>:4200/auth/register`, then run the promote script from the backend directory:
+Register your DM account through the app, then promote it from the backend directory:
 
 ```bash
-cd dnd_vtt_backend
 node scripts/make-admin.mjs your@email.com
 ```
 
 Only admin accounts can upload maps, place/move tokens, and access the Map Manager.
+
+### Deploying changes
+
+After editing frontend code, rebuild and restart:
+
+```bash
+# In dnd_vtt_frontend/
+npx ng build
+
+# In dnd_vtt_backend/
+npm run start:dev   # watch mode restarts automatically on backend changes
+```
 
 ## API Endpoints
 
