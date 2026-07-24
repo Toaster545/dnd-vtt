@@ -7,6 +7,25 @@ export interface AbilityScores {
   charisma: number;
 }
 
+export type Ability = keyof AbilityScores;
+
+export const ABILITIES: Ability[] = [
+  'strength', 'dexterity', 'constitution', 'intelligence', 'wisdom', 'charisma',
+];
+
+export const ABILITY_SHORT: Record<Ability, string> = {
+  strength: 'STR', dexterity: 'DEX', constitution: 'CON',
+  intelligence: 'INT', wisdom: 'WIS', charisma: 'CHA',
+};
+
+export const ALIGNMENTS = [
+  'Lawful Good', 'Neutral Good', 'Chaotic Good',
+  'Lawful Neutral', 'True Neutral', 'Chaotic Neutral',
+  'Lawful Evil', 'Neutral Evil', 'Chaotic Evil',
+];
+
+export const STANDARD_ARRAY = [15, 14, 13, 12, 10, 8];
+
 export interface Character {
   id?: string;
   user_id?: string;

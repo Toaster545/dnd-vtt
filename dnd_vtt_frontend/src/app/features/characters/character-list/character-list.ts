@@ -1,16 +1,18 @@
 import { Component, inject, signal, OnInit } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { MatDialog } from '@angular/material/dialog';
+import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { CharacterService } from '../../../core/services/character.service';
+import { Character } from '../../../core/models/character.model';
+import { ConfirmService } from '../../../shared/confirm.service';
+import { CharacterDisplayComponent } from '../../../shared/character-display/character-display';
 
 const CHAR_VIEWED_KEY = 'dnd-char-viewed';
 function sortByRecentlyViewed<T extends { id?: string }>(chars: T[]): T[] {
   const views: Record<string, number> = JSON.parse(localStorage.getItem(CHAR_VIEWED_KEY) ?? '{}');
   return [...chars].sort((a, b) => (views[b.id!] ?? 0) - (views[a.id!] ?? 0));
 }
-import { MatIconModule } from '@angular/material/icon';
-import { MatTooltipModule } from '@angular/material/tooltip';
-import { CharacterService } from '../../../core/services/character.service';
-import { Character } from '../../../core/models/character.model';
-import { ConfirmService } from '../../../shared/confirm.service';
 
 @Component({
   selector: 'app-character-list',
@@ -21,6 +23,7 @@ import { ConfirmService } from '../../../shared/confirm.service';
 export class CharacterListComponent implements OnInit {
   private characterService = inject(CharacterService);
   private confirm = inject(ConfirmService);
+  private dialog = inject(MatDialog);
 
   characters = signal<Character[]>([]);
   loading = signal(true);
@@ -34,6 +37,16 @@ export class CharacterListComponent implements OnInit {
     } finally {
       this.loading.set(false);
     }
+  }
+
+  viewSheet(char: Character) {
+    this.dialog.open(CharacterDisplayComponent, {
+      data: { character: char },
+      maxWidth: '860px',
+      width: '95vw',
+      maxHeight: '92vh',
+      panelClass: 'char-sheet-dialog',
+    });
   }
 
   async delete(id: string) {

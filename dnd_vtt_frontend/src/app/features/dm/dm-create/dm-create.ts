@@ -7,7 +7,7 @@ import { Session } from '../../../core/models/session.model';
 import { DmCharactersComponent } from './dm-characters/dm-characters';
 import { ConfirmService } from '../../../shared/confirm.service';
 
-type CreateSection = 'sessions' | 'encounters' | 'characters';
+type CreateSection = 'sessions' | 'encounters' | 'characters' | 'items' | 'spells';
 
 @Component({
   selector: 'app-dm-create',

@@ -1,0 +1,229 @@
+<!-- Header -->
+<div class="flex items-start justify-between gap-4 px-6 pt-5 pb-4 border-b border-white/10">
+  <div class="min-w-0">
+    <h2 class="font-brand text-2xl text-parchment m-0 leading-tight truncate">{{ char.name }}</h2>
+    <p class="text-slate text-sm m-0 mt-1">
+      Level {{ char.level }} {{ char.race }}
+      &nbsp;·&nbsp; {{ char.class }}@if (char.subclass) { — {{ char.subclass }} }
+      &nbsp;·&nbsp; {{ char.background }}
+      &nbsp;·&nbsp; {{ char.alignment }}
+    </p>
+  </div>
+  <div class="flex items-start gap-4 shrink-0">
+    <!-- HP -->
+    <div class="text-center">
+      <div class="text-[10px] text-slate uppercase tracking-widest mb-0.5">Hit Points</div>
+      <div class="font-brand text-2xl leading-none" [class]="hpPercent() <= 25 ? 'text-danger' : 'text-parchment'">
+        {{ char.current_hp }}
+      </div>
+      <div class="text-xs text-slate mt-0.5">/ {{ char.max_hp }}</div>
+      <div class="w-16 h-1.5 bg-white/10 rounded-full mt-1 overflow-hidden">
+        <div class="h-full rounded-full transition-all" [class]="hpColor()" [style.width.%]="hpPercent()"></div>
+      </div>
+    </div>
+    <button [mat-dialog-close]="null" class="btn-icon mt-0.5">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+</div>
+
+<mat-dialog-content class="!p-0 !max-h-[75vh]">
+  @if (loading()) {
+    <div class="flex justify-center items-center py-20">
+      <span class="spinner-lg"></span>
+    </div>
+  } @else {
+    <div class="p-5 flex flex-col gap-5">
+
+      <!-- Combat Stats -->
+      <div class="grid grid-cols-5 gap-2">
+        @for (stat of [
+          { label: 'Armor Class',    value: char.armor_class + '' },
+          { label: 'Speed',          value: char.speed + ' ft' },
+          { label: 'Initiative',     value: fmt(initiative()) },
+          { label: 'Prof. Bonus',    value: '+' + char.proficiency_bonus },
+          { label: 'Passive Perc.',  value: passivePerception() + '' }
+        ]; track stat.label) {
+          <div class="bg-elevated rounded-lg border border-white/10 text-center py-2.5 px-1">
+            <div class="text-[10px] text-slate uppercase tracking-wide leading-tight">{{ stat.label }}</div>
+            <div class="font-brand text-xl text-gold mt-0.5">{{ stat.value }}</div>
+          </div>
+        }
+      </div>
+
+      <!-- Abilities · Saves · Skills -->
+      <div class="grid gap-4" style="grid-template-columns: auto 1fr 1fr">
+
+        <!-- Ability Scores -->
+        <div class="flex flex-col gap-1.5">
+          @for (ab of abilities; track ab) {
+            <div class="bg-elevated rounded-lg border border-white/10 text-center w-[72px] py-2">
+              <div class="text-[10px] text-slate uppercase tracking-widest">{{ abilityShort[ab] }}</div>
+              <div class="font-brand text-2xl text-gold font-bold leading-none my-0.5">{{ fmt(mod(ab)) }}</div>
+              <div class="text-xs text-parchment">{{ scores()[ab] }}</div>
+            </div>
+          }
+        </div>
+
+        <!-- Saving Throws -->
+        <div>
+          <h4 class="font-brand text-gold text-xs uppercase tracking-widest m-0 pb-1.5 mb-2 border-b border-gold/25">
+            Saving Throws
+          </h4>
+          <div class="flex flex-col gap-1.5">
+            @for (ab of abilities; track ab) {
+              <div class="flex items-center gap-2 text-sm">
+                <span class="w-4 h-4 rounded-full border flex items-center justify-center shrink-0 text-[9px]"
+                  [class]="saveProficient(ab) ? 'bg-gold border-gold text-canvas font-bold' : 'border-slate/50 text-transparent'">●</span>
+                <span class="font-brand text-gold text-sm w-7 text-right tabular-nums">{{ fmt(saveBonus(ab)) }}</span>
+                <span class="text-slate text-xs">{{ abilityShort[ab] }}</span>
+              </div>
+            }
+          </div>
+        </div>
+
+        <!-- Skills -->
+        <div>
+          <h4 class="font-brand text-gold text-xs uppercase tracking-widest m-0 pb-1.5 mb-2 border-b border-gold/25">
+            Skills
+          </h4>
+          <div class="flex flex-col gap-1">
+            @for (skill of skillList; track skill) {
+              <div class="flex items-center gap-1.5 text-xs">
+                <span class="w-3.5 h-3.5 rounded-full border flex items-center justify-center shrink-0 text-[8px]"
+                  [class]="skillProf(skill) ? 'bg-gold border-gold text-canvas font-bold' : 'border-slate/50 text-transparent'">●</span>
+                <span class="font-brand text-gold w-6 text-right tabular-nums text-xs">{{ fmt(skillBonus(skill)) }}</span>
+                <span class="text-slate flex-1 truncate">{{ skill }}</span>
+                <span class="text-coal/80 text-[10px] w-7 text-right">{{ abilityShort[skillAbility[skill]] }}</span>
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+
+      <!-- Class-specific stats -->
+      @if (classSpecific().length || pactMagic(); as pm) {
+        <div>
+          <h4 class="font-brand text-gold text-xs uppercase tracking-widest m-0 pb-1.5 mb-2 border-b border-gold/25">
+            {{ char.class }} — Level {{ char.level }}
+          </h4>
+          <div class="flex flex-wrap gap-2">
+            @for (stat of classSpecific(); track stat.label) {
+              <div class="bg-elevated rounded-lg border border-white/10 px-3 py-2 text-center min-w-[80px]">
+                <div class="text-[10px] text-slate">{{ stat.label }}</div>
+                <div class="font-brand text-gold text-xl">{{ stat.value }}</div>
+              </div>
+            }
+            @if (pactMagic()) {
+              <div class="bg-elevated rounded-lg border border-white/10 px-3 py-2 text-center min-w-[80px]">
+                <div class="text-[10px] text-slate">Pact Slots</div>
+                <div class="font-brand text-gold text-xl">{{ pactMagic()!.slots }}</div>
+                <div class="text-[10px] text-slate mt-0.5">{{ pactMagic()!.slot_level }}th level</div>
+              </div>
+            }
+          </div>
+        </div>
+      }
+
+      <!-- Spell Slots -->
+      @if (spellSlots().length) {
+        <div>
+          <h4 class="font-brand text-gold text-xs uppercase tracking-widest m-0 pb-1.5 mb-2 border-b border-gold/25">
+            Spell Slots
+          </h4>
+          <div class="flex flex-wrap gap-2">
+            @for (slot of spellSlots(); track slot.label) {
+              <div class="bg-elevated rounded-lg border border-white/10 px-3 py-2 text-center min-w-[56px]">
+                <div class="text-[10px] text-slate">{{ slot.label }}</div>
+                <div class="font-brand text-gold text-xl">{{ slot.count }}</div>
+                <div class="flex justify-center gap-0.5 mt-1 flex-wrap">
+                  @for (i of [].constructor(slot.count); track $index) {
+                    <span class="w-2.5 h-2.5 rounded-full border border-gold/50 bg-gold/20"></span>
+                  }
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+      }
+
+      <!-- Class Features -->
+      @if (classFeatures().length) {
+        <div>
+          <h4 class="font-brand text-gold text-xs uppercase tracking-widest m-0 pb-1.5 mb-2 border-b border-gold/25">
+            Class Features
+          </h4>
+          <div class="flex flex-wrap gap-1.5">
+            @for (f of classFeatures(); track f.level + f.name) {
+              <span class="inline-flex items-center gap-1 rounded border px-2 py-0.5 text-xs"
+                [class]="f.subclass
+                  ? 'border-gold/40 bg-gold/10 text-gold-bright'
+                  : 'border-white/10 bg-elevated text-parchment'">
+                <span class="text-[10px] text-slate/70 font-brand">{{ f.level }}</span>
+                {{ f.name }}
+              </span>
+            }
+          </div>
+        </div>
+      }
+
+      <!-- Race Traits -->
+      @if (raceData()) {
+        <div>
+          <h4 class="font-brand text-gold text-xs uppercase tracking-widest m-0 pb-1.5 mb-2 border-b border-gold/25">
+            Racial Traits — {{ raceData()!.name }}
+          </h4>
+          <div class="flex flex-wrap gap-1.5 mb-2">
+            @for (trait of raceData()!.traits; track trait) {
+              <span class="tag">{{ trait }}</span>
+            }
+          </div>
+          @if (raceData()!.ability_bonuses.length) {
+            <p class="text-xs text-slate m-0">
+              ASI:
+              @for (ab of raceData()!.ability_bonuses; track ab.ability) {
+                <span class="text-gold-bright mr-2">+{{ ab.bonus }} {{ abilityShort[ab.ability] ?? ab.ability }}</span>
+              }
+            </p>
+          }
+        </div>
+      }
+
+      <!-- Background -->
+      @if (bgData()) {
+        <div>
+          <h4 class="font-brand text-gold text-xs uppercase tracking-widest m-0 pb-1.5 mb-2 border-b border-gold/25">
+            Background — {{ bgData()!.name }}
+          </h4>
+          <div class="flex flex-wrap items-center gap-2 text-xs">
+            <span class="text-slate">Feature:</span>
+            <span class="tag">{{ bgData()!.feature }}</span>
+            @if (bgData()!.skill_proficiencies.length) {
+              <span class="text-coal mx-1">·</span>
+              <span class="text-slate">Skills:</span>
+              @for (s of bgData()!.skill_proficiencies; track s) {
+                <span class="tag">{{ s }}</span>
+              }
+            }
+            @if (bgData()!.tool_proficiencies.length) {
+              <span class="text-coal mx-1">·</span>
+              <span class="text-slate">Tools:</span>
+              @for (t of bgData()!.tool_proficiencies; track t) {
+                <span class="tag">{{ t }}</span>
+              }
+            }
+          </div>
+        </div>
+      }
+
+      <!-- Notes -->
+      @if (char.notes) {
+        <div>
+          <h4 class="font-brand text-gold text-xs uppercase tracking-widest m-0 pb-1.5 mb-2 border-b border-gold/25">Notes</h4>
+          <p class="text-sm text-slate whitespace-pre-wrap m-0 leading-relaxed">{{ char.notes }}</p>
+        </div>
+      }
+
+    </div>
+  }
+</mat-dialog-content>

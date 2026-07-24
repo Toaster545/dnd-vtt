@@ -3,22 +3,9 @@ import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { ContentService, DndRace, DndClass, DndBackground } from '../../../../core/services/content.service';
-import { CharacterService } from '../../../../core/services/character.service';
-import { Character, abilityModifier } from '../../../../core/models/character.model';
-
-type Ability = 'strength' | 'dexterity' | 'constitution' | 'intelligence' | 'wisdom' | 'charisma';
-const ABILITIES: Ability[] = ['strength', 'dexterity', 'constitution', 'intelligence', 'wisdom', 'charisma'];
-const ABILITY_SHORT: Record<Ability, string> = {
-  strength: 'STR', dexterity: 'DEX', constitution: 'CON',
-  intelligence: 'INT', wisdom: 'WIS', charisma: 'CHA',
-};
-const ALIGNMENTS = [
-  'Lawful Good', 'Neutral Good', 'Chaotic Good',
-  'Lawful Neutral', 'True Neutral', 'Chaotic Neutral',
-  'Lawful Evil', 'Neutral Evil', 'Chaotic Evil',
-];
-const STANDARD_ARRAY = [15, 14, 13, 12, 10, 8];
+import { ContentService, DndRace, DndClass, DndBackground } from '../../../../../core/services/content.service';
+import { CharacterService } from '../../../../../core/services/character.service';
+import { Character, Ability, ABILITIES, ABILITY_SHORT, ALIGNMENTS, STANDARD_ARRAY, abilityModifier } from '../../../../../core/models/character.model';
 const STEPS = ['Race', 'Class', 'Background', 'Abilities', 'Details'];
 
 @Component({

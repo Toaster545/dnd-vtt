@@ -26,6 +26,9 @@
             <div class="flex items-center gap-1.5">
               <span class="text-xs text-slate border border-white/10 rounded px-2 py-0.5">HP {{ c.max_hp }}</span>
               <span class="text-xs text-slate border border-white/10 rounded px-2 py-0.5">AC {{ c.armor_class }}</span>
+              <button class="btn-icon" (click)="viewSheet(c)" matTooltip="View sheet">
+                <mat-icon>menu_book</mat-icon>
+              </button>
               <button class="btn-icon" (click)="openEdit(c)" matTooltip="Edit">
                 <mat-icon>edit</mat-icon>
               </button>

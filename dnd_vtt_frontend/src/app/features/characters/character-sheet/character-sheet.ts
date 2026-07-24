@@ -2,11 +2,13 @@ import { Component, inject, signal, OnInit } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { SlicePipe, UpperCasePipe } from '@angular/common';
+import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { CharacterService } from '../../../core/services/character.service';
 import { ContentService } from '../../../core/services/content.service';
-import { Character, abilityModifier } from '../../../core/models/character.model';
+import { Character, ALIGNMENTS, abilityModifier } from '../../../core/models/character.model';
+import { CharacterDisplayComponent } from '../../../shared/character-display/character-display';
 
 const CHAR_VIEWED_KEY = 'dnd-char-viewed';
 function markCharacterViewed(id: string) {
@@ -21,11 +23,6 @@ const SKILLS = [
   'Nature', 'Perception', 'Performance', 'Persuasion', 'Religion',
   'Sleight of Hand', 'Stealth', 'Survival',
 ];
-const ALIGNMENTS = [
-  'Lawful Good', 'Neutral Good', 'Chaotic Good',
-  'Lawful Neutral', 'True Neutral', 'Chaotic Neutral',
-  'Lawful Evil', 'Neutral Evil', 'Chaotic Evil',
-];
 
 @Component({
   selector: 'app-character-sheet',
@@ -39,6 +36,7 @@ export class CharacterSheetComponent implements OnInit {
   private content = inject(ContentService);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
+  private dialog = inject(MatDialog);
 
   readonly skills = SKILLS;
   readonly alignments = ALIGNMENTS;
@@ -83,6 +81,24 @@ export class CharacterSheetComponent implements OnInit {
   });
 
   skillProficiencies: Record<string, boolean> = Object.fromEntries(SKILLS.map(s => [s, false]));
+
+  viewSheet() {
+    const v = this.form.getRawValue();
+    const char: Character = {
+      ...v,
+      id: this.characterId() ?? undefined,
+      skills: { ...this.skillProficiencies },
+      equipment: [],
+      spells: [],
+    };
+    this.dialog.open(CharacterDisplayComponent, {
+      data: { character: char },
+      maxWidth: '860px',
+      width: '95vw',
+      maxHeight: '92vh',
+      panelClass: 'char-sheet-dialog',
+    });
+  }
 
   getAbilityScore(stat: string): number {
     const scores = this.form.value.ability_scores as Record<string, number> | undefined;

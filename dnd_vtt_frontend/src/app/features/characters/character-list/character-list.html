@@ -32,11 +32,14 @@
               HP: {{ char.current_hp }} / {{ char.max_hp }} &nbsp;|&nbsp; AC: {{ char.armor_class }}
             </div>
             <div class="px-3 py-2 flex gap-1 border-t border-white/10">
+              <button class="btn-ghost text-sm" (click)="viewSheet(char)" matTooltip="View character sheet">
+                <mat-icon class="text-base">menu_book</mat-icon> Sheet
+              </button>
               <button class="btn-ghost text-sm" [routerLink]="['/characters', char.id]">
                 <mat-icon class="text-base">edit</mat-icon> Edit
               </button>
-              <button class="btn-danger text-sm" (click)="delete(char.id!)">
-                <mat-icon class="text-base">delete</mat-icon> Delete
+              <button class="btn-icon ml-auto" (click)="delete(char.id!)" matTooltip="Delete character">
+                <mat-icon class="text-base text-danger">delete</mat-icon>
               </button>
             </div>
           </div>

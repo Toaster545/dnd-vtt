@@ -4,6 +4,9 @@
       <mat-icon>arrow_back</mat-icon>
     </button>
     <span class="toolbar-title flex-1">{{ form.value.name || 'New Character' }}</span>
+    <button class="btn-outline" (click)="viewSheet()" matTooltip="View compiled character sheet">
+      <mat-icon>menu_book</mat-icon> View Sheet
+    </button>
     <button class="btn-primary" (click)="save()" [disabled]="saving()">
       @if (saving()) { <span class="spinner-sm"></span> } @else { Save }
     </button>

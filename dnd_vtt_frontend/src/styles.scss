@@ -146,3 +146,12 @@ textarea.field-input {
   border: 1px solid rgba(255,255,255,0.12);
   border-radius: 8px !important;
 }
+
+// Character sheet dialog — tighter padding, dark scroll
+.char-sheet-dialog .mat-mdc-dialog-container {
+  .mdc-dialog__surface { background: #1e2033 !important; }
+  .mat-mdc-dialog-content { color: inherit; padding: 0; }
+}
+.char-sheet-dialog .mat-mdc-dialog-content::-webkit-scrollbar { width: 6px; }
+.char-sheet-dialog .mat-mdc-dialog-content::-webkit-scrollbar-track { background: transparent; }
+.char-sheet-dialog .mat-mdc-dialog-content::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 3px; }

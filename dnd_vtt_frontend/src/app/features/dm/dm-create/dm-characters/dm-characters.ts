@@ -1,5 +1,7 @@
 import { Component, inject, signal, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
+import { CharacterDisplayComponent } from '../../../../shared/character-display/character-display';
 
 const CHAR_VIEWED_KEY = 'dnd-char-viewed';
 function markCharacterViewed(id: string) {
@@ -14,7 +16,7 @@ function sortByRecentlyViewed<T extends { id?: string }>(chars: T[]): T[] {
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { CharacterService } from '../../../../core/services/character.service';
 import { Character } from '../../../../core/models/character.model';
-import { CharacterWizardComponent } from '../character-wizard/character-wizard';
+import { CharacterWizardComponent } from './character-wizard/character-wizard';
 import { ConfirmService } from '../../../../shared/confirm.service';
 
 @Component({
@@ -26,6 +28,7 @@ import { ConfirmService } from '../../../../shared/confirm.service';
 export class DmCharactersComponent implements OnInit {
   private characterService = inject(CharacterService);
   private confirm = inject(ConfirmService);
+  private dialog = inject(MatDialog);
 
   characters = signal<Character[]>([]);
   editingCharacter = signal<Character | null>(null);
@@ -33,6 +36,13 @@ export class DmCharactersComponent implements OnInit {
 
   async ngOnInit() { await this.load(); }
   private async load() { this.characters.set(sortByRecentlyViewed(await this.characterService.getMyCharacters())); }
+
+  viewSheet(character: Character) {
+    this.dialog.open(CharacterDisplayComponent, {
+      data: { character },
+      maxWidth: '860px', width: '95vw', maxHeight: '92vh', panelClass: 'char-sheet-dialog',
+    });
+  }
 
   openCreate() { this.editingCharacter.set(null); this.showWizard.set(true); }
   openEdit(character: Character) {

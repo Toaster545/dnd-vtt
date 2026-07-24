@@ -13,6 +13,14 @@
       <mat-icon class="text-lg">sports_martial_arts</mat-icon>
       Encounters
     </button>
+    <button class="nav-item" [class.active]="activeSection() === 'items'" (click)="activeSection.set('items')">
+      <mat-icon class="text-lg">sports_martial_arts</mat-icon>
+      Items
+    </button>
+    <button class="nav-item" [class.active]="activeSection() === 'spells'" (click)="activeSection.set('spells')">
+      <mat-icon class="text-lg">sports_martial_arts</mat-icon>
+      Spells
+    </button>
   </nav>
 
   <!-- Content -->
@@ -72,6 +80,16 @@
 
     @if (activeSection() === 'characters') {
       <app-dm-characters />
+    }
+
+    @if (activeSection() === 'items') {
+      <h2 class="font-brand text-lg text-parchment mb-3">Items</h2>
+      <p class="text-slate text-sm">Items coming soon.</p>
+    }
+
+    @if (activeSection() === 'spells') {
+      <h2 class="font-brand text-lg text-parchment mb-3">Spells</h2>
+      <p class="text-slate text-sm">Spells coming soon.</p>
     }
 
   </div>
