@@ -37,4 +37,8 @@ export class ContentService {
   getRace(index: string)        { return this.loadOne('races', index); }
   getBackgrounds()              { return this.loadAll('backgrounds'); }
   getBackground(index: string)  { return this.loadOne('backgrounds', index); }
+  getItems()                    { return this.loadAll('items'); }
+  getItem(index: string)        { return this.loadOne('items', index); }
+  getSpells()                   { return this.loadAll('spells'); }
+  getSpell(index: string)       { return this.loadOne('spells', index); }
 }

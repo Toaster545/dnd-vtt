@@ -11,4 +11,8 @@ export class ContentController {
   @Get('races/:index')         getRace(@Param('index') i: string)   { return this.content.getRace(i); }
   @Get('backgrounds')          getBackgrounds()                      { return this.content.getBackgrounds(); }
   @Get('backgrounds/:index')   getBackground(@Param('index') i: string) { return this.content.getBackground(i); }
+  @Get('items')                getItems()                                { return this.content.getItems(); }
+  @Get('items/:index')         getItem(@Param('index') i: string)       { return this.content.getItem(i); }
+  @Get('spells')               getSpells()                               { return this.content.getSpells(); }
+  @Get('spells/:index')        getSpell(@Param('index') i: string)      { return this.content.getSpell(i); }
 }

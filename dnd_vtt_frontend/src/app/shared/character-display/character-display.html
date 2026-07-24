@@ -38,11 +38,11 @@
       <!-- Combat Stats -->
       <div class="grid grid-cols-5 gap-2">
         @for (stat of [
-          { label: 'Armor Class',    value: char.armor_class + '' },
-          { label: 'Speed',          value: char.speed + ' ft' },
-          { label: 'Initiative',     value: fmt(initiative()) },
-          { label: 'Prof. Bonus',    value: '+' + char.proficiency_bonus },
-          { label: 'Passive Perc.',  value: passivePerception() + '' }
+          { label: 'Armor Class',   value: char.armor_class + '' },
+          { label: 'Speed',         value: char.speed + ' ft' },
+          { label: 'Initiative',    value: fmt(stats().initiative) },
+          { label: 'Prof. Bonus',   value: '+' + stats().proficiency_bonus },
+          { label: 'Passive Perc.', value: stats().passive_perception + '' }
         ]; track stat.label) {
           <div class="bg-elevated rounded-lg border border-white/10 text-center py-2.5 px-1">
             <div class="text-[10px] text-slate uppercase tracking-wide leading-tight">{{ stat.label }}</div>
@@ -50,6 +50,20 @@
           </div>
         }
       </div>
+
+      <!-- Spell Attack / Save DC (if spellcaster) -->
+      @if (stats().spell_attack_bonus !== null) {
+        <div class="grid grid-cols-2 gap-2">
+          <div class="bg-elevated rounded-lg border border-white/10 text-center py-2.5">
+            <div class="text-[10px] text-slate uppercase tracking-wide">Spell Attack</div>
+            <div class="font-brand text-xl text-gold mt-0.5">{{ fmt(stats().spell_attack_bonus!) }}</div>
+          </div>
+          <div class="bg-elevated rounded-lg border border-white/10 text-center py-2.5">
+            <div class="text-[10px] text-slate uppercase tracking-wide">Spell Save DC</div>
+            <div class="font-brand text-xl text-gold mt-0.5">{{ stats().spell_save_dc }}</div>
+          </div>
+        </div>
+      }
 
       <!-- Abilities · Saves · Skills -->
       <div class="grid gap-4" style="grid-template-columns: auto 1fr 1fr">
@@ -59,8 +73,8 @@
           @for (ab of abilities; track ab) {
             <div class="bg-elevated rounded-lg border border-white/10 text-center w-[72px] py-2">
               <div class="text-[10px] text-slate uppercase tracking-widest">{{ abilityShort[ab] }}</div>
-              <div class="font-brand text-2xl text-gold font-bold leading-none my-0.5">{{ fmt(mod(ab)) }}</div>
-              <div class="text-xs text-parchment">{{ scores()[ab] }}</div>
+              <div class="font-brand text-2xl text-gold font-bold leading-none my-0.5">{{ fmt(stats().ability_modifiers[ab]) }}</div>
+              <div class="text-xs text-parchment">{{ char.ability_scores[ab] }}</div>
             </div>
           }
         </div>
@@ -74,8 +88,8 @@
             @for (ab of abilities; track ab) {
               <div class="flex items-center gap-2 text-sm">
                 <span class="w-4 h-4 rounded-full border flex items-center justify-center shrink-0 text-[9px]"
-                  [class]="saveProficient(ab) ? 'bg-gold border-gold text-canvas font-bold' : 'border-slate/50 text-transparent'">●</span>
-                <span class="font-brand text-gold text-sm w-7 text-right tabular-nums">{{ fmt(saveBonus(ab)) }}</span>
+                  [class]="stats().saving_throw_proficient.has(ab) ? 'bg-gold border-gold text-canvas font-bold' : 'border-slate/50 text-transparent'">●</span>
+                <span class="font-brand text-gold text-sm w-7 text-right tabular-nums">{{ fmt(stats().saving_throw_bonuses[ab]) }}</span>
                 <span class="text-slate text-xs">{{ abilityShort[ab] }}</span>
               </div>
             }
@@ -91,8 +105,8 @@
             @for (skill of skillList; track skill) {
               <div class="flex items-center gap-1.5 text-xs">
                 <span class="w-3.5 h-3.5 rounded-full border flex items-center justify-center shrink-0 text-[8px]"
-                  [class]="skillProf(skill) ? 'bg-gold border-gold text-canvas font-bold' : 'border-slate/50 text-transparent'">●</span>
-                <span class="font-brand text-gold w-6 text-right tabular-nums text-xs">{{ fmt(skillBonus(skill)) }}</span>
+                  [class]="char.skills?.[skill] ? 'bg-gold border-gold text-canvas font-bold' : 'border-slate/50 text-transparent'">●</span>
+                <span class="font-brand text-gold w-6 text-right tabular-nums text-xs">{{ fmt(stats().skill_bonuses[skill]) }}</span>
                 <span class="text-slate flex-1 truncate">{{ skill }}</span>
                 <span class="text-coal/80 text-[10px] w-7 text-right">{{ abilityShort[skillAbility[skill]] }}</span>
               </div>
@@ -102,7 +116,7 @@
       </div>
 
       <!-- Class-specific stats -->
-      @if (classSpecific().length || pactMagic(); as pm) {
+      @if (classSpecific().length || pactMagic()) {
         <div>
           <h4 class="font-brand text-gold text-xs uppercase tracking-widest m-0 pb-1.5 mb-2 border-b border-gold/25">
             {{ char.class }} — Level {{ char.level }}
@@ -133,12 +147,13 @@
           </h4>
           <div class="flex flex-wrap gap-2">
             @for (slot of spellSlots(); track slot.label) {
-              <div class="bg-elevated rounded-lg border border-white/10 px-3 py-2 text-center min-w-[56px]">
+              <div class="bg-elevated rounded-lg border border-white/10 px-3 py-2 text-center min-w-[64px]">
                 <div class="text-[10px] text-slate">{{ slot.label }}</div>
-                <div class="font-brand text-gold text-xl">{{ slot.count }}</div>
+                <div class="font-brand text-gold text-xl">{{ slot.count - slot.used }} / {{ slot.count }}</div>
                 <div class="flex justify-center gap-0.5 mt-1 flex-wrap">
                   @for (i of [].constructor(slot.count); track $index) {
-                    <span class="w-2.5 h-2.5 rounded-full border border-gold/50 bg-gold/20"></span>
+                    <span class="w-2.5 h-2.5 rounded-full border"
+                      [class]="$index < slot.used ? 'border-slate/30 bg-transparent' : 'border-gold/50 bg-gold/20'"></span>
                   }
                 </div>
               </div>
@@ -211,6 +226,29 @@
               @for (t of bgData()!.tool_proficiencies; track t) {
                 <span class="tag">{{ t }}</span>
               }
+            }
+          </div>
+        </div>
+      }
+
+      <!-- Flavor -->
+      @if (char.personality_traits || char.ideals || char.bonds || char.flaws) {
+        <div>
+          <h4 class="font-brand text-gold text-xs uppercase tracking-widest m-0 pb-1.5 mb-2 border-b border-gold/25">
+            Personality
+          </h4>
+          <div class="grid grid-cols-2 gap-2 text-xs text-slate">
+            @if (char.personality_traits) {
+              <div><span class="text-parchment/60 block mb-0.5">Traits</span>{{ char.personality_traits }}</div>
+            }
+            @if (char.ideals) {
+              <div><span class="text-parchment/60 block mb-0.5">Ideals</span>{{ char.ideals }}</div>
+            }
+            @if (char.bonds) {
+              <div><span class="text-parchment/60 block mb-0.5">Bonds</span>{{ char.bonds }}</div>
+            }
+            @if (char.flaws) {
+              <div><span class="text-parchment/60 block mb-0.5">Flaws</span>{{ char.flaws }}</div>
             }
           </div>
         </div>

@@ -143,8 +143,115 @@
         </div>
       }
 
-      <!-- Step 4: Details -->
+      <!-- Step 4: Equipment -->
       @if (activeStep() === 4) {
+        <h2 class="font-brand text-xl text-parchment mb-1">Starting Equipment</h2>
+        <p class="text-sm text-slate mb-4">Select items to add to your character's inventory.</p>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-2xl">
+          @for (item of items(); track item.index) {
+            <button
+              class="text-left p-4 rounded-md border transition-all cursor-pointer w-full"
+              [class]="selectedItemIndices().has(item.index)
+                ? 'border-gold/60 bg-gold/5'
+                : 'border-white/10 hover:border-white/25'"
+              (click)="toggleItem(item.index)"
+              style="background: transparent; font-family: inherit;"
+            >
+              <div class="flex items-start justify-between gap-2 mb-1.5">
+                <span class="font-semibold text-sm" [class]="selectedItemIndices().has(item.index) ? 'text-parchment' : 'text-slate'">
+                  {{ item.name }}
+                </span>
+                @if (selectedItemIndices().has(item.index)) {
+                  <span class="text-gold text-xs shrink-0">✓ Added</span>
+                }
+              </div>
+              <div class="flex gap-1.5 flex-wrap mb-1.5">
+                <span class="text-xs border border-white/15 rounded px-1.5 py-0.5 text-slate">{{ item.category }}</span>
+                @if (item.damage) {
+                  <span class="text-xs border border-white/15 rounded px-1.5 py-0.5 text-slate">{{ item.damage }} {{ item.damage_type }}</span>
+                }
+                @if (item.armor_class) {
+                  <span class="text-xs border border-white/15 rounded px-1.5 py-0.5 text-slate">AC {{ item.armor_class }}</span>
+                }
+                <span class="text-xs text-coal">{{ item.cost }}</span>
+              </div>
+              @for (prop of item.properties; track prop) {
+                <span class="text-xs text-gold/70 block">{{ prop }}</span>
+              }
+            </button>
+          }
+        </div>
+        @if (selectedItemIndices().size) {
+          <p class="text-sm text-slate mt-4">
+            <span class="text-gold font-medium">{{ selectedItemIndices().size }}</span> item(s) selected
+          </p>
+        }
+      }
+
+      <!-- Step 5: Spells -->
+      @if (activeStep() === 5) {
+        <h2 class="font-brand text-xl text-parchment mb-1">Known Spells</h2>
+        @if (selectedClass()?.spellcasting_ability) {
+          <p class="text-sm text-slate mb-4">
+            Showing spells available to {{ selectedClass()!.name }}.
+            Select spells to add to your spellbook.
+          </p>
+        } @else {
+          <p class="text-sm text-slate mb-4">
+            @if (selectedClass()) {
+              {{ selectedClass()!.name }} is not a spellcasting class. You can still add spells if needed.
+            } @else {
+              Select a class first to filter spells, or browse all spells below.
+            }
+          </p>
+        }
+        @if (visibleSpells().length === 0) {
+          <p class="text-slate text-sm">No spells available for this class.</p>
+        } @else {
+          <div class="flex flex-col gap-2 max-w-2xl">
+            @for (spell of visibleSpells(); track spell.index) {
+              <button
+                class="text-left p-4 rounded-md border transition-all cursor-pointer w-full"
+                [class]="selectedSpellIndices().has(spell.index)
+                  ? 'border-gold/60 bg-gold/5'
+                  : 'border-white/10 hover:border-white/25'"
+                (click)="toggleSpell(spell.index)"
+                style="background: transparent; font-family: inherit;"
+              >
+                <div class="flex items-start justify-between gap-3">
+                  <div class="flex-1 min-w-0">
+                    <div class="flex items-center gap-2 mb-1">
+                      <span class="font-semibold text-sm" [class]="selectedSpellIndices().has(spell.index) ? 'text-parchment' : 'text-slate'">
+                        {{ spell.name }}
+                      </span>
+                      <span class="text-xs border border-white/15 rounded px-1.5 py-0.5 text-slate">
+                        {{ spell.level === 0 ? 'Cantrip' : spell.level + (spell.level === 1 ? 'st' : spell.level === 2 ? 'nd' : spell.level === 3 ? 'rd' : 'th') + ' level' }}
+                      </span>
+                      <span class="text-xs text-coal">{{ spell.school }}</span>
+                    </div>
+                    <div class="flex gap-3 text-xs text-coal">
+                      <span>{{ spell.casting_time }}</span>
+                      <span>{{ spell.range }}</span>
+                      <span>{{ spell.duration }}</span>
+                    </div>
+                  </div>
+                  @if (selectedSpellIndices().has(spell.index)) {
+                    <span class="text-gold text-xs shrink-0 mt-0.5">✓ Known</span>
+                  }
+                </div>
+              </button>
+            }
+          </div>
+          @if (selectedSpellIndices().size) {
+            <p class="text-sm text-slate mt-4">
+              <span class="text-gold font-medium">{{ selectedSpellIndices().size }}</span> spell(s) selected
+            </p>
+          }
+        }
+      }
+
+      <!-- Step 6: Details -->
+      @if (activeStep() === 6) {
         <h2 class="font-brand text-xl text-parchment mb-4">Character Details</h2>
         <div class="flex gap-6 flex-wrap items-start">
           <!-- Form fields -->

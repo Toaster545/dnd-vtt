@@ -1,0 +1,12 @@
+{
+  "index": "healing-potion",
+  "name": "Healing Potion",
+  "type": "consumable",
+  "category": "Potion",
+  "damage": null,
+  "damage_type": null,
+  "properties": ["Restores 2d4+2 HP"],
+  "weight": 0.5,
+  "cost": "50 gp",
+  "description": "A character who drinks the magical red fluid in this vial regains 2d4+2 hit points."
+}

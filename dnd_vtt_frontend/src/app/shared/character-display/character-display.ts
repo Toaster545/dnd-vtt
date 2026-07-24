@@ -1,17 +1,10 @@
-import { Component, inject, signal, OnInit } from '@angular/core';
+import { Component, inject, signal, computed, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
-import { Character, Ability, ABILITIES, ABILITY_SHORT, abilityModifier } from '../../core/models/character.model';
+import { Character, Ability, ABILITIES, ABILITY_SHORT, SKILLS } from '../../core/models/character.model';
 import { ContentService, DndClass, DndRace, DndBackground } from '../../core/services/content.service';
+import { CharacterStatsService } from '../../core/services/character-stats.service';
 
-const SKILL_ABILITY: Record<string, string> = {
-  'Acrobatics': 'dexterity',    'Animal Handling': 'wisdom',  'Arcana': 'intelligence',
-  'Athletics': 'strength',       'Deception': 'charisma',      'History': 'intelligence',
-  'Insight': 'wisdom',           'Intimidation': 'charisma',   'Investigation': 'intelligence',
-  'Medicine': 'wisdom',          'Nature': 'intelligence',      'Perception': 'wisdom',
-  'Performance': 'charisma',     'Persuasion': 'charisma',     'Religion': 'intelligence',
-  'Sleight of Hand': 'dexterity','Stealth': 'dexterity',       'Survival': 'wisdom',
-};
 const ORDINALS = ['','1st','2nd','3rd','4th','5th','6th','7th','8th','9th'];
 
 function toIndex(name: string): string {
@@ -26,16 +19,21 @@ function toIndex(name: string): string {
 export class CharacterDisplayComponent implements OnInit {
   readonly char = inject<{ character: Character }>(MAT_DIALOG_DATA).character;
   private content = inject(ContentService);
+  private statsService = inject(CharacterStatsService);
 
-  classData  = signal<DndClass | null>(null);
-  raceData   = signal<DndRace | null>(null);
-  bgData     = signal<DndBackground | null>(null);
-  loading    = signal(true);
+  classData = signal<DndClass | null>(null);
+  raceData  = signal<DndRace | null>(null);
+  bgData    = signal<DndBackground | null>(null);
+  loading   = signal(true);
 
-  readonly abilities    = ABILITIES;
+  readonly abilities     = ABILITIES;
   readonly abilityShort: Record<string, string> = ABILITY_SHORT;
-  readonly skillList    = Object.keys(SKILL_ABILITY);
-  readonly skillAbility = SKILL_ABILITY;
+  readonly skillList     = Object.keys(SKILLS);
+  readonly skillAbility: Record<string, string> = SKILLS;
+
+  stats = computed(() =>
+    this.statsService.compute(this.char, this.classData(), this.raceData()),
+  );
 
   async ngOnInit() {
     const [cls, race, bg] = await Promise.allSettled([
@@ -49,32 +47,7 @@ export class CharacterDisplayComponent implements OnInit {
     this.loading.set(false);
   }
 
-  scores(): Record<Ability, number> {
-    return (this.char.ability_scores ?? {}) as Record<Ability, number>;
-  }
-
-  mod(ability: Ability): number {
-    return abilityModifier(this.scores()[ability] ?? 10);
-  }
-
-  fmt(n: number): string { return n >= 0 ? `+${n}` : `${n}`; }
-
-  saveProficient(ability: string): boolean {
-    return this.classData()?.saving_throws.includes(ability) ?? false;
-  }
-
-  saveBonus(ability: Ability): number {
-    return this.mod(ability) + (this.saveProficient(ability) ? this.char.proficiency_bonus : 0);
-  }
-
-  skillProf(skill: string): boolean { return !!(this.char.skills ?? {})[skill]; }
-
-  skillBonus(skill: string): number {
-    return this.mod(SKILL_ABILITY[skill] as Ability) + (this.skillProf(skill) ? this.char.proficiency_bonus : 0);
-  }
-
-  initiative():        number { return this.mod('dexterity'); }
-  passivePerception(): number { return 10 + this.skillBonus('Perception'); }
+  fmt(n: number): string { return this.statsService.fmt(n); }
 
   private currentLvl() {
     return this.classData()?.levels.find(l => l.level === this.char.level) ?? null;
@@ -84,11 +57,10 @@ export class CharacterDisplayComponent implements OnInit {
     const cls = this.classData();
     if (!cls) return [];
     const sub = cls.subclasses.find(
-      s => s.name === this.char.subclass || s.index === toIndex(this.char.subclass ?? '')
+      s => s.name === this.char.subclass || s.index === toIndex(this.char.subclass ?? ''),
     );
     const subLevelSet = new Set(sub?.levels.map(l => l.level) ?? []);
     const out: { level: number; name: string; subclass: boolean }[] = [];
-
     for (const lvl of cls.levels) {
       if (lvl.level > this.char.level) break;
       for (const f of lvl.features) {
@@ -104,12 +76,16 @@ export class CharacterDisplayComponent implements OnInit {
     return out;
   }
 
-  spellSlots(): { label: string; count: number }[] {
+  spellSlots(): { label: string; count: number; used: number }[] {
     const lvl = this.currentLvl();
     if (!lvl?.spell_slots) return [];
     return Object.entries(lvl.spell_slots)
       .filter(([, n]) => n > 0)
-      .map(([k, n]) => ({ label: ORDINALS[+k] ?? `${k}th`, count: n }));
+      .map(([k, n]) => ({
+        label: ORDINALS[+k] ?? `${k}th`,
+        count: n,
+        used: this.char.spell_slots_used?.[k] ?? 0,
+      }));
   }
 
   pactMagic() { return this.currentLvl()?.pact_magic ?? null; }
@@ -131,14 +107,11 @@ export class CharacterDisplayComponent implements OnInit {
   }
 
   hpPercent(): number {
-    if (!this.char.max_hp) return 0;
-    return Math.round((this.char.current_hp / this.char.max_hp) * 100);
+    return !this.char.max_hp ? 0 : Math.round((this.char.current_hp / this.char.max_hp) * 100);
   }
 
   hpColor(): string {
     const pct = this.hpPercent();
-    if (pct <= 25) return 'bg-danger';
-    if (pct <= 50) return 'bg-yellow-500';
-    return 'bg-success';
+    return pct <= 25 ? 'bg-danger' : pct <= 50 ? 'bg-yellow-500' : 'bg-success';
   }
 }

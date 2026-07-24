@@ -99,14 +99,33 @@
           <div class="card-header border-b border-white/10">
             <h3 class="font-brand text-parchment m-0">Combat</h3>
           </div>
-          <div class="card-body">
+          <div class="card-body flex flex-col gap-4">
             <div class="flex gap-3 flex-wrap">
-              @for (f of combatFields; track f.key) {
-                <div class="field min-w-28">
-                  <label class="field-label">{{ f.label }}</label>
-                  <input class="field-input" type="number" [formControlName]="f.key" />
-                </div>
-              }
+              <div class="field min-w-28">
+                <label class="field-label">
+                  Max HP
+                  @if (suggestedMaxHp()) {
+                    <span class="text-gold/60 font-normal ml-1">(suggested: {{ suggestedMaxHp() }})</span>
+                  }
+                </label>
+                <input class="field-input" type="number" formControlName="max_hp" />
+              </div>
+              <div class="field min-w-28">
+                <label class="field-label">Current HP</label>
+                <input class="field-input" type="number" formControlName="current_hp" />
+              </div>
+              <div class="field min-w-28">
+                <label class="field-label">Temp HP</label>
+                <input class="field-input" type="number" formControlName="temp_hp" />
+              </div>
+              <div class="field min-w-28">
+                <label class="field-label">Armor Class</label>
+                <input class="field-input" type="number" formControlName="armor_class" />
+              </div>
+              <div class="field min-w-28">
+                <label class="field-label">Speed (ft)</label>
+                <input class="field-input" type="number" formControlName="speed" />
+              </div>
             </div>
           </div>
         </div>
@@ -117,15 +136,50 @@
             <h3 class="font-brand text-parchment m-0">Skill Proficiencies</h3>
           </div>
           <div class="card-body">
-            <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
-              @for (skill of skills; track skill) {
-                <label class="flex items-center gap-2 cursor-pointer text-sm">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
+              @for (skill of skillList; track skill) {
+                <label class="flex items-center gap-2 cursor-pointer text-sm py-0.5">
                   <input type="checkbox" class="accent-gold w-4 h-4"
                          [checked]="skillProficiencies[skill]"
                          (change)="toggleSkill(skill)" />
-                  <span class="text-parchment">{{ skill }}</span>
+                  <span class="text-parchment flex-1">{{ skill }}</span>
+                  @if (skillProficiencies[skill]) {
+                    <label class="flex items-center gap-1 text-xs text-gold cursor-pointer">
+                      <input type="checkbox" class="accent-gold w-3.5 h-3.5"
+                             [checked]="expertise[skill]"
+                             (change)="toggleExpertise(skill)" />
+                      Expertise
+                    </label>
+                  }
                 </label>
               }
+            </div>
+          </div>
+        </div>
+
+        <!-- Personality -->
+        <div class="card">
+          <div class="card-header border-b border-white/10">
+            <h3 class="font-brand text-parchment m-0">Personality</h3>
+          </div>
+          <div class="card-body flex flex-col gap-3">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div class="field">
+                <label class="field-label">Personality Traits</label>
+                <textarea class="field-input" formControlName="personality_traits" rows="2"></textarea>
+              </div>
+              <div class="field">
+                <label class="field-label">Ideals</label>
+                <textarea class="field-input" formControlName="ideals" rows="2"></textarea>
+              </div>
+              <div class="field">
+                <label class="field-label">Bonds</label>
+                <textarea class="field-input" formControlName="bonds" rows="2"></textarea>
+              </div>
+              <div class="field">
+                <label class="field-label">Flaws</label>
+                <textarea class="field-input" formControlName="flaws" rows="2"></textarea>
+              </div>
             </div>
           </div>
         </div>
@@ -138,7 +192,7 @@
           <div class="card-body">
             <div class="field">
               <textarea class="field-input" formControlName="notes" rows="6"
-                        placeholder="Character backstory, personality…"></textarea>
+                        placeholder="Character backstory, session notes…"></textarea>
             </div>
           </div>
         </div>

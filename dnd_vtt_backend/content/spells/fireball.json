@@ -1,0 +1,12 @@
+{
+  "index": "fireball",
+  "name": "Fireball",
+  "level": 3,
+  "school": "Evocation",
+  "casting_time": "1 action",
+  "range": "150 feet",
+  "components": ["V", "S", "M"],
+  "duration": "Instantaneous",
+  "classes": ["Sorcerer", "Wizard"],
+  "description": "A bright streak flashes from your pointing finger to a point you choose within range, then blossoms with a low roar into an explosion of flame. Each creature in a 20-foot-radius sphere must make a Dexterity saving throw. A target takes 8d6 fire damage on a failed save, or half on a success."
+}

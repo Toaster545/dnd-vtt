@@ -14,83 +14,32 @@
       Encounters
     </button>
     <button class="nav-item" [class.active]="activeSection() === 'items'" (click)="activeSection.set('items')">
-      <mat-icon class="text-lg">sports_martial_arts</mat-icon>
+      <mat-icon class="text-lg">backpack</mat-icon>
       Items
     </button>
     <button class="nav-item" [class.active]="activeSection() === 'spells'" (click)="activeSection.set('spells')">
-      <mat-icon class="text-lg">sports_martial_arts</mat-icon>
+      <mat-icon class="text-lg">auto_fix_high</mat-icon>
       Spells
     </button>
   </nav>
 
   <!-- Content -->
   <div class="flex-1 overflow-auto p-6">
-
-    @if (activeSection() === 'sessions') {
-      <div class="flex items-center gap-3 mb-5">
-        <h2 class="font-brand text-lg text-parchment m-0 flex-1">Sessions</h2>
-        <button class="btn-outline text-sm" (click)="showForm.set(!showForm())">
-          {{ showForm() ? 'Cancel' : '+ New Session' }}
-        </button>
-      </div>
-
-      @if (showForm()) {
-        <div class="card card-body mb-4 max-w-lg">
-          <form (ngSubmit)="createSession()" class="flex flex-col gap-3">
-            <div class="field">
-              <label class="field-label">Session name</label>
-              <input class="field-input" [(ngModel)]="newName" name="name" required autofocus />
-            </div>
-            <div class="field">
-              <label class="field-label">Description (optional)</label>
-              <textarea class="field-input" [(ngModel)]="newDescription" name="description" rows="3"></textarea>
-            </div>
-            <div>
-              <button class="btn-primary" type="submit" [disabled]="!newName.trim() || saving()">
-                @if (saving()) { <span class="spinner-sm"></span> } @else { Create Session }
-              </button>
-            </div>
-          </form>
-        </div>
+    @switch (activeSection()) {
+      @case ('characters') { <app-dm-characters /> }
+      @case ('sessions')   { <app-dm-sessions /> }
+      @case ('encounters') {
+        <h2 class="font-brand text-lg text-parchment mb-3">Encounters</h2>
+        <p class="text-slate text-sm">Encounters coming soon.</p>
       }
-
-      <ul class="divide-y divide-white/8">
-        @for (session of sessions(); track session.id) {
-          <li class="flex items-center py-3 gap-3">
-            <div class="flex-1 min-w-0">
-              <p class="text-parchment font-medium truncate m-0">{{ session.name }}</p>
-              <p class="text-slate text-xs m-0 mt-0.5">{{ formatDate(session.created_at) }}</p>
-            </div>
-            <button class="btn-icon text-danger/70 hover:text-danger"
-                    (click)="deleteSession(session.id)"
-                    matTooltip="Delete session">
-              <mat-icon>delete</mat-icon>
-            </button>
-          </li>
-        } @empty {
-          <p class="text-slate text-sm py-4">No sessions yet.</p>
-        }
-      </ul>
+      @case ('items') {
+        <h2 class="font-brand text-lg text-parchment mb-3">Items</h2>
+        <p class="text-slate text-sm">Items coming soon.</p>
+      }
+      @case ('spells') {
+        <h2 class="font-brand text-lg text-parchment mb-3">Spells</h2>
+        <p class="text-slate text-sm">Spells coming soon.</p>
+      }
     }
-
-    @if (activeSection() === 'encounters') {
-      <h2 class="font-brand text-lg text-parchment mb-3">Encounters</h2>
-      <p class="text-slate text-sm">Encounters coming soon.</p>
-    }
-
-    @if (activeSection() === 'characters') {
-      <app-dm-characters />
-    }
-
-    @if (activeSection() === 'items') {
-      <h2 class="font-brand text-lg text-parchment mb-3">Items</h2>
-      <p class="text-slate text-sm">Items coming soon.</p>
-    }
-
-    @if (activeSection() === 'spells') {
-      <h2 class="font-brand text-lg text-parchment mb-3">Spells</h2>
-      <p class="text-slate text-sm">Spells coming soon.</p>
-    }
-
   </div>
 </div>

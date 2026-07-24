@@ -3,10 +3,10 @@ import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { ContentService, DndRace, DndClass, DndBackground } from '../../../../../core/services/content.service';
+import { ContentService, DndRace, DndClass, DndBackground, DndItem, DndSpell } from '../../../../../core/services/content.service';
 import { CharacterService } from '../../../../../core/services/character.service';
-import { Character, Ability, ABILITIES, ABILITY_SHORT, ALIGNMENTS, STANDARD_ARRAY, abilityModifier } from '../../../../../core/models/character.model';
-const STEPS = ['Race', 'Class', 'Background', 'Abilities', 'Details'];
+import { Character, Ability, ABILITIES, ABILITY_SHORT, ALIGNMENTS, STANDARD_ARRAY, defaultCharacter, abilityModifier } from '../../../../../core/models/character.model';
+const STEPS = ['Race', 'Class', 'Background', 'Abilities', 'Equipment', 'Spells', 'Details'];
 
 @Component({
   selector: 'app-character-wizard',
@@ -34,7 +34,18 @@ export class CharacterWizardComponent implements OnInit {
   races = signal<DndRace[]>([]);
   classes = signal<DndClass[]>([]);
   backgrounds = signal<DndBackground[]>([]);
+  items = signal<DndItem[]>([]);
+  spells = signal<DndSpell[]>([]);
   loading = signal(true);
+
+  selectedItemIndices = signal<Set<string>>(new Set());
+  selectedSpellIndices = signal<Set<string>>(new Set());
+
+  visibleSpells = computed(() => {
+    const cls = this.selectedClass();
+    if (!cls) return this.spells();
+    return this.spells().filter(s => s.classes.includes(cls.name));
+  });
 
   characterId = signal<string | null>(null);
   selectedRace = signal<DndRace | null>(null);
@@ -87,14 +98,18 @@ export class CharacterWizardComponent implements OnInit {
   isEditing = computed(() => this.characterId() !== null);
 
   async ngOnInit() {
-    const [races, classes, backgrounds] = await Promise.all([
+    const [races, classes, backgrounds, items, spells] = await Promise.all([
       this.content.getRaces(),
       this.content.getClasses(),
       this.content.getBackgrounds(),
+      this.content.getItems(),
+      this.content.getSpells(),
     ]);
     this.races.set(races);
     this.classes.set(classes);
     this.backgrounds.set(backgrounds);
+    this.items.set(items);
+    this.spells.set(spells);
     this.loading.set(false);
 
     const existing = this.character();
@@ -136,6 +151,22 @@ export class CharacterWizardComponent implements OnInit {
   }
 
   isValueAssigned(v: number): boolean { return Object.values(this.assignments()).includes(v); }
+
+  toggleItem(index: string) {
+    this.selectedItemIndices.update(s => {
+      const next = new Set(s);
+      next.has(index) ? next.delete(index) : next.add(index);
+      return next;
+    });
+  }
+
+  toggleSpell(index: string) {
+    this.selectedSpellIndices.update(s => {
+      const next = new Set(s);
+      next.has(index) ? next.delete(index) : next.add(index);
+      return next;
+    });
+  }
   asiFor(ab: Ability): number { return this.racialASI()[ab]; }
 
   mod(score: number): string {
@@ -145,7 +176,7 @@ export class CharacterWizardComponent implements OnInit {
 
   raceASISummary(race: DndRace): string {
     return race.ability_bonuses
-      .map(ab => `+${ab.bonus} ${ab.ability.charAt(0).toUpperCase() + ab.ability.slice(0, 3)}`)
+      .map(ab => `+${ab.bonus} ${ABILITY_SHORT[ab.ability as Ability] ?? ab.ability}`)
       .join(' ');
   }
 
@@ -154,7 +185,16 @@ export class CharacterWizardComponent implements OnInit {
     this.saving.set(true);
     try {
       const hp = this.maxHP();
+      const equipment = this.items()
+        .filter(it => this.selectedItemIndices().has(it.index))
+        .map(it => ({ itemIndex: it.index, name: it.name, quantity: 1, equipped: false }));
+
+      const spells = this.spells()
+        .filter(sp => this.selectedSpellIndices().has(sp.index))
+        .map(sp => ({ spellIndex: sp.index, name: sp.name, prepared: false }));
+
       const result = await this.characterService.saveCharacter({
+        ...defaultCharacter(),
         id: this.characterId() ?? undefined,
         name: this.characterName.trim() || 'Unnamed Character',
         race: this.selectedRace()?.name ?? '',
@@ -168,9 +208,9 @@ export class CharacterWizardComponent implements OnInit {
         current_hp: this.currentHp() ?? hp,
         armor_class: this.armorClass(),
         speed: this.speed(),
-        proficiency_bonus: this.profBonus(),
-        skills: {}, equipment: [], spells: [], notes: '',
-      });
+        equipment,
+        spells,
+      } as Character);
       this.characterId.set(result.id ?? null);
       this.snackBar.open('Progress saved', 'OK', { duration: 2000 });
     } finally { this.saving.set(false); }

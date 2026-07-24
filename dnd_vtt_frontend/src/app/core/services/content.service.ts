@@ -68,6 +68,33 @@ export interface DndBackground {
   feature: string;
 }
 
+export interface DndItem {
+  index: string;
+  name: string;
+  type: 'weapon' | 'armor' | 'gear' | 'consumable' | string;
+  category: string;
+  damage?: string | null;
+  damage_type?: string | null;
+  armor_class?: string;
+  properties: string[];
+  weight: number;
+  cost: string;
+  description: string;
+}
+
+export interface DndSpell {
+  index: string;
+  name: string;
+  level: number;
+  school: string;
+  casting_time: string;
+  range: string;
+  components: string[];
+  duration: string;
+  classes: string[];
+  description: string;
+}
+
 @Injectable({ providedIn: 'root' })
 export class ContentService {
   private cache = new Map<string, unknown>();
@@ -87,4 +114,8 @@ export class ContentService {
   getRace(index: string)            { return this.get<DndRace>(`races/${index}`); }
   getBackgrounds()                  { return this.get<DndBackground[]>('backgrounds'); }
   getBackground(index: string)      { return this.get<DndBackground>(`backgrounds/${index}`); }
+  getItems()                        { return this.get<DndItem[]>('items'); }
+  getItem(index: string)            { return this.get<DndItem>(`items/${index}`); }
+  getSpells()                       { return this.get<DndSpell[]>('spells'); }
+  getSpell(index: string)           { return this.get<DndSpell>(`spells/${index}`); }
 }

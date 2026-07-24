@@ -1,0 +1,12 @@
+{
+  "index": "longsword",
+  "name": "Longsword",
+  "type": "weapon",
+  "category": "Martial Melee",
+  "damage": "1d8",
+  "damage_type": "slashing",
+  "properties": ["Versatile (1d10)"],
+  "weight": 3,
+  "cost": "15 gp",
+  "description": "A straight-bladed sword effective in one or two hands. One of the most common weapons in the world."
+}

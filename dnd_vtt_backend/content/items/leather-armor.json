@@ -1,0 +1,11 @@
+{
+  "index": "leather-armor",
+  "name": "Leather Armor",
+  "type": "armor",
+  "category": "Light Armor",
+  "armor_class": "11 + DEX",
+  "properties": [],
+  "weight": 10,
+  "cost": "10 gp",
+  "description": "The breastplate and shoulder protectors of this armor are made of leather that has been stiffened by being boiled in oil."
+}
