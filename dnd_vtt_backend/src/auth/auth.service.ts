@@ -1,52 +1,64 @@
 import { Injectable, BadRequestException, UnauthorizedException } from '@nestjs/common';
-import { SupabaseService } from '../common/supabase.service';
+import { JwtService } from '@nestjs/jwt';
+import * as bcrypt from 'bcrypt';
+import { randomUUID } from 'crypto';
+import { DatabaseService } from '../common/database.service';
 
 @Injectable()
 export class AuthService {
-  constructor(private supabase: SupabaseService) {}
+  constructor(
+    private db: DatabaseService,
+    private jwt: JwtService,
+  ) {}
 
   async register(email: string, password: string, username: string) {
-    const { data, error } = await this.supabase.client.auth.admin.createUser({
-      email,
-      password,
-      email_confirm: true,
-    });
-    if (error) throw new BadRequestException(error.message);
+    const existing = await this.db.execute(
+      'SELECT id FROM profiles WHERE email = ? OR username = ?',
+      [email, username],
+    );
+    if (existing.rows.length) {
+      throw new BadRequestException('Email or username already in use');
+    }
 
-    const { error: profileError } = await this.supabase.client
-      .from('profiles')
-      .insert({ id: data.user.id, email, username, role: 'player' });
-    if (profileError) throw new BadRequestException(profileError.message);
-
+    const hash = await bcrypt.hash(password, 10);
+    const id = randomUUID();
+    await this.db.execute(
+      'INSERT INTO profiles (id, email, username, password_hash) VALUES (?, ?, ?, ?)',
+      [id, email, username, hash],
+    );
     return { message: 'Account created. You can now sign in.' };
   }
 
   async login(email: string, password: string) {
-    const { data, error } = await this.supabase.client.auth.signInWithPassword({
-      email,
-      password,
-    });
-    if (error) throw new UnauthorizedException(error.message);
+    const result = await this.db.execute(
+      'SELECT * FROM profiles WHERE email = ?',
+      [email],
+    );
+    const user = result.rows[0];
+    if (!user) throw new UnauthorizedException('Invalid credentials');
 
-    const { data: profile } = await this.supabase.client
-      .from('profiles')
-      .select('id, email, username, role')
-      .eq('id', data.user.id)
-      .single();
+    const valid = await bcrypt.compare(password, user.password_hash as string);
+    if (!valid) throw new UnauthorizedException('Invalid credentials');
 
+    const access_token = this.jwt.sign({ sub: user.id });
     return {
-      access_token: data.session.access_token,
-      profile,
+      access_token,
+      profile: {
+        id: user.id,
+        email: user.email,
+        username: user.username,
+        role: user.role,
+      },
     };
   }
 
   async getProfile(userId: string) {
-    const { data, error } = await this.supabase.client
-      .from('profiles')
-      .select('id, email, username, role')
-      .eq('id', userId)
-      .single();
-    if (error) throw new UnauthorizedException();
-    return data;
+    const result = await this.db.execute(
+      'SELECT id, email, username, role FROM profiles WHERE id = ?',
+      [userId],
+    );
+    const user = result.rows[0];
+    if (!user) throw new UnauthorizedException();
+    return user;
   }
 }

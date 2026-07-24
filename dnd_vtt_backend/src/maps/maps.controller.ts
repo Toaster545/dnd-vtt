@@ -51,7 +51,7 @@ export class MapsController {
 
   @Delete(':id/tokens/:tokenId')
   @UseGuards(AdminGuard)
-  deleteToken(@Param('tokenId') tokenId: string) {
-    return this.maps.deleteToken(tokenId);
+  deleteToken(@Param('id') mapId: string, @Param('tokenId') tokenId: string) {
+    return this.maps.deleteToken(tokenId, mapId);
   }
 }

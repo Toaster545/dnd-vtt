@@ -2,7 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { firstValueFrom, Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import { SupabaseService } from './supabase.service';
+import { SocketService } from './socket.service';
 import { BattleMap, MapToken } from '../models/campaign.model';
 
 const API = environment.apiUrl;
@@ -10,8 +10,7 @@ const API = environment.apiUrl;
 @Injectable({ providedIn: 'root' })
 export class BattleMapService {
   private http = inject(HttpClient);
-  // Supabase client kept only for Realtime subscriptions
-  private supabase = inject(SupabaseService).client;
+  private socketService = inject(SocketService);
 
   async getAllMaps(): Promise<BattleMap[]> {
     return firstValueFrom(this.http.get<BattleMap[]>(`${API}/maps`));
@@ -45,26 +44,25 @@ export class BattleMapService {
   }
 
   async deleteToken(tokenId: string, mapId: string): Promise<void> {
-    await firstValueFrom(
-      this.http.delete(`${API}/maps/${mapId}/tokens/${tokenId}`)
-    );
+    await firstValueFrom(this.http.delete(`${API}/maps/${mapId}/tokens/${tokenId}`));
   }
 
-  // Supabase Realtime for live token updates (read-only subscription)
+  // WebSocket subscription for live token updates
   watchTokens(mapId: string): Observable<MapToken[]> {
     return new Observable(observer => {
+      const socket = this.socketService.socket;
+
       this.getTokens(mapId).then(tokens => observer.next(tokens));
 
-      const channel = this.supabase
-        .channel(`tokens:${mapId}`)
-        .on(
-          'postgres_changes',
-          { event: '*', schema: 'public', table: 'map_tokens', filter: `map_id=eq.${mapId}` },
-          () => this.getTokens(mapId).then(tokens => observer.next(tokens))
-        )
-        .subscribe();
+      socket.connect();
+      socket.emit('join_map', mapId);
+      socket.on('tokens_updated', (tokens: MapToken[]) => observer.next(tokens));
 
-      return () => this.supabase.removeChannel(channel);
+      return () => {
+        socket.emit('leave_map', mapId);
+        socket.off('tokens_updated');
+        socket.disconnect();
+      };
     });
   }
 }

@@ -1,37 +1,34 @@
-import {
-  CanActivate, ExecutionContext, Injectable, UnauthorizedException,
-} from '@nestjs/common';
-import { verify } from 'jsonwebtoken';
-import { SupabaseService } from '../common/supabase.service';
+import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
+import { DatabaseService } from '../common/database.service';
 
 @Injectable()
 export class JwtGuard implements CanActivate {
-  constructor(private supabase: SupabaseService) {}
+  constructor(
+    private jwt: JwtService,
+    private db: DatabaseService,
+  ) {}
 
   async canActivate(ctx: ExecutionContext): Promise<boolean> {
     const req = ctx.switchToHttp().getRequest();
     const auth = req.headers['authorization'] as string | undefined;
-
     if (!auth?.startsWith('Bearer ')) throw new UnauthorizedException();
 
-    const token = auth.slice(7);
-
-    let payload: any;
+    let payload: { sub: string };
     try {
-      payload = verify(token, process.env.SUPABASE_JWT_SECRET!);
+      payload = this.jwt.verify(auth.slice(7));
     } catch {
-      throw new UnauthorizedException('Invalid token');
+      throw new UnauthorizedException('Invalid or expired token');
     }
 
-    const { data: profile, error } = await this.supabase.client
-      .from('profiles')
-      .select('id, email, username, role')
-      .eq('id', payload.sub)
-      .single();
+    const result = await this.db.execute(
+      'SELECT id, email, username, role FROM profiles WHERE id = ?',
+      [payload.sub],
+    );
+    const user = result.rows[0];
+    if (!user) throw new UnauthorizedException('User not found');
 
-    if (error || !profile) throw new UnauthorizedException('User not found');
-
-    req.user = profile;
+    req.user = user;
     return true;
   }
 }
