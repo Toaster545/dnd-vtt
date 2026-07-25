@@ -1,0 +1,6 @@
+{
+  "index": "polearm-master",
+  "name": "Polearm Master",
+  "description": "When you take the Attack action with a glaive, halberd, quarterstaff, or spear, you can use a bonus action to make a melee attack with the opposite end of the weapon (1d4 bludgeoning damage). While wielding one of these weapons, other creatures provoke an opportunity attack from you when they enter your reach.",
+  "category": "general"
+}

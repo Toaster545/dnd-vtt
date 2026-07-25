@@ -1,0 +1,6 @@
+{
+  "index": "mage-slayer",
+  "name": "Mage Slayer",
+  "description": "When a creature within 5 ft. of you casts a spell, you can use your reaction to make a melee attack against it. You have advantage on saving throws against spells cast by creatures within 5 ft. of you. When you damage a creature that is concentrating, it has disadvantage on the save to maintain concentration.",
+  "category": "general"
+}
