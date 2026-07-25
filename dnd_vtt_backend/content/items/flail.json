@@ -1,0 +1,16 @@
+{
+  "index": "flail",
+  "name": "Flail",
+  "type": "weapon",
+  "category": "Martial Melee",
+  "damage": "1d8",
+  "damage_type": "bludgeoning",
+  "properties": [],
+  "weight": 2,
+  "cost": "10 gp",
+  "description": "A spiked head on a chain, swung to devastating effect.",
+  "mastery": {
+    "property": "Sap",
+    "description": "Hit gives the target disadvantage on its next attack roll before the start of your next turn."
+  }
+}

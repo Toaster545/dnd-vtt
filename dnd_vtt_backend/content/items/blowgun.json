@@ -1,0 +1,19 @@
+{
+  "index": "blowgun",
+  "name": "Blowgun",
+  "type": "weapon",
+  "category": "Martial Ranged",
+  "damage": "1",
+  "damage_type": "piercing",
+  "properties": [
+    "Ammunition (range 25/100)",
+    "Loading"
+  ],
+  "weight": 1,
+  "cost": "10 gp",
+  "description": "A slender tube that fires small needles.",
+  "mastery": {
+    "property": "Vex",
+    "description": "Hit grants advantage on your next attack roll against that target before the end of your next turn."
+  }
+}

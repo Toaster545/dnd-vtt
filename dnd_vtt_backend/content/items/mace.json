@@ -1,0 +1,16 @@
+{
+  "index": "mace",
+  "name": "Mace",
+  "type": "weapon",
+  "category": "Simple Melee",
+  "damage": "1d6",
+  "damage_type": "bludgeoning",
+  "properties": [],
+  "weight": 4,
+  "cost": "5 gp",
+  "description": "A heavy metal head on a sturdy haft.",
+  "mastery": {
+    "property": "Sap",
+    "description": "Hit gives the target disadvantage on its next attack roll before the start of your next turn."
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "index": "handaxe",
+  "name": "Handaxe",
+  "type": "weapon",
+  "category": "Simple Melee",
+  "damage": "1d6",
+  "damage_type": "slashing",
+  "properties": [
+    "Light",
+    "Thrown (range 20/60)"
+  ],
+  "weight": 2,
+  "cost": "5 gp",
+  "description": "A light axe balanced for throwing as well as melee.",
+  "mastery": {
+    "property": "Vex",
+    "description": "Hit grants advantage on your next attack roll against that target before the end of your next turn."
+  }
+}

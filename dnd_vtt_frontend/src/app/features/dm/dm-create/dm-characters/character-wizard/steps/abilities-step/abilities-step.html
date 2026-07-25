@@ -1,0 +1,39 @@
+<h2 class="font-brand text-xl text-parchment mb-1">Assign Ability Scores</h2>
+<p class="text-sm text-slate mb-4">Assign each value from the standard array exactly once.</p>
+<div class="flex gap-2 flex-wrap mb-6">
+  @for (v of standardArray; track v) {
+    <span class="text-sm font-mono font-bold px-3 py-1 rounded border"
+      [class]="isValueAssigned(v)
+        ? 'border-gold/25 text-gold/40 line-through'
+        : 'border-white/20 text-parchment bg-elevated'">
+      {{ v }}
+    </span>
+  }
+</div>
+<div class="grid grid-cols-2 sm:grid-cols-3 gap-4 max-w-lg">
+  @for (ab of abilities; track ab) {
+    <div class="flex flex-col gap-1">
+      <label class="text-xs font-bold text-slate uppercase tracking-wide">{{ abilityShort[ab] }}</label>
+      <select class="field-input" [ngModel]="assignments()[ab]" (ngModelChange)="assign(ab, $event)" [name]="ab">
+        <option [ngValue]="null">—</option>
+        @for (v of optionsFor(ab); track v) {
+          <option [ngValue]="v">{{ v }}</option>
+        }
+      </select>
+      <div class="flex items-center justify-between text-xs mt-0.5">
+        @if (asiFor(ab) > 0) {
+          <span class="text-success">+{{ asiFor(ab) }}</span>
+        } @else {
+          <span></span>
+        }
+        @if (assignments()[ab] !== null) {
+          <span class="font-semibold text-parchment">= {{ finalScores()[ab] }}
+            <span class="text-gold ml-1">{{ mod(finalScores()[ab]) }}</span>
+          </span>
+        } @else {
+          <span class="text-coal">—</span>
+        }
+      </div>
+    </div>
+  }
+</div>

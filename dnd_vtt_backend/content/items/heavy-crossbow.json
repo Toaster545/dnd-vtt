@@ -1,0 +1,21 @@
+{
+  "index": "heavy-crossbow",
+  "name": "Heavy Crossbow",
+  "type": "weapon",
+  "category": "Martial Ranged",
+  "damage": "1d10",
+  "damage_type": "piercing",
+  "properties": [
+    "Ammunition (range 100/400)",
+    "Heavy",
+    "Loading",
+    "Two-Handed"
+  ],
+  "weight": 18,
+  "cost": "50 gp",
+  "description": "A large, powerful crossbow.",
+  "mastery": {
+    "property": "Push",
+    "description": "Hit pushes the target up to 10 ft. away from you."
+  }
+}

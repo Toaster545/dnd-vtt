@@ -1,0 +1,18 @@
+{
+  "index": "club",
+  "name": "Club",
+  "type": "weapon",
+  "category": "Simple Melee",
+  "damage": "1d4",
+  "damage_type": "bludgeoning",
+  "properties": [
+    "Light"
+  ],
+  "weight": 2,
+  "cost": "1 sp",
+  "description": "A stout length of wood, favored as an improvised bludgeon.",
+  "mastery": {
+    "property": "Slow",
+    "description": "Hit reduces the target's speed by 10 ft. until the start of your next turn."
+  }
+}

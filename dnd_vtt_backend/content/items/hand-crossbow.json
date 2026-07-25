@@ -1,0 +1,20 @@
+{
+  "index": "hand-crossbow",
+  "name": "Hand Crossbow",
+  "type": "weapon",
+  "category": "Martial Ranged",
+  "damage": "1d6",
+  "damage_type": "piercing",
+  "properties": [
+    "Ammunition (range 30/120)",
+    "Light",
+    "Loading"
+  ],
+  "weight": 3,
+  "cost": "75 gp",
+  "description": "A compact crossbow that can be fired one-handed.",
+  "mastery": {
+    "property": "Nick",
+    "description": "The extra attack granted by this weapon's Light property doesn't require a bonus action."
+  }
+}

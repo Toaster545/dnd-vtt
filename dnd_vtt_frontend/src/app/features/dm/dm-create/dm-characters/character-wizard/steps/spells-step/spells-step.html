@@ -1,0 +1,48 @@
+<h2 class="font-brand text-xl text-parchment mb-1">Known Spells</h2>
+@if (selectedClass()?.spellcasting_ability) {
+  <p class="text-sm text-slate mb-4">
+    Showing spells available to {{ selectedClass()!.name }}. Select spells to add to your spellbook.
+  </p>
+} @else {
+  <p class="text-sm text-slate mb-4">
+    @if (selectedClass()) {
+      {{ selectedClass()!.name }} is not a spellcasting class. You can still add spells if needed.
+    } @else {
+      Select a class first to filter spells, or browse all spells below.
+    }
+  </p>
+}
+@if (visibleSpells().length === 0) {
+  <p class="text-slate text-sm">No spells available for this class.</p>
+} @else {
+  <div class="flex flex-col gap-1.5 max-w-2xl">
+    @for (spell of visibleSpells(); track spell.index) {
+      <button
+        class="flex items-center justify-between px-4 py-3 rounded-md border transition-all cursor-pointer text-left w-full"
+        [class]="selectedSpellIndices().has(spell.index)
+          ? 'border-gold/60 bg-gold/5'
+          : 'border-white/10 hover:border-white/25'"
+        (click)="spellToggled.emit(spell.index)"
+        style="background: transparent; font-family: inherit;"
+      >
+        <div class="flex items-center gap-3">
+          <span class="font-medium text-sm" [class]="selectedSpellIndices().has(spell.index) ? 'text-parchment' : 'text-slate'">{{ spell.name }}</span>
+          @if (selectedSpellIndices().has(spell.index)) {
+            <span class="text-gold text-xs">✓</span>
+          }
+        </div>
+        <div class="flex items-center gap-3 flex-shrink-0 ml-4 text-xs text-coal">
+          <span>{{ spell.level === 0 ? 'Cantrip' : spell.level + (spell.level === 1 ? 'st' : spell.level === 2 ? 'nd' : spell.level === 3 ? 'rd' : 'th') + ' lvl' }}</span>
+          <span>{{ spell.school }}</span>
+          <span>{{ spell.casting_time }}</span>
+          <span>{{ spell.range }}</span>
+        </div>
+      </button>
+    }
+  </div>
+  @if (selectedSpellIndices().size) {
+    <p class="text-sm text-slate mt-4">
+      <span class="text-gold font-medium">{{ selectedSpellIndices().size }}</span> spell(s) selected
+    </p>
+  }
+}

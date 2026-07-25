@@ -1,0 +1,19 @@
+{
+  "index": "maul",
+  "name": "Maul",
+  "type": "weapon",
+  "category": "Martial Melee",
+  "damage": "2d6",
+  "damage_type": "bludgeoning",
+  "properties": [
+    "Heavy",
+    "Two-Handed"
+  ],
+  "weight": 10,
+  "cost": "10 gp",
+  "description": "An immense two-handed hammer.",
+  "mastery": {
+    "property": "Topple",
+    "description": "Hit can knock the target prone (target makes a Constitution save)."
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "index": "scimitar",
+  "name": "Scimitar",
+  "type": "weapon",
+  "category": "Martial Melee",
+  "damage": "1d6",
+  "damage_type": "slashing",
+  "properties": [
+    "Finesse",
+    "Light"
+  ],
+  "weight": 3,
+  "cost": "25 gp",
+  "description": "A curved sword with a wicked edge.",
+  "mastery": {
+    "property": "Nick",
+    "description": "The extra attack granted by this weapon's Light property doesn't require a bonus action."
+  }
+}

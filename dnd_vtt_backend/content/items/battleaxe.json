@@ -1,0 +1,18 @@
+{
+  "index": "battleaxe",
+  "name": "Battleaxe",
+  "type": "weapon",
+  "category": "Martial Melee",
+  "damage": "1d8",
+  "damage_type": "slashing",
+  "properties": [
+    "Versatile (1d10)"
+  ],
+  "weight": 4,
+  "cost": "10 gp",
+  "description": "A broad-bladed axe balanced for one- or two-handed use.",
+  "mastery": {
+    "property": "Topple",
+    "description": "Hit can knock the target prone (target makes a Constitution save)."
+  }
+}

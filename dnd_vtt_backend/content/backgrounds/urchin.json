@@ -1,9 +1,36 @@
 {
   "index": "urchin",
   "name": "Urchin",
-  "skill_proficiencies": ["Sleight of Hand", "Stealth"],
-  "tool_proficiencies": ["Disguise kit", "Thieves' tools"],
+  "skill_proficiencies": [
+    "Sleight of Hand",
+    "Stealth"
+  ],
+  "tool_proficiencies": [
+    "Disguise kit",
+    "Thieves' tools"
+  ],
   "languages": "None",
-  "starting_equipment": ["Small knife", "Map of the city you grew up in", "Pet mouse", "Token from your parents", "Common clothes", "Belt pouch with 10 gp"],
-  "feature": "City Secrets"
+  "starting_equipment": [
+    "Small knife",
+    "Map of the city you grew up in",
+    "Pet mouse",
+    "Token from your parents",
+    "Common clothes",
+    "Belt pouch with 10 gp"
+  ],
+  "feature": "City Secrets",
+  "grants": [
+    {
+      "type": "ability_choice",
+      "key": "ability_scores",
+      "name": "Ability Scores",
+      "description": "Increase one of the abilities below by 2 and a different one by 1, or increase all three by 1 each. No score can be increased above 20 this way.",
+      "points": 3,
+      "abilities": [
+        "dexterity",
+        "constitution",
+        "wisdom"
+      ]
+    }
+  ]
 }

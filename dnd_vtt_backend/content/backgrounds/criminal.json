@@ -1,9 +1,33 @@
 {
   "index": "criminal",
   "name": "Criminal",
-  "skill_proficiencies": ["Deception", "Stealth"],
-  "tool_proficiencies": ["One type of gaming set", "Thieves' tools"],
+  "skill_proficiencies": [
+    "Deception",
+    "Stealth"
+  ],
+  "tool_proficiencies": [
+    "One type of gaming set",
+    "Thieves' tools"
+  ],
   "languages": "None",
-  "starting_equipment": ["Crowbar", "Dark common clothes with hood", "Belt pouch with 15 gp"],
-  "feature": "Criminal Contact"
+  "starting_equipment": [
+    "Crowbar",
+    "Dark common clothes with hood",
+    "Belt pouch with 15 gp"
+  ],
+  "feature": "Criminal Contact",
+  "grants": [
+    {
+      "type": "ability_choice",
+      "key": "ability_scores",
+      "name": "Ability Scores",
+      "description": "Increase one of the abilities below by 2 and a different one by 1, or increase all three by 1 each. No score can be increased above 20 this way.",
+      "points": 3,
+      "abilities": [
+        "dexterity",
+        "constitution",
+        "intelligence"
+      ]
+    }
+  ]
 }

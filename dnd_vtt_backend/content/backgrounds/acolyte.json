@@ -1,9 +1,33 @@
 {
   "index": "acolyte",
   "name": "Acolyte",
-  "skill_proficiencies": ["Insight", "Religion"],
+  "skill_proficiencies": [
+    "Insight",
+    "Religion"
+  ],
   "tool_proficiencies": [],
   "languages": "Two of your choice",
-  "starting_equipment": ["Holy symbol", "Prayer book or prayer wheel", "5 sticks of incense", "Vestments", "Common clothes", "Belt pouch with 15 gp"],
-  "feature": "Shelter of the Faithful"
+  "starting_equipment": [
+    "Holy symbol",
+    "Prayer book or prayer wheel",
+    "5 sticks of incense",
+    "Vestments",
+    "Common clothes",
+    "Belt pouch with 15 gp"
+  ],
+  "feature": "Shelter of the Faithful",
+  "grants": [
+    {
+      "type": "ability_choice",
+      "key": "ability_scores",
+      "name": "Ability Scores",
+      "description": "Increase one of the abilities below by 2 and a different one by 1, or increase all three by 1 each. No score can be increased above 20 this way.",
+      "points": 3,
+      "abilities": [
+        "intelligence",
+        "wisdom",
+        "charisma"
+      ]
+    }
+  ]
 }

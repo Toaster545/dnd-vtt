@@ -193,14 +193,6 @@
               <span class="tag">{{ trait }}</span>
             }
           </div>
-          @if (raceData()!.ability_bonuses.length) {
-            <p class="text-xs text-slate m-0">
-              ASI:
-              @for (ab of raceData()!.ability_bonuses; track ab.ability) {
-                <span class="text-gold-bright mr-2">+{{ ab.bonus }} {{ abilityShort[ab.ability] ?? ab.ability }}</span>
-              }
-            </p>
-          }
         </div>
       }
 

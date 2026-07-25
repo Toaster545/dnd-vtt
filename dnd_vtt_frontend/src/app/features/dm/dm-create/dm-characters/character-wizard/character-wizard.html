@@ -1,9 +1,20 @@
-<div class="flex flex-col h-full">
+<div class="flex flex-col flex-1 min-h-0">
   @if (loading()) {
     <div class="flex-1 flex items-center justify-center">
       <span class="spinner-lg"></span>
     </div>
   } @else {
+
+    <div class="flex items-end gap-3 flex-shrink-0 px-6 pt-4">
+      <div class="field flex-1 max-w-xs">
+        <label class="field-label">Character Name</label>
+        <input class="field-input py-1 text-sm" [ngModel]="characterName()" (ngModelChange)="characterName.set($event)" placeholder="Unnamed Character" name="charName" />
+      </div>
+      <div class="field w-20">
+        <label class="field-label">Level</label>
+        <input class="field-input py-1 text-sm" type="number" [ngModel]="level()" (ngModelChange)="level.set(+$event)" min="1" max="20" name="level" />
+      </div>
+    </div>
 
     <!-- Step tabs -->
     <div class="flex border-b border-white/10 overflow-x-auto flex-shrink-0">
@@ -27,308 +38,93 @@
 
     <!-- Step content -->
     <div class="flex-1 overflow-y-auto p-6">
-
-      <!-- Step 0: Race -->
       @if (activeStep() === 0) {
-        <h2 class="font-brand text-xl text-parchment mb-4">Choose Your Race</h2>
-        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
-          @for (race of races(); track race.index) {
-            <button
-              class="text-left p-4 rounded-md border transition-all cursor-pointer"
-              [class]="selectedRace()?.index === race.index
-                ? 'border-gold/60 bg-gold/5 text-parchment'
-                : 'border-white/10 text-slate hover:border-white/25 hover:text-parchment'"
-              (click)="selectedRace.set(race)"
-              style="background: var(--tw-bg, transparent); font-family: inherit;"
-            >
-              <p class="font-semibold text-sm mb-1.5 m-0" [class]="selectedRace()?.index === race.index ? 'text-parchment' : ''">{{ race.name }}</p>
-              <div class="flex gap-1 flex-wrap mb-1.5">
-                <span class="text-xs border border-white/15 rounded px-1.5 py-0.5">{{ race.size }}</span>
-                <span class="text-xs border border-white/15 rounded px-1.5 py-0.5">{{ race.speed }}ft</span>
-              </div>
-              @if (race.ability_bonuses.length) {
-                <p class="text-xs text-success m-0">{{ raceASISummary(race) }}</p>
-              }
-              @if (race.subraces.length) {
-                <p class="text-xs text-coal italic m-0 mt-0.5">{{ race.subraces.length }} subrace(s)</p>
-              }
-            </button>
-          }
-        </div>
+        <app-race-step
+          [races]="races()"
+          [selected]="raceSelection()"
+          (raceChosen)="onRaceChosen($event)"
+        />
       }
-
-      <!-- Step 1: Class -->
       @if (activeStep() === 1) {
-        <h2 class="font-brand text-xl text-parchment mb-4">Choose Your Class</h2>
-        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
-          @for (cls of classes(); track cls.index) {
-            <button
-              class="text-left p-4 rounded-md border transition-all cursor-pointer"
-              [class]="selectedClass()?.index === cls.index
-                ? 'border-gold/60 bg-gold/5 text-parchment'
-                : 'border-white/10 text-slate hover:border-white/25 hover:text-parchment'"
-              (click)="selectedClass.set(cls)"
-              style="background: transparent; font-family: inherit;"
-            >
-              <p class="font-semibold text-sm mb-1.5 m-0" [class]="selectedClass()?.index === cls.index ? 'text-parchment' : ''">{{ cls.name }}</p>
-              <span class="text-xs border border-white/15 rounded px-1.5 py-0.5">d{{ cls.hit_die }}</span>
-              @if (cls.saving_throws.length) {
-                <p class="text-xs text-slate m-0 mt-1.5">Saves: {{ cls.saving_throws.join(', ') }}</p>
-              }
-            </button>
-          }
-        </div>
+        <app-class-step
+          [classes]="classes()"
+          [items]="items()"
+          [feats]="feats()"
+          [selectedClasses]="selectedClasses()"
+          [characterLevel]="level()"
+          [baseAbilityScores]="scoresBeforeClassASI()"
+          (classAdded)="onClassAdded($event)"
+          (classRemoved)="onClassRemoved($event)"
+        />
       }
-
-      <!-- Step 2: Background -->
       @if (activeStep() === 2) {
-        <h2 class="font-brand text-xl text-parchment mb-4">Choose Your Background</h2>
-        <div class="flex flex-col gap-1.5 max-w-2xl">
-          @for (bg of backgrounds(); track bg.index) {
-            <button
-              class="flex items-baseline justify-between px-4 py-3 rounded-md border transition-all cursor-pointer text-left w-full"
-              [class]="selectedBackground()?.index === bg.index
-                ? 'border-gold/60 bg-gold/5'
-                : 'border-white/10 hover:border-white/25'"
-              (click)="selectedBackground.set(bg)"
-              style="background: transparent; font-family: inherit;"
-            >
-              <span class="font-medium text-sm" [class]="selectedBackground()?.index === bg.index ? 'text-parchment' : 'text-slate'">{{ bg.name }}</span>
-              <span class="text-xs text-coal ml-4 flex-shrink-0">{{ bg.skill_proficiencies.join(', ') }}</span>
-            </button>
-          }
-        </div>
+        <app-background-step
+          [backgrounds]="backgrounds()"
+          [selected]="backgroundSelection()"
+          [baseAbilityScores]="scoresBeforeBackgroundASI()"
+          (backgroundChosen)="onBackgroundChosen($event)"
+        />
       }
-
-      <!-- Step 3: Abilities -->
       @if (activeStep() === 3) {
-        <h2 class="font-brand text-xl text-parchment mb-1">Assign Ability Scores</h2>
-        <p class="text-sm text-slate mb-4">Assign each value from the standard array exactly once.</p>
-        <div class="flex gap-2 flex-wrap mb-6">
-          @for (v of standardArray; track v) {
-            <span class="text-sm font-mono font-bold px-3 py-1 rounded border"
-              [class]="isValueAssigned(v)
-                ? 'border-gold/25 text-gold/40 line-through'
-                : 'border-white/20 text-parchment bg-elevated'">
-              {{ v }}
-            </span>
-          }
-        </div>
-        <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 max-w-lg">
-          @for (ab of abilities; track ab) {
-            <div class="flex flex-col gap-1">
-              <label class="text-xs font-bold text-slate uppercase tracking-wide">{{ abilityShort[ab] }}</label>
-              <select class="field-input" [ngModel]="assignments()[ab]" (ngModelChange)="assign(ab, $event)" [name]="ab">
-                <option [ngValue]="null">—</option>
-                @for (v of optionsFor(ab); track v) {
-                  <option [ngValue]="v">{{ v }}</option>
-                }
-              </select>
-              <div class="flex items-center justify-between text-xs mt-0.5">
-                @if (asiFor(ab) > 0) {
-                  <span class="text-success">+{{ asiFor(ab) }}</span>
-                } @else {
-                  <span></span>
-                }
-                @if (assignments()[ab] !== null) {
-                  <span class="font-semibold text-parchment">= {{ finalScores()[ab] }}
-                    <span class="text-gold ml-1">{{ mod(finalScores()[ab]) }}</span>
-                  </span>
-                } @else {
-                  <span class="text-coal">—</span>
-                }
-              </div>
-            </div>
-          }
-        </div>
+        <app-abilities-step
+          [assignments]="assignments()"
+          [bonusScores]="bonusScores()"
+          [finalScores]="finalScores()"
+          (assignmentChanged)="assign($event.ability, $event.value)"
+        />
       }
-
-      <!-- Step 4: Equipment -->
       @if (activeStep() === 4) {
-        <h2 class="font-brand text-xl text-parchment mb-1">Starting Equipment</h2>
-        <p class="text-sm text-slate mb-4">Select items to add to your character's inventory.</p>
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-2xl">
-          @for (item of items(); track item.index) {
-            <button
-              class="text-left p-4 rounded-md border transition-all cursor-pointer w-full"
-              [class]="selectedItemIndices().has(item.index)
-                ? 'border-gold/60 bg-gold/5'
-                : 'border-white/10 hover:border-white/25'"
-              (click)="toggleItem(item.index)"
-              style="background: transparent; font-family: inherit;"
-            >
-              <div class="flex items-start justify-between gap-2 mb-1.5">
-                <span class="font-semibold text-sm" [class]="selectedItemIndices().has(item.index) ? 'text-parchment' : 'text-slate'">
-                  {{ item.name }}
-                </span>
-                @if (selectedItemIndices().has(item.index)) {
-                  <span class="text-gold text-xs shrink-0">✓ Added</span>
-                }
-              </div>
-              <div class="flex gap-1.5 flex-wrap mb-1.5">
-                <span class="text-xs border border-white/15 rounded px-1.5 py-0.5 text-slate">{{ item.category }}</span>
-                @if (item.damage) {
-                  <span class="text-xs border border-white/15 rounded px-1.5 py-0.5 text-slate">{{ item.damage }} {{ item.damage_type }}</span>
-                }
-                @if (item.armor_class) {
-                  <span class="text-xs border border-white/15 rounded px-1.5 py-0.5 text-slate">AC {{ item.armor_class }}</span>
-                }
-                <span class="text-xs text-coal">{{ item.cost }}</span>
-              </div>
-              @for (prop of item.properties; track prop) {
-                <span class="text-xs text-gold/70 block">{{ prop }}</span>
-              }
-            </button>
-          }
-        </div>
-        @if (selectedItemIndices().size) {
-          <p class="text-sm text-slate mt-4">
-            <span class="text-gold font-medium">{{ selectedItemIndices().size }}</span> item(s) selected
-          </p>
-        }
+        <app-equipment-step
+          [items]="items()"
+          [selectedItemIndices]="selectedItemIndices()"
+          (itemToggled)="toggleItem($event)"
+        />
       }
-
-      <!-- Step 5: Spells -->
       @if (activeStep() === 5) {
-        <h2 class="font-brand text-xl text-parchment mb-1">Known Spells</h2>
-        @if (selectedClass()?.spellcasting_ability) {
-          <p class="text-sm text-slate mb-4">
-            Showing spells available to {{ selectedClass()!.name }}.
-            Select spells to add to your spellbook.
-          </p>
-        } @else {
-          <p class="text-sm text-slate mb-4">
-            @if (selectedClass()) {
-              {{ selectedClass()!.name }} is not a spellcasting class. You can still add spells if needed.
-            } @else {
-              Select a class first to filter spells, or browse all spells below.
-            }
-          </p>
-        }
-        @if (visibleSpells().length === 0) {
-          <p class="text-slate text-sm">No spells available for this class.</p>
-        } @else {
-          <div class="flex flex-col gap-2 max-w-2xl">
-            @for (spell of visibleSpells(); track spell.index) {
-              <button
-                class="text-left p-4 rounded-md border transition-all cursor-pointer w-full"
-                [class]="selectedSpellIndices().has(spell.index)
-                  ? 'border-gold/60 bg-gold/5'
-                  : 'border-white/10 hover:border-white/25'"
-                (click)="toggleSpell(spell.index)"
-                style="background: transparent; font-family: inherit;"
-              >
-                <div class="flex items-start justify-between gap-3">
-                  <div class="flex-1 min-w-0">
-                    <div class="flex items-center gap-2 mb-1">
-                      <span class="font-semibold text-sm" [class]="selectedSpellIndices().has(spell.index) ? 'text-parchment' : 'text-slate'">
-                        {{ spell.name }}
-                      </span>
-                      <span class="text-xs border border-white/15 rounded px-1.5 py-0.5 text-slate">
-                        {{ spell.level === 0 ? 'Cantrip' : spell.level + (spell.level === 1 ? 'st' : spell.level === 2 ? 'nd' : spell.level === 3 ? 'rd' : 'th') + ' level' }}
-                      </span>
-                      <span class="text-xs text-coal">{{ spell.school }}</span>
-                    </div>
-                    <div class="flex gap-3 text-xs text-coal">
-                      <span>{{ spell.casting_time }}</span>
-                      <span>{{ spell.range }}</span>
-                      <span>{{ spell.duration }}</span>
-                    </div>
-                  </div>
-                  @if (selectedSpellIndices().has(spell.index)) {
-                    <span class="text-gold text-xs shrink-0 mt-0.5">✓ Known</span>
-                  }
-                </div>
-              </button>
-            }
-          </div>
-          @if (selectedSpellIndices().size) {
-            <p class="text-sm text-slate mt-4">
-              <span class="text-gold font-medium">{{ selectedSpellIndices().size }}</span> spell(s) selected
-            </p>
-          }
-        }
+        <app-spells-step
+          [spells]="spells()"
+          [selectedClass]="primaryClass()"
+          [selectedSpellIndices]="selectedSpellIndices()"
+          (spellToggled)="toggleSpell($event)"
+        />
       }
-
-      <!-- Step 6: Details -->
       @if (activeStep() === 6) {
-        <h2 class="font-brand text-xl text-parchment mb-4">Character Details</h2>
-        <div class="flex gap-6 flex-wrap items-start">
-          <!-- Form fields -->
-          <div class="flex flex-col gap-4 flex-1 min-w-64">
-            <div class="field">
-              <label class="field-label">Character Name</label>
-              <input class="field-input" [(ngModel)]="characterName" placeholder="Unnamed Character" name="charName" />
-            </div>
-            <div class="flex gap-3">
-              <div class="field flex-1">
-                <label class="field-label">Level</label>
-                <input class="field-input" type="number" [ngModel]="level()" (ngModelChange)="level.set(+$event)" min="1" max="20" name="level" />
-              </div>
-              <div class="field flex-1">
-                <label class="field-label">Alignment</label>
-                <select class="field-input" [(ngModel)]="alignment" name="alignment">
-                  @for (a of alignments; track a) { <option [value]="a">{{ a }}</option> }
-                </select>
-              </div>
-            </div>
-            @if (subclassOptions().length && level() >= 3) {
-              <div class="field">
-                <label class="field-label">Subclass</label>
-                <select class="field-input" [(ngModel)]="subclass" name="subclass">
-                  <option value="">— None —</option>
-                  @for (s of subclassOptions(); track s) { <option [value]="s">{{ s }}</option> }
-                </select>
-              </div>
-            }
-          </div>
-
-          <!-- Stats panel -->
-          <div class="card w-48 flex-shrink-0">
-            <div class="p-4">
-              <h3 class="font-brand text-sm text-parchment mb-3 m-0">Derived Stats</h3>
-              <div class="grid grid-cols-2 gap-2 text-center">
-                <div class="bg-elevated rounded p-2">
-                  <p class="text-xl font-bold text-gold m-0">{{ maxHP() }}</p>
-                  <p class="text-xs text-slate m-0 mt-0.5">Max HP</p>
-                </div>
-                <div class="bg-elevated rounded p-2">
-                  <p class="text-xl font-bold text-gold m-0">{{ armorClass() }}</p>
-                  <p class="text-xs text-slate m-0 mt-0.5">AC</p>
-                </div>
-                <div class="bg-elevated rounded p-2">
-                  <p class="text-xl font-bold text-gold m-0">{{ speed() }}</p>
-                  <p class="text-xs text-slate m-0 mt-0.5">Speed</p>
-                </div>
-                <div class="bg-elevated rounded p-2">
-                  <p class="text-xl font-bold text-gold m-0">+{{ profBonus() }}</p>
-                  <p class="text-xs text-slate m-0 mt-0.5">Prof</p>
-                </div>
-              </div>
-              @if (selectedRace() || selectedClass() || selectedBackground()) {
-                <div class="flex flex-col gap-1 mt-3">
-                  @if (selectedRace()) { <span class="tag">{{ selectedRace()!.name }}</span> }
-                  @if (selectedClass()) { <span class="tag">{{ selectedClass()!.name }}</span> }
-                  @if (selectedBackground()) { <span class="tag">{{ selectedBackground()!.name }}</span> }
-                </div>
-              }
-            </div>
-          </div>
-        </div>
+        <app-details-step
+          [alignment]="alignment()"
+          [maxHP]="maxHP()"
+          [armorClass]="armorClass()"
+          [speed]="speed()"
+          [profBonus]="profBonus()"
+          [selectedRace]="selectedRace()"
+          [selectedClass]="primaryClass()"
+          [selectedBackground]="selectedBackground()"
+          (alignmentChanged)="alignment.set($event)"
+        />
       }
-
     </div>
 
     <!-- Persistent footer -->
     <div class="flex items-center justify-between px-6 py-4 border-t border-white/10 flex-shrink-0 bg-canvas">
-      <button class="btn-ghost" (click)="cancelled.emit()">{{ isEditing() ? 'Close' : 'Cancel' }}</button>
+      <div class="flex items-center gap-3">
+        <button class="btn-ghost" (click)="cancelAndSave()">{{ isEditing() ? 'Close' : 'Cancel' }}</button>
+        <span class="text-xs">
+          @if (saveStatus() === 'saving') { <span class="text-slate">Saving…</span> }
+          @if (saveStatus() === 'saved')  { <span class="text-success">Saved ✓</span> }
+        </span>
+      </div>
       <div class="flex gap-2">
-        <button class="btn-outline" [disabled]="saving()" (click)="save()">
-          @if (saving()) { <span class="spinner-sm"></span> } @else { Save Progress }
+        <button class="btn-outline" [disabled]="activeStep() === 0" (click)="prev()">
+          ← Previous
         </button>
-        <button class="btn-primary" [disabled]="saving()" (click)="saveAndClose()">
-          {{ isEditing() ? 'Save & Close' : 'Create Character' }}
-        </button>
+        @if (isLastStep()) {
+          <button class="btn-primary" [disabled]="saving()" (click)="finish()">
+            @if (saving()) { <span class="spinner-sm"></span> } @else { Done }
+          </button>
+        } @else {
+          <button class="btn-primary" (click)="next()">
+            Next →
+          </button>
+        }
       </div>
     </div>
 

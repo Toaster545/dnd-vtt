@@ -1,0 +1,20 @@
+{
+  "index": "longbow",
+  "name": "Longbow",
+  "type": "weapon",
+  "category": "Martial Ranged",
+  "damage": "1d8",
+  "damage_type": "piercing",
+  "properties": [
+    "Ammunition (range 150/600)",
+    "Heavy",
+    "Two-Handed"
+  ],
+  "weight": 2,
+  "cost": "50 gp",
+  "description": "A tall bow capable of long-range shots.",
+  "mastery": {
+    "property": "Slow",
+    "description": "Hit reduces the target's speed by 10 ft. until the start of your next turn."
+  }
+}

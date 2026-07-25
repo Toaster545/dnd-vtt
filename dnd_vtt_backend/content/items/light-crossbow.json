@@ -1,0 +1,20 @@
+{
+  "index": "light-crossbow",
+  "name": "Light Crossbow",
+  "type": "weapon",
+  "category": "Simple Ranged",
+  "damage": "1d8",
+  "damage_type": "piercing",
+  "properties": [
+    "Ammunition (range 80/320)",
+    "Loading",
+    "Two-Handed"
+  ],
+  "weight": 5,
+  "cost": "25 gp",
+  "description": "A compact crossbow, slow to reload but simple to use.",
+  "mastery": {
+    "property": "Slow",
+    "description": "Hit reduces the target's speed by 10 ft. until the start of your next turn."
+  }
+}

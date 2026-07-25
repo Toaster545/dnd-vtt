@@ -1,23 +1,63 @@
 {
   "index": "halfling",
   "name": "Halfling",
+  "description": "The comforts of home are the goals of most halflings' lives: a place to settle in peace and quiet, far from marauding monsters and clashing armies. Yet halfling adventurers are surprisingly common among their kind, off seeking adventure and fortune far from home.",
   "speed": 25,
   "size": "Small",
-  "ability_bonuses": [{ "ability": "dexterity", "bonus": 2 }],
-  "traits": ["Lucky", "Brave", "Halfling Nimbleness"],
-  "languages": ["Common", "Halfling"],
+  "traits": [
+    "Lucky",
+    "Brave",
+    "Halfling Nimbleness"
+  ],
+  "grants": [
+    {
+      "type": "feature",
+      "name": "Lucky",
+      "description": "When you roll a 1 on an attack roll, ability check, or saving throw, you can reroll the die and must use the new roll."
+    },
+    {
+      "type": "feature",
+      "name": "Brave",
+      "description": "Advantage on saving throws against being frightened."
+    },
+    {
+      "type": "feature",
+      "name": "Halfling Nimbleness",
+      "description": "You can move through the space of any creature that is a size larger than you."
+    }
+  ],
+  "languages": [
+    "Common",
+    "Halfling"
+  ],
   "subraces": [
     {
       "index": "lightfoot",
       "name": "Lightfoot Halfling",
-      "ability_bonuses": [{ "ability": "charisma", "bonus": 1 }],
-      "traits": ["Naturally Stealthy"]
+      "traits": [
+        "Naturally Stealthy"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Naturally Stealthy",
+          "description": "You can attempt to hide even when you are obscured only by a creature that is at least one size larger than you."
+        }
+      ]
     },
     {
       "index": "stout",
       "name": "Stout Halfling",
-      "ability_bonuses": [{ "ability": "constitution", "bonus": 1 }],
-      "traits": ["Stout Resilience"]
+      "traits": [
+        "Stout Resilience"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Stout Resilience",
+          "description": "Advantage on saving throws against poison, and resistance to poison damage."
+        }
+      ]
     }
   ]
 }

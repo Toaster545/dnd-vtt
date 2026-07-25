@@ -6,6 +6,7 @@ import { DmCreateComponent } from './dm-create/dm-create';
 import { DmPlayComponent } from './dm-play/dm-play';
 
 type Tab = 'create' | 'play';
+type PlaySubTab = 'sessions' | 'characters';
 
 @Component({
   selector: 'app-dm-shell',
@@ -15,5 +16,13 @@ type Tab = 'create' | 'play';
 })
 export class DmShellComponent {
   auth = inject(AuthService);
-  activeTab = signal<Tab>('create');
+  activeTab    = signal<Tab>('create');
+  playSubTab   = signal<PlaySubTab>('sessions');
+  playMenuOpen = signal(false);
+
+  selectPlay(tab: PlaySubTab) {
+    this.activeTab.set('play');
+    this.playSubTab.set(tab);
+    this.playMenuOpen.set(false);
+  }
 }

@@ -1,0 +1,18 @@
+{
+  "index": "rapier",
+  "name": "Rapier",
+  "type": "weapon",
+  "category": "Martial Melee",
+  "damage": "1d8",
+  "damage_type": "piercing",
+  "properties": [
+    "Finesse"
+  ],
+  "weight": 2,
+  "cost": "25 gp",
+  "description": "A slender, sharply pointed blade.",
+  "mastery": {
+    "property": "Vex",
+    "description": "Hit grants advantage on your next attack roll against that target before the end of your next turn."
+  }
+}

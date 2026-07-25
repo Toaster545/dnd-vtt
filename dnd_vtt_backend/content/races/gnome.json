@@ -1,23 +1,85 @@
 {
   "index": "gnome",
   "name": "Gnome",
+  "description": "A gnome's energy and enthusiasm for living shines through every inch of their tiny body. Gnomes average about 3 feet tall and weigh 40 to 45 pounds, and their bright eyes and mischievous grins give away their good-natured love of life.",
   "speed": 25,
   "size": "Small",
-  "ability_bonuses": [{ "ability": "intelligence", "bonus": 2 }],
-  "traits": ["Darkvision (60 ft)", "Gnome Cunning"],
-  "languages": ["Common", "Gnomish"],
+  "traits": [
+    "Darkvision (60 ft)",
+    "Gnome Cunning"
+  ],
+  "grants": [
+    {
+      "type": "feature",
+      "name": "Darkvision (60 ft)",
+      "description": "See in dim light within 60 ft. as if it were bright light, and in darkness as if it were dim light (no color, only shades of gray)."
+    },
+    {
+      "type": "feature",
+      "name": "Gnome Cunning",
+      "description": "Advantage on all Intelligence, Wisdom, and Charisma saving throws against magic."
+    }
+  ],
+  "languages": [
+    "Common",
+    "Gnomish"
+  ],
   "subraces": [
     {
       "index": "forest-gnome",
       "name": "Forest Gnome",
-      "ability_bonuses": [{ "ability": "dexterity", "bonus": 1 }],
-      "traits": ["Natural Illusionist", "Speak with Small Beasts"]
+      "traits": [
+        "Natural Illusionist",
+        "Speak with Small Beasts"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Natural Illusionist",
+          "description": "Know the Minor Illusion cantrip. Intelligence is your spellcasting ability for it."
+        },
+        {
+          "type": "feature",
+          "name": "Speak with Small Beasts",
+          "description": "Communicate simple ideas with Small or smaller beasts through sounds and gestures."
+        }
+      ]
     },
     {
       "index": "rock-gnome",
       "name": "Rock Gnome",
-      "ability_bonuses": [{ "ability": "constitution", "bonus": 1 }],
-      "traits": ["Artificer's Lore", "Tinker"]
+      "traits": [
+        "Artificer's Lore",
+        "Tinker"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Artificer's Lore",
+          "description": "Whenever you make an Intelligence (History) check related to magic items, alchemical objects, or technological devices, you're considered proficient and add double your proficiency bonus."
+        },
+        {
+          "type": "choice",
+          "key": "tinker_device",
+          "name": "Tinker",
+          "choose": 1,
+          "description": "Using tinker's tools, spend 1 hour and 10 gp of materials to construct a Tiny clockwork device (AC 5, 1 HP). It ceases to function after 24 hours unless you spend 1 hour repairing it, or when you dismantle it. Choose the device you build most often.",
+          "options": [
+            {
+              "name": "Clockwork Toy",
+              "description": "A toy animal, monster, or person that moves randomly for 1 minute."
+            },
+            {
+              "name": "Fire Starter",
+              "description": "Use the device to kindle a small fire."
+            },
+            {
+              "name": "Music Box",
+              "description": "Plays a single song at a moderate volume when opened."
+            }
+          ]
+        }
+      ]
     }
   ]
 }

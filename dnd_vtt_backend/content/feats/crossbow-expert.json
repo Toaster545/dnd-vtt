@@ -1,0 +1,6 @@
+{
+  "index": "crossbow-expert",
+  "name": "Crossbow Expert",
+  "description": "You ignore the loading property of crossbows you're proficient with. Being within 5 ft. of a hostile creature doesn't impose disadvantage on your ranged attack rolls. When you use the Attack action with a one-handed weapon, you can make a bonus action attack with a hand crossbow you're holding.",
+  "category": "general"
+}
