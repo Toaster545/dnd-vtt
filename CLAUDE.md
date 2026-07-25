@@ -73,10 +73,31 @@ Notably, character data was migrated from explicit columns (v1) to a single JSON
 character records are read/written as a loosely-typed JSON document, not normalized columns.
 
 **Static 5e game content vs. character data.** `ContentModule` (`src/content/`) serves static SRD-derived
-game data (classes, races, backgrounds, items, spells) from JSON files under `dnd_vtt_backend/content/`,
+game data (classes, races, backgrounds, feats, items, spells) from JSON files under `dnd_vtt_backend/content/`,
 cached in memory per-process. This is distinct from `Open5eService`/`Dnd5eService` on the frontend, which
 historically hit the external Open5e API — check which one a given feature actually uses before assuming
 game data comes from the network vs. local files.
+
+**Feats.** Each feat (`content/feats/*.json`) has a `category` (`origin`, `general`, or
+`fighting_style`) and an optional `prerequisite` (ability score minimums, armor/spellcasting
+requirements, a required class feature, or specific classes). Per the 2024 rules, a feat choice
+that doesn't name a specific category can be filled from *any* category as long as its
+prerequisite is met — e.g. a Fighter's level 4 ASI-or-feat slot can take a Fighting Style feat
+too, since having the Fighting Style feature (gained at level 1) satisfies that feat's only
+prerequisite. `class-step.ts`'s `qualifiesForFeat()` checks prerequisites; don't re-narrow feat
+pickers to a single category without re-checking that rule. A feat's mechanical grant is data,
+not just description text: `abilityIncrease` (a flat or player-chosen +1 ability, most General
+feats) and `effects` (the same `TraitEffect` shape a class `choice` option uses, e.g. a Fighting
+Style's `ac_bonus`) are both applied automatically by `character-wizard.ts` once a feat is picked,
+independent of each other — a feat can carry both, either, or neither.
+
+**Grant types.** Class/race/background levels describe their choices as a `TraitGrant` union
+(`feature`, `choice`, `skill_choice`, `weapon_mastery`, `ability_choice`, `feat_pick`) that
+`class-step.ts`/`.html` renders generically rather than one-off UI per class. `ability_choice`
+is the class ASI slot (`allowFeat` lets the player take a feat instead, stored under a
+companion `${key}:feat` trait key); `feat_pick` is a pure feat picker with no ASI alternative,
+sourced from the Feats content and filtered to a `category` (e.g. a class's Fighting Style
+feature) — see `fighter.json`/`paladin.json`/`ranger.json` for the pattern.
 
 **Real-time tokens.** `MapsModule` exposes both REST endpoints (map/token CRUD, admin-only for mutation)
 and a socket.io gateway (`tokens.gateway.ts`) that broadcasts token position changes to all connected

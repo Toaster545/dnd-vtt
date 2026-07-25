@@ -2,5 +2,15 @@
   "index": "weapon-master",
   "name": "Weapon Master",
   "description": "Gain proficiency with four weapons of your choice. Increase Strength or Dexterity by 1, to a maximum of 20.",
-  "category": "general"
+  "category": "general",
+  "prerequisite": {
+    "level": 4
+  },
+  "abilityIncrease": {
+    "abilities": [
+      "strength",
+      "dexterity"
+    ],
+    "amount": 1
+  }
 }

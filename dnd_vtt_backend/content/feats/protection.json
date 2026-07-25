@@ -1,0 +1,14 @@
+{
+  "index": "protection",
+  "name": "Protection",
+  "description": "Reaction: when a creature you can see attacks a target other than you within 5 ft of you, impose disadvantage on that attack roll (and all others against the target until the start of your next turn) if you're holding a shield.",
+  "category": "fighting_style",
+  "prerequisite": {
+    "feature": "Fighting Style"
+  },
+  "effects": [
+    {
+      "type": "special"
+    }
+  ]
+}

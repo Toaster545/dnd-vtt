@@ -1,0 +1,14 @@
+{
+  "index": "interception",
+  "name": "Interception",
+  "description": "Reaction: reduce damage to a nearby creature by 1d10 + proficiency bonus when you're wielding a weapon or shield.",
+  "category": "fighting_style",
+  "prerequisite": {
+    "feature": "Fighting Style"
+  },
+  "effects": [
+    {
+      "type": "special"
+    }
+  ]
+}

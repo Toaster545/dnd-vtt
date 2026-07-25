@@ -2,5 +2,17 @@
   "index": "spell-sniper",
   "name": "Spell Sniper",
   "description": "When you cast a spell that requires an attack roll, its range is doubled, and the spell's attacks ignore half and three-quarters cover. Learn one cantrip that requires an attack roll from a spell list you know.",
-  "category": "general"
+  "category": "general",
+  "prerequisite": {
+    "level": 4,
+    "spellcasting": true
+  },
+  "abilityIncrease": {
+    "abilities": [
+      "intelligence",
+      "wisdom",
+      "charisma"
+    ],
+    "amount": 1
+  }
 }

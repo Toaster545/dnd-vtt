@@ -2,5 +2,19 @@
   "index": "skill-expert",
   "name": "Skill Expert",
   "description": "Increase one ability score by 1, to a maximum of 20. Gain proficiency in one skill of your choice. Choose one skill you're proficient in and gain expertise with it, doubling your proficiency bonus for checks with that skill.",
-  "category": "general"
+  "category": "general",
+  "prerequisite": {
+    "level": 4
+  },
+  "abilityIncrease": {
+    "abilities": [
+      "strength",
+      "dexterity",
+      "constitution",
+      "intelligence",
+      "wisdom",
+      "charisma"
+    ],
+    "amount": 1
+  }
 }

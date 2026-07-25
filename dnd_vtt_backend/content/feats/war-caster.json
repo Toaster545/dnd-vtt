@@ -2,5 +2,17 @@
   "index": "war-caster",
   "name": "War Caster",
   "description": "You have advantage on Constitution saving throws to maintain concentration on a spell. You can perform spells' somatic components even when a weapon or shield occupies both hands. When a hostile creature's movement provokes an opportunity attack from you, you can cast a spell at it with a casting time of 1 action instead of making an opportunity attack.",
-  "category": "general"
+  "category": "general",
+  "prerequisite": {
+    "level": 4,
+    "spellcasting": true
+  },
+  "abilityIncrease": {
+    "abilities": [
+      "intelligence",
+      "wisdom",
+      "charisma"
+    ],
+    "amount": 1
+  }
 }

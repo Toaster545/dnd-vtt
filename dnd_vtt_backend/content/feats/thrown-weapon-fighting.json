@@ -1,0 +1,15 @@
+{
+  "index": "thrown-weapon-fighting",
+  "name": "Thrown Weapon Fighting",
+  "description": "+2 bonus to damage rolls with thrown weapons; draw a thrown weapon as part of the attack.",
+  "category": "fighting_style",
+  "prerequisite": {
+    "feature": "Fighting Style"
+  },
+  "effects": [
+    {
+      "type": "thrown_damage_bonus",
+      "value": 2
+    }
+  ]
+}

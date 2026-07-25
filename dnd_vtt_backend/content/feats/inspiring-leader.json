@@ -2,5 +2,19 @@
   "index": "inspiring-leader",
   "name": "Inspiring Leader",
   "description": "Spend 10 minutes inspiring your companions. Up to six creatures of your choice within 30 ft. who can see and hear you (including you) each gain temporary hit points equal to your level + your Charisma modifier.",
-  "category": "general"
+  "category": "general",
+  "prerequisite": {
+    "level": 4,
+    "abilities": [
+      "wisdom",
+      "charisma"
+    ]
+  },
+  "abilityIncrease": {
+    "abilities": [
+      "wisdom",
+      "charisma"
+    ],
+    "amount": 1
+  }
 }

@@ -113,7 +113,23 @@ export class CharacterWizardComponent implements OnInit, OnDestroy {
     return this.sumAbilityChoicePicks(bg ? [bg] : [], this.backgroundTraits());
   });
 
-  // Sum of every ability_choice (Ability Score Improvement) point spent across all selected
+  // A feat taken in place of an ASI (or via a pure feat_pick like Fighting Style) can itself
+  // carry an ability score increase — most General feats give a flat or player-chosen +1,
+  // independent of any `effects` it also carries. Folds that into whichever bonus map is
+  // building, using `chosenAbility` (the companion `:feat_ability` pick) when the feat offers
+  // more than one eligible ability.
+  private applyFeatAbilityBonus(
+    bonus: Record<Ability, number>, featIndex: string | undefined, chosenAbility: string | undefined,
+  ) {
+    if (!featIndex) return;
+    const inc = this.feats().find(f => f.index === featIndex)?.abilityIncrease;
+    if (!inc) return;
+    const ability = inc.abilities.length === 1 ? inc.abilities[0] : chosenAbility;
+    if (ability && ability in bonus) bonus[ability as Ability] += inc.amount;
+  }
+
+  // Sum of every ability_choice (Ability Score Improvement) point spent, plus the ability
+  // increase baked into any feat taken instead (or via a feat_pick grant), across all selected
   // classes and subclasses.
   private classAbilityBonuses = computed(() => {
     const bonus: Record<Ability, number> = { strength: 0, dexterity: 0, constitution: 0, intelligence: 0, wisdom: 0, charisma: 0 };
@@ -122,9 +138,15 @@ export class CharacterWizardComponent implements OnInit, OnDestroy {
       const levels = [...entry.cls.levels, ...(subclass?.levels ?? [])];
       for (const lvl of levels) {
         for (const grant of lvl.grants ?? []) {
-          if (grant.type !== 'ability_choice') continue;
-          for (const ability of entry.traits[grant.key] ?? []) {
-            if (ability in bonus) bonus[ability as Ability] += 1;
+          if (grant.type === 'ability_choice') {
+            for (const ability of entry.traits[grant.key] ?? []) {
+              if (ability in bonus) bonus[ability as Ability] += 1;
+            }
+            this.applyFeatAbilityBonus(bonus, entry.traits[`${grant.key}:feat`]?.[0], entry.traits[`${grant.key}:feat_ability`]?.[0]);
+          } else if (grant.type === 'feat_pick') {
+            for (const featIndex of entry.traits[grant.key] ?? []) {
+              this.applyFeatAbilityBonus(bonus, featIndex, entry.traits[`${grant.key}:feat_ability`]?.[0]);
+            }
           }
         }
       }
@@ -165,22 +187,37 @@ export class CharacterWizardComponent implements OnInit, OnDestroy {
     if (!cls) return 10;
     const die = cls.hit_die;
     const conMod = abilityModifier(this.finalScores().constitution);
-    return Math.max(1, die + conMod + (this.level() - 1) * (Math.floor(die / 2) + 1 + conMod));
+    const base = Math.max(1, die + conMod + (this.level() - 1) * (Math.floor(die / 2) + 1 + conMod));
+    // e.g. Tough: +2 max HP per character level, on top of the normal hit-die progression.
+    const perLevelBonus = this.selectedEffects('hp_bonus_per_level').reduce((sum, e) => sum + (e.value ?? 0), 0);
+    return base + perLevelBonus * this.level();
   });
-  // Scans every chosen class option for a structured `effect` of the given type — e.g. a
-  // fighting style's ac_bonus — so any class/option that carries one is picked up
-  // automatically, without matching on the option's display name.
+  // Scans every chosen class option AND every chosen feat for a structured `effect`/`effects`
+  // entry of the given type — e.g. a fighting style's ac_bonus, whether it came from an
+  // embedded class option or a feat picked via `ability_choice`/`feat_pick` — so anything that
+  // carries one is picked up automatically, without matching on its display name.
   private selectedEffects(type: string): TraitEffect[] {
     const out: TraitEffect[] = [];
+    const feats = this.feats();
+    const collectFeat = (featIndex: string | undefined) => {
+      for (const eff of feats.find(f => f.index === featIndex)?.effects ?? []) {
+        if (eff.type === type) out.push(eff);
+      }
+    };
     for (const entry of this.selectedClasses()) {
       const subclass = entry.cls.subclasses.find(s => s.name === entry.subclass);
       const levels = [...entry.cls.levels, ...(subclass?.levels ?? [])];
       for (const lvl of levels) {
         for (const grant of lvl.grants ?? []) {
-          if (grant.type !== 'choice') continue;
-          const picked = entry.traits[grant.key] ?? [];
-          for (const opt of grant.options) {
-            if (opt.effect && picked.includes(opt.name) && opt.effect.type === type) out.push(opt.effect);
+          if (grant.type === 'choice') {
+            const picked = entry.traits[grant.key] ?? [];
+            for (const opt of grant.options) {
+              if (opt.effect && picked.includes(opt.name) && opt.effect.type === type) out.push(opt.effect);
+            }
+          } else if (grant.type === 'ability_choice') {
+            collectFeat(entry.traits[`${grant.key}:feat`]?.[0]);
+          } else if (grant.type === 'feat_pick') {
+            for (const featIndex of entry.traits[grant.key] ?? []) collectFeat(featIndex);
           }
         }
       }

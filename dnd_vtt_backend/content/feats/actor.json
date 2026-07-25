@@ -1,0 +1,18 @@
+{
+  "index": "actor",
+  "name": "Actor",
+  "description": "While disguised as a real or fictional person, you have advantage on Charisma (Deception or Performance) checks to convince others you are that person. You can also mimic the sounds and speech of other creatures; a listener must succeed on a Wisdom (Insight) check (DC 8 + your Charisma modifier + proficiency bonus) to detect the mimicry is faked. Increase your Charisma by 1, to a maximum of 20.",
+  "category": "general",
+  "prerequisite": {
+    "level": 4,
+    "abilities": [
+      "charisma"
+    ]
+  },
+  "abilityIncrease": {
+    "abilities": [
+      "charisma"
+    ],
+    "amount": 1
+  }
+}

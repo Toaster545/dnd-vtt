@@ -2,5 +2,16 @@
   "index": "moderately-armored",
   "name": "Moderately Armored",
   "description": "Gain proficiency with medium armor and shields. Increase Strength or Dexterity by 1, to a maximum of 20.",
-  "category": "general"
+  "category": "general",
+  "prerequisite": {
+    "level": 4,
+    "armorProficiency": "light"
+  },
+  "abilityIncrease": {
+    "abilities": [
+      "strength",
+      "dexterity"
+    ],
+    "amount": 1
+  }
 }

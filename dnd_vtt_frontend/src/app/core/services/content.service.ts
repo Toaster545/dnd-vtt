@@ -48,16 +48,49 @@ export type TraitGrant =
   // unique per occurrence (e.g. "asi_4", "asi_8"), not shared across levels the way a scaling
   // resource like Action Surge is. When `allowFeat` is set (class ASI only), the player may
   // take a feat instead of the ability increase — stored under a companion trait key,
-  // `${key}:feat`, holding the chosen feat's index; `feats` optionally restricts the list.
-  | { type: 'ability_choice'; key: string; name: string; description?: string; points: number; abilities?: string[]; allowFeat?: boolean; feats?: string[] };
+  // `${key}:feat`, holding the chosen feat's index (and `${key}:feat_ability` if that feat's
+  // own ability bonus has more than one eligible ability); `feats` optionally restricts the list.
+  | { type: 'ability_choice'; key: string; name: string; description?: string; points: number; abilities?: string[]; allowFeat?: boolean; feats?: string[] }
+  // A pure feat picker sourced from the Feats content library, filtered to `category` (and
+  // optionally further restricted to `feats`) — e.g. a class's Fighting Style feature. No ASI
+  // alternative (unlike `ability_choice`). `excludeKey` points at another feat_pick/ability_choice
+  // grant's key whose already-picked feat(s) should be excluded from this one's options (e.g.
+  // Fighter's Additional Fighting Style must differ from the style picked at level 1).
+  | { type: 'feat_pick'; key: string; name: string; choose: number; description?: string; category: 'origin' | 'general' | 'fighting_style'; feats?: string[]; excludeKey?: string };
 
 export interface DndFeat {
   index: string;
   name: string;
   description: string;
   // Origin feats come from Background (or Human's Versatile trait) at character creation —
-  // they never belong in the level 4+ ASI-or-feat pool, only General feats do.
-  category: 'origin' | 'general';
+  // they never belong in the level 4+ ASI-or-feat pool. Fighting Style feats are only ever
+  // offered through a class's Fighting Style feature (see `feat_pick` grants), never the
+  // general ASI-or-feat pool either. Only General feats populate that pool.
+  category: 'origin' | 'general' | 'fighting_style';
+  // "For which you qualify" — a feat picker should only offer feats the character actually
+  // meets. `abilities` is an OR list (any one of these at `min` qualifies); level is always 4
+  // for every current General feat (the earliest this slot appears) so it's carried for
+  // completeness rather than actively gated on. `feature`/`classes` gate Fighting Style feats
+  // that are class-restricted (e.g. Blessed Warrior requires the Paladin's Fighting Style
+  // feature) — `feature` is informational (the grant context already implies it), `classes` is
+  // actively checked against the character's selected classes.
+  prerequisite?: {
+    level?: number;
+    abilities?: string[];
+    min?: number; // ability score threshold for `abilities`; defaults to 13 if omitted
+    armorProficiency?: 'light' | 'medium' | 'heavy' | 'shield';
+    spellcasting?: boolean;
+    feature?: string;
+    classes?: string[];
+  };
+  // Mechanical grants baked into taking the feat itself, applied automatically to computed
+  // stats — independent of `prerequisite` (which is about qualifying to take it) and of each
+  // other (a feat can carry both, or either alone). Most General feats give a flat or
+  // player-chosen +1 to one ability (max 20); `abilities.length > 1` means the player picks
+  // which. Fighting Style feats instead (or additionally) carry `effects`, the same TraitEffect
+  // shape a class `choice` option uses, for their combat bonus (AC, damage, attack rolls, etc.).
+  abilityIncrease?: { abilities: string[]; amount: number };
+  effects?: TraitEffect[];
 }
 
 export interface ClassLevel {

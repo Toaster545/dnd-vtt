@@ -2,5 +2,19 @@
   "index": "sentinel",
   "name": "Sentinel",
   "description": "When you hit a creature with an opportunity attack, its speed becomes 0 for the rest of the turn. Creatures provoke opportunity attacks from you even when they take the Disengage action. When a creature within 5 ft. of you makes an attack against a target other than you, you can use your reaction to make a melee attack against the attacker.",
-  "category": "general"
+  "category": "general",
+  "prerequisite": {
+    "level": 4,
+    "abilities": [
+      "strength",
+      "dexterity"
+    ]
+  },
+  "abilityIncrease": {
+    "abilities": [
+      "strength",
+      "dexterity"
+    ],
+    "amount": 1
+  }
 }

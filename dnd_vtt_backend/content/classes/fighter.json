@@ -42,19 +42,9 @@
           "level": 10, "features": ["Additional Fighting Style"],
           "grants": [
             {
-              "type": "choice", "key": "additional_fighting_style", "name": "Additional Fighting Style", "choose": 1,
+              "type": "feat_pick", "key": "additional_fighting_style", "name": "Additional Fighting Style", "choose": 1,
               "description": "Learn a second Fighting Style option of your choice, different from the one you already know.",
-              "options": [
-                { "name": "Archery", "description": "+2 bonus to attack rolls you make with ranged weapons.", "effect": { "type": "ranged_attack_bonus", "value": 2 } },
-                { "name": "Blind Fighting", "description": "Blindsight 10 ft.; can fight normally while blinded or in darkness within that range.", "effect": { "type": "special" } },
-                { "name": "Defense", "description": "+1 bonus to AC while wearing armor.", "effect": { "type": "ac_bonus", "value": 1 } },
-                { "name": "Dueling", "description": "+2 bonus to damage rolls when wielding a melee weapon in one hand with no other weapons.", "effect": { "type": "melee_damage_bonus", "value": 2 } },
-                { "name": "Great Weapon Fighting", "description": "Reroll 1s and 2s on damage dice for two-handed or versatile melee weapons.", "effect": { "type": "reroll_damage_dice", "values": [1, 2] } },
-                { "name": "Interception", "description": "Reaction: reduce damage to a nearby creature by 1d10 + proficiency bonus when you're wielding a weapon or shield.", "effect": { "type": "special" } },
-                { "name": "Thrown Weapon Fighting", "description": "+2 bonus to damage rolls with thrown weapons; draw a thrown weapon as part of the attack.", "effect": { "type": "thrown_damage_bonus", "value": 2 } },
-                { "name": "Two-Weapon Fighting", "description": "Add your ability modifier to the damage of your off-hand attack.", "effect": { "type": "special" } },
-                { "name": "Unarmed Fighting", "description": "Unarmed strikes deal 1d6 (or 1d8 if empty-handed) damage; bonus action grapple damage.", "effect": { "type": "special" } }
-              ]
+              "category": "fighting_style", "excludeKey": "fighting_style"
             }
           ]
         },
@@ -233,19 +223,9 @@
           "description": "Choose 2 skills from the fighter list."
         },
         {
-          "type": "choice", "key": "fighting_style", "name": "Fighting Style", "choose": 1,
+          "type": "feat_pick", "key": "fighting_style", "name": "Fighting Style", "choose": 1,
           "description": "Adopt a particular style of fighting as your specialty.",
-          "options": [
-            { "name": "Archery", "description": "+2 bonus to attack rolls you make with ranged weapons.", "effect": { "type": "ranged_attack_bonus", "value": 2 } },
-            { "name": "Blind Fighting", "description": "Blindsight 10 ft.; can fight normally while blinded or in darkness within that range.", "effect": { "type": "special" } },
-            { "name": "Defense", "description": "+1 bonus to AC while wearing armor.", "effect": { "type": "ac_bonus", "value": 1 } },
-            { "name": "Dueling", "description": "+2 bonus to damage rolls when wielding a melee weapon in one hand with no other weapons.", "effect": { "type": "melee_damage_bonus", "value": 2 } },
-            { "name": "Great Weapon Fighting", "description": "Reroll 1s and 2s on damage dice for two-handed or versatile melee weapons.", "effect": { "type": "reroll_damage_dice", "values": [1, 2] } },
-            { "name": "Interception", "description": "Reaction: reduce damage to a nearby creature by 1d10 + proficiency bonus when you're wielding a weapon or shield.", "effect": { "type": "special" } },
-            { "name": "Thrown Weapon Fighting", "description": "+2 bonus to damage rolls with thrown weapons; draw a thrown weapon as part of the attack.", "effect": { "type": "thrown_damage_bonus", "value": 2 } },
-            { "name": "Two-Weapon Fighting", "description": "Add your ability modifier to the damage of your off-hand attack.", "effect": { "type": "special" } },
-            { "name": "Unarmed Fighting", "description": "Unarmed strikes deal 1d6 (or 1d8 if empty-handed) damage; bonus action grapple damage.", "effect": { "type": "special" } }
-          ]
+          "category": "fighting_style"
         },
         {
           "type": "feature", "key": "second-wind", "name": "Second Wind",

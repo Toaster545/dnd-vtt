@@ -2,5 +2,19 @@
   "index": "speedy",
   "name": "Speedy",
   "description": "Your walking speed increases by 10 ft. Difficult terrain doesn't cost you extra movement when you take the Dash action.",
-  "category": "general"
+  "category": "general",
+  "prerequisite": {
+    "level": 4,
+    "abilities": [
+      "dexterity",
+      "constitution"
+    ]
+  },
+  "abilityIncrease": {
+    "abilities": [
+      "dexterity",
+      "constitution"
+    ],
+    "amount": 1
+  }
 }

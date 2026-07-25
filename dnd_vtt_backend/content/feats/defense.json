@@ -1,0 +1,15 @@
+{
+  "index": "defense",
+  "name": "Defense",
+  "description": "+1 bonus to AC while wearing armor.",
+  "category": "fighting_style",
+  "prerequisite": {
+    "feature": "Fighting Style"
+  },
+  "effects": [
+    {
+      "type": "ac_bonus",
+      "value": 1
+    }
+  ]
+}

@@ -2,5 +2,16 @@
   "index": "mounted-combatant",
   "name": "Mounted Combatant",
   "description": "While mounted and not the target of an attack, you have advantage on melee attack rolls against unmounted creatures smaller than your mount. You can redirect an attack that would hit your mount to yourself instead. If your mount is subjected to an effect that allows a Dexterity save for half damage, it takes no damage on a success.",
-  "category": "general"
+  "category": "general",
+  "prerequisite": {
+    "level": 4
+  },
+  "abilityIncrease": {
+    "abilities": [
+      "strength",
+      "dexterity",
+      "wisdom"
+    ],
+    "amount": 1
+  }
 }

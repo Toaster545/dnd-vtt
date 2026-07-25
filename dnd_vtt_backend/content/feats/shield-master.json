@@ -2,5 +2,15 @@
   "index": "shield-master",
   "name": "Shield Master",
   "description": "If you take the Attack action, you can use a bonus action to shove a creature within 5 ft. with your shield. You can add your shield's AC bonus to any Dexterity saving throw against an effect that targets only you. If you're subjected to an effect that allows a Dexterity save for half damage, you can use your reaction to take no damage on a success instead.",
-  "category": "general"
+  "category": "general",
+  "prerequisite": {
+    "level": 4,
+    "armorProficiency": "shield"
+  },
+  "abilityIncrease": {
+    "abilities": [
+      "strength"
+    ],
+    "amount": 1
+  }
 }

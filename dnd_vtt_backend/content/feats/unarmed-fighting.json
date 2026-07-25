@@ -1,0 +1,14 @@
+{
+  "index": "unarmed-fighting",
+  "name": "Unarmed Fighting",
+  "description": "Unarmed strikes deal 1d6 (or 1d8 if empty-handed) damage; bonus action grapple damage.",
+  "category": "fighting_style",
+  "prerequisite": {
+    "feature": "Fighting Style"
+  },
+  "effects": [
+    {
+      "type": "special"
+    }
+  ]
+}

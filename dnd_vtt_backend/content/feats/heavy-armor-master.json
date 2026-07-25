@@ -2,5 +2,16 @@
   "index": "heavy-armor-master",
   "name": "Heavy Armor Master",
   "description": "While wearing heavy armor, bludgeoning, piercing, and slashing damage you take from nonmagical weapons is reduced by 3. Increase your Strength by 1, to a maximum of 20.",
-  "category": "general"
+  "category": "general",
+  "prerequisite": {
+    "level": 4,
+    "armorProficiency": "heavy"
+  },
+  "abilityIncrease": {
+    "abilities": [
+      "constitution",
+      "strength"
+    ],
+    "amount": 1
+  }
 }
