@@ -1,0 +1,6 @@
+{
+  "index": "elemental-adept",
+  "name": "Elemental Adept",
+  "description": "Choose a damage type: acid, cold, fire, lightning, or thunder. Spells you cast ignore resistance to that damage type, and when you roll damage of that type for a spell, you can treat any 1 on a damage die as a 2.",
+  "category": "general"
+}

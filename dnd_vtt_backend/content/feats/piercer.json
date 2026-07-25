@@ -1,0 +1,6 @@
+{
+  "index": "piercer",
+  "name": "Piercer",
+  "description": "Once per turn when you hit a creature with a piercing-damage weapon attack, you can reroll one damage die and use the new roll. When you score a critical hit that deals piercing damage, you can roll one additional damage die. Increase Strength or Dexterity by 1, to a maximum of 20.",
+  "category": "general"
+}

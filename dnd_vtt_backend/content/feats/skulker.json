@@ -1,0 +1,6 @@
+{
+  "index": "skulker",
+  "name": "Skulker",
+  "description": "You can try to hide when you are only lightly obscured. When you're hidden and miss with a ranged attack, missing doesn't reveal your position. Dim light doesn't impose disadvantage on your Wisdom (Perception) checks relying on sight.",
+  "category": "general"
+}
