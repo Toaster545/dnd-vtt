@@ -1,0 +1,6 @@
+{
+  "index": "mobile",
+  "name": "Mobile",
+  "description": "Your speed increases by 10 ft. When you make a melee attack against a creature, you don't provoke opportunity attacks from that creature for the rest of the turn. When you move into difficult terrain during the Dash action, you don't need to spend extra movement.",
+  "category": "general"
+}

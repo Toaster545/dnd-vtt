@@ -8,5 +8,6 @@
   "properties": ["Versatile (1d10)"],
   "weight": 3,
   "cost": "15 gp",
-  "description": "A straight-bladed sword effective in one or two hands. One of the most common weapons in the world."
+  "description": "A straight-bladed sword effective in one or two hands. One of the most common weapons in the world.",
+  "mastery": { "property": "Sap", "description": "Hit gives the target disadvantage on its next attack roll before the start of your next turn." }
 }

@@ -1,0 +1,18 @@
+{
+  "index": "sling",
+  "name": "Sling",
+  "type": "weapon",
+  "category": "Simple Ranged",
+  "damage": "1d4",
+  "damage_type": "bludgeoning",
+  "properties": [
+    "Ammunition (range 30/120)"
+  ],
+  "weight": 0,
+  "cost": "1 sp",
+  "description": "A leather pouch on a cord, used to hurl stones.",
+  "mastery": {
+    "property": "Slow",
+    "description": "Hit reduces the target's speed by 10 ft. until the start of your next turn."
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "index": "whip",
+  "name": "Whip",
+  "type": "weapon",
+  "category": "Martial Melee",
+  "damage": "1d4",
+  "damage_type": "slashing",
+  "properties": [
+    "Finesse",
+    "Reach"
+  ],
+  "weight": 3,
+  "cost": "2 gp",
+  "description": "A long, flexible weapon that keeps foes at bay.",
+  "mastery": {
+    "property": "Slow",
+    "description": "Hit reduces the target's speed by 10 ft. until the start of your next turn."
+  }
+}

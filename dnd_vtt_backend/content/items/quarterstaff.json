@@ -1,0 +1,18 @@
+{
+  "index": "quarterstaff",
+  "name": "Quarterstaff",
+  "type": "weapon",
+  "category": "Simple Melee",
+  "damage": "1d6",
+  "damage_type": "bludgeoning",
+  "properties": [
+    "Versatile (1d8)"
+  ],
+  "weight": 4,
+  "cost": "2 sp",
+  "description": "A simple wooden staff, useful in one or two hands.",
+  "mastery": {
+    "property": "Topple",
+    "description": "Hit can knock the target prone (target makes a Constitution save)."
+  }
+}

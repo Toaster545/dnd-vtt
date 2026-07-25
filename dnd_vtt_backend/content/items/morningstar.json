@@ -1,0 +1,16 @@
+{
+  "index": "morningstar",
+  "name": "Morningstar",
+  "type": "weapon",
+  "category": "Martial Melee",
+  "damage": "1d8",
+  "damage_type": "piercing",
+  "properties": [],
+  "weight": 4,
+  "cost": "15 gp",
+  "description": "A spiked metal ball mounted on a haft.",
+  "mastery": {
+    "property": "Sap",
+    "description": "Hit gives the target disadvantage on its next attack roll before the start of your next turn."
+  }
+}

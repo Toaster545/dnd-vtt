@@ -1,0 +1,16 @@
+{
+  "index": "war-pick",
+  "name": "War Pick",
+  "type": "weapon",
+  "category": "Martial Melee",
+  "damage": "1d8",
+  "damage_type": "piercing",
+  "properties": [],
+  "weight": 2,
+  "cost": "5 gp",
+  "description": "A pick adapted for war, able to punch through armor.",
+  "mastery": {
+    "property": "Sap",
+    "description": "Hit gives the target disadvantage on its next attack roll before the start of your next turn."
+  }
+}

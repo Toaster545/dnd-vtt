@@ -1,9 +1,35 @@
 {
   "index": "soldier",
   "name": "Soldier",
-  "skill_proficiencies": ["Athletics", "Intimidation"],
-  "tool_proficiencies": ["One type of gaming set", "Vehicles (land)"],
+  "skill_proficiencies": [
+    "Athletics",
+    "Intimidation"
+  ],
+  "tool_proficiencies": [
+    "One type of gaming set",
+    "Vehicles (land)"
+  ],
   "languages": "None",
-  "starting_equipment": ["Insignia of rank", "Trophy from a fallen enemy", "Bone dice or deck of cards", "Common clothes", "Belt pouch with 10 gp"],
-  "feature": "Military Rank"
+  "starting_equipment": [
+    "Insignia of rank",
+    "Trophy from a fallen enemy",
+    "Bone dice or deck of cards",
+    "Common clothes",
+    "Belt pouch with 10 gp"
+  ],
+  "feature": "Military Rank",
+  "grants": [
+    {
+      "type": "ability_choice",
+      "key": "ability_scores",
+      "name": "Ability Scores",
+      "description": "Increase one of the abilities below by 2 and a different one by 1, or increase all three by 1 each. No score can be increased above 20 this way.",
+      "points": 3,
+      "abilities": [
+        "strength",
+        "dexterity",
+        "constitution"
+      ]
+    }
+  ]
 }

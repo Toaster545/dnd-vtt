@@ -1,13 +1,78 @@
 {
   "index": "dragonborn",
   "name": "Dragonborn",
+  "description": "Born of dragons, as their name proclaims, dragonborn walk proudly through a world that greets them with fearful incomprehension. Shaped by draconic gods or the dragons themselves, dragonborn originally hatched from dragon eggs as a unique race, combining the best attributes of dragons and humanoids.",
   "speed": 30,
   "size": "Medium",
-  "ability_bonuses": [
-    { "ability": "strength", "bonus": 2 },
-    { "ability": "charisma", "bonus": 1 }
+  "traits": [
+    "Draconic Ancestry",
+    "Breath Weapon",
+    "Damage Resistance"
   ],
-  "traits": ["Draconic Ancestry", "Breath Weapon", "Damage Resistance"],
-  "languages": ["Common", "Draconic"],
+  "grants": [
+    {
+      "type": "choice",
+      "key": "draconic_ancestry",
+      "name": "Draconic Ancestry",
+      "choose": 1,
+      "description": "Choose the type of dragon you descend from. It determines the damage type and shape of your Breath Weapon and the damage type of your resistance.",
+      "options": [
+        {
+          "name": "Black",
+          "description": "Acid damage \u2014 Breath Weapon: 5 ft. by 30 ft. line (Dexterity save)."
+        },
+        {
+          "name": "Blue",
+          "description": "Lightning damage \u2014 Breath Weapon: 5 ft. by 30 ft. line (Dexterity save)."
+        },
+        {
+          "name": "Brass",
+          "description": "Fire damage \u2014 Breath Weapon: 5 ft. by 30 ft. line (Dexterity save)."
+        },
+        {
+          "name": "Bronze",
+          "description": "Lightning damage \u2014 Breath Weapon: 5 ft. by 30 ft. line (Dexterity save)."
+        },
+        {
+          "name": "Copper",
+          "description": "Acid damage \u2014 Breath Weapon: 5 ft. by 30 ft. line (Dexterity save)."
+        },
+        {
+          "name": "Gold",
+          "description": "Fire damage \u2014 Breath Weapon: 15 ft. cone (Dexterity save)."
+        },
+        {
+          "name": "Green",
+          "description": "Poison damage \u2014 Breath Weapon: 15 ft. cone (Constitution save)."
+        },
+        {
+          "name": "Red",
+          "description": "Fire damage \u2014 Breath Weapon: 15 ft. cone (Dexterity save)."
+        },
+        {
+          "name": "Silver",
+          "description": "Cold damage \u2014 Breath Weapon: 15 ft. cone (Constitution save)."
+        },
+        {
+          "name": "White",
+          "description": "Cold damage \u2014 Breath Weapon: 15 ft. cone (Constitution save)."
+        }
+      ]
+    },
+    {
+      "type": "feature",
+      "name": "Breath Weapon",
+      "description": "Action: exhale destructive energy in the shape and damage type determined by your Draconic Ancestry. Each creature in the area makes a Dexterity or Constitution save (as appropriate), taking damage that scales with your level on a failure, half as much on a success. Usable a number of times equal to your proficiency bonus, regaining all expended uses on a long rest."
+    },
+    {
+      "type": "feature",
+      "name": "Damage Resistance",
+      "description": "Resistance to the damage type determined by your Draconic Ancestry."
+    }
+  ],
+  "languages": [
+    "Common",
+    "Draconic"
+  ],
   "subraces": []
 }

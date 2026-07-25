@@ -1,0 +1,19 @@
+{
+  "index": "lance",
+  "name": "Lance",
+  "type": "weapon",
+  "category": "Martial Melee",
+  "damage": "1d12",
+  "damage_type": "piercing",
+  "properties": [
+    "Reach",
+    "Special"
+  ],
+  "weight": 6,
+  "cost": "10 gp",
+  "description": "A long thrusting weapon designed for mounted combat.",
+  "mastery": {
+    "property": "Sap",
+    "description": "Hit gives the target disadvantage on its next attack roll before the start of your next turn."
+  }
+}

@@ -1,13 +1,50 @@
 {
   "index": "tiefling",
   "name": "Tiefling",
+  "description": "To be greeted with stares and whispers, to be treated with suspicion and fear, to be denied the comforts of home \u2014 this is the lot in life for the tiefling, born with the blood of fiends running through their veins, marked by their infernal heritage with horns, a tail, and eyes of solid color.",
   "speed": 30,
   "size": "Medium",
-  "ability_bonuses": [
-    { "ability": "intelligence", "bonus": 1 },
-    { "ability": "charisma",     "bonus": 2 }
+  "traits": [
+    "Darkvision (60 ft)",
+    "Hellish Resistance (fire)",
+    "Infernal Legacy (Thaumaturgy, Hellish Rebuke, Darkness)"
   ],
-  "traits": ["Darkvision (60 ft)", "Hellish Resistance (fire)", "Infernal Legacy (Thaumaturgy, Hellish Rebuke, Darkness)"],
-  "languages": ["Common", "Infernal"],
+  "grants": [
+    {
+      "type": "feature",
+      "name": "Darkvision (60 ft)",
+      "description": "See in dim light within 60 ft. as if it were bright light, and in darkness as if it were dim light (no color, only shades of gray)."
+    },
+    {
+      "type": "feature",
+      "name": "Hellish Resistance",
+      "description": "Resistance to fire damage."
+    },
+    {
+      "type": "choice",
+      "key": "fiendish_legacy",
+      "name": "Fiendish Legacy",
+      "choose": 1,
+      "description": "Choose the fiendish bloodline your infernal heritage traces to. It determines a cantrip you know and the spells you gain as you level, all cast with Charisma.",
+      "options": [
+        {
+          "name": "Abyssal",
+          "description": "Cantrip: Poison Spray. At 3rd level, cast Ray of Sickness once per long rest; at 5th level, Hold Person once per long rest."
+        },
+        {
+          "name": "Chthonic",
+          "description": "Cantrip: Chill Touch. At 3rd level, cast False Life once per long rest; at 5th level, Ray of Enfeeblement once per long rest."
+        },
+        {
+          "name": "Infernal",
+          "description": "Cantrip: Fire Bolt. At 3rd level, cast Hellish Rebuke once per long rest; at 5th level, Darkness once per long rest."
+        }
+      ]
+    }
+  ],
+  "languages": [
+    "Common",
+    "Infernal"
+  ],
   "subraces": []
 }

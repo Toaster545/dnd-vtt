@@ -1,9 +1,34 @@
 {
   "index": "entertainer",
   "name": "Entertainer",
-  "skill_proficiencies": ["Acrobatics", "Performance"],
-  "tool_proficiencies": ["Disguise kit", "One type of musical instrument"],
+  "skill_proficiencies": [
+    "Acrobatics",
+    "Performance"
+  ],
+  "tool_proficiencies": [
+    "Disguise kit",
+    "One type of musical instrument"
+  ],
   "languages": "None",
-  "starting_equipment": ["Musical instrument", "Favor of an admirer (love letter, lock of hair, trinket)", "Costume", "Belt pouch with 15 gp"],
-  "feature": "By Popular Demand"
+  "starting_equipment": [
+    "Musical instrument",
+    "Favor of an admirer (love letter, lock of hair, trinket)",
+    "Costume",
+    "Belt pouch with 15 gp"
+  ],
+  "feature": "By Popular Demand",
+  "grants": [
+    {
+      "type": "ability_choice",
+      "key": "ability_scores",
+      "name": "Ability Scores",
+      "description": "Increase one of the abilities below by 2 and a different one by 1, or increase all three by 1 each. No score can be increased above 20 this way.",
+      "points": 3,
+      "abilities": [
+        "strength",
+        "dexterity",
+        "charisma"
+      ]
+    }
+  ]
 }

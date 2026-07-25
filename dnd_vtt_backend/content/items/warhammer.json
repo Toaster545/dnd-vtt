@@ -1,0 +1,18 @@
+{
+  "index": "warhammer",
+  "name": "Warhammer",
+  "type": "weapon",
+  "category": "Martial Melee",
+  "damage": "1d8",
+  "damage_type": "bludgeoning",
+  "properties": [
+    "Versatile (1d10)"
+  ],
+  "weight": 2,
+  "cost": "15 gp",
+  "description": "A heavy hammer built for combat.",
+  "mastery": {
+    "property": "Push",
+    "description": "Hit pushes the target up to 10 ft. away from you."
+  }
+}

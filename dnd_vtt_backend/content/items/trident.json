@@ -1,0 +1,19 @@
+{
+  "index": "trident",
+  "name": "Trident",
+  "type": "weapon",
+  "category": "Martial Melee",
+  "damage": "1d6",
+  "damage_type": "piercing",
+  "properties": [
+    "Thrown (range 20/60)",
+    "Versatile (1d8)"
+  ],
+  "weight": 4,
+  "cost": "5 gp",
+  "description": "A three-pronged spear.",
+  "mastery": {
+    "property": "Topple",
+    "description": "Hit can knock the target prone (target makes a Constitution save)."
+  }
+}

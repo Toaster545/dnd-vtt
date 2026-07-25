@@ -15,4 +15,6 @@ export class ContentController {
   @Get('items/:index')         getItem(@Param('index') i: string)       { return this.content.getItem(i); }
   @Get('spells')               getSpells()                               { return this.content.getSpells(); }
   @Get('spells/:index')        getSpell(@Param('index') i: string)      { return this.content.getSpell(i); }
+  @Get('feats')                getFeats()                                { return this.content.getFeats(); }
+  @Get('feats/:index')         getFeat(@Param('index') i: string)       { return this.content.getFeat(i); }
 }

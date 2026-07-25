@@ -1,9 +1,33 @@
 {
   "index": "noble",
   "name": "Noble",
-  "skill_proficiencies": ["History", "Persuasion"],
-  "tool_proficiencies": ["One type of gaming set"],
+  "skill_proficiencies": [
+    "History",
+    "Persuasion"
+  ],
+  "tool_proficiencies": [
+    "One type of gaming set"
+  ],
   "languages": "One of your choice",
-  "starting_equipment": ["Fine clothes", "Signet ring", "Scroll of pedigree", "Purse with 25 gp"],
-  "feature": "Position of Privilege"
+  "starting_equipment": [
+    "Fine clothes",
+    "Signet ring",
+    "Scroll of pedigree",
+    "Purse with 25 gp"
+  ],
+  "feature": "Position of Privilege",
+  "grants": [
+    {
+      "type": "ability_choice",
+      "key": "ability_scores",
+      "name": "Ability Scores",
+      "description": "Increase one of the abilities below by 2 and a different one by 1, or increase all three by 1 each. No score can be increased above 20 this way.",
+      "points": 3,
+      "abilities": [
+        "strength",
+        "intelligence",
+        "charisma"
+      ]
+    }
+  ]
 }

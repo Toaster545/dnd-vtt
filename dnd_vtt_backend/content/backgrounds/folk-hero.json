@@ -1,9 +1,35 @@
 {
   "index": "folk-hero",
   "name": "Folk Hero",
-  "skill_proficiencies": ["Animal Handling", "Survival"],
-  "tool_proficiencies": ["One type of artisan's tools", "Vehicles (land)"],
+  "skill_proficiencies": [
+    "Animal Handling",
+    "Survival"
+  ],
+  "tool_proficiencies": [
+    "One type of artisan's tools",
+    "Vehicles (land)"
+  ],
   "languages": "None",
-  "starting_equipment": ["Artisan's tools", "Shovel", "Iron pot", "Common clothes", "Belt pouch with 10 gp"],
-  "feature": "Rustic Hospitality"
+  "starting_equipment": [
+    "Artisan's tools",
+    "Shovel",
+    "Iron pot",
+    "Common clothes",
+    "Belt pouch with 10 gp"
+  ],
+  "feature": "Rustic Hospitality",
+  "grants": [
+    {
+      "type": "ability_choice",
+      "key": "ability_scores",
+      "name": "Ability Scores",
+      "description": "Increase one of the abilities below by 2 and a different one by 1, or increase all three by 1 each. No score can be increased above 20 this way.",
+      "points": 3,
+      "abilities": [
+        "strength",
+        "constitution",
+        "wisdom"
+      ]
+    }
+  ]
 }

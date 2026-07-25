@@ -1,0 +1,19 @@
+{
+  "index": "light-hammer",
+  "name": "Light Hammer",
+  "type": "weapon",
+  "category": "Simple Melee",
+  "damage": "1d4",
+  "damage_type": "bludgeoning",
+  "properties": [
+    "Light",
+    "Thrown (range 20/60)"
+  ],
+  "weight": 2,
+  "cost": "2 gp",
+  "description": "A one-handed hammer balanced for throwing.",
+  "mastery": {
+    "property": "Nick",
+    "description": "The extra attack granted by this weapon's Light property doesn't require a bonus action."
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "index": "greataxe",
+  "name": "Greataxe",
+  "type": "weapon",
+  "category": "Martial Melee",
+  "damage": "1d12",
+  "damage_type": "slashing",
+  "properties": [
+    "Heavy",
+    "Two-Handed"
+  ],
+  "weight": 7,
+  "cost": "30 gp",
+  "description": "A massive, two-handed axe.",
+  "mastery": {
+    "property": "Cleave",
+    "description": "Hit lets you make a free attack against another creature within 5 ft. of the original target."
+  }
+}

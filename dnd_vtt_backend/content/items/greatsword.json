@@ -1,0 +1,19 @@
+{
+  "index": "greatsword",
+  "name": "Greatsword",
+  "type": "weapon",
+  "category": "Martial Melee",
+  "damage": "2d6",
+  "damage_type": "slashing",
+  "properties": [
+    "Heavy",
+    "Two-Handed"
+  ],
+  "weight": 6,
+  "cost": "50 gp",
+  "description": "A huge blade wielded with both hands.",
+  "mastery": {
+    "property": "Graze",
+    "description": "On a miss, you still deal damage to the target equal to your relevant ability modifier."
+  }
+}

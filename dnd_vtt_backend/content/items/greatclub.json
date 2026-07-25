@@ -1,0 +1,18 @@
+{
+  "index": "greatclub",
+  "name": "Greatclub",
+  "type": "weapon",
+  "category": "Simple Melee",
+  "damage": "1d8",
+  "damage_type": "bludgeoning",
+  "properties": [
+    "Two-Handed"
+  ],
+  "weight": 10,
+  "cost": "2 sp",
+  "description": "A massive, roughly shaped club.",
+  "mastery": {
+    "property": "Push",
+    "description": "Hit pushes the target up to 10 ft. away from you."
+  }
+}

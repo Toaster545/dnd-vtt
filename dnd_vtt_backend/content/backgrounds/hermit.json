@@ -1,9 +1,34 @@
 {
   "index": "hermit",
   "name": "Hermit",
-  "skill_proficiencies": ["Medicine", "Religion"],
-  "tool_proficiencies": ["Herbalism kit"],
+  "skill_proficiencies": [
+    "Medicine",
+    "Religion"
+  ],
+  "tool_proficiencies": [
+    "Herbalism kit"
+  ],
   "languages": "One of your choice",
-  "starting_equipment": ["Scroll case with notes", "Winter blanket", "Common clothes", "Herbalism kit", "5 gp"],
-  "feature": "Discovery"
+  "starting_equipment": [
+    "Scroll case with notes",
+    "Winter blanket",
+    "Common clothes",
+    "Herbalism kit",
+    "5 gp"
+  ],
+  "feature": "Discovery",
+  "grants": [
+    {
+      "type": "ability_choice",
+      "key": "ability_scores",
+      "name": "Ability Scores",
+      "description": "Increase one of the abilities below by 2 and a different one by 1, or increase all three by 1 each. No score can be increased above 20 this way.",
+      "points": 3,
+      "abilities": [
+        "constitution",
+        "wisdom",
+        "charisma"
+      ]
+    }
+  ]
 }

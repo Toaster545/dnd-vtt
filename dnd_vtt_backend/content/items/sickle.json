@@ -1,0 +1,18 @@
+{
+  "index": "sickle",
+  "name": "Sickle",
+  "type": "weapon",
+  "category": "Simple Melee",
+  "damage": "1d4",
+  "damage_type": "slashing",
+  "properties": [
+    "Light"
+  ],
+  "weight": 2,
+  "cost": "1 gp",
+  "description": "A curved blade, as much tool as weapon.",
+  "mastery": {
+    "property": "Nick",
+    "description": "The extra attack granted by this weapon's Light property doesn't require a bonus action."
+  }
+}

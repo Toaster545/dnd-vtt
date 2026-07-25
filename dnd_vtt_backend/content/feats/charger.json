@@ -1,0 +1,6 @@
+{
+  "index": "charger",
+  "name": "Charger",
+  "description": "When you take the Dash action and then make a melee attack as a bonus action, if you moved at least 10 ft. in a straight line beforehand, you can add 5 to the attack's damage roll, or push the target up to 10 ft. away.",
+  "category": "general"
+}

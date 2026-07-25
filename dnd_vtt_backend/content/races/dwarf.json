@@ -1,23 +1,88 @@
 {
   "index": "dwarf",
   "name": "Dwarf",
+  "description": "Bold and hardy, dwarves are known as skilled warriors, miners, and workers of stone and metal. Though they stand well under 5 feet tall, dwarves are so broad and compact that they can weigh as much as a human standing nearly two feet taller.",
   "speed": 25,
   "size": "Medium",
-  "ability_bonuses": [{ "ability": "constitution", "bonus": 2 }],
-  "traits": ["Darkvision (60 ft)", "Dwarven Resilience", "Dwarven Combat Training", "Tool Proficiency", "Stonecunning"],
-  "languages": ["Common", "Dwarvish"],
+  "traits": [
+    "Darkvision (60 ft)",
+    "Dwarven Resilience",
+    "Dwarven Combat Training",
+    "Tool Proficiency",
+    "Stonecunning"
+  ],
+  "grants": [
+    {
+      "type": "feature",
+      "name": "Darkvision (60 ft)",
+      "description": "See in dim light within 60 ft. as if it were bright light, and in darkness as if it were dim light (no color, only shades of gray)."
+    },
+    {
+      "type": "feature",
+      "name": "Dwarven Resilience",
+      "description": "Advantage on saving throws against poison, and resistance to poison damage."
+    },
+    {
+      "type": "feature",
+      "name": "Dwarven Combat Training",
+      "description": "Proficiency with the battleaxe, handaxe, light hammer, and warhammer."
+    },
+    {
+      "type": "choice",
+      "key": "tool_proficiency",
+      "name": "Tool Proficiency",
+      "choose": 1,
+      "description": "Gain proficiency with one type of artisan's tools of your choice.",
+      "options": [
+        {
+          "name": "Smith's Tools"
+        },
+        {
+          "name": "Brewer's Supplies"
+        },
+        {
+          "name": "Mason's Tools"
+        }
+      ]
+    },
+    {
+      "type": "feature",
+      "name": "Stonecunning",
+      "description": "Whenever you make an Intelligence (History) check related to the origin of stonework, you're considered proficient and add double your proficiency bonus."
+    }
+  ],
+  "languages": [
+    "Common",
+    "Dwarvish"
+  ],
   "subraces": [
     {
       "index": "hill-dwarf",
       "name": "Hill Dwarf",
-      "ability_bonuses": [{ "ability": "wisdom", "bonus": 1 }],
-      "traits": ["Dwarven Toughness"]
+      "traits": [
+        "Dwarven Toughness"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Dwarven Toughness",
+          "description": "Your hit point maximum increases by 1, and increases by 1 again every time you gain a level."
+        }
+      ]
     },
     {
       "index": "mountain-dwarf",
       "name": "Mountain Dwarf",
-      "ability_bonuses": [{ "ability": "strength", "bonus": 2 }],
-      "traits": ["Dwarven Armor Training"]
+      "traits": [
+        "Dwarven Armor Training"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Dwarven Armor Training",
+          "description": "Proficiency with light and medium armor."
+        }
+      ]
     }
   ]
 }

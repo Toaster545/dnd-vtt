@@ -1,0 +1,19 @@
+{
+  "index": "spear",
+  "name": "Spear",
+  "type": "weapon",
+  "category": "Simple Melee",
+  "damage": "1d6",
+  "damage_type": "piercing",
+  "properties": [
+    "Thrown (range 20/60)",
+    "Versatile (1d8)"
+  ],
+  "weight": 3,
+  "cost": "1 gp",
+  "description": "A simple, versatile thrusting weapon.",
+  "mastery": {
+    "property": "Sap",
+    "description": "Hit gives the target disadvantage on its next attack roll before the start of your next turn."
+  }
+}

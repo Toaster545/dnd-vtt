@@ -8,11 +8,36 @@
               (click)="activeTab.set('create')">
         <mat-icon class="text-base">create</mat-icon> Create
       </button>
-      <button class="btn-ghost text-sm gap-1.5"
-              [class.bg-white/10]="activeTab() === 'play'"
-              (click)="activeTab.set('play')">
-        <mat-icon class="text-base">play_arrow</mat-icon> Play
-      </button>
+
+      <div class="relative">
+        <button class="btn-ghost text-sm gap-1.5"
+                [class.bg-white/10]="activeTab() === 'play'"
+                (click)="playMenuOpen.set(!playMenuOpen())">
+          <mat-icon class="text-base">play_arrow</mat-icon> Play
+          <mat-icon class="text-base">arrow_drop_down</mat-icon>
+        </button>
+        @if (playMenuOpen()) {
+          <div class="fixed inset-0 z-40" (click)="playMenuOpen.set(false)"></div>
+          <div class="absolute top-full left-1/2 -translate-x-1/2 mt-1 z-50 w-48 rounded-md border border-white/10 bg-elevated shadow-lg py-1 overflow-hidden">
+            <button
+              class="w-full text-left px-3.5 py-2.5 text-sm flex items-center gap-2 transition-colors cursor-pointer border-0"
+              [class]="activeTab() === 'play' && playSubTab() === 'sessions' ? 'text-gold bg-white/5' : 'text-slate hover:text-parchment hover:bg-white/5'"
+              style="background-color: transparent; font-family: inherit;"
+              (click)="selectPlay('sessions')"
+            >
+              <mat-icon class="text-base">event</mat-icon> Sessions
+            </button>
+            <button
+              class="w-full text-left px-3.5 py-2.5 text-sm flex items-center gap-2 transition-colors cursor-pointer border-0"
+              [class]="activeTab() === 'play' && playSubTab() === 'characters' ? 'text-gold bg-white/5' : 'text-slate hover:text-parchment hover:bg-white/5'"
+              style="background-color: transparent; font-family: inherit;"
+              (click)="selectPlay('characters')"
+            >
+              <mat-icon class="text-base">person</mat-icon> Characters
+            </button>
+          </div>
+        }
+      </div>
     </nav>
 
     <div class="flex items-center gap-2 ml-auto">
@@ -24,11 +49,11 @@
     </div>
   </header>
 
-  <div class="flex-1 overflow-hidden flex flex-col">
+  <div class="flex-1 overflow-hidden flex flex-col min-h-0">
     @if (activeTab() === 'create') {
-      <app-dm-create />
+      <app-dm-create class="flex-1 min-h-0" />
     } @else {
-      <app-dm-play />
+      <app-dm-play class="flex-1 min-h-0" [subTab]="playSubTab()" />
     }
   </div>
 </div>

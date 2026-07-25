@@ -1,6 +1,8 @@
 {
   "index": "fighter",
   "name": "Fighter",
+  "description": "Fighters share an unparalleled mastery with weapons and armor, and a thorough knowledge of the skills of combat. Fighters excel at overcoming difficult odds through discipline and versatility, and can hold the line, break the enemy's, or do a little of both — living weapons, thinking and acting on their feet.",
+  "primary_abilities": ["strength", "dexterity"],
   "hit_die": 10,
   "saving_throws": ["strength", "constitution"],
   "armor_training": ["All Armor", "Shields"],
@@ -24,11 +26,50 @@
       "name": "Champion",
       "description": "Focus on raw physical power to deal devastating hits.",
       "levels": [
-        { "level": 3,  "features": ["Improved Critical"] },
-        { "level": 7,  "features": ["Remarkable Athlete"] },
-        { "level": 10, "features": ["Additional Fighting Style"] },
-        { "level": 15, "features": ["Superior Critical"] },
-        { "level": 18, "features": ["Survivor"] }
+        {
+          "level": 3, "features": ["Improved Critical"],
+          "grants": [
+            { "type": "feature", "name": "Improved Critical", "description": "Your weapon attacks score a critical hit on a roll of 19 or 20 on the d20." }
+          ]
+        },
+        {
+          "level": 7, "features": ["Remarkable Athlete"],
+          "grants": [
+            { "type": "feature", "name": "Remarkable Athlete", "description": "Add half your proficiency bonus (round up) to any Strength, Dexterity, or Constitution check that doesn't already use your proficiency bonus. Your running long jump distance increases by a number of feet equal to your Strength modifier." }
+          ]
+        },
+        {
+          "level": 10, "features": ["Additional Fighting Style"],
+          "grants": [
+            {
+              "type": "choice", "key": "additional_fighting_style", "name": "Additional Fighting Style", "choose": 1,
+              "description": "Learn a second Fighting Style option of your choice, different from the one you already know.",
+              "options": [
+                { "name": "Archery", "description": "+2 bonus to attack rolls you make with ranged weapons.", "effect": { "type": "ranged_attack_bonus", "value": 2 } },
+                { "name": "Blind Fighting", "description": "Blindsight 10 ft.; can fight normally while blinded or in darkness within that range.", "effect": { "type": "special" } },
+                { "name": "Defense", "description": "+1 bonus to AC while wearing armor.", "effect": { "type": "ac_bonus", "value": 1 } },
+                { "name": "Dueling", "description": "+2 bonus to damage rolls when wielding a melee weapon in one hand with no other weapons.", "effect": { "type": "melee_damage_bonus", "value": 2 } },
+                { "name": "Great Weapon Fighting", "description": "Reroll 1s and 2s on damage dice for two-handed or versatile melee weapons.", "effect": { "type": "reroll_damage_dice", "values": [1, 2] } },
+                { "name": "Interception", "description": "Reaction: reduce damage to a nearby creature by 1d10 + proficiency bonus when you're wielding a weapon or shield.", "effect": { "type": "special" } },
+                { "name": "Thrown Weapon Fighting", "description": "+2 bonus to damage rolls with thrown weapons; draw a thrown weapon as part of the attack.", "effect": { "type": "thrown_damage_bonus", "value": 2 } },
+                { "name": "Two-Weapon Fighting", "description": "Add your ability modifier to the damage of your off-hand attack.", "effect": { "type": "special" } },
+                { "name": "Unarmed Fighting", "description": "Unarmed strikes deal 1d6 (or 1d8 if empty-handed) damage; bonus action grapple damage.", "effect": { "type": "special" } }
+              ]
+            }
+          ]
+        },
+        {
+          "level": 15, "features": ["Superior Critical"],
+          "grants": [
+            { "type": "feature", "name": "Superior Critical", "description": "Your weapon attacks score a critical hit on a roll of 18-20 on the d20." }
+          ]
+        },
+        {
+          "level": 18, "features": ["Survivor"],
+          "grants": [
+            { "type": "feature", "name": "Survivor", "description": "At the start of each of your turns, regain HP equal to 5 + your Constitution modifier if you have no more than half your HP left and aren't at 0 HP." }
+          ]
+        }
       ]
     },
     {
@@ -36,11 +77,62 @@
       "name": "Battle Master",
       "description": "Use combat maneuvers powered by superiority dice to control the battlefield.",
       "levels": [
-        { "level": 3,  "features": ["Combat Superiority", "Student of War"] },
-        { "level": 7,  "features": ["Know Your Enemy"] },
-        { "level": 10, "features": ["Improved Combat Superiority (d10)"] },
-        { "level": 15, "features": ["Relentless"] },
-        { "level": 18, "features": ["Improved Combat Superiority (d12)"] }
+        {
+          "level": 3, "features": ["Combat Superiority", "Student of War"],
+          "grants": [
+            { "type": "feature", "name": "Combat Superiority", "description": "You gain 4 Superiority Dice (d8s). When you roll initiative and have no Superiority Dice left, you regain one. All expended dice are regained on a short or long rest." },
+            {
+              "type": "choice", "key": "combat_maneuvers", "name": "Combat Maneuvers", "choose": 3,
+              "description": "Learn 3 maneuvers. Whenever you use one, roll your Superiority Die and add it to the effect; the die is expended on use.",
+              "options": [
+                { "name": "Ambush", "description": "Add your Superiority Die to a Stealth check or to an initiative roll." },
+                { "name": "Bait and Switch", "description": "Swap places with a willing creature within 5 ft.; add the die to your AC or theirs until the start of your next turn." },
+                { "name": "Brace", "description": "Reaction: when a creature moves into your reach, make a melee attack against it, adding the die to the damage." },
+                { "name": "Commander's Strike", "description": "Forgo one attack to direct an ally; it can use its reaction to attack, adding the die to its damage." },
+                { "name": "Disarming Attack", "description": "Hit: add the die to damage; target makes a Strength save or drops an item of your choice." },
+                { "name": "Distracting Strike", "description": "Hit: add the die to damage; the next attack against the target by someone else has advantage before your next turn." },
+                { "name": "Evasive Footwork", "description": "Add the die to your AC while moving, without provoking opportunity attacks." },
+                { "name": "Feinting Attack", "description": "Bonus action to feint against a creature within 5 ft.; you have advantage on your next attack against it, adding the die to damage on a hit." },
+                { "name": "Goading Attack", "description": "Hit: add the die to damage; target makes a Wisdom save or has disadvantage on attacks against anyone but you until your next turn." },
+                { "name": "Lunging Attack", "description": "Extend your melee reach by 5 ft. for one attack, adding the die to damage on a hit." },
+                { "name": "Maneuvering Attack", "description": "Hit: add the die to damage; an ally can use its reaction to move up to half its speed without provoking opportunity attacks from the target." },
+                { "name": "Menacing Attack", "description": "Hit: add the die to damage; target makes a Wisdom save or becomes frightened of you until the end of your next turn." },
+                { "name": "Parry", "description": "Reaction: when hit by a melee attack, reduce the damage by the die roll plus your Dexterity modifier." },
+                { "name": "Precision Attack", "description": "Add the die to an attack roll, before or after the roll is made." },
+                { "name": "Pushing Attack", "description": "Hit: add the die to damage; target makes a Strength save or is pushed up to 15 ft. away." },
+                { "name": "Rally", "description": "Bonus action: choose an ally, who gains temporary hit points equal to the die roll plus your Fighter level." },
+                { "name": "Riposte", "description": "Reaction: when a creature misses you with a melee attack, make a melee attack against it, adding the die to damage on a hit." },
+                { "name": "Sweeping Attack", "description": "Hit: choose another creature within 5 ft. of the original target; if the attack would hit it too, it takes damage equal to the die roll." },
+                { "name": "Trip Attack", "description": "Hit: add the die to damage; target makes a Strength save or is knocked prone." }
+              ]
+            },
+            { "type": "feature", "name": "Student of War", "description": "Gain proficiency with one type of artisan's tools of your choice." }
+          ]
+        },
+        {
+          "level": 7, "features": ["Know Your Enemy"],
+          "grants": [
+            { "type": "feature", "name": "Know Your Enemy", "description": "If you spend at least 1 minute observing or interacting with a creature outside combat, learn how it compares to you: whether it's your equal, superior, or inferior in one or more of Strength, AC, current HP, or class levels (DM's choice)." }
+          ]
+        },
+        {
+          "level": 10, "features": ["Improved Combat Superiority (d10)"],
+          "grants": [
+            { "type": "feature", "name": "Improved Combat Superiority (d10)", "description": "Your Superiority Dice turn into d10s." }
+          ]
+        },
+        {
+          "level": 15, "features": ["Relentless"],
+          "grants": [
+            { "type": "feature", "name": "Relentless", "description": "When you roll initiative and have no Superiority Dice left, you regain one Superiority Die." }
+          ]
+        },
+        {
+          "level": 18, "features": ["Improved Combat Superiority (d12)"],
+          "grants": [
+            { "type": "feature", "name": "Improved Combat Superiority (d12)", "description": "Your Superiority Dice turn into d12s." }
+          ]
+        }
       ]
     },
     {
@@ -48,19 +140,45 @@
       "name": "Eldritch Knight",
       "description": "Combine martial mastery with arcane spells from the wizard spell list.",
       "levels": [
-        { "level": 3,  "features": ["Spellcasting", "Weapon Bond"],              "spell_slots": { "1": 2 } },
+        {
+          "level": 3, "features": ["Spellcasting", "Weapon Bond"], "spell_slots": { "1": 2 },
+          "grants": [
+            { "type": "feature", "name": "Spellcasting", "description": "Learn wizard cantrips and spells (mostly from the abjuration and evocation schools), cast using Intelligence. See the Spells step for your known spells and slots." },
+            { "type": "feature", "name": "Weapon Bond", "description": "Bond with up to two weapons in a short ritual; you can't be disarmed of a bonded weapon unless incapacitated, and can summon a bonded weapon to your hand as a bonus action." }
+          ]
+        },
         { "level": 4,  "features": [],                                            "spell_slots": { "1": 3 } },
         { "level": 5,  "features": [],                                            "spell_slots": { "1": 3 } },
         { "level": 6,  "features": [],                                            "spell_slots": { "1": 3 } },
-        { "level": 7,  "features": ["War Magic"],                                 "spell_slots": { "1": 4, "2": 2 } },
+        {
+          "level": 7, "features": ["War Magic"], "spell_slots": { "1": 4, "2": 2 },
+          "grants": [
+            { "type": "feature", "name": "War Magic", "description": "When you use your action to cast a cantrip, you can make one weapon attack as a bonus action." }
+          ]
+        },
         { "level": 8,  "features": [],                                            "spell_slots": { "1": 4, "2": 2 } },
         { "level": 9,  "features": [],                                            "spell_slots": { "1": 4, "2": 2 } },
-        { "level": 10, "features": ["Eldritch Strike"],                           "spell_slots": { "1": 4, "2": 3 } },
+        {
+          "level": 10, "features": ["Eldritch Strike"], "spell_slots": { "1": 4, "2": 3 },
+          "grants": [
+            { "type": "feature", "name": "Eldritch Strike", "description": "When you hit a creature with a weapon attack, that creature has disadvantage on its next save against a spell you cast before the end of your next turn." }
+          ]
+        },
         { "level": 11, "features": [],                                            "spell_slots": { "1": 4, "2": 3 } },
         { "level": 12, "features": [],                                            "spell_slots": { "1": 4, "2": 3 } },
-        { "level": 13, "features": ["Arcane Charge"],                             "spell_slots": { "1": 4, "2": 3, "3": 2 } },
+        {
+          "level": 13, "features": ["Arcane Charge"], "spell_slots": { "1": 4, "2": 3, "3": 2 },
+          "grants": [
+            { "type": "feature", "name": "Arcane Charge", "description": "When you use Action Surge, you can teleport up to 30 ft. to an unoccupied space you can see, before or after the additional action." }
+          ]
+        },
         { "level": 14, "features": [],                                            "spell_slots": { "1": 4, "2": 3, "3": 2 } },
-        { "level": 15, "features": ["Improved War Magic"],                        "spell_slots": { "1": 4, "2": 3, "3": 2 } },
+        {
+          "level": 15, "features": ["Improved War Magic"], "spell_slots": { "1": 4, "2": 3, "3": 2 },
+          "grants": [
+            { "type": "feature", "name": "Improved War Magic", "description": "You can use War Magic when you cast a spell of 1st level or higher, not just a cantrip." }
+          ]
+        },
         { "level": 16, "features": [],                                            "spell_slots": { "1": 4, "2": 3, "3": 3 } },
         { "level": 17, "features": [],                                            "spell_slots": { "1": 4, "2": 3, "3": 3 } },
         { "level": 18, "features": [],                                            "spell_slots": { "1": 4, "2": 3, "3": 3 } },
@@ -73,34 +191,200 @@
       "name": "Psi Warrior",
       "description": "Use psionic energy to augment your physical attacks and protect your allies.",
       "levels": [
-        { "level": 3,  "features": ["Psionic Power"] },
-        { "level": 7,  "features": ["Telekinetic Adept"] },
-        { "level": 10, "features": ["Guarded Mind"] },
-        { "level": 15, "features": ["Bulwark of Force"] },
-        { "level": 18, "features": ["Telekinetic Master"] }
+        {
+          "level": 3, "features": ["Psionic Power"],
+          "grants": [
+            { "type": "feature", "name": "Psionic Power", "description": "Gain a pool of Psionic Energy dice (d6s) that fuel three abilities: Protective Field (reaction, reduce damage to yourself or a nearby creature), Psi-Powered Leap (bonus action, fly speed and jump distance for a minute), and Telekinetic Movement (action, move an object or creature you can see within 30 ft.). Dice are spent to fuel each use and are all regained on a long rest." }
+          ]
+        },
+        {
+          "level": 7, "features": ["Telekinetic Adept"],
+          "grants": [
+            { "type": "feature", "name": "Telekinetic Adept", "description": "Gain two more uses drawn from your Psionic Energy dice: Psionic Strike (add a die to a weapon attack's damage as force damage) and Telekinetic Thrust (push, pull, or knock a creature prone with a hit)." }
+          ]
+        },
+        {
+          "level": 10, "features": ["Guarded Mind"],
+          "grants": [
+            { "type": "feature", "name": "Guarded Mind", "description": "Resistance to psychic damage, and at the start of your turn you can end one effect on yourself that made you charmed or frightened." }
+          ]
+        },
+        {
+          "level": 15, "features": ["Bulwark of Force"],
+          "grants": [
+            { "type": "feature", "name": "Bulwark of Force", "description": "Reaction: expend a Psionic Energy die to grant half cover to yourself and up to two creatures within 30 ft. of you against a source you can see, until the start of your next turn." }
+          ]
+        },
+        {
+          "level": 18, "features": ["Telekinetic Master"],
+          "grants": [
+            { "type": "feature", "name": "Telekinetic Master", "description": "Cast telekinesis without spending a spell slot, once per long rest, using Intelligence, Wisdom, or Charisma (your choice) as the spellcasting ability." }
+          ]
+        }
       ]
     }
   ],
   "levels": [
-    { "level": 1,  "proficiency_bonus": 2, "features": ["Fighting Style", "Second Wind"] },
-    { "level": 2,  "proficiency_bonus": 2, "features": ["Action Surge (1/rest)"] },
-    { "level": 3,  "proficiency_bonus": 2, "features": ["Martial Archetype"] },
-    { "level": 4,  "proficiency_bonus": 2, "features": ["Ability Score Improvement"] },
-    { "level": 5,  "proficiency_bonus": 3, "features": ["Extra Attack"] },
-    { "level": 6,  "proficiency_bonus": 3, "features": ["Ability Score Improvement"] },
-    { "level": 7,  "proficiency_bonus": 3, "features": ["Martial Archetype Feature"] },
-    { "level": 8,  "proficiency_bonus": 3, "features": ["Ability Score Improvement"] },
-    { "level": 9,  "proficiency_bonus": 4, "features": ["Indomitable (1/long rest)"] },
-    { "level": 10, "proficiency_bonus": 4, "features": ["Martial Archetype Feature"] },
-    { "level": 11, "proficiency_bonus": 4, "features": ["Extra Attack (2)"] },
-    { "level": 12, "proficiency_bonus": 4, "features": ["Ability Score Improvement"] },
-    { "level": 13, "proficiency_bonus": 5, "features": ["Indomitable (2/long rest)"] },
-    { "level": 14, "proficiency_bonus": 5, "features": ["Ability Score Improvement"] },
-    { "level": 15, "proficiency_bonus": 5, "features": ["Martial Archetype Feature"] },
-    { "level": 16, "proficiency_bonus": 5, "features": ["Ability Score Improvement"] },
-    { "level": 17, "proficiency_bonus": 6, "features": ["Action Surge (2/rest)", "Indomitable (3/long rest)"] },
-    { "level": 18, "proficiency_bonus": 6, "features": ["Martial Archetype Feature"] },
-    { "level": 19, "proficiency_bonus": 6, "features": ["Ability Score Improvement"] },
-    { "level": 20, "proficiency_bonus": 6, "features": ["Extra Attack (3)"] }
+    {
+      "level": 1, "proficiency_bonus": 2, "features": ["Fighting Style", "Second Wind"],
+      "grants": [
+        {
+          "type": "skill_choice", "key": "skills", "name": "Skill Proficiencies", "choose": 2,
+          "description": "Choose 2 skills from the fighter list."
+        },
+        {
+          "type": "choice", "key": "fighting_style", "name": "Fighting Style", "choose": 1,
+          "description": "Adopt a particular style of fighting as your specialty.",
+          "options": [
+            { "name": "Archery", "description": "+2 bonus to attack rolls you make with ranged weapons.", "effect": { "type": "ranged_attack_bonus", "value": 2 } },
+            { "name": "Blind Fighting", "description": "Blindsight 10 ft.; can fight normally while blinded or in darkness within that range.", "effect": { "type": "special" } },
+            { "name": "Defense", "description": "+1 bonus to AC while wearing armor.", "effect": { "type": "ac_bonus", "value": 1 } },
+            { "name": "Dueling", "description": "+2 bonus to damage rolls when wielding a melee weapon in one hand with no other weapons.", "effect": { "type": "melee_damage_bonus", "value": 2 } },
+            { "name": "Great Weapon Fighting", "description": "Reroll 1s and 2s on damage dice for two-handed or versatile melee weapons.", "effect": { "type": "reroll_damage_dice", "values": [1, 2] } },
+            { "name": "Interception", "description": "Reaction: reduce damage to a nearby creature by 1d10 + proficiency bonus when you're wielding a weapon or shield.", "effect": { "type": "special" } },
+            { "name": "Thrown Weapon Fighting", "description": "+2 bonus to damage rolls with thrown weapons; draw a thrown weapon as part of the attack.", "effect": { "type": "thrown_damage_bonus", "value": 2 } },
+            { "name": "Two-Weapon Fighting", "description": "Add your ability modifier to the damage of your off-hand attack.", "effect": { "type": "special" } },
+            { "name": "Unarmed Fighting", "description": "Unarmed strikes deal 1d6 (or 1d8 if empty-handed) damage; bonus action grapple damage.", "effect": { "type": "special" } }
+          ]
+        },
+        {
+          "type": "feature", "key": "second-wind", "name": "Second Wind",
+          "description": "Bonus action: regain 1d10 + fighter level hit points. Two uses per long rest; regain a use on a short rest.",
+          "action": { "activation": "bonus_action", "uses": { "max": 2, "per": "long_rest" } }
+        },
+        {
+          "type": "weapon_mastery", "key": "weapon_mastery", "name": "Weapon Mastery", "choose": 3,
+          "description": "Choose 3 weapons you have proficiency with. You gain that weapon's mastery property whenever you attack with it. Swap choices after a long rest.",
+          "proficiency": ["Simple", "Martial"]
+        }
+      ]
+    },
+    {
+      "level": 2, "proficiency_bonus": 2, "features": ["Action Surge (1/rest)", "Tactical Mind"],
+      "grants": [
+        {
+          "type": "feature", "key": "action-surge", "name": "Action Surge (1/rest)",
+          "description": "Take one additional action on your turn, once per short or long rest.",
+          "action": { "activation": "free", "uses": { "max": 1, "per": "short_rest" } }
+        },
+        {
+          "type": "feature", "name": "Tactical Mind",
+          "description": "When you fail an ability check, you can expend a use of your Second Wind (no action required) to add a bonus equal to your proficiency bonus to the check, potentially turning the failure into a success, instead of regaining hit points."
+        }
+      ]
+    },
+    {
+      "level": 3, "proficiency_bonus": 2, "features": ["Martial Archetype"],
+      "grants": [
+        { "type": "feature", "name": "Martial Archetype", "description": "Choose a Fighter subclass, gaining features from it at this level and again at later levels." }
+      ]
+    },
+    {
+      "level": 4, "proficiency_bonus": 2, "features": ["Ability Score Improvement"],
+      "grants": [
+        { "type": "ability_choice", "key": "asi_4", "name": "Ability Score Improvement", "description": "Increase one ability score by 2, or two scores by 1 each, to a maximum of 20 (or take a feat).", "points": 2, "allowFeat": true }
+      ]
+    },
+    {
+      "level": 5, "proficiency_bonus": 3, "features": ["Extra Attack"],
+      "grants": [
+        { "type": "feature", "name": "Extra Attack", "description": "Attack twice, instead of once, whenever you take the Attack action on your turn." }
+      ]
+    },
+    {
+      "level": 6, "proficiency_bonus": 3, "features": ["Ability Score Improvement"],
+      "grants": [
+        { "type": "ability_choice", "key": "asi_6", "name": "Ability Score Improvement", "description": "Increase one ability score by 2, or two scores by 1 each, to a maximum of 20 (or take a feat).", "points": 2, "allowFeat": true }
+      ]
+    },
+    {
+      "level": 7, "proficiency_bonus": 3, "features": ["Martial Archetype Feature"],
+      "grants": [
+        { "type": "feature", "name": "Martial Archetype Feature", "description": "Gain a feature from your chosen subclass." }
+      ]
+    },
+    {
+      "level": 8, "proficiency_bonus": 3, "features": ["Ability Score Improvement"],
+      "grants": [
+        { "type": "ability_choice", "key": "asi_8", "name": "Ability Score Improvement", "description": "Increase one ability score by 2, or two scores by 1 each, to a maximum of 20 (or take a feat).", "points": 2, "allowFeat": true }
+      ]
+    },
+    {
+      "level": 9, "proficiency_bonus": 4, "features": ["Indomitable (1/long rest)"],
+      "grants": [
+        { "type": "feature", "name": "Indomitable (1/long rest)", "description": "Reroll a failed saving throw. Once per long rest." }
+      ]
+    },
+    {
+      "level": 10, "proficiency_bonus": 4, "features": ["Martial Archetype Feature"],
+      "grants": [
+        { "type": "feature", "name": "Martial Archetype Feature", "description": "Gain a feature from your chosen subclass." }
+      ]
+    },
+    {
+      "level": 11, "proficiency_bonus": 4, "features": ["Extra Attack (2)"],
+      "grants": [
+        { "type": "feature", "name": "Extra Attack (2)", "description": "Attack three times, instead of once, whenever you take the Attack action on your turn." }
+      ]
+    },
+    {
+      "level": 12, "proficiency_bonus": 4, "features": ["Ability Score Improvement"],
+      "grants": [
+        { "type": "ability_choice", "key": "asi_12", "name": "Ability Score Improvement", "description": "Increase one ability score by 2, or two scores by 1 each, to a maximum of 20 (or take a feat).", "points": 2, "allowFeat": true }
+      ]
+    },
+    {
+      "level": 13, "proficiency_bonus": 5, "features": ["Indomitable (2/long rest)"],
+      "grants": [
+        { "type": "feature", "name": "Indomitable (2/long rest)", "description": "Reroll a failed saving throw. Twice per long rest." }
+      ]
+    },
+    {
+      "level": 14, "proficiency_bonus": 5, "features": ["Ability Score Improvement"],
+      "grants": [
+        { "type": "ability_choice", "key": "asi_14", "name": "Ability Score Improvement", "description": "Increase one ability score by 2, or two scores by 1 each, to a maximum of 20 (or take a feat).", "points": 2, "allowFeat": true }
+      ]
+    },
+    {
+      "level": 15, "proficiency_bonus": 5, "features": ["Martial Archetype Feature"],
+      "grants": [
+        { "type": "feature", "name": "Martial Archetype Feature", "description": "Gain a feature from your chosen subclass." }
+      ]
+    },
+    {
+      "level": 16, "proficiency_bonus": 5, "features": ["Ability Score Improvement"],
+      "grants": [
+        { "type": "ability_choice", "key": "asi_16", "name": "Ability Score Improvement", "description": "Increase one ability score by 2, or two scores by 1 each, to a maximum of 20 (or take a feat).", "points": 2, "allowFeat": true }
+      ]
+    },
+    {
+      "level": 17, "proficiency_bonus": 6, "features": ["Action Surge (2/rest)", "Indomitable (3/long rest)"],
+      "grants": [
+        {
+          "type": "feature", "key": "action-surge", "name": "Action Surge (2/rest)",
+          "description": "Use Action Surge twice per short or long rest, but only once per turn.",
+          "action": { "activation": "free", "uses": { "max": 2, "per": "short_rest" } }
+        },
+        { "type": "feature", "name": "Indomitable (3/long rest)", "description": "Reroll a failed saving throw. Three times per long rest." }
+      ]
+    },
+    {
+      "level": 18, "proficiency_bonus": 6, "features": ["Martial Archetype Feature"],
+      "grants": [
+        { "type": "feature", "name": "Martial Archetype Feature", "description": "Gain a feature from your chosen subclass." }
+      ]
+    },
+    {
+      "level": 19, "proficiency_bonus": 6, "features": ["Ability Score Improvement"],
+      "grants": [
+        { "type": "ability_choice", "key": "asi_19", "name": "Ability Score Improvement", "description": "Increase one ability score by 2, or two scores by 1 each, to a maximum of 20 (or take a feat).", "points": 2, "allowFeat": true }
+      ]
+    },
+    {
+      "level": 20, "proficiency_bonus": 6, "features": ["Extra Attack (3)"],
+      "grants": [
+        { "type": "feature", "name": "Extra Attack (3)", "description": "Attack four times, instead of once, whenever you take the Attack action on your turn." }
+      ]
+    }
   ]
 }

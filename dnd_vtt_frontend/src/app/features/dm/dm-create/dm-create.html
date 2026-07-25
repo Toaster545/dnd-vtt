@@ -1,4 +1,4 @@
-<div class="flex h-full overflow-hidden">
+<div class="flex flex-1 min-h-0 overflow-hidden">
   <!-- Sidebar nav -->
   <nav class="w-48 border-r border-white/10 py-2 flex-shrink-0">
     <button class="nav-item" [class.active]="activeSection() === 'characters'" (click)="activeSection.set('characters')">
@@ -24,21 +24,29 @@
   </nav>
 
   <!-- Content -->
-  <div class="flex-1 overflow-auto p-6">
+  <div class="flex-1 overflow-hidden flex flex-col">
     @switch (activeSection()) {
-      @case ('characters') { <app-dm-characters /> }
-      @case ('sessions')   { <app-dm-sessions /> }
+      @case ('characters') { <app-dm-characters class="flex flex-col flex-1 min-h-0" /> }
+      @case ('sessions') {
+        <div class="flex-1 overflow-auto p-6"><app-dm-sessions /></div>
+      }
       @case ('encounters') {
-        <h2 class="font-brand text-lg text-parchment mb-3">Encounters</h2>
-        <p class="text-slate text-sm">Encounters coming soon.</p>
+        <div class="flex-1 overflow-auto p-6">
+          <h2 class="font-brand text-lg text-parchment mb-3">Encounters</h2>
+          <p class="text-slate text-sm">Encounters coming soon.</p>
+        </div>
       }
       @case ('items') {
-        <h2 class="font-brand text-lg text-parchment mb-3">Items</h2>
-        <p class="text-slate text-sm">Items coming soon.</p>
+        <div class="flex-1 overflow-auto p-6">
+          <h2 class="font-brand text-lg text-parchment mb-3">Items</h2>
+          <p class="text-slate text-sm">Items coming soon.</p>
+        </div>
       }
       @case ('spells') {
-        <h2 class="font-brand text-lg text-parchment mb-3">Spells</h2>
-        <p class="text-slate text-sm">Spells coming soon.</p>
+        <div class="flex-1 overflow-auto p-6">
+          <h2 class="font-brand text-lg text-parchment mb-3">Spells</h2>
+          <p class="text-slate text-sm">Spells coming soon.</p>
+        </div>
       }
     }
   </div>

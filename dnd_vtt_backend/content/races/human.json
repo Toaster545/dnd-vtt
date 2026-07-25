@@ -1,17 +1,22 @@
 {
   "index": "human",
   "name": "Human",
+  "description": "Humans are the most adaptable and ambitious people among the common races. Whatever drives them, humans are the innovators, the achievers, and the pioneers of the worlds, forever reshaping their surroundings and adapting to a new home.",
   "speed": 30,
   "size": "Medium",
-  "ability_bonuses": [
-    { "ability": "strength",     "bonus": 1 },
-    { "ability": "dexterity",    "bonus": 1 },
-    { "ability": "constitution", "bonus": 1 },
-    { "ability": "intelligence", "bonus": 1 },
-    { "ability": "wisdom",       "bonus": 1 },
-    { "ability": "charisma",     "bonus": 1 }
+  "traits": [
+    "Extra Language"
   ],
-  "traits": ["Extra Language"],
-  "languages": ["Common", "One extra language of your choice"],
+  "grants": [
+    {
+      "type": "feature",
+      "name": "Extra Language",
+      "description": "Speak, read, and write one extra language of your choice."
+    }
+  ],
+  "languages": [
+    "Common",
+    "One extra language of your choice"
+  ],
   "subraces": []
 }

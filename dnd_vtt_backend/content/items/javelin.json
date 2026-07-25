@@ -1,0 +1,18 @@
+{
+  "index": "javelin",
+  "name": "Javelin",
+  "type": "weapon",
+  "category": "Simple Melee",
+  "damage": "1d6",
+  "damage_type": "piercing",
+  "properties": [
+    "Thrown (range 30/120)"
+  ],
+  "weight": 2,
+  "cost": "5 sp",
+  "description": "A light spear meant to be thrown.",
+  "mastery": {
+    "property": "Slow",
+    "description": "Hit reduces the target's speed by 10 ft. until the start of your next turn."
+  }
+}

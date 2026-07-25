@@ -1,0 +1,6 @@
+{
+  "index": "great-weapon-master",
+  "name": "Great Weapon Master",
+  "description": "On your turn, when you score a critical hit with a melee weapon or reduce a creature to 0 HP with one, you can make a bonus action melee attack. Before making a melee attack with a heavy weapon you're proficient with, you can take a -5 penalty to the attack roll for a +10 bonus to damage if it hits.",
+  "category": "general"
+}

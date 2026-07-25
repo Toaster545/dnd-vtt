@@ -1,0 +1,20 @@
+{
+  "index": "dagger",
+  "name": "Dagger",
+  "type": "weapon",
+  "category": "Simple Melee",
+  "damage": "1d4",
+  "damage_type": "piercing",
+  "properties": [
+    "Finesse",
+    "Light",
+    "Thrown (range 20/60)"
+  ],
+  "weight": 1,
+  "cost": "2 gp",
+  "description": "A short, easily concealed blade.",
+  "mastery": {
+    "property": "Nick",
+    "description": "The extra attack granted by this weapon's Light property doesn't require a bonus action."
+  }
+}

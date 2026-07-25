@@ -68,10 +68,14 @@ export interface Character {
   // Identity (reference content by name)
   name: string;
   race: string;
-  class: string;
-  subclass?: string;
-  level: number;
+  subrace?: string;
+  race_choices?: Record<string, string[]>; // race/subrace trait picks, e.g. Draconic Ancestry
+  class: string;         // primary class name
+  subclass?: string;     // primary class subclass
+  level: number;         // total character level
+  classes?: { name: string; level: number; subclass?: string; choices?: Record<string, string[]>; skills?: string[] }[]; // multiclass
   background: string;
+  background_choices?: Record<string, string[]>; // background trait picks, incl. ability score increase
   alignment: string;
 
   // Raw ability scores — never computed, always stored
@@ -100,6 +104,11 @@ export interface Character {
   // Spells
   spells: SpellEntry[];
   spell_slots_used: Record<string, number>; // slot level → count used
+
+  // Limited-use class/race/item features (Second Wind, Action Surge, etc.) — keyed by the
+  // content grant's stable `key`, not its display name. Rest recovery clears entries by
+  // ClassGrantAction.uses.per; slot-based spellcasting stays in spell_slots_used above.
+  resource_uses: Record<string, number>;
 
   // Flavor
   personality_traits: string;
@@ -133,6 +142,7 @@ export function defaultCharacter(): Omit<Character, 'name'> {
     equipment: [],
     currency: { cp: 0, sp: 0, ep: 0, gp: 0, pp: 0 },
     spells: [], spell_slots_used: {},
+    resource_uses: {},
     personality_traits: '', ideals: '', bonds: '', flaws: '', notes: '',
   };
 }
