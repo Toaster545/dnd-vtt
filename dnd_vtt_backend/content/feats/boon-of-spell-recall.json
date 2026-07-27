@@ -1,0 +1,21 @@
+{
+  "index": "boon-of-spell-recall",
+  "name": "Boon of Spell Recall",
+  "description": "Increase one ability score by 1, to a maximum of 30. Once per long rest, at the end of a short rest, you can regain one expended spell slot of 5th level or lower.",
+  "category": "epic",
+  "prerequisite": {
+    "level": 19,
+    "spellcasting": true
+  },
+  "abilityIncrease": {
+    "abilities": [
+      "strength",
+      "dexterity",
+      "constitution",
+      "intelligence",
+      "wisdom",
+      "charisma"
+    ],
+    "amount": 1
+  }
+}

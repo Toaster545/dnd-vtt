@@ -1,0 +1,20 @@
+{
+  "index": "boon-of-recovery",
+  "name": "Boon of Recovery",
+  "description": "Increase one ability score by 1, to a maximum of 30. Once per long rest, when you would be reduced to 0 hit points but not killed outright, you can instead drop to 1 hit point. If you do, you lose a number of Hit Dice equal to half your total (minimum of 1).",
+  "category": "epic",
+  "prerequisite": {
+    "level": 19
+  },
+  "abilityIncrease": {
+    "abilities": [
+      "strength",
+      "dexterity",
+      "constitution",
+      "intelligence",
+      "wisdom",
+      "charisma"
+    ],
+    "amount": 1
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "index": "boon-of-irresistible-offense",
+  "name": "Boon of Irresistible Offense",
+  "description": "Increase one ability score by 1, to a maximum of 30. Once per turn when you deal damage to a creature that has resistance to that damage type, the creature loses its resistance to that damage type against your attack.",
+  "category": "epic",
+  "prerequisite": {
+    "level": 19
+  },
+  "abilityIncrease": {
+    "abilities": [
+      "strength",
+      "dexterity",
+      "constitution",
+      "intelligence",
+      "wisdom",
+      "charisma"
+    ],
+    "amount": 1
+  }
+}

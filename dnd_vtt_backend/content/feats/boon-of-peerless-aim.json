@@ -1,0 +1,20 @@
+{
+  "index": "boon-of-peerless-aim",
+  "name": "Boon of Peerless Aim",
+  "description": "Increase one ability score by 1, to a maximum of 30. Once per short or long rest, when you miss with a ranged attack roll, you can turn the miss into a hit.",
+  "category": "epic",
+  "prerequisite": {
+    "level": 19
+  },
+  "abilityIncrease": {
+    "abilities": [
+      "strength",
+      "dexterity",
+      "constitution",
+      "intelligence",
+      "wisdom",
+      "charisma"
+    ],
+    "amount": 1
+  }
+}

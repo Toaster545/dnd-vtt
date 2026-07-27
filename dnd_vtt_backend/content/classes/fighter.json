@@ -257,7 +257,7 @@
         },
         {
           "type": "feature", "key": "second-wind", "name": "Second Wind",
-          "description": "Bonus action: regain 1d10 + fighter level hit points. Two uses per long rest; regain a use on a short rest.",
+          "description": "Bonus action: regain 1d10 + {level} hit points. Two uses per long rest; regain a use on a short rest.",
           "action": { "activation": "bonus_action", "uses": { "max": 2, "per": "long_rest" } }
         },
         {
@@ -290,13 +290,19 @@
     {
       "level": 4, "proficiency_bonus": 2, "features": ["Ability Score Improvement"],
       "grants": [
-        { "type": "ability_choice", "key": "asi_4", "name": "Ability Score Improvement", "description": "Increase one ability score by 2, or two scores by 1 each, to a maximum of 20 (or take a feat).", "points": 2, "allowFeat": true }
+        { "type": "ability_choice", "key": "asi_4", "name": "Ability Score Improvement", "description": "Increase one ability score by 2, or two scores by 1 each, to a maximum of 20 (or take a feat).", "points": 2, "allowFeat": true },
+        {
+          "type": "weapon_mastery", "key": "weapon_mastery_4", "name": "Weapon Mastery (4th weapon)", "choose": 1,
+          "description": "Choose 1 additional weapon you have proficiency with to gain its mastery property.",
+          "proficiency": ["Simple", "Martial"]
+        }
       ]
     },
     {
-      "level": 5, "proficiency_bonus": 3, "features": ["Extra Attack"],
+      "level": 5, "proficiency_bonus": 3, "features": ["Extra Attack", "Tactical Shift"],
       "grants": [
-        { "type": "feature", "name": "Extra Attack", "description": "Attack twice, instead of once, whenever you take the Attack action on your turn." }
+        { "type": "feature", "name": "Extra Attack", "description": "Attack twice, instead of once, whenever you take the Attack action on your turn." },
+        { "type": "feature", "name": "Tactical Shift", "description": "Whenever you use Second Wind, you can move up to half your Speed as part of that bonus action without provoking opportunity attacks." }
       ]
     },
     {
@@ -318,15 +324,21 @@
       ]
     },
     {
-      "level": 9, "proficiency_bonus": 4, "features": ["Indomitable (1/long rest)"],
+      "level": 9, "proficiency_bonus": 4, "features": ["Indomitable (1/long rest)", "Tactical Master"],
       "grants": [
-        { "type": "feature", "name": "Indomitable (1/long rest)", "description": "Reroll a failed saving throw. Once per long rest." }
+        { "type": "feature", "name": "Indomitable (1/long rest)", "description": "Reroll a failed saving throw. Once per long rest." },
+        { "type": "feature", "name": "Tactical Master", "description": "You can replace the mastery property of the weapon you attack with for Push, Sap, or Slow instead, for that attack." }
       ]
     },
     {
       "level": 10, "proficiency_bonus": 4, "features": ["Martial Archetype Feature"],
       "grants": [
-        { "type": "feature", "name": "Martial Archetype Feature", "description": "Gain a feature from your chosen subclass." }
+        { "type": "feature", "name": "Martial Archetype Feature", "description": "Gain a feature from your chosen subclass." },
+        {
+          "type": "weapon_mastery", "key": "weapon_mastery_10", "name": "Weapon Mastery (5th weapon)", "choose": 1,
+          "description": "Choose 1 additional weapon you have proficiency with to gain its mastery property.",
+          "proficiency": ["Simple", "Martial"]
+        }
       ]
     },
     {
@@ -342,9 +354,10 @@
       ]
     },
     {
-      "level": 13, "proficiency_bonus": 5, "features": ["Indomitable (2/long rest)"],
+      "level": 13, "proficiency_bonus": 5, "features": ["Indomitable (2/long rest)", "Studied Attacks"],
       "grants": [
-        { "type": "feature", "name": "Indomitable (2/long rest)", "description": "Reroll a failed saving throw. Twice per long rest." }
+        { "type": "feature", "name": "Indomitable (2/long rest)", "description": "Reroll a failed saving throw. Twice per long rest." },
+        { "type": "feature", "name": "Studied Attacks", "description": "If you miss with an attack roll against a creature, you have advantage on your next attack roll against that creature before the end of your next turn." }
       ]
     },
     {
@@ -362,7 +375,12 @@
     {
       "level": 16, "proficiency_bonus": 5, "features": ["Ability Score Improvement"],
       "grants": [
-        { "type": "ability_choice", "key": "asi_16", "name": "Ability Score Improvement", "description": "Increase one ability score by 2, or two scores by 1 each, to a maximum of 20 (or take a feat).", "points": 2, "allowFeat": true }
+        { "type": "ability_choice", "key": "asi_16", "name": "Ability Score Improvement", "description": "Increase one ability score by 2, or two scores by 1 each, to a maximum of 20 (or take a feat).", "points": 2, "allowFeat": true },
+        {
+          "type": "weapon_mastery", "key": "weapon_mastery_16", "name": "Weapon Mastery (6th weapon)", "choose": 1,
+          "description": "Choose 1 additional weapon you have proficiency with to gain its mastery property.",
+          "proficiency": ["Simple", "Martial"]
+        }
       ]
     },
     {
@@ -383,9 +401,9 @@
       ]
     },
     {
-      "level": 19, "proficiency_bonus": 6, "features": ["Ability Score Improvement"],
+      "level": 19, "proficiency_bonus": 6, "features": ["Epic Boon"],
       "grants": [
-        { "type": "ability_choice", "key": "asi_19", "name": "Ability Score Improvement", "description": "Increase one ability score by 2, or two scores by 1 each, to a maximum of 20 (or take a feat).", "points": 2, "allowFeat": true }
+        { "type": "feat_pick", "key": "epic_boon_19", "name": "Epic Boon", "choose": 1, "description": "Choose an Epic Boon feat, gaining its benefits.", "category": "epic" }
       ]
     },
     {

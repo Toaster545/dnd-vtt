@@ -366,7 +366,7 @@ export class ClassStepComponent implements OnInit {
     this.syncDraft();
   }
 
-  availableFeatPicks(grant: { key: string; category: 'origin' | 'general' | 'fighting_style'; feats?: string[]; excludeKey?: string }): DndFeat[] {
+  availableFeatPicks(grant: { key: string; category: 'origin' | 'general' | 'fighting_style' | 'epic'; feats?: string[]; excludeKey?: string }): DndFeat[] {
     const taken = this.alreadyTakenElsewhere(grant.key);
     let pool = this.feats().filter(f =>
       f.category === grant.category && this.qualifiesForFeat(f) && (f.repeatable || !taken.has(f.index)));
@@ -494,10 +494,36 @@ export class ClassStepComponent implements OnInit {
     });
   }
 
-  weaponMasteryOptions(grant: { proficiency: string[] }): DndItem[] {
+  // Weapons already mastered via some OTHER weapon_mastery grant (e.g. the level 1 pick of 3,
+  // when filling the level 4 "4th weapon" grant) — a class's weapon mastery count grows across
+  // several levels (see fighter.json), each its own keyed grant, so without this a weapon picked
+  // at an earlier level would still show up as pickable again at a later one.
+  private weaponMasteryPicksElsewhere(excludeGrantKey: string): Set<string> {
+    const out = new Set<string>();
+    const scan = (cls: DndClass, traits: Record<string, string[]>) => {
+      const levels = [...cls.levels, ...cls.subclasses.flatMap(s => s.levels)];
+      for (const grant of levels.flatMap(l => l.grants ?? [])) {
+        if (grant.type === 'weapon_mastery' && grant.key !== excludeGrantKey) {
+          for (const weapon of traits[grant.key] ?? []) out.add(weapon);
+        }
+      }
+    };
+    const browsing = this.browsingClass();
+    for (const entry of this.selectedClasses()) {
+      scan(entry.cls, browsing?.index === entry.cls.index ? this.draftTraits() : entry.traits);
+    }
+    if (browsing && !this.selectedClasses().some(e => e.cls.index === browsing.index)) {
+      scan(browsing, this.draftTraits());
+    }
+    return out;
+  }
+
+  weaponMasteryOptions(grant: { key: string; proficiency: string[] }): DndItem[] {
+    const excluded = this.weaponMasteryPicksElsewhere(grant.key);
     return this.items().filter(it =>
       it.type === 'weapon' && it.mastery &&
-      grant.proficiency.some(p => it.category.startsWith(p)),
+      grant.proficiency.some(p => it.category.startsWith(p)) &&
+      !excluded.has(it.name),
     );
   }
 

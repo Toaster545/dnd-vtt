@@ -9,7 +9,8 @@
   "effects": [
     {
       "type": "melee_damage_bonus",
-      "value": 2
+      "value": 2,
+      "condition": "one_handed_melee_no_offhand"
     }
   ]
 }

@@ -1,4 +1,5 @@
 import { Component, inject, input, output, signal, computed, effect } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import {
@@ -34,7 +35,7 @@ type Tab = 'stats' | 'actions' | 'inventory' | 'spells';
 
 @Component({
   selector: 'app-character-play-sheet',
-  imports: [MatIconModule, MatTooltipModule],
+  imports: [FormsModule, MatIconModule, MatTooltipModule],
   templateUrl: './character-play-sheet.html',
   styleUrl: './character-play-sheet.scss',
 })
@@ -55,6 +56,8 @@ export class CharacterPlaySheetComponent {
   activeTab   = signal<Tab>('stats');
   loading     = signal(true);
   persisting  = signal(false);
+
+  hpAdjustAmount  = signal<number>(0);
 
   localChar       = signal<Character | null>(null);
   raceData        = signal<DndRace | null>(null);
@@ -82,15 +85,50 @@ export class CharacterPlaySheetComponent {
     return this.actionsService.compute(classes, char.resource_uses ?? {});
   });
 
-  equippedWeapons = computed(() => {
-    const char = this.localChar();
-    if (!char) return [];
+  // The four Actions-tab groups, in display order: weapon/spell attacks (below), then
+  // trackable class features split by their action economy — "Other Actions" (activation
+  // 'action'/'reaction') alongside the static reference lists below, then Bonus Actions, then
+  // Special ("free" activation — resources like Action Surge that don't cost any action-economy
+  // slot at all).
+  otherResourceActions = computed(() => this.actions().filter(a => a.activation === 'action' || a.activation === 'reaction'));
+  bonusActions         = computed(() => this.actions().filter(a => a.activation === 'bonus_action'));
+  specialActions       = computed(() => this.actions().filter(a => a.activation === 'free'));
+
+  // The standard PHB actions every character can always take — not class-specific data, so a
+  // fixed reference list rather than something resolved from grants.
+  readonly universalActions: DisplayFeature[] = [
+    { source: 'Action', name: 'Dash', detail: 'Gain extra movement equal to your Speed.' },
+    { source: 'Action', name: 'Disengage', detail: "Your movement doesn't provoke opportunity attacks for the rest of the turn." },
+    { source: 'Action', name: 'Dodge', detail: 'Until your next turn, attack rolls against you have disadvantage (if you can see the attacker), and you make Dexterity saves with advantage.' },
+    { source: 'Action', name: 'Help', detail: "Give an ally advantage on their next ability check for a task, or on their next attack against a creature within 5 ft. of you." },
+    { source: 'Action', name: 'Hide', detail: 'Make a Dexterity (Stealth) check to become hidden.' },
+    { source: 'Action', name: 'Ready', detail: 'Choose a trigger and an action or movement to take in response to it, using your reaction when it occurs.' },
+    { source: 'Action', name: 'Search', detail: 'Make a Wisdom (Perception) or Intelligence (Investigation) check to find something.' },
+    { source: 'Action', name: 'Use an Object', detail: 'Interact with a second object, or use an object that requires your action.' },
+  ];
+
+  // Weapons the character has actually chosen mastery for (across every weapon_mastery grant on
+  // every selected class — the choice may be split across several levels, see fighter.json),
+  // shown as a during-combat reference of the mastery property that triggers when they hit.
+  masteredWeapons = computed<DisplayFeature[]>(() => {
     const items = this.itemsAll();
-    return char.equipment
-      .filter(e => e.equipped)
-      .map(e => items.find(it => it.index === e.itemIndex))
-      .filter((it): it is DndItem => !!it && it.type === 'weapon');
+    const names = new Set<string>();
+    for (const rc of this.resolvedClasses()) {
+      const levels = [...rc.data.levels, ...(rc.subclass?.levels ?? [])];
+      for (const grant of levels.flatMap(l => l.grants ?? [])) {
+        if (grant.type !== 'weapon_mastery') continue;
+        for (const name of rc.choices[grant.key] ?? []) names.add(name);
+      }
+    }
+    return [...names]
+      .map(name => items.find(it => it.name === name && it.mastery))
+      .filter((it): it is DndItem => !!it)
+      .map(it => ({ source: 'Weapon Mastery', name: `${it.name} — ${it.mastery!.property}`, detail: it.mastery!.description }));
   });
+
+  // Cantrips are always castable; leveled spells only once prepared — same rule the Spells tab's
+  // prepare toggle exists to enforce.
+  castableSpells = computed(() => this.knownSpells().filter(({ spell, entry }) => spell.level === 0 || entry.prepared));
 
   inventoryItems = computed(() => {
     const char = this.localChar();
@@ -266,6 +304,20 @@ export class CharacterPlaySheetComponent {
   hpColor(char: Character): string {
     const pct = this.hpPercent(char);
     return pct <= 25 ? 'bg-danger' : pct <= 50 ? 'bg-yellow-500' : 'bg-success';
+  }
+
+  setHpAdjustAmount(value: string) {
+    this.hpAdjustAmount.set(Math.max(0, Math.floor(+value || 0)));
+  }
+
+  // Damage (negative delta) or healing (positive delta), clamped to [0, max_hp] — current_hp
+  // can't go negative (that's what death saves track) or overheal past max.
+  applyHpDelta(delta: number) {
+    const char = this.localChar();
+    if (!char || !delta) return;
+    const next = Math.max(0, Math.min(char.max_hp, char.current_hp + delta));
+    if (next === char.current_hp) return;
+    this.persist({ ...char, current_hp: next });
   }
 
   // Actions

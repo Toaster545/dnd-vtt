@@ -1,0 +1,20 @@
+{
+  "index": "boon-of-the-night-spirit",
+  "name": "Boon of the Night Spirit",
+  "description": "Increase one ability score by 1, to a maximum of 30. Gain resistance to nonmagical bludgeoning, piercing, and slashing damage. In addition, as a bonus action you can become invisible until the start of your next turn or until you attack, deal damage, or force a creature to make a saving throw; you can use this a number of times equal to your proficiency bonus, regaining all expended uses when you finish a long rest.",
+  "category": "epic",
+  "prerequisite": {
+    "level": 19
+  },
+  "abilityIncrease": {
+    "abilities": [
+      "strength",
+      "dexterity",
+      "constitution",
+      "intelligence",
+      "wisdom",
+      "charisma"
+    ],
+    "amount": 1
+  }
+}

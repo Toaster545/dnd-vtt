@@ -1,0 +1,20 @@
+{
+  "index": "boon-of-combat-prowess",
+  "name": "Boon of Combat Prowess",
+  "description": "Increase one ability score by 1, to a maximum of 30. Once per turn, when you miss with an attack roll, you can turn the miss into a hit.",
+  "category": "epic",
+  "prerequisite": {
+    "level": 19
+  },
+  "abilityIncrease": {
+    "abilities": [
+      "strength",
+      "dexterity",
+      "constitution",
+      "intelligence",
+      "wisdom",
+      "charisma"
+    ],
+    "amount": 1
+  }
+}

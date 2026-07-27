@@ -1,0 +1,20 @@
+{
+  "index": "boon-of-truesight",
+  "name": "Boon of Truesight",
+  "description": "Increase one ability score by 1, to a maximum of 30. Gain Truesight with a range of 120 feet.",
+  "category": "epic",
+  "prerequisite": {
+    "level": 19
+  },
+  "abilityIncrease": {
+    "abilities": [
+      "strength",
+      "dexterity",
+      "constitution",
+      "intelligence",
+      "wisdom",
+      "charisma"
+    ],
+    "amount": 1
+  }
+}

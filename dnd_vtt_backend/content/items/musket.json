@@ -1,0 +1,20 @@
+{
+  "index": "musket",
+  "name": "Musket",
+  "type": "weapon",
+  "category": "Martial Ranged",
+  "damage": "1d12",
+  "damage_type": "piercing",
+  "properties": [
+    "Ammunition (range 40/120)",
+    "Loading",
+    "Two-Handed"
+  ],
+  "weight": 10,
+  "cost": "500 gp",
+  "description": "A two-handed firearm. Rare in most D&D worlds — available only with the DM's permission.",
+  "mastery": {
+    "property": "Slow",
+    "description": "Hit reduces the target's Speed by 10 feet until the start of your next turn."
+  }
+}
