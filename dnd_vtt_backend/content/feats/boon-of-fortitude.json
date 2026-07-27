@@ -1,0 +1,20 @@
+{
+  "index": "boon-of-fortitude",
+  "name": "Boon of Fortitude",
+  "description": "Increase one ability score by 1, to a maximum of 30. Your hit point maximum increases by 40. Once per turn, whenever you regain hit points from any source, add your Constitution modifier to the amount regained.",
+  "category": "epic",
+  "prerequisite": {
+    "level": 19
+  },
+  "abilityIncrease": {
+    "abilities": [
+      "strength",
+      "dexterity",
+      "constitution",
+      "intelligence",
+      "wisdom",
+      "charisma"
+    ],
+    "amount": 1
+  }
+}

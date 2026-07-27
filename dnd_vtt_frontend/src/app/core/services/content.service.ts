@@ -66,7 +66,7 @@ export type TraitGrant =
   // alternative (unlike `ability_choice`). `excludeKey` points at another feat_pick/ability_choice
   // grant's key whose already-picked feat(s) should be excluded from this one's options (e.g.
   // Fighter's Additional Fighting Style must differ from the style picked at level 1).
-  | { type: 'feat_pick'; key: string; name: string; choose: number; description?: string; category: 'origin' | 'general' | 'fighting_style'; feats?: string[]; excludeKey?: string };
+  | { type: 'feat_pick'; key: string; name: string; choose: number; description?: string; category: 'origin' | 'general' | 'fighting_style' | 'epic'; feats?: string[]; excludeKey?: string };
 
 export interface DndFeat {
   index: string;
@@ -75,8 +75,11 @@ export interface DndFeat {
   // Origin feats come from Background (or Human's Versatile trait) at character creation —
   // they never belong in the level 4+ ASI-or-feat pool. Fighting Style feats are only ever
   // offered through a class's Fighting Style feature (see `feat_pick` grants), never the
-  // general ASI-or-feat pool either. Only General feats populate that pool.
-  category: 'origin' | 'general' | 'fighting_style';
+  // general ASI-or-feat pool either. Only General feats populate that pool. Epic feats
+  // (Epic Boons) are likewise only ever offered through a dedicated `feat_pick` grant at
+  // level 19 — they carry `prerequisite.level: 19` mostly for informational completeness,
+  // same as General feats carrying `level: 4`.
+  category: 'origin' | 'general' | 'fighting_style' | 'epic';
   // "For which you qualify" — a feat picker should only offer feats the character actually
   // meets. `abilities` is an OR list (any one of these at `min` qualifies); level is always 4
   // for every current General feat (the earliest this slot appears) so it's carried for

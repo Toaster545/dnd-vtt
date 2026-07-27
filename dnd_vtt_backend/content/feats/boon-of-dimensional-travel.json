@@ -1,0 +1,20 @@
+{
+  "index": "boon-of-dimensional-travel",
+  "name": "Boon of Dimensional Travel",
+  "description": "Increase one ability score by 1, to a maximum of 30. Immediately after you take the Attack action or the Magic action on your turn, you can teleport up to 30 feet to an unoccupied space you can see.",
+  "category": "epic",
+  "prerequisite": {
+    "level": 19
+  },
+  "abilityIncrease": {
+    "abilities": [
+      "strength",
+      "dexterity",
+      "constitution",
+      "intelligence",
+      "wisdom",
+      "charisma"
+    ],
+    "amount": 1
+  }
+}

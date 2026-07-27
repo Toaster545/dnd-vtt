@@ -1,7 +1,19 @@
 import { Injectable } from '@angular/core';
 import { Character, Ability, ABILITIES, SKILLS, abilityModifier, proficiencyBonus } from '../models/character.model';
 import { DndClass, DndFeat, DndItem, DndRace } from './content.service';
-import { ClassChoiceSource, activeEffects, baseArmorClass, collectTraitEffects, resolveCharacterFeatPicks } from '../utils/character-effects';
+import {
+  ClassChoiceSource, activeEffects, baseArmorClass, collectTraitEffects, equippedItems, resolveCharacterFeatPicks,
+} from '../utils/character-effects';
+
+export interface WeaponAttack {
+  itemIndex: string;
+  name: string;
+  attack_bonus: number;
+  damage_dice: string;
+  damage_bonus: number;
+  damage_type: string | null;
+  mastery?: { property: string; description: string };
+}
 
 export interface ComputedStats {
   proficiency_bonus: number;
@@ -12,6 +24,8 @@ export interface ComputedStats {
   saving_throw_bonuses: Record<Ability, number>;
   skill_bonuses: Record<string, number>;
   passive_perception: number;
+  passive_investigation: number;
+  passive_insight: number;
   spell_attack_bonus: number | null;
   spell_save_dc: number | null;
   // Live AC — from whatever's actually equipped right now (armor's own formula, or 10 + Dex if
@@ -19,6 +33,38 @@ export interface ComputedStats {
   // Defense's "+1 while wearing armor"). Not `char.armor_class` — that stored field is only
   // used by the separate player-facing character sheet's manual editor.
   computed_ac: number;
+  weapon_attacks: WeaponAttack[];
+}
+
+// Weapon proficiency comes from a class's `weapon_proficiencies` list, which mixes broad
+// categories ("Simple Weapons", "Martial Weapons") with specific weapon names in plural form
+// ("Longswords", "Hand Crossbows") — every current class's list stays within these two shapes,
+// so a trailing-"s" strip is enough to recover the singular item name to compare.
+function classGrantsProficiency(weapon: DndItem, classData: DndClass): boolean {
+  return classData.weapon_proficiencies.some(p =>
+    (p === 'Simple Weapons' && weapon.category.startsWith('Simple')) ||
+    (p === 'Martial Weapons' && weapon.category.startsWith('Martial')) ||
+    p.replace(/s$/, '').toLowerCase() === weapon.name.toLowerCase(),
+  );
+}
+
+function isProficientWithWeapon(
+  weapon: DndItem, classesForFeats: ClassChoiceSource[], feats: DndFeat[],
+): boolean {
+  if (classesForFeats.some(({ data }) => classGrantsProficiency(weapon, data))) return true;
+  // A feat granting a whole weapon category (e.g. Martial Weapon Training's `tags: ['martial']`)
+  // rather than the fixed `value` count of specific weapons some feats describe but never let
+  // the player actually name (e.g. Weapon Master) — only category-tagged grants are resolvable
+  // to "is the character proficient with THIS weapon" generically.
+  const categoryGrants = collectTraitEffects(classesForFeats, feats)
+    .filter(e => e.type === 'weapon_proficiency' && e.tags?.length);
+  return categoryGrants.some(e => e.tags!.some(tag => weapon.category.toLowerCase().startsWith(tag.toLowerCase())));
+}
+
+// Melee uses Strength, ranged uses Dexterity, and Finesse weapons use whichever is better.
+function weaponAbilityMod(weapon: DndItem, mods: Record<Ability, number>): number {
+  if (weapon.properties.includes('Finesse')) return Math.max(mods.strength, mods.dexterity);
+  return weapon.category.includes('Ranged') ? mods.dexterity : mods.strength;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -53,10 +99,9 @@ export class CharacterStatsService {
       ...acc, [ab]: mods[ab] + (saveProfSet.has(ab) ? prof : 0),
     }), {} as Record<Ability, number>);
 
-    const conditionalAcBonus = activeEffects(
-      collectTraitEffects(classesForFeats, feats).filter(e => e.type === 'ac_bonus'),
-      char.equipment, items,
-    ).reduce((sum, e) => sum + (e.value ?? 0), 0);
+    const allEffects = collectTraitEffects(classesForFeats, feats);
+    const conditionalAcBonus = activeEffects(allEffects.filter(e => e.type === 'ac_bonus'), char.equipment, items)
+      .reduce((sum, e) => sum + (e.value ?? 0), 0);
     const computed_ac = baseArmorClass(char.equipment, items, mods.dexterity) + conditionalAcBonus;
 
     const skill_bonuses = Object.fromEntries(
@@ -68,6 +113,40 @@ export class CharacterStatsService {
     );
 
     const passive_perception = 10 + (skill_bonuses['Perception'] ?? mods.wisdom);
+    const passive_investigation = 10 + (skill_bonuses['Investigation'] ?? mods.intelligence);
+    const passive_insight = 10 + (skill_bonuses['Insight'] ?? mods.wisdom);
+
+    const weapon_attacks: WeaponAttack[] = equippedItems(char.equipment, items)
+      .filter(it => it.type === 'weapon')
+      .map(weapon => {
+        const abilityMod = weaponAbilityMod(weapon, mods);
+        const proficient = isProficientWithWeapon(weapon, classesForFeats, feats);
+        const isRanged = weapon.category.includes('Ranged');
+        const isThrown = weapon.properties.some(p => p.startsWith('Thrown'));
+
+        const rangedAttackBonus = isRanged
+          ? activeEffects(allEffects.filter(e => e.type === 'ranged_attack_bonus'), char.equipment, items)
+              .reduce((sum, e) => sum + (e.value ?? 0), 0)
+          : 0;
+        const meleeDamageBonus = !isRanged
+          ? activeEffects(allEffects.filter(e => e.type === 'melee_damage_bonus'), char.equipment, items)
+              .reduce((sum, e) => sum + (e.value ?? 0), 0)
+          : 0;
+        const thrownDamageBonus = isThrown
+          ? activeEffects(allEffects.filter(e => e.type === 'thrown_damage_bonus'), char.equipment, items)
+              .reduce((sum, e) => sum + (e.value ?? 0), 0)
+          : 0;
+
+        return {
+          itemIndex: weapon.index,
+          name: weapon.name,
+          attack_bonus: abilityMod + (proficient ? prof : 0) + rangedAttackBonus,
+          damage_dice: weapon.damage ?? '',
+          damage_bonus: abilityMod + meleeDamageBonus + thrownDamageBonus,
+          damage_type: weapon.damage_type ?? null,
+          mastery: weapon.mastery,
+        };
+      });
 
     const spellcastingAbility = classData?.spellcasting_ability as Ability | undefined;
     const spell_attack_bonus = spellcastingAbility != null
@@ -84,7 +163,10 @@ export class CharacterStatsService {
       saving_throw_bonuses,
       skill_bonuses,
       computed_ac,
+      weapon_attacks,
       passive_perception,
+      passive_investigation,
+      passive_insight,
       spell_attack_bonus,
       spell_save_dc,
     };

@@ -1,0 +1,20 @@
+{
+  "index": "boon-of-energy-resistance",
+  "name": "Boon of Energy Resistance",
+  "description": "Increase one ability score by 1, to a maximum of 30. Gain resistance to two damage types of your choice, other than bludgeoning, piercing, slashing, or force. Whenever you finish a long rest, you can change one or both of your chosen damage types.",
+  "category": "epic",
+  "prerequisite": {
+    "level": 19
+  },
+  "abilityIncrease": {
+    "abilities": [
+      "strength",
+      "dexterity",
+      "constitution",
+      "intelligence",
+      "wisdom",
+      "charisma"
+    ],
+    "amount": 1
+  }
+}

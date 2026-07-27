@@ -1,0 +1,19 @@
+{
+  "index": "pistol",
+  "name": "Pistol",
+  "type": "weapon",
+  "category": "Martial Ranged",
+  "damage": "1d10",
+  "damage_type": "piercing",
+  "properties": [
+    "Ammunition (range 30/90)",
+    "Loading"
+  ],
+  "weight": 3,
+  "cost": "250 gp",
+  "description": "A one-handed firearm. Rare in most D&D worlds — available only with the DM's permission.",
+  "mastery": {
+    "property": "Vex",
+    "description": "Hit gives you advantage on your next attack roll against the same target before the end of your next turn."
+  }
+}

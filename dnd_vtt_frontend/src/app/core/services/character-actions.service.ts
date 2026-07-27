@@ -24,7 +24,12 @@ export class CharacterActionsService {
     classes: { data: DndClass; level: number; subclass?: Subclass | null }[],
     resourceUses: Record<string, number>,
   ): CharacterAction[] {
-    const winners = new Map<string, { level: number; grant: FeatureGrant; source: string }>();
+    // `level` here is the unlock threshold (which level's declaration currently wins, e.g. Action
+    // Surge's 1-use-vs-2-use text) — kept separate from `classLevel`, the character's actual
+    // current level in that class, which is what a description's `{level}` placeholder means
+    // (e.g. Second Wind's "1d10 + {level}" scales with current Fighter level, not the level 1
+    // it was unlocked at).
+    const winners = new Map<string, { level: number; classLevel: number; grant: FeatureGrant; source: string }>();
 
     for (const { data, level, subclass } of classes) {
       const levels = [...data.levels, ...(subclass?.levels ?? [])];
@@ -34,18 +39,18 @@ export class CharacterActionsService {
           if (grant.type !== 'feature' || !grant.action || !grant.key) continue;
           const existing = winners.get(grant.key);
           if (!existing || lvl.level >= existing.level) {
-            winners.set(grant.key, { level: lvl.level, grant, source: data.name });
+            winners.set(grant.key, { level: lvl.level, classLevel: level, grant, source: data.name });
           }
         }
       }
     }
 
-    return [...winners.values()].map(({ grant, source }) => {
+    return [...winners.values()].map(({ grant, source, classLevel }) => {
       const max = grant.action!.uses?.max ?? 0;
       return {
         key: grant.key!,
         name: grant.name,
-        description: grant.description,
+        description: grant.description?.replace('{level}', String(classLevel)),
         activation: grant.action!.activation,
         source,
         maxUses: max,
