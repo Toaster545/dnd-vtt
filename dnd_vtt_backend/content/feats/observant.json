@@ -2,5 +2,19 @@
   "index": "observant",
   "name": "Observant",
   "description": "If you can see a creature's mouth and it's speaking a language you know, you can read its lips. Gain a +5 bonus to passive Perception and passive Investigation. Increase Intelligence or Wisdom by 1, to a maximum of 20.",
-  "category": "general"
+  "category": "general",
+  "prerequisite": {
+    "level": 4,
+    "abilities": [
+      "intelligence",
+      "wisdom"
+    ]
+  },
+  "abilityIncrease": {
+    "abilities": [
+      "intelligence",
+      "wisdom"
+    ],
+    "amount": 1
+  }
 }

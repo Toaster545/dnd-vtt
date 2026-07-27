@@ -1,0 +1,14 @@
+{
+  "index": "blind-fighting",
+  "name": "Blind Fighting",
+  "description": "Blindsight 10 ft.; can fight normally while blinded or in darkness within that range.",
+  "category": "fighting_style",
+  "prerequisite": {
+    "feature": "Fighting Style"
+  },
+  "effects": [
+    {
+      "type": "special"
+    }
+  ]
+}

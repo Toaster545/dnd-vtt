@@ -1,0 +1,12 @@
+{
+  "index": "arrows",
+  "name": "Arrows (20)",
+  "type": "gear",
+  "category": "Ammunition",
+  "damage": null,
+  "damage_type": null,
+  "properties": [],
+  "weight": 1,
+  "cost": "1 gp",
+  "description": "A bundle of 20 arrows for use with a bow."
+}

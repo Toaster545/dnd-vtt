@@ -78,6 +78,14 @@ export interface Character {
   background_choices?: Record<string, string[]>; // background trait picks, incl. ability score increase
   alignment: string;
 
+  // Starting-equipment picks — which of a class/background's `StartingEquipment` groups were
+  // chosen (and any category-ref item picks within them), or gold instead. Same
+  // `Record<string, string[]>` shape as background_choices/classes[].choices, keyed by
+  // `mode` / `group:<key>` / `cat:<key>` (see core/utils/starting-equipment.ts). Only the
+  // primary class's equipment is tracked — starting gear is a level-1 concern, not per-class.
+  class_equipment_choices?: Record<string, string[]>;
+  background_equipment_choices?: Record<string, string[]>;
+
   // Raw ability scores — never computed, always stored
   ability_scores: AbilityScores;
 

@@ -2,5 +2,26 @@
   "index": "dual-wielder",
   "name": "Dual Wielder",
   "description": "You gain +1 to AC while wielding two melee weapons. You can two-weapon fight even when the one-handed melee weapons you're wielding aren't light. You can draw or stow two one-handed weapons at once.",
-  "category": "general"
+  "category": "general",
+  "prerequisite": {
+    "level": 4,
+    "abilities": [
+      "strength",
+      "dexterity"
+    ]
+  },
+  "abilityIncrease": {
+    "abilities": [
+      "strength",
+      "dexterity"
+    ],
+    "amount": 1
+  },
+  "effects": [
+    {
+      "type": "ac_bonus",
+      "value": 1,
+      "condition": "dual_wielding_melee"
+    }
+  ]
 }

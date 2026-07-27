@@ -11,10 +11,20 @@ export interface SpellSlots {
 // Machine-readable mechanical effect of a chosen option, so calculations (AC, damage, etc.)
 // can be derived generically instead of matching on the option's display name.
 export interface TraitEffect {
-  type: string; // e.g. 'ac_bonus' | 'melee_damage_bonus' | 'ranged_attack_bonus' | 'special'
+  type: string; // e.g. 'ac_bonus' | 'melee_damage_bonus' | 'ranged_attack_bonus' | 'armor_proficiency' | 'weapon_proficiency' | 'tool_proficiency' | 'special'
   value?: number;
   values?: number[];
+  tags?: string[];
+  condition?: EffectCondition;
 }
+
+export type EffectCondition =
+  | 'wearing_armor'
+  | 'no_armor'
+  | 'wielding_shield'
+  | 'two_handed_melee'
+  | 'one_handed_melee_no_offhand'
+  | 'dual_wielding_melee';
 
 export interface TraitOption {
   name: string;
@@ -48,16 +58,58 @@ export type TraitGrant =
   // unique per occurrence (e.g. "asi_4", "asi_8"), not shared across levels the way a scaling
   // resource like Action Surge is. When `allowFeat` is set (class ASI only), the player may
   // take a feat instead of the ability increase — stored under a companion trait key,
-  // `${key}:feat`, holding the chosen feat's index; `feats` optionally restricts the list.
-  | { type: 'ability_choice'; key: string; name: string; description?: string; points: number; abilities?: string[]; allowFeat?: boolean; feats?: string[] };
+  // `${key}:feat`, holding the chosen feat's index (and `${key}:feat_ability` if that feat's
+  // own ability bonus has more than one eligible ability); `feats` optionally restricts the list.
+  | { type: 'ability_choice'; key: string; name: string; description?: string; points: number; abilities?: string[]; allowFeat?: boolean; feats?: string[] }
+  // A pure feat picker sourced from the Feats content library, filtered to `category` (and
+  // optionally further restricted to `feats`) — e.g. a class's Fighting Style feature. No ASI
+  // alternative (unlike `ability_choice`). `excludeKey` points at another feat_pick/ability_choice
+  // grant's key whose already-picked feat(s) should be excluded from this one's options (e.g.
+  // Fighter's Additional Fighting Style must differ from the style picked at level 1).
+  | { type: 'feat_pick'; key: string; name: string; choose: number; description?: string; category: 'origin' | 'general' | 'fighting_style'; feats?: string[]; excludeKey?: string };
 
 export interface DndFeat {
   index: string;
   name: string;
   description: string;
   // Origin feats come from Background (or Human's Versatile trait) at character creation —
-  // they never belong in the level 4+ ASI-or-feat pool, only General feats do.
-  category: 'origin' | 'general';
+  // they never belong in the level 4+ ASI-or-feat pool. Fighting Style feats are only ever
+  // offered through a class's Fighting Style feature (see `feat_pick` grants), never the
+  // general ASI-or-feat pool either. Only General feats populate that pool.
+  category: 'origin' | 'general' | 'fighting_style';
+  // "For which you qualify" — a feat picker should only offer feats the character actually
+  // meets. `abilities` is an OR list (any one of these at `min` qualifies); level is always 4
+  // for every current General feat (the earliest this slot appears) so it's carried for
+  // completeness rather than actively gated on. `feature`/`classes` gate Fighting Style feats
+  // that are class-restricted (e.g. Blessed Warrior requires the Paladin's Fighting Style
+  // feature) — `feature` is informational (the grant context already implies it), `classes` is
+  // actively checked against the character's selected classes.
+  prerequisite?: {
+    level?: number;
+    abilities?: string[];
+    min?: number; // ability score threshold for `abilities`; defaults to 13 if omitted
+    armorProficiency?: 'light' | 'medium' | 'heavy' | 'shield';
+    spellcasting?: boolean;
+    feature?: string;
+    classes?: string[];
+  };
+  // Mechanical grants baked into taking the feat itself, applied automatically to computed
+  // stats — independent of `prerequisite` (which is about qualifying to take it) and of each
+  // other (a feat can carry both, or either alone). Most General feats give a flat or
+  // player-chosen +1 to one ability (max 20); `abilities.length > 1` means the player picks
+  // which. `grantsSaveProficiency` is for the Resilient pattern — the character also gains
+  // saving-throw proficiency in whichever ability was increased (the player-chosen one, when
+  // there's a choice), not a separately-chosen ability. Fighting Style and proficiency-granting
+  // feats instead (or additionally) carry `effects`, the same TraitEffect shape a class `choice`
+  // option uses — combat bonuses (AC, damage, attack rolls, etc.), optionally gated by
+  // `condition`, plus fixed proficiency grants (`armor_proficiency`/`weapon_proficiency`/
+  // `tool_proficiency`, kind(s) in `tags`).
+  abilityIncrease?: { abilities: string[]; amount: number; grantsSaveProficiency?: boolean };
+  effects?: TraitEffect[];
+  // Whether this feat can be taken more than once (stacking each time) — per the PHB, most
+  // feats can't; only mark this when the book explicitly says so. Non-repeatable feats already
+  // taken (via any ASI-or-feat/feat_pick slot on the character) are excluded from feat pickers.
+  repeatable?: boolean;
 }
 
 export interface ClassLevel {
@@ -94,7 +146,7 @@ export interface DndClass {
   weapon_proficiencies: string[];
   tool_proficiencies: string[];
   skill_choices: { count: number; from: string[] };
-  starting_equipment: ({ choice: true; options: string[] } | { fixed: string[] })[];
+  starting_equipment: StartingEquipment;
   spellcasting_ability?: string;
   subclass_level: number;
   subclasses: Subclass[];
@@ -133,12 +185,49 @@ export interface DndBackground {
   skill_proficiencies: string[];
   tool_proficiencies: string[];
   languages: string;
-  starting_equipment: string[];
+  starting_equipment: StartingEquipment;
   feature: string;
   // Ability score increase now lives here rather than on race — see TraitGrant's
   // 'ability_choice' variant. Always a single grant: 3 points, restricted to this
   // background's 3 relevant abilities.
   grants?: TraitGrant[];
+}
+
+// A single concrete item grant within starting equipment — either a specific catalog item, or
+// "any item whose category starts with X" (the player then picks which one, same idea as
+// `weapon_mastery`'s category-filtered picker). Every ref carries its own stable `key` so a
+// category pick can be stored/looked-up directly, regardless of whether the ref lives loose in
+// `fixed` or nested inside a group option.
+export type EquipmentItemRef =
+  | { key: string; item: string; quantity?: number }
+  | { key: string; category: string; label: string; quantity?: number };
+
+export interface EquipmentOption {
+  key: string;    // stable id for this alternative within its group, e.g. "chain_mail"
+  label: string;  // display text, e.g. "Leather Armor, a Longbow, and 20 Arrows"
+  items: EquipmentItemRef[];
+  // gp bundled with THIS option specifically — classes typically offer two full,
+  // independently-priced-out gear packages (e.g. Fighter's "Chain Mail... and 4 GP" vs
+  // "Studded Leather... and 11 GP"), each with its own leftover gold, unlike the flat
+  // `StartingEquipment.gold` alongside a single `fixed` set (background pattern).
+  gold?: number;
+}
+
+// One PHB equipment line that offers a handful of interchangeable alternatives — pick exactly
+// one option. E.g. Fighter's "(a) chain mail or (b) leather armor, a longbow, and 20 arrows".
+export interface EquipmentGroup {
+  key: string;
+  options: EquipmentOption[];
+}
+
+// A class or background's starting gear (option "a" in PHB terms: `fixed` + one pick per
+// `groups`, plus `gold` bundled alongside it, e.g. Soldier's "...with 10 gp") versus a flat
+// gold sum instead of all of it (option "b": `goldAlternative`).
+export interface StartingEquipment {
+  fixed: EquipmentItemRef[];
+  groups: EquipmentGroup[];
+  gold: number;
+  goldAlternative: number;
 }
 
 export interface DndItem {

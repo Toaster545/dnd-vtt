@@ -2,5 +2,15 @@
   "index": "poisoner",
   "name": "Poisoner",
   "description": "Gain proficiency with the poisoner's kit. You can apply poison to a weapon or piece of ammunition as a bonus action. Creatures you make or apply poison with have disadvantage on the saving throw against it.",
-  "category": "general"
+  "category": "general",
+  "prerequisite": {
+    "level": 4
+  },
+  "abilityIncrease": {
+    "abilities": [
+      "dexterity",
+      "intelligence"
+    ],
+    "amount": 1
+  }
 }

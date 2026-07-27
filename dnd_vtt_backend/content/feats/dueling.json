@@ -1,0 +1,15 @@
+{
+  "index": "dueling",
+  "name": "Dueling",
+  "description": "+2 bonus to damage rolls when wielding a melee weapon in one hand with no other weapons.",
+  "category": "fighting_style",
+  "prerequisite": {
+    "feature": "Fighting Style"
+  },
+  "effects": [
+    {
+      "type": "melee_damage_bonus",
+      "value": 2
+    }
+  ]
+}

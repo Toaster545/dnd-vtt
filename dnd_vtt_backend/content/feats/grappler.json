@@ -2,5 +2,19 @@
   "index": "grappler",
   "name": "Grappler",
   "description": "You have advantage on attack rolls against a creature you are grappling. You can use your action to try to pin a creature grappled by you: the target must succeed on a Strength saving throw or be restrained until the grapple ends.",
-  "category": "general"
+  "category": "general",
+  "prerequisite": {
+    "level": 4,
+    "abilities": [
+      "strength",
+      "dexterity"
+    ]
+  },
+  "abilityIncrease": {
+    "abilities": [
+      "strength",
+      "dexterity"
+    ],
+    "amount": 1
+  }
 }

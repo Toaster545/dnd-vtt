@@ -36,8 +36,9 @@
       }
     </div>
 
-    <!-- Step content -->
-    <div class="flex-1 overflow-y-auto p-6">
+    <!-- Step content + live preview -->
+    <div class="flex-1 flex min-h-0">
+    <div class="w-[50%] min-w-0 overflow-y-auto p-6">
       @if (activeStep() === 0) {
         <app-race-step
           [races]="races()"
@@ -77,7 +78,14 @@
         <app-equipment-step
           [items]="items()"
           [selectedItemIndices]="selectedItemIndices()"
+          [currency]="startingCurrency()"
+          [classData]="primaryClass()"
+          [background]="selectedBackground()"
+          [classChoices]="classEquipChoices()"
+          [backgroundChoices]="backgroundEquipChoices()"
           (itemToggled)="toggleItem($event)"
+          (classChoicesChanged)="classEquipChoices.set($event)"
+          (backgroundChoicesChanged)="backgroundEquipChoices.set($event)"
         />
       }
       @if (activeStep() === 5) {
@@ -101,6 +109,12 @@
           (alignmentChanged)="alignment.set($event)"
         />
       }
+    </div>
+
+    <!-- Live preview -->
+    <div class="w-[50%] min-w-0 overflow-y-auto p-6 border-l border-white/10">
+      <app-character-preview [character]="draftCharacter()" [stats]="previewStats()" />
+    </div>
     </div>
 
     <!-- Persistent footer -->

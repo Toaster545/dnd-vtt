@@ -72,7 +72,7 @@
         </div>
         <div class="flex gap-2">
           <span class="text-coal w-28 flex-shrink-0">Equipment</span>
-          <span class="text-slate">{{ bg.starting_equipment.join(', ') }}</span>
+          <span class="text-slate">{{ equipmentPreview(bg) }}</span>
         </div>
         <div class="flex gap-2">
           <span class="text-coal w-28 flex-shrink-0">Feature</span>
@@ -80,6 +80,39 @@
         </div>
       </div>
     </div>
+
+    <!-- Skill/Tool choices (e.g. Soldier's 2 skills, choice of gaming set) -->
+    @for (choice of choiceGrants(bg); track choice.key) {
+      <div>
+        <p class="text-xs font-bold text-slate uppercase tracking-wide mb-2">
+          {{ choice.name }} — choose {{ choice.choose }}
+          @if (choiceLeft(choice) > 0) { <span class="text-gold font-normal normal-case ml-1">({{ choiceLeft(choice) }} left)</span> }
+          @if (choiceLeft(choice) === 0) { <span class="text-success font-normal normal-case ml-1">✓</span> }
+        </p>
+        @if (choice.description) { <p class="text-xs text-coal mb-2">{{ choice.description }}</p> }
+        <div class="flex flex-col gap-1 max-w-sm">
+          @for (opt of choice.options; track opt.name) {
+            @let picked = traitSelected(choice, opt.name);
+            @let full = !picked && choiceLeft(choice) === 0;
+            <button
+              class="group flex items-start justify-between px-3 py-1.5 rounded border transition-all text-left w-full"
+              [class]="picked ? 'border-gold/50 bg-gold/5 cursor-pointer'
+                : full ? 'border-white/8 cursor-not-allowed'
+                       : 'border-white/10 hover:border-white/30 hover:bg-white/5 cursor-pointer'"
+              [disabled]="full"
+              (click)="toggleChoice(choice, opt.name)"
+              style="font-family: inherit;"
+            >
+              <div class="flex items-center gap-2">
+                @if (picked) { <span class="text-gold text-xs">✓</span> }
+                <span class="text-sm" [class]="picked ? 'text-parchment' : 'text-slate group-hover:text-parchment'">{{ opt.name }}</span>
+              </div>
+              @if (opt.description) { <span class="text-xs text-coal ml-4 max-w-xs text-right flex-shrink-0">{{ opt.description }}</span> }
+            </button>
+          }
+        </div>
+      </div>
+    }
 
     <!-- Ability Scores -->
     @if (grant) {

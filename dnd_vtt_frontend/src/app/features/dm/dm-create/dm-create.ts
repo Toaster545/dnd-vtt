@@ -3,7 +3,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { DmCharactersComponent } from './dm-characters/dm-characters';
 import { DmSessionsComponent } from './dm-sessions/dm-sessions';
 
-type CreateSection = 'sessions' | 'encounters' | 'characters' | 'items' | 'spells';
+type CreateSection = 'sessions' | 'encounters' | 'characters' | 'equipement' | 'spells';
 
 @Component({
   selector: 'app-dm-create',

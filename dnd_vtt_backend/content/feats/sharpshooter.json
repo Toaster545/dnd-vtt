@@ -2,5 +2,17 @@
   "index": "sharpshooter",
   "name": "Sharpshooter",
   "description": "Attacking at long range doesn't impose disadvantage on your ranged weapon attack rolls. Your ranged weapon attacks ignore half and three-quarters cover. Before making a ranged weapon attack with a weapon you're proficient with, you can take a -5 penalty to the attack roll for a +10 bonus to damage if it hits.",
-  "category": "general"
+  "category": "general",
+  "prerequisite": {
+    "level": 4,
+    "abilities": [
+      "dexterity"
+    ]
+  },
+  "abilityIncrease": {
+    "abilities": [
+      "dexterity"
+    ],
+    "amount": 1
+  }
 }

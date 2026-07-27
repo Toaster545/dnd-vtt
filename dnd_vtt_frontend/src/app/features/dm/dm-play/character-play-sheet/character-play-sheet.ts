@@ -69,7 +69,10 @@ export class CharacterPlaySheetComponent {
   stats = computed(() => {
     const char = this.localChar();
     if (!char) return null;
-    return this.statsService.compute(char, this.primaryClass(), this.raceData());
+    const classesForFeats = this.resolvedClasses().map(rc => ({ data: rc.data, choices: rc.choices }));
+    return this.statsService.compute(
+      char, this.primaryClass(), this.raceData(), this.featsAll(), classesForFeats, this.itemsAll(),
+    );
   });
 
   actions = computed<CharacterAction[]>(() => {

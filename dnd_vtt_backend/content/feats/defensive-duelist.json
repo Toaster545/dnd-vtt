@@ -2,5 +2,17 @@
   "index": "defensive-duelist",
   "name": "Defensive Duelist",
   "description": "When you're wielding a finesse weapon you're proficient with and another creature hits you with a melee attack, you can use your reaction to add your proficiency bonus to your AC for that attack, potentially causing it to miss.",
-  "category": "general"
+  "category": "general",
+  "prerequisite": {
+    "level": 4,
+    "abilities": [
+      "dexterity"
+    ]
+  },
+  "abilityIncrease": {
+    "abilities": [
+      "dexterity"
+    ],
+    "amount": 1
+  }
 }

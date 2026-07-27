@@ -1,0 +1,14 @@
+{
+  "index": "two-weapon-fighting",
+  "name": "Two-Weapon Fighting",
+  "description": "Add your ability modifier to the damage of your off-hand attack.",
+  "category": "fighting_style",
+  "prerequisite": {
+    "feature": "Fighting Style"
+  },
+  "effects": [
+    {
+      "type": "special"
+    }
+  ]
+}

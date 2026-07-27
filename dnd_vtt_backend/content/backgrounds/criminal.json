@@ -6,7 +6,6 @@
     "Stealth"
   ],
   "tool_proficiencies": [
-    "One type of gaming set",
     "Thieves' tools"
   ],
   "languages": "None",
@@ -27,6 +26,19 @@
         "dexterity",
         "constitution",
         "intelligence"
+      ]
+    },
+    {
+      "type": "choice",
+      "key": "gaming_set",
+      "name": "Tool Proficiency",
+      "description": "Choose one kind of gaming set.",
+      "choose": 1,
+      "options": [
+        { "name": "Dice Set" },
+        { "name": "Dragonchess Set" },
+        { "name": "Playing Card Set" },
+        { "name": "Three-Dragon Ante Set" }
       ]
     }
   ]

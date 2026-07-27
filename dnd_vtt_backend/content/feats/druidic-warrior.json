@@ -1,0 +1,17 @@
+{
+  "index": "druidic-warrior",
+  "name": "Druidic Warrior",
+  "description": "You learn two Druid cantrips of your choice (Guidance and Starry Wisp recommended). They count as Ranger spells for you, and Wisdom is your spellcasting ability for them. Whenever you gain a Ranger level, you can replace one of these cantrips with another Druid cantrip.",
+  "category": "fighting_style",
+  "prerequisite": {
+    "feature": "Fighting Style",
+    "classes": [
+      "ranger"
+    ]
+  },
+  "effects": [
+    {
+      "type": "special"
+    }
+  ]
+}

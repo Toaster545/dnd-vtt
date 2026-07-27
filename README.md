@@ -8,8 +8,16 @@ No cloud account required — everything runs locally and is exposed via a [Clou
 
 - **Authentication** — Email/password login and registration with bcrypt + JWT
 - **Role-based access** — `admin` (DM) and `player` roles enforced on the backend
-- **Character creation** — Full 5e character sheet with race/class/background data from the [Open5e API](https://open5e.com/)
+- **Character creation wizard** — Full 2024 5e character sheet built step by step (race,
+  class/subclass, background, ability scores, equipment, spells, details), backed by static
+  SRD-derived game data served from the backend — no external API dependency
+- **Feats** — Origin, General, and Fighting Style feats with data-driven prerequisites; the
+  wizard only offers feats a character actually qualifies for, and any ability score increase or
+  mechanical bonus a feat grants (AC, damage, extra HP, etc.) is automatically factored into the
+  character's computed stats
 - **Character persistence** — Each player's characters are saved to their account
+- **Session management** — DM creates and tracks game sessions
+- **Live play** — DM and players view saved characters and run live sessions
 - **Battle maps** — Upload Dungeondraft PNG exports and display them on a grid canvas
 - **Live token sync** — DM places and moves tokens; positions update in real time for all viewers via WebSockets
 - **View-only for players** — Players see the map and tokens but cannot modify them
@@ -18,14 +26,14 @@ No cloud account required — everything runs locally and is exposed via a [Clou
 
 | Layer | Technology |
 |---|---|
-| Frontend | Angular 18 (standalone components, signals) |
+| Frontend | Angular 22 (standalone components, signals) |
 | Backend | NestJS (REST API + WebSocket gateway) |
 | Database | SQLite via [@libsql/client](https://github.com/tursodatabase/libsql-client-ts) |
 | Auth | bcrypt + JWT (`@nestjs/jwt`) |
 | Canvas / VTT | [Konva.js](https://konvajs.org/) |
 | Real-time | socket.io (WebSockets) |
-| 5e Game Data | [Open5e API](https://api.open5e.com/v1/) |
-| Styling | SCSS (custom dark theme) |
+| 5e Game Data | Static SRD-derived JSON served by the backend's Content module (see below) |
+| Styling | SCSS + Tailwind utilities (custom dark theme); Angular Material used selectively |
 
 ## Project Structure
 
@@ -35,8 +43,17 @@ dnd-vtt/
 │   ├── src/
 │   │   ├── auth/           # JWT guard, admin guard, login/register endpoints
 │   │   ├── characters/     # Character CRUD endpoints
+│   │   ├── content/        # Serves static 5e game content (see content/ below)
 │   │   ├── maps/           # Map + token endpoints, WebSocket gateway
+│   │   ├── sessions/       # Game session CRUD endpoints (DM only)
 │   │   └── common/         # DatabaseService, CurrentUser decorator
+│   ├── content/            # Static SRD-derived game data (JSON, one file per entry)
+│   │   ├── classes/        # Class + subclass features, levels, grants
+│   │   ├── races/          # Species traits
+│   │   ├── backgrounds/    # Backgrounds + origin ability increase
+│   │   ├── feats/          # Origin, General, and Fighting Style feats
+│   │   ├── items/          # Weapons, armor, gear
+│   │   └── spells/         # Spell list
 │   ├── data/               # SQLite database file (auto-created)
 │   ├── scripts/            # Utility scripts (e.g. make-admin)
 │   ├── uploads/            # Uploaded map images (served as static files)
@@ -47,13 +64,17 @@ dnd-vtt/
         │   ├── guards/     # authGuard, adminGuard
         │   ├── interceptors/ # auth interceptor (injects Bearer token)
         │   ├── models/     # TypeScript interfaces
-        │   └── services/   # auth, character, battle-map, socket, open5e
+        │   └── services/   # auth, character, character-stats, battle-map, content, session, socket
         └── features/
             ├── auth/       # login, register
             ├── characters/ # character-list, character-sheet
             ├── battle-map/ # Konva.js VTT canvas
             ├── admin/      # map-manager (DM only)
-            └── dashboard/  # home screen
+            ├── dashboard/  # home screen
+            └── dm/         # DM-only area (gated by adminGuard)
+                ├── dm-create/       # session management + character wizard
+                │   └── dm-characters/character-wizard/steps/  # one component per wizard step
+                └── dm-play/         # live session view, character play sheet
 ```
 
 ## Architecture
@@ -73,22 +94,17 @@ A single Cloudflare Tunnel forwards `yourdomain.com → localhost:3000`.
 
 - Node.js 18+
 
-### 1. Build the frontend
+### 1. Install dependencies
 
 ```bash
-cd dnd_vtt_frontend
-npm install
-npx ng build
+cd dnd_vtt_frontend && npm install && cd ../dnd_vtt_backend && npm install && cd ..
 ```
 
-This compiles the Angular app into `dnd_vtt_frontend/dist/dnd-app/browser/`, which NestJS will serve.
-
-### 2. Set up and start the backend
+### 2. Configure the backend
 
 ```bash
 cd dnd_vtt_backend
 cp .env.example .env
-npm install
 ```
 
 Edit `.env`:
@@ -100,17 +116,30 @@ CORS_ORIGINS=http://localhost:4200,https://yourdomain.com
 DB_PATH=./data/dnd.db
 ```
 
-Start the server:
+The SQLite database and schema are created automatically on first run at `data/dnd.db`.
+
+### 3. Run it
+
+From the repo root, `npm run dev` runs the backend (`start:dev`, with `DEV_BYPASS=true`) and the
+frontend (rebuild-on-change `watch`) concurrently:
 
 ```bash
-npm run start:dev
+npm run dev
 ```
 
-The SQLite database and schema are created automatically on first run at `data/dnd.db`.
+During active frontend development it's usually faster to run `ng serve` (port 4200, proxies
+`/api` to the backend) instead of rebuilding on every change — see `dnd_vtt_frontend/README.md`.
+
+For a one-off production-style build and run instead of `npm run dev`:
+
+```bash
+npm run build   # builds the frontend, then the backend
+npm start       # runs the built backend, which also serves the built frontend
+```
 
 The app is now available at `http://localhost:3000`.
 
-### 3. Create the admin (DM) account
+### 4. Create the admin (DM) account
 
 Register your DM account through the app, then promote it from the backend directory:
 
@@ -118,19 +147,8 @@ Register your DM account through the app, then promote it from the backend direc
 node scripts/make-admin.mjs your@email.com
 ```
 
-Only admin accounts can upload maps, place/move tokens, and access the Map Manager.
-
-### Deploying changes
-
-After editing frontend code, rebuild and restart:
-
-```bash
-# In dnd_vtt_frontend/
-npx ng build
-
-# In dnd_vtt_backend/
-npm run start:dev   # watch mode restarts automatically on backend changes
-```
+Only admin accounts can upload maps, place/move tokens, access the Map Manager and Session
+Manager, and create/edit characters through the DM's character wizard.
 
 ## API Endpoints
 
@@ -146,6 +164,15 @@ All endpoints are prefixed with `/api`. Protected routes require a `Bearer` toke
 | GET | `/characters/:id` | Auth (own) | Get character |
 | PUT | `/characters/:id` | Auth (own) | Update character |
 | DELETE | `/characters/:id` | Auth (own) | Delete character |
+| GET | `/content/classes`, `/content/classes/:index` | Auth | Class/subclass data |
+| GET | `/content/races`, `/content/races/:index` | Auth | Species data |
+| GET | `/content/backgrounds`, `/content/backgrounds/:index` | Auth | Background data |
+| GET | `/content/feats`, `/content/feats/:index` | Auth | Feat data |
+| GET | `/content/items`, `/content/items/:index` | Auth | Weapon/armor/gear data |
+| GET | `/content/spells`, `/content/spells/:index` | Auth | Spell data |
+| GET | `/sessions` | Admin | List game sessions |
+| POST | `/sessions` | Admin | Create session |
+| DELETE | `/sessions/:id` | Admin | Delete session |
 | GET | `/maps` | Auth | List all maps |
 | GET | `/maps/:id` | Auth | Get map |
 | POST | `/maps` | Admin | Create map |
@@ -155,6 +182,20 @@ All endpoints are prefixed with `/api`. Protected routes require a `Bearer` toke
 | DELETE | `/maps/:id/tokens/:tokenId` | Admin | Delete token |
 
 Token positions are also pushed in real time to all connected clients via the WebSocket gateway on the same port.
+
+## 5e Game Content
+
+Static SRD-derived game data (classes, races, backgrounds, feats, items, spells) lives as JSON
+files under `dnd_vtt_backend/content/`, one file per entry, served by the `ContentModule` and
+cached in memory per-process. There's no external API dependency and no database table for this
+data — it's read-only reference content shared by every character.
+
+Class/race/background levels describe their choices (skills, ability score increases, weapon
+mastery, feats, etc.) as a small set of structured "grant" types the character wizard renders
+generically, rather than one-off UI per class. Feats carry a `category` (`origin`, `general`, or
+`fighting_style`) plus an optional `prerequisite` (ability score minimums, armor/spellcasting
+requirements, a required class feature, or specific classes) and an optional mechanical effect
+(`abilityIncrease` and/or `effects`) that the wizard applies automatically once picked.
 
 ## Using Dungeondraft Maps
 
@@ -169,9 +210,12 @@ Token positions are also pushed in real time to all connected clients via the We
 | Table | Purpose |
 |---|---|
 | `profiles` | User accounts, hashed passwords, roles |
-| `characters` | Player character sheets (scoped to owning user) |
+| `characters` | Player character sheets (scoped to owning user); stored as a single JSON `data` column, not normalized fields |
+| `sessions` | DM-created game sessions |
 | `battle_maps` | Uploaded maps |
 | `map_tokens` | Token positions per map (broadcast via WebSocket on change) |
+
+There's no ORM — schema changes are hand-rolled migrations gated by `PRAGMA user_version` in `DatabaseService`.
 
 ## License
 

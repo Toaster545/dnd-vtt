@@ -2,5 +2,16 @@
   "index": "telekinetic",
   "name": "Telekinetic",
   "description": "Learn the Mage Hand cantrip, castable without verbal or somatic components, and its spectral hand can be invisible. As a bonus action, you can telekinetically shove one creature within 30 ft. up to 5 ft. toward or away from you. Increase Intelligence, Wisdom, or Charisma by 1, to a maximum of 20.",
-  "category": "general"
+  "category": "general",
+  "prerequisite": {
+    "level": 4
+  },
+  "abilityIncrease": {
+    "abilities": [
+      "intelligence",
+      "wisdom",
+      "charisma"
+    ],
+    "amount": 1
+  }
 }

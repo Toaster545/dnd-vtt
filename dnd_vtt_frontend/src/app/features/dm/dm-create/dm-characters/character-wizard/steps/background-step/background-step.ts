@@ -8,6 +8,7 @@ export interface BackgroundChoice {
 }
 
 type AbilityGrant = Extract<TraitGrant, { type: 'ability_choice' }>;
+type ChoiceGrant = Extract<TraitGrant, { type: 'choice' }>;
 type ViewMode = 'list' | 'detail' | 'selected';
 
 @Component({
@@ -73,9 +74,46 @@ export class BackgroundStepComponent implements OnInit {
     return this.selected()?.background.index === bg.index;
   }
 
+  // Starting equipment is picked in its own wizard step (it needs the item catalog and a
+  // gear-or-gold choice, more than a one-line summary can show) — this is just a pointer there.
+  // Older content not yet migrated to the structured shape still shows its flat item list.
+  equipmentPreview(bg: DndBackground): string {
+    const equip: unknown = bg.starting_equipment;
+    return Array.isArray(equip) ? equip.join(', ') : 'Choose in the Equipment step';
+  }
+
   abilityChoiceGrant(bg: DndBackground): AbilityGrant | null {
     const grant = bg.grants?.find(g => g.type === 'ability_choice');
     return grant?.type === 'ability_choice' ? grant : null;
+  }
+
+  // Skill/tool picks (e.g. Soldier's "choose 2 skills" / "choose one kind of gaming set") —
+  // self-contained `choice` grants with their own embedded options, same shape a class's
+  // `choice` grant uses, so no separate "from" list needs to live on DndBackground itself.
+  choiceGrants(bg: DndBackground): ChoiceGrant[] {
+    return (bg.grants ?? []).filter((g): g is ChoiceGrant => g.type === 'choice');
+  }
+
+  traitSelected(grant: ChoiceGrant, option: string): boolean {
+    return this.draftTraits()[grant.key]?.includes(option) ?? false;
+  }
+
+  choiceLeft(grant: ChoiceGrant): number {
+    return grant.choose - (this.draftTraits()[grant.key]?.length ?? 0);
+  }
+
+  toggleChoice(grant: ChoiceGrant, option: string) {
+    this.draftTraits.update(traits => {
+      const current = traits[grant.key] ?? [];
+      if (grant.choose === 1) {
+        return { ...traits, [grant.key]: current.includes(option) ? [] : [option] };
+      }
+      if (current.includes(option)) {
+        return { ...traits, [grant.key]: current.filter(o => o !== option) };
+      }
+      if (current.length >= grant.choose) return traits;
+      return { ...traits, [grant.key]: [...current, option] };
+    });
   }
 
   baseScoreFor(ability: string): number {

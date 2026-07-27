@@ -6,17 +6,21 @@
     "Intimidation"
   ],
   "tool_proficiencies": [
-    "One type of gaming set",
     "Vehicles (land)"
   ],
   "languages": "None",
-  "starting_equipment": [
-    "Insignia of rank",
-    "Trophy from a fallen enemy",
-    "Bone dice or deck of cards",
-    "Common clothes",
-    "Belt pouch with 10 gp"
-  ],
+  "starting_equipment": {
+    "fixed": [
+      { "key": "spear", "item": "spear" },
+      { "key": "shortbow", "item": "shortbow" },
+      { "key": "arrows", "item": "arrows" },
+      { "key": "quiver", "item": "quiver" },
+      { "key": "clothes", "item": "travelers-clothes" }
+    ],
+    "groups": [],
+    "gold": 14,
+    "goldAlternative": 50
+  },
   "feature": "Military Rank",
   "grants": [
     {
@@ -29,6 +33,19 @@
         "strength",
         "dexterity",
         "constitution"
+      ]
+    },
+    {
+      "type": "choice",
+      "key": "gaming_set",
+      "name": "Tool Proficiency",
+      "description": "You also gain proficiency with Vehicles (land). Choose one kind of gaming set.",
+      "choose": 1,
+      "options": [
+        { "name": "Dice Set" },
+        { "name": "Dragonchess Set" },
+        { "name": "Playing Card Set" },
+        { "name": "Three-Dragon Ante Set" }
       ]
     }
   ]

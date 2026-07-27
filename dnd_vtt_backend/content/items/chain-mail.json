@@ -1,0 +1,11 @@
+{
+  "index": "chain-mail",
+  "name": "Chain Mail",
+  "type": "armor",
+  "category": "Heavy Armor",
+  "armor_class": "16",
+  "properties": ["Requires Strength 13", "Stealth Disadvantage"],
+  "weight": 55,
+  "cost": "75 gp",
+  "description": "Made of interlocking metal rings, this armor includes a layer of quilted fabric worn underneath to prevent chafing."
+}

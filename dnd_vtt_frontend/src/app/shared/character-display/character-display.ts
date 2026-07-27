@@ -2,8 +2,9 @@ import { Component, inject, signal, computed, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { Character, Ability, ABILITIES, ABILITY_SHORT, SKILLS } from '../../core/models/character.model';
-import { ContentService, DndClass, DndRace, DndBackground } from '../../core/services/content.service';
+import { ContentService, DndClass, DndRace, DndBackground, DndFeat, DndItem } from '../../core/services/content.service';
 import { CharacterStatsService } from '../../core/services/character-stats.service';
+import { ClassChoiceSource } from '../../core/utils/character-effects';
 
 const ORDINALS = ['','1st','2nd','3rd','4th','5th','6th','7th','8th','9th'];
 
@@ -24,6 +25,8 @@ export class CharacterDisplayComponent implements OnInit {
   classData = signal<DndClass | null>(null);
   raceData  = signal<DndRace | null>(null);
   bgData    = signal<DndBackground | null>(null);
+  feats     = signal<DndFeat[]>([]);
+  items     = signal<DndItem[]>([]);
   loading   = signal(true);
 
   readonly abilities     = ABILITIES;
@@ -31,19 +34,35 @@ export class CharacterDisplayComponent implements OnInit {
   readonly skillList     = Object.keys(SKILLS);
   readonly skillAbility: Record<string, string> = SKILLS;
 
+  // Primary class only, matching classFeatures()/pactMagic()/etc below — this display doesn't
+  // resolve multiclass features either, so feat resolution (which lives on class grants) stays
+  // consistent with that existing scope rather than silently fixing multiclass here.
+  private classesForFeats = computed<ClassChoiceSource[]>(() => {
+    const data = this.classData();
+    if (!data) return [];
+    const choices = this.char.classes?.[0]?.choices ?? {};
+    return [{ data, choices }];
+  });
+
   stats = computed(() =>
-    this.statsService.compute(this.char, this.classData(), this.raceData()),
+    this.statsService.compute(
+      this.char, this.classData(), this.raceData(), this.feats(), this.classesForFeats(), this.items(),
+    ),
   );
 
   async ngOnInit() {
-    const [cls, race, bg] = await Promise.allSettled([
+    const [cls, race, bg, feats, items] = await Promise.allSettled([
       this.content.getClass(toIndex(this.char.class)),
       this.content.getRace(toIndex(this.char.race)),
       this.content.getBackground(toIndex(this.char.background)),
+      this.content.getFeats(),
+      this.content.getItems(),
     ]);
-    if (cls.status  === 'fulfilled') this.classData.set(cls.value  as DndClass);
-    if (race.status === 'fulfilled') this.raceData.set(race.value  as DndRace);
-    if (bg.status   === 'fulfilled') this.bgData.set(bg.value      as DndBackground);
+    if (cls.status   === 'fulfilled') this.classData.set(cls.value   as DndClass);
+    if (race.status  === 'fulfilled') this.raceData.set(race.value  as DndRace);
+    if (bg.status    === 'fulfilled') this.bgData.set(bg.value      as DndBackground);
+    if (feats.status === 'fulfilled') this.feats.set(feats.value    as DndFeat[]);
+    if (items.status === 'fulfilled') this.items.set(items.value    as DndItem[]);
     this.loading.set(false);
   }
 

@@ -2,5 +2,16 @@
   "index": "telepathic",
   "name": "Telepathic",
   "description": "You can speak telepathically to any creature you can see within 60 ft. that has a language, understood regardless of the language it speaks. You can cast Detect Thoughts once without a spell slot, regaining the ability on a long rest. Increase Intelligence, Wisdom, or Charisma by 1, to a maximum of 20.",
-  "category": "general"
+  "category": "general",
+  "prerequisite": {
+    "level": 4
+  },
+  "abilityIncrease": {
+    "abilities": [
+      "intelligence",
+      "wisdom",
+      "charisma"
+    ],
+    "amount": 1
+  }
 }

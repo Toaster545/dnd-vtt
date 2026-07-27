@@ -1,0 +1,11 @@
+{
+  "index": "shield",
+  "name": "Shield",
+  "type": "armor",
+  "category": "Shield",
+  "armor_class": "+2",
+  "properties": [],
+  "weight": 6,
+  "cost": "10 gp",
+  "description": "A shield is made from wood or metal and is carried in one hand. Wielding a shield increases your AC by 2."
+}

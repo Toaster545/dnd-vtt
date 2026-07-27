@@ -2,5 +2,21 @@
   "index": "ritual-caster",
   "name": "Ritual Caster",
   "description": "Choose a class (bard, cleric, druid, sorcerer, warlock, or wizard). Learn two 1st-level spells with the ritual tag from that class's spell list and gain a ritual book to record them in; you can add ritual spells you find to it over time.",
-  "category": "general"
+  "category": "general",
+  "prerequisite": {
+    "level": 4,
+    "abilities": [
+      "intelligence",
+      "wisdom",
+      "charisma"
+    ]
+  },
+  "abilityIncrease": {
+    "abilities": [
+      "intelligence",
+      "wisdom",
+      "charisma"
+    ],
+    "amount": 1
+  }
 }

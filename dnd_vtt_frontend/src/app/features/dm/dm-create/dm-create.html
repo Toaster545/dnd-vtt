@@ -13,9 +13,9 @@
       <mat-icon class="text-lg">sports_martial_arts</mat-icon>
       Encounters
     </button>
-    <button class="nav-item" [class.active]="activeSection() === 'items'" (click)="activeSection.set('items')">
+    <button class="nav-item" [class.active]="activeSection() === 'equipement'" (click)="activeSection.set('equipement')">
       <mat-icon class="text-lg">backpack</mat-icon>
-      Items
+      Equipement
     </button>
     <button class="nav-item" [class.active]="activeSection() === 'spells'" (click)="activeSection.set('spells')">
       <mat-icon class="text-lg">auto_fix_high</mat-icon>
@@ -36,10 +36,10 @@
           <p class="text-slate text-sm">Encounters coming soon.</p>
         </div>
       }
-      @case ('items') {
+      @case ('equipement') {
         <div class="flex-1 overflow-auto p-6">
-          <h2 class="font-brand text-lg text-parchment mb-3">Items</h2>
-          <p class="text-slate text-sm">Items coming soon.</p>
+          <h2 class="font-brand text-lg text-parchment mb-3">Equipement</h2>
+          <p class="text-slate text-sm">Equipement coming soon.</p>
         </div>
       }
       @case ('spells') {

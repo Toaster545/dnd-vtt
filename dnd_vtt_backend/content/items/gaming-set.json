@@ -1,0 +1,12 @@
+{
+  "index": "gaming-set",
+  "name": "Gaming Set",
+  "type": "gear",
+  "category": "Tool",
+  "damage": null,
+  "damage_type": null,
+  "properties": [],
+  "weight": 0,
+  "cost": "1 gp",
+  "description": "A set of bone dice, or a deck of cards, or another kind of gaming set used for games of chance."
+}

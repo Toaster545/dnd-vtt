@@ -1,0 +1,18 @@
+{
+  "index": "great-weapon-fighting",
+  "name": "Great Weapon Fighting",
+  "description": "Reroll 1s and 2s on damage dice for two-handed or versatile melee weapons.",
+  "category": "fighting_style",
+  "prerequisite": {
+    "feature": "Fighting Style"
+  },
+  "effects": [
+    {
+      "type": "reroll_damage_dice",
+      "values": [
+        1,
+        2
+      ]
+    }
+  ]
+}

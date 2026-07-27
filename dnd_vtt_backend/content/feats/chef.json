@@ -2,5 +2,15 @@
   "index": "chef",
   "name": "Chef",
   "description": "You gain proficiency with cook's utensils if you don't already have it. During a short rest, you can cook food that restores extra hit points (1d8 + your Constitution modifier) to any creature who eats a serving, up to a number of servings equal to your proficiency bonus. You can also spend 1 minute preparing a treat that grants a small bonus (advantage on the next Con save vs. exhaustion, or a d4 that can be added to a roll) to whoever eats it, once per long rest per recipient.",
-  "category": "general"
+  "category": "general",
+  "prerequisite": {
+    "level": 4
+  },
+  "abilityIncrease": {
+    "abilities": [
+      "constitution",
+      "wisdom"
+    ],
+    "amount": 1
+  }
 }

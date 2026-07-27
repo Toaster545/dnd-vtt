@@ -2,5 +2,15 @@
   "index": "slasher",
   "name": "Slasher",
   "description": "Once per turn when you hit a creature with a slashing-damage attack, you can reduce its speed by 10 ft. until the start of your next turn. When you score a critical hit that deals slashing damage, the target has disadvantage on attack rolls until the start of your next turn. Increase Strength or Dexterity by 1, to a maximum of 20.",
-  "category": "general"
+  "category": "general",
+  "prerequisite": {
+    "level": 4
+  },
+  "abilityIncrease": {
+    "abilities": [
+      "strength",
+      "dexterity"
+    ],
+    "amount": 1
+  }
 }

@@ -2,5 +2,15 @@
   "index": "crusher",
   "name": "Crusher",
   "description": "Once per turn when you hit a creature with a bludgeoning-damage attack, you can move it 5 ft. to an unoccupied space. When you score a critical hit with bludgeoning damage, attacks against that target have advantage until the start of your next turn. Increase Strength or Constitution by 1, to a maximum of 20.",
-  "category": "general"
+  "category": "general",
+  "prerequisite": {
+    "level": 4
+  },
+  "abilityIncrease": {
+    "abilities": [
+      "strength",
+      "constitution"
+    ],
+    "amount": 1
+  }
 }
