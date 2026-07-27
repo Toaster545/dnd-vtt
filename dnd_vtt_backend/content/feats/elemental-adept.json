@@ -14,5 +14,6 @@
       "charisma"
     ],
     "amount": 1
-  }
+  },
+  "repeatable": true
 }

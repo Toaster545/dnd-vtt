@@ -12,5 +12,11 @@
       "dexterity"
     ],
     "amount": 1
-  }
+  },
+  "effects": [
+    {
+      "type": "weapon_proficiency",
+      "value": 4
+    }
+  ]
 }

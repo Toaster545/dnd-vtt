@@ -5,9 +5,7 @@
     "Insight",
     "Persuasion"
   ],
-  "tool_proficiencies": [
-    "One type of artisan's tools"
-  ],
+  "tool_proficiencies": [],
   "languages": "One of your choice",
   "starting_equipment": [
     "Artisan's tools",
@@ -27,6 +25,32 @@
         "constitution",
         "intelligence",
         "charisma"
+      ]
+    },
+    {
+      "type": "choice",
+      "key": "artisans_tools",
+      "name": "Tool Proficiency",
+      "description": "Choose one kind of artisan's tools.",
+      "choose": 1,
+      "options": [
+        { "name": "Alchemist's Supplies" },
+        { "name": "Brewer's Supplies" },
+        { "name": "Calligrapher's Supplies" },
+        { "name": "Carpenter's Tools" },
+        { "name": "Cartographer's Tools" },
+        { "name": "Cobbler's Tools" },
+        { "name": "Cook's Utensils" },
+        { "name": "Glassblower's Tools" },
+        { "name": "Jeweler's Tools" },
+        { "name": "Leatherworker's Tools" },
+        { "name": "Mason's Tools" },
+        { "name": "Painter's Supplies" },
+        { "name": "Potter's Tools" },
+        { "name": "Smith's Tools" },
+        { "name": "Tinker's Tools" },
+        { "name": "Weaver's Tools" },
+        { "name": "Woodcarver's Tools" }
       ]
     }
   ]

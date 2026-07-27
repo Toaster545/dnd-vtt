@@ -1,7 +1,10 @@
 import { Component, inject, signal, computed, effect, output, OnInit, OnDestroy, input } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ContentService, DndRace, DndClass, DndBackground, DndItem, DndSpell, DndFeat, TraitEffect, TraitGrant } from '../../../../../core/services/content.service';
+import { ClassChoiceSource, collectTraitEffects } from '../../../../../core/utils/character-effects';
+import { isStructuredEquipment, resolveStartingEquipment } from '../../../../../core/utils/starting-equipment';
 import { CharacterService } from '../../../../../core/services/character.service';
+import { CharacterStatsService } from '../../../../../core/services/character-stats.service';
 import { Character, Ability, ABILITIES, defaultCharacter, abilityModifier } from '../../../../../core/models/character.model';
 import { RaceStepComponent, Subrace, RaceChoice } from './steps/race-step/race-step';
 import { ClassStepComponent, ClassEntry } from './steps/class-step/class-step';
@@ -10,6 +13,7 @@ import { AbilitiesStepComponent } from './steps/abilities-step/abilities-step';
 import { EquipmentStepComponent } from './steps/equipment-step/equipment-step';
 import { SpellsStepComponent } from './steps/spells-step/spells-step';
 import { DetailsStepComponent } from './steps/details-step/details-step';
+import { CharacterPreviewComponent } from './character-preview/character-preview';
 
 const STEPS = ['Race', 'Class', 'Background', 'Abilities', 'Equipment', 'Spells', 'Details'];
 
@@ -24,6 +28,7 @@ const STEPS = ['Race', 'Class', 'Background', 'Abilities', 'Equipment', 'Spells'
     EquipmentStepComponent,
     SpellsStepComponent,
     DetailsStepComponent,
+    CharacterPreviewComponent,
   ],
   templateUrl: './character-wizard.html',
   styleUrl: './character-wizard.scss',
@@ -31,6 +36,7 @@ const STEPS = ['Race', 'Class', 'Background', 'Abilities', 'Equipment', 'Spells'
 export class CharacterWizardComponent implements OnInit, OnDestroy {
   private content          = inject(ContentService);
   private characterService = inject(CharacterService);
+  private statsService     = inject(CharacterStatsService);
 
   readonly character = input<Character | null>(null);
   readonly saved     = output<void>();
@@ -50,6 +56,8 @@ export class CharacterWizardComponent implements OnInit, OnDestroy {
 
   selectedItemIndices  = signal<Set<string>>(new Set());
   selectedSpellIndices = signal<Set<string>>(new Set());
+  classEquipChoices      = signal<Record<string, string[]>>({});
+  backgroundEquipChoices = signal<Record<string, string[]>>({});
 
   characterId        = signal<string | null>(null);
   selectedRace       = signal<DndRace | null>(null);
@@ -195,34 +203,15 @@ export class CharacterWizardComponent implements OnInit, OnDestroy {
   // Scans every chosen class option AND every chosen feat for a structured `effect`/`effects`
   // entry of the given type — e.g. a fighting style's ac_bonus, whether it came from an
   // embedded class option or a feat picked via `ability_choice`/`feat_pick` — so anything that
-  // carries one is picked up automatically, without matching on its display name.
+  // carries one is picked up automatically, without matching on its display name. Conditioned
+  // effects (e.g. Defense's ac_bonus "while wearing armor") are deliberately excluded here: they
+  // aren't baked into the saved character, they're evaluated live from equipped gear by
+  // CharacterStatsService wherever AC is displayed.
   private selectedEffects(type: string): TraitEffect[] {
-    const out: TraitEffect[] = [];
-    const feats = this.feats();
-    const collectFeat = (featIndex: string | undefined) => {
-      for (const eff of feats.find(f => f.index === featIndex)?.effects ?? []) {
-        if (eff.type === type) out.push(eff);
-      }
-    };
-    for (const entry of this.selectedClasses()) {
-      const subclass = entry.cls.subclasses.find(s => s.name === entry.subclass);
-      const levels = [...entry.cls.levels, ...(subclass?.levels ?? [])];
-      for (const lvl of levels) {
-        for (const grant of lvl.grants ?? []) {
-          if (grant.type === 'choice') {
-            const picked = entry.traits[grant.key] ?? [];
-            for (const opt of grant.options) {
-              if (opt.effect && picked.includes(opt.name) && opt.effect.type === type) out.push(opt.effect);
-            }
-          } else if (grant.type === 'ability_choice') {
-            collectFeat(entry.traits[`${grant.key}:feat`]?.[0]);
-          } else if (grant.type === 'feat_pick') {
-            for (const featIndex of entry.traits[grant.key] ?? []) collectFeat(featIndex);
-          }
-        }
-      }
-    }
-    return out;
+    return collectTraitEffects(
+      this.selectedClasses().map(e => ({ data: e.cls, choices: e.traits })),
+      this.feats(),
+    ).filter(e => e.type === type && !e.condition);
   }
 
   armorClass = computed(() => {
@@ -232,6 +221,93 @@ export class CharacterWizardComponent implements OnInit, OnDestroy {
   speed      = computed(() => this.selectedRace()?.speed ?? 30);
   isEditing  = computed(() => this.characterId() !== null);
   isLastStep = computed(() => this.activeStep() === STEPS.length - 1);
+
+  private skillsRecord = computed(() => {
+    const bgSkills = this.selectedBackground()?.skill_proficiencies ?? [];
+    const classSkills = this.selectedClasses().flatMap(e => e.skills);
+    return [...new Set([...bgSkills, ...classSkills])]
+      .reduce((acc, s) => ({ ...acc, [s]: true }), {} as Record<string, boolean>);
+  });
+
+  // What the class's and background's starting-equipment choice (gear bundle or flat gold)
+  // actually resolves to right now — `null` sources (old, not-yet-migrated content) contribute
+  // nothing rather than erroring.
+  private resolvedClassEquipment = computed(() => {
+    const equip = this.primaryClass()?.starting_equipment;
+    return isStructuredEquipment(equip) ? resolveStartingEquipment(equip, this.classEquipChoices()) : { items: [], gold: 0 };
+  });
+  private resolvedBackgroundEquipment = computed(() => {
+    const equip = this.selectedBackground()?.starting_equipment;
+    return isStructuredEquipment(equip) ? resolveStartingEquipment(equip, this.backgroundEquipChoices()) : { items: [], gold: 0 };
+  });
+
+  // Only `gp` is ever populated today — nothing in starting equipment grants cp/sp/ep/pp — but
+  // shown as a full breakdown (matching the play sheet's own currency display) since a manual
+  // override or a future "buy gear with leftover gold" flow could put value in the others.
+  startingCurrency = computed(() => ({
+    cp: 0, sp: 0, ep: 0, gp: this.resolvedClassEquipment().gold + this.resolvedBackgroundEquipment().gold, pp: 0,
+  }));
+
+  // The character record as it stands right now, built straight from the wizard's live signals
+  // — used both to persist (save(), below) and to drive the live preview pane, so the preview
+  // is never more than a re-render behind what's actually on screen (no debounce, no round trip
+  // through the backend).
+  draftCharacter = computed<Character>(() => {
+    const isSingle = this.selectedClasses().length === 1;
+    const classes  = isSingle
+      ? [{ ...this.selectedClasses()[0], level: this.level() }]
+      : this.selectedClasses();
+    const primary  = classes[0];
+
+    const itemName = (index: string) => this.items().find(it => it.index === index)?.name ?? index;
+    const structuredEquipment = [...this.resolvedClassEquipment().items, ...this.resolvedBackgroundEquipment().items]
+      .map(r => ({ itemIndex: r.itemIndex, name: itemName(r.itemIndex), quantity: r.quantity, equipped: false }));
+    const freeEquipment = this.items()
+      .filter(it => this.selectedItemIndices().has(it.index))
+      .map(it => ({ itemIndex: it.index, name: it.name, quantity: 1, equipped: false }));
+    const equipment = [...structuredEquipment, ...freeEquipment];
+
+    const spells = this.spells()
+      .filter(sp => this.selectedSpellIndices().has(sp.index))
+      .map(sp => ({ spellIndex: sp.index, name: sp.name, prepared: false }));
+    const hp = this.maxHP();
+
+    return {
+      ...defaultCharacter(),
+      id: this.characterId() ?? undefined,
+      name: this.characterName().trim() || 'Unnamed Character',
+      race: this.selectedRace()?.name ?? '',
+      subrace: this.selectedSubrace()?.name ?? '',
+      race_choices: this.raceTraits(),
+      class: primary?.cls.name ?? '',
+      subclass: primary?.subclass ?? '',
+      level: this.level(),
+      classes: classes.map(e => ({ name: e.cls.name, level: e.level, subclass: e.subclass, choices: e.traits, skills: e.skills })),
+      background: this.selectedBackground()?.name ?? '',
+      background_choices: this.backgroundTraits(),
+      class_equipment_choices: this.classEquipChoices(),
+      background_equipment_choices: this.backgroundEquipChoices(),
+      alignment: this.alignment(),
+      ability_scores: { ...this.finalScores() },
+      max_hp: hp,
+      current_hp: this.currentHp() ?? hp,
+      armor_class: this.armorClass(),
+      speed: this.speed(),
+      skills: this.skillsRecord(),
+      equipment,
+      currency: this.startingCurrency(),
+      spells,
+    } as Character;
+  });
+
+  private classesForFeats = computed<ClassChoiceSource[]>(() =>
+    this.selectedClasses().map(e => ({ data: e.cls, choices: e.traits })),
+  );
+
+  previewStats = computed(() => this.statsService.compute(
+    this.draftCharacter(), this.primaryClass(), this.selectedRace(),
+    this.feats(), this.classesForFeats(), this.items(),
+  ));
 
   private initialized = false;
   private saveTimer: ReturnType<typeof setTimeout> | null = null;
@@ -243,6 +319,7 @@ export class CharacterWizardComponent implements OnInit, OnDestroy {
       this.selectedRace(); this.selectedSubrace(); this.raceTraits(); this.selectedClasses();
       this.selectedBackground(); this.backgroundTraits();
       this.assignments(); this.selectedItemIndices(); this.selectedSpellIndices();
+      this.classEquipChoices(); this.backgroundEquipChoices();
       this.currentHp();
 
       if (!this.initialized) return;
@@ -288,6 +365,8 @@ export class CharacterWizardComponent implements OnInit, OnDestroy {
       }
       this.raceTraits.set(existing.race_choices ?? {});
       this.backgroundTraits.set(existing.background_choices ?? {});
+      this.classEquipChoices.set(existing.class_equipment_choices ?? {});
+      this.backgroundEquipChoices.set(existing.background_equipment_choices ?? {});
       // Restore classes
       const classEntries = (existing.classes ?? (existing.class ? [{ name: existing.class, level: existing.level, subclass: existing.subclass }] : []))
         .map(c => {
@@ -358,46 +437,7 @@ export class CharacterWizardComponent implements OnInit, OnDestroy {
     if (this.saveTimer) { clearTimeout(this.saveTimer); this.saveTimer = null; }
     this.saving.set(true);
     try {
-      const hp        = this.maxHP();
-      const isSingle  = this.selectedClasses().length === 1;
-      const classes   = isSingle
-        ? [{ ...this.selectedClasses()[0], level: this.level() }]
-        : this.selectedClasses();
-      const primary   = classes[0];
-      const equipment = this.items()
-        .filter(it => this.selectedItemIndices().has(it.index))
-        .map(it => ({ itemIndex: it.index, name: it.name, quantity: 1, equipped: false }));
-      const spells = this.spells()
-        .filter(sp => this.selectedSpellIndices().has(sp.index))
-        .map(sp => ({ spellIndex: sp.index, name: sp.name, prepared: false }));
-      const bgSkills = this.selectedBackground()?.skill_proficiencies ?? [];
-      const classSkills = this.selectedClasses().flatMap(e => e.skills);
-      const skillsRecord = [...new Set([...bgSkills, ...classSkills])]
-        .reduce((acc, s) => ({ ...acc, [s]: true }), {} as Record<string, boolean>);
-
-      const result = await this.characterService.saveCharacter({
-        ...defaultCharacter(),
-        id: this.characterId() ?? undefined,
-        name: this.characterName().trim() || 'Unnamed Character',
-        race: this.selectedRace()?.name ?? '',
-        subrace: this.selectedSubrace()?.name ?? '',
-        race_choices: this.raceTraits(),
-        class: primary?.cls.name ?? '',
-        subclass: primary?.subclass ?? '',
-        level: this.level(),
-        classes: classes.map(e => ({ name: e.cls.name, level: e.level, subclass: e.subclass, choices: e.traits, skills: e.skills })),
-        background: this.selectedBackground()?.name ?? '',
-        background_choices: this.backgroundTraits(),
-        alignment: this.alignment(),
-        ability_scores: { ...this.finalScores() },
-        max_hp: hp,
-        current_hp: this.currentHp() ?? hp,
-        armor_class: this.armorClass(),
-        speed: this.speed(),
-        skills: skillsRecord,
-        equipment,
-        spells,
-      } as Character);
+      const result = await this.characterService.saveCharacter(this.draftCharacter());
       this.characterId.set(result.id ?? null);
       this.saveStatus.set('saved');
       if (this.statusTimer) clearTimeout(this.statusTimer);

@@ -1,5 +1,40 @@
 <h2 class="font-brand text-xl text-parchment mb-1">Starting Equipment</h2>
-<p class="text-sm text-slate mb-4">Select items to add to your character's inventory.</p>
+<p class="text-sm text-slate mb-4">Choose your class and background's starting gear, or take gold instead and buy your own.</p>
+
+<div class="grid grid-cols-5 gap-2 max-w-xl mb-6">
+  @for (coin of [
+    { label: 'CP', value: currency().cp },
+    { label: 'SP', value: currency().sp },
+    { label: 'EP', value: currency().ep },
+    { label: 'GP', value: currency().gp },
+    { label: 'PP', value: currency().pp }
+  ]; track coin.label) {
+    <div class="bg-elevated rounded-lg border border-white/10 text-center py-2">
+      <div class="text-[10px] text-slate uppercase tracking-wide">{{ coin.label }}</div>
+      <div class="font-brand text-lg text-gold mt-0.5">{{ coin.value }}</div>
+    </div>
+  }
+</div>
+
+<div class="max-w-xl">
+  <app-equipment-choice
+    label="Class Equipment"
+    [equip]="classEquipment()"
+    [items]="items()"
+    [choices]="classChoices()"
+    (changed)="classChoicesChanged.emit($event)"
+  />
+  <app-equipment-choice
+    label="Background Equipment"
+    [equip]="backgroundEquipment()"
+    [items]="items()"
+    [choices]="backgroundChoices()"
+    (changed)="backgroundChoicesChanged.emit($event)"
+  />
+</div>
+
+<h3 class="font-brand text-lg text-parchment mb-1 mt-2">Other Equipment</h3>
+<p class="text-sm text-slate mb-4">Add anything else to your character's inventory.</p>
 <div class="flex flex-col gap-1.5 max-w-2xl">
   @for (item of items(); track item.index) {
     <button

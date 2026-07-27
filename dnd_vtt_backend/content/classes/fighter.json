@@ -12,12 +12,40 @@
     "count": 2,
     "from": ["Acrobatics", "Animal Handling", "Athletics", "History", "Insight", "Intimidation", "Perception", "Survival"]
   },
-  "starting_equipment": [
-    { "choice": true, "options": ["Chain mail", "Leather armor, longbow, and 20 arrows"] },
-    { "choice": true, "options": ["Martial weapon and a shield", "Two martial weapons"] },
-    { "choice": true, "options": ["Light crossbow and 20 bolts", "2 handaxes"] },
-    { "choice": true, "options": ["Dungeoneer's pack", "Explorer's pack"] }
-  ],
+  "starting_equipment": {
+    "fixed": [
+      { "key": "pack", "item": "dungeoneers-pack" }
+    ],
+    "groups": [
+      {
+        "key": "package",
+        "options": [
+          {
+            "key": "a", "label": "Chain Mail, a Greatsword, a Flail, and 8 Javelins", "gold": 4,
+            "items": [
+              { "key": "a_armor", "item": "chain-mail" },
+              { "key": "a_greatsword", "item": "greatsword" },
+              { "key": "a_flail", "item": "flail" },
+              { "key": "a_javelins", "item": "javelin", "quantity": 8 }
+            ]
+          },
+          {
+            "key": "b", "label": "Studded Leather Armor, a Scimitar, a Shortsword, a Longbow, 20 Arrows, and a Quiver", "gold": 11,
+            "items": [
+              { "key": "b_armor", "item": "studded-leather-armor" },
+              { "key": "b_scimitar", "item": "scimitar" },
+              { "key": "b_shortsword", "item": "shortsword" },
+              { "key": "b_longbow", "item": "longbow" },
+              { "key": "b_arrows", "item": "arrows" },
+              { "key": "b_quiver", "item": "quiver" }
+            ]
+          }
+        ]
+      }
+    ],
+    "gold": 0,
+    "goldAlternative": 155
+  },
   "spellcasting_ability": null,
   "subclass_level": 3,
   "subclasses": [

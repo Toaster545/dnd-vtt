@@ -100,7 +100,11 @@ export class ClassStepComponent implements OnInit {
 
   goToList() { this.viewMode.set('list'); }
 
-  confirmClass() {
+  // Pushes the current draft up to the parent (which autosaves the character on any change),
+  // without leaving the detail view — called after every user edit below so picks are never
+  // lost to a missed click, not just when the class is first opened (that initial draft
+  // population shouldn't itself count as "adding" a class the player is merely previewing).
+  private syncDraft() {
     const cls = this.browsingClass();
     if (!cls) return;
     this.classAdded.emit({
@@ -110,6 +114,11 @@ export class ClassStepComponent implements OnInit {
       skills: [...this.draftSkills()],
       traits: Object.fromEntries(Object.entries(this.draftTraits()).map(([k, v]) => [k, [...v]])),
     });
+  }
+
+  confirmClass() {
+    if (!this.browsingClass()) return;
+    this.syncDraft();
     this.browsingClass.set(null);
     this.viewMode.set('my-classes');
   }
@@ -152,6 +161,19 @@ export class ClassStepComponent implements OnInit {
       if (skills.length >= cls.skill_choices.count) return skills;
       return [...skills, skill];
     });
+    this.syncDraft();
+  }
+
+  // Level (multiclass only) and subclass are set directly from template bindings — routed
+  // through methods (rather than `draftLevel.set(...)` inline) so they can also autosave.
+  setDraftLevel(level: number) {
+    this.draftLevel.set(level);
+    this.syncDraft();
+  }
+
+  selectSubclass(name: string) {
+    this.draftSubclass.set(name);
+    this.syncDraft();
   }
 
   visibleLevels(cls: DndClass): number[] {
@@ -264,6 +286,7 @@ export class ClassStepComponent implements OnInit {
   incrementAbility(grant: Extract<TraitGrant, { type: 'ability_choice' }>, ability: Ability) {
     if (!this.canIncrementAbility(grant, ability)) return;
     this.draftTraits.update(traits => ({ ...traits, [grant.key]: [...(traits[grant.key] ?? []), ability] }));
+    this.syncDraft();
   }
 
   decrementAbility(grant: Extract<TraitGrant, { type: 'ability_choice' }>, ability: Ability) {
@@ -275,6 +298,7 @@ export class ClassStepComponent implements OnInit {
       next.splice(idx, 1);
       return { ...traits, [grant.key]: next };
     });
+    this.syncDraft();
   }
 
   // Feat picks live under a companion key so ASI picks and a feat choice never collide in the
@@ -309,6 +333,7 @@ export class ClassStepComponent implements OnInit {
 
   selectFeatAbility(grant: { key: string }, ability: string) {
     this.draftTraits.update(traits => ({ ...traits, [this.featAbilityKey(grant)]: [ability] }));
+    this.syncDraft();
   }
 
   setAbilityMode(grant: { key: string }, mode: 'asi' | 'feat') {
@@ -319,14 +344,16 @@ export class ClassStepComponent implements OnInit {
       else { delete next[this.featKey(grant)]; delete next[this.featAbilityKey(grant)]; }
       return next;
     });
+    this.syncDraft();
   }
 
   // "For which you qualify" — non-qualifying feats are excluded outright rather than shown
   // disabled. The class ASI-or-feat feature doesn't name a category, so per the 2024 rules any
   // category is eligible here (not just General) as long as its prerequisite is met — e.g. a
   // Fighter who already has the Fighting Style feature qualifies for a Fighting Style feat too.
-  availableFeats(grant: { feats?: string[] }): DndFeat[] {
-    const pool = this.feats().filter(f => this.qualifiesForFeat(f));
+  availableFeats(grant: { key: string; feats?: string[] }): DndFeat[] {
+    const taken = this.alreadyTakenElsewhere(grant.key);
+    const pool = this.feats().filter(f => this.qualifiesForFeat(f) && (f.repeatable || !taken.has(f.index)));
     return grant.feats?.length ? pool.filter(f => grant.feats!.includes(f.index)) : pool;
   }
 
@@ -336,10 +363,13 @@ export class ClassStepComponent implements OnInit {
       delete next[this.featAbilityKey(grant)];
       return next;
     });
+    this.syncDraft();
   }
 
-  availableFeatPicks(grant: { category: 'origin' | 'general' | 'fighting_style'; feats?: string[]; excludeKey?: string }): DndFeat[] {
-    let pool = this.feats().filter(f => f.category === grant.category && this.qualifiesForFeat(f));
+  availableFeatPicks(grant: { key: string; category: 'origin' | 'general' | 'fighting_style'; feats?: string[]; excludeKey?: string }): DndFeat[] {
+    const taken = this.alreadyTakenElsewhere(grant.key);
+    let pool = this.feats().filter(f =>
+      f.category === grant.category && this.qualifiesForFeat(f) && (f.repeatable || !taken.has(f.index)));
     if (grant.feats?.length) pool = pool.filter(f => grant.feats!.includes(f.index));
     if (grant.excludeKey) {
       const excluded = new Set(this.draftTraits()[grant.excludeKey] ?? []);
@@ -355,11 +385,59 @@ export class ClassStepComponent implements OnInit {
     ];
   }
 
+  // A feat can grant armor proficiency directly (e.g. Heavily Armored →
+  // `effects: [{ type: 'armor_proficiency', tags: ['heavy'] }]`), same as a class's
+  // `armor_training` list — both count toward qualifying for a later armor-gated prerequisite.
+  private armorProficiencyTagsFromFeats(): string[] {
+    return this.allFeatPickEntries()
+      .map(e => this.feats().find(f => f.index === e.featIndex))
+      .filter((f): f is DndFeat => !!f)
+      .flatMap(f => f.effects ?? [])
+      .filter(eff => eff.type === 'armor_proficiency')
+      .flatMap(eff => eff.tags ?? []);
+  }
+
   private hasArmorProficiency(kind: 'light' | 'medium' | 'heavy' | 'shield'): boolean {
-    return this.armorTraining().some(t => {
+    const fromClasses = this.armorTraining().some(t => {
       const lower = t.toLowerCase();
       return lower.includes('all armor') || lower.includes(kind);
     });
+    return fromClasses || this.armorProficiencyTagsFromFeats().includes(kind);
+  }
+
+  // Every feat currently picked via any `ability_choice`/`feat_pick` grant on any selected
+  // class (plus the class currently being browsed), tagged with which grant chose it — the
+  // shared basis for both armor-proficiency-from-feats and repeatable-feat gating below.
+  private allFeatPickEntries(): { grantKey: string; featIndex: string }[] {
+    const out: { grantKey: string; featIndex: string }[] = [];
+    const scan = (cls: DndClass, traits: Record<string, string[]>) => {
+      const levels = [...cls.levels, ...cls.subclasses.flatMap(s => s.levels)];
+      for (const grant of levels.flatMap(l => l.grants ?? [])) {
+        if (grant.type === 'ability_choice') {
+          const featIndex = traits[`${grant.key}:feat`]?.[0];
+          if (featIndex) out.push({ grantKey: grant.key, featIndex });
+        } else if (grant.type === 'feat_pick') {
+          for (const featIndex of traits[grant.key] ?? []) out.push({ grantKey: grant.key, featIndex });
+        }
+      }
+    };
+    const browsing = this.browsingClass();
+    for (const entry of this.selectedClasses()) {
+      scan(entry.cls, browsing?.index === entry.cls.index ? this.draftTraits() : entry.traits);
+    }
+    if (browsing && !this.selectedClasses().some(e => e.cls.index === browsing.index)) {
+      scan(browsing, this.draftTraits());
+    }
+    return out;
+  }
+
+  // Feats already taken via some OTHER grant than the one currently being filled — used to
+  // exclude non-repeatable feats from a picker, without hiding a feat the picker's own grant
+  // already selected (which would break deselecting it).
+  private alreadyTakenElsewhere(excludeGrantKey: string): Set<string> {
+    return new Set(
+      this.allFeatPickEntries().filter(e => e.grantKey !== excludeGrantKey).map(e => e.featIndex),
+    );
   }
 
   private hasSpellcasting(): boolean {
@@ -436,5 +514,6 @@ export class ClassStepComponent implements OnInit {
       if (current.length >= grant.choose) return traits;
       return { ...traits, [grant.key]: [...current, option] };
     });
+    this.syncDraft();
   }
 }

@@ -1,0 +1,12 @@
+{
+  "index": "common-clothes",
+  "name": "Common Clothes",
+  "type": "gear",
+  "category": "Adventuring Gear",
+  "damage": null,
+  "damage_type": null,
+  "properties": [],
+  "weight": 3,
+  "cost": "5 sp",
+  "description": "Plain, everyday clothing."
+}

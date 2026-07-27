@@ -38,7 +38,7 @@
       <!-- Combat Stats -->
       <div class="grid grid-cols-5 gap-2">
         @for (stat of [
-          { label: 'Armor Class',   value: char.armor_class + '' },
+          { label: 'Armor Class',   value: stats().computed_ac + '' },
           { label: 'Speed',         value: char.speed + ' ft' },
           { label: 'Initiative',    value: fmt(stats().initiative) },
           { label: 'Prof. Bonus',   value: '+' + stats().proficiency_bonus },

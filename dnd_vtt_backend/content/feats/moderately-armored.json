@@ -13,5 +13,11 @@
       "dexterity"
     ],
     "amount": 1
-  }
+  },
+  "effects": [
+    {
+      "type": "armor_proficiency",
+      "tags": ["medium", "shield"]
+    }
+  ]
 }

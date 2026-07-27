@@ -15,6 +15,7 @@
       "wisdom",
       "charisma"
     ],
-    "amount": 1
+    "amount": 1,
+    "grantsSaveProficiency": true
   }
 }

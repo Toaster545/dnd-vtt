@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Character, Ability, ABILITIES, SKILLS, abilityModifier, proficiencyBonus } from '../models/character.model';
-import { DndClass, DndRace } from './content.service';
+import { DndClass, DndFeat, DndItem, DndRace } from './content.service';
+import { ClassChoiceSource, activeEffects, baseArmorClass, collectTraitEffects, resolveCharacterFeatPicks } from '../utils/character-effects';
 
 export interface ComputedStats {
   proficiency_bonus: number;
@@ -13,11 +14,19 @@ export interface ComputedStats {
   passive_perception: number;
   spell_attack_bonus: number | null;
   spell_save_dc: number | null;
+  // Live AC — from whatever's actually equipped right now (armor's own formula, or 10 + Dex if
+  // unarmored, plus a shield's bonus) plus any conditional effect currently active (e.g.
+  // Defense's "+1 while wearing armor"). Not `char.armor_class` — that stored field is only
+  // used by the separate player-facing character sheet's manual editor.
+  computed_ac: number;
 }
 
 @Injectable({ providedIn: 'root' })
 export class CharacterStatsService {
-  compute(char: Character, classData: DndClass | null, raceData: DndRace | null): ComputedStats {
+  compute(
+    char: Character, classData: DndClass | null, raceData: DndRace | null,
+    feats: DndFeat[] = [], classesForFeats: ClassChoiceSource[] = [], items: DndItem[] = [],
+  ): ComputedStats {
     const prof = proficiencyBonus(char.level);
     const scores = char.ability_scores;
 
@@ -32,9 +41,23 @@ export class CharacterStatsService {
     );
 
     const saveProfSet = new Set(classData?.saving_throws ?? []);
+    // Resilient-pattern feats grant save proficiency in whichever ability their abilityIncrease
+    // increased (the player-chosen one, when the feat offers more than one option).
+    for (const { feat, ability } of resolveCharacterFeatPicks(classesForFeats, feats)) {
+      const inc = feat.abilityIncrease;
+      if (!inc?.grantsSaveProficiency) continue;
+      const granted = inc.abilities.length === 1 ? inc.abilities[0] : ability;
+      if (granted) saveProfSet.add(granted);
+    }
     const saving_throw_bonuses = ABILITIES.reduce((acc, ab) => ({
       ...acc, [ab]: mods[ab] + (saveProfSet.has(ab) ? prof : 0),
     }), {} as Record<Ability, number>);
+
+    const conditionalAcBonus = activeEffects(
+      collectTraitEffects(classesForFeats, feats).filter(e => e.type === 'ac_bonus'),
+      char.equipment, items,
+    ).reduce((sum, e) => sum + (e.value ?? 0), 0);
+    const computed_ac = baseArmorClass(char.equipment, items, mods.dexterity) + conditionalAcBonus;
 
     const skill_bonuses = Object.fromEntries(
       Object.entries(SKILLS).map(([skill, ability]) => {
@@ -60,6 +83,7 @@ export class CharacterStatsService {
       saving_throw_proficient: saveProfSet,
       saving_throw_bonuses,
       skill_bonuses,
+      computed_ac,
       passive_perception,
       spell_attack_bonus,
       spell_save_dc,

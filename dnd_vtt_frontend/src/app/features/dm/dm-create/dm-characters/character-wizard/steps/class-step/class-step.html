@@ -142,7 +142,7 @@
           class="field-input py-1 text-sm w-20"
           type="number"
           [ngModel]="draftLevel()"
-          (ngModelChange)="draftLevel.set(+$event)"
+          (ngModelChange)="setDraftLevel(+$event)"
           [min]="1"
           [max]="remainingLevels(cls)"
           name="draftLevel"
@@ -185,7 +185,7 @@
               <button
                 class="group flex items-start justify-between px-3 py-2 rounded border transition-all text-left w-full cursor-pointer"
                 [class]="picked ? 'border-gold/50 bg-gold/5' : 'border-white/10 hover:border-white/30 hover:bg-white/5'"
-                (click)="draftSubclass.set(sub.name)"
+                (click)="selectSubclass(sub.name)"
                 style="font-family: inherit;"
               >
                 <div class="flex items-center gap-2">
@@ -536,11 +536,14 @@
 
   </div>
 
-  <!-- Footer actions -->
-  <div class="flex items-center justify-between pt-5 mt-5 border-t border-white/10 max-w-2xl">
-    <button class="btn-ghost" (click)="back()">Cancel</button>
+  <!-- Footer actions — sticky so it's reachable without scrolling through the whole class's
+       traits list; changes now save automatically as you make them (see the mutator methods
+       below), so this is mainly a "done, back to My Classes" action rather than the only way
+       to keep your picks. -->
+  <div class="sticky -bottom-6 py-4 mt-5 flex items-center justify-end gap-2 max-w-2xl">
+    <button class="btn-ghost border border-white/10" (click)="back()">← Back</button>
     <button class="btn-primary" (click)="confirmClass()">
-      {{ isCurrentAdded() ? 'Update Class' : 'Add Class' }}
+      {{ isCurrentAdded() ? 'Done' : 'Add Class' }}
     </button>
   </div>
 }

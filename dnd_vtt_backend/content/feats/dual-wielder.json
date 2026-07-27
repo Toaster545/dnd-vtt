@@ -16,5 +16,12 @@
       "dexterity"
     ],
     "amount": 1
-  }
+  },
+  "effects": [
+    {
+      "type": "ac_bonus",
+      "value": 1,
+      "condition": "dual_wielding_melee"
+    }
+  ]
 }
