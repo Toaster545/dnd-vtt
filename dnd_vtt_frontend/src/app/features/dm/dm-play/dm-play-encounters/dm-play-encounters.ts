@@ -233,7 +233,7 @@ export class DmPlayEncountersComponent implements OnInit, OnDestroy {
     this.toggleArm({
       kind: 'monster',
       label: monster.name,
-      color: '#e74c3c',
+      color: this.colorForMonster(monster.index),
       size: this.monsterSizeCells(monster.size),
       hp: monster.hit_points,
       max_hp: monster.hit_points,
@@ -291,6 +291,26 @@ export class DmPlayEncountersComponent implements OnInit, OnDestroy {
     // next map click doesn't place a token in the color it had a moment ago.
     const armed = this.armedEntity();
     if (armed?.kind === 'character' && armed.characterId === characterId) {
+      this.armedEntity.set({ ...armed, color });
+    }
+  }
+
+  // Same idea as the character palette above, but keyed by monster index (a type, not an
+  // instance) — every hobgoblin placed from this roster row shares one color, chosen up front.
+  private readonly monsterPalette = ['#e74c3c', '#f97316', '#c026d3', '#7c3aed', '#0891b2', '#65a30d', '#dc2626', '#78716c'];
+  private monsterColorOverrides = signal<Record<string, string>>({});
+
+  colorForMonster(monsterIndex: string): string {
+    const override = this.monsterColorOverrides()[monsterIndex];
+    if (override) return override;
+    const idx = (this.selected()?.monsters ?? []).indexOf(monsterIndex);
+    return this.monsterPalette[idx >= 0 ? idx % this.monsterPalette.length : 0];
+  }
+
+  setMonsterColor(monsterIndex: string, color: string) {
+    this.monsterColorOverrides.update(map => ({ ...map, [monsterIndex]: color }));
+    const armed = this.armedEntity();
+    if (armed?.kind === 'monster' && armed.monsterIndex === monsterIndex) {
       this.armedEntity.set({ ...armed, color });
     }
   }

@@ -47,6 +47,12 @@ export class BattleMapService {
     await firstValueFrom(this.http.delete(`${API}/maps/${mapId}/tokens/${tokenId}`));
   }
 
+  async rerollInitiative(mapId: string, tokenId: string): Promise<MapToken> {
+    return firstValueFrom(
+      this.http.post<MapToken>(`${API}/maps/${mapId}/tokens/${tokenId}/reroll-initiative`, {})
+    );
+  }
+
   // WebSocket subscription for live token updates
   watchTokens(mapId: string): Observable<MapToken[]> {
     return new Observable(observer => {

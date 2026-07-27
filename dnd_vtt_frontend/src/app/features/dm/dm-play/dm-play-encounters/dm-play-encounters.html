@@ -144,17 +144,23 @@
                 @for (index of encounter.monsters; track index) {
                   @let monster = monsterFor(index);
                   @if (monster) {
-                    <button type="button"
-                      class="flex items-center justify-between gap-2 px-3 py-2 rounded border text-left text-sm w-full cursor-pointer"
-                      [class]="isArmedMonster(index) ? 'border-gold/50 bg-gold/5' : 'border-white/10 hover:border-white/30'"
-                      (click)="toggleArmMonster(monster)"
-                      style="font-family: inherit;"
-                    >
-                      <div class="min-w-0">
-                        <span class="text-parchment font-medium truncate">{{ monster.name }}</span>
-                        <p class="text-coal text-xs m-0 mt-0.5">CR {{ monster.challenge_rating }} · AC {{ monster.armor_class }} · HP {{ monster.hit_points }}</p>
-                      </div>
-                    </button>
+                    <div class="flex items-center gap-1.5">
+                      <button type="button"
+                        class="flex-1 min-w-0 flex items-center justify-between gap-2 px-3 py-2 rounded border text-left text-sm cursor-pointer"
+                        [class]="isArmedMonster(index) ? 'border-gold/50 bg-gold/5' : 'border-white/10 hover:border-white/30'"
+                        (click)="toggleArmMonster(monster)"
+                        style="font-family: inherit;"
+                      >
+                        <div class="min-w-0">
+                          <span class="text-parchment font-medium truncate">{{ monster.name }}</span>
+                          <p class="text-coal text-xs m-0 mt-0.5">CR {{ monster.challenge_rating }} · AC {{ monster.armor_class }} · HP {{ monster.hit_points }}</p>
+                        </div>
+                      </button>
+                      <input type="color" class="h-7 w-7 rounded cursor-pointer border border-white/10 bg-transparent flex-shrink-0"
+                        [ngModel]="colorForMonster(index)" (ngModelChange)="setMonsterColor(index, $event)"
+                        (click)="$event.stopPropagation()" name="color-monster-{{ index }}"
+                        [matTooltip]="'Token color for ' + monster.name" />
+                    </div>
                   }
                 }
               </div>

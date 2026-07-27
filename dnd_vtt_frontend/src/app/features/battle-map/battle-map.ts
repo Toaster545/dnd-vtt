@@ -1,5 +1,5 @@
 import {
-  Component, ElementRef, inject, input, output, signal, effect, OnInit, AfterViewInit, OnDestroy, ViewChild
+  Component, ElementRef, inject, input, output, signal, computed, effect, OnInit, AfterViewInit, OnDestroy, ViewChild
 } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import Konva from 'konva';
@@ -53,6 +53,18 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
   error = signal<string | null>(null);
 
   newToken = { label: 'Token', color: '#e74c3c', size: 1, is_player: false };
+
+  // Turn order is just the token list re-sorted by initiative, highest first — no separate state
+  // to keep in sync, since `tokens` is already kept live by the socket subscription below.
+  // Tokens with no roll yet (a player the DM hasn't entered a number for) sort to the bottom.
+  turnOrder = computed(() => {
+    return [...this.tokens()].sort((a, b) => {
+      if (a.initiative == null && b.initiative == null) return 0;
+      if (a.initiative == null) return 1;
+      if (b.initiative == null) return -1;
+      return b.initiative - a.initiative;
+    });
+  });
 
   private stage?: Konva.Stage;
   private mapLayer?: Konva.Layer;
@@ -252,6 +264,20 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
   async removeToken(token: MapToken) {
     if (!await this.confirm.confirm(`Remove "${token.label ?? 'this token'}" from the map?`, 'Remove Token', 'Remove')) return;
     await this.mapService.deleteToken(token.id!, this.mapId);
+  }
+
+  // Manual entry — used for a player token's DM-supplied roll, or to hand-correct any token.
+  // Relies on the same socket echo every other token edit does, so no local state patch here.
+  async setInitiative(token: MapToken, raw: string) {
+    const trimmed = raw.trim();
+    const value = trimmed === '' ? null : Math.floor(Number(trimmed));
+    if (trimmed !== '' && Number.isNaN(value)) return;
+    if (value === (token.initiative ?? null)) return;
+    await this.mapService.upsertToken({ ...token, initiative: value });
+  }
+
+  async rerollInitiative(token: MapToken) {
+    await this.mapService.rerollInitiative(this.mapId, token.id!);
   }
 
   private async addTokenAt(col: number, row: number, _cellSize: number) {

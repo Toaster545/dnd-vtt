@@ -50,6 +50,7 @@ export class DatabaseService implements OnModuleInit {
     if (version < 3) await this.applyV3();
     if (version < 4) await this.applyV4();
     if (version < 5) await this.applyV5();
+    if (version < 6) await this.applyV6();
   }
 
   // ── V1: initial schema (explicit columns on characters) ─────────────────────
@@ -227,5 +228,13 @@ export class DatabaseService implements OnModuleInit {
 
     await this.db.execute(`PRAGMA user_version = 5`);
     this.logger.log('Applied schema migration v5 (encounter join codes)');
+  }
+
+  // ── V6: token initiative (turn order) ────────────────────────────────────────
+  private async applyV6() {
+    await this.db.execute(`ALTER TABLE map_tokens ADD COLUMN initiative REAL`);
+
+    await this.db.execute(`PRAGMA user_version = 6`);
+    this.logger.log('Applied schema migration v6 (token initiative)');
   }
 }
