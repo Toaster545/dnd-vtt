@@ -43,4 +43,6 @@ export class ContentService {
   getSpell(index: string)       { return this.loadOne('spells', index); }
   getFeats()                    { return this.loadAll('feats'); }
   getFeat(index: string)        { return this.loadOne('feats', index); }
+  getMonsters()                 { return this.loadAll('monsters'); }
+  getMonster(index: string)     { return this.loadOne('monsters', index); }
 }

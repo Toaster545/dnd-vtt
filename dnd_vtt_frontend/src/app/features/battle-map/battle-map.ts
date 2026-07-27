@@ -1,5 +1,5 @@
 import {
-  Component, ElementRef, inject, signal, OnInit, OnDestroy, AfterViewInit, ViewChild
+  Component, ElementRef, inject, input, output, signal, effect, OnInit, AfterViewInit, OnDestroy, ViewChild
 } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import Konva from 'konva';
@@ -9,7 +9,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { BattleMapService } from '../../core/services/battle-map.service';
 import { AuthService } from '../../core/services/auth.service';
-import { MapToken, BattleMap } from '../../core/models/campaign.model';
+import { MapToken, BattleMap, PlacingEntity } from '../../core/models/campaign.model';
 import { ConfirmService } from '../../shared/confirm.service';
 
 @Component({
@@ -20,6 +20,27 @@ import { ConfirmService } from '../../shared/confirm.service';
 })
 export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('stageContainer') stageContainer!: ElementRef<HTMLDivElement>;
+
+  // Set when embedded (e.g. inside the DM's encounter play view) with a specific map to show —
+  // falls back to the `/battle-map/:id` route param when absent, so this component still works
+  // standalone at that route. `embedded` hides the page-level header/back button, which doesn't
+  // make sense nested inside another view that already has its own chrome.
+  readonly mapIdInput = input<string | undefined>(undefined);
+  readonly embedded   = input(false);
+  // Armed from an encounter's roster sidebar (a specific character or monster type) — when set,
+  // clicking the map places a token built from it instead of the manual `newToken` form below.
+  // Not cleared here after a placement; the parent decides when arming/disarming happens, so a
+  // DM can drop several instances of the same roster entry with repeated clicks.
+  readonly placingEntity = input<PlacingEntity | null>(null);
+  // Live HP for character tokens, keyed by character_id — a character token's HP lives on the
+  // Character record (see MapToken.character_id), not the token itself. The DM's roster feeds this
+  // from its already-loaded character list (privileged, admin-only reads); the player's own view
+  // feeds it from encounter presence instead, which is why this is party-visible in hpFor while
+  // monster HP (which does live on the token) stays admin-only there.
+  readonly characterHp = input<Record<string, { hp: number; max_hp: number }>>({});
+  // Fired when an already-placed token (not the map background) is clicked, so a parent embedding
+  // this component (e.g. the encounter roster) can show that token's stat block/HP.
+  readonly tokenClicked = output<MapToken>();
 
   mapService = inject(BattleMapService);
   auth = inject(AuthService);
@@ -39,21 +60,45 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
   private gridLayer?: Konva.Layer;
   private tokenSub?: Subscription;
   private mapId!: string;
+  private routeMapId: string | null = null;
+  private viewReady = signal(false);
+  private loadedMapId: string | null = null;
+  private cellSize = 0;
+  // Mirrors the `tokens` signal, but as a plain field the characterHp-driven redraw effect below
+  // can read without also making token list changes trigger it a second time (the tokens socket
+  // subscription already redraws directly on its own).
+  private lastTokens: MapToken[] = [];
 
-  async ngOnInit() {
-    this.mapId = this.route.snapshot.paramMap.get('id') ?? '';
-    if (!this.mapId) { this.loading.set(false); return; }
-    try {
-      const map = await this.mapService.getMap(this.mapId);
-      this.map.set(map);
-    } catch (e: any) {
-      this.error.set(e.message);
-      this.loading.set(false);
-    }
+  constructor() {
+    // Reacts to either the input changing (switching maps while this component stays mounted,
+    // e.g. picking a different encounter) or the view becoming ready — whichever happens last is
+    // what actually triggers the load, instead of the old ngOnInit/ngAfterViewInit split where an
+    // async fetch kicked off in ngOnInit could never finish before ngAfterViewInit's one-shot
+    // check of `this.map()` had already run (and found it still empty).
+    effect(() => {
+      const ready = this.viewReady();
+      const id = this.mapIdInput() ?? this.routeMapId ?? '';
+      if (!ready || !id || id === this.loadedMapId) return;
+      this.loadedMapId = id;
+      this.loadMap(id);
+    });
+
+    // A character's HP changing (e.g. the DM adjusting it from the roster's character sheet)
+    // doesn't touch the token list itself, so it needs its own redraw trigger.
+    effect(() => {
+      this.characterHp();
+      if (this.tokenLayer && this.cellSize) {
+        this.renderTokens(this.lastTokens, this.cellSize);
+      }
+    });
+  }
+
+  ngOnInit() {
+    this.routeMapId = this.route.snapshot.paramMap.get('id');
   }
 
   ngAfterViewInit() {
-    if (this.map()) this.initStage();
+    this.viewReady.set(true);
   }
 
   ngOnDestroy() {
@@ -61,7 +106,26 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
     this.stage?.destroy();
   }
 
-  private async initStage() {
+  private async loadMap(id: string) {
+    this.mapId = id;
+    this.loading.set(true);
+    this.error.set(null);
+    this.tokenSub?.unsubscribe();
+    this.tokenSub = undefined;
+    this.stage?.destroy();
+    this.stage = undefined;
+
+    try {
+      const map = await this.mapService.getMap(id);
+      this.map.set(map);
+      this.initStage();
+    } catch (e: any) {
+      this.error.set(e.message);
+      this.loading.set(false);
+    }
+  }
+
+  private initStage() {
     const map = this.map()!;
     const container = this.stageContainer.nativeElement;
     const gridSize = map.grid_size || 50;
@@ -81,6 +145,7 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
       const konvaImg = new Konva.Image({ image: img, x: 0, y: 0, width: w, height: h });
       this.mapLayer.add(konvaImg);
       this.drawGrid(w, h, gridSize * scale);
+      this.cellSize = gridSize * scale;
 
       this.stage.on('click tap', (e) => {
         if (e.target === konvaImg && this.auth.isAdmin()) {
@@ -93,6 +158,7 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
 
       this.tokenSub = this.mapService.watchTokens(this.mapId).subscribe(tokens => {
         this.tokens.set(tokens);
+        this.lastTokens = tokens;
         this.renderTokens(tokens, gridSize * scale);
       });
 
@@ -130,6 +196,31 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
         offsetX: (r * 0.7 / 2) * 1.5,
         offsetY: r * 0.7 / 2,
       }));
+
+      // Character HP is party-visible (anyone with data for it in `characterHp`, players
+      // included); monster HP stays DM-only intel — see hpFor.
+      const hp = this.hpFor(token);
+      if (hp) {
+        const text = `${hp.hp}/${hp.max_hp}`;
+        const fontSize = Math.max(10, Math.min(13, r * 0.4));
+        const hpLabel = new Konva.Text({ text, fontSize, fontStyle: 'bold', fill: this.hpLabelColor(hp.hp, hp.max_hp) });
+        const padX = 4, padY = 2;
+        const labelW = hpLabel.width();
+        const labelH = hpLabel.height();
+        const bgY = -(r + labelH + padY * 2 + 4);
+        hpLabel.position({ x: -labelW / 2, y: bgY + padY });
+        group.add(new Konva.Rect({
+          x: -labelW / 2 - padX,
+          y: bgY,
+          width: labelW + padX * 2,
+          height: labelH + padY * 2,
+          fill: 'rgba(20, 18, 14, 0.75)',
+          cornerRadius: 3,
+        }));
+        group.add(hpLabel);
+      }
+
+      group.on('click tap', () => this.tokenClicked.emit(token));
       if (this.auth.isAdmin()) {
         group.on('dragend', async () => {
           const pos = group.position();
@@ -142,12 +233,44 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
     layer.draw();
   }
 
+  private hpFor(token: MapToken): { hp: number; max_hp: number } | null {
+    if (token.character_id) return this.characterHp()[token.character_id] ?? null;
+    // Monster hp/max_hp lives directly on the token, but stays hidden from players — standard
+    // hide-the-enemy's-exact-HP table convention, unlike character HP which is party-visible.
+    if (this.auth.isAdmin() && token.hp != null && token.max_hp != null) return { hp: token.hp, max_hp: token.max_hp };
+    return null;
+  }
+
+  private hpLabelColor(hp: number, maxHp: number): string {
+    if (!maxHp) return '#ede9df';
+    const pct = (hp / maxHp) * 100;
+    if (pct <= 25) return '#e05252';
+    if (pct <= 50) return '#eab308';
+    return '#4caf82';
+  }
+
   async removeToken(token: MapToken) {
     if (!await this.confirm.confirm(`Remove "${token.label ?? 'this token'}" from the map?`, 'Remove Token', 'Remove')) return;
     await this.mapService.deleteToken(token.id!, this.mapId);
   }
 
   private async addTokenAt(col: number, row: number, _cellSize: number) {
+    const entity = this.placingEntity();
+    if (entity) {
+      await this.mapService.upsertToken({
+        map_id: this.mapId,
+        label: entity.label,
+        color: entity.color,
+        x: col, y: row,
+        size: entity.size,
+        hp: entity.hp,
+        max_hp: entity.max_hp,
+        is_player: entity.kind === 'character',
+        character_id: entity.characterId,
+        monster_index: entity.monsterIndex,
+      });
+      return;
+    }
     await this.mapService.upsertToken({
       map_id: this.mapId,
       label: this.newToken.label,

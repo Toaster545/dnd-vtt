@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
 import { randomUUID } from 'crypto';
 import { DatabaseService } from '../common/database.service';
+import type { RequestUser } from '../common/current-user.decorator';
 
 // Top-level columns kept for fast listing/filtering
 const LIST_FIELDS = ['name', 'race', 'class', 'level'] as const;
@@ -28,6 +29,18 @@ export class CharactersService {
     return this.deserialize(row);
   }
 
+  // Same lookup, but a DM (admin) can read/edit any character, not just ones their own account
+  // happens to own. This app is single-campaign self-hosted (see CLAUDE.md) — "admin" means the
+  // DM running the game, who needs to see and manage whatever character a player actually brings
+  // into an encounter, not just characters created under the DM's own login.
+  async findOneReadable(id: string, user: RequestUser) {
+    if (user.role !== 'admin') return this.findOne(id, user.id);
+    const result = await this.db.execute('SELECT * FROM characters WHERE id = ?', [id]);
+    const row = result.rows[0];
+    if (!row) throw new NotFoundException('Character not found');
+    return this.deserialize(row);
+  }
+
   async create(userId: string, body: Record<string, unknown>) {
     const id = randomUUID();
     const now = new Date().toISOString();
@@ -40,14 +53,14 @@ export class CharactersService {
     return this.findOne(id, userId);
   }
 
-  async update(id: string, userId: string, body: Record<string, unknown>) {
-    await this.findOne(id, userId);
+  async update(id: string, user: RequestUser, body: Record<string, unknown>) {
+    await this.findOneReadable(id, user);
     const { name, race, class: cls, level, ...rest } = body;
     await this.db.execute(
       `UPDATE characters SET name=?, race=?, class=?, level=?, data=?, updated_at=? WHERE id=?`,
       [name ?? 'Unnamed', race ?? '', cls ?? '', level ?? 1, JSON.stringify(rest), new Date().toISOString(), id],
     );
-    return this.findOne(id, userId);
+    return this.findOneReadable(id, user);
   }
 
   async remove(id: string, userId: string) {

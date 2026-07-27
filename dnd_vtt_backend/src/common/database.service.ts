@@ -47,6 +47,9 @@ export class DatabaseService implements OnModuleInit {
 
     if (version < 1) await this.applyV1();
     if (version < 2) await this.applyV2();
+    if (version < 3) await this.applyV3();
+    if (version < 4) await this.applyV4();
+    if (version < 5) await this.applyV5();
   }
 
   // ── V1: initial schema (explicit columns on characters) ─────────────────────
@@ -186,5 +189,43 @@ export class DatabaseService implements OnModuleInit {
     await this.db.execute(`DROP TABLE characters_v1`);
     await this.db.execute(`PRAGMA user_version = 2`);
     this.logger.log('Applied schema migration v2 (characters → data blob)');
+  }
+
+  // ── V3: encounters ───────────────────────────────────────────────────────────
+  private async applyV3() {
+    await this.db.execute(`
+      CREATE TABLE IF NOT EXISTS encounters (
+        id            TEXT PRIMARY KEY,
+        dm_id         TEXT NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
+        session_id    TEXT REFERENCES sessions(id) ON DELETE SET NULL,
+        name          TEXT NOT NULL,
+        map_id        TEXT REFERENCES battle_maps(id) ON DELETE SET NULL,
+        monsters      TEXT NOT NULL DEFAULT '[]',
+        character_ids TEXT NOT NULL DEFAULT '[]',
+        status        TEXT NOT NULL DEFAULT 'draft' CHECK(status IN ('draft','active','ended')),
+        created_at    TEXT NOT NULL DEFAULT (datetime('now')),
+        updated_at    TEXT NOT NULL DEFAULT (datetime('now'))
+      )
+    `);
+
+    await this.db.execute(`PRAGMA user_version = 3`);
+    this.logger.log('Applied schema migration v3 (encounters)');
+  }
+
+  // ── V4: map_tokens reference their source (character or monster type) ───────
+  private async applyV4() {
+    await this.db.execute(`ALTER TABLE map_tokens ADD COLUMN character_id TEXT REFERENCES characters(id) ON DELETE SET NULL`);
+    await this.db.execute(`ALTER TABLE map_tokens ADD COLUMN monster_index TEXT`);
+
+    await this.db.execute(`PRAGMA user_version = 4`);
+    this.logger.log('Applied schema migration v4 (map_tokens source references)');
+  }
+
+  // ── V5: encounter join codes ──────────────────────────────────────────────────
+  private async applyV5() {
+    await this.db.execute(`ALTER TABLE encounters ADD COLUMN join_code TEXT`);
+
+    await this.db.execute(`PRAGMA user_version = 5`);
+    this.logger.log('Applied schema migration v5 (encounter join codes)');
   }
 }

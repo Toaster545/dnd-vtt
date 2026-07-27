@@ -1,0 +1,33 @@
+{
+  "index": "orc",
+  "name": "Orc",
+  "size": "Medium",
+  "type": "humanoid (orc)",
+  "alignment": "chaotic evil",
+  "armor_class": 13,
+  "armor_class_desc": "hide armor",
+  "hit_points": 15,
+  "hit_dice": "2d8 + 6",
+  "speed": { "walk": 30 },
+  "ability_scores": {
+    "strength": 16,
+    "dexterity": 12,
+    "constitution": 16,
+    "intelligence": 7,
+    "wisdom": 11,
+    "charisma": 10
+  },
+  "skills": { "Intimidation": 2 },
+  "senses": { "darkvision": 60, "passive_perception": 10 },
+  "languages": ["Common", "Orc"],
+  "challenge_rating": "1/2",
+  "xp": 100,
+  "traits": [
+    { "name": "Aggressive", "description": "As a bonus action, the orc can move up to its speed toward a hostile creature that it can see." }
+  ],
+  "actions": [
+    { "name": "Greataxe", "description": "Melee Weapon Attack: +5 to hit, reach 5 ft., one target. Hit: 9 (1d12 + 3) slashing damage." },
+    { "name": "Javelin", "description": "Melee or Ranged Weapon Attack: +5 to hit, reach 5 ft. or range 30/120 ft., one target. Hit: 6 (1d6 + 3) piercing damage." }
+  ],
+  "description": "Orcs are savage raiders who worship the war-god Gruumsh, throwing themselves into melee combat with reckless abandon."
+}

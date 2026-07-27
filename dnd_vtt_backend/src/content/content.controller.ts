@@ -17,4 +17,6 @@ export class ContentController {
   @Get('spells/:index')        getSpell(@Param('index') i: string)      { return this.content.getSpell(i); }
   @Get('feats')                getFeats()                                { return this.content.getFeats(); }
   @Get('feats/:index')         getFeat(@Param('index') i: string)       { return this.content.getFeat(i); }
+  @Get('monsters')             getMonsters()                             { return this.content.getMonsters(); }
+  @Get('monsters/:index')      getMonster(@Param('index') i: string)    { return this.content.getMonster(i); }
 }

@@ -16,5 +16,6 @@ export class DashboardComponent implements OnInit {
 
   ngOnInit() {
     if (this.auth.isAdmin()) this.router.navigate(['/dm'], { replaceUrl: true });
+    else this.router.navigate(['/player'], { replaceUrl: true });
   }
 }

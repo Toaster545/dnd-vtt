@@ -61,18 +61,20 @@ export class MapsService {
   async upsertToken(mapId: string, token: Record<string, unknown>) {
     const id = (token.id as string) || randomUUID();
     await this.db.execute(
-      `INSERT INTO map_tokens (id, map_id, label, color, x, y, size, hp, max_hp, is_player)
-       VALUES (?,?,?,?,?,?,?,?,?,?)
+      `INSERT INTO map_tokens (id, map_id, label, color, x, y, size, hp, max_hp, is_player, character_id, monster_index)
+       VALUES (?,?,?,?,?,?,?,?,?,?,?,?)
        ON CONFLICT(id) DO UPDATE SET
          label=excluded.label, color=excluded.color,
          x=excluded.x, y=excluded.y, size=excluded.size,
-         hp=excluded.hp, max_hp=excluded.max_hp, is_player=excluded.is_player`,
+         hp=excluded.hp, max_hp=excluded.max_hp, is_player=excluded.is_player,
+         character_id=excluded.character_id, monster_index=excluded.monster_index`,
       [
         id, mapId,
         token.label ?? 'Token', token.color ?? '#e74c3c',
         token.x ?? 0, token.y ?? 0, token.size ?? 1,
         token.hp ?? null, token.max_hp ?? null,
         token.is_player ? 1 : 0,
+        token.character_id ?? null, token.monster_index ?? null,
       ],
     );
     const tokens = await this.getTokens(mapId);

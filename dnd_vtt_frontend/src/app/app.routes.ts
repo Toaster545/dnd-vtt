@@ -23,20 +23,6 @@ export const routes: Routes = [
     loadComponent: () => import('./features/dashboard/dashboard').then(m => m.DashboardComponent),
   },
   {
-    path: 'characters',
-    canActivate: [authGuard],
-    children: [
-      {
-        path: '',
-        loadComponent: () => import('./features/characters/character-list/character-list').then(m => m.CharacterListComponent),
-      },
-      {
-        path: ':id',
-        loadComponent: () => import('./features/characters/character-sheet/character-sheet').then(m => m.CharacterSheetComponent),
-      },
-    ],
-  },
-  {
     path: 'battle-map',
     canActivate: [authGuard],
     loadComponent: () => import('./features/battle-map/battle-map').then(m => m.BattleMapComponent),
@@ -50,6 +36,11 @@ export const routes: Routes = [
     path: 'dm',
     canActivate: [authGuard, adminGuard],
     loadComponent: () => import('./features/dm/dm-shell').then(m => m.DmShellComponent),
+  },
+  {
+    path: 'player',
+    canActivate: [authGuard],
+    loadComponent: () => import('./features/player/player-shell').then(m => m.PlayerShellComponent),
   },
   {
     path: 'admin/maps',

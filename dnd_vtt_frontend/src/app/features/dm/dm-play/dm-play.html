@@ -1,5 +1,6 @@
 <div class="flex flex-col h-full overflow-hidden">
-  @if (subTab() === 'sessions') {
+  @switch (subTab()) {
+  @case ('sessions') {
     <div class="flex h-full overflow-hidden">
       <!-- Session list -->
       <aside class="w-60 border-r border-white/10 overflow-y-auto flex-shrink-0">
@@ -48,7 +49,11 @@
         }
       </div>
     </div>
-  } @else {
+  }
+  @case ('encounters') {
+    <app-dm-play-encounters class="flex-1 min-h-0" />
+  }
+  @case ('characters') {
     @if (selectedCharacter(); as char) {
       <div class="flex items-center gap-2 px-4 py-2.5 border-b border-white/10 flex-shrink-0">
         <button class="btn-ghost text-sm" (click)="backToCharacterList()">
@@ -83,5 +88,6 @@
         }
       </div>
     }
+  }
   }
 </div>

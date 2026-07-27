@@ -261,6 +261,41 @@ export interface DndSpell {
   description: string;
 }
 
+export interface DndMonster {
+  index: string;
+  name: string;
+  size: string;
+  type: string;
+  alignment: string;
+  armor_class: number;
+  armor_class_desc?: string;
+  hit_points: number;
+  hit_dice: string;
+  speed: { walk?: number; fly?: number; swim?: number; climb?: number; burrow?: number };
+  ability_scores: {
+    strength: number; dexterity: number; constitution: number;
+    intelligence: number; wisdom: number; charisma: number;
+  };
+  saving_throws?: Record<string, number>;
+  skills?: Record<string, number>;
+  damage_vulnerabilities?: string[];
+  damage_resistances?: string[];
+  damage_immunities?: string[];
+  condition_immunities?: string[];
+  senses: {
+    darkvision?: number; blindsight?: number; truesight?: number; tremorsense?: number;
+    passive_perception: number;
+  };
+  languages: string[];
+  challenge_rating: string;
+  xp: number;
+  traits?: { name: string; description: string }[];
+  actions: { name: string; description: string }[];
+  reactions?: { name: string; description: string }[];
+  legendary_actions?: { name: string; description: string }[];
+  description?: string;
+}
+
 @Injectable({ providedIn: 'root' })
 export class ContentService {
   private cache = new Map<string, unknown>();
@@ -286,4 +321,6 @@ export class ContentService {
   getSpell(index: string)           { return this.get<DndSpell>(`spells/${index}`); }
   getFeats()                        { return this.get<DndFeat[]>('feats'); }
   getFeat(index: string)            { return this.get<DndFeat>(`feats/${index}`); }
+  getMonsters()                     { return this.get<DndMonster[]>('monsters'); }
+  getMonster(index: string)         { return this.get<DndMonster>(`monsters/${index}`); }
 }
