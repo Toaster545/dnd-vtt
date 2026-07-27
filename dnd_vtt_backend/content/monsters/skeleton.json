@@ -1,0 +1,32 @@
+{
+  "index": "skeleton",
+  "name": "Skeleton",
+  "size": "Medium",
+  "type": "undead",
+  "alignment": "lawful evil",
+  "armor_class": 13,
+  "armor_class_desc": "armor scraps",
+  "hit_points": 13,
+  "hit_dice": "2d8 + 4",
+  "speed": { "walk": 30 },
+  "ability_scores": {
+    "strength": 10,
+    "dexterity": 14,
+    "constitution": 15,
+    "intelligence": 6,
+    "wisdom": 8,
+    "charisma": 5
+  },
+  "damage_vulnerabilities": ["bludgeoning"],
+  "damage_immunities": ["poison"],
+  "condition_immunities": ["exhaustion", "poisoned"],
+  "senses": { "darkvision": 60, "passive_perception": 9 },
+  "languages": ["understands the languages it knew in life but can't speak"],
+  "challenge_rating": "1/4",
+  "xp": 50,
+  "actions": [
+    { "name": "Shortsword", "description": "Melee Weapon Attack: +4 to hit, reach 5 ft., one target. Hit: 5 (1d6 + 2) piercing damage." },
+    { "name": "Shortbow", "description": "Ranged Weapon Attack: +4 to hit, range 80/320 ft., one target. Hit: 5 (1d6 + 2) piercing damage." }
+  ],
+  "description": "A skeleton is an animated pile of bones knit together by dark magic, mindlessly following the orders of whoever raised or commands it."
+}

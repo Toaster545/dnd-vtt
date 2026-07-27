@@ -16,7 +16,7 @@ export class CharactersController {
 
   @Get(':id')
   findOne(@Param('id') id: string, @CurrentUser() user: RequestUser) {
-    return this.characters.findOne(id, user.id);
+    return this.characters.findOneReadable(id, user);
   }
 
   @Post()
@@ -30,7 +30,7 @@ export class CharactersController {
     @CurrentUser() user: RequestUser,
     @Body() body: Record<string, unknown>,
   ) {
-    return this.characters.update(id, user.id, body);
+    return this.characters.update(id, user, body);
   }
 
   @Delete(':id')

@@ -47,21 +47,30 @@ export class BattleMapService {
     await firstValueFrom(this.http.delete(`${API}/maps/${mapId}/tokens/${tokenId}`));
   }
 
+  async rerollInitiative(mapId: string, tokenId: string): Promise<MapToken> {
+    return firstValueFrom(
+      this.http.post<MapToken>(`${API}/maps/${mapId}/tokens/${tokenId}/reroll-initiative`, {})
+    );
+  }
+
   // WebSocket subscription for live token updates
   watchTokens(mapId: string): Observable<MapToken[]> {
     return new Observable(observer => {
       const socket = this.socketService.socket;
+      // Named so `off` below only removes this subscription's own listener — `socket` is a
+      // singleton shared with other live features (e.g. encounter presence), so tearing down one
+      // subscriber must never disconnect it or drop another subscriber's listeners wholesale.
+      const handleUpdate = (tokens: MapToken[]) => observer.next(tokens);
 
       this.getTokens(mapId).then(tokens => observer.next(tokens));
 
       socket.connect();
       socket.emit('join_map', mapId);
-      socket.on('tokens_updated', (tokens: MapToken[]) => observer.next(tokens));
+      socket.on('tokens_updated', handleUpdate);
 
       return () => {
         socket.emit('leave_map', mapId);
-        socket.off('tokens_updated');
-        socket.disconnect();
+        socket.off('tokens_updated', handleUpdate);
       };
     });
   }

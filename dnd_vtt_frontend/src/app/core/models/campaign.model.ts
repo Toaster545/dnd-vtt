@@ -27,6 +27,28 @@ export interface MapToken {
   hp?: number;
   max_hp?: number;
   is_player: boolean;
+  // Which roster entry this token represents, if any — a character token's HP lives on the
+  // Character record itself (see character_id), while a monster token's hp/max_hp above are the
+  // actual per-instance combat HP (independent per placed copy of the same monster type).
+  character_id?: string;
+  monster_index?: string;
+  // Turn-order value: 1d20 + DEX mod, auto-rolled server-side the moment a monster token is
+  // placed; null for a player token until the DM types in that player's roll.
+  initiative?: number | null;
+}
+
+// What's "armed" from an encounter's roster sidebar, ready to be dropped onto the map on the next
+// click — built by the roster UI (from a Character or a DndMonster), consumed by BattleMapComponent
+// to fill in a new token's fields instead of a manually-typed label/color.
+export interface PlacingEntity {
+  kind: 'monster' | 'character';
+  label: string;
+  color: string;
+  size: number;
+  hp?: number;
+  max_hp?: number;
+  characterId?: string;
+  monsterIndex?: string;
 }
 
 export interface UniversalVTTData {

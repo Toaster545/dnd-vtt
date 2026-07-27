@@ -1,0 +1,35 @@
+{
+  "index": "hobgoblin-devastator",
+  "name": "Hobgoblin Devastator",
+  "size": "Medium",
+  "type": "humanoid (goblinoid)",
+  "alignment": "lawful evil",
+  "armor_class": 12,
+  "armor_class_desc": "15 with mage armor",
+  "hit_points": 39,
+  "hit_dice": "6d8 + 12",
+  "speed": { "walk": 30 },
+  "ability_scores": {
+    "strength": 10,
+    "dexterity": 10,
+    "constitution": 14,
+    "intelligence": 16,
+    "wisdom": 12,
+    "charisma": 11
+  },
+  "saving_throws": { "Intelligence": 5, "Wisdom": 3 },
+  "skills": { "Arcana": 5 },
+  "senses": { "darkvision": 60, "passive_perception": 11 },
+  "languages": ["Common", "Goblin"],
+  "challenge_rating": "4",
+  "xp": 1100,
+  "traits": [
+    { "name": "Martial Advantage", "description": "Once per turn, the hobgoblin can deal an extra 10 (3d6) damage to a creature it hits with an attack if that creature is within 5 ft. of an ally of the hobgoblin that isn't incapacitated." },
+    { "name": "Spellcasting", "description": "The hobgoblin is a 6th-level spellcaster. Its spellcasting ability is Intelligence (spell save DC 13, +5 to hit with spell attacks). It has the following wizard spells prepared: Cantrips (at will): fire bolt, light, mage hand, prestidigitation. 1st level (4 slots): mage armor, magic missile, shield. 2nd level (3 slots): misty step, scorching ray. 3rd level (3 slots): fireball, fly." }
+  ],
+  "actions": [
+    { "name": "Redirect Attack", "description": "When a creature the hobgoblin can see targets it with an attack, the hobgoblin chooses another hobgoblin within 5 ft. of it. The two hobgoblins swap places, and the chosen hobgoblin becomes the target instead of the original hobgoblin." },
+    { "name": "Quarterstaff", "description": "Melee Weapon Attack: +2 to hit (+4 to hit with shield spell), reach 5 ft., one target. Hit: 3 (1d6) bludgeoning damage, or 4 (1d8) bludgeoning damage if used with two hands." }
+  ],
+  "description": "Hobgoblin devastators are battle-mages who study arcane magic to serve their legions, hurling destructive spells from the back ranks while lesser hobgoblins shield them from harm."
+}

@@ -54,4 +54,10 @@ export class MapsController {
   deleteToken(@Param('id') mapId: string, @Param('tokenId') tokenId: string) {
     return this.maps.deleteToken(tokenId, mapId);
   }
+
+  @Post(':id/tokens/:tokenId/reroll-initiative')
+  @UseGuards(AdminGuard)
+  rerollInitiative(@Param('id') mapId: string, @Param('tokenId') tokenId: string) {
+    return this.maps.rerollInitiative(mapId, tokenId);
+  }
 }

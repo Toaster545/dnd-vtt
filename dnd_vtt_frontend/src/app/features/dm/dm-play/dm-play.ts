@@ -5,8 +5,9 @@ import { Session } from '../../../core/models/session.model';
 import { CharacterService } from '../../../core/services/character.service';
 import { Character } from '../../../core/models/character.model';
 import { CharacterPlaySheetComponent } from './character-play-sheet/character-play-sheet';
+import { DmPlayEncountersComponent } from './dm-play-encounters/dm-play-encounters';
 
-type SubTab = 'sessions' | 'characters';
+type SubTab = 'sessions' | 'encounters' | 'characters';
 
 const CHAR_VIEWED_KEY = 'dnd-char-viewed';
 function markCharacterViewed(id: string) {
@@ -21,7 +22,7 @@ function sortByRecentlyViewed<T extends { id?: string }>(chars: T[]): T[] {
 
 @Component({
   selector: 'app-dm-play',
-  imports: [MatIconModule, CharacterPlaySheetComponent],
+  imports: [MatIconModule, CharacterPlaySheetComponent, DmPlayEncountersComponent],
   templateUrl: './dm-play.html',
   styleUrl: './dm-play.scss',
 })
