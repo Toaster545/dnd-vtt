@@ -17,9 +17,16 @@ No cloud account required — everything runs locally and is exposed via a [Clou
   character's computed stats
 - **Character persistence** — Each player's characters are saved to their account
 - **Session management** — DM creates and tracks game sessions
-- **Live play** — DM and players view saved characters and run live sessions
+- **Encounters** — DM builds a roster of monsters and characters against a map, then starts the
+  encounter to generate a join code; players join with that code and one of their own characters
+  from their own device, live presence (who's connected, self-reported HP) is broadcast to the DM
 - **Battle maps** — Upload Dungeondraft PNG exports and display them on a grid canvas
 - **Live token sync** — DM places and moves tokens; positions update in real time for all viewers via WebSockets
+- **Per-token color** — Each character and monster type gets a distinct default token color,
+  overridable per-roster-entry via a color picker
+- **Initiative tracker** — Placing a monster token auto-rolls 1d20 + its DEX modifier into a
+  turn-order list; player tokens wait for the DM to enter their rolled initiative. The DM can edit
+  any value or reroll a monster; players see the same turn order read-only
 - **View-only for players** — Players see the map and tokens but cannot modify them
 
 ## Tech Stack
@@ -44,7 +51,8 @@ dnd-vtt/
 │   │   ├── auth/           # JWT guard, admin guard, login/register endpoints
 │   │   ├── characters/     # Character CRUD endpoints
 │   │   ├── content/        # Serves static 5e game content (see content/ below)
-│   │   ├── maps/           # Map + token endpoints, WebSocket gateway
+│   │   ├── encounters/     # Encounter CRUD, join codes, live presence WebSocket gateway
+│   │   ├── maps/           # Map + token endpoints (incl. initiative), WebSocket gateway
 │   │   ├── sessions/       # Game session CRUD endpoints (DM only)
 │   │   └── common/         # DatabaseService, CurrentUser decorator
 │   ├── content/            # Static SRD-derived game data (JSON, one file per entry)
@@ -68,13 +76,15 @@ dnd-vtt/
         └── features/
             ├── auth/       # login, register
             ├── characters/ # character-list, character-sheet
-            ├── battle-map/ # Konva.js VTT canvas
+            ├── battle-map/ # Konva.js VTT canvas, shared by DM and player views (incl. turn order)
             ├── admin/      # map-manager (DM only)
             ├── dashboard/  # home screen
+            ├── player/     # player-facing area: join an encounter by code, play own character
             └── dm/         # DM-only area (gated by adminGuard)
-                ├── dm-create/       # session management + character wizard
-                │   └── dm-characters/character-wizard/steps/  # one component per wizard step
-                └── dm-play/         # live session view, character play sheet
+                ├── dm-create/       # session/encounter management + character wizard
+                │   ├── dm-encounters/                          # build an encounter's roster
+                │   └── dm-characters/character-wizard/steps/   # one component per wizard step
+                └── dm-play/         # live session/encounter view, character play sheet
 ```
 
 ## Architecture
@@ -173,15 +183,25 @@ All endpoints are prefixed with `/api`. Protected routes require a `Bearer` toke
 | GET | `/sessions` | Admin | List game sessions |
 | POST | `/sessions` | Admin | Create session |
 | DELETE | `/sessions/:id` | Admin | Delete session |
+| GET | `/encounters` | Admin | List the DM's encounters |
+| GET | `/encounters/join/:code` | Auth | Resolve an active encounter by its join code |
+| GET | `/encounters/:id` | Admin | Get encounter |
+| POST | `/encounters` | Admin | Create encounter (name, map, monster/character roster) |
+| PUT | `/encounters/:id` | Admin | Update encounter (e.g. add a monster/character to the roster) |
+| DELETE | `/encounters/:id` | Admin | Delete encounter |
+| POST | `/encounters/:id/start` | Admin | Activate encounter, generating a join code |
+| POST | `/encounters/:id/stop` | Admin | Deactivate encounter |
 | GET | `/maps` | Auth | List all maps |
 | GET | `/maps/:id` | Auth | Get map |
 | POST | `/maps` | Admin | Create map |
 | POST | `/maps/upload` | Admin | Upload map image |
 | GET | `/maps/:id/tokens` | Auth | Get tokens for map |
-| POST | `/maps/:id/tokens` | Admin | Add/update token |
+| POST | `/maps/:id/tokens` | Admin | Add/update token (new monster tokens auto-roll initiative) |
 | DELETE | `/maps/:id/tokens/:tokenId` | Admin | Delete token |
+| POST | `/maps/:id/tokens/:tokenId/reroll-initiative` | Admin | Reroll a monster token's initiative |
 
-Token positions are also pushed in real time to all connected clients via the WebSocket gateway on the same port.
+Token positions are also pushed in real time to all connected clients via the WebSocket gateway on
+the same port, as is who's currently present in a live encounter (`encounter-presence.gateway.ts`).
 
 ## 5e Game Content
 
@@ -212,8 +232,9 @@ requirements, a required class feature, or specific classes) and an optional mec
 | `profiles` | User accounts, hashed passwords, roles |
 | `characters` | Player character sheets (scoped to owning user); stored as a single JSON `data` column, not normalized fields |
 | `sessions` | DM-created game sessions |
+| `encounters` | DM-built roster (monsters + characters) against a map, with a `status` and a `join_code` once started |
 | `battle_maps` | Uploaded maps |
-| `map_tokens` | Token positions per map (broadcast via WebSocket on change) |
+| `map_tokens` | Token positions per map, including `initiative` (broadcast via WebSocket on change) |
 
 There's no ORM — schema changes are hand-rolled migrations gated by `PRAGMA user_version` in `DatabaseService`.
 
