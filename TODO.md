@@ -7,11 +7,10 @@
 ## Andre
 
 - [ ] Push `andre_setup` to `main` and ensure everything works.
-- [ ] Build a functioning Warlock class.
-- [ ] Fix backgrounds.
+- [x] Build a functioning Warlock class.
 - [ ] Character Creation:
-    - [ ] fix backgrounds (2024 version)
-    - [ ] Races choices and traits
+    - [x] fix backgrounds (2024 version)
+    - [x] Races choices and traits
     - [ ] ability score increases
     - [ ] add customizability (background, for instance)
 
