@@ -1,0 +1,5 @@
+{
+  "index": "tent", "name": "Tent", "type": "gear", "category": "Adventuring Gear",
+  "damage": null, "damage_type": null, "properties": [], "weight": 20, "cost": "2 gp",
+  "description": "A portable canvas shelter for two people."
+}

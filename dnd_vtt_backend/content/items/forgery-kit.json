@@ -1,0 +1,5 @@
+{
+  "index": "forgery-kit", "name": "Forgery Kit", "type": "gear", "category": "Tool",
+  "damage": null, "damage_type": null, "properties": [], "weight": 5, "cost": "15 gp",
+  "description": "Specialized inks, papers, seals, and implements used to imitate documents."
+}

@@ -1,34 +1,26 @@
 {
   "index": "charlatan",
   "name": "Charlatan",
-  "skill_proficiencies": [
-    "Deception",
-    "Sleight of Hand"
-  ],
-  "tool_proficiencies": [
-    "Disguise kit",
-    "Forgery kit"
-  ],
+  "skill_proficiencies": ["Deception", "Sleight of Hand"],
+  "tool_proficiencies": ["Forgery Kit"],
   "languages": "None",
-  "starting_equipment": [
-    "Fine clothes",
-    "Disguise kit",
-    "Con tools (e.g. weighted dice, marked cards)",
-    "Belt pouch with 15 gp"
-  ],
-  "feature": "False Identity",
-  "grants": [
-    {
-      "type": "ability_choice",
-      "key": "ability_scores",
-      "name": "Ability Scores",
-      "description": "Increase one of the abilities below by 2 and a different one by 1, or increase all three by 1 each. No score can be increased above 20 this way.",
-      "points": 3,
-      "abilities": [
-        "dexterity",
-        "constitution",
-        "charisma"
-      ]
-    }
-  ]
+  "starting_equipment": {
+    "fixed": [
+      { "key": "forgery-kit", "item": "forgery-kit" },
+      { "key": "costume", "item": "costume" },
+      { "key": "fine-clothes", "item": "fine-clothes" }
+    ],
+    "groups": [],
+    "gold": 15,
+    "goldAlternative": 50
+  },
+  "feature": "Origin Feat: Skilled",
+  "grants": [{
+    "type": "ability_choice",
+    "key": "ability_scores",
+    "name": "Ability Scores",
+    "description": "Increase one listed ability by 2 and a different one by 1, or increase all three by 1. No score can be increased above 20 this way.",
+    "points": 3,
+    "abilities": ["dexterity", "constitution", "charisma"]
+  }]
 }

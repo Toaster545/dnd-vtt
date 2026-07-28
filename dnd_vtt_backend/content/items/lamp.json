@@ -1,0 +1,5 @@
+{
+  "index": "lamp", "name": "Lamp", "type": "gear", "category": "Adventuring Gear",
+  "damage": null, "damage_type": null, "properties": [], "weight": 1, "cost": "5 sp",
+  "description": "A small oil-burning lamp."
+}

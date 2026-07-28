@@ -1,0 +1,5 @@
+{
+  "index": "herbalism-kit", "name": "Herbalism Kit", "type": "gear", "category": "Tool",
+  "damage": null, "damage_type": null, "properties": [], "weight": 3, "cost": "5 gp",
+  "description": "Pouches, clippers, and other implements used to identify and prepare herbs."
+}

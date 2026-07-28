@@ -1,0 +1,5 @@
+{
+  "index": "shovel", "name": "Shovel", "type": "gear", "category": "Adventuring Gear",
+  "damage": null, "damage_type": null, "properties": [], "weight": 5, "cost": "2 gp",
+  "description": "A hand tool used for digging and moving loose material."
+}

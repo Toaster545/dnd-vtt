@@ -1,6 +1,12 @@
 import { Component, OnInit, input, output, signal } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { MatIconModule } from '@angular/material/icon';
 import { DndBackground, TraitGrant } from '../../../../../../../core/services/content.service';
-import { Ability } from '../../../../../../../core/models/character.model';
+import { Ability, SKILLS } from '../../../../../../../core/models/character.model';
+import {
+  BACKGROUND_SKILLS_KEY,
+  resolveBackgroundSkills,
+} from '../../../../../../../core/utils/background-skills';
 
 export interface BackgroundChoice {
   background: DndBackground;
@@ -13,6 +19,7 @@ type ViewMode = 'list' | 'detail' | 'selected';
 
 @Component({
   selector: 'app-background-step',
+  imports: [FormsModule, MatIconModule],
   templateUrl: './background-step.html',
 })
 export class BackgroundStepComponent implements OnInit {
@@ -24,6 +31,10 @@ export class BackgroundStepComponent implements OnInit {
   viewMode           = signal<ViewMode>('list');
   browsingBackground = signal<DndBackground | null>(null);
   draftTraits        = signal<Record<string, string[]>>({});
+  editingSkills      = signal(false);
+  private skillEditSnapshot: string[] | null | undefined;
+
+  readonly allSkills = Object.keys(SKILLS);
 
   ngOnInit() {
     if (this.selected()) this.viewMode.set('selected');
@@ -41,11 +52,14 @@ export class BackgroundStepComponent implements OnInit {
   private openDetail(bg: DndBackground) {
     const existing = this.selected()?.background.index === bg.index ? this.selected() : null;
     this.draftTraits.set(existing?.traits ? { ...existing.traits } : {});
+    this.editingSkills.set(false);
+    this.skillEditSnapshot = undefined;
     this.browsingBackground.set(bg);
     this.viewMode.set('detail');
   }
 
   back() {
+    this.editingSkills.set(false);
     this.browsingBackground.set(null);
     this.viewMode.set(this.selected() ? 'selected' : 'list');
   }
@@ -72,6 +86,61 @@ export class BackgroundStepComponent implements OnInit {
 
   isBackgroundSelected(bg: DndBackground): boolean {
     return this.selected()?.background.index === bg.index;
+  }
+
+  backgroundSkills(bg: DndBackground): string[] {
+    return resolveBackgroundSkills(bg, this.draftTraits());
+  }
+
+  startEditingSkills(bg: DndBackground) {
+    const saved = this.draftTraits()[BACKGROUND_SKILLS_KEY];
+    const current = this.backgroundSkills(bg);
+    this.skillEditSnapshot = saved ? [...saved] : null;
+    this.draftTraits.update(traits => ({
+      ...traits,
+      [BACKGROUND_SKILLS_KEY]: [...current],
+    }));
+    this.editingSkills.set(true);
+  }
+
+  updateSkill(index: number, skill: string) {
+    this.draftTraits.update(traits => {
+      const current = [...(traits[BACKGROUND_SKILLS_KEY] ?? [])];
+      if (current.some((selected, i) => i !== index && selected === skill)) return traits;
+      current[index] = skill;
+      return { ...traits, [BACKGROUND_SKILLS_KEY]: current };
+    });
+  }
+
+  skillUsedInOtherSlot(skill: string, index: number, bg: DndBackground): boolean {
+    return this.backgroundSkills(bg).some((selected, i) => i !== index && selected === skill);
+  }
+
+  finishEditingSkills() {
+    this.editingSkills.set(false);
+    this.skillEditSnapshot = undefined;
+  }
+
+  cancelEditingSkills() {
+    const snapshot = this.skillEditSnapshot;
+    this.draftTraits.update(traits => {
+      const next = { ...traits };
+      if (snapshot) next[BACKGROUND_SKILLS_KEY] = [...snapshot];
+      else delete next[BACKGROUND_SKILLS_KEY];
+      return next;
+    });
+    this.editingSkills.set(false);
+    this.skillEditSnapshot = undefined;
+  }
+
+  restoreDefaultSkills() {
+    this.draftTraits.update(traits => {
+      const next = { ...traits };
+      delete next[BACKGROUND_SKILLS_KEY];
+      return next;
+    });
+    this.editingSkills.set(false);
+    this.skillEditSnapshot = undefined;
   }
 
   // Starting equipment is picked in its own wizard step (it needs the item catalog and a

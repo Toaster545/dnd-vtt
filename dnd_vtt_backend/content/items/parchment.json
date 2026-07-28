@@ -1,0 +1,5 @@
+{
+  "index": "parchment", "name": "Parchment Sheet", "type": "gear", "category": "Adventuring Gear",
+  "damage": null, "damage_type": null, "properties": [], "weight": 0, "cost": "1 sp",
+  "description": "A single sheet prepared for writing."
+}
