@@ -79,11 +79,9 @@ export interface Character {
   languages?: string[]; // Common plus the character's selected/feature-granted languages
   alignment: string;
 
-  // Starting-equipment picks — which of a class/background's `StartingEquipment` groups were
-  // chosen (and any category-ref item picks within them), or gold instead. Same
-  // `Record<string, string[]>` shape as background_choices/classes[].choices, keyed by
-  // `mode` / `group:<key>` / `cat:<key>` (see core/utils/starting-equipment.ts). Only the
-  // primary class's equipment is tracked — starting gear is a level-1 concern, not per-class.
+  // Starting-equipment picks (chosen groups/category items, or gold instead), keyed by
+  // `mode` / `group:<key>` / `cat:<key>` — see core/utils/starting-equipment.ts. Only the
+  // primary class's equipment is tracked, since starting gear is a level-1 concern.
   class_equipment_choices?: Record<string, string[]>;
   background_equipment_choices?: Record<string, string[]>;
 

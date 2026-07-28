@@ -122,11 +122,8 @@ export class CharacterWizardComponent implements OnInit, OnDestroy {
     return this.sumAbilityChoicePicks(bg ? [bg] : [], this.backgroundTraits());
   });
 
-  // A feat taken in place of an ASI (or via a pure feat_pick like Fighting Style) can itself
-  // carry an ability score increase — most General feats give a flat or player-chosen +1,
-  // independent of any `effects` it also carries. Folds that into whichever bonus map is
-  // building, using `chosenAbility` (the companion `:feat_ability` pick) when the feat offers
-  // more than one eligible ability.
+  // A feat taken in place of an ASI (or via feat_pick) can itself carry a +1 ability increase;
+  // folds that into the bonus map, using `chosenAbility` when the feat offers more than one.
   private applyFeatAbilityBonus(
     bonus: Record<Ability, number>, featIndex: string | undefined, chosenAbility: string | undefined,
   ) {
@@ -201,13 +198,9 @@ export class CharacterWizardComponent implements OnInit, OnDestroy {
     const perLevelBonus = this.selectedEffects('hp_bonus_per_level').reduce((sum, e) => sum + (e.value ?? 0), 0);
     return base + perLevelBonus * this.level();
   });
-  // Scans every chosen class option AND every chosen feat for a structured `effect`/`effects`
-  // entry of the given type — e.g. a fighting style's ac_bonus, whether it came from an
-  // embedded class option or a feat picked via `ability_choice`/`feat_pick` — so anything that
-  // carries one is picked up automatically, without matching on its display name. Conditioned
-  // effects (e.g. Defense's ac_bonus "while wearing armor") are deliberately excluded here: they
-  // aren't baked into the saved character, they're evaluated live from equipped gear by
-  // CharacterStatsService wherever AC is displayed.
+  // Scans every chosen class option and feat for a structured `effects` entry of the given
+  // type. Conditioned effects (e.g. Defense's ac_bonus "while wearing armor") are excluded —
+  // those are evaluated live from equipped gear by CharacterStatsService instead.
   private selectedEffects(type: string): TraitEffect[] {
     const race = this.selectedRace();
     return collectTraitEffects(
