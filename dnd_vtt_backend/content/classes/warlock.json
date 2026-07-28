@@ -1,6 +1,8 @@
 {
   "index": "warlock",
   "name": "Warlock",
+  "description": "Warlocks seek hidden knowledge and supernatural power through binding pacts with mysterious patrons. Their bargains grant strange invocations and a compact reserve of potent magic that returns after a short rest.",
+  "primary_abilities": ["charisma"],
   "hit_die": 8,
   "saving_throws": ["wisdom", "charisma"],
   "armor_training": ["Light Armor"],
@@ -8,71 +10,817 @@
   "tool_proficiencies": [],
   "skill_choices": {
     "count": 2,
-    "from": ["Arcana", "Deception", "History", "Intimidation", "Investigation", "Nature", "Religion"]
+    "from": [
+      "Arcana",
+      "Deception",
+      "History",
+      "Intimidation",
+      "Investigation",
+      "Nature",
+      "Religion"
+    ]
   },
-  "starting_equipment": [
-    { "choice": true, "options": ["Light crossbow and 20 bolts", "Any simple weapon"] },
-    { "choice": true, "options": ["Component pouch", "Arcane focus"] },
-    { "choice": true, "options": ["Scholar's pack", "Dungeoneer's pack"] },
-    { "fixed": ["Leather armor", "Any simple weapon", "2 daggers"] }
-  ],
+  "starting_equipment": {
+    "fixed": [
+      { "key": "armor", "item": "leather-armor" },
+      { "key": "weapon", "item": "sickle" },
+      { "key": "daggers", "item": "dagger", "quantity": 2 },
+      { "key": "focus", "item": "arcane-focus-orb" },
+      { "key": "book", "item": "book-occult-lore" },
+      { "key": "pack", "item": "scholars-pack" }
+    ],
+    "groups": [],
+    "gold": 15,
+    "goldAlternative": 100
+  },
   "spellcasting_ability": "charisma",
-  "subclass_level": 1,
+  "subclass_level": 3,
   "subclasses": [
     {
       "index": "archfey",
-      "name": "The Archfey",
-      "description": "Bargained with a lord of the fey to gain power rooted in enchantment and fear.",
+      "name": "Archfey Patron",
+      "description": "Draw beguiling magic and uncanny mobility from a powerful lord of the Feywild.",
       "levels": [
-        { "level": 1,  "features": ["Fey Presence"] },
-        { "level": 6,  "features": ["Misty Escape"] },
-        { "level": 10, "features": ["Beguiling Defenses"] },
-        { "level": 14, "features": ["Dark Delirium"] }
+        {
+          "level": 3,
+          "features": ["Archfey Spells", "Steps of the Fey"],
+          "grants": [
+            {
+              "type": "feature",
+              "name": "Archfey Spells",
+              "description": "Always have Faerie Fire, Sleep, Calm Emotions, Misty Step, Blink, Plant Growth, Dominate Beast, Greater Invisibility, Dominate Person, and Seeming prepared as you reach the Warlock levels that can cast them."
+            },
+            {
+              "type": "feature",
+              "name": "Steps of the Fey",
+              "description": "Misty Step is always prepared and can be cast without a slot a number of times equal to your Charisma modifier per long rest. Whenever you cast it, choose Refreshing Step (you or a creature within 10 feet gains 1d10 temporary hit points) or Taunting Step (creatures near the space you left must save or have disadvantage attacking anyone but you until your next turn)."
+            }
+          ]
+        },
+        {
+          "level": 6,
+          "features": ["Misty Escape"],
+          "grants": [
+            {
+              "type": "feature",
+              "name": "Misty Escape",
+              "description": "When you take damage, use your reaction to cast Misty Step without a slot. Your Steps of the Fey also gains Disappearing Step (become Invisible until your next turn or until you attack, deal damage, or cast a spell) and Dreadful Step (nearby creatures at your destination take Psychic damage on a failed Wisdom save)."
+            }
+          ]
+        },
+        {
+          "level": 10,
+          "features": ["Beguiling Defenses"],
+          "grants": [
+            {
+              "type": "feature",
+              "name": "Beguiling Defenses",
+              "description": "You are immune to the Charmed condition. When a creature tries to charm you, you can use your reaction to turn the effect back on it."
+            }
+          ]
+        },
+        {
+          "level": 14,
+          "features": ["Bewitching Magic"],
+          "grants": [
+            {
+              "type": "feature",
+              "name": "Bewitching Magic",
+              "description": "Immediately after casting an Enchantment or Illusion spell with an action and a spell slot, cast Misty Step as part of the same action without spending another slot."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "index": "celestial",
+      "name": "Celestial Patron",
+      "description": "Channel the radiant power of a mighty being from the Upper Planes to heal allies and punish foes.",
+      "levels": [
+        {
+          "level": 3,
+          "features": ["Celestial Spells", "Healing Light"],
+          "grants": [
+            {
+              "type": "feature",
+              "name": "Celestial Spells",
+              "description": "Always have Aid, Cure Wounds, Guiding Bolt, Lesser Restoration, Daylight, Revivify, Guardian of Faith, Wall of Fire, Greater Restoration, and Summon Celestial prepared as you reach the Warlock levels that can cast them."
+            },
+            {
+              "type": "feature",
+              "name": "Healing Light",
+              "description": "Gain a pool of d6s equal to 1 plus your Warlock level. As a bonus action, spend dice up to your Charisma modifier to heal a creature you can see within 60 feet; regain all dice on a long rest."
+            }
+          ]
+        },
+        {
+          "level": 6,
+          "features": ["Radiant Soul"],
+          "grants": [
+            {
+              "type": "feature",
+              "name": "Radiant Soul",
+              "description": "Gain resistance to Radiant damage. Once per turn when one of your spells deals Radiant or Fire damage, add your Charisma modifier to one damage roll against one target."
+            }
+          ]
+        },
+        {
+          "level": 10,
+          "features": ["Celestial Resilience"],
+          "grants": [
+            {
+              "type": "feature",
+              "name": "Celestial Resilience",
+              "description": "After a short or long rest, you and up to five creatures gain temporary hit points; yours equal your Warlock level plus Charisma modifier, and each ally gains half your Warlock level plus Charisma modifier."
+            }
+          ]
+        },
+        {
+          "level": 14,
+          "features": ["Searing Vengeance"],
+          "grants": [
+            {
+              "type": "feature",
+              "key": "searing-vengeance",
+              "name": "Searing Vengeance",
+              "description": "At the start of your turn while making death saves, regain half your hit points, stand up, and deal Radiant damage while blinding nearby creatures. Once per long rest.",
+              "action": {
+                "activation": "free",
+                "uses": { "max": 1, "per": "long_rest" }
+              }
+            }
+          ]
+        }
       ]
     },
     {
       "index": "fiend",
-      "name": "The Fiend",
-      "description": "Made a pact with a powerful fiend from the Lower Planes for dark power.",
+      "name": "Fiend Patron",
+      "description": "Draw destructive magic and ruthless resilience from a bargain with a power of the Lower Planes.",
       "levels": [
-        { "level": 1,  "features": ["Dark One's Blessing"] },
-        { "level": 6,  "features": ["Dark One's Own Luck"] },
-        { "level": 10, "features": ["Fiendish Resilience"] },
-        { "level": 14, "features": ["Hurl Through Hell"] }
+        {
+          "level": 3,
+          "features": ["Fiend Spells", "Dark One's Blessing"],
+          "grants": [
+            {
+              "type": "feature",
+              "name": "Fiend Spells",
+              "description": "Always have Burning Hands, Command, Scorching Ray, Suggestion, Fireball, Stinking Cloud, Fire Shield, Wall of Fire, Geas, and Insect Plague prepared as you reach the Warlock levels that can cast them."
+            },
+            {
+              "type": "feature",
+              "name": "Dark One's Blessing",
+              "description": "When an enemy drops to 0 hit points within 10 feet of you, gain temporary hit points equal to your Charisma modifier plus your Warlock level."
+            }
+          ]
+        },
+        {
+          "level": 6,
+          "features": ["Dark One's Own Luck"],
+          "grants": [
+            {
+              "type": "feature",
+              "name": "Dark One's Own Luck",
+              "description": "When you make an ability check or saving throw, add 1d10 after seeing the roll but before its outcome. Uses equal your Charisma modifier per long rest."
+            }
+          ]
+        },
+        {
+          "level": 10,
+          "features": ["Fiendish Resilience"],
+          "grants": [
+            {
+              "type": "feature",
+              "name": "Fiendish Resilience",
+              "description": "Choose one damage type except Force whenever you finish a short or long rest; you resist that damage until you choose again."
+            }
+          ]
+        },
+        {
+          "level": 14,
+          "features": ["Hurl Through Hell"],
+          "grants": [
+            {
+              "type": "feature",
+              "key": "hurl-through-hell",
+              "name": "Hurl Through Hell",
+              "description": "Once per turn when you hit with an attack, banish the target through a nightmare realm until the end of your next turn, when it takes 8d10 Psychic damage. Once per long rest unless you spend a Pact Magic slot to restore it.",
+              "action": {
+                "activation": "free",
+                "uses": { "max": 1, "per": "long_rest" }
+              }
+            }
+          ]
+        }
       ]
     },
     {
       "index": "great-old-one",
-      "name": "The Great Old One",
-      "description": "Bargained with an incomprehensible alien entity for telepathic and mind-bending power.",
+      "name": "Great Old One Patron",
+      "description": "Touch an alien consciousness beyond reality and wield telepathy, psychic magic, and warped perception.",
       "levels": [
-        { "level": 1,  "features": ["Awakened Mind"] },
-        { "level": 6,  "features": ["Entropic Ward"] },
-        { "level": 10, "features": ["Thought Shield"] },
-        { "level": 14, "features": ["Create Thrall"] }
+        {
+          "level": 3,
+          "features": [
+            "Great Old One Spells",
+            "Awakened Mind",
+            "Psychic Spells"
+          ],
+          "grants": [
+            {
+              "type": "feature",
+              "name": "Great Old One Spells",
+              "description": "Always have Dissonant Whispers, Tasha's Hideous Laughter, Detect Thoughts, Phantasmal Force, Clairvoyance, Hunger of Hadar, Confusion, Summon Aberration, Modify Memory, and Telekinesis prepared as you reach the Warlock levels that can cast them."
+            },
+            {
+              "type": "feature",
+              "name": "Awakened Mind",
+              "description": "Form a telepathic link with a creature you can see within 30 feet. You can communicate while within miles equal to your Charisma modifier, and maintain one link at a time."
+            },
+            {
+              "type": "feature",
+              "name": "Psychic Spells",
+              "description": "When a Warlock spell deals damage, you can change it to Psychic damage. Enchantment and Illusion Warlock spells can be cast without Verbal or Somatic components."
+            }
+          ]
+        },
+        {
+          "level": 6,
+          "features": ["Clairvoyant Combatant"],
+          "grants": [
+            {
+              "type": "feature",
+              "name": "Clairvoyant Combatant",
+              "description": "When you form an Awakened Mind bond, force that creature to make a Wisdom save. On a failure, it has disadvantage attacking you and you have advantage attacking it for the bond's duration. Once per short or long rest."
+            }
+          ]
+        },
+        {
+          "level": 10,
+          "features": ["Eldritch Hex", "Thought Shield"],
+          "grants": [
+            {
+              "type": "feature",
+              "name": "Eldritch Hex",
+              "description": "Hex is always prepared. A target affected by your Hex also has disadvantage on saving throws using the ability you chose for the spell."
+            },
+            {
+              "type": "feature",
+              "name": "Thought Shield",
+              "description": "Your thoughts cannot be read against your will, and you gain resistance to Psychic damage. When a creature deals Psychic damage to you, it takes the same amount."
+            }
+          ]
+        },
+        {
+          "level": 14,
+          "features": ["Create Thrall"],
+          "grants": [
+            {
+              "type": "feature",
+              "name": "Create Thrall",
+              "description": "Summon Aberration is always prepared and can be cast once without material components or a spell slot per long rest. The summoned aberration gains temporary hit points equal to your Warlock level and deals extra Psychic damage on its first hit each turn."
+            }
+          ]
+        }
       ]
     }
   ],
   "levels": [
-    { "level": 1,  "proficiency_bonus": 2, "features": ["Otherworldly Patron", "Pact Magic"],             "cantrips_known": 2,  "spells_known": 2,  "pact_magic": { "slots": 1, "slot_level": 1 } },
-    { "level": 2,  "proficiency_bonus": 2, "features": ["Eldritch Invocations"],                          "cantrips_known": 2,  "spells_known": 3,  "pact_magic": { "slots": 2, "slot_level": 1 }, "class_specific": { "invocations_known": 2 } },
-    { "level": 3,  "proficiency_bonus": 2, "features": ["Pact Boon"],                                     "cantrips_known": 2,  "spells_known": 4,  "pact_magic": { "slots": 2, "slot_level": 2 }, "class_specific": { "invocations_known": 2 } },
-    { "level": 4,  "proficiency_bonus": 2, "features": ["Ability Score Improvement"],                     "cantrips_known": 3,  "spells_known": 5,  "pact_magic": { "slots": 2, "slot_level": 2 }, "class_specific": { "invocations_known": 2 } },
-    { "level": 5,  "proficiency_bonus": 3, "features": [],                                                "cantrips_known": 3,  "spells_known": 6,  "pact_magic": { "slots": 2, "slot_level": 3 }, "class_specific": { "invocations_known": 3 } },
-    { "level": 6,  "proficiency_bonus": 3, "features": ["Otherworldly Patron Feature"],                   "cantrips_known": 3,  "spells_known": 7,  "pact_magic": { "slots": 2, "slot_level": 3 }, "class_specific": { "invocations_known": 3 } },
-    { "level": 7,  "proficiency_bonus": 3, "features": [],                                                "cantrips_known": 3,  "spells_known": 8,  "pact_magic": { "slots": 2, "slot_level": 4 }, "class_specific": { "invocations_known": 4 } },
-    { "level": 8,  "proficiency_bonus": 3, "features": ["Ability Score Improvement"],                     "cantrips_known": 3,  "spells_known": 9,  "pact_magic": { "slots": 2, "slot_level": 4 }, "class_specific": { "invocations_known": 4 } },
-    { "level": 9,  "proficiency_bonus": 4, "features": [],                                                "cantrips_known": 3,  "spells_known": 10, "pact_magic": { "slots": 2, "slot_level": 5 }, "class_specific": { "invocations_known": 5 } },
-    { "level": 10, "proficiency_bonus": 4, "features": ["Otherworldly Patron Feature"],                   "cantrips_known": 4,  "spells_known": 10, "pact_magic": { "slots": 2, "slot_level": 5 }, "class_specific": { "invocations_known": 5 } },
-    { "level": 11, "proficiency_bonus": 4, "features": ["Mystic Arcanum (6th level)"],                    "cantrips_known": 4,  "spells_known": 11, "pact_magic": { "slots": 3, "slot_level": 5 }, "class_specific": { "invocations_known": 5 } },
-    { "level": 12, "proficiency_bonus": 4, "features": ["Ability Score Improvement"],                     "cantrips_known": 4,  "spells_known": 11, "pact_magic": { "slots": 3, "slot_level": 5 }, "class_specific": { "invocations_known": 6 } },
-    { "level": 13, "proficiency_bonus": 5, "features": ["Mystic Arcanum (7th level)"],                    "cantrips_known": 4,  "spells_known": 12, "pact_magic": { "slots": 3, "slot_level": 5 }, "class_specific": { "invocations_known": 6 } },
-    { "level": 14, "proficiency_bonus": 5, "features": ["Otherworldly Patron Feature"],                   "cantrips_known": 4,  "spells_known": 12, "pact_magic": { "slots": 3, "slot_level": 5 }, "class_specific": { "invocations_known": 6 } },
-    { "level": 15, "proficiency_bonus": 5, "features": ["Mystic Arcanum (8th level)"],                    "cantrips_known": 4,  "spells_known": 13, "pact_magic": { "slots": 3, "slot_level": 5 }, "class_specific": { "invocations_known": 7 } },
-    { "level": 16, "proficiency_bonus": 5, "features": ["Ability Score Improvement"],                     "cantrips_known": 4,  "spells_known": 13, "pact_magic": { "slots": 3, "slot_level": 5 }, "class_specific": { "invocations_known": 7 } },
-    { "level": 17, "proficiency_bonus": 6, "features": ["Mystic Arcanum (9th level)"],                    "cantrips_known": 4,  "spells_known": 14, "pact_magic": { "slots": 4, "slot_level": 5 }, "class_specific": { "invocations_known": 7 } },
-    { "level": 18, "proficiency_bonus": 6, "features": [],                                                "cantrips_known": 4,  "spells_known": 14, "pact_magic": { "slots": 4, "slot_level": 5 }, "class_specific": { "invocations_known": 8 } },
-    { "level": 19, "proficiency_bonus": 6, "features": ["Ability Score Improvement"],                     "cantrips_known": 4,  "spells_known": 15, "pact_magic": { "slots": 4, "slot_level": 5 }, "class_specific": { "invocations_known": 8 } },
-    { "level": 20, "proficiency_bonus": 6, "features": ["Eldritch Master"],                               "cantrips_known": 4,  "spells_known": 15, "pact_magic": { "slots": 4, "slot_level": 5 }, "class_specific": { "invocations_known": 8 } }
+    {
+      "level": 1,
+      "proficiency_bonus": 2,
+      "features": ["Eldritch Invocations", "Pact Magic"],
+      "cantrips_known": 2,
+      "spells_known": 2,
+      "pact_magic": { "slots": 1, "slot_level": 1 },
+      "class_specific": { "invocations_known": 1 },
+      "grants": [
+        {
+          "type": "skill_choice",
+          "key": "skills",
+          "name": "Skill Proficiencies",
+          "choose": 2,
+          "description": "Choose 2 skills from the Warlock list."
+        },
+        {
+          "type": "choice",
+          "key": "eldritch_invocations",
+          "name": "Eldritch Invocations",
+          "choose": 1,
+          "chooseByLevel": {
+            "1": 1,
+            "2": 3,
+            "5": 5,
+            "7": 6,
+            "9": 7,
+            "12": 8,
+            "15": 9,
+            "18": 10
+          },
+          "description": "Choose supernatural gifts from your forbidden studies. The total grows with your Warlock level; whenever you gain a Warlock level, you may replace an invocation for which you still qualify.",
+          "options": [
+            {
+              "name": "Agonizing Blast",
+              "description": "Choose a damaging Warlock cantrip; add your Charisma modifier to its damage rolls.",
+              "prerequisite": { "level": 2 }
+            },
+            {
+              "name": "Armor of Shadows",
+              "description": "Cast Mage Armor on yourself without spending a spell slot."
+            },
+            {
+              "name": "Ascendant Step",
+              "description": "Cast Levitate on yourself without spending a spell slot.",
+              "prerequisite": { "level": 5 }
+            },
+            {
+              "name": "Devil's Sight",
+              "description": "See normally in Dim Light and Darkness, magical or nonmagical, to 120 feet.",
+              "prerequisite": { "level": 2 }
+            },
+            {
+              "name": "Devouring Blade",
+              "description": "Attack three times with your pact weapon when you take the Attack action.",
+              "prerequisite": { "level": 12, "selections": ["Thirsting Blade"] }
+            },
+            {
+              "name": "Eldritch Mind",
+              "description": "Gain advantage on Constitution saves made to maintain Concentration."
+            },
+            {
+              "name": "Eldritch Smite",
+              "description": "Once per turn on a pact-weapon hit, spend a Pact Magic slot for extra Force damage and knock a Huge or smaller target Prone.",
+              "prerequisite": {
+                "level": 5,
+                "selections": ["Pact of the Blade"]
+              }
+            },
+            {
+              "name": "Eldritch Spear",
+              "description": "Choose a damaging Warlock cantrip; its range increases by a number of feet equal to 30 times your Warlock level.",
+              "prerequisite": { "level": 2 }
+            },
+            {
+              "name": "Fiendish Vigor",
+              "description": "Cast False Life on yourself without a slot and take the maximum roll for its temporary hit points.",
+              "prerequisite": { "level": 2 }
+            },
+            {
+              "name": "Gaze of Two Minds",
+              "description": "Touch a willing creature to perceive through its senses; maintain the connection at range and cast spells from its space.",
+              "prerequisite": { "level": 5 }
+            },
+            {
+              "name": "Gift of the Depths",
+              "description": "Breathe underwater, gain a Swim Speed equal to your Speed, and cast Water Breathing once per long rest.",
+              "prerequisite": { "level": 5 }
+            },
+            {
+              "name": "Gift of the Protectors",
+              "description": "Your Book of Shadows can hold protective names; once per long rest, a named creature that would drop to 0 hit points drops to 1 instead.",
+              "prerequisite": { "level": 9, "selections": ["Pact of the Tome"] }
+            },
+            {
+              "name": "Investment of the Chain Master",
+              "description": "Empower your familiar with flight or swimming, your spell-save DC, magical damage, bonus-action attacks, and damage resistance.",
+              "prerequisite": {
+                "level": 5,
+                "selections": ["Pact of the Chain"]
+              }
+            },
+            {
+              "name": "Lessons of the First Ones",
+              "description": "Gain an Origin feat for which you qualify. This invocation can be selected more than once.",
+              "prerequisite": { "level": 2 }
+            },
+            {
+              "name": "Lifedrinker",
+              "description": "Once per turn, a pact-weapon hit deals an extra 1d6 Necrotic, Psychic, or Radiant damage; expend a Hit Point Die to heal yourself.",
+              "prerequisite": {
+                "level": 9,
+                "selections": ["Pact of the Blade"]
+              }
+            },
+            {
+              "name": "Mask of Many Faces",
+              "description": "Cast Disguise Self without spending a spell slot.",
+              "prerequisite": { "level": 2 }
+            },
+            {
+              "name": "Master of Myriad Forms",
+              "description": "Cast Alter Self without spending a spell slot.",
+              "prerequisite": { "level": 5 }
+            },
+            {
+              "name": "Misty Visions",
+              "description": "Cast Silent Image without spending a spell slot.",
+              "prerequisite": { "level": 2 }
+            },
+            {
+              "name": "One with Shadows",
+              "description": "While in Dim Light or Darkness, cast Invisibility on yourself without a slot.",
+              "prerequisite": { "level": 5 }
+            },
+            {
+              "name": "Otherworldly Leap",
+              "description": "Cast Jump on yourself without spending a spell slot.",
+              "prerequisite": { "level": 2 }
+            },
+            {
+              "name": "Pact of the Blade",
+              "description": "Conjure or bond with a pact weapon, use Charisma for its attacks and damage, and change its damage type to Necrotic, Psychic, or Radiant."
+            },
+            {
+              "name": "Pact of the Chain",
+              "description": "Learn Find Familiar and cast it as a Magic action without a slot, gaining additional special familiar forms."
+            },
+            {
+              "name": "Pact of the Tome",
+              "description": "Conjure a Book of Shadows after a rest; choose three cantrips and two level-1 ritual spells from any class while the book is with you."
+            },
+            {
+              "name": "Repelling Blast",
+              "description": "Once per turn when a damaging Warlock cantrip hits a Large or smaller creature, push it up to 10 feet away.",
+              "prerequisite": { "level": 2 }
+            },
+            {
+              "name": "Thirsting Blade",
+              "description": "Attack twice with your pact weapon when you take the Attack action.",
+              "prerequisite": {
+                "level": 5,
+                "selections": ["Pact of the Blade"]
+              }
+            },
+            {
+              "name": "Visions of Distant Realms",
+              "description": "Cast Arcane Eye without spending a spell slot.",
+              "prerequisite": { "level": 9 }
+            },
+            {
+              "name": "Whispers of the Grave",
+              "description": "Cast Speak with Dead without spending a spell slot.",
+              "prerequisite": { "level": 7 }
+            },
+            {
+              "name": "Witch Sight",
+              "description": "Gain Truesight to 30 feet.",
+              "prerequisite": { "level": 15 }
+            }
+          ]
+        },
+        {
+          "type": "feature",
+          "name": "Pact Magic",
+          "description": "Cast prepared Warlock spells with Charisma. All Pact Magic slots have the same level and return when you finish a short or long rest; an Arcane Focus can serve as your spellcasting focus."
+        }
+      ]
+    },
+    {
+      "level": 2,
+      "proficiency_bonus": 2,
+      "features": ["Magical Cunning"],
+      "cantrips_known": 2,
+      "spells_known": 3,
+      "pact_magic": { "slots": 2, "slot_level": 1 },
+      "class_specific": { "invocations_known": 3 },
+      "grants": [
+        {
+          "type": "feature",
+          "key": "magical-cunning",
+          "name": "Magical Cunning",
+          "description": "Perform a 1-minute rite to regain expended Pact Magic slots up to half your maximum, rounded up. Once per long rest.",
+          "action": {
+            "activation": "action",
+            "uses": { "max": 1, "per": "long_rest" }
+          }
+        }
+      ]
+    },
+    {
+      "level": 3,
+      "proficiency_bonus": 2,
+      "features": ["Warlock Subclass"],
+      "cantrips_known": 2,
+      "spells_known": 4,
+      "pact_magic": { "slots": 2, "slot_level": 2 },
+      "class_specific": { "invocations_known": 3 },
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Warlock Subclass",
+          "description": "Choose a patron, gaining features from it at this level and again at later levels."
+        }
+      ]
+    },
+    {
+      "level": 4,
+      "proficiency_bonus": 2,
+      "features": ["Ability Score Improvement"],
+      "cantrips_known": 3,
+      "spells_known": 5,
+      "pact_magic": { "slots": 2, "slot_level": 2 },
+      "class_specific": { "invocations_known": 3 },
+      "grants": [
+        {
+          "type": "ability_choice",
+          "key": "asi_4",
+          "name": "Ability Score Improvement",
+          "description": "Increase one ability score by 2, or two scores by 1 each, to a maximum of 20 (or take a feat).",
+          "points": 2,
+          "allowFeat": true
+        }
+      ]
+    },
+    {
+      "level": 5,
+      "proficiency_bonus": 3,
+      "features": [],
+      "cantrips_known": 3,
+      "spells_known": 6,
+      "pact_magic": { "slots": 2, "slot_level": 3 },
+      "class_specific": { "invocations_known": 5 }
+    },
+    {
+      "level": 6,
+      "proficiency_bonus": 3,
+      "features": ["Warlock Subclass Feature"],
+      "cantrips_known": 3,
+      "spells_known": 7,
+      "pact_magic": { "slots": 2, "slot_level": 3 },
+      "class_specific": { "invocations_known": 5 },
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Warlock Subclass Feature",
+          "description": "Gain a feature from your chosen patron."
+        }
+      ]
+    },
+    {
+      "level": 7,
+      "proficiency_bonus": 3,
+      "features": [],
+      "cantrips_known": 3,
+      "spells_known": 8,
+      "pact_magic": { "slots": 2, "slot_level": 4 },
+      "class_specific": { "invocations_known": 6 }
+    },
+    {
+      "level": 8,
+      "proficiency_bonus": 3,
+      "features": ["Ability Score Improvement"],
+      "cantrips_known": 3,
+      "spells_known": 9,
+      "pact_magic": { "slots": 2, "slot_level": 4 },
+      "class_specific": { "invocations_known": 6 },
+      "grants": [
+        {
+          "type": "ability_choice",
+          "key": "asi_8",
+          "name": "Ability Score Improvement",
+          "description": "Increase one ability score by 2, or two scores by 1 each, to a maximum of 20 (or take a feat).",
+          "points": 2,
+          "allowFeat": true
+        }
+      ]
+    },
+    {
+      "level": 9,
+      "proficiency_bonus": 4,
+      "features": ["Contact Patron"],
+      "cantrips_known": 3,
+      "spells_known": 10,
+      "pact_magic": { "slots": 2, "slot_level": 5 },
+      "class_specific": { "invocations_known": 7 },
+      "grants": [
+        {
+          "type": "feature",
+          "key": "contact-patron",
+          "name": "Contact Patron",
+          "description": "Cast Contact Other Plane to contact your patron without spending a slot; you automatically succeed on the spell's saving throw. Once per long rest.",
+          "action": {
+            "activation": "action",
+            "uses": { "max": 1, "per": "long_rest" }
+          }
+        }
+      ]
+    },
+    {
+      "level": 10,
+      "proficiency_bonus": 4,
+      "features": ["Warlock Subclass Feature"],
+      "cantrips_known": 4,
+      "spells_known": 10,
+      "pact_magic": { "slots": 2, "slot_level": 5 },
+      "class_specific": { "invocations_known": 7 },
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Warlock Subclass Feature",
+          "description": "Gain a feature from your chosen patron."
+        }
+      ]
+    },
+    {
+      "level": 11,
+      "proficiency_bonus": 4,
+      "features": ["Mystic Arcanum (Level 6 Spell)"],
+      "cantrips_known": 4,
+      "spells_known": 11,
+      "pact_magic": { "slots": 3, "slot_level": 5 },
+      "class_specific": { "invocations_known": 7 },
+      "grants": [
+        {
+          "type": "choice",
+          "key": "mystic_arcanum_6",
+          "name": "Mystic Arcanum (Level 6 Spell)",
+          "choose": 1,
+          "description": "Choose one level 6 Warlock spell. Cast it once without a spell slot, regaining the use on a long rest.",
+          "options": [
+            { "name": "Arcane Gate" },
+            { "name": "Circle of Death" },
+            { "name": "Create Undead" },
+            { "name": "Eyebite" },
+            { "name": "Summon Fiend" },
+            { "name": "Tasha's Bubbling Cauldron" },
+            { "name": "True Seeing" }
+          ]
+        }
+      ]
+    },
+    {
+      "level": 12,
+      "proficiency_bonus": 4,
+      "features": ["Ability Score Improvement"],
+      "cantrips_known": 4,
+      "spells_known": 11,
+      "pact_magic": { "slots": 3, "slot_level": 5 },
+      "class_specific": { "invocations_known": 8 },
+      "grants": [
+        {
+          "type": "ability_choice",
+          "key": "asi_12",
+          "name": "Ability Score Improvement",
+          "description": "Increase one ability score by 2, or two scores by 1 each, to a maximum of 20 (or take a feat).",
+          "points": 2,
+          "allowFeat": true
+        }
+      ]
+    },
+    {
+      "level": 13,
+      "proficiency_bonus": 5,
+      "features": ["Mystic Arcanum (Level 7 Spell)"],
+      "cantrips_known": 4,
+      "spells_known": 12,
+      "pact_magic": { "slots": 3, "slot_level": 5 },
+      "class_specific": { "invocations_known": 8 },
+      "grants": [
+        {
+          "type": "choice",
+          "key": "mystic_arcanum_7",
+          "name": "Mystic Arcanum (Level 7 Spell)",
+          "choose": 1,
+          "description": "Choose one level 7 Warlock spell. Cast it once without a spell slot, regaining the use on a long rest.",
+          "options": [
+            { "name": "Etherealness" },
+            { "name": "Finger of Death" },
+            { "name": "Forcecage" },
+            { "name": "Plane Shift" }
+          ]
+        }
+      ]
+    },
+    {
+      "level": 14,
+      "proficiency_bonus": 5,
+      "features": ["Warlock Subclass Feature"],
+      "cantrips_known": 4,
+      "spells_known": 12,
+      "pact_magic": { "slots": 3, "slot_level": 5 },
+      "class_specific": { "invocations_known": 8 },
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Warlock Subclass Feature",
+          "description": "Gain a feature from your chosen patron."
+        }
+      ]
+    },
+    {
+      "level": 15,
+      "proficiency_bonus": 5,
+      "features": ["Mystic Arcanum (Level 8 Spell)"],
+      "cantrips_known": 4,
+      "spells_known": 13,
+      "pact_magic": { "slots": 3, "slot_level": 5 },
+      "class_specific": { "invocations_known": 9 },
+      "grants": [
+        {
+          "type": "choice",
+          "key": "mystic_arcanum_8",
+          "name": "Mystic Arcanum (Level 8 Spell)",
+          "choose": 1,
+          "description": "Choose one level 8 Warlock spell. Cast it once without a spell slot, regaining the use on a long rest.",
+          "options": [
+            { "name": "Befuddlement" },
+            { "name": "Demiplane" },
+            { "name": "Dominate Monster" },
+            { "name": "Glibness" },
+            { "name": "Power Word Stun" }
+          ]
+        }
+      ]
+    },
+    {
+      "level": 16,
+      "proficiency_bonus": 5,
+      "features": ["Ability Score Improvement"],
+      "cantrips_known": 4,
+      "spells_known": 13,
+      "pact_magic": { "slots": 3, "slot_level": 5 },
+      "class_specific": { "invocations_known": 9 },
+      "grants": [
+        {
+          "type": "ability_choice",
+          "key": "asi_16",
+          "name": "Ability Score Improvement",
+          "description": "Increase one ability score by 2, or two scores by 1 each, to a maximum of 20 (or take a feat).",
+          "points": 2,
+          "allowFeat": true
+        }
+      ]
+    },
+    {
+      "level": 17,
+      "proficiency_bonus": 6,
+      "features": ["Mystic Arcanum (Level 9 Spell)"],
+      "cantrips_known": 4,
+      "spells_known": 14,
+      "pact_magic": { "slots": 4, "slot_level": 5 },
+      "class_specific": { "invocations_known": 9 },
+      "grants": [
+        {
+          "type": "choice",
+          "key": "mystic_arcanum_9",
+          "name": "Mystic Arcanum (Level 9 Spell)",
+          "choose": 1,
+          "description": "Choose one level 9 Warlock spell. Cast it once without a spell slot, regaining the use on a long rest.",
+          "options": [
+            { "name": "Astral Projection" },
+            { "name": "Foresight" },
+            { "name": "Gate" },
+            { "name": "Imprisonment" },
+            { "name": "Power Word Kill" },
+            { "name": "True Polymorph" },
+            { "name": "Weird" }
+          ]
+        }
+      ]
+    },
+    {
+      "level": 18,
+      "proficiency_bonus": 6,
+      "features": [],
+      "cantrips_known": 4,
+      "spells_known": 14,
+      "pact_magic": { "slots": 4, "slot_level": 5 },
+      "class_specific": { "invocations_known": 10 }
+    },
+    {
+      "level": 19,
+      "proficiency_bonus": 6,
+      "features": ["Epic Boon"],
+      "cantrips_known": 4,
+      "spells_known": 15,
+      "pact_magic": { "slots": 4, "slot_level": 5 },
+      "class_specific": { "invocations_known": 10 },
+      "grants": [
+        {
+          "type": "feat_pick",
+          "key": "epic_boon_19",
+          "name": "Epic Boon",
+          "choose": 1,
+          "description": "Choose an Epic Boon feat, gaining its benefits.",
+          "category": "epic"
+        }
+      ]
+    },
+    {
+      "level": 20,
+      "proficiency_bonus": 6,
+      "features": ["Eldritch Master"],
+      "cantrips_known": 4,
+      "spells_known": 15,
+      "pact_magic": { "slots": 4, "slot_level": 5 },
+      "class_specific": { "invocations_known": 10 },
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Eldritch Master",
+          "description": "Whenever you use Magical Cunning, regain all expended Pact Magic slots instead of only half."
+        }
+      ]
+    }
   ]
 }

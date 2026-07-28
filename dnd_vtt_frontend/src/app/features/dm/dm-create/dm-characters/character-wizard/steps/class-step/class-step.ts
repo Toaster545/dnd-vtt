@@ -1,8 +1,9 @@
 import { Component, OnInit, input, output, signal, computed } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { UpperCasePipe } from '@angular/common';
-import { DndClass, TraitGrant, DndItem, DndFeat } from '../../../../../../../core/services/content.service';
+import { DndClass, TraitGrant, TraitOption, DndItem, DndFeat } from '../../../../../../../core/services/content.service';
 import { Ability, ABILITIES } from '../../../../../../../core/models/character.model';
+import { resolveProgressiveChoiceLimit } from '../../../../../../../core/utils/progressive-choice';
 
 export interface ClassEntry {
   cls: DndClass;
@@ -230,9 +231,10 @@ export class ClassStepComponent implements OnInit {
       case 'skill_choice':
         return grant.choose - this.draftSkills().length;
       case 'choice':
+        return Math.max(0, this.choiceLimit(grant) - (this.draftTraits()[grant.key]?.length ?? 0));
       case 'weapon_mastery':
       case 'feat_pick':
-        return grant.choose - (this.draftTraits()[grant.key]?.length ?? 0);
+        return Math.max(0, grant.choose - (this.draftTraits()[grant.key]?.length ?? 0));
       case 'ability_choice':
         if (grant.allowFeat && this.grantMode(grant) === 'feat') {
           const feat = this.pickedFeatFor(grant);
@@ -244,6 +246,23 @@ export class ClassStepComponent implements OnInit {
       default:
         return 0;
     }
+  }
+
+  // Most choice grants have a fixed size. Progressive pools use the greatest configured total
+  // at or below the current class level (falling back to the ordinary `choose` value).
+  choiceLimit(grant: Extract<TraitGrant, { type: 'choice' }>): number {
+    return resolveProgressiveChoiceLimit(grant.choose, grant.chooseByLevel, this.effectiveLevel());
+  }
+
+  availableTraitOptions(grant: Extract<TraitGrant, { type: 'choice' }>): TraitOption[] {
+    const allSelections = new Set(Object.values(this.draftTraits()).flat());
+    return grant.options.filter(option => {
+      if (this.traitSelected(grant, option.name)) return true;
+      const prerequisite = option.prerequisite;
+      if (!prerequisite) return true;
+      if (prerequisite.level && this.effectiveLevel() < prerequisite.level) return false;
+      return (prerequisite.selections ?? []).every(selection => allSelections.has(selection));
+    });
   }
 
   abilityAllocated(grant: Extract<TraitGrant, { type: 'ability_choice' }>, ability: Ability): number {
@@ -531,13 +550,14 @@ export class ClassStepComponent implements OnInit {
     if (!unlocked) return;
     this.draftTraits.update(traits => {
       const current = traits[grant.key] ?? [];
-      if (grant.choose === 1) {
+      const limit = grant.type === 'choice' ? this.choiceLimit(grant) : grant.choose;
+      if (limit === 1) {
         return { ...traits, [grant.key]: current.includes(option) ? [] : [option] };
       }
       if (current.includes(option)) {
         return { ...traits, [grant.key]: current.filter(o => o !== option) };
       }
-      if (current.length >= grant.choose) return traits;
+      if (current.length >= limit) return traits;
       return { ...traits, [grant.key]: [...current, option] };
     });
     this.syncDraft();
