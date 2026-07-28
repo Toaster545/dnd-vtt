@@ -21,25 +21,19 @@ import { ConfirmService } from '../../shared/confirm.service';
 export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('stageContainer') stageContainer!: ElementRef<HTMLDivElement>;
 
-  // Set when embedded (e.g. inside the DM's encounter play view) with a specific map to show —
-  // falls back to the `/battle-map/:id` route param when absent, so this component still works
-  // standalone at that route. `embedded` hides the page-level header/back button, which doesn't
-  // make sense nested inside another view that already has its own chrome.
+  // When embedded (e.g. in the DM's encounter play view), a specific map is passed in directly;
+  // otherwise falls back to the `/battle-map/:id` route param. `embedded` hides the page header.
   readonly mapIdInput = input<string | undefined>(undefined);
   readonly embedded   = input(false);
-  // Armed from an encounter's roster sidebar (a specific character or monster type) — when set,
-  // clicking the map places a token built from it instead of the manual `newToken` form below.
-  // Not cleared here after a placement; the parent decides when arming/disarming happens, so a
-  // DM can drop several instances of the same roster entry with repeated clicks.
+  // Armed from an encounter's roster sidebar; when set, clicking the map places a token built
+  // from it instead of the manual `newToken` form. Not auto-cleared — the parent controls
+  // arming/disarming so the DM can drop several of the same entry with repeated clicks.
   readonly placingEntity = input<PlacingEntity | null>(null);
-  // Live HP for character tokens, keyed by character_id — a character token's HP lives on the
-  // Character record (see MapToken.character_id), not the token itself. The DM's roster feeds this
-  // from its already-loaded character list (privileged, admin-only reads); the player's own view
-  // feeds it from encounter presence instead, which is why this is party-visible in hpFor while
-  // monster HP (which does live on the token) stays admin-only there.
+  // Live HP for character tokens, keyed by character_id (it lives on the Character record, not
+  // the token). Fed from the DM's already-loaded roster, or from encounter presence on the
+  // player's view — hence party-visible here, unlike monster HP which stays admin-only.
   readonly characterHp = input<Record<string, { hp: number; max_hp: number }>>({});
-  // Fired when an already-placed token (not the map background) is clicked, so a parent embedding
-  // this component (e.g. the encounter roster) can show that token's stat block/HP.
+  // Fired when an already-placed token is clicked, so an embedding parent can show its stat block/HP.
   readonly tokenClicked = output<MapToken>();
 
   mapService = inject(BattleMapService);
@@ -54,9 +48,7 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
 
   newToken = { label: 'Token', color: '#e74c3c', size: 1, is_player: false };
 
-  // Turn order is just the token list re-sorted by initiative, highest first — no separate state
-  // to keep in sync, since `tokens` is already kept live by the socket subscription below.
-  // Tokens with no roll yet (a player the DM hasn't entered a number for) sort to the bottom.
+  // The token list re-sorted by initiative, highest first, with unrolled tokens sorted last.
   turnOrder = computed(() => {
     return [...this.tokens()].sort((a, b) => {
       if (a.initiative == null && b.initiative == null) return 0;
@@ -76,17 +68,14 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
   private viewReady = signal(false);
   private loadedMapId: string | null = null;
   private cellSize = 0;
-  // Mirrors the `tokens` signal, but as a plain field the characterHp-driven redraw effect below
-  // can read without also making token list changes trigger it a second time (the tokens socket
-  // subscription already redraws directly on its own).
+  // Mirrors the `tokens` signal as a plain field so the characterHp redraw effect below can read
+  // it without also re-triggering on every token change (the socket subscription already redraws directly).
   private lastTokens: MapToken[] = [];
 
   constructor() {
-    // Reacts to either the input changing (switching maps while this component stays mounted,
-    // e.g. picking a different encounter) or the view becoming ready — whichever happens last is
-    // what actually triggers the load, instead of the old ngOnInit/ngAfterViewInit split where an
-    // async fetch kicked off in ngOnInit could never finish before ngAfterViewInit's one-shot
-    // check of `this.map()` had already run (and found it still empty).
+    // Triggers the load once both the input/route map id and the view are ready, whichever
+    // settles last — avoids the old ngOnInit/ngAfterViewInit split where an async fetch could
+    // finish after ngAfterViewInit's one-shot check had already run.
     effect(() => {
       const ready = this.viewReady();
       const id = this.mapIdInput() ?? this.routeMapId ?? '';
