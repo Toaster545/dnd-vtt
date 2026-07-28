@@ -10,6 +10,8 @@
     - [ ] lock user characters
     - [ ] add encounters
     - [ ] add notes
+    - [ ] customize campaign
+    - [ ] 
 - [ ] Encounters
     - [ ] Add Turns
     - [ ] Measuring and player movement
