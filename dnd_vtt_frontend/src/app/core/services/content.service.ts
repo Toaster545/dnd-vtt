@@ -48,11 +48,13 @@ export interface TraitAction {
 export type TraitGrant =
   // `key` is only required when `action` is present — it's the stable id usage is tracked
   // against (Character.resource_uses), since `name` can be reworded without breaking saves.
-  | { type: 'feature'; name: string; description?: string; key?: string; action?: TraitAction }
+  | { type: 'feature'; name: string; description?: string; key?: string; action?: TraitAction; effects?: TraitEffect[] }
   // `chooseByLevel` lets a choice pool grow with class level while retaining one stable key.
   // Keys are class levels and values are the total number of choices available at that level.
   | { type: 'choice'; key: string; name: string; choose: number; chooseByLevel?: Record<string, number>; description?: string; options: TraitOption[] }
-  | { type: 'skill_choice'; key: string; name: string; choose: number; description?: string }
+  // `skills` optionally restricts the choice to a named list (e.g. Elf's Keen Senses); without
+  // one, every skill is eligible (e.g. Human's Skillful).
+  | { type: 'skill_choice'; key: string; name: string; choose: number; description?: string; skills?: string[] }
   // Options aren't embedded — they're derived from weapon items (DndItem.mastery) the
   // class is proficient with, filtered by category, so the weapon/mastery data stays
   // in one place and every class that grants Weapon Mastery shares it.
