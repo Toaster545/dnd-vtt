@@ -17,6 +17,7 @@
     "wisdom": 11,
     "charisma": 10
   },
+  "initiative_bonus": 1,
   "skills": { "Intimidation": 2 },
   "senses": { "darkvision": 60, "passive_perception": 10 },
   "languages": ["Common", "Orc"],

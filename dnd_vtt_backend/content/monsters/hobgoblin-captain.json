@@ -2,12 +2,12 @@
   "index": "hobgoblin-captain",
   "name": "Hobgoblin Captain",
   "size": "Medium",
-  "type": "humanoid (goblinoid)",
+  "type": "fey (goblinoid)",
   "alignment": "lawful evil",
   "armor_class": 17,
-  "armor_class_desc": "chain mail",
-  "hit_points": 39,
-  "hit_dice": "6d8 + 12",
+  "armor_class_desc": "half-plate armor",
+  "hit_points": 58,
+  "hit_dice": "9d8 + 18",
   "speed": { "walk": 30 },
   "ability_scores": {
     "strength": 15,
@@ -17,22 +17,18 @@
     "wisdom": 10,
     "charisma": 13
   },
-  "skills": { "Perception": 2 },
-  "senses": { "darkvision": 60, "passive_perception": 12 },
+  "initiative_bonus": 4,
+  "senses": { "darkvision": 60, "passive_perception": 10 },
   "languages": ["Common", "Goblin"],
   "challenge_rating": "3",
   "xp": 700,
   "traits": [
-    { "name": "Martial Advantage", "description": "Once per turn, the hobgoblin can deal an extra 7 (2d6) damage to a creature it hits with a weapon attack if that creature is within 5 ft. of an ally of the hobgoblin that isn't incapacitated." }
+    { "name": "Aura of Authority", "description": "While in a 10-foot Emanation originating from the hobgoblin, the hobgoblin and its allies have advantage on attack rolls and saving throws, provided the hobgoblin doesn't have the Incapacitated condition." }
   ],
   "actions": [
-    { "name": "Multiattack", "description": "The hobgoblin makes three melee attacks: two with its glaive and one with its longsword. Or it makes two ranged attacks with its javelin." },
-    { "name": "Glaive", "description": "Melee Weapon Attack: +4 to hit, reach 10 ft., one target. Hit: 4 (1d10) slashing damage, or 5 (1d10) slashing damage if used with two hands to make a melee attack." },
-    { "name": "Longsword", "description": "Melee Weapon Attack: +4 to hit, reach 5 ft., one target. Hit: 5 (1d8 + 1) slashing damage, or 6 (1d10 + 1) slashing damage if used with two hands." },
-    { "name": "Javelin", "description": "Melee or Ranged Weapon Attack: +4 to hit, reach 5 ft. or range 30/120 ft., one target. Hit: 5 (1d6 + 2) piercing damage." }
+    { "name": "Multiattack", "description": "The hobgoblin makes two attacks, using Greatsword or Longbow in any combination." },
+    { "name": "Greatsword", "description": "Melee Attack Roll: +4, reach 5 ft. Hit: 9 (2d6 + 2) Slashing damage plus 3 (1d6) Poison damage." },
+    { "name": "Longbow", "description": "Ranged Attack Roll: +4, range 150/600 ft. Hit: 6 (1d8 + 2) Piercing damage plus 5 (2d4) Poison damage." }
   ],
-  "reactions": [
-    { "name": "Leadership (Recharges after a Short or Long Rest)", "description": "For 1 minute, the hobgoblin can utter a special command or warning whenever a nonhostile creature that it can see within 30 ft. of it makes an attack roll or a saving throw. The creature can add a d4 to its roll provided it can hear and understand the hobgoblin. A creature can benefit from only one Leadership die at a time. This effect ends if the hobgoblin is incapacitated." }
-  ],
-  "description": "A hobgoblin captain commands squads of hobgoblin soldiers, barking orders that bolster their morale and coordinating their attacks against isolated foes."
+  "description": "A hobgoblin captain commands squads of hobgoblin soldiers, its presence and barked orders bolstering the resolve of every ally nearby while its poison-coated blade cuts down stragglers."
 }

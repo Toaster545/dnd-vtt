@@ -84,7 +84,6 @@ export function collectTraitEffects(
       const picked = choices[grant.key] ?? [];
       for (const opt of grant.options) {
         if (!picked.includes(opt.name)) continue;
-        if (opt.effect) out.push(opt.effect);
         out.push(...(opt.effects ?? []));
       }
     }

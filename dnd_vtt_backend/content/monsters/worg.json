@@ -17,6 +17,7 @@
     "wisdom": 11,
     "charisma": 8
   },
+  "initiative_bonus": 1,
   "skills": { "Perception": 3 },
   "senses": { "passive_perception": 13 },
   "languages": ["Common", "Goblin", "Worg"],

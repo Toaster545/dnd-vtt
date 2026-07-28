@@ -17,6 +17,7 @@
     "wisdom": 8,
     "charisma": 5
   },
+  "initiative_bonus": 2,
   "damage_vulnerabilities": ["bludgeoning"],
   "damage_immunities": ["poison"],
   "condition_immunities": ["exhaustion", "poisoned"],
