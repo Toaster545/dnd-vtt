@@ -1,0 +1,5 @@
+{
+  "index": "musical-instrument", "name": "Musical Instrument", "type": "gear", "category": "Tool",
+  "damage": null, "damage_type": null, "properties": [], "weight": 0, "cost": "varies",
+  "description": "One kind of musical instrument chosen for the background's tool proficiency."
+}

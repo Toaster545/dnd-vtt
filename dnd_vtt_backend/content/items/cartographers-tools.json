@@ -1,0 +1,5 @@
+{
+  "index": "cartographers-tools", "name": "Cartographer's Tools", "type": "gear", "category": "Tool",
+  "damage": null, "damage_type": null, "properties": [], "weight": 6, "cost": "15 gp",
+  "description": "Instruments and supplies used to measure terrain and create maps."
+}

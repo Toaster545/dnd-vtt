@@ -1,0 +1,5 @@
+{
+  "index": "thieves-tools", "name": "Thieves' Tools", "type": "gear", "category": "Tool",
+  "damage": null, "damage_type": null, "properties": [], "weight": 1, "cost": "25 gp",
+  "description": "Picks, files, pliers, and other instruments used to disable traps and open locks."
+}

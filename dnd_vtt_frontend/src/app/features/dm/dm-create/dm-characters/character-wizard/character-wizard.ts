@@ -3,6 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { ContentService, DndRace, DndClass, DndBackground, DndItem, DndSpell, DndFeat, TraitEffect, TraitGrant } from '../../../../../core/services/content.service';
 import { ClassChoiceSource, collectTraitEffects } from '../../../../../core/utils/character-effects';
 import { isStructuredEquipment, resolveStartingEquipment } from '../../../../../core/utils/starting-equipment';
+import { resolveBackgroundSkills } from '../../../../../core/utils/background-skills';
 import { CharacterService } from '../../../../../core/services/character.service';
 import { CharacterStatsService } from '../../../../../core/services/character-stats.service';
 import { Character, Ability, ABILITIES, defaultCharacter, abilityModifier } from '../../../../../core/models/character.model';
@@ -229,7 +230,7 @@ export class CharacterWizardComponent implements OnInit, OnDestroy {
   isLastStep = computed(() => this.activeStep() === STEPS.length - 1);
 
   private skillsRecord = computed(() => {
-    const bgSkills = this.selectedBackground()?.skill_proficiencies ?? [];
+    const bgSkills = resolveBackgroundSkills(this.selectedBackground(), this.backgroundTraits());
     const classSkills = this.selectedClasses().flatMap(e => e.skills);
     const race = this.selectedRace();
     const subrace = this.selectedSubrace();

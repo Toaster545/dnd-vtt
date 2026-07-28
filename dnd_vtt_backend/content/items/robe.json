@@ -1,0 +1,5 @@
+{
+  "index": "robe", "name": "Robe", "type": "gear", "category": "Adventuring Gear",
+  "damage": null, "damage_type": null, "properties": [], "weight": 4, "cost": "1 gp",
+  "description": "A simple full-length outer garment."
+}

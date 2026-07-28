@@ -1,0 +1,5 @@
+{
+  "index": "calligraphers-supplies", "name": "Calligrapher's Supplies", "type": "gear", "category": "Tool",
+  "damage": null, "damage_type": null, "properties": [], "weight": 5, "cost": "10 gp",
+  "description": "Pens, ink, parchment, and other tools used for calligraphy."
+}
