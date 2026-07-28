@@ -1,85 +1,52 @@
 {
   "index": "gnome",
   "name": "Gnome",
-  "description": "A gnome's energy and enthusiasm for living shines through every inch of their tiny body. Gnomes average about 3 feet tall and weigh 40 to 45 pounds, and their bright eyes and mischievous grins give away their good-natured love of life.",
-  "speed": 25,
+  "description": "Gnomes are magical, inventive folk whose cleverness helped them thrive in forests and underground homes. Their forest and rock lineages express that ancient magic in different ways.",
+  "creature_type": "Humanoid",
+  "speed": 30,
   "size": "Small",
-  "traits": [
-    "Darkvision (60 ft)",
-    "Gnome Cunning"
-  ],
+  "traits": ["Darkvision", "Gnomish Cunning", "Gnomish Lineage"],
   "grants": [
     {
       "type": "feature",
-      "name": "Darkvision (60 ft)",
-      "description": "See in dim light within 60 ft. as if it were bright light, and in darkness as if it were dim light (no color, only shades of gray)."
+      "name": "Darkvision",
+      "description": "You have Darkvision out to 60 feet."
     },
     {
       "type": "feature",
-      "name": "Gnome Cunning",
-      "description": "Advantage on all Intelligence, Wisdom, and Charisma saving throws against magic."
-    }
-  ],
-  "languages": [
-    "Common",
-    "Gnomish"
-  ],
-  "subraces": [
+      "name": "Gnomish Cunning",
+      "description": "You have Advantage on Intelligence, Wisdom, and Charisma saving throws."
+    },
     {
-      "index": "forest-gnome",
-      "name": "Forest Gnome",
-      "traits": [
-        "Natural Illusionist",
-        "Speak with Small Beasts"
-      ],
-      "grants": [
+      "type": "choice",
+      "key": "gnomish_lineage",
+      "name": "Gnomish Lineage",
+      "choose": 1,
+      "description": "Choose the supernatural lineage your gnome inherits.",
+      "options": [
         {
-          "type": "feature",
-          "name": "Natural Illusionist",
-          "description": "Know the Minor Illusion cantrip. Intelligence is your spellcasting ability for it."
+          "name": "Forest Gnome",
+          "description": "You know Minor Illusion and always have Speak with Animals prepared. Cast Speak with Animals without a spell slot a number of times equal to your Proficiency Bonus per Long Rest, or use spell slots."
         },
         {
-          "type": "feature",
-          "name": "Speak with Small Beasts",
-          "description": "Communicate simple ideas with Small or smaller beasts through sounds and gestures."
+          "name": "Rock Gnome",
+          "description": "You know Mending and Prestidigitation. A 10-minute Prestidigitation casting can create a Tiny clockwork device that reproduces one effect of the spell; up to three can exist, each lasting 8 hours."
         }
       ]
     },
     {
-      "index": "rock-gnome",
-      "name": "Rock Gnome",
-      "traits": [
-        "Artificer's Lore",
-        "Tinker"
-      ],
-      "grants": [
-        {
-          "type": "feature",
-          "name": "Artificer's Lore",
-          "description": "Whenever you make an Intelligence (History) check related to magic items, alchemical objects, or technological devices, you're considered proficient and add double your proficiency bonus."
-        },
-        {
-          "type": "choice",
-          "key": "tinker_device",
-          "name": "Tinker",
-          "choose": 1,
-          "description": "Using tinker's tools, spend 1 hour and 10 gp of materials to construct a Tiny clockwork device (AC 5, 1 HP). It ceases to function after 24 hours unless you spend 1 hour repairing it, or when you dismantle it. Choose the device you build most often.",
-          "options": [
-            {
-              "name": "Clockwork Toy",
-              "description": "A toy animal, monster, or person that moves randomly for 1 minute."
-            },
-            {
-              "name": "Fire Starter",
-              "description": "Use the device to kindle a small fire."
-            },
-            {
-              "name": "Music Box",
-              "description": "Plays a single song at a moderate volume when opened."
-            }
-          ]
-        }
+      "type": "choice",
+      "key": "gnomish_spellcasting_ability",
+      "name": "Lineage Spellcasting Ability",
+      "choose": 1,
+      "description": "Choose the spellcasting ability used by your Gnomish Lineage spells.",
+      "options": [
+        { "name": "Intelligence" },
+        { "name": "Wisdom" },
+        { "name": "Charisma" }
       ]
     }
-  ]
+  ],
+  "languages": [],
+  "subraces": []
 }

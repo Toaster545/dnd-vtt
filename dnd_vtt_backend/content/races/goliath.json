@@ -1,0 +1,38 @@
+{
+  "index": "goliath",
+  "name": "Goliath",
+  "description": "Goliaths are towering descendants of giants. Their ancestry grants a supernatural boon, great physical power, and the ability to briefly approach the stature of their gigantic kin.",
+  "creature_type": "Humanoid",
+  "speed": 35,
+  "size": "Medium",
+  "traits": ["Giant Ancestry", "Large Form", "Powerful Build"],
+  "grants": [
+    {
+      "type": "choice",
+      "key": "giant_ancestry",
+      "name": "Giant Ancestry",
+      "choose": 1,
+      "description": "Choose one giant boon. You can use the chosen benefit a number of times equal to your Proficiency Bonus per Long Rest.",
+      "options": [
+        { "name": "Cloud's Jaunt", "description": "Cloud Giant: as a Bonus Action, teleport up to 30 feet to an unoccupied space you can see." },
+        { "name": "Fire's Burn", "description": "Fire Giant: after an attack roll hits and deals damage, deal an extra 1d10 Fire damage." },
+        { "name": "Frost's Chill", "description": "Frost Giant: after an attack roll hits and deals damage, deal an extra 1d6 Cold damage and reduce the target's Speed by 10 feet until your next turn." },
+        { "name": "Hill's Tumble", "description": "Hill Giant: after an attack roll damages a Large or smaller creature, give it the Prone condition." },
+        { "name": "Stone's Endurance", "description": "Stone Giant: as a Reaction when damaged, reduce the damage by 1d12 + your Constitution modifier." },
+        { "name": "Storm's Thunder", "description": "Storm Giant: as a Reaction when a creature within 60 feet damages you, deal 1d8 Thunder damage to it." }
+      ]
+    },
+    {
+      "type": "feature",
+      "name": "Large Form",
+      "description": "At level 5, use a Bonus Action to become Large for 10 minutes if space allows. During that time you have Advantage on Strength checks and your Speed increases by 10 feet. Once used, this trait refreshes on a Long Rest."
+    },
+    {
+      "type": "feature",
+      "name": "Powerful Build",
+      "description": "You have Advantage on ability checks made to end the Grappled condition and count as one size larger when determining carrying capacity."
+    }
+  ],
+  "languages": [],
+  "subraces": []
+}
