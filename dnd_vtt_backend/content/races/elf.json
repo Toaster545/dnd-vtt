@@ -1,159 +1,70 @@
 {
   "index": "elf",
   "name": "Elf",
-  "description": "Elves are a magical people of otherworldly grace, living in the world but not entirely part of it. They love nature and magic, art and artistry, music and poetry, and the good things the world has to offer.",
+  "description": "Elves are long-lived people touched by the Feywild. Their surroundings can shape a lineage over generations, producing traditions such as drow, high elves, and wood elves.",
+  "creature_type": "Humanoid",
   "speed": 30,
   "size": "Medium",
-  "traits": [
-    "Darkvision (60 ft)",
-    "Keen Senses",
-    "Fey Ancestry",
-    "Trance"
-  ],
+  "traits": ["Darkvision", "Elven Lineage", "Fey Ancestry", "Keen Senses", "Trance"],
   "grants": [
     {
       "type": "feature",
-      "name": "Darkvision (60 ft)",
-      "description": "See in dim light within 60 ft. as if it were bright light, and in darkness as if it were dim light (no color, only shades of gray)."
+      "name": "Darkvision",
+      "description": "You have Darkvision out to 60 feet."
     },
     {
-      "type": "feature",
-      "name": "Keen Senses",
-      "description": "Proficiency in the Perception skill."
+      "type": "choice",
+      "key": "elven_lineage",
+      "name": "Elven Lineage",
+      "choose": 1,
+      "description": "Choose a lineage. Its level 3 and 5 spells are always prepared; each can be cast once without a spell slot per Long Rest or with an appropriate spell slot.",
+      "options": [
+        {
+          "name": "Drow",
+          "description": "Level 1: Darkvision increases to 120 feet and you know Dancing Lights. Level 3: Faerie Fire. Level 5: Darkness."
+        },
+        {
+          "name": "High Elf",
+          "description": "Level 1: Prestidigitation, replaceable with another Wizard cantrip after a Long Rest. Level 3: Detect Magic. Level 5: Misty Step."
+        },
+        {
+          "name": "Wood Elf",
+          "description": "Level 1: Speed 35 feet and Druidcraft. Level 3: Longstrider. Level 5: Pass without Trace.",
+          "effect": { "type": "speed_bonus", "value": 5 }
+        }
+      ]
+    },
+    {
+      "type": "choice",
+      "key": "elven_spellcasting_ability",
+      "name": "Lineage Spellcasting Ability",
+      "choose": 1,
+      "description": "Choose the spellcasting ability used by your Elven Lineage spells.",
+      "options": [
+        { "name": "Intelligence" },
+        { "name": "Wisdom" },
+        { "name": "Charisma" }
+      ]
     },
     {
       "type": "feature",
       "name": "Fey Ancestry",
-      "description": "Advantage on saving throws against being charmed, and magic can't put you to sleep."
+      "description": "You have Advantage on saving throws made to avoid or end the Charmed condition."
+    },
+    {
+      "type": "skill_choice",
+      "key": "keen_senses",
+      "name": "Keen Senses",
+      "choose": 1,
+      "description": "Gain proficiency in Insight, Perception, or Survival.",
+      "skills": ["Insight", "Perception", "Survival"]
     },
     {
       "type": "feature",
       "name": "Trance",
-      "description": "You don't need to sleep. Instead you meditate deeply for 4 hours a day, gaining the same benefit a human gets from 8 hours of sleep."
+      "description": "You need no sleep, magic can't put you to sleep, and you can finish a Long Rest in 4 hours of conscious, trancelike meditation."
     }
   ],
-  "languages": [
-    "Common",
-    "Elvish"
-  ],
-  "subraces": [
-    {
-      "index": "high-elf",
-      "name": "High Elf",
-      "traits": [
-        "Elf Weapon Training",
-        "Cantrip",
-        "Extra Language"
-      ],
-      "grants": [
-        {
-          "type": "feature",
-          "name": "Elf Weapon Training",
-          "description": "Proficiency with the longsword, shortsword, shortbow, and longbow."
-        },
-        {
-          "type": "choice",
-          "key": "high_elf_cantrip",
-          "name": "Cantrip",
-          "choose": 1,
-          "description": "Learn one cantrip from the wizard spell list. Intelligence is your spellcasting ability for it.",
-          "options": [
-            {
-              "name": "Dancing Lights"
-            },
-            {
-              "name": "Fire Bolt"
-            },
-            {
-              "name": "Light"
-            },
-            {
-              "name": "Mage Hand"
-            },
-            {
-              "name": "Mending"
-            },
-            {
-              "name": "Message"
-            },
-            {
-              "name": "Minor Illusion"
-            },
-            {
-              "name": "Prestidigitation"
-            },
-            {
-              "name": "Ray of Frost"
-            },
-            {
-              "name": "Shocking Grasp"
-            }
-          ]
-        },
-        {
-          "type": "feature",
-          "name": "Extra Language",
-          "description": "Speak, read, and write one extra language of your choice."
-        }
-      ]
-    },
-    {
-      "index": "wood-elf",
-      "name": "Wood Elf",
-      "traits": [
-        "Elf Weapon Training",
-        "Fleet of Foot (35 ft speed)",
-        "Mask of the Wild"
-      ],
-      "grants": [
-        {
-          "type": "feature",
-          "name": "Elf Weapon Training",
-          "description": "Proficiency with the longsword, shortsword, shortbow, and longbow."
-        },
-        {
-          "type": "feature",
-          "name": "Fleet of Foot",
-          "description": "Your base walking speed increases to 35 ft."
-        },
-        {
-          "type": "feature",
-          "name": "Mask of the Wild",
-          "description": "You can attempt to hide even when only lightly obscured by foliage, heavy rain, falling snow, mist, and other natural phenomena."
-        }
-      ]
-    },
-    {
-      "index": "dark-elf",
-      "name": "Dark Elf (Drow)",
-      "traits": [
-        "Superior Darkvision (120 ft)",
-        "Sunlight Sensitivity",
-        "Drow Magic",
-        "Drow Weapon Training"
-      ],
-      "grants": [
-        {
-          "type": "feature",
-          "name": "Superior Darkvision (120 ft)",
-          "description": "Your darkvision has a radius of 120 ft. instead of the usual 60."
-        },
-        {
-          "type": "feature",
-          "name": "Sunlight Sensitivity",
-          "description": "Disadvantage on attack rolls and Wisdom (Perception) checks that rely on sight when you or the target is in direct sunlight."
-        },
-        {
-          "type": "feature",
-          "name": "Drow Magic",
-          "description": "Know the Dancing Lights cantrip. At 3rd level, cast Faerie Fire once per long rest; at 5th level, cast Darkness once per long rest. Charisma is your spellcasting ability for these."
-        },
-        {
-          "type": "feature",
-          "name": "Drow Weapon Training",
-          "description": "Proficiency with rapiers, shortswords, and hand crossbows."
-        }
-      ]
-    }
-  ]
+  "languages": [],
+  "subraces": []
 }

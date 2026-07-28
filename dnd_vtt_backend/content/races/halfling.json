@@ -1,63 +1,33 @@
 {
   "index": "halfling",
   "name": "Halfling",
-  "description": "The comforts of home are the goals of most halflings' lives: a place to settle in peace and quiet, far from marauding monsters and clashing armies. Yet halfling adventurers are surprisingly common among their kind, off seeking adventure and fortune far from home.",
-  "speed": 25,
+  "description": "Halflings value life, home, and community, yet many possess a brave and adventurous spirit. Their legendary luck often seems to intervene at the moment they need it most.",
+  "creature_type": "Humanoid",
+  "speed": 30,
   "size": "Small",
-  "traits": [
-    "Lucky",
-    "Brave",
-    "Halfling Nimbleness"
-  ],
+  "traits": ["Brave", "Halfling Nimbleness", "Luck", "Naturally Stealthy"],
   "grants": [
     {
       "type": "feature",
-      "name": "Lucky",
-      "description": "When you roll a 1 on an attack roll, ability check, or saving throw, you can reroll the die and must use the new roll."
-    },
-    {
-      "type": "feature",
       "name": "Brave",
-      "description": "Advantage on saving throws against being frightened."
+      "description": "You have Advantage on saving throws made to avoid or end the Frightened condition."
     },
     {
       "type": "feature",
       "name": "Halfling Nimbleness",
-      "description": "You can move through the space of any creature that is a size larger than you."
-    }
-  ],
-  "languages": [
-    "Common",
-    "Halfling"
-  ],
-  "subraces": [
-    {
-      "index": "lightfoot",
-      "name": "Lightfoot Halfling",
-      "traits": [
-        "Naturally Stealthy"
-      ],
-      "grants": [
-        {
-          "type": "feature",
-          "name": "Naturally Stealthy",
-          "description": "You can attempt to hide even when you are obscured only by a creature that is at least one size larger than you."
-        }
-      ]
+      "description": "You can move through the space of a creature larger than you, but you can't stop in that space."
     },
     {
-      "index": "stout",
-      "name": "Stout Halfling",
-      "traits": [
-        "Stout Resilience"
-      ],
-      "grants": [
-        {
-          "type": "feature",
-          "name": "Stout Resilience",
-          "description": "Advantage on saving throws against poison, and resistance to poison damage."
-        }
-      ]
+      "type": "feature",
+      "name": "Luck",
+      "description": "When the d20 of a D20 Test rolls a 1, you can reroll it and must use the new result."
+    },
+    {
+      "type": "feature",
+      "name": "Naturally Stealthy",
+      "description": "You can take the Hide action when you are obscured only by a creature at least one size larger than you."
     }
-  ]
+  ],
+  "languages": [],
+  "subraces": []
 }

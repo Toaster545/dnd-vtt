@@ -42,6 +42,7 @@
       @if (activeStep() === 0) {
         <app-race-step
           [races]="races()"
+          [feats]="feats()"
           [selected]="raceSelection()"
           (raceChosen)="onRaceChosen($event)"
         />

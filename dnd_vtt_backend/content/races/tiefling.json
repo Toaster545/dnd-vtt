@@ -1,50 +1,57 @@
 {
   "index": "tiefling",
   "name": "Tiefling",
-  "description": "To be greeted with stares and whispers, to be treated with suspicion and fear, to be denied the comforts of home \u2014 this is the lot in life for the tiefling, born with the blood of fiends running through their veins, marked by their infernal heritage with horns, a tail, and eyes of solid color.",
+  "description": "Tieflings are linked by blood to Fiends of the Lower Planes. Their abyssal, chthonic, or infernal legacy promises supernatural power but does not determine their outlook or destiny.",
+  "creature_type": "Humanoid",
   "speed": 30,
-  "size": "Medium",
-  "traits": [
-    "Darkvision (60 ft)",
-    "Hellish Resistance (fire)",
-    "Infernal Legacy (Thaumaturgy, Hellish Rebuke, Darkness)"
-  ],
+  "size": "Small or Medium",
+  "size_options": ["Small", "Medium"],
+  "traits": ["Darkvision", "Fiendish Legacy", "Otherworldly Presence"],
   "grants": [
     {
       "type": "feature",
-      "name": "Darkvision (60 ft)",
-      "description": "See in dim light within 60 ft. as if it were bright light, and in darkness as if it were dim light (no color, only shades of gray)."
-    },
-    {
-      "type": "feature",
-      "name": "Hellish Resistance",
-      "description": "Resistance to fire damage."
+      "name": "Darkvision",
+      "description": "You have Darkvision out to 60 feet."
     },
     {
       "type": "choice",
       "key": "fiendish_legacy",
       "name": "Fiendish Legacy",
       "choose": 1,
-      "description": "Choose the fiendish bloodline your infernal heritage traces to. It determines a cantrip you know and the spells you gain as you level, all cast with Charisma.",
+      "description": "Choose a legacy. Its level 3 and 5 spells are always prepared; each can be cast once without a spell slot per Long Rest or with an appropriate spell slot.",
       "options": [
         {
           "name": "Abyssal",
-          "description": "Cantrip: Poison Spray. At 3rd level, cast Ray of Sickness once per long rest; at 5th level, Hold Person once per long rest."
+          "description": "Level 1: Poison resistance and Poison Spray. Level 3: Ray of Sickness. Level 5: Hold Person."
         },
         {
           "name": "Chthonic",
-          "description": "Cantrip: Chill Touch. At 3rd level, cast False Life once per long rest; at 5th level, Ray of Enfeeblement once per long rest."
+          "description": "Level 1: Necrotic resistance and Chill Touch. Level 3: False Life. Level 5: Ray of Enfeeblement."
         },
         {
           "name": "Infernal",
-          "description": "Cantrip: Fire Bolt. At 3rd level, cast Hellish Rebuke once per long rest; at 5th level, Darkness once per long rest."
+          "description": "Level 1: Fire resistance and Fire Bolt. Level 3: Hellish Rebuke. Level 5: Darkness."
         }
       ]
+    },
+    {
+      "type": "choice",
+      "key": "fiendish_spellcasting_ability",
+      "name": "Legacy Spellcasting Ability",
+      "choose": 1,
+      "description": "Choose the spellcasting ability used by your Fiendish Legacy spells and Thaumaturgy.",
+      "options": [
+        { "name": "Intelligence" },
+        { "name": "Wisdom" },
+        { "name": "Charisma" }
+      ]
+    },
+    {
+      "type": "feature",
+      "name": "Otherworldly Presence",
+      "description": "You know the Thaumaturgy cantrip. It uses the spellcasting ability selected for Fiendish Legacy."
     }
   ],
-  "languages": [
-    "Common",
-    "Infernal"
-  ],
+  "languages": [],
   "subraces": []
 }
