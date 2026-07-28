@@ -1,0 +1,5 @@
+{
+  "index": "navigators-tools", "name": "Navigator's Tools", "type": "gear", "category": "Tool",
+  "damage": null, "damage_type": null, "properties": [], "weight": 2, "cost": "25 gp",
+  "description": "Charts and instruments used to plot a course and determine position."
+}

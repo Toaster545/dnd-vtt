@@ -1,0 +1,6 @@
+{
+  "index": "savage-attacker",
+  "name": "Savage Attacker",
+  "description": "Once per turn when you hit with a weapon, roll the weapon's damage dice twice and use either roll against the target.",
+  "category": "origin"
+}

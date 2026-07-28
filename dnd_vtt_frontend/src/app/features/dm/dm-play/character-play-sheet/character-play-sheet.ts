@@ -211,6 +211,7 @@ export class CharacterPlaySheetComponent {
       case 'feature':
         return [{ source, name: grant.name, detail: grant.description }];
       case 'choice':
+      case 'skill_choice':
       case 'weapon_mastery': {
         const picked = choices[grant.key] ?? [];
         if (!picked.length) return [];
@@ -230,6 +231,12 @@ export class CharacterPlaySheetComponent {
           .map(([a, n]) => `+${n} ${a.charAt(0).toUpperCase()}${a.slice(1)}`)
           .join(', ');
         return [{ source, name: grant.name, detail }];
+      }
+      case 'feat_pick': {
+        return (choices[grant.key] ?? [])
+          .map(index => this.featsAll().find(feat => feat.index === index))
+          .filter((feat): feat is DndFeat => !!feat)
+          .map(feat => ({ source, name: feat.name, detail: feat.description }));
       }
       default:
         return [];

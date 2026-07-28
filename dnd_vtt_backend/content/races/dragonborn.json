@@ -1,78 +1,52 @@
 {
   "index": "dragonborn",
   "name": "Dragonborn",
-  "description": "Born of dragons, as their name proclaims, dragonborn walk proudly through a world that greets them with fearful incomprehension. Shaped by draconic gods or the dragons themselves, dragonborn originally hatched from dragon eggs as a unique race, combining the best attributes of dragons and humanoids.",
+  "description": "Dragonborn resemble wingless, bipedal dragons. Their scales, horns, and coloration reflect a draconic ancestor whose magic shapes their breath and defenses.",
+  "creature_type": "Humanoid",
   "speed": 30,
   "size": "Medium",
-  "traits": [
-    "Draconic Ancestry",
-    "Breath Weapon",
-    "Damage Resistance"
-  ],
+  "traits": ["Draconic Ancestry", "Breath Weapon", "Damage Resistance", "Darkvision", "Draconic Flight"],
   "grants": [
     {
       "type": "choice",
       "key": "draconic_ancestry",
       "name": "Draconic Ancestry",
       "choose": 1,
-      "description": "Choose the type of dragon you descend from. It determines the damage type and shape of your Breath Weapon and the damage type of your resistance.",
+      "description": "Choose your dragon ancestor. Its damage type applies to your Breath Weapon and Damage Resistance.",
       "options": [
-        {
-          "name": "Black",
-          "description": "Acid damage \u2014 Breath Weapon: 5 ft. by 30 ft. line (Dexterity save)."
-        },
-        {
-          "name": "Blue",
-          "description": "Lightning damage \u2014 Breath Weapon: 5 ft. by 30 ft. line (Dexterity save)."
-        },
-        {
-          "name": "Brass",
-          "description": "Fire damage \u2014 Breath Weapon: 5 ft. by 30 ft. line (Dexterity save)."
-        },
-        {
-          "name": "Bronze",
-          "description": "Lightning damage \u2014 Breath Weapon: 5 ft. by 30 ft. line (Dexterity save)."
-        },
-        {
-          "name": "Copper",
-          "description": "Acid damage \u2014 Breath Weapon: 5 ft. by 30 ft. line (Dexterity save)."
-        },
-        {
-          "name": "Gold",
-          "description": "Fire damage \u2014 Breath Weapon: 15 ft. cone (Dexterity save)."
-        },
-        {
-          "name": "Green",
-          "description": "Poison damage \u2014 Breath Weapon: 15 ft. cone (Constitution save)."
-        },
-        {
-          "name": "Red",
-          "description": "Fire damage \u2014 Breath Weapon: 15 ft. cone (Dexterity save)."
-        },
-        {
-          "name": "Silver",
-          "description": "Cold damage \u2014 Breath Weapon: 15 ft. cone (Constitution save)."
-        },
-        {
-          "name": "White",
-          "description": "Cold damage \u2014 Breath Weapon: 15 ft. cone (Constitution save)."
-        }
+        { "name": "Black", "description": "Acid" },
+        { "name": "Blue", "description": "Lightning" },
+        { "name": "Brass", "description": "Fire" },
+        { "name": "Bronze", "description": "Lightning" },
+        { "name": "Copper", "description": "Acid" },
+        { "name": "Gold", "description": "Fire" },
+        { "name": "Green", "description": "Poison" },
+        { "name": "Red", "description": "Fire" },
+        { "name": "Silver", "description": "Cold" },
+        { "name": "White", "description": "Cold" }
       ]
     },
     {
       "type": "feature",
       "name": "Breath Weapon",
-      "description": "Action: exhale destructive energy in the shape and damage type determined by your Draconic Ancestry. Each creature in the area makes a Dexterity or Constitution save (as appropriate), taking damage that scales with your level on a failure, half as much on a success. Usable a number of times equal to your proficiency bonus, regaining all expended uses on a long rest."
+      "description": "When you take the Attack action, replace one attack with a 15-foot Cone or a 30-foot-by-5-foot Line (chosen each use). Creatures make a Dexterity save against DC 8 + your Constitution modifier + Proficiency Bonus, taking 1d10 ancestry damage on a failure or half on a success. Damage becomes 2d10 at level 5, 3d10 at level 11, and 4d10 at level 17. Uses equal your Proficiency Bonus per Long Rest."
     },
     {
       "type": "feature",
       "name": "Damage Resistance",
-      "description": "Resistance to the damage type determined by your Draconic Ancestry."
+      "description": "You resist the damage type associated with your Draconic Ancestry."
+    },
+    {
+      "type": "feature",
+      "name": "Darkvision",
+      "description": "You have Darkvision out to 60 feet."
+    },
+    {
+      "type": "feature",
+      "name": "Draconic Flight",
+      "description": "At level 5, use a Bonus Action to sprout spectral wings for 10 minutes. They grant a Fly Speed equal to your Speed until retracted or you become Incapacitated. Once used, this trait refreshes on a Long Rest."
     }
   ],
-  "languages": [
-    "Common",
-    "Draconic"
-  ],
+  "languages": [],
   "subraces": []
 }

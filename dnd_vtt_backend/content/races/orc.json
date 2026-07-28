@@ -1,0 +1,28 @@
+{
+  "index": "orc",
+  "name": "Orc",
+  "description": "Orcs inherit endurance, determination, and dark-adapted sight from ancestors shaped for long journeys across plains, caverns, and seas.",
+  "creature_type": "Humanoid",
+  "speed": 30,
+  "size": "Medium",
+  "traits": ["Adrenaline Rush", "Darkvision", "Relentless Endurance"],
+  "grants": [
+    {
+      "type": "feature",
+      "name": "Adrenaline Rush",
+      "description": "Take the Dash action as a Bonus Action and gain Temporary Hit Points equal to your Proficiency Bonus. Uses equal your Proficiency Bonus, and all uses return after a Short or Long Rest."
+    },
+    {
+      "type": "feature",
+      "name": "Darkvision",
+      "description": "You have Darkvision out to 120 feet."
+    },
+    {
+      "type": "feature",
+      "name": "Relentless Endurance",
+      "description": "When reduced to 0 Hit Points without being killed outright, you can drop to 1 Hit Point instead. Once used, this trait refreshes on a Long Rest."
+    }
+  ],
+  "languages": [],
+  "subraces": []
+}

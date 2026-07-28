@@ -1,6 +1,6 @@
 {
   "index": "lucky",
   "name": "Lucky",
-  "description": "You have 3 luck points. Whenever you make an attack roll, ability check, or saving throw, you can spend 1 luck point to roll an additional d20 and choose which to use. You can also spend a luck point when a creature attacks you, to force it to reroll. You regain expended luck points on a long rest.",
+  "description": "You have Luck Points equal to your Proficiency Bonus and regain them after a Long Rest. Spend a point to give yourself Advantage on a D20 Test or to impose Disadvantage on an attack roll made against you.",
   "category": "origin"
 }

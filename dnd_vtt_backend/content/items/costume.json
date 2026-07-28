@@ -1,0 +1,5 @@
+{
+  "index": "costume", "name": "Costume", "type": "gear", "category": "Adventuring Gear",
+  "damage": null, "damage_type": null, "properties": [], "weight": 4, "cost": "5 gp",
+  "description": "Clothing styled for a particular role or performance."
+}

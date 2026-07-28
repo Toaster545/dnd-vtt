@@ -1,0 +1,5 @@
+{
+  "index": "fine-clothes", "name": "Fine Clothes", "type": "gear", "category": "Adventuring Gear",
+  "damage": null, "damage_type": null, "properties": [], "weight": 6, "cost": "15 gp",
+  "description": "High-quality clothing suitable for formal occasions."
+}

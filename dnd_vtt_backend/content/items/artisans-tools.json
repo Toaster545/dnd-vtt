@@ -1,0 +1,5 @@
+{
+  "index": "artisans-tools", "name": "Artisan's Tools", "type": "gear", "category": "Tool",
+  "damage": null, "damage_type": null, "properties": [], "weight": 0, "cost": "varies",
+  "description": "One kind of artisan's tools chosen for the background's tool proficiency."
+}

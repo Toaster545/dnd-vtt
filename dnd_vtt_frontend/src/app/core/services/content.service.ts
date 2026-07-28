@@ -29,11 +29,11 @@ export type EffectCondition =
 export interface TraitOption {
   name: string;
   description?: string;
-  effect?: TraitEffect;
   // Optional generic gates for progressive choices such as Eldritch Invocations. A selected
   // option remains visible even if a prerequisite is later lost, allowing the player to remove
   // it instead of leaving an invisible stale choice in the saved character.
   prerequisite?: { level?: number; selections?: string[] };
+  effects?: TraitEffect[];
 }
 
 // How a feature is used at the table, and its resource pool if it's limited-use.
@@ -166,16 +166,16 @@ export interface DndRace {
   index: string;
   name: string;
   description?: string;
+  creature_type: string;
   speed: number;
   size: string;
+  size_options?: string[];
   // No ability_bonuses — species don't grant ability score increases (that comes from
   // Background instead). See DndBackground.grants.
   // Legacy flat fallback for races not yet restructured — see `grants`.
   traits: string[];
-  // Same shape as a class level's grants (feature/choice — skill_choice and weapon_mastery
-  // aren't used here since races don't have a class-style skill_choices table or weapon
-  // proficiency list to derive them from; races needing a skill/weapon pick use a
-  // self-contained 'choice' grant with its own embedded options instead).
+  // Same shape as a class level's grants. A species `skill_choice` can optionally provide its
+  // own restricted skill list; without one, every skill is eligible.
   grants?: TraitGrant[];
   languages: string[];
   subraces: {

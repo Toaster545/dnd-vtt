@@ -1,45 +1,28 @@
 {
   "index": "criminal",
   "name": "Criminal",
-  "skill_proficiencies": [
-    "Deception",
-    "Stealth"
-  ],
-  "tool_proficiencies": [
-    "Thieves' tools"
-  ],
+  "skill_proficiencies": ["Sleight of Hand", "Stealth"],
+  "tool_proficiencies": ["Thieves' Tools"],
   "languages": "None",
-  "starting_equipment": [
-    "Crowbar",
-    "Dark common clothes with hood",
-    "Belt pouch with 15 gp"
-  ],
-  "feature": "Criminal Contact",
-  "grants": [
-    {
-      "type": "ability_choice",
-      "key": "ability_scores",
-      "name": "Ability Scores",
-      "description": "Increase one of the abilities below by 2 and a different one by 1, or increase all three by 1 each. No score can be increased above 20 this way.",
-      "points": 3,
-      "abilities": [
-        "dexterity",
-        "constitution",
-        "intelligence"
-      ]
-    },
-    {
-      "type": "choice",
-      "key": "gaming_set",
-      "name": "Tool Proficiency",
-      "description": "Choose one kind of gaming set.",
-      "choose": 1,
-      "options": [
-        { "name": "Dice Set" },
-        { "name": "Dragonchess Set" },
-        { "name": "Playing Card Set" },
-        { "name": "Three-Dragon Ante Set" }
-      ]
-    }
-  ]
+  "starting_equipment": {
+    "fixed": [
+      { "key": "daggers", "item": "dagger", "quantity": 2 },
+      { "key": "thieves-tools", "item": "thieves-tools" },
+      { "key": "crowbar", "item": "crowbar" },
+      { "key": "pouches", "item": "pouch", "quantity": 2 },
+      { "key": "clothes", "item": "travelers-clothes" }
+    ],
+    "groups": [],
+    "gold": 16,
+    "goldAlternative": 50
+  },
+  "feature": "Origin Feat: Alert",
+  "grants": [{
+    "type": "ability_choice",
+    "key": "ability_scores",
+    "name": "Ability Scores",
+    "description": "Increase one listed ability by 2 and a different one by 1, or increase all three by 1. No score can be increased above 20 this way.",
+    "points": 3,
+    "abilities": ["dexterity", "constitution", "intelligence"]
+  }]
 }

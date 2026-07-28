@@ -1,0 +1,5 @@
+{
+  "index": "carpenters-tools", "name": "Carpenter's Tools", "type": "gear", "category": "Tool",
+  "damage": null, "damage_type": null, "properties": [], "weight": 6, "cost": "8 gp",
+  "description": "Hand tools used to build and repair wooden objects and structures."
+}

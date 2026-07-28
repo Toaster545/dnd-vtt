@@ -179,6 +179,9 @@
                   <h4 class="font-brand text-gold text-xs uppercase tracking-widest m-0 pb-1.5 mb-2 border-b border-gold/25">Features &amp; Traits</h4>
                   <div class="flex flex-wrap gap-2 mb-3">
                     <span class="tag">Speed: {{ char.speed }} ft</span>
+                    @for (language of char.languages ?? []; track language) {
+                      <span class="tag">{{ language }}</span>
+                    }
                   </div>
                   @if (resolvedFeatures().length) {
                     <div class="flex flex-col gap-2">
