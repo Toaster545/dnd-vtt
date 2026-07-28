@@ -4,6 +4,14 @@
 
 ## Mathieu
 
+- [ ] Campaign logic
+    - [ ] Creating campaign
+    - [ ] Assign Users
+    - [ ] lock user characters
+    - [ ] add encounters
+    - [ ] add notes
+- [ ] 
+
 ## Andre
 
 - [ ] Push `andre_setup` to `main` and ensure everything works.
