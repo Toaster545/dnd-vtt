@@ -1,0 +1,6 @@
+{
+  "index": "tavern-brawler",
+  "name": "Tavern Brawler",
+  "description": "Your Unarmed Strike can deal 1d4 + Strength modifier Bludgeoning damage, and you reroll damage-die results of 1 for it. You are proficient with improvised weapons. Once per turn when an Unarmed Strike hits as part of the Attack action, you can damage and push the target 5 feet.",
+  "category": "origin"
+}

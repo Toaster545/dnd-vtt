@@ -1,5 +1,5 @@
 import { EquipmentEntry } from '../models/character.model';
-import { DndClass, DndFeat, DndItem, EffectCondition, TraitEffect } from '../services/content.service';
+import { DndClass, DndFeat, DndItem, DndRace, EffectCondition, TraitEffect, TraitGrant } from '../services/content.service';
 
 // One selected class's data paired with its stored trait picks — the minimal shape needed to
 // walk `grants` and resolve what a character actually chose, shared between the wizard's live
@@ -7,6 +7,12 @@ import { DndClass, DndFeat, DndItem, EffectCondition, TraitEffect } from '../ser
 export interface ClassChoiceSource {
   data: DndClass;
   choices: Record<string, string[]>;
+}
+
+export interface RaceChoiceSource {
+  data: DndRace;
+  choices: Record<string, string[]>;
+  subrace?: string | null;
 }
 
 export interface FeatPick {
@@ -19,7 +25,16 @@ export interface FeatPick {
 // Every feat the character has actually taken, across every class/subclass's `ability_choice`
 // (taken instead of an ASI) and `feat_pick` grants — the single source of truth other
 // resolvers (effects, save proficiency, repeatable-feat gating) build on.
-export function resolveCharacterFeatPicks(classes: ClassChoiceSource[], feats: DndFeat[]): FeatPick[] {
+function activeRaceGrants(source: RaceChoiceSource): TraitGrant[] {
+  const subrace = source.subrace
+    ? source.data.subraces.find(sub => sub.name === source.subrace || sub.index === source.subrace)
+    : null;
+  return [...(source.data.grants ?? []), ...(subrace?.grants ?? [])];
+}
+
+export function resolveCharacterFeatPicks(
+  classes: ClassChoiceSource[], feats: DndFeat[], race: RaceChoiceSource | null = null,
+): FeatPick[] {
   const out: FeatPick[] = [];
   const byIndex = (index: string) => feats.find(f => f.index === index);
   for (const { data, choices } of classes) {
@@ -39,6 +54,15 @@ export function resolveCharacterFeatPicks(classes: ClassChoiceSource[], feats: D
       }
     }
   }
+  if (race) {
+    for (const grant of activeRaceGrants(race)) {
+      if (grant.type !== 'feat_pick') continue;
+      for (const featIndex of race.choices[grant.key] ?? []) {
+        const feat = byIndex(featIndex);
+        if (feat) out.push({ feat, ability: race.choices[`${grant.key}:feat_ability`]?.[0] });
+      }
+    }
+  }
   return out;
 }
 
@@ -46,21 +70,33 @@ export function resolveCharacterFeatPicks(classes: ClassChoiceSource[], feats: D
 // `choice` option (e.g. a Fighting Style listed directly on a class) or from a picked feat.
 // Effects with a `condition` are included unfiltered here; callers that care whether the
 // condition currently holds should filter with `evaluateCondition`/`activeEffects` below.
-export function collectTraitEffects(classes: ClassChoiceSource[], feats: DndFeat[]): TraitEffect[] {
+export function collectTraitEffects(
+  classes: ClassChoiceSource[], feats: DndFeat[], race: RaceChoiceSource | null = null,
+): TraitEffect[] {
   const out: TraitEffect[] = [];
+  const collectGrantEffects = (grants: TraitGrant[], choices: Record<string, string[]>) => {
+    for (const grant of grants) {
+      if (grant.type === 'feature') {
+        out.push(...(grant.effects ?? []));
+        continue;
+      }
+      if (grant.type !== 'choice') continue;
+      const picked = choices[grant.key] ?? [];
+      for (const opt of grant.options) {
+        if (!picked.includes(opt.name)) continue;
+        if (opt.effect) out.push(opt.effect);
+        out.push(...(opt.effects ?? []));
+      }
+    }
+  };
   for (const { data, choices } of classes) {
     const levels = [...data.levels, ...data.subclasses.flatMap(s => s.levels)];
     for (const lvl of levels) {
-      for (const grant of lvl.grants ?? []) {
-        if (grant.type !== 'choice') continue;
-        const picked = choices[grant.key] ?? [];
-        for (const opt of grant.options) {
-          if (opt.effect && picked.includes(opt.name)) out.push(opt.effect);
-        }
-      }
+      collectGrantEffects(lvl.grants ?? [], choices);
     }
   }
-  for (const { feat } of resolveCharacterFeatPicks(classes, feats)) {
+  if (race) collectGrantEffects(activeRaceGrants(race), race.choices);
+  for (const { feat } of resolveCharacterFeatPicks(classes, feats, race)) {
     out.push(...(feat.effects ?? []));
   }
   return out;

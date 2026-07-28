@@ -1,0 +1,6 @@
+{
+  "index": "healer",
+  "name": "Healer",
+  "description": "With a Healer's Kit, tend a creature as a Utilize action so it can expend one Hit Point Die and regain that roll plus your Proficiency Bonus; a creature can benefit once per Short or Long Rest. When a healing spell or this benefit rolls a 1, you can reroll that die and must use the new result.",
+  "category": "origin"
+}

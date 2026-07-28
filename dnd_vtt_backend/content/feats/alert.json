@@ -1,6 +1,6 @@
 {
   "index": "alert",
   "name": "Alert",
-  "description": "You gain a +5 bonus to initiative. You can't be surprised while you are conscious, and other creatures don't gain advantage on attack rolls against you as a result of being unseen by you.",
+  "description": "Add your Proficiency Bonus to Initiative. Immediately after rolling Initiative, you may swap your result with one willing ally in the same combat, provided neither of you is Incapacitated.",
   "category": "origin"
 }

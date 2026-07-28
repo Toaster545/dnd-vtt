@@ -209,9 +209,11 @@ export class CharacterWizardComponent implements OnInit, OnDestroy {
   // aren't baked into the saved character, they're evaluated live from equipped gear by
   // CharacterStatsService wherever AC is displayed.
   private selectedEffects(type: string): TraitEffect[] {
+    const race = this.selectedRace();
     return collectTraitEffects(
       this.selectedClasses().map(e => ({ data: e.cls, choices: e.traits })),
       this.feats(),
+      race ? { data: race, choices: this.raceTraits(), subrace: this.selectedSubrace()?.name } : null,
     ).filter(e => e.type === type && !e.condition);
   }
 
@@ -219,16 +221,30 @@ export class CharacterWizardComponent implements OnInit, OnDestroy {
     const bonus = this.selectedEffects('ac_bonus').reduce((sum, e) => sum + (e.value ?? 0), 0);
     return 10 + abilityModifier(this.finalScores().dexterity) + bonus;
   });
-  speed      = computed(() => this.selectedRace()?.speed ?? 30);
+  speed      = computed(() => {
+    const base = this.selectedRace()?.speed ?? 30;
+    const bonus = this.selectedEffects('speed_bonus').reduce((sum, effect) => sum + (effect.value ?? 0), 0);
+    return base + bonus;
+  });
   isEditing  = computed(() => this.characterId() !== null);
   isLastStep = computed(() => this.activeStep() === STEPS.length - 1);
 
   private skillsRecord = computed(() => {
     const bgSkills = resolveBackgroundSkills(this.selectedBackground(), this.backgroundTraits());
     const classSkills = this.selectedClasses().flatMap(e => e.skills);
-    return [...new Set([...bgSkills, ...classSkills])]
+    const race = this.selectedRace();
+    const subrace = this.selectedSubrace();
+    const raceSkills = [...(race?.grants ?? []), ...(subrace?.grants ?? [])]
+      .filter((grant): grant is Extract<TraitGrant, { type: 'skill_choice' }> => grant.type === 'skill_choice')
+      .flatMap(grant => this.raceTraits()[grant.key] ?? []);
+    return [...new Set([...bgSkills, ...classSkills, ...raceSkills])]
       .reduce((acc, s) => ({ ...acc, [s]: true }), {} as Record<string, boolean>);
   });
+
+  private languages = computed(() => [
+    'Common',
+    ...new Set(this.raceTraits()['languages'] ?? []),
+  ]);
 
   // What the class's and background's starting-equipment choice (gear bundle or flat gold)
   // actually resolves to right now — `null` sources (old, not-yet-migrated content) contribute
@@ -286,6 +302,7 @@ export class CharacterWizardComponent implements OnInit, OnDestroy {
       classes: classes.map(e => ({ name: e.cls.name, level: e.level, subclass: e.subclass, choices: e.traits, skills: e.skills })),
       background: this.selectedBackground()?.name ?? '',
       background_choices: this.backgroundTraits(),
+      languages: this.languages(),
       class_equipment_choices: this.classEquipChoices(),
       background_equipment_choices: this.backgroundEquipChoices(),
       alignment: this.alignment(),
@@ -364,7 +381,11 @@ export class CharacterWizardComponent implements OnInit, OnDestroy {
       if (existing.subrace && race) {
         this.selectedSubrace.set(race.subraces.find(s => s.name === existing.subrace) ?? null);
       }
-      this.raceTraits.set(existing.race_choices ?? {});
+      const raceChoices = { ...(existing.race_choices ?? {}) };
+      if (!raceChoices['languages']?.length && existing.languages?.length) {
+        raceChoices['languages'] = existing.languages.filter(language => language !== 'Common').slice(0, 2);
+      }
+      this.raceTraits.set(raceChoices);
       this.backgroundTraits.set(existing.background_choices ?? {});
       this.classEquipChoices.set(existing.class_equipment_choices ?? {});
       this.backgroundEquipChoices.set(existing.background_equipment_choices ?? {});

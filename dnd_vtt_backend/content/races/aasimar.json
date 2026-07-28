@@ -1,0 +1,39 @@
+{
+  "index": "aasimar",
+  "name": "Aasimar",
+  "description": "Aasimar carry a spark of the Upper Planes within their souls. That celestial light can heal, ward against radiant and necrotic power, and emerge as a dramatic revelation in battle.",
+  "creature_type": "Humanoid",
+  "speed": 30,
+  "size": "Small or Medium",
+  "size_options": ["Small", "Medium"],
+  "traits": ["Celestial Resistance", "Darkvision", "Healing Hands", "Light Bearer", "Celestial Revelation"],
+  "grants": [
+    {
+      "type": "feature",
+      "name": "Celestial Resistance",
+      "description": "You resist Necrotic and Radiant damage."
+    },
+    {
+      "type": "feature",
+      "name": "Darkvision",
+      "description": "You have Darkvision out to 60 feet."
+    },
+    {
+      "type": "feature",
+      "name": "Healing Hands",
+      "description": "As a Magic action, touch a creature and roll a number of d4s equal to your Proficiency Bonus. The creature regains Hit Points equal to the total. Once used, this trait refreshes on a Long Rest."
+    },
+    {
+      "type": "feature",
+      "name": "Light Bearer",
+      "description": "You know the Light cantrip and use Charisma as its spellcasting ability."
+    },
+    {
+      "type": "feature",
+      "name": "Celestial Revelation",
+      "description": "At level 3, use a Bonus Action once per Long Rest to transform for 1 minute, choosing each time: Heavenly Wings grants a Fly Speed equal to your Speed; Inner Radiance sheds bright light for 10 feet and dim light for 10 more and deals Radiant damage equal to your Proficiency Bonus to creatures within 10 feet at the end of your turns; Necrotic Shroud forces creatures of your choice within 10 feet to make a Charisma save (DC 8 + your Charisma modifier + Proficiency Bonus) or become Frightened until the end of your next turn. Once on each of your turns during the transformation, one target you damage with an attack or spell takes extra damage equal to your Proficiency Bonus—Radiant for Heavenly Wings or Inner Radiance, Necrotic for Necrotic Shroud."
+    }
+  ],
+  "languages": [],
+  "subraces": []
+}

@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Character, Ability, ABILITIES, SKILLS, abilityModifier, proficiencyBonus } from '../models/character.model';
 import { DndClass, DndFeat, DndItem, DndRace } from './content.service';
 import {
-  ClassChoiceSource, activeEffects, baseArmorClass, collectTraitEffects, equippedItems, resolveCharacterFeatPicks,
+  ClassChoiceSource, RaceChoiceSource, activeEffects, baseArmorClass, collectTraitEffects, equippedItems, resolveCharacterFeatPicks,
 } from '../utils/character-effects';
 
 export interface WeaponAttack {
@@ -49,14 +49,14 @@ function classGrantsProficiency(weapon: DndItem, classData: DndClass): boolean {
 }
 
 function isProficientWithWeapon(
-  weapon: DndItem, classesForFeats: ClassChoiceSource[], feats: DndFeat[],
+  weapon: DndItem, classesForFeats: ClassChoiceSource[], feats: DndFeat[], race: RaceChoiceSource | null,
 ): boolean {
   if (classesForFeats.some(({ data }) => classGrantsProficiency(weapon, data))) return true;
   // A feat granting a whole weapon category (e.g. Martial Weapon Training's `tags: ['martial']`)
   // rather than the fixed `value` count of specific weapons some feats describe but never let
   // the player actually name (e.g. Weapon Master) — only category-tagged grants are resolvable
   // to "is the character proficient with THIS weapon" generically.
-  const categoryGrants = collectTraitEffects(classesForFeats, feats)
+  const categoryGrants = collectTraitEffects(classesForFeats, feats, race)
     .filter(e => e.type === 'weapon_proficiency' && e.tags?.length);
   return categoryGrants.some(e => e.tags!.some(tag => weapon.category.toLowerCase().startsWith(tag.toLowerCase())));
 }
@@ -80,16 +80,26 @@ export class CharacterStatsService {
       ...acc, [ab]: abilityModifier(scores[ab] ?? 10),
     }), {} as Record<Ability, number>);
 
+    const raceForFeats: RaceChoiceSource | null = raceData ? {
+      data: raceData,
+      choices: char.race_choices ?? {},
+      subrace: char.subrace,
+    } : null;
+    const allEffects = collectTraitEffects(classesForFeats, feats, raceForFeats);
+
     const hit_die = classData?.hit_die ?? 8;
+    const hpBonusPerLevel = allEffects
+      .filter(effect => effect.type === 'hp_bonus_per_level')
+      .reduce((sum, effect) => sum + (effect.value ?? 0), 0);
     const suggested_max_hp = Math.max(1,
       hit_die + mods.constitution +
       (char.level - 1) * (Math.floor(hit_die / 2) + 1 + mods.constitution),
-    );
+    ) + hpBonusPerLevel * char.level;
 
     const saveProfSet = new Set(classData?.saving_throws ?? []);
     // Resilient-pattern feats grant save proficiency in whichever ability their abilityIncrease
     // increased (the player-chosen one, when the feat offers more than one option).
-    for (const { feat, ability } of resolveCharacterFeatPicks(classesForFeats, feats)) {
+    for (const { feat, ability } of resolveCharacterFeatPicks(classesForFeats, feats, raceForFeats)) {
       const inc = feat.abilityIncrease;
       if (!inc?.grantsSaveProficiency) continue;
       const granted = inc.abilities.length === 1 ? inc.abilities[0] : ability;
@@ -99,7 +109,6 @@ export class CharacterStatsService {
       ...acc, [ab]: mods[ab] + (saveProfSet.has(ab) ? prof : 0),
     }), {} as Record<Ability, number>);
 
-    const allEffects = collectTraitEffects(classesForFeats, feats);
     const conditionalAcBonus = activeEffects(allEffects.filter(e => e.type === 'ac_bonus'), char.equipment, items)
       .reduce((sum, e) => sum + (e.value ?? 0), 0);
     const computed_ac = baseArmorClass(char.equipment, items, mods.dexterity) + conditionalAcBonus;
@@ -120,7 +129,7 @@ export class CharacterStatsService {
       .filter(it => it.type === 'weapon')
       .map(weapon => {
         const abilityMod = weaponAbilityMod(weapon, mods);
-        const proficient = isProficientWithWeapon(weapon, classesForFeats, feats);
+        const proficient = isProficientWithWeapon(weapon, classesForFeats, feats, raceForFeats);
         const isRanged = weapon.category.includes('Ranged');
         const isThrown = weapon.properties.some(p => p.startsWith('Thrown'));
 

@@ -75,7 +75,8 @@ export interface Character {
   level: number;         // total character level
   classes?: { name: string; level: number; subclass?: string; choices?: Record<string, string[]>; skills?: string[] }[]; // multiclass
   background: string;
-  background_choices?: Record<string, string[]>; // ability increase, customized skills, and tool picks
+  background_choices?: Record<string, string[]>; // background trait picks, incl. ability score increase
+  languages?: string[]; // Common plus the character's selected/feature-granted languages
   alignment: string;
 
   // Starting-equipment picks — which of a class/background's `StartingEquipment` groups were
@@ -140,7 +141,7 @@ export function proficiencyBonus(level: number): number {
 
 export function defaultCharacter(): Omit<Character, 'name'> {
   return {
-    race: '', class: '', level: 1, background: '', alignment: 'True Neutral',
+    race: '', class: '', level: 1, background: '', languages: ['Common'], alignment: 'True Neutral',
     ability_scores: { strength: 10, dexterity: 10, constitution: 10, intelligence: 10, wisdom: 10, charisma: 10 },
     max_hp: 10, current_hp: 10, temp_hp: 0, hit_dice_used: 0,
     death_saves: { successes: 0, failures: 0 },
