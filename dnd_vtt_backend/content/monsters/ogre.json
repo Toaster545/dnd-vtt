@@ -17,6 +17,7 @@
     "wisdom": 7,
     "charisma": 7
   },
+  "initiative_bonus": -1,
   "senses": { "darkvision": 60, "passive_perception": 8 },
   "languages": ["Common", "Giant"],
   "challenge_rating": "2",

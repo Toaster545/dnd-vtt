@@ -1,0 +1,34 @@
+{
+  "index": "goblin-minion",
+  "name": "Goblin Minion",
+  "size": "Small",
+  "type": "fey (goblinoid)",
+  "alignment": "chaotic neutral",
+  "armor_class": 12,
+  "armor_class_desc": "unarmored",
+  "hit_points": 7,
+  "hit_dice": "2d6",
+  "speed": { "walk": 30 },
+  "ability_scores": {
+    "strength": 8,
+    "dexterity": 15,
+    "constitution": 10,
+    "intelligence": 10,
+    "wisdom": 8,
+    "charisma": 8
+  },
+  "initiative_bonus": 2,
+  "saving_throws": { "Dexterity": 2 },
+  "skills": { "Stealth": 6 },
+  "senses": { "darkvision": 60, "passive_perception": 9 },
+  "languages": ["Common", "Goblin"],
+  "challenge_rating": "1/8",
+  "xp": 25,
+  "traits": [
+    { "name": "Nimble Escape", "description": "As a bonus action, the goblin can take the Disengage or Hide action." }
+  ],
+  "actions": [
+    { "name": "Dagger", "description": "Melee or Ranged Attack Roll: +4, reach 5 ft. or range 20/60 ft. Hit: 4 (1d4 + 2) Piercing damage." }
+  ],
+  "description": "Goblin minions are the least experienced fighters of a goblin warband, thrown into the fray in numbers to wear down foes before the warriors and boss close in."
+}

@@ -1,0 +1,38 @@
+{
+  "index": "hobgoblin-warlord",
+  "name": "Hobgoblin Warlord",
+  "size": "Medium",
+  "type": "fey (goblinoid)",
+  "alignment": "lawful evil",
+  "armor_class": 20,
+  "armor_class_desc": "plate armor, shield",
+  "hit_points": 112,
+  "hit_dice": "15d8 + 45",
+  "speed": { "walk": 30 },
+  "ability_scores": {
+    "strength": 17,
+    "dexterity": 14,
+    "constitution": 16,
+    "intelligence": 14,
+    "wisdom": 11,
+    "charisma": 15
+  },
+  "initiative_bonus": 5,
+  "saving_throws": { "Dexterity": 5, "Intelligence": 5, "Wisdom": 3, "Charisma": 5 },
+  "senses": { "darkvision": 60, "passive_perception": 10 },
+  "languages": ["Common", "Goblin"],
+  "challenge_rating": "6",
+  "xp": 2300,
+  "traits": [
+    { "name": "Aura of Authority", "description": "While in a 30-foot Emanation originating from the hobgoblin, the hobgoblin and its allies have advantage on attack rolls and saving throws, provided the hobgoblin doesn't have the Incapacitated condition." }
+  ],
+  "actions": [
+    { "name": "Multiattack", "description": "The hobgoblin makes three attacks, using Javelin or Longsword in any combination." },
+    { "name": "Longsword", "description": "Melee Attack Roll: +6, reach 5 ft. Hit: 12 (2d8 + 3) Slashing damage." },
+    { "name": "Javelin", "description": "Melee or Ranged Attack Roll: +6, reach 5 ft. or range 30/120 ft. Hit: 11 (2d6 + 4) Piercing damage, and the target's speed decreases by 10 feet until the start of the hobgoblin's next turn." }
+  ],
+  "reactions": [
+    { "name": "Parry", "description": "The hobgoblin adds 3 to its AC against one melee attack that would hit it, provided it can see the attacker and is wielding a melee weapon." }
+  ],
+  "description": "Hobgoblin warlords lead entire legions, commanding the ebb and flow of battle with a strategic mind honed by decades of war and an aura of command that steels every ally within earshot."
+}

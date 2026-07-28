@@ -1,0 +1,35 @@
+{
+  "index": "goblin-warrior",
+  "name": "Goblin Warrior",
+  "size": "Small",
+  "type": "fey (goblinoid)",
+  "alignment": "chaotic neutral",
+  "armor_class": 15,
+  "armor_class_desc": "leather armor, shield",
+  "hit_points": 10,
+  "hit_dice": "3d6",
+  "speed": { "walk": 30 },
+  "ability_scores": {
+    "strength": 8,
+    "dexterity": 15,
+    "constitution": 10,
+    "intelligence": 10,
+    "wisdom": 8,
+    "charisma": 8
+  },
+  "initiative_bonus": 2,
+  "saving_throws": { "Dexterity": 2 },
+  "skills": { "Stealth": 6 },
+  "senses": { "darkvision": 60, "passive_perception": 9 },
+  "languages": ["Common", "Goblin"],
+  "challenge_rating": "1/4",
+  "xp": 50,
+  "traits": [
+    { "name": "Nimble Escape", "description": "As a bonus action, the goblin can take the Disengage or Hide action." }
+  ],
+  "actions": [
+    { "name": "Scimitar", "description": "Melee Attack Roll: +4, reach 5 ft. Hit: 5 (1d6 + 2) Slashing damage. If the attack roll had advantage, add another 2 (1d4) Slashing damage." },
+    { "name": "Shortbow", "description": "Ranged Attack Roll: +4, range 80/320 ft. Hit: 5 (1d6 + 2) Piercing damage. If the attack roll had advantage, add another 2 (1d4) Piercing damage." }
+  ],
+  "description": "Goblin warriors make up the rank and file of a goblin warband, striking from ambush and darting out of reach the instant they're pressed."
+}

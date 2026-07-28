@@ -17,6 +17,7 @@
     "wisdom": 12,
     "charisma": 6
   },
+  "initiative_bonus": 2,
   "skills": { "Perception": 3, "Stealth": 4 },
   "senses": { "passive_perception": 13 },
   "languages": [],

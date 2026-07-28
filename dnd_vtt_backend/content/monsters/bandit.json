@@ -17,6 +17,7 @@
     "wisdom": 10,
     "charisma": 10
   },
+  "initiative_bonus": 1,
   "senses": { "passive_perception": 10 },
   "languages": ["any one language (usually Common)"],
   "challenge_rating": "1/8",

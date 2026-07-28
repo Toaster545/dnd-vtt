@@ -118,16 +118,20 @@ export class MapsService {
     this.gateway.broadcastTokens(mapId, tokens);
     return tokens.find((t: any) => t.id === tokenId);
   }
-
-  // 1d20 + the monster's DEX modifier — mirrors the standard initiative roll, using whatever
-  // ability score the static content file has for that monster type.
+  
   private rollMonsterInitiative(monsterIndex: string): number | null {
     try {
-      const monster = this.content.getMonster(monsterIndex) as { ability_scores?: { dexterity?: number } };
-      const dex = monster.ability_scores?.dexterity;
-      if (dex == null) return null;
-      const mod = Math.floor((dex - 10) / 2);
-      return Math.floor(Math.random() * 20) + 1 + mod;
+      const monster = this.content.getMonster(monsterIndex) as {
+        ability_scores?: { dexterity?: number };
+        initiative_bonus?: number;
+      };
+      let bonus = monster.initiative_bonus;
+      if (bonus == null) {
+        const dex = monster.ability_scores?.dexterity;
+        if (dex == null) return null;
+        bonus = Math.floor((dex - 10) / 2);
+      }
+      return Math.floor(Math.random() * 20) + 1 + bonus;
     } catch {
       return null;
     }
