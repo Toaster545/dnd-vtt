@@ -7,6 +7,10 @@
 - [ ] Push `andre_setup` to `main` and ensure everything works.
 - [ ] Build a functioning Warlock class.
 - [ ] Fix backgrounds.
-- [ ] Races in Character Creation
+- [ ] Character Creation:
+    - [ ] fix backgrounds (2024 version)
+    - [ ] Races choices and traits
+    - [ ] ability score increases
+    - [ ] add customizability (background, for instance)
 
 ## Anthony
