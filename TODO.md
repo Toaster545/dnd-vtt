@@ -5,10 +5,10 @@
 ## Mathieu
 
 - [ ] Campaign logic
-    - [ ] Creating campaign
-    - [ ] Assign Users
+    - [x] Creating campaign
+    - [x] Assign Users
     - [ ] lock user characters
-    - [ ] add encounters
+    - [x] add encounters
     - [ ] add notes
     - [ ] customize campaign
     - [ ] 
