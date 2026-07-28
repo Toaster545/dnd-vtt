@@ -10,7 +10,11 @@
     - [ ] lock user characters
     - [ ] add encounters
     - [ ] add notes
-- [ ] 
+- [ ] Encounters
+    - [ ] Add Turns
+    - [ ] Measuring and player movement
+    - [ ] fog of war
+    - [ ] 
 
 ## Andre
 
