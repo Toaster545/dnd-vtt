@@ -29,7 +29,10 @@ export type EffectCondition =
 export interface TraitOption {
   name: string;
   description?: string;
-  effect?: TraitEffect;
+  // Optional generic gates for progressive choices such as Eldritch Invocations. A selected
+  // option remains visible even if a prerequisite is later lost, allowing the player to remove
+  // it instead of leaving an invisible stale choice in the saved character.
+  prerequisite?: { level?: number; selections?: string[] };
   effects?: TraitEffect[];
 }
 
@@ -45,9 +48,11 @@ export interface TraitAction {
 export type TraitGrant =
   // `key` is only required when `action` is present — it's the stable id usage is tracked
   // against (Character.resource_uses), since `name` can be reworded without breaking saves.
-  | { type: 'feature'; name: string; description?: string; key?: string; action?: TraitAction; effects?: TraitEffect[] }
-  | { type: 'choice'; key: string; name: string; choose: number; description?: string; options: TraitOption[] }
-  | { type: 'skill_choice'; key: string; name: string; choose: number; description?: string; skills?: string[] }
+  | { type: 'feature'; name: string; description?: string; key?: string; action?: TraitAction }
+  // `chooseByLevel` lets a choice pool grow with class level while retaining one stable key.
+  // Keys are class levels and values are the total number of choices available at that level.
+  | { type: 'choice'; key: string; name: string; choose: number; chooseByLevel?: Record<string, number>; description?: string; options: TraitOption[] }
+  | { type: 'skill_choice'; key: string; name: string; choose: number; description?: string }
   // Options aren't embedded — they're derived from weapon items (DndItem.mastery) the
   // class is proficient with, filtered by category, so the weapon/mastery data stays
   // in one place and every class that grants Weapon Mastery shares it.
