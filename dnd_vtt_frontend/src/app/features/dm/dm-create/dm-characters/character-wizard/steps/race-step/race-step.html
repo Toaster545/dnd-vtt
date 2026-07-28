@@ -19,6 +19,7 @@
           <span class="font-medium text-sm" [class]="selected ? 'text-parchment' : 'text-slate'">{{ race.name }}</span>
         </div>
         <div class="flex items-center gap-3 text-xs text-coal flex-shrink-0 ml-4">
+          <span>{{ race.creature_type }}</span>
           <span>{{ race.size }}</span>
           <span>{{ race.speed }}ft</span>
           @if (race.subraces.length) { <span class="text-slate">{{ race.subraces.length }} subraces</span> }
@@ -39,8 +40,15 @@
     style="font-family: inherit;"
   >
     <div class="flex items-center gap-3">
-      <span class="font-medium text-sm text-parchment">{{ sel.race.name }}</span>
-      @if (sel.subrace) { <span class="text-xs text-slate">{{ sel.subrace.name }}</span> }
+      <div>
+        <div class="flex items-center gap-3">
+          <span class="font-medium text-sm text-parchment">{{ sel.race.name }}</span>
+          @if (sel.subrace) { <span class="text-xs text-slate">{{ sel.subrace.name }}</span> }
+        </div>
+        @if (sel.traits['languages']?.length) {
+          <span class="text-xs text-coal">Common, {{ sel.traits['languages'].join(', ') }}</span>
+        }
+      </div>
     </div>
     <span class="text-xs text-coal flex-shrink-0 ml-4">Edit →</span>
   </button>
@@ -57,6 +65,8 @@
       <button class="btn-ghost text-sm mb-2" (click)="back()">← Back</button>
       <h2 class="font-brand text-2xl text-parchment m-0">{{ race.name }}</h2>
       <div class="flex items-center gap-3 mt-1 text-sm text-slate">
+        <span>{{ race.creature_type }}</span>
+        <span>·</span>
         <span>{{ race.size }}</span>
         <span>·</span>
         <span>{{ race.speed }} ft. speed</span>
@@ -78,17 +88,111 @@
       <p class="text-xs font-bold text-slate uppercase tracking-wide mb-2">Quick Reference</p>
       <div class="flex flex-col gap-1 text-sm">
         <div class="flex gap-2">
+          <span class="text-coal w-24 flex-shrink-0">Creature Type</span>
+          <span class="text-slate">{{ race.creature_type }}</span>
+        </div>
+        <div class="flex gap-2">
           <span class="text-coal w-24 flex-shrink-0">Size</span>
-          <span class="text-slate">{{ race.size }}</span>
+          <span class="text-slate">{{ selectedSize(race) || race.size }}</span>
         </div>
         <div class="flex gap-2">
           <span class="text-coal w-24 flex-shrink-0">Speed</span>
           <span class="text-slate">{{ race.speed }} ft.</span>
         </div>
-        @if (race.languages.length) {
-          <div class="flex gap-2">
-            <span class="text-coal w-24 flex-shrink-0">Languages</span>
-            <span class="text-slate">{{ race.languages.join(', ') }}</span>
+        <div class="flex gap-2">
+          <span class="text-coal w-24 flex-shrink-0">Languages</span>
+          <span class="text-slate">{{ selectedLanguages().join(', ') }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Character Size -->
+    @if (sizeGrant(race); as sizeChoice) {
+      @let needsSize = choicesLeft(sizeChoice) > 0;
+      @let sizeCollapsed = isGrantCollapsed(sizeChoice.key);
+      <div>
+        <p class="text-xs font-bold text-slate uppercase tracking-wide mb-3">Character Size</p>
+        <div class="pl-3 border-l border-white/10 ml-1">
+          <button
+            class="flex items-center gap-2 w-full text-left cursor-pointer"
+            (click)="toggleGrantCollapsed(sizeChoice.key)"
+            style="font-family: inherit;"
+          >
+            <span class="w-1.5 h-1.5 rounded-full flex-shrink-0" [class]="needsSize ? 'bg-gold' : 'bg-success/70'" [title]="needsSize ? 'Choice needed' : 'Complete'"></span>
+            <p class="text-sm text-parchment font-medium flex-1">
+              Size — choose {{ sizeChoice.choose }}
+              @if (needsSize) { <span class="text-gold font-normal text-xs">({{ choicesLeft(sizeChoice) }} left)</span> }
+              @if (!needsSize) { <span class="text-success font-normal text-xs">✓</span> }
+            </p>
+            <span class="text-coal text-xs flex-shrink-0">{{ sizeCollapsed ? '▸' : '▾' }}</span>
+          </button>
+          @if (!sizeCollapsed) {
+            <div class="mt-1.5 pl-3.5">
+              @if (sizeChoice.description) { <p class="text-xs text-coal mb-2">{{ sizeChoice.description }}</p> }
+              <div class="flex flex-wrap gap-1.5">
+                @for (option of sizeChoice.options; track option.name) {
+                  @let picked = traitSelected(sizeChoice, option.name);
+                  @let full = !picked && !needsSize;
+                  <button
+                    class="px-2.5 py-1 rounded text-xs border transition-all"
+                    [class]="picked ? 'border-gold/60 bg-gold/10 text-parchment cursor-pointer'
+                      : full ? 'border-white/8 text-coal cursor-not-allowed'
+                              : 'border-white/15 text-slate hover:border-white/30 hover:text-parchment cursor-pointer'"
+                    [disabled]="full"
+                    (click)="toggleTrait(sizeChoice, option.name)"
+                    style="font-family: inherit;"
+                  >
+                    @if (picked) { <span class="text-gold mr-1">✓</span> }
+                    {{ option.name }}
+                  </button>
+                }
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+    }
+
+    <!-- Character Languages -->
+    <div>
+      @let needsLanguage = choicesLeft(languageGrant) > 0;
+      @let languagesCollapsed = isGrantCollapsed(languageGrant.key);
+      <p class="text-xs font-bold text-slate uppercase tracking-wide mb-3">Character Languages</p>
+      <div class="pl-3 border-l border-white/10 ml-1">
+        <button
+          class="flex items-center gap-2 w-full text-left cursor-pointer"
+          (click)="toggleGrantCollapsed(languageGrant.key)"
+          style="font-family: inherit;"
+        >
+          <span class="w-1.5 h-1.5 rounded-full flex-shrink-0" [class]="needsLanguage ? 'bg-gold' : 'bg-success/70'" [title]="needsLanguage ? 'Choice needed' : 'Complete'"></span>
+          <p class="text-sm text-parchment font-medium flex-1">
+            Languages — choose {{ languageGrant.choose }}
+            @if (needsLanguage) { <span class="text-gold font-normal text-xs">({{ choicesLeft(languageGrant) }} left)</span> }
+            @if (!needsLanguage) { <span class="text-success font-normal text-xs">✓</span> }
+          </p>
+          <span class="text-coal text-xs flex-shrink-0">{{ languagesCollapsed ? '▸' : '▾' }}</span>
+        </button>
+        @if (!languagesCollapsed) {
+          <div class="mt-1.5 pl-3.5">
+            <p class="text-xs text-coal mb-2">{{ languageGrant.description }}</p>
+            <div class="flex flex-wrap gap-1.5">
+              @for (option of languageGrant.options; track option.name) {
+                @let picked = traitSelected(languageGrant, option.name);
+                @let full = !picked && !needsLanguage;
+                <button
+                  class="px-2.5 py-1 rounded text-xs border transition-all"
+                  [class]="picked ? 'border-gold/60 bg-gold/10 text-parchment cursor-pointer'
+                    : full ? 'border-white/8 text-coal cursor-not-allowed'
+                            : 'border-white/15 text-slate hover:border-white/30 hover:text-parchment cursor-pointer'"
+                  [disabled]="full"
+                  (click)="toggleTrait(languageGrant, option.name)"
+                  style="font-family: inherit;"
+                >
+                  @if (picked) { <span class="text-gold mr-1">✓</span> }
+                  {{ option.name }}
+                </button>
+              }
+            </div>
           </div>
         }
       </div>
@@ -185,6 +289,95 @@
               </div>
             }
 
+            @case ('skill_choice') {
+              @let needsChoice = choicesLeft(grant) > 0;
+              @let collapsed   = isGrantCollapsed(grant.key);
+              <div>
+                <button
+                  class="flex items-center gap-2 w-full text-left cursor-pointer"
+                  (click)="toggleGrantCollapsed(grant.key)"
+                  style="font-family: inherit;"
+                >
+                  <span class="w-1.5 h-1.5 rounded-full flex-shrink-0" [class]="needsChoice ? 'bg-gold' : 'bg-success/70'" [title]="needsChoice ? 'Choice needed' : 'Complete'"></span>
+                  <p class="text-sm text-parchment font-medium flex-1">
+                    {{ grant.name }} — choose {{ grant.choose }}
+                    @if (needsChoice) { <span class="text-gold font-normal text-xs">({{ choicesLeft(grant) }} left)</span> }
+                    @if (!needsChoice) { <span class="text-success font-normal text-xs">✓</span> }
+                  </p>
+                  <span class="text-coal text-xs flex-shrink-0">{{ collapsed ? '▸' : '▾' }}</span>
+                </button>
+                @if (!collapsed) {
+                  <div class="pl-3.5 mt-1.5">
+                    @if (grant.description) { <p class="text-xs text-coal mb-2">{{ grant.description }}</p> }
+                    <div class="flex flex-wrap gap-1.5">
+                      @for (skill of availableSkills(grant); track skill) {
+                        @let picked = traitSelected(grant, skill);
+                        @let full   = !picked && !needsChoice;
+                        <button
+                          class="px-2.5 py-1 rounded text-xs border transition-all"
+                          [class]="picked ? 'border-gold/60 bg-gold/10 text-parchment cursor-pointer'
+                            : full ? 'border-white/8 text-coal cursor-not-allowed'
+                                    : 'border-white/15 text-slate hover:border-white/30 hover:text-parchment cursor-pointer'"
+                          [disabled]="full"
+                          (click)="toggleTrait(grant, skill)"
+                          style="font-family: inherit;"
+                        >
+                          @if (picked) { <span class="text-gold mr-1">✓</span> }
+                          {{ skill }}
+                        </button>
+                      }
+                    </div>
+                  </div>
+                }
+              </div>
+            }
+
+            @case ('feat_pick') {
+              @let needsChoice = choicesLeft(grant) > 0;
+              @let collapsed   = isGrantCollapsed(grant.key);
+              <div>
+                <button
+                  class="flex items-center gap-2 w-full text-left cursor-pointer"
+                  (click)="toggleGrantCollapsed(grant.key)"
+                  style="font-family: inherit;"
+                >
+                  <span class="w-1.5 h-1.5 rounded-full flex-shrink-0" [class]="needsChoice ? 'bg-gold' : 'bg-success/70'" [title]="needsChoice ? 'Choice needed' : 'Complete'"></span>
+                  <p class="text-sm text-parchment font-medium flex-1">
+                    {{ grant.name }} — choose {{ grant.choose }}
+                    @if (needsChoice) { <span class="text-gold font-normal text-xs">({{ choicesLeft(grant) }} left)</span> }
+                    @if (!needsChoice) { <span class="text-success font-normal text-xs">✓</span> }
+                  </p>
+                  <span class="text-coal text-xs flex-shrink-0">{{ collapsed ? '▸' : '▾' }}</span>
+                </button>
+                @if (!collapsed) {
+                  <div class="pl-3.5 mt-1.5">
+                    @if (grant.description) { <p class="text-xs text-coal mb-2">{{ grant.description }}</p> }
+                    <div class="flex flex-col gap-1">
+                      @for (feat of availableFeats(grant); track feat.index) {
+                        @let picked = traitSelected(grant, feat.index);
+                        @let full   = !picked && !needsChoice;
+                        <button
+                          class="group flex items-start justify-between px-3 py-1.5 rounded border transition-all text-left w-full"
+                          [class]="picked ? 'border-gold/50 bg-gold/5 cursor-pointer'
+                            : full ? 'border-white/8 cursor-not-allowed'
+                                    : 'border-white/10 hover:border-white/30 hover:bg-white/5 cursor-pointer'"
+                          [disabled]="full"
+                          (click)="toggleTrait(grant, feat.index)"
+                          style="font-family: inherit;"
+                        >
+                          <div class="flex items-center gap-2">
+                            @if (picked) { <span class="text-gold text-xs">✓</span> }
+                            <span class="text-sm" [class]="picked ? 'text-parchment' : 'text-slate group-hover:text-parchment'">{{ feat.name }}</span>
+                          </div>
+                          <span class="text-xs text-coal ml-4 max-w-xs text-right flex-shrink-0">{{ feat.description }}</span>
+                        </button>
+                      }
+                    </div>
+                  </div>
+                }
+              </div>
+            }
+
           }
         }
       </div>
@@ -264,7 +457,7 @@
   <!-- Footer actions -->
   <div class="flex items-center justify-between pt-5 mt-5 border-t border-white/10 max-w-2xl">
     <button class="btn-ghost" (click)="back()">Cancel</button>
-    <button class="btn-primary" (click)="confirmRace()">
+    <button class="btn-primary" [disabled]="!raceComplete(race)" (click)="confirmRace()">
       {{ isCurrentSelected() ? 'Update Race' : 'Select This Race' }}
     </button>
   </div>

@@ -1,7 +1,7 @@
 {
   "index": "tough",
   "name": "Tough",
-  "description": "Your hit point maximum increases by 2 for each level you have. Whenever you gain a level, your hit point maximum increases by an additional 2.",
+  "description": "Your Hit Point maximum increases by twice your character level whenever you gain this feat and increases by 2 whenever you gain another level.",
   "category": "origin",
   "effects": [{ "type": "hp_bonus_per_level", "value": 2 }]
 }

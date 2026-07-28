@@ -1,0 +1,7 @@
+{
+  "index": "skilled",
+  "name": "Skilled",
+  "description": "Gain proficiency in any combination of three skills or tools of your choice.",
+  "category": "origin",
+  "repeatable": true
+}
