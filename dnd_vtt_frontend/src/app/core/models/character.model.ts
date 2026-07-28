@@ -75,7 +75,7 @@ export interface Character {
   level: number;         // total character level
   classes?: { name: string; level: number; subclass?: string; choices?: Record<string, string[]>; skills?: string[] }[]; // multiclass
   background: string;
-  background_choices?: Record<string, string[]>; // background trait picks, incl. ability score increase
+  background_choices?: Record<string, string[]>; // ability increase, customized skills, and tool picks
   alignment: string;
 
   // Starting-equipment picks — which of a class/background's `StartingEquipment` groups were

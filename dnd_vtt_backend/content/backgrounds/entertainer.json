@@ -1,50 +1,41 @@
 {
   "index": "entertainer",
   "name": "Entertainer",
-  "skill_proficiencies": [
-    "Acrobatics",
-    "Performance"
-  ],
-  "tool_proficiencies": [
-    "Disguise kit"
-  ],
+  "skill_proficiencies": ["Acrobatics", "Performance"],
+  "tool_proficiencies": ["Musical Instrument (one kind)"],
   "languages": "None",
-  "starting_equipment": [
-    "Musical instrument",
-    "Favor of an admirer (love letter, lock of hair, trinket)",
-    "Costume",
-    "Belt pouch with 15 gp"
-  ],
-  "feature": "By Popular Demand",
+  "starting_equipment": {
+    "fixed": [
+      { "key": "musical-instrument", "item": "musical-instrument" },
+      { "key": "costumes", "item": "costume", "quantity": 2 },
+      { "key": "mirror", "item": "mirror" },
+      { "key": "perfume", "item": "perfume" },
+      { "key": "clothes", "item": "travelers-clothes" }
+    ],
+    "groups": [],
+    "gold": 11,
+    "goldAlternative": 50
+  },
+  "feature": "Origin Feat: Musician",
   "grants": [
     {
       "type": "ability_choice",
       "key": "ability_scores",
       "name": "Ability Scores",
-      "description": "Increase one of the abilities below by 2 and a different one by 1, or increase all three by 1 each. No score can be increased above 20 this way.",
+      "description": "Increase one listed ability by 2 and a different one by 1, or increase all three by 1. No score can be increased above 20 this way.",
       "points": 3,
-      "abilities": [
-        "strength",
-        "dexterity",
-        "charisma"
-      ]
+      "abilities": ["strength", "dexterity", "charisma"]
     },
     {
       "type": "choice",
       "key": "musical_instrument",
       "name": "Tool Proficiency",
-      "description": "Choose one kind of musical instrument.",
+      "description": "Choose one kind of Musical Instrument.",
       "choose": 1,
       "options": [
-        { "name": "Bagpipes" },
-        { "name": "Drum" },
-        { "name": "Dulcimer" },
-        { "name": "Flute" },
-        { "name": "Horn" },
-        { "name": "Lute" },
-        { "name": "Lyre" },
-        { "name": "Pan Flute" },
-        { "name": "Shawm" },
+        { "name": "Bagpipes" }, { "name": "Drum" }, { "name": "Dulcimer" },
+        { "name": "Flute" }, { "name": "Horn" }, { "name": "Lute" },
+        { "name": "Lyre" }, { "name": "Pan Flute" }, { "name": "Shawm" },
         { "name": "Viol" }
       ]
     }

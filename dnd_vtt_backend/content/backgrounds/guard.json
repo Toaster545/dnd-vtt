@@ -1,20 +1,25 @@
 {
-  "index": "noble",
-  "name": "Noble",
-  "skill_proficiencies": ["History", "Persuasion"],
+  "index": "guard",
+  "name": "Guard",
+  "skill_proficiencies": ["Athletics", "Perception"],
   "tool_proficiencies": ["Gaming Set (one kind)"],
   "languages": "None",
   "starting_equipment": {
     "fixed": [
+      { "key": "spear", "item": "spear" },
+      { "key": "light-crossbow", "item": "light-crossbow" },
+      { "key": "bolts", "item": "crossbow-bolts" },
       { "key": "gaming-set", "item": "gaming-set" },
-      { "key": "fine-clothes", "item": "fine-clothes" },
-      { "key": "perfume", "item": "perfume" }
+      { "key": "hooded-lantern", "item": "hooded-lantern" },
+      { "key": "manacles", "item": "manacles" },
+      { "key": "quiver", "item": "quiver" },
+      { "key": "clothes", "item": "travelers-clothes" }
     ],
     "groups": [],
-    "gold": 29,
+    "gold": 12,
     "goldAlternative": 50
   },
-  "feature": "Origin Feat: Skilled",
+  "feature": "Origin Feat: Alert",
   "grants": [
     {
       "type": "ability_choice",
@@ -22,7 +27,7 @@
       "name": "Ability Scores",
       "description": "Increase one listed ability by 2 and a different one by 1, or increase all three by 1. No score can be increased above 20 this way.",
       "points": 3,
-      "abilities": ["strength", "intelligence", "charisma"]
+      "abilities": ["strength", "intelligence", "wisdom"]
     },
     {
       "type": "choice",

@@ -1,28 +1,28 @@
 {
-  "index": "sage",
-  "name": "Sage",
-  "skill_proficiencies": ["Arcana", "History"],
+  "index": "scribe",
+  "name": "Scribe",
+  "skill_proficiencies": ["Investigation", "Perception"],
   "tool_proficiencies": ["Calligrapher's Supplies"],
   "languages": "None",
   "starting_equipment": {
     "fixed": [
-      { "key": "quarterstaff", "item": "quarterstaff" },
       { "key": "calligraphers-supplies", "item": "calligraphers-supplies" },
-      { "key": "history-book", "item": "book" },
-      { "key": "parchment", "item": "parchment", "quantity": 8 },
-      { "key": "robe", "item": "robe" }
+      { "key": "fine-clothes", "item": "fine-clothes" },
+      { "key": "lamp", "item": "lamp" },
+      { "key": "oil", "item": "oil", "quantity": 3 },
+      { "key": "parchment", "item": "parchment", "quantity": 12 }
     ],
     "groups": [],
-    "gold": 8,
+    "gold": 23,
     "goldAlternative": 50
   },
-  "feature": "Origin Feat: Magic Initiate (Wizard)",
+  "feature": "Origin Feat: Skilled",
   "grants": [{
     "type": "ability_choice",
     "key": "ability_scores",
     "name": "Ability Scores",
     "description": "Increase one listed ability by 2 and a different one by 1, or increase all three by 1. No score can be increased above 20 this way.",
     "points": 3,
-    "abilities": ["constitution", "intelligence", "wisdom"]
+    "abilities": ["dexterity", "intelligence", "wisdom"]
   }]
 }

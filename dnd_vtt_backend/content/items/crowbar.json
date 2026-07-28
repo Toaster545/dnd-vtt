@@ -1,0 +1,5 @@
+{
+  "index": "crowbar", "name": "Crowbar", "type": "gear", "category": "Adventuring Gear",
+  "damage": null, "damage_type": null, "properties": [], "weight": 5, "cost": "2 gp",
+  "description": "A sturdy metal bar that provides leverage when prying objects apart."
+}

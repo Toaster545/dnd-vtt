@@ -5,6 +5,7 @@ import { Character, Ability, ABILITIES, ABILITY_SHORT, SKILLS } from '../../core
 import { ContentService, DndClass, DndRace, DndBackground, DndFeat, DndItem } from '../../core/services/content.service';
 import { CharacterStatsService } from '../../core/services/character-stats.service';
 import { ClassChoiceSource } from '../../core/utils/character-effects';
+import { resolveBackgroundSkills } from '../../core/utils/background-skills';
 
 const ORDINALS = ['','1st','2nd','3rd','4th','5th','6th','7th','8th','9th'];
 
@@ -48,6 +49,10 @@ export class CharacterDisplayComponent implements OnInit {
     this.statsService.compute(
       this.char, this.classData(), this.raceData(), this.feats(), this.classesForFeats(), this.items(),
     ),
+  );
+
+  backgroundSkills = computed(() =>
+    resolveBackgroundSkills(this.bgData(), this.char.background_choices),
   );
 
   async ngOnInit() {
