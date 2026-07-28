@@ -3,6 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { UpperCasePipe } from '@angular/common';
 import { DndClass, TraitGrant, TraitOption, DndItem, DndFeat } from '../../../../../../../core/services/content.service';
 import { Ability, ABILITIES } from '../../../../../../../core/models/character.model';
+import { resolveProgressiveChoiceLimit } from '../../../../../../../core/utils/progressive-choice';
 
 export interface ClassEntry {
   cls: DndClass;
@@ -250,9 +251,7 @@ export class ClassStepComponent implements OnInit {
   // Most choice grants have a fixed size. Progressive pools use the greatest configured total
   // at or below the current class level (falling back to the ordinary `choose` value).
   choiceLimit(grant: Extract<TraitGrant, { type: 'choice' }>): number {
-    if (!grant.chooseByLevel) return grant.choose;
-    return Object.entries(grant.chooseByLevel).reduce((limit, [level, count]) =>
-      Number(level) <= this.effectiveLevel() ? count : limit, grant.choose);
+    return resolveProgressiveChoiceLimit(grant.choose, grant.chooseByLevel, this.effectiveLevel());
   }
 
   availableTraitOptions(grant: Extract<TraitGrant, { type: 'choice' }>): TraitOption[] {
