@@ -139,10 +139,20 @@ export class CharacterPlaySheetComponent {
 
   spellcastingClass = computed(() => this.resolvedClasses().find(rc => !!rc.data.spellcasting_ability) ?? null);
 
+  currentPactMagic = computed(() => {
+    const rc = this.spellcastingClass();
+    if (!rc) return null;
+    return rc.data.levels.find(l => l.level === rc.level)?.pact_magic ?? null;
+  });
+
   currentSpellSlots = computed<SpellSlots>(() => {
     const rc = this.spellcastingClass();
     if (!rc) return {};
-    return rc.data.levels.find(l => l.level === rc.level)?.spell_slots ?? {};
+    const level = rc.data.levels.find(l => l.level === rc.level);
+    if (level?.spell_slots) return level.spell_slots;
+    return level?.pact_magic
+      ? { [String(level.pact_magic.slot_level)]: level.pact_magic.slots } as SpellSlots
+      : {};
   });
 
   spellSlotLevels = computed(() => Object.entries(this.currentSpellSlots()).filter(([, n]) => (n ?? 0) > 0));
@@ -336,7 +346,12 @@ export class CharacterPlaySheetComponent {
   rest(type: 'short_rest' | 'long_rest') {
     const char = this.localChar();
     if (!char) return;
-    this.persist({ ...char, resource_uses: this.actionsService.rest(char.resource_uses ?? {}, this.actions(), type) });
+    const restoresSlots = type === 'long_rest' || (type === 'short_rest' && !!this.currentPactMagic());
+    this.persist({
+      ...char,
+      resource_uses: this.actionsService.rest(char.resource_uses ?? {}, this.actions(), type),
+      spell_slots_used: restoresSlots ? {} : char.spell_slots_used,
+    });
   }
 
   // Inventory

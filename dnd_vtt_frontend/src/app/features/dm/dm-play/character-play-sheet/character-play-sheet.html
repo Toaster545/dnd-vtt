@@ -413,7 +413,9 @@
             } @else {
               @if (spellSlotLevels().length) {
                 <div>
-                  <h4 class="font-brand text-gold text-xs uppercase tracking-widest m-0 pb-1.5 mb-2 border-b border-gold/25">Spell Slots</h4>
+                  <h4 class="font-brand text-gold text-xs uppercase tracking-widest m-0 pb-1.5 mb-2 border-b border-gold/25">
+                    {{ currentPactMagic() ? 'Pact Magic Slots (Short Rest)' : 'Spell Slots' }}
+                  </h4>
                   <div class="flex flex-wrap gap-2">
                     @for (slot of spellSlotLevels(); track slot[0]) {
                       @let used = char.spell_slots_used?.[slot[0]] ?? 0;

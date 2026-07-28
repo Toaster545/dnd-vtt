@@ -1,0 +1,12 @@
+{
+  "index": "arcane-focus-orb",
+  "name": "Arcane Focus (Orb)",
+  "type": "gear",
+  "category": "Arcane Focus",
+  "damage": null,
+  "damage_type": null,
+  "properties": [],
+  "weight": 3,
+  "cost": "20 gp",
+  "description": "A crystal orb used by an arcane spellcaster as a spellcasting focus."
+}
