@@ -7,6 +7,11 @@
       <button class="btn-ghost text-sm" (click)="closeCharacterView()">
         <mat-icon class="text-base">arrow_back</mat-icon> {{ encounter.name }}
       </button>
+      @if (viewingCharacterToken(); as tok) {
+        <input type="color" class="h-7 w-7 rounded cursor-pointer border border-white/10 bg-transparent ml-auto flex-shrink-0"
+          [ngModel]="tok.color" (ngModelChange)="setCharacterTokenColor($event)"
+          name="characterTokenColor" matTooltip="Token color" />
+      }
     </div>
     <app-character-play-sheet [character]="char" (saved)="onCharacterSaved($event)" class="block flex-1 min-h-0" />
   } @else {
@@ -48,12 +53,47 @@
       <div class="flex flex-1 overflow-hidden">
         <!-- Roster sidebar (or monster token detail, swapped in place) -->
         <aside [style.width.px]="rosterWidth()" class="border-r border-white/10 overflow-y-auto flex-shrink-0 p-4">
-          @if (viewingMonsterToken(); as sel) {
+          @if (viewingCustomToken(); as tok) {
+            <button class="btn-ghost text-sm mb-3" (click)="closeCustomTokenView()">
+              <mat-icon class="text-base">arrow_back</mat-icon> Roster
+            </button>
+
+            <div class="flex flex-col gap-3">
+              <div class="field">
+                <label class="field-label">Name</label>
+                <input class="field-input" maxlength="20"
+                  [ngModel]="tok.label" (ngModelChange)="setCustomTokenLabel($event)" name="customTokenLabel" />
+              </div>
+              <div class="flex items-center gap-3">
+                <span class="field-label">Color</span>
+                <input type="color" class="h-8 w-14 rounded cursor-pointer border border-white/10 bg-transparent"
+                  [ngModel]="tok.color" (ngModelChange)="setCustomTokenColor($event)" name="customTokenColor" />
+              </div>
+              <div class="field">
+                <label class="field-label">Size (cells)</label>
+                <select class="field-input"
+                  [ngModel]="tok.size" (ngModelChange)="setCustomTokenSize($event)" name="customTokenSize">
+                  <option [ngValue]="1">Small / Medium (1)</option>
+                  <option [ngValue]="2">Large (2)</option>
+                  <option [ngValue]="3">Huge (3)</option>
+                  <option [ngValue]="4">Gargantuan (4)</option>
+                </select>
+              </div>
+              <button class="btn-outline text-xs px-2 py-1 text-danger" (click)="removeCustomToken()">
+                Remove Token
+              </button>
+            </div>
+          } @else if (viewingMonsterToken(); as sel) {
             <button class="btn-ghost text-sm mb-3" (click)="closeMonsterTokenView()">
               <mat-icon class="text-base">arrow_back</mat-icon> Roster
             </button>
 
-            <h3 class="font-brand text-lg text-parchment m-0">{{ sel.monster.name }}</h3>
+            <div class="flex items-center gap-2 mb-1">
+              <h3 class="font-brand text-lg text-parchment m-0 flex-1">{{ sel.monster.name }}</h3>
+              <input type="color" class="h-7 w-7 rounded cursor-pointer border border-white/10 bg-transparent flex-shrink-0"
+                [ngModel]="sel.token.color" (ngModelChange)="setMonsterTokenColor($event)"
+                name="monsterTokenColor" matTooltip="Token color" />
+            </div>
             <p class="text-coal text-xs mb-3">
               {{ sel.monster.size }} {{ sel.monster.type }} · CR {{ sel.monster.challenge_rating }}
             </p>
@@ -104,6 +144,17 @@
               }
             </div>
           } @else {
+            <button type="button"
+              class="w-full flex items-center gap-2 px-3 py-2 rounded border text-left text-sm cursor-pointer mb-4"
+              [class]="isArmedCustomToken() ? 'border-gold/50 bg-gold/5' : 'border-white/10 hover:border-white/30'"
+              (click)="toggleArmCustomToken()"
+              matTooltip="Arm, then click the map to drop a blank token you can name and color afterward"
+              style="font-family: inherit;"
+            >
+              <mat-icon class="text-base text-slate">add_circle</mat-icon>
+              <span class="text-parchment font-medium">Add Empty Token</span>
+            </button>
+
             <h3 class="text-xs font-semibold text-slate uppercase tracking-wider mb-2">Players</h3>
             @if (presentPlayers().length === 0) {
               <p class="text-xs text-slate mb-4">No players have joined yet.</p>

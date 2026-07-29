@@ -1,5 +1,16 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Put,
+  UseGuards,
+} from '@nestjs/common';
 import { ContentService } from './content.service';
+import { CreateMonsterDto } from './dto/create-monster.dto';
+import { JwtGuard } from '../auth/jwt.guard';
+import { AdminGuard } from '../auth/admin.guard';
 
 @Controller('content')
 export class ContentController {
@@ -46,5 +57,15 @@ export class ContentController {
   }
   @Get('monsters/:index') getMonster(@Param('index') i: string) {
     return this.content.getMonster(i);
+  }
+  @Post('monsters')
+  @UseGuards(JwtGuard, AdminGuard)
+  createMonster(@Body() dto: CreateMonsterDto) {
+    return this.content.saveMonster(dto);
+  }
+  @Put('monsters/:index')
+  @UseGuards(JwtGuard, AdminGuard)
+  updateMonster(@Param('index') index: string, @Body() dto: CreateMonsterDto) {
+    return this.content.updateMonster(index, dto);
   }
 }

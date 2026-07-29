@@ -239,6 +239,9 @@ export interface DndMonster {
   size: string;
   type: string;
   alignment: string;
+  // Default token color for this monster type, set in the monster wizard — a per-encounter
+  // override in dm-encounter-play.ts still takes priority when one's been chosen live.
+  color?: string;
   armor_class: number;
   armor_class_desc?: string;
   hit_points: number;
@@ -279,6 +282,14 @@ export class ContentService {
     const data = await res.json() as T;
     this.cache.set(path, data);
     return data;
+  }
+
+  // This cache never expires on its own — anything that writes content outside this service
+  // (currently just MonsterService's create/update) has to call this afterward, or callers keep
+  // seeing pre-edit data for the rest of the SPA session.
+  invalidateMonster(index: string) {
+    this.cache.delete('monsters');
+    this.cache.delete(`monsters/${index}`);
   }
 
   getClasses()                      { return this.get<DndClass[]>('classes'); }

@@ -544,6 +544,12 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
       });
       return;
     }
+    // Embedded views (encounter play, player session) have no `newToken` form on screen — an
+    // encounter's roster sidebar arms a PlacingEntity (including the "Add Empty Token" tool)
+    // instead, so an unarmed click there should be a no-op rather than silently dropping a
+    // default red "Token". Only the standalone map editor, where the Add Token sidebar form is
+    // visible and pre-fillable, should place from `newToken` on a bare click.
+    if (this.embedded()) return;
     await this.mapService.upsertToken({
       map_id: this.mapId,
       label: this.newToken.label,

@@ -1,0 +1,252 @@
+<div class="flex flex-col flex-1 min-h-0">
+  <div class="flex items-center gap-3 flex-shrink-0 px-6 py-4 border-b border-white/10 bg-surface sticky top-0 z-10">
+    <h2 class="font-brand text-lg text-parchment m-0 flex-1">{{ isEdit() ? 'Edit Monster' : 'New Monster' }}</h2>
+    <button class="btn-ghost text-sm" type="button" (click)="cancelled.emit()">Cancel</button>
+    <button class="btn-primary text-sm" type="button" [disabled]="!canSave() || saving()" (click)="save()">
+      @if (saving()) { <span class="spinner-sm"></span> } @else { <mat-icon class="text-base">save</mat-icon> }
+      Save Monster
+    </button>
+  </div>
+
+  @if (error()) {
+    <p class="field-error px-6 pt-3 m-0">{{ error() }}</p>
+  }
+
+  <div class="flex-1 overflow-y-auto p-6">
+
+    <div class="grid grid-cols-1 xl:grid-cols-2 gap-5 items-start">
+
+      <div class="card card-body">
+        <h3 class="text-sm font-semibold text-gold uppercase tracking-wide mb-3">Identity</h3>
+        <div class="grid grid-cols-3 gap-3">
+          <div class="field col-span-3">
+            <label class="field-label">Name</label>
+            <input class="field-input" [ngModel]="name()" (ngModelChange)="onNameChange($event)" placeholder="e.g. Young Red Dragon" name="name" />
+          </div>
+          <div class="field col-span-3">
+            <label class="field-label">Index (filename)</label>
+            <input class="field-input" [ngModel]="index()" (ngModelChange)="onIndexChange($event)"
+              [readonly]="isEdit()" [class.opacity-60]="isEdit()" placeholder="young-red-dragon" name="index" />
+          </div>
+          <div class="field">
+            <label class="field-label">Size</label>
+            <select class="field-input" [ngModel]="size()" (ngModelChange)="size.set($event)" name="size">
+              @for (s of sizes; track s) { <option [value]="s">{{ s }}</option> }
+            </select>
+          </div>
+          <div class="field">
+            <label class="field-label">Type</label>
+            <input class="field-input" [ngModel]="type()" (ngModelChange)="type.set($event)" placeholder="e.g. dragon" name="type" />
+          </div>
+          <div class="field">
+            <label class="field-label">Token Color</label>
+            <input type="color" class="field-input h-9 px-1 cursor-pointer" [ngModel]="color()" (ngModelChange)="color.set($event)" name="color" />
+          </div>
+          <div class="field col-span-3">
+            <label class="field-label">Alignment</label>
+            <input class="field-input" [ngModel]="alignment()" (ngModelChange)="alignment.set($event)" placeholder="e.g. chaotic evil" name="alignment" />
+          </div>
+        </div>
+      </div>
+
+      <div class="card card-body">
+        <h3 class="text-sm font-semibold text-gold uppercase tracking-wide mb-3">Defense &amp; Hit Points</h3>
+        <div class="grid grid-cols-2 gap-3">
+          <div class="field">
+            <label class="field-label">Armor Class</label>
+            <input class="field-input" type="number" [ngModel]="armorClass()" (ngModelChange)="armorClass.set(+$event)" name="ac" />
+          </div>
+          <div class="field">
+            <label class="field-label">AC Description</label>
+            <input class="field-input" [ngModel]="armorClassDesc()" (ngModelChange)="armorClassDesc.set($event)" placeholder="e.g. natural armor" name="acDesc" />
+          </div>
+          <div class="field">
+            <label class="field-label">Hit Points</label>
+            <input class="field-input" type="number" [ngModel]="hitPoints()" (ngModelChange)="hitPoints.set(+$event)" name="hp" />
+          </div>
+          <div class="field">
+            <label class="field-label">Hit Dice</label>
+            <input class="field-input" [ngModel]="hitDice()" (ngModelChange)="hitDice.set($event)" placeholder="e.g. 2d8 + 2" name="hitDice" />
+          </div>
+        </div>
+      </div>
+
+      <div class="card card-body">
+        <h3 class="text-sm font-semibold text-gold uppercase tracking-wide mb-3">Speed (ft.)</h3>
+        <div class="grid grid-cols-5 gap-3">
+          <div class="field">
+            <label class="field-label">Walk</label>
+            <input class="field-input" type="number" [ngModel]="speedWalk()" (ngModelChange)="speedWalk.set($event === '' ? null : +$event)" name="speedWalk" />
+          </div>
+          <div class="field">
+            <label class="field-label">Fly</label>
+            <input class="field-input" type="number" [ngModel]="speedFly()" (ngModelChange)="speedFly.set($event === '' ? null : +$event)" name="speedFly" />
+          </div>
+          <div class="field">
+            <label class="field-label">Swim</label>
+            <input class="field-input" type="number" [ngModel]="speedSwim()" (ngModelChange)="speedSwim.set($event === '' ? null : +$event)" name="speedSwim" />
+          </div>
+          <div class="field">
+            <label class="field-label">Climb</label>
+            <input class="field-input" type="number" [ngModel]="speedClimb()" (ngModelChange)="speedClimb.set($event === '' ? null : +$event)" name="speedClimb" />
+          </div>
+          <div class="field">
+            <label class="field-label">Burrow</label>
+            <input class="field-input" type="number" [ngModel]="speedBurrow()" (ngModelChange)="speedBurrow.set($event === '' ? null : +$event)" name="speedBurrow" />
+          </div>
+        </div>
+      </div>
+
+      <div class="card card-body">
+        <h3 class="text-sm font-semibold text-gold uppercase tracking-wide mb-3">Ability Scores</h3>
+        <div class="grid grid-cols-6 gap-3">
+          <div class="field">
+            <label class="field-label">STR</label>
+            <input class="field-input" type="number" [ngModel]="strength()" (ngModelChange)="strength.set(+$event)" name="str" />
+          </div>
+          <div class="field">
+            <label class="field-label">DEX</label>
+            <input class="field-input" type="number" [ngModel]="dexterity()" (ngModelChange)="dexterity.set(+$event)" name="dex" />
+          </div>
+          <div class="field">
+            <label class="field-label">CON</label>
+            <input class="field-input" type="number" [ngModel]="constitution()" (ngModelChange)="constitution.set(+$event)" name="con" />
+          </div>
+          <div class="field">
+            <label class="field-label">INT</label>
+            <input class="field-input" type="number" [ngModel]="intelligence()" (ngModelChange)="intelligence.set(+$event)" name="int" />
+          </div>
+          <div class="field">
+            <label class="field-label">WIS</label>
+            <input class="field-input" type="number" [ngModel]="wisdom()" (ngModelChange)="wisdom.set(+$event)" name="wis" />
+          </div>
+          <div class="field">
+            <label class="field-label">CHA</label>
+            <input class="field-input" type="number" [ngModel]="charisma()" (ngModelChange)="charisma.set(+$event)" name="cha" />
+          </div>
+        </div>
+      </div>
+
+      <div class="card card-body">
+        <h3 class="text-sm font-semibold text-gold uppercase tracking-wide mb-3">Saving Throws &amp; Skills</h3>
+        <div class="grid grid-cols-2 gap-6">
+          <div>
+            <div class="flex items-center mb-2 gap-2">
+              <span class="field-label flex-1">Saving Throws</span>
+              <button class="btn-icon" type="button" (click)="addSavingThrow()" title="Add saving throw"><mat-icon class="text-base">add</mat-icon></button>
+            </div>
+            <div class="flex flex-col gap-2">
+              @for (row of savingThrows(); track $index) {
+                <div class="flex items-center gap-2">
+                  <input class="field-input flex-1" placeholder="Dexterity" [ngModel]="row.ability" (ngModelChange)="updateSavingThrow($index, { ability: $event })" name="savingThrowAbility{{ $index }}" />
+                  <input class="field-input w-16" type="number" [ngModel]="row.bonus" (ngModelChange)="updateSavingThrow($index, { bonus: +$event })" name="savingThrowBonus{{ $index }}" />
+                  <button class="btn-icon" type="button" (click)="removeSavingThrow($index)" title="Remove"><mat-icon class="text-base">close</mat-icon></button>
+                </div>
+              }
+            </div>
+          </div>
+          <div>
+            <div class="flex items-center mb-2 gap-2">
+              <span class="field-label flex-1">Skills</span>
+              <button class="btn-icon" type="button" (click)="addSkill()" title="Add skill"><mat-icon class="text-base">add</mat-icon></button>
+            </div>
+            <div class="flex flex-col gap-2">
+              @for (row of skills(); track $index) {
+                <div class="flex items-center gap-2">
+                  <input class="field-input flex-1" placeholder="Perception" [ngModel]="row.skill" (ngModelChange)="updateSkill($index, { skill: $event })" name="skillName{{ $index }}" />
+                  <input class="field-input w-16" type="number" [ngModel]="row.bonus" (ngModelChange)="updateSkill($index, { bonus: +$event })" name="skillBonus{{ $index }}" />
+                  <button class="btn-icon" type="button" (click)="removeSkill($index)" title="Remove"><mat-icon class="text-base">close</mat-icon></button>
+                </div>
+              }
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card card-body">
+        <h3 class="text-sm font-semibold text-gold uppercase tracking-wide mb-3">Damage &amp; Conditions</h3>
+        <p class="text-slate text-xs mb-3 mt-0">Comma-separated lists.</p>
+        <div class="grid grid-cols-2 gap-3">
+          <div class="field">
+            <label class="field-label">Vulnerabilities</label>
+            <input class="field-input" [ngModel]="damageVulnerabilities()" (ngModelChange)="damageVulnerabilities.set($event)" placeholder="fire" name="vuln" />
+          </div>
+          <div class="field">
+            <label class="field-label">Resistances</label>
+            <input class="field-input" [ngModel]="damageResistances()" (ngModelChange)="damageResistances.set($event)" placeholder="cold, bludgeoning" name="resist" />
+          </div>
+          <div class="field">
+            <label class="field-label">Immunities</label>
+            <input class="field-input" [ngModel]="damageImmunities()" (ngModelChange)="damageImmunities.set($event)" placeholder="poison" name="dmgImmune" />
+          </div>
+          <div class="field">
+            <label class="field-label">Condition Immunities</label>
+            <input class="field-input" [ngModel]="conditionImmunities()" (ngModelChange)="conditionImmunities.set($event)" placeholder="charmed, frightened" name="condImmune" />
+          </div>
+        </div>
+      </div>
+
+      <div class="card card-body">
+        <h3 class="text-sm font-semibold text-gold uppercase tracking-wide mb-3">Senses &amp; Languages</h3>
+        <div class="grid grid-cols-3 gap-3">
+          <div class="field">
+            <label class="field-label">Darkvision</label>
+            <input class="field-input" type="number" [ngModel]="darkvision()" (ngModelChange)="darkvision.set($event === '' ? null : +$event)" name="darkvision" />
+          </div>
+          <div class="field">
+            <label class="field-label">Blindsight</label>
+            <input class="field-input" type="number" [ngModel]="blindsight()" (ngModelChange)="blindsight.set($event === '' ? null : +$event)" name="blindsight" />
+          </div>
+          <div class="field">
+            <label class="field-label">Truesight</label>
+            <input class="field-input" type="number" [ngModel]="truesight()" (ngModelChange)="truesight.set($event === '' ? null : +$event)" name="truesight" />
+          </div>
+          <div class="field">
+            <label class="field-label">Tremorsense</label>
+            <input class="field-input" type="number" [ngModel]="tremorsense()" (ngModelChange)="tremorsense.set($event === '' ? null : +$event)" name="tremorsense" />
+          </div>
+          <div class="field">
+            <label class="field-label">Passive Perception</label>
+            <input class="field-input" type="number" [ngModel]="passivePerception()" (ngModelChange)="passivePerception.set(+$event)" name="passivePerception" />
+          </div>
+          <div class="field col-span-3">
+            <label class="field-label">Languages</label>
+            <input class="field-input" [ngModel]="languages()" (ngModelChange)="languages.set($event)" placeholder="Common, Draconic" name="languages" />
+          </div>
+        </div>
+      </div>
+
+      <div class="card card-body">
+        <h3 class="text-sm font-semibold text-gold uppercase tracking-wide mb-3">Challenge</h3>
+        <div class="grid grid-cols-2 gap-3">
+          <div class="field">
+            <label class="field-label">Challenge Rating</label>
+            <input class="field-input" [ngModel]="challengeRating()" (ngModelChange)="challengeRating.set($event)" placeholder="e.g. 1/4 or 6" name="cr" />
+          </div>
+          <div class="field">
+            <label class="field-label">XP</label>
+            <input class="field-input" type="number" [ngModel]="xp()" (ngModelChange)="xp.set(+$event)" name="xp" />
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="grid grid-cols-1 xl:grid-cols-2 gap-5 items-start mt-5">
+      <app-monster-entry-list title="Traits" placeholder="e.g. Keen Smell"
+        [entries]="traits()" (entriesChange)="traits.set($event)" />
+      <app-monster-entry-list title="Actions" placeholder="e.g. Bite" [required]="true"
+        [entries]="actions()" (entriesChange)="actions.set($event)" />
+      <app-monster-entry-list title="Reactions" placeholder="e.g. Parry"
+        [entries]="reactions()" (entriesChange)="reactions.set($event)" />
+      <app-monster-entry-list title="Legendary Actions" placeholder="e.g. Tail Attack"
+        [entries]="legendaryActions()" (entriesChange)="legendaryActions.set($event)" />
+    </div>
+
+    <div class="card card-body mt-5">
+      <h3 class="text-sm font-semibold text-gold uppercase tracking-wide mb-3">Description</h3>
+      <textarea class="field-input" rows="3" [ngModel]="description()" (ngModelChange)="description.set($event)" placeholder="Flavor text" name="description"></textarea>
+    </div>
+
+  </div>
+</div>

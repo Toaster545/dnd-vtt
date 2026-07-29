@@ -114,7 +114,7 @@ export class PlayerCampaignSessionComponent implements OnInit, OnDestroy {
   }
 
   private async loadSession() {
-    this.leaveEncounter();
+    this.resetEncounterState();
     this.loading.set(true);
     const [hub, encounters, session] = await Promise.all([
       this.campaignService.getById(this.campaignId),
@@ -185,7 +185,16 @@ export class PlayerCampaignSessionComponent implements OnInit, OnDestroy {
     }
   }
 
+  // Explicit "Leave" action — also forgets the rejoin target so a later refresh doesn't pull the
+  // player back in.
   leaveEncounter() {
+    this.resetEncounterState();
+    this.clearStoredRejoin();
+  }
+
+  // Tears down local/live state without touching the stored rejoin target — used at the top of
+  // loadSession(), which needs to read that target right after to decide whether to auto-rejoin.
+  private resetEncounterState() {
     const encounter = this.activeEncounter();
     if (encounter?.id) this.encounterService.leavePresence(encounter.id);
     this.presenceSub?.unsubscribe();
@@ -194,7 +203,6 @@ export class PlayerCampaignSessionComponent implements OnInit, OnDestroy {
     this.currentTurnToken.set(null);
     this.activeEncounter.set(null);
     this.activeCharacter.set(null);
-    this.clearStoredRejoin();
   }
 
   onCharacterSaved(character: Character) {
