@@ -13,7 +13,7 @@
     - [ ] customize campaign
     - [ ] 
 - [ ] Encounters
-    - [ ] Add Turns
+    - [x] Add Turns
     - [ ] Measuring and player movement
     - [ ] fog of war
     - [ ] 
