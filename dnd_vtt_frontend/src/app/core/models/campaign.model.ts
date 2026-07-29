@@ -88,10 +88,12 @@ export interface MapFog {
   hidden_cells: string[];
 }
 
-// A Roll20-style ruler/cone/sphere measurement, drawn while dragging on the map and broadcast live
-// to everyone else viewing it (see BattleMapService.watchMeasurements) — never persisted. Grid-cell
-// coordinates (fractional, snapped to intersections), not pixels, so it renders correctly for
-// every viewer regardless of their own canvas scale.
+// A Roll20-style ruler/cone/sphere measurement, drawn while dragging on the map. Only the DM's
+// measurements are broadcast live to everyone else viewing it (see BattleMapService.watchMeasurements /
+// BattleMapComponent's auth.isAdmin() gate on sendMeasure) — a player's own measurement is rendered
+// locally only, never sent to other viewers. Never persisted. Grid-cell coordinates (fractional,
+// snapped to intersections), not pixels, so it renders correctly for every viewer regardless of
+// their own canvas scale.
 export type MeasureShape = 'line' | 'cone' | 'sphere';
 export interface Measurement {
   shape: MeasureShape;

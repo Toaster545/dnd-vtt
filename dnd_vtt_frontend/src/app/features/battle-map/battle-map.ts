@@ -379,10 +379,15 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
       this.renderMeasurements();
 
       // Throttled so a raw mousemove stream doesn't flood the socket.
-      const now = Date.now();
-      if (now - this.lastMeasureBroadcast > 50) {
-        this.lastMeasureBroadcast = now;
-        this.mapService.sendMeasure(this.mapId, this.measurementTool.current);
+      // Only the DM's measurements go out over the wire — everyone should see those.
+      // A player's own measurement stays local-only (drawn above via renderMeasurements()),
+      // so nobody else, including the DM, sees another player's ruler.
+      if (this.auth.isAdmin()) {
+        const now = Date.now();
+        if (now - this.lastMeasureBroadcast > 50) {
+          this.lastMeasureBroadcast = now;
+          this.mapService.sendMeasure(this.mapId, this.measurementTool.current);
+        }
       }
     });
 
@@ -400,7 +405,9 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
       if (!this.measurementTool.current) return;
       this.measurementTool.end();
       this.renderMeasurements();
-      this.mapService.sendMeasure(this.mapId, null);
+      if (this.auth.isAdmin()) {
+        this.mapService.sendMeasure(this.mapId, null);
+      }
     });
 
     this.tokenSub = this.mapService.watchTokens(this.mapId).subscribe(tokens => {
