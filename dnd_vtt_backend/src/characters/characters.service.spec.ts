@@ -139,11 +139,12 @@ describe('CharactersService', () => {
         notes: 'player tried to overwrite notes',
       });
 
+      const blob = updated as unknown as Record<string, unknown>;
       // Whitelisted field (current_hp) goes through...
-      expect(updated.current_hp).toBe(5);
+      expect(blob.current_hp).toBe(5);
       // ...but name/notes are outside PLAYER_EDITABLE_FIELDS and are left untouched.
       expect(updated.name).toBe('Aria');
-      expect(updated.notes).toBe('secret DM notes');
+      expect(blob.notes).toBe('secret DM notes');
     });
 
     it('lets the player fully rewrite the copy once the DM unlocks edit access', async () => {

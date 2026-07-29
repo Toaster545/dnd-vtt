@@ -143,10 +143,6 @@ export class CampaignsController {
     @Body() dto: SetRaceClassVisibilityDto,
     @CurrentUser() user: RequestUser,
   ) {
-    return this.campaigns.setOwnRaceClassVisibility(
-      id,
-      user.id,
-      dto.visible,
-    );
+    return this.campaigns.setOwnRaceClassVisibility(id, user.id, dto.visible);
   }
 }

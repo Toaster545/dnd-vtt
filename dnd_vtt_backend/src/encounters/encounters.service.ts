@@ -254,7 +254,7 @@ export class EncountersService {
 
     const currentId = encounter.current_turn_token_id as string | null;
     const idx = currentId ? order.indexOf(currentId) : -1;
-    let round = encounter.round_number as number;
+    let round = encounter.round_number;
     let nextIdx: number;
     if (idx === -1) {
       // Not started yet, or the previously-active token is no longer on the map.
@@ -280,7 +280,7 @@ export class EncountersService {
 
     const currentId = encounter.current_turn_token_id as string | null;
     const idx = currentId ? order.indexOf(currentId) : -1;
-    let round = encounter.round_number as number;
+    let round = encounter.round_number;
     let prevIdx: number;
     if (idx <= 0) {
       prevIdx = order.length - 1;
@@ -305,7 +305,7 @@ export class EncountersService {
     const updated = await this.findOne(id, dmId);
     this.presence.broadcastTurnState(id, {
       current_turn_token_id: updated.current_turn_token_id as string | null,
-      round_number: updated.round_number as number,
+      round_number: updated.round_number,
     });
     return updated;
   }

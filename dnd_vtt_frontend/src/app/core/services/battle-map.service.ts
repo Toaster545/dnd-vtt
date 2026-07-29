@@ -83,7 +83,7 @@ export class BattleMapService {
 
   // WebSocket subscription for other viewers' live measurements, keyed by their socket id so
   // several people can measure at once without clobbering each other.
-  watchMeasurements(mapId: string): Observable<{ senderId: string; measurement: Measurement | null }> {
+  watchMeasurements(): Observable<{ senderId: string; measurement: Measurement | null }> {
     return new Observable(observer => {
       const socket = this.socketService.socket;
       const handleUpdate = (event: { senderId: string; measurement: Measurement | null }) => observer.next(event);

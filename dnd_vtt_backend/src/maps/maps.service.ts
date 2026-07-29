@@ -50,10 +50,7 @@ export class MapsService {
     return this.findOne(id);
   }
 
-  async uploadImage(
-    file: Express.Multer.File,
-    campaignId: string,
-  ): Promise<string> {
+  uploadImage(file: Express.Multer.File, campaignId: string): Promise<string> {
     const uploadDir = join(process.cwd(), 'uploads', 'maps', campaignId);
     if (!existsSync(uploadDir)) mkdirSync(uploadDir, { recursive: true });
 
@@ -67,10 +64,10 @@ export class MapsService {
     // Tunnel). A baked-in absolute host would only ever be right for one of those, and baking in
     // `http://` specifically breaks entirely once the tunnel serves the app over https (browsers
     // block that as mixed content).
-    return `/uploads/maps/${campaignId}/${filename}`;
+    return Promise.resolve(`/uploads/maps/${campaignId}/${filename}`);
   }
 
-  async getTokens(mapId: string) {
+  async getTokens(mapId: string): Promise<Record<string, unknown>[]> {
     const result = await this.db.execute(
       'SELECT * FROM map_tokens WHERE map_id = ?',
       [mapId],
@@ -122,7 +119,7 @@ export class MapsService {
     );
     const tokens = await this.getTokens(mapId);
     this.gateway.broadcastTokens(mapId, tokens);
-    return tokens.find((t: any) => t.id === id);
+    return tokens.find((t) => t.id === id);
   }
 
   async deleteToken(tokenId: string, mapId: string) {
@@ -151,7 +148,7 @@ export class MapsService {
     ]);
     const tokens = await this.getTokens(mapId);
     this.gateway.broadcastTokens(mapId, tokens);
-    return tokens.find((t: any) => t.id === tokenId);
+    return tokens.find((t) => t.id === tokenId);
   }
 
   // `hidden_cells` empty means every cell is visible — a freshly-enabled map starts fully
@@ -165,10 +162,7 @@ export class MapsService {
     if (!row) return { enabled: false, hidden_cells: [] as string[] };
     return {
       enabled: !!row.enabled,
-      hidden_cells: this.db.parseJson<string[]>(
-        row.hidden_cells as string,
-        [],
-      ),
+      hidden_cells: this.db.parseJson<string[]>(row.hidden_cells as string, []),
     };
   }
 

@@ -88,7 +88,7 @@ describe('AuthService', () => {
     it('returns the profile for a valid id', async () => {
       await service.register('a@test.com', 'password123', 'alice');
       const { profile } = await service.login('a@test.com', 'password123');
-      const result = await service.getProfile(profile.id);
+      const result = await service.getProfile(profile.id as string);
       expect(result.username).toBe('alice');
     });
 

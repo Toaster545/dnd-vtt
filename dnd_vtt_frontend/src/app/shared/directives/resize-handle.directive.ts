@@ -13,7 +13,7 @@ import { Directive, output } from '@angular/core';
   },
 })
 export class ResizeHandleDirective {
-  readonly resize = output<number>();
+  readonly resizeDrag = output<number>();
 
   onPointerDown(event: PointerEvent) {
     event.preventDefault();
@@ -24,7 +24,7 @@ export class ResizeHandleDirective {
     document.body.style.cursor = 'col-resize';
     document.body.style.userSelect = 'none';
 
-    const onMove = (e: PointerEvent) => this.resize.emit(e.movementX);
+    const onMove = (e: PointerEvent) => this.resizeDrag.emit(e.movementX);
     const onUp = () => {
       target.releasePointerCapture(event.pointerId);
       document.body.style.cursor = '';

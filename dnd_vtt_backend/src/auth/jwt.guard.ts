@@ -5,7 +5,18 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import type { Request } from 'express';
+import type { Row } from '@libsql/client';
 import { DatabaseService } from '../common/database.service';
+import type { RequestUser } from '../common/current-user.decorator';
+
+function toRequestUser(row: Row): RequestUser {
+  return {
+    id: row.id as string,
+    email: row.email as string,
+    role: row.role as RequestUser['role'],
+  };
+}
 
 @Injectable()
 export class JwtGuard implements CanActivate {
@@ -15,8 +26,8 @@ export class JwtGuard implements CanActivate {
   ) {}
 
   async canActivate(ctx: ExecutionContext): Promise<boolean> {
-    const req = ctx.switchToHttp().getRequest();
-    const auth = req.headers['authorization'] as string | undefined;
+    const req = ctx.switchToHttp().getRequest<Request>();
+    const auth = req.headers['authorization'];
     if (!auth?.startsWith('Bearer ')) throw new UnauthorizedException();
 
     const token = auth.slice(7);
@@ -31,7 +42,7 @@ export class JwtGuard implements CanActivate {
         throw new UnauthorizedException(
           'No admin account found — register one first',
         );
-      req.user = user;
+      req.user = toRequestUser(user);
       return true;
     }
 
@@ -49,7 +60,7 @@ export class JwtGuard implements CanActivate {
     const user = result.rows[0];
     if (!user) throw new UnauthorizedException('User not found');
 
-    req.user = user;
+    req.user = toRequestUser(user);
     return true;
   }
 }

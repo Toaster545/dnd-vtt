@@ -177,7 +177,7 @@ export class PlayerCampaignSessionComponent implements OnInit, OnDestroy {
       this.announceSelf(joined.id!, character);
       this.presenceSub = this.encounterService.watchPresence(joined.id!)
         .subscribe(players => this.presentPlayers.set(players));
-      this.turnSub = this.encounterService.watchTurnState(joined.id!)
+      this.turnSub = this.encounterService.watchTurnState()
         .subscribe(state => this.activeEncounter.update(e => e ? {
           ...e, current_turn_token_id: state.current_turn_token_id, round_number: state.round_number,
         } : e));
@@ -236,7 +236,7 @@ export class PlayerCampaignSessionComponent implements OnInit, OnDestroy {
   toggleNotes(encounterId: string) {
     this.expandedNotesFor.update(set => {
       const next = new Set(set);
-      next.has(encounterId) ? next.delete(encounterId) : next.add(encounterId);
+      if (next.has(encounterId)) next.delete(encounterId); else next.add(encounterId);
       return next;
     });
   }

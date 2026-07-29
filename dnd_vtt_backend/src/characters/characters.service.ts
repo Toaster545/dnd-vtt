@@ -7,9 +7,6 @@ import { randomUUID } from 'crypto';
 import { DatabaseService } from '../common/database.service';
 import type { RequestUser } from '../common/current-user.decorator';
 
-// Top-level columns kept for fast listing/filtering
-const LIST_FIELDS = ['name', 'race', 'class', 'level'] as const;
-
 // Fields a player may change on their own campaign copy without the DM granting full edit
 // access — everything the character play sheet's in-encounter controls touch (HP, resource/spell
 // slot uses from actions and rests, equip toggle, spell-prepared toggle). Anything else in the
