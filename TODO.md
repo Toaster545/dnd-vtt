@@ -42,9 +42,9 @@
     - [ ] Updates to character (leveling up)
     - [ ] 
 - [ ] Monster Creation
-- [ ] Auto deployement pipeline
-    - [ ] Testing
-    - [ ] pull from main
+- [x] Auto deployement pipeline
+    - [x] Testing
+    - [x] pull from main
 
 ## Andre
 
