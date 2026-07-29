@@ -61,6 +61,7 @@ export class DatabaseService implements OnModuleInit {
     if (version < 6) await this.applyV6();
     if (version < 7) await this.applyV7();
     if (version < 8) await this.applyV8();
+    if (version < 9) await this.applyV9();
   }
 
   // ── V1: initial schema (explicit columns on characters) ─────────────────────
@@ -365,15 +366,30 @@ export class DatabaseService implements OnModuleInit {
     for (const row of rows.rows) {
       const url = row.image_url as string;
       const relative = url.replace(/^https?:\/\/[^/]+/, '');
-      await this.db.execute(`UPDATE battle_maps SET image_url = ? WHERE id = ?`, [
-        relative,
-        row.id,
-      ]);
+      await this.db.execute(
+        `UPDATE battle_maps SET image_url = ? WHERE id = ?`,
+        [relative, row.id],
+      );
     }
 
     await this.db.execute(`PRAGMA user_version = 8`);
     this.logger.log(
       `Applied schema migration v8 (relative map image URLs, fixed ${rows.rows.length} row(s))`,
+    );
+  }
+
+  // ── V9: campaign/session background images ──────────────────────────────────
+  private async applyV9() {
+    await this.db.execute(
+      `ALTER TABLE campaigns ADD COLUMN background_url TEXT`,
+    );
+    await this.db.execute(
+      `ALTER TABLE sessions ADD COLUMN background_url TEXT`,
+    );
+
+    await this.db.execute(`PRAGMA user_version = 9`);
+    this.logger.log(
+      'Applied schema migration v9 (campaign/session backgrounds)',
     );
   }
 }

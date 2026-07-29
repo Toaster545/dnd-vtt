@@ -6,11 +6,13 @@ import { Subscription } from 'rxjs';
 import { EncounterService } from '../../../../core/services/encounter.service';
 import { CharacterService } from '../../../../core/services/character.service';
 import { CampaignService } from '../../../../core/services/campaign.service';
+import { SessionService } from '../../../../core/services/session.service';
 import { BattleMapService } from '../../../../core/services/battle-map.service';
 import { AuthService } from '../../../../core/services/auth.service';
 import { Encounter, PresentPlayer } from '../../../../core/models/encounter.model';
 import { Character } from '../../../../core/models/character.model';
 import { BattleMap } from '../../../../core/models/campaign.model';
+import { Session } from '../../../../core/models/session.model';
 import { BattleMapComponent } from '../../../battle-map/battle-map';
 import { CharacterPlaySheetComponent } from '../../../dm/dm-play/character-play-sheet/character-play-sheet';
 import { NotesPanelComponent } from '../../../../shared/components/notes-panel/notes-panel';
@@ -36,6 +38,7 @@ export class PlayerCampaignSessionComponent implements OnInit, OnDestroy {
   private encounterService = inject(EncounterService);
   private characterService = inject(CharacterService);
   private campaignService  = inject(CampaignService);
+  private sessionService   = inject(SessionService);
   private mapService       = inject(BattleMapService);
   private auth              = inject(AuthService);
 
@@ -46,6 +49,7 @@ export class PlayerCampaignSessionComponent implements OnInit, OnDestroy {
   campaignId!: string;
   sessionId!: string;
 
+  session    = signal<Session | null>(null);
   encounters = signal<Encounter[]>([]);
   recapMaps  = signal<Record<string, BattleMap>>({});
   loading    = signal(true);
@@ -96,12 +100,14 @@ export class PlayerCampaignSessionComponent implements OnInit, OnDestroy {
   private async loadSession() {
     this.leaveEncounter();
     this.loading.set(true);
-    const [hub, encounters] = await Promise.all([
+    const [hub, encounters, session] = await Promise.all([
       this.campaignService.getById(this.campaignId),
       this.encounterService.getBySession(this.sessionId),
+      this.sessionService.getById(this.sessionId),
     ]);
     const me = hub.members.find(m => m.user_id === this.auth.profile()?.id);
     this.myCharacterId = me?.character_id ?? null;
+    this.session.set(session);
     this.encounters.set(encounters);
     this.loading.set(false);
     void this.loadRecapMaps(encounters);

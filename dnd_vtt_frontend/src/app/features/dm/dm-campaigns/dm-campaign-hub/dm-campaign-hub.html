@@ -1,7 +1,14 @@
 @if (loading()) {
   <div class="flex justify-center mt-10"><span class="spinner-lg"></span></div>
+} @else if (showWizard()) {
+  <app-character-wizard class="flex flex-col flex-1 min-h-0"
+    [character]="editingCharacter()"
+    (saved)="onCharacterSaved()"
+    (cancelled)="onCharacterCancelled()"
+  />
 } @else if (campaign(); as c) {
-  <div class="flex-1 min-h-0 overflow-y-auto p-6">
+  <div class="flex-1 min-h-0 overflow-y-auto p-6 bg-cover bg-center"
+       [style.background-image]="c.background_url ? 'linear-gradient(rgba(13,14,22,0.88), rgba(13,14,22,0.88)), url(' + c.background_url + ')' : null">
     <div class="flex items-center gap-2 mb-4">
       <button class="btn-icon" (click)="backToList()" matTooltip="Back to campaigns">
         <mat-icon>arrow_back</mat-icon>
@@ -10,6 +17,15 @@
         <h2 class="font-brand text-lg text-parchment m-0">{{ c.name }}</h2>
         @if (c.description) { <p class="text-slate text-sm m-0 mt-0.5">{{ c.description }}</p> }
       </div>
+      <input #bgInput type="file" accept="image/*" class="hidden" (change)="onBackgroundFileChange($event)" />
+      <button class="btn-icon" (click)="bgInput.click()" [disabled]="uploadingBackground()" matTooltip="Set background image">
+        @if (uploadingBackground()) { <span class="spinner-sm"></span> } @else { <mat-icon>image</mat-icon> }
+      </button>
+      @if (c.background_url) {
+        <button class="btn-icon text-danger/70 hover:text-danger" (click)="clearBackground()" matTooltip="Remove background image">
+          <mat-icon>hide_image</mat-icon>
+        </button>
+      }
       <button class="btn-outline text-sm gap-1.5" (click)="copyJoinCode()" matTooltip="Copy join code">
         <mat-icon class="text-base">{{ copied() ? 'check' : 'content_copy' }}</mat-icon>
         Join code: <span class="font-mono text-gold">{{ c.join_code }}</span>
@@ -78,6 +94,18 @@
         </ul>
 
         <div class="mt-6">
+          <h3 class="font-brand text-sm text-parchment m-0 mb-3">Description</h3>
+          <div class="card card-body flex flex-col gap-2">
+            <textarea class="field-input" rows="4" placeholder="Campaign overview, tone, hooks…"
+                      [(ngModel)]="descriptionDraft" name="campaignDescription"></textarea>
+            <button class="btn-primary text-sm self-end" (click)="saveDescription()"
+                    [disabled]="!descriptionDirty() || savingDescription()">
+              @if (savingDescription()) { <span class="spinner-sm"></span> } @else { Save }
+            </button>
+          </div>
+        </div>
+
+        <div class="mt-6">
           <app-notes-panel entityType="campaign" [entityId]="campaignId" />
         </div>
       </div>
@@ -86,13 +114,28 @@
         <h3 class="font-brand text-sm text-parchment m-0 mb-3">Party</h3>
         <ul class="divide-y divide-white/8">
           @for (member of c.members; track member.user_id) {
-            <li class="flex items-center py-2.5 gap-2">
+            <li class="flex items-center py-2.5 gap-2 cursor-pointer" (click)="openMember(member)">
               <div class="flex-1 min-w-0">
-                <p class="text-parchment text-sm font-medium truncate m-0">{{ member.username }}</p>
-                <p class="text-slate text-xs m-0">{{ member.character_name }}</p>
+                <p class="text-parchment text-sm font-medium truncate m-0">{{ member.character_name }}</p>
+                <p class="text-slate text-xs m-0">
+                  {{ member.username }}
+                  @if (member.character_race || member.character_class) {
+                    · {{ member.character_race || '—' }} {{ member.character_class || '—' }} · Lv {{ member.character_level }}
+                  }
+                </p>
               </div>
-              <button class="btn-icon text-danger/70 hover:text-danger"
-                      (click)="removeMember(member.user_id, member.username)"
+              @if (member.character_max_hp != null) {
+                <span class="text-xs text-slate border border-white/10 rounded px-2 py-0.5 flex-shrink-0">
+                  HP {{ member.character_current_hp }}/{{ member.character_max_hp }}
+                </span>
+              }
+              @if (member.character_armor_class != null) {
+                <span class="text-xs text-slate border border-white/10 rounded px-2 py-0.5 flex-shrink-0">
+                  AC {{ member.character_armor_class }}
+                </span>
+              }
+              <button class="btn-icon text-danger/70 hover:text-danger flex-shrink-0"
+                      (click)="$event.stopPropagation(); removeMember(member.user_id, member.username)"
                       matTooltip="Remove from campaign">
                 <mat-icon class="text-base">person_remove</mat-icon>
               </button>

@@ -6,8 +6,10 @@ import {
 import { randomUUID } from 'crypto';
 import { DatabaseService } from '../common/database.service';
 import { generateJoinCode } from '../common/join-code.util';
+import { saveUploadedImage } from '../common/upload.util';
 import { CreateCampaignDto } from './dto/create-campaign.dto';
 import { JoinCampaignDto } from './dto/join-campaign.dto';
+import { UpdateCampaignDto } from './dto/update-campaign.dto';
 import type { RequestUser } from '../common/current-user.decorator';
 
 @Injectable()
@@ -65,7 +67,9 @@ export class CampaignsService {
     );
 
     const members = await this.db.execute(
-      `SELECT m.user_id, p.username, m.character_id, ch.name AS character_name
+      `SELECT m.user_id, p.username, m.character_id, ch.name AS character_name,
+              ch.race AS character_race, ch.class AS character_class, ch.level AS character_level,
+              ch.data AS character_data
        FROM campaign_members m
        JOIN profiles p ON p.id = m.user_id
        JOIN characters ch ON ch.id = m.character_id
@@ -77,8 +81,43 @@ export class CampaignsService {
     return {
       ...this.deserialize(campaign),
       sessions: sessions.rows,
-      members: members.rows,
+      members: members.rows.map((row) => this.deserializeMember(row)),
     };
+  }
+
+  async update(id: string, dmId: string, dto: UpdateCampaignDto) {
+    const campaign = await this.getCampaignRow(id);
+    if (campaign.dm_id !== dmId) throw new ForbiddenException();
+
+    const fields: string[] = [];
+    const args: unknown[] = [];
+    if (dto.description !== undefined) {
+      fields.push('description = ?');
+      args.push(dto.description);
+    }
+    if (dto.background_url !== undefined) {
+      fields.push('background_url = ?');
+      args.push(dto.background_url);
+    }
+    if (fields.length > 0) {
+      args.push(id);
+      await this.db.execute(
+        `UPDATE campaigns SET ${fields.join(', ')} WHERE id = ?`,
+        args,
+      );
+    }
+    return this.findOne(id, { id: dmId, role: 'admin' } as RequestUser);
+  }
+
+  async uploadBackground(id: string, dmId: string, file: Express.Multer.File) {
+    const campaign = await this.getCampaignRow(id);
+    if (campaign.dm_id !== dmId) throw new ForbiddenException();
+    const url = saveUploadedImage(file, `campaigns/${id}`);
+    await this.db.execute(
+      'UPDATE campaigns SET background_url = ? WHERE id = ?',
+      [url, id],
+    );
+    return this.findOne(id, { id: dmId, role: 'admin' } as RequestUser);
   }
 
   async remove(id: string, dmId: string) {
@@ -189,6 +228,28 @@ export class CampaignsService {
     if (membership.rows.length === 0) throw new ForbiddenException();
   }
 
+  // The member row's own top-level columns (name/race/class/level) are fast to select directly;
+  // HP/AC only exist inside the character's JSON `data` blob, so pull just those for the hub's
+  // party-list summary rather than shipping the whole character document down for every member.
+  private deserializeMember(row: Record<string, unknown>) {
+    const data = this.db.parseJson<Record<string, unknown>>(
+      row.character_data as string,
+      {},
+    );
+    return {
+      user_id: row.user_id,
+      username: row.username,
+      character_id: row.character_id,
+      character_name: row.character_name,
+      character_race: row.character_race,
+      character_class: row.character_class,
+      character_level: row.character_level,
+      character_max_hp: data.max_hp ?? null,
+      character_current_hp: data.current_hp ?? null,
+      character_armor_class: data.armor_class ?? null,
+    };
+  }
+
   private deserialize(row: Record<string, unknown>) {
     const data = this.db.parseJson(row.data as string, {});
     return {
@@ -198,6 +259,7 @@ export class CampaignsService {
       name: row.name,
       description: row.description,
       join_code: row.join_code,
+      background_url: row.background_url ?? null,
       created_at: row.created_at,
       updated_at: row.updated_at,
     };

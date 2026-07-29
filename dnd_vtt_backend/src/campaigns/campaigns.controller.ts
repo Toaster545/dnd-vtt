@@ -4,12 +4,17 @@ import {
   Delete,
   Get,
   Param,
+  Patch,
   Post,
+  UploadedFile,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { CampaignsService } from './campaigns.service';
 import { CreateCampaignDto } from './dto/create-campaign.dto';
 import { JoinCampaignDto } from './dto/join-campaign.dto';
+import { UpdateCampaignDto } from './dto/update-campaign.dto';
 import { JwtGuard } from '../auth/jwt.guard';
 import { AdminGuard } from '../auth/admin.guard';
 import { CurrentUser } from '../common/current-user.decorator';
@@ -39,6 +44,27 @@ export class CampaignsController {
   @Get(':id')
   findOne(@Param('id') id: string, @CurrentUser() user: RequestUser) {
     return this.campaigns.findOne(id, user);
+  }
+
+  @Patch(':id')
+  @UseGuards(AdminGuard)
+  update(
+    @Param('id') id: string,
+    @Body() dto: UpdateCampaignDto,
+    @CurrentUser() user: RequestUser,
+  ) {
+    return this.campaigns.update(id, user.id, dto);
+  }
+
+  @Post(':id/background')
+  @UseGuards(AdminGuard)
+  @UseInterceptors(FileInterceptor('file'))
+  uploadBackground(
+    @Param('id') id: string,
+    @UploadedFile() file: Express.Multer.File,
+    @CurrentUser() user: RequestUser,
+  ) {
+    return this.campaigns.uploadBackground(id, user.id, file);
   }
 
   @Delete(':id')

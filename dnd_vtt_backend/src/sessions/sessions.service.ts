@@ -5,7 +5,9 @@ import {
 } from '@nestjs/common';
 import { randomUUID } from 'crypto';
 import { DatabaseService } from '../common/database.service';
+import { saveUploadedImage } from '../common/upload.util';
 import { CreateSessionDto } from './dto/create-session.dto';
+import { UpdateSessionDto } from './dto/update-session.dto';
 import type { RequestUser } from '../common/current-user.decorator';
 
 @Injectable()
@@ -51,6 +53,54 @@ export class SessionsService {
     const row = result.rows[0];
     if (!row) throw new NotFoundException('Session not found');
     return row;
+  }
+
+  // Same lookup as findOne, gated the same way as findAllForCampaign: the owning DM can always
+  // read it, a player only if they're an active member of the session's campaign (this app has
+  // no per-session visibility check here since a single session record's own description isn't
+  // the encounter-level reveal mechanism — visible_to_players on the session itself already
+  // gates whether it shows up in the player's session list at all).
+  async findOneForUser(id: string, user: RequestUser) {
+    const session = await this.findOne(id);
+    if (session.dm_id !== user.id) {
+      await this.assertActiveMember(session.campaign_id as string, user.id);
+    }
+    return session;
+  }
+
+  async update(id: string, dmId: string, dto: UpdateSessionDto) {
+    const session = await this.findOne(id);
+    if (session.dm_id !== dmId) throw new ForbiddenException();
+
+    const fields: string[] = [];
+    const args: unknown[] = [];
+    if (dto.description !== undefined) {
+      fields.push('description = ?');
+      args.push(dto.description);
+    }
+    if (dto.background_url !== undefined) {
+      fields.push('background_url = ?');
+      args.push(dto.background_url);
+    }
+    if (fields.length > 0) {
+      args.push(id);
+      await this.db.execute(
+        `UPDATE sessions SET ${fields.join(', ')} WHERE id = ?`,
+        args,
+      );
+    }
+    return this.findOne(id);
+  }
+
+  async uploadBackground(id: string, dmId: string, file: Express.Multer.File) {
+    const session = await this.findOne(id);
+    if (session.dm_id !== dmId) throw new ForbiddenException();
+    const url = saveUploadedImage(file, `sessions/${id}`);
+    await this.db.execute(
+      'UPDATE sessions SET background_url = ? WHERE id = ?',
+      [url, id],
+    );
+    return this.findOne(id);
   }
 
   async create(dmId: string, dto: CreateSessionDto) {

@@ -10,6 +10,11 @@ import { NotesPanelComponent } from '../../../../shared/components/notes-panel/n
   selector: 'app-player-campaign-hub',
   imports: [RouterLink, MatIconModule, MatTooltipModule, NotesPanelComponent],
   templateUrl: './player-campaign-hub.html',
+  // Routed in via player-shell's <router-outlet>, so without a host sizing class this stays an
+  // unstyled inline element and the template's flex-1/min-h-0/overflow-y-auto root div has no
+  // bounded parent to size against — it just grows to content height instead of filling the
+  // screen. Same fix as DmCampaignHubComponent / DmCampaignSessionComponent / PlayerCampaignSessionComponent.
+  host: { class: 'flex flex-col flex-1 min-h-0 overflow-hidden' },
 })
 export class PlayerCampaignHubComponent implements OnInit {
   private route            = inject(ActivatedRoute);

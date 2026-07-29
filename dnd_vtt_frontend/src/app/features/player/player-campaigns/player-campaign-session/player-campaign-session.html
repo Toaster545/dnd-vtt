@@ -45,7 +45,8 @@
     </div>
   </div>
 } @else {
-  <div class="flex-1 min-h-0 overflow-y-auto p-6">
+  <div class="flex-1 min-h-0 overflow-y-auto p-6 bg-cover bg-center"
+       [style.background-image]="session()?.background_url ? 'linear-gradient(rgba(13,14,22,0.88), rgba(13,14,22,0.88)), url(' + session()!.background_url + ')' : null">
     <div class="flex items-center gap-2 mb-5 max-w-2xl">
       <button class="btn-icon" (click)="backToHub()" matTooltip="Back to campaign">
         <mat-icon>arrow_back</mat-icon>

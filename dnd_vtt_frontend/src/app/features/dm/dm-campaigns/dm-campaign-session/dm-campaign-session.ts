@@ -8,9 +8,11 @@ import { EncounterService } from '../../../../core/services/encounter.service';
 import { ContentService, DndMonster } from '../../../../core/services/content.service';
 import { CharacterService } from '../../../../core/services/character.service';
 import { BattleMapService } from '../../../../core/services/battle-map.service';
+import { SessionService } from '../../../../core/services/session.service';
 import { Encounter } from '../../../../core/models/encounter.model';
 import { Character } from '../../../../core/models/character.model';
 import { BattleMap, UniversalVTTData } from '../../../../core/models/campaign.model';
+import { Session } from '../../../../core/models/session.model';
 import { ConfirmService } from '../../../../shared/confirm.service';
 import { NotesPanelComponent } from '../../../../shared/components/notes-panel/notes-panel';
 
@@ -18,6 +20,11 @@ import { NotesPanelComponent } from '../../../../shared/components/notes-panel/n
   selector: 'app-dm-campaign-session',
   imports: [FormsModule, RouterLink, MatIconModule, MatTooltipModule, NotesPanelComponent],
   templateUrl: './dm-campaign-session.html',
+  // Routed in via dm-shell's <router-outlet>, so without a host sizing class this stays an
+  // unstyled inline element and the template's flex-1/min-h-0/overflow-y-auto root div has no
+  // bounded parent to size against — it just grows to content height instead of filling the
+  // screen. Same fix as DmCampaignHubComponent / PlayerCampaignSessionComponent.
+  host: { class: 'flex flex-col flex-1 min-h-0 overflow-hidden' },
 })
 export class DmCampaignSessionComponent implements OnInit, OnDestroy {
   @ViewChild('previewContainer') previewContainer?: ElementRef<HTMLDivElement>;
@@ -28,15 +35,28 @@ export class DmCampaignSessionComponent implements OnInit, OnDestroy {
   private content           = inject(ContentService);
   private characterService  = inject(CharacterService);
   private mapService        = inject(BattleMapService);
+  private sessionService    = inject(SessionService);
   private confirm           = inject(ConfirmService);
 
   campaignId = this.route.snapshot.paramMap.get('campaignId')!;
   sessionId  = this.route.snapshot.paramMap.get('sessionId')!;
 
+  session    = signal<Session | null>(null);
   encounters = signal<Encounter[]>([]);
   monsters   = signal<DndMonster[]>([]);
   characters = signal<Character[]>([]);
   loading    = signal(true);
+
+  descriptionDraft    = '';
+  savingDescription   = signal(false);
+  uploadingBackground = signal(false);
+
+  // A plain method, not computed() — descriptionDraft is an ngModel-bound field, not a signal, so
+  // a computed() here would only re-evaluate when the session() signal changes and would ignore
+  // every keystroke, leaving the Save button's [disabled] stuck at its first-render value.
+  descriptionDirty(): boolean {
+    return this.descriptionDraft.trim() !== (this.session()?.description ?? '').trim();
+  }
 
   showForm  = signal(false);
   saving    = signal(false);
@@ -76,15 +96,44 @@ export class DmCampaignSessionComponent implements OnInit, OnDestroy {
   }
 
   async ngOnInit() {
-    const [encounters, monsters, characters] = await Promise.all([
+    const [session, encounters, monsters, characters] = await Promise.all([
+      this.sessionService.getById(this.sessionId),
       this.encounterService.getBySession(this.sessionId),
       this.content.getMonsters(),
       this.characterService.getMyCharacters(),
     ]);
+    this.session.set(session);
+    this.descriptionDraft = session.description ?? '';
     this.encounters.set(encounters);
     this.monsters.set(monsters);
     this.characters.set(characters);
     this.loading.set(false);
+  }
+
+  async saveDescription() {
+    this.savingDescription.set(true);
+    try {
+      this.session.set(await this.sessionService.update(this.sessionId, { description: this.descriptionDraft.trim() }));
+    } finally {
+      this.savingDescription.set(false);
+    }
+  }
+
+  async onBackgroundFileChange(event: Event) {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    input.value = '';
+    if (!file) return;
+    this.uploadingBackground.set(true);
+    try {
+      this.session.set(await this.sessionService.uploadBackground(this.sessionId, file));
+    } finally {
+      this.uploadingBackground.set(false);
+    }
+  }
+
+  async clearBackground() {
+    this.session.set(await this.sessionService.update(this.sessionId, { background_url: null }));
   }
 
   ngOnDestroy() {

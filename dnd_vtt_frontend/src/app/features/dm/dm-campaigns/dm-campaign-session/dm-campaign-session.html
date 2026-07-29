@@ -1,9 +1,19 @@
-<div class="flex-1 min-h-0 overflow-y-auto p-6">
+<div class="flex-1 min-h-0 overflow-y-auto p-6 bg-cover bg-center"
+     [style.background-image]="session()?.background_url ? 'linear-gradient(rgba(13,14,22,0.88), rgba(13,14,22,0.88)), url(' + session()!.background_url + ')' : null">
   <div class="flex items-center gap-3 mb-5">
     <button class="btn-icon" (click)="backToHub()" matTooltip="Back to campaign">
       <mat-icon>arrow_back</mat-icon>
     </button>
     <h2 class="font-brand text-lg text-parchment m-0 flex-1">Encounters</h2>
+    <input #bgInput type="file" accept="image/*" class="hidden" (change)="onBackgroundFileChange($event)" />
+    <button class="btn-icon" (click)="bgInput.click()" [disabled]="uploadingBackground()" matTooltip="Set background image">
+      @if (uploadingBackground()) { <span class="spinner-sm"></span> } @else { <mat-icon>image</mat-icon> }
+    </button>
+    @if (session()?.background_url) {
+      <button class="btn-icon text-danger/70 hover:text-danger" (click)="clearBackground()" matTooltip="Remove background image">
+        <mat-icon>hide_image</mat-icon>
+      </button>
+    }
     @if (showForm()) {
       <button class="btn-outline text-sm" (click)="cancelForm()">Cancel</button>
     } @else {
@@ -164,6 +174,18 @@
       }
     </ul>
   }
+
+  <div class="mt-6 max-w-2xl">
+    <h3 class="font-brand text-sm text-parchment m-0 mb-3">Description</h3>
+    <div class="card card-body flex flex-col gap-2">
+      <textarea class="field-input" rows="4" placeholder="What's this session about…"
+                [(ngModel)]="descriptionDraft" name="sessionDescription"></textarea>
+      <button class="btn-primary text-sm self-end" (click)="saveDescription()"
+              [disabled]="!descriptionDirty() || savingDescription()">
+        @if (savingDescription()) { <span class="spinner-sm"></span> } @else { Save }
+      </button>
+    </div>
+  </div>
 
   <div class="mt-6 max-w-2xl">
     <app-notes-panel entityType="session" [entityId]="sessionId" />

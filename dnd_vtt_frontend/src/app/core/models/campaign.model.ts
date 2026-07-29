@@ -4,6 +4,7 @@ export interface Campaign {
   name: string;
   description?: string;
   join_code: string;
+  background_url?: string | null;
   created_at?: string;
   updated_at?: string;
 }
@@ -14,6 +15,12 @@ export interface CampaignMember {
   username: string;
   character_id: string;
   character_name: string;
+  character_race?: string;
+  character_class?: string;
+  character_level?: number;
+  character_max_hp?: number | null;
+  character_current_hp?: number | null;
+  character_armor_class?: number | null;
   source_character_id?: string | null;
   status?: 'active' | 'removed';
   joined_at?: string;

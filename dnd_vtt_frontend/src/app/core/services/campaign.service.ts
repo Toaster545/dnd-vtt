@@ -22,6 +22,16 @@ export class CampaignService {
     return firstValueFrom(this.http.post<CampaignHub>(`${API}/campaigns`, { name, description }));
   }
 
+  update(id: string, patch: { description?: string; background_url?: string | null }): Promise<CampaignHub> {
+    return firstValueFrom(this.http.patch<CampaignHub>(`${API}/campaigns/${id}`, patch));
+  }
+
+  uploadBackground(id: string, file: File): Promise<CampaignHub> {
+    const form = new FormData();
+    form.append('file', file);
+    return firstValueFrom(this.http.post<CampaignHub>(`${API}/campaigns/${id}/background`, form));
+  }
+
   remove(id: string): Promise<void> {
     return firstValueFrom(this.http.delete<void>(`${API}/campaigns/${id}`));
   }
