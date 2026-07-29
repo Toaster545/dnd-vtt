@@ -5,7 +5,6 @@
 ## General
 - [ ] Rests (short long)
 - [ ] Shop?
-- [ ] Dashboard
 - [ ] Spells
 - [ ] Equipement
 - [ ] Party Inventory
