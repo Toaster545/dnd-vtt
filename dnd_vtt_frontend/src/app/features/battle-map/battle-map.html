@@ -34,6 +34,12 @@
                   (click)="toggleMeasureTool('sphere')" matTooltip="Measure: sphere">
             <mat-icon class="text-base">circle</mat-icon>
           </button>
+          @if (myToken()) {
+            <button class="btn-icon w-8 h-8 ml-1" [class.border-gold/50]="showMoveRange()" [class.bg-gold/5]="showMoveRange()"
+                    (click)="showMoveRange.set(!showMoveRange())" matTooltip="Show my movement range">
+              <mat-icon class="text-base">directions_walk</mat-icon>
+            </button>
+          }
         </div>
       }
 

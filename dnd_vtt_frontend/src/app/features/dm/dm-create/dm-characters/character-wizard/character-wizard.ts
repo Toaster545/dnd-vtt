@@ -1,7 +1,7 @@
 import { Component, inject, signal, computed, effect, output, OnInit, OnDestroy, input } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ContentService, DndRace, DndClass, DndBackground, DndItem, DndSpell, DndFeat, TraitEffect, TraitGrant } from '../../../../../core/services/content.service';
-import { ClassChoiceSource, collectTraitEffects } from '../../../../../core/utils/character-effects';
+import { ClassChoiceSource, averageHpFormula, collectTraitEffects, reachableGrants } from '../../../../../core/utils/character-effects';
 import { isStructuredEquipment, resolveStartingEquipment } from '../../../../../core/utils/starting-equipment';
 import { resolveBackgroundSkills } from '../../../../../core/utils/background-skills';
 import { CharacterService } from '../../../../../core/services/character.service';
@@ -191,12 +191,10 @@ export class CharacterWizardComponent implements OnInit, OnDestroy {
   maxHP      = computed(() => {
     const cls = this.primaryClass();
     if (!cls) return 10;
-    const die = cls.hit_die;
     const conMod = abilityModifier(this.finalScores().constitution);
-    const base = Math.max(1, die + conMod + (this.level() - 1) * (Math.floor(die / 2) + 1 + conMod));
     // e.g. Tough: +2 max HP per character level, on top of the normal hit-die progression.
     const perLevelBonus = this.selectedEffects('hp_bonus_per_level').reduce((sum, e) => sum + (e.value ?? 0), 0);
-    return base + perLevelBonus * this.level();
+    return averageHpFormula(this.level(), cls.hit_die, conMod, perLevelBonus);
   });
   // Scans every chosen class option and feat for a structured `effects` entry of the given
   // type. Conditioned effects (e.g. Defense's ac_bonus "while wearing armor") are excluded —
@@ -204,7 +202,7 @@ export class CharacterWizardComponent implements OnInit, OnDestroy {
   private selectedEffects(type: string): TraitEffect[] {
     const race = this.selectedRace();
     return collectTraitEffects(
-      this.selectedClasses().map(e => ({ data: e.cls, choices: e.traits })),
+      this.selectedClasses().map(e => ({ data: e.cls, choices: e.traits, level: e.level, subclass: e.subclass })),
       this.feats(),
       race ? { data: race, choices: this.raceTraits(), subrace: this.selectedSubrace()?.name } : null,
     ).filter(e => e.type === type && !e.condition);
@@ -258,15 +256,20 @@ export class CharacterWizardComponent implements OnInit, OnDestroy {
     cp: 0, sp: 0, ep: 0, gp: this.resolvedClassEquipment().gold + this.resolvedBackgroundEquipment().gold, pp: 0,
   }));
 
+  // A single, non-multiclass character's class always tracks the overall level directly (there's
+  // nothing else it could mean) — reconciled here synchronously rather than relying solely on the
+  // level-sync effect below, so every computed reads a consistent level with no one-tick lag.
+  private reconciledClasses = computed<ClassEntry[]>(() => {
+    const classes = this.selectedClasses();
+    return classes.length === 1 ? [{ ...classes[0], level: this.level() }] : classes;
+  });
+
   // The character record as it stands right now, built straight from the wizard's live signals
   // — used both to persist (save(), below) and to drive the live preview pane, so the preview
   // is never more than a re-render behind what's actually on screen (no debounce, no round trip
   // through the backend).
   draftCharacter = computed<Character>(() => {
-    const isSingle = this.selectedClasses().length === 1;
-    const classes  = isSingle
-      ? [{ ...this.selectedClasses()[0], level: this.level() }]
-      : this.selectedClasses();
+    const classes = this.reconciledClasses();
     const primary  = classes[0];
 
     const itemName = (index: string) => this.items().find(it => it.index === index)?.name ?? index;
@@ -301,7 +304,9 @@ export class CharacterWizardComponent implements OnInit, OnDestroy {
       alignment: this.alignment(),
       ability_scores: { ...this.finalScores() },
       max_hp: hp,
-      current_hp: this.currentHp() ?? hp,
+      // Clamped to the (possibly just-lowered) max — e.g. leveling a character down elsewhere
+      // shrinks max_hp on the next wizard save, and current_hp shouldn't end up exceeding it.
+      current_hp: Math.min(this.currentHp() ?? hp, hp),
       armor_class: this.armorClass(),
       speed: this.speed(),
       skills: this.skillsRecord(),
@@ -312,7 +317,7 @@ export class CharacterWizardComponent implements OnInit, OnDestroy {
   });
 
   private classesForFeats = computed<ClassChoiceSource[]>(() =>
-    this.selectedClasses().map(e => ({ data: e.cls, choices: e.traits })),
+    this.reconciledClasses().map(e => ({ data: e.cls, choices: e.traits, level: e.level, subclass: e.subclass })),
   );
 
   previewStats = computed(() => this.statsService.compute(
@@ -325,6 +330,32 @@ export class CharacterWizardComponent implements OnInit, OnDestroy {
   private statusTimer: ReturnType<typeof setTimeout> | null = null;
 
   constructor() {
+    // If a class's effective level drops (the overall level field lowered, or a multiclass split
+    // redistributed), anything gained above the new level has to go — a level-1 character can't
+    // "still have" a level-3 subclass or a level-4 ASI/feat pick. This only ever removes stale
+    // picks; it never restores them if the level is later raised back up. Guarded by an actual
+    // change check (not just re-set every run) so writing back to selectedClasses can't loop.
+    effect(() => {
+      const raw = this.selectedClasses();
+      const reconciled = this.reconciledClasses();
+      let changed = false;
+      const next = reconciled.map((entry, i) => {
+        const validKeys = new Set(
+          reachableGrants(entry.cls, entry.subclass, entry.level)
+            .flatMap(g => g.key ? [g.key, `${g.key}:feat`, `${g.key}:feat_ability`] : []),
+        );
+        const subclass = entry.level >= entry.cls.subclass_level ? entry.subclass : '';
+        const staleKeys = Object.keys(entry.traits).some(k => !validKeys.has(k));
+        if (entry.level === raw[i].level && subclass === entry.subclass && !staleKeys) return raw[i];
+        changed = true;
+        const traits = staleKeys
+          ? Object.fromEntries(Object.entries(entry.traits).filter(([k]) => validKeys.has(k)))
+          : entry.traits;
+        return { ...entry, subclass, traits };
+      });
+      if (changed) this.selectedClasses.set(next);
+    });
+
     effect(() => {
       this.characterName(); this.level(); this.alignment();
       this.selectedRace(); this.selectedSubrace(); this.raceTraits(); this.selectedClasses();

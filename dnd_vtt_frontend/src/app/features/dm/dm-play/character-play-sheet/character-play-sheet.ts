@@ -72,7 +72,7 @@ export class CharacterPlaySheetComponent {
   stats = computed(() => {
     const char = this.localChar();
     if (!char) return null;
-    const classesForFeats = this.resolvedClasses().map(rc => ({ data: rc.data, choices: rc.choices }));
+    const classesForFeats = this.resolvedClasses().map(rc => ({ data: rc.data, choices: rc.choices, level: rc.level, subclass: rc.subclassName }));
     return this.statsService.compute(
       char, this.primaryClass(), this.raceData(), this.featsAll(), classesForFeats, this.itemsAll(),
     );
@@ -298,11 +298,24 @@ export class CharacterPlaySheetComponent {
     this.loading.set(false);
   }
 
+  // char.armor_class is a stored field, not derived (see character.model.ts) — everywhere outside
+  // this sheet (campaign hub, encounter roster) reads it directly, so a stale value there would
+  // sit at whatever the wizard last set regardless of what's actually equipped now. Keep it in
+  // sync with the same live formula the sheet itself displays (`stats().computed_ac`) every time
+  // something is persisted, not just on equip toggles — cheap, and never wrong.
+  private computeArmorClass(char: Character): number {
+    const classesForFeats = this.resolvedClasses().map(rc => ({ data: rc.data, choices: rc.choices, level: rc.level, subclass: rc.subclassName }));
+    return this.statsService.compute(
+      char, this.primaryClass(), this.raceData(), this.featsAll(), classesForFeats, this.itemsAll(),
+    ).computed_ac;
+  }
+
   private async persist(next: Character) {
-    this.localChar.set(next);
+    const withAc = { ...next, armor_class: this.computeArmorClass(next) };
+    this.localChar.set(withAc);
     this.persisting.set(true);
     try {
-      const result = await this.characterService.saveCharacter(next);
+      const result = await this.characterService.saveCharacter(withAc);
       this.localChar.set(result);
       this.saved.emit(result);
     } finally {

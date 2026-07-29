@@ -15,6 +15,8 @@ import { CampaignsService } from './campaigns.service';
 import { CreateCampaignDto } from './dto/create-campaign.dto';
 import { JoinCampaignDto } from './dto/join-campaign.dto';
 import { UpdateCampaignDto } from './dto/update-campaign.dto';
+import { SetEditAccessDto } from './dto/set-edit-access.dto';
+import { SetPartyLevelDto } from './dto/set-party-level.dto';
 import { JwtGuard } from '../auth/jwt.guard';
 import { AdminGuard } from '../auth/admin.guard';
 import { CurrentUser } from '../common/current-user.decorator';
@@ -79,6 +81,16 @@ export class CampaignsController {
     return this.campaigns.getMembers(id, user.id);
   }
 
+  @Patch(':id/party-level')
+  @UseGuards(AdminGuard)
+  setPartyLevel(
+    @Param('id') id: string,
+    @Body() dto: SetPartyLevelDto,
+    @CurrentUser() user: RequestUser,
+  ) {
+    return this.campaigns.setPartyLevel(id, user.id, dto.level);
+  }
+
   @Delete(':id/members/:userId')
   @UseGuards(AdminGuard)
   removeMember(
@@ -87,5 +99,21 @@ export class CampaignsController {
     @CurrentUser() user: RequestUser,
   ) {
     return this.campaigns.removeMember(id, user.id, userId);
+  }
+
+  @Patch(':id/members/:userId/edit-access')
+  @UseGuards(AdminGuard)
+  setMemberEditAccess(
+    @Param('id') id: string,
+    @Param('userId') userId: string,
+    @Body() dto: SetEditAccessDto,
+    @CurrentUser() user: RequestUser,
+  ) {
+    return this.campaigns.setMemberEditAccess(
+      id,
+      user.id,
+      userId,
+      dto.unlocked,
+    );
   }
 }

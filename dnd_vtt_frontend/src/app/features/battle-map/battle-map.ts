@@ -37,6 +37,12 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
   // Id of the token whose turn it currently is (from the embedding parent's Encounter record) —
   // drives the highlight ring drawn in renderTokens() and the turn-order row highlight below.
   readonly currentTurnTokenId = input<string | null>(null);
+  // The viewing player's own character — set only by the player-facing embedding (the DM has no
+  // "own character"), used to find their token and offer a "show my movement range" toggle. Speed
+  // is passed in feet rather than the Character record itself, so this component doesn't need to
+  // know the Character model at all.
+  readonly myCharacterId = input<string | null>(null);
+  readonly myMoveSpeedFt = input<number | null>(null);
   // Fired when an already-placed token is clicked, so an embedding parent can show its stat block/HP.
   readonly tokenClicked = output<MapToken>();
   // Fired whenever the resolved current-turn token changes, so an embedding parent — which only
@@ -76,6 +82,16 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
     this.activeMeasureTool.update(current => current === shape ? null : shape);
   }
 
+  // Personal reference only — not broadcast (unlike the measure tools above), since this is "let
+  // me see my own reach," not something that needs to appear on anyone else's screen.
+  showMoveRange = signal(false);
+
+  myToken = computed(() => this.tokens().find(t => t.character_id === this.myCharacterId()) ?? null);
+  private moveRangeSquares = computed(() => {
+    const ft = this.myMoveSpeedFt();
+    return ft ? Math.floor(ft / BattleMapComponent.FEET_PER_SQUARE) : 0;
+  });
+
   // The token list re-sorted by initiative, highest first, with unrolled tokens sorted last.
   turnOrder = computed(() => {
     return [...this.tokens()].sort((a, b) => {
@@ -95,6 +111,7 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
   private tokenLayer?: Konva.Layer;
   private gridLayer?: Konva.Layer;
   private measureLayer?: Konva.Layer;
+  private moveRangeLayer?: Konva.Layer;
   private konvaImg?: Konva.Image;
   private img?: HTMLImageElement;
   private gridSize = 50;
@@ -139,6 +156,16 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
       this.activeMeasureTool();
       if (this.tokenLayer && this.cellSize) {
         this.renderTokens(this.lastTokens, this.cellSize);
+      }
+    });
+
+    // The movement-range highlight depends on where `myToken` currently is (which moves whenever
+    // the token list updates) as well as the toggle and the character's speed.
+    effect(() => {
+      this.showMoveRange();
+      this.myToken();
+      if (this.moveRangeLayer && this.cellSize) {
+        this.renderMoveRange();
       }
     });
 
@@ -228,9 +255,12 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
     this.stage = new Konva.Stage({ container, width: container.clientWidth, height: container.clientHeight });
     this.mapLayer = new Konva.Layer();
     this.gridLayer = new Konva.Layer();
+    this.moveRangeLayer = new Konva.Layer();
     this.tokenLayer = new Konva.Layer();
     this.measureLayer = new Konva.Layer();
-    this.stage.add(this.mapLayer, this.gridLayer, this.tokenLayer, this.measureLayer);
+    this.stage.add(this.mapLayer, this.gridLayer, this.moveRangeLayer, this.tokenLayer, this.measureLayer);
+    // Purely visual, drawn beneath the tokens — never clicked or dragged.
+    this.moveRangeLayer.listening(false);
     // Purely visual — the ruler/cone/sphere itself is never clicked or dragged, only the stage's
     // own mousedown/mousemove/mouseup handlers below drive it.
     this.measureLayer.listening(false);
@@ -323,6 +353,7 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.drawGrid(w, h, this.cellSize);
     this.renderTokens(this.lastTokens, this.cellSize);
+    this.renderMoveRange();
   }
 
   private drawGrid(w: number, h: number, cellSize: number) {
@@ -540,6 +571,40 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
       fill: '#fff', offsetX: text.length * 3.5, offsetY: 20,
       shadowColor: '#000', shadowBlur: 4, shadowOpacity: 0.8,
     }));
+  }
+
+  // Squares reachable from `myToken`'s current position this turn — the 2024 rules' default
+  // diagonal-movement variant (a diagonal square costs the same as an orthogonal one), so the
+  // reachable area is a plain square bounding box, not a circle. No pathfinding/terrain: this app
+  // has no walls/obstacle model, so it's every square within Chebyshev range of the token.
+  private renderMoveRange() {
+    const layer = this.moveRangeLayer;
+    if (!layer) return;
+    layer.destroyChildren();
+
+    const token = this.myToken();
+    const range = this.moveRangeSquares();
+    if (this.showMoveRange() && token && range > 0 && this.stage) {
+      const cs = this.cellSize;
+      const centerCol = token.x + token.size / 2;
+      const centerRow = token.y + token.size / 2;
+      const maxCol = Math.floor(this.stage.width() / cs);
+      const maxRow = Math.floor(this.stage.height() / cs);
+      const minCellCol = Math.max(0, Math.floor(centerCol - range));
+      const maxCellCol = Math.min(maxCol - 1, Math.ceil(centerCol + range) - 1);
+      const minCellRow = Math.max(0, Math.floor(centerRow - range));
+      const maxCellRow = Math.min(maxRow - 1, Math.ceil(centerRow + range) - 1);
+
+      for (let col = minCellCol; col <= maxCellCol; col++) {
+        for (let row = minCellRow; row <= maxCellRow; row++) {
+          layer.add(new Konva.Rect({
+            x: col * cs, y: row * cs, width: cs, height: cs,
+            fill: 'rgba(76, 175, 130, 0.25)',
+          }));
+        }
+      }
+    }
+    layer.draw();
   }
 
   private hpFor(token: MapToken): { hp: number; max_hp: number } | null {

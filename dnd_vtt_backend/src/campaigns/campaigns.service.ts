@@ -67,7 +67,7 @@ export class CampaignsService {
     );
 
     const members = await this.db.execute(
-      `SELECT m.user_id, p.username, m.character_id, ch.name AS character_name,
+      `SELECT m.user_id, p.username, m.character_id, m.edit_unlocked, ch.name AS character_name,
               ch.race AS character_race, ch.class AS character_class, ch.level AS character_level,
               ch.data AS character_data
        FROM campaign_members m
@@ -210,6 +210,45 @@ export class CampaignsService {
     return { removed: true };
   }
 
+  // Grants (or revokes) a player full edit access to their own campaign copy — normally only the
+  // DM can write it (see CharactersService.update). Unlocking lets the player open the character
+  // wizard on it themselves instead of the DM having to make every change on their behalf.
+  async setMemberEditAccess(
+    campaignId: string,
+    dmId: string,
+    userId: string,
+    unlocked: boolean,
+  ) {
+    const campaign = await this.getCampaignRow(campaignId);
+    if (campaign.dm_id !== dmId) throw new ForbiddenException();
+    const result = await this.db.execute(
+      `UPDATE campaign_members SET edit_unlocked = ? WHERE campaign_id = ? AND user_id = ? AND status = 'active'`,
+      [unlocked ? 1 : 0, campaignId, userId],
+    );
+    if (result.rowsAffected === 0)
+      throw new NotFoundException('Member not found');
+    return { edit_unlocked: unlocked };
+  }
+
+  // Sets every active member's campaign-copy character to the same level in one shot — used by
+  // the DM hub's party level control (manual set and "level party up" both funnel through here).
+  // Only touches the `level` column; HP/spell slots/features stay whatever they were — the backend
+  // has no per-class hit-die/CON-mod math to recompute max_hp, so HP is left for the DM to adjust
+  // per character through the wizard, same as leveling a single character up manually.
+  async setPartyLevel(campaignId: string, dmId: string, level: number) {
+    const campaign = await this.getCampaignRow(campaignId);
+    if (campaign.dm_id !== dmId) throw new ForbiddenException();
+    await this.db.execute(
+      `UPDATE characters SET level = ?, updated_at = ?
+       WHERE id IN (
+         SELECT character_id FROM campaign_members
+         WHERE campaign_id = ? AND status = 'active'
+       )`,
+      [level, new Date().toISOString(), campaignId],
+    );
+    return this.findOne(campaignId, { id: dmId, role: 'admin' } as RequestUser);
+  }
+
   private async getCampaignRow(id: string) {
     const result = await this.db.execute(
       'SELECT * FROM campaigns WHERE id = ?',
@@ -240,6 +279,7 @@ export class CampaignsService {
       user_id: row.user_id,
       username: row.username,
       character_id: row.character_id,
+      edit_unlocked: !!row.edit_unlocked,
       character_name: row.character_name,
       character_race: row.character_race,
       character_class: row.character_class,

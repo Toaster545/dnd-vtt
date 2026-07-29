@@ -63,6 +63,7 @@ export class DatabaseService implements OnModuleInit {
     if (version < 8) await this.applyV8();
     if (version < 9) await this.applyV9();
     if (version < 10) await this.applyV10();
+    if (version < 11) await this.applyV11();
   }
 
   // ── V1: initial schema (explicit columns on characters) ─────────────────────
@@ -405,5 +406,17 @@ export class DatabaseService implements OnModuleInit {
 
     await this.db.execute(`PRAGMA user_version = 10`);
     this.logger.log('Applied schema migration v10 (encounter turn tracking)');
+  }
+
+  // ── V11: DM-grantable full edit access to a player's campaign character copy ────
+  private async applyV11() {
+    await this.db.execute(
+      `ALTER TABLE campaign_members ADD COLUMN edit_unlocked INTEGER NOT NULL DEFAULT 0`,
+    );
+
+    await this.db.execute(`PRAGMA user_version = 11`);
+    this.logger.log(
+      'Applied schema migration v11 (campaign member edit access)',
+    );
   }
 }

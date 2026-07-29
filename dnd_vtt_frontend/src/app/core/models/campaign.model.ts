@@ -24,6 +24,9 @@ export interface CampaignMember {
   source_character_id?: string | null;
   status?: 'active' | 'removed';
   joined_at?: string;
+  // DM-grantable full edit access to this member's campaign character copy — see
+  // CampaignService.setMemberEditAccess / CharactersService.update's edit_unlocked check.
+  edit_unlocked?: boolean;
 }
 
 // GET /campaigns/:id payload — the campaign plus what's inside it, scoped to whatever the caller
