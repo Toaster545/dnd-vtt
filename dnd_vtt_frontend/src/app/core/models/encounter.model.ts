@@ -10,6 +10,10 @@ export interface Encounter {
   join_code?: string | null;
   summary?: string;
   visible_to_players?: boolean;
+  // Whose turn it currently is on the encounter's map, and which round of combat that's in — null
+  // current_turn_token_id means turns haven't started yet (or the encounter has no active combat).
+  current_turn_token_id?: string | null;
+  round_number?: number;
   created_at?: string;
   updated_at?: string;
 }
@@ -32,4 +36,5 @@ export interface PresentPlayer {
   // Self-reported by that player's own client — read-only for anyone else watching presence.
   hp?: number;
   max_hp?: number;
+  portraitSeed?: string;
 }

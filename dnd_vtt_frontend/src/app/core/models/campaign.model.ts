@@ -21,9 +21,13 @@ export interface CampaignMember {
   character_max_hp?: number | null;
   character_current_hp?: number | null;
   character_armor_class?: number | null;
+  character_portrait_seed?: string | null;
   source_character_id?: string | null;
   status?: 'active' | 'removed';
   joined_at?: string;
+  // DM-grantable full edit access to this member's campaign character copy — see
+  // CampaignService.setMemberEditAccess / CharactersService.update's edit_unlocked check.
+  edit_unlocked?: boolean;
 }
 
 // GET /campaigns/:id payload — the campaign plus what's inside it, scoped to whatever the caller
@@ -75,6 +79,32 @@ export interface MapToken {
   // placed; null for a player token until the DM types in that player's roll.
   initiative?: number | null;
 }
+
+// Manual reveal-brush fog of war. `hidden_cells` is a set of "col,row" keys — everything else on
+// the grid is visible. A freshly-enabled map starts with an empty set (fully visible); the DM
+// paints/rect-selects areas to hide. Persisted per map and broadcast live, same as tokens.
+export interface MapFog {
+  enabled: boolean;
+  hidden_cells: string[];
+}
+
+// A Roll20-style ruler/cone/sphere measurement, drawn while dragging on the map. Only the DM's
+// measurements are broadcast live to everyone else viewing it (see BattleMapService.watchMeasurements /
+// BattleMapComponent's auth.isAdmin() gate on sendMeasure) — a player's own measurement is rendered
+// locally only, never sent to other viewers. Never persisted. Grid-cell coordinates (fractional,
+// snapped to intersections), not pixels, so it renders correctly for every viewer regardless of
+// their own canvas scale.
+export type MeasureShape = 'line' | 'cone' | 'sphere';
+export interface Measurement {
+  shape: MeasureShape;
+  originCol: number;
+  originRow: number;
+  pointCol: number;
+  pointRow: number;
+}
+
+// Which fog-of-war brush/rectangle tool is currently armed on the battle map toolbar.
+export type FogToolName = 'reveal-brush' | 'hide-brush' | 'reveal-rect' | 'hide-rect';
 
 // What's "armed" from an encounter's roster sidebar, ready to be dropped onto the map on the next
 // click — built by the roster UI (from a Character or a DndMonster), consumed by BattleMapComponent

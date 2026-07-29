@@ -1,5 +1,11 @@
 @if (loading()) {
   <div class="flex justify-center mt-10"><span class="spinner-lg"></span></div>
+} @else if (showWizard()) {
+  <app-character-wizard class="flex flex-col flex-1 min-h-0"
+    [character]="editingCharacter()"
+    (saved)="onCharacterSaved()"
+    (cancelled)="onCharacterCancelled()"
+  />
 } @else if (campaign(); as c) {
   <div class="flex-1 min-h-0 overflow-y-auto p-6 bg-cover bg-center"
        [style.background-image]="c.background_url ? 'linear-gradient(rgba(13,14,22,0.88), rgba(13,14,22,0.88)), url(' + c.background_url + ')' : null">
@@ -43,6 +49,7 @@
         <ul class="divide-y divide-white/8">
           @for (member of c.members; track member.user_id) {
             <li class="flex items-center py-2.5 gap-2">
+              <img [src]="portraitFor(member)" class="w-8 h-8 rounded-full flex-shrink-0" alt="" />
               <div class="flex-1 min-w-0">
                 <p class="text-parchment text-sm font-medium truncate m-0">{{ member.character_name }}</p>
                 <p class="text-slate text-xs m-0">
@@ -61,6 +68,12 @@
                 <span class="text-xs text-slate border border-white/10 rounded px-2 py-0.5 flex-shrink-0">
                   AC {{ member.character_armor_class }}
                 </span>
+              }
+              @if (isMe(member) && member.edit_unlocked) {
+                <button class="btn-outline text-xs px-2 py-1 flex-shrink-0" (click)="editMyCharacter(member)"
+                        matTooltip="Your DM has given you access to edit this character">
+                  <mat-icon class="text-base">edit</mat-icon> Edit
+                </button>
               }
             </li>
           } @empty {

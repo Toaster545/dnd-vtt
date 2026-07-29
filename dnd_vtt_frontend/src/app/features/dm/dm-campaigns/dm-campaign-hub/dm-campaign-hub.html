@@ -112,9 +112,27 @@
 
       <div>
         <h3 class="font-brand text-sm text-parchment m-0 mb-3">Party</h3>
+
+        <div class="card card-body flex items-center gap-2 mb-4">
+          <label class="field-label m-0 flex-shrink-0">Party level</label>
+          <input class="field-input w-16 text-center" type="number" min="1" max="20"
+                 [(ngModel)]="partyLevel" name="partyLevel" [disabled]="savingPartyLevel()" />
+          <button class="btn-outline text-sm flex-shrink-0" (click)="applyPartyLevel()"
+                  [disabled]="savingPartyLevel()" matTooltip="Set every party member to this level">
+            Set
+          </button>
+          <button class="btn-primary text-sm flex-1 gap-1.5" (click)="levelPartyUp()"
+                  [disabled]="savingPartyLevel() || partyLevel >= 20"
+                  matTooltip="Level up the whole party by one">
+            <mat-icon class="text-base">trending_up</mat-icon>
+            Level Party Up
+          </button>
+        </div>
+
         <ul class="divide-y divide-white/8">
           @for (member of c.members; track member.user_id) {
             <li class="flex items-center py-2.5 gap-2 cursor-pointer" (click)="openMember(member)">
+              <img [src]="portraitFor(member)" class="w-8 h-8 rounded-full flex-shrink-0" alt="" />
               <div class="flex-1 min-w-0">
                 <p class="text-parchment text-sm font-medium truncate m-0">{{ member.character_name }}</p>
                 <p class="text-slate text-xs m-0">
@@ -124,9 +142,9 @@
                   }
                 </p>
               </div>
-              @if (member.character_max_hp != null) {
+              @if (maxHpFor(member) != null) {
                 <span class="text-xs text-slate border border-white/10 rounded px-2 py-0.5 flex-shrink-0">
-                  HP {{ member.character_current_hp }}/{{ member.character_max_hp }}
+                  HP {{ currentHpFor(member) }}/{{ maxHpFor(member) }}
                 </span>
               }
               @if (member.character_armor_class != null) {
@@ -134,6 +152,12 @@
                   AC {{ member.character_armor_class }}
                 </span>
               }
+              <button class="btn-icon flex-shrink-0"
+                      [class]="member.edit_unlocked ? 'text-gold' : 'text-slate hover:text-parchment'"
+                      (click)="toggleEditAccess(member, $event)"
+                      [matTooltip]="member.edit_unlocked ? 'Player can edit this character — click to revoke' : 'Grant this player access to the character wizard'">
+                <mat-icon class="text-base">{{ member.edit_unlocked ? 'lock_open' : 'lock' }}</mat-icon>
+              </button>
               <button class="btn-icon text-danger/70 hover:text-danger flex-shrink-0"
                       (click)="$event.stopPropagation(); removeMember(member.user_id, member.username)"
                       matTooltip="Remove from campaign">

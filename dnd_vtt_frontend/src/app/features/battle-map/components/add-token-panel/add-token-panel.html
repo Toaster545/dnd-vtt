@@ -1,0 +1,41 @@
+@if (!embedded()) {
+  <div>
+    <h3 class="text-xs font-semibold text-slate uppercase tracking-wider mb-2">Add Token</h3>
+    <p class="text-xs text-slate mb-3">Click on the map to place a token.</p>
+    <div class="flex flex-col gap-3">
+      <div class="field">
+        <label class="field-label">Label</label>
+        <input class="field-input" [(ngModel)]="newToken().label" maxlength="20" />
+      </div>
+      <div class="flex items-center gap-3">
+        <span class="field-label">Color</span>
+        <input type="color" [(ngModel)]="newToken().color"
+               class="h-8 w-14 rounded cursor-pointer border border-white/10 bg-transparent" />
+      </div>
+      <div class="field">
+        <label class="field-label">Size (cells)</label>
+        <select class="field-input" [(ngModel)]="newToken().size">
+          <option [ngValue]="1">Small / Medium (1)</option>
+          <option [ngValue]="2">Large (2)</option>
+          <option [ngValue]="3">Huge (3)</option>
+          <option [ngValue]="4">Gargantuan (4)</option>
+        </select>
+      </div>
+      <label class="flex items-center gap-2 cursor-pointer text-sm text-parchment">
+        <input type="checkbox" class="accent-gold w-4 h-4" [(ngModel)]="newToken().is_player" />
+        Player character
+      </label>
+    </div>
+  </div>
+} @else {
+  <div>
+    <h3 class="text-xs font-semibold text-slate uppercase tracking-wider mb-2">Place a Token</h3>
+    <p class="text-xs text-slate">
+      @if (placingEntity()) {
+        Click the map to place <strong class="text-parchment">{{ placingEntity()!.label }}</strong>.
+      } @else {
+        Select a monster or character on the left, then click the map to place them.
+      }
+    </p>
+  </div>
+}

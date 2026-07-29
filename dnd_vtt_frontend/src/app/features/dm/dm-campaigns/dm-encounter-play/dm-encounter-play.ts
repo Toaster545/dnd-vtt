@@ -1,6 +1,6 @@
 import { Component, inject, signal, computed, OnInit, OnDestroy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { Subscription } from 'rxjs';
@@ -12,28 +12,41 @@ import { Encounter, PresentPlayer } from '../../../../core/models/encounter.mode
 import { Character, ABILITY_SHORT, Ability } from '../../../../core/models/character.model';
 import { MapToken, PlacingEntity } from '../../../../core/models/campaign.model';
 import { BattleMapComponent } from '../../../battle-map/battle-map';
-import { CharacterPlaySheetComponent } from '../character-play-sheet/character-play-sheet';
+import { CharacterPlaySheetComponent } from '../../dm-play/character-play-sheet/character-play-sheet';
 import { ResizeHandleDirective } from '../../../../shared/directives/resize-handle.directive';
 
 @Component({
-  selector: 'app-dm-play-encounters',
+  selector: 'app-dm-encounter-play',
   imports: [FormsModule, MatIconModule, MatTooltipModule, BattleMapComponent, CharacterPlaySheetComponent, ResizeHandleDirective],
-  templateUrl: './dm-play-encounters.html',
+  templateUrl: './dm-encounter-play.html',
+  // Routed in via dm-shell's <router-outlet> alongside the rest of /dm/campaigns/... — same sizing
+  // fix as DmCampaignHubComponent/DmCampaignSessionComponent, needed for the embedded battle-map to
+  // get a bounded height to fill instead of collapsing.
+  host: { class: 'flex flex-col flex-1 min-h-0 overflow-hidden' },
 })
-export class DmPlayEncountersComponent implements OnInit, OnDestroy {
+export class DmEncounterPlayComponent implements OnInit, OnDestroy {
   private route             = inject(ActivatedRoute);
+  private router            = inject(Router);
   private encounterService = inject(EncounterService);
   private content          = inject(ContentService);
   private characterService = inject(CharacterService);
   private mapService       = inject(BattleMapService);
 
-  encounters = signal<Encounter[]>([]);
+  campaignId = this.route.snapshot.paramMap.get('campaignId')!;
+  sessionId  = this.route.snapshot.paramMap.get('sessionId')!;
+  encounterId = this.route.snapshot.paramMap.get('encounterId')!;
+
   monsters   = signal<DndMonster[]>([]);
   characters = signal<Character[]>([]);
   loading    = signal(true);
 
   selected = signal<Encounter | null>(null);
   togglingStatus = signal(false);
+
+  // Resolved from the battle-map's own token list via (currentTurnTokenChanged) — the encounter
+  // record only carries the current turn's token id, not its name/color for display.
+  currentTurnToken = signal<MapToken | null>(null);
+  togglingTurn = signal(false);
 
   // Live "who's got this encounter open right now" — see EncounterPresenceGateway.
   presentPlayers = signal<PresentPlayer[]>([]);
@@ -78,6 +91,16 @@ export class DmPlayEncountersComponent implements OnInit, OnDestroy {
     return map;
   });
 
+  // Portrait for every character above, keyed by id — same idea as characterHp, fed to the
+  // battle-map so player tokens can render the character's face instead of a plain color fill.
+  characterPortraits = computed(() => {
+    const map: Record<string, string> = {};
+    for (const c of Object.values(this.allCharactersById())) {
+      if (c.id && c.portrait_seed) map[c.id] = c.portrait_seed;
+    }
+    return map;
+  });
+
   // Clicking a character token takes over the whole detail area (map + roster hidden), matching
   // how the existing Characters play tab already does list→full-sheet.
   viewingCharacter = signal<Character | null>(null);
@@ -103,24 +126,15 @@ export class DmPlayEncountersComponent implements OnInit, OnDestroy {
   });
 
   async ngOnInit() {
-    const [encounters, monsters, characters] = await Promise.all([
-      this.encounterService.getAll(),
+    const [encounter, monsters, characters] = await Promise.all([
+      this.encounterService.getById(this.encounterId),
       this.content.getMonsters(),
       this.characterService.getMyCharacters(),
     ]);
-    this.encounters.set(encounters);
     this.monsters.set(monsters);
     this.characters.set(characters);
     this.loading.set(false);
 
-    // A campaign session's "Play" link hands off here with ?encounterId= so the DM lands directly
-    // on that encounter's board instead of having to find it again in the flat list.
-    const encounterId = this.route.snapshot.queryParamMap.get('encounterId');
-    const target = encounterId && this.encounters().find(e => e.id === encounterId);
-    if (target) this.openEncounter(target);
-  }
-
-  openEncounter(encounter: Encounter) {
     this.selected.set(encounter);
     this.presenceSub = this.encounterService.watchPresence(encounter.id!)
       .subscribe(players => {
@@ -133,18 +147,8 @@ export class DmPlayEncountersComponent implements OnInit, OnDestroy {
     this.hpPollInterval = setInterval(() => this.refreshPresentCharacters(this.presentPlayers()), 6000);
   }
 
-  backToList() {
-    this.selected.set(null);
-    this.armedEntity.set(null);
-    this.viewingCharacter.set(null);
-    this.viewingMonsterToken.set(null);
-    this.showMonsterSearch.set(false);
-    this.monsterSearchQuery.set('');
-    this.presenceSub?.unsubscribe();
-    this.presentPlayers.set([]);
-    this.extraCharacters.set({});
-    clearInterval(this.hpPollInterval);
-    this.hpPollInterval = undefined;
+  backToSession() {
+    void this.router.navigate(['/dm/campaigns', this.campaignId, 'sessions', this.sessionId]);
   }
 
   ngOnDestroy() {
@@ -169,9 +173,7 @@ export class DmPlayEncountersComponent implements OnInit, OnDestroy {
     if (!encounter?.id) return;
     this.togglingStatus.set(true);
     try {
-      const updated = await this.encounterService.start(encounter.id);
-      this.selected.set(updated);
-      this.encounters.update(list => list.map(e => e.id === updated.id ? updated : e));
+      this.selected.set(await this.encounterService.start(encounter.id));
     } finally {
       this.togglingStatus.set(false);
     }
@@ -182,11 +184,31 @@ export class DmPlayEncountersComponent implements OnInit, OnDestroy {
     if (!encounter?.id) return;
     this.togglingStatus.set(true);
     try {
-      const updated = await this.encounterService.stop(encounter.id);
-      this.selected.set(updated);
-      this.encounters.update(list => list.map(e => e.id === updated.id ? updated : e));
+      this.selected.set(await this.encounterService.stop(encounter.id));
     } finally {
       this.togglingStatus.set(false);
+    }
+  }
+
+  async nextTurn() {
+    const encounter = this.selected();
+    if (!encounter?.id) return;
+    this.togglingTurn.set(true);
+    try {
+      this.selected.set(await this.encounterService.nextTurn(encounter.id));
+    } finally {
+      this.togglingTurn.set(false);
+    }
+  }
+
+  async previousTurn() {
+    const encounter = this.selected();
+    if (!encounter?.id) return;
+    this.togglingTurn.set(true);
+    try {
+      this.selected.set(await this.encounterService.previousTurn(encounter.id));
+    } finally {
+      this.togglingTurn.set(false);
     }
   }
 
@@ -204,11 +226,9 @@ export class DmPlayEncountersComponent implements OnInit, OnDestroy {
     if (!encounter?.id || encounter.monsters.includes(monster.index)) return;
     this.addingMonster.set(true);
     try {
-      const updated = await this.encounterService.update(encounter.id, {
+      this.selected.set(await this.encounterService.update(encounter.id, {
         monsters: [...encounter.monsters, monster.index],
-      });
-      this.selected.set(updated);
-      this.encounters.update(list => list.map(e => e.id === updated.id ? updated : e));
+      }));
     } finally {
       this.addingMonster.set(false);
     }
@@ -394,10 +414,5 @@ export class DmPlayEncountersComponent implements OnInit, OnDestroy {
     if (next === currentHp) return;
     const updated = await this.mapService.upsertToken({ ...current.token, hp: next });
     this.viewingMonsterToken.set({ token: updated, monster: current.monster });
-  }
-
-  formatDate(iso?: string): string {
-    if (!iso) return '';
-    return new Date(iso).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
   }
 }

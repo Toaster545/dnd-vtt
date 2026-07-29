@@ -41,8 +41,11 @@ export class CharacterDisplayComponent implements OnInit {
   private classesForFeats = computed<ClassChoiceSource[]>(() => {
     const data = this.classData();
     if (!data) return [];
-    const choices = this.char.classes?.[0]?.choices ?? {};
-    return [{ data, choices }];
+    const primary = this.char.classes?.[0];
+    const choices = primary?.choices ?? {};
+    const level = primary?.level ?? this.char.level;
+    const subclass = primary?.subclass ?? this.char.subclass;
+    return [{ data, choices, level, subclass }];
   });
 
   stats = computed(() =>

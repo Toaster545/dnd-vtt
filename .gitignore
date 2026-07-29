@@ -23,3 +23,4 @@ yarn-error.log*
 
 dnd_vtt_backend/data/
 dnd_vtt_backend/uploads/maps/
+dnd_vtt_backend/uploads/campaigns/

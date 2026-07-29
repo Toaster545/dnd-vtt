@@ -50,6 +50,13 @@ export const routes: Routes = [
             m => m.DmCampaignSessionComponent,
           ),
       },
+      {
+        path: 'campaigns/:campaignId/sessions/:sessionId/encounters/:encounterId',
+        loadComponent: () =>
+          import('./features/dm/dm-campaigns/dm-encounter-play/dm-encounter-play').then(
+            m => m.DmEncounterPlayComponent,
+          ),
+      },
     ],
   },
   {

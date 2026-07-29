@@ -1,11 +1,8 @@
-import { Component, inject, input, signal, OnInit } from '@angular/core';
+import { Component, inject, signal, OnInit } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { CharacterService } from '../../../core/services/character.service';
 import { Character } from '../../../core/models/character.model';
 import { CharacterPlaySheetComponent } from './character-play-sheet/character-play-sheet';
-import { DmPlayEncountersComponent } from './dm-play-encounters/dm-play-encounters';
-
-type SubTab = 'encounters' | 'characters';
 
 const CHAR_VIEWED_KEY = 'dnd-char-viewed';
 function markCharacterViewed(id: string) {
@@ -20,14 +17,12 @@ function sortByRecentlyViewed<T extends { id?: string }>(chars: T[]): T[] {
 
 @Component({
   selector: 'app-dm-play',
-  imports: [MatIconModule, CharacterPlaySheetComponent, DmPlayEncountersComponent],
+  imports: [MatIconModule, CharacterPlaySheetComponent],
   templateUrl: './dm-play.html',
   styleUrl: './dm-play.scss',
 })
 export class DmPlayComponent implements OnInit {
   private characterService = inject(CharacterService);
-
-  readonly subTab = input<SubTab>('encounters');
 
   characters        = signal<Character[]>([]);
   selectedCharacter  = signal<Character | null>(null);

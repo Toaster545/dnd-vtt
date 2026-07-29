@@ -18,6 +18,7 @@ interface PresentPlayer {
   // up character reads across accounts the way the DM's admin-only endpoint does.
   hp?: number;
   max_hp?: number;
+  portraitSeed?: string;
 }
 
 // Tracks which players currently have an encounter open (for the DM's "Players" roster section) —
@@ -53,6 +54,7 @@ export class EncounterPresenceGateway implements OnGatewayDisconnect {
       characterName: string;
       hp?: number;
       max_hp?: number;
+      portraitSeed?: string;
     },
   ) {
     client.join(`encounter-presence:${data.encounterId}`);
@@ -66,6 +68,7 @@ export class EncounterPresenceGateway implements OnGatewayDisconnect {
       characterName: data.characterName,
       hp: data.hp,
       max_hp: data.max_hp,
+      portraitSeed: data.portraitSeed,
     });
     this.broadcast(data.encounterId);
   }
@@ -94,6 +97,15 @@ export class EncounterPresenceGateway implements OnGatewayDisconnect {
     this.server
       .to(`encounter-presence:${encounterId}`)
       .emit('encounter_players_updated', players);
+  }
+
+  // DM advanced/reversed the current turn — pushed to the same room presence already tracks, so
+  // both the DM's own other tabs and every joined player pick it up without a separate room/join.
+  broadcastTurnState(
+    encounterId: string,
+    state: { current_turn_token_id: string | null; round_number: number },
+  ) {
+    this.server.to(`encounter-presence:${encounterId}`).emit('turn_changed', state);
   }
 
   // Global broadcast (no room) so any connected player's client can decide for itself whether the

@@ -9,35 +9,11 @@
         <mat-icon class="text-base">create</mat-icon> Create
       </button>
 
-      <div class="relative">
-        <button class="btn-ghost text-sm gap-1.5"
-                [class.bg-white/10]="activeTab() === 'play'"
-                (click)="playMenuOpen.set(!playMenuOpen())">
-          <mat-icon class="text-base">play_arrow</mat-icon> Play
-          <mat-icon class="text-base">arrow_drop_down</mat-icon>
-        </button>
-        @if (playMenuOpen()) {
-          <div class="fixed inset-0 z-40" (click)="playMenuOpen.set(false)"></div>
-          <div class="absolute top-full left-1/2 -translate-x-1/2 mt-1 z-50 w-48 rounded-md border border-white/10 bg-elevated shadow-lg py-1 overflow-hidden">
-            <button
-              class="w-full text-left px-3.5 py-2.5 text-sm flex items-center gap-2 transition-colors cursor-pointer border-0"
-              [class]="activeTab() === 'play' && playSubTab() === 'encounters' ? 'text-gold bg-white/5' : 'text-slate hover:text-parchment hover:bg-white/5'"
-              style="background-color: transparent; font-family: inherit;"
-              (click)="selectPlay('encounters')"
-            >
-              <mat-icon class="text-base">sports_martial_arts</mat-icon> Encounters
-            </button>
-            <button
-              class="w-full text-left px-3.5 py-2.5 text-sm flex items-center gap-2 transition-colors cursor-pointer border-0"
-              [class]="activeTab() === 'play' && playSubTab() === 'characters' ? 'text-gold bg-white/5' : 'text-slate hover:text-parchment hover:bg-white/5'"
-              style="background-color: transparent; font-family: inherit;"
-              (click)="selectPlay('characters')"
-            >
-              <mat-icon class="text-base">person</mat-icon> Characters
-            </button>
-          </div>
-        }
-      </div>
+      <button class="btn-ghost text-sm gap-1.5"
+              [class.bg-white/10]="activeTab() === 'play'"
+              (click)="selectTab('play')">
+        <mat-icon class="text-base">person</mat-icon> Characters
+      </button>
 
       <button class="btn-ghost text-sm gap-1.5"
               [class.bg-white/10]="activeTab() === 'campaigns'"
@@ -61,7 +37,7 @@
         <app-dm-create class="flex-1 min-h-0" />
       }
       @case ('play') {
-        <app-dm-play class="flex-1 min-h-0" [subTab]="playSubTab()" />
+        <app-dm-play class="flex-1 min-h-0" />
       }
       @case ('campaigns') {
         <div class="flex-1 min-h-0 overflow-hidden flex flex-col">

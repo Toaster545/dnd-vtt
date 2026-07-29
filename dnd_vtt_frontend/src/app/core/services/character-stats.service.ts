@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Character, Ability, ABILITIES, SKILLS, abilityModifier, proficiencyBonus } from '../models/character.model';
 import { DndClass, DndFeat, DndItem, DndRace } from './content.service';
 import {
-  ClassChoiceSource, RaceChoiceSource, activeEffects, baseArmorClass, collectTraitEffects, equippedItems, resolveCharacterFeatPicks,
+  ClassChoiceSource, RaceChoiceSource, activeEffects, averageHpFormula, baseArmorClass, collectTraitEffects, equippedItems, resolveCharacterFeatPicks,
 } from '../utils/character-effects';
 
 export interface WeaponAttack {
@@ -91,10 +91,7 @@ export class CharacterStatsService {
     const hpBonusPerLevel = allEffects
       .filter(effect => effect.type === 'hp_bonus_per_level')
       .reduce((sum, effect) => sum + (effect.value ?? 0), 0);
-    const suggested_max_hp = Math.max(1,
-      hit_die + mods.constitution +
-      (char.level - 1) * (Math.floor(hit_die / 2) + 1 + mods.constitution),
-    ) + hpBonusPerLevel * char.level;
+    const suggested_max_hp = averageHpFormula(char.level, hit_die, mods.constitution, hpBonusPerLevel);
 
     const saveProfSet = new Set(classData?.saving_throws ?? []);
     // Resilient-pattern feats grant save proficiency in whichever ability their abilityIncrease

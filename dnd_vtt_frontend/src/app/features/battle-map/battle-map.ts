@@ -4,18 +4,29 @@ import {
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import Konva from 'konva';
 import { Subscription } from 'rxjs';
-import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { BattleMapService } from '../../core/services/battle-map.service';
 import { AuthService } from '../../core/services/auth.service';
-import { MapToken, BattleMap, PlacingEntity } from '../../core/models/campaign.model';
+import { MapToken, BattleMap, MapFog, PlacingEntity, MeasureShape, FogToolName } from '../../core/models/campaign.model';
 import { ConfirmService } from '../../shared/confirm.service';
 import { ResizeHandleDirective } from '../../shared/directives/resize-handle.directive';
+import { drawGrid } from './canvas/grid-renderer';
+import { renderMoveRange } from './canvas/move-range-renderer';
+import { renderTokens } from './canvas/token-renderer';
+import { portraitDataUri } from '../../core/utils/avatar';
+import { MeasurementTool, snapToGrid, FEET_PER_SQUARE } from './canvas/measurement-tool';
+import { FogTool, cellUnderPointer } from './canvas/fog-tool';
+import { MapToolbarComponent } from './components/map-toolbar/map-toolbar';
+import { AddTokenPanelComponent } from './components/add-token-panel/add-token-panel';
+import { TurnOrderPanelComponent } from './components/turn-order-panel/turn-order-panel';
 
 @Component({
   selector: 'app-battle-map',
-  imports: [RouterLink, FormsModule, MatIconModule, MatTooltipModule, ResizeHandleDirective],
+  imports: [
+    RouterLink, MatIconModule, MatTooltipModule, ResizeHandleDirective,
+    MapToolbarComponent, AddTokenPanelComponent, TurnOrderPanelComponent,
+  ],
   templateUrl: './battle-map.html',
   styleUrl: './battle-map.scss',
 })
@@ -34,8 +45,25 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
   // the token). Fed from the DM's already-loaded roster, or from encounter presence on the
   // player's view — hence party-visible here, unlike monster HP which stays admin-only.
   readonly characterHp = input<Record<string, { hp: number; max_hp: number }>>({});
+  // Portrait seed for character tokens, keyed by character_id — same sourcing story as
+  // characterHp above (DM roster vs. player presence). Resolved to loaded <img>s in
+  // resolvePortraitImages() below before being handed to renderTokens().
+  readonly characterPortraits = input<Record<string, string>>({});
+  // Id of the token whose turn it currently is (from the embedding parent's Encounter record) —
+  // drives the highlight ring drawn in renderTokens() and the turn-order row highlight below.
+  readonly currentTurnTokenId = input<string | null>(null);
+  // The viewing player's own character — set only by the player-facing embedding (the DM has no
+  // "own character"), used to find their token and offer a "show my movement range" toggle. Speed
+  // is passed in feet rather than the Character record itself, so this component doesn't need to
+  // know the Character model at all.
+  readonly myCharacterId = input<string | null>(null);
+  readonly myMoveSpeedFt = input<number | null>(null);
   // Fired when an already-placed token is clicked, so an embedding parent can show its stat block/HP.
   readonly tokenClicked = output<MapToken>();
+  // Fired whenever the resolved current-turn token changes, so an embedding parent — which only
+  // has the id above — can show the token's name (e.g. a "X's Turn" header label) without having
+  // to duplicate token state of its own.
+  readonly currentTurnTokenChanged = output<MapToken | null>();
 
   mapService = inject(BattleMapService);
   auth = inject(AuthService);
@@ -59,6 +87,55 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
     this.rightAsideWidth.update(w => Math.min(420, Math.max(220, w - dx)));
   }
 
+  // Roll20-style ruler/cone/sphere — null is the normal select/place/drag mode. Available to
+  // every viewer (DM and players), not gated by auth.isAdmin(). Toggling this suspends token
+  // placement/dragging (see the `stage.on('click tap', ...)` guard and renderTokens()'s
+  // `draggable` below) while a measure tool is active.
+  activeMeasureTool = signal<MeasureShape | null>(null);
+
+  toggleMeasureTool(shape: MeasureShape) {
+    this.activeMeasureTool.update(current => current === shape ? null : shape);
+    if (this.activeMeasureTool()) this.activeFogTool.set(null);
+  }
+
+  // DM-only fog-of-war tools — mutually exclusive with the measure tool above, same reasoning:
+  // both repurpose the stage's mousedown/mousemove/mouseup handlers, so only one can drive them
+  // at a time. A map starts fully visible (`hidden_cells` empty); the DM hides areas rather than
+  // revealing them.
+  fog = signal<MapFog>({ enabled: false, hidden_cells: [] });
+  activeFogTool = signal<FogToolName | null>(null);
+
+  toggleFogTool(tool: FogToolName) {
+    this.activeFogTool.update(current => current === tool ? null : tool);
+    if (this.activeFogTool()) this.activeMeasureTool.set(null);
+  }
+
+  selectPointerTool() {
+    this.activeMeasureTool.set(null);
+    this.activeFogTool.set(null);
+  }
+
+  async toggleFogEnabled() {
+    await this.mapService.setFogEnabled(this.mapId, !this.fog().enabled);
+  }
+
+  async revealAllFog() {
+    if (!await this.confirm.confirm(
+      'Reveal the entire map? Any areas you\'ve hidden will become visible again.', 'Reveal All', 'Reveal'
+    )) return;
+    await this.mapService.resetFog(this.mapId);
+  }
+
+  // Personal reference only — not broadcast (unlike the measure tools above), since this is "let
+  // me see my own reach," not something that needs to appear on anyone else's screen.
+  showMoveRange = signal(false);
+
+  myToken = computed(() => this.tokens().find(t => t.character_id === this.myCharacterId()) ?? null);
+  private moveRangeSquares = computed(() => {
+    const ft = this.myMoveSpeedFt();
+    return ft ? Math.floor(ft / FEET_PER_SQUARE) : 0;
+  });
+
   // The token list re-sorted by initiative, highest first, with unrolled tokens sorted last.
   turnOrder = computed(() => {
     return [...this.tokens()].sort((a, b) => {
@@ -69,10 +146,17 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   });
 
+  currentTurnToken = computed(() =>
+    this.tokens().find(t => t.id === this.currentTurnTokenId()) ?? null
+  );
+
   private stage?: Konva.Stage;
   private mapLayer?: Konva.Layer;
   private tokenLayer?: Konva.Layer;
   private gridLayer?: Konva.Layer;
+  private fogLayer?: Konva.Layer;
+  private measureLayer?: Konva.Layer;
+  private moveRangeLayer?: Konva.Layer;
   private konvaImg?: Konva.Image;
   private img?: HTMLImageElement;
   private gridSize = 50;
@@ -81,6 +165,11 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
   // firing a window resize event.
   private resizeObserver?: ResizeObserver;
   private tokenSub?: Subscription;
+  private measureSub?: Subscription;
+  private fogSub?: Subscription;
+  private measurementTool = new MeasurementTool();
+  private fogTool = new FogTool((cells, revealed) => this.mapService.paintFog(this.mapId, cells, revealed));
+  private lastMeasureBroadcast = 0;
   private mapId!: string;
   private routeMapId: string | null = null;
   private viewReady = signal(false);
@@ -89,6 +178,11 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
   // Mirrors the `tokens` signal as a plain field so the characterHp redraw effect below can read
   // it without also re-triggering on every token change (the socket subscription already redraws directly).
   private lastTokens: MapToken[] = [];
+  // Loaded portrait <img>s, keyed by `${characterId}:${seed}` so a changed seed (re-picked
+  // portrait) naturally gets its own entry instead of showing a stale cached image. Populated
+  // lazily by resolvePortraitImages() — decoding a data URI into an Image is still async even
+  // though portraitDataUri() itself returns synchronously.
+  private portraitImageCache: Record<string, HTMLImageElement> = {};
 
   constructor() {
     // Triggers the load once both the input/route map id and the view are ready, whichever
@@ -102,13 +196,34 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
       this.loadMap(id);
     });
 
-    // A character's HP changing (e.g. the DM adjusting it from the roster's character sheet)
-    // doesn't touch the token list itself, so it needs its own redraw trigger.
+    // A character's HP changing (e.g. the DM adjusting it from the roster's character sheet), the
+    // current turn changing, or the measure tool being toggled (which flips whether tokens are
+    // draggable) doesn't touch the token list itself, so each needs its own redraw trigger.
     effect(() => {
       this.characterHp();
+      this.characterPortraits();
+      this.currentTurnTokenId();
+      this.activeMeasureTool();
+      this.fog();
       if (this.tokenLayer && this.cellSize) {
-        this.renderTokens(this.lastTokens, this.cellSize);
+        this.renderTokens(this.lastTokens);
       }
+    });
+
+    // The movement-range highlight depends on where `myToken` currently is (which moves whenever
+    // the token list updates) as well as the toggle and the character's speed.
+    effect(() => {
+      this.showMoveRange();
+      this.myToken();
+      if (this.moveRangeLayer && this.cellSize && this.stage) {
+        renderMoveRange(this.moveRangeLayer, this.stage, this.cellSize, this.showMoveRange(), this.myToken(), this.moveRangeSquares());
+      }
+    });
+
+    // Lets an embedding parent (which only holds the current-turn token *id*) resolve it to the
+    // actual token for display, e.g. a "X's Turn" header label.
+    effect(() => {
+      this.currentTurnTokenChanged.emit(this.currentTurnToken());
     });
   }
 
@@ -122,6 +237,8 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnDestroy() {
     this.tokenSub?.unsubscribe();
+    this.measureSub?.unsubscribe();
+    this.fogSub?.unsubscribe();
     this.resizeObserver?.disconnect();
     this.stage?.destroy();
   }
@@ -132,6 +249,12 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
     this.error.set(null);
     this.tokenSub?.unsubscribe();
     this.tokenSub = undefined;
+    this.measureSub?.unsubscribe();
+    this.measureSub = undefined;
+    this.fogSub?.unsubscribe();
+    this.fogSub = undefined;
+    this.measurementTool.reset();
+    this.fogTool.reset();
     // #stageContainer is a stable element reused across map loads (see the template comment), so
     // the observer from a previous map must be torn down before buildStage() attaches a new one —
     // otherwise every map switch would stack another observer on the same element.
@@ -186,8 +309,19 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
     this.stage = new Konva.Stage({ container, width: container.clientWidth, height: container.clientHeight });
     this.mapLayer = new Konva.Layer();
     this.gridLayer = new Konva.Layer();
+    this.fogLayer = new Konva.Layer();
+    this.moveRangeLayer = new Konva.Layer();
     this.tokenLayer = new Konva.Layer();
-    this.stage.add(this.mapLayer, this.gridLayer, this.tokenLayer);
+    this.measureLayer = new Konva.Layer();
+    this.stage.add(this.mapLayer, this.gridLayer, this.fogLayer, this.moveRangeLayer, this.tokenLayer, this.measureLayer);
+    // Purely visual, drawn beneath the tokens — token *filtering* in renderTokens() is what
+    // actually hides monsters from players; this layer just tints/blacks-out fogged terrain.
+    this.fogLayer.listening(false);
+    // Purely visual, drawn beneath the tokens — never clicked or dragged.
+    this.moveRangeLayer.listening(false);
+    // Purely visual — the ruler/cone/sphere itself is never clicked or dragged, only the stage's
+    // own mousedown/mousemove/mouseup handlers below drive it.
+    this.measureLayer.listening(false);
 
     // Grid lines are purely decorative — nothing on this layer is ever clicked or dragged.
     // Konva otherwise assigns every shape a unique hit-test color, and a grid can easily be
@@ -202,18 +336,94 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
     this.mapLayer.add(this.konvaImg);
 
     this.stage.on('click tap', (e) => {
-      if (e.target === this.konvaImg && this.auth.isAdmin()) {
+      if (e.target === this.konvaImg && this.auth.isAdmin() && !this.activeMeasureTool() && !this.activeFogTool()) {
         const pos = this.stage!.getPointerPosition()!;
         const col = Math.floor(pos.x / this.cellSize);
         const row = Math.floor(pos.y / this.cellSize);
-        this.addTokenAt(col, row, this.cellSize);
+        this.addTokenAt(col, row);
+      }
+    });
+
+    this.stage.on('mousedown touchstart', () => {
+      const fogTool = this.activeFogTool();
+      if (fogTool === 'reveal-brush' || fogTool === 'hide-brush') {
+        this.fogTool.beginBrush(fogTool === 'reveal-brush', cellUnderPointer(this.stage!, this.cellSize));
+        this.renderFog();
+        return;
+      }
+      if (fogTool === 'reveal-rect' || fogTool === 'hide-rect') {
+        this.fogTool.beginRect(cellUnderPointer(this.stage!, this.cellSize));
+        this.renderFog();
+        return;
+      }
+      const shape = this.activeMeasureTool();
+      if (!shape) return;
+      const { col, row } = snapToGrid(this.stage!, this.cellSize);
+      this.measurementTool.begin(shape, col, row);
+    });
+
+    this.stage.on('mousemove touchmove', () => {
+      if (this.fogTool.isPaintingBrush) {
+        this.fogTool.continueBrush(cellUnderPointer(this.stage!, this.cellSize));
+        this.renderFog();
+        return;
+      }
+      if (this.fogTool.isDraggingRect) {
+        this.fogTool.updateRect(cellUnderPointer(this.stage!, this.cellSize));
+        this.renderFog();
+        return;
+      }
+      if (!this.measurementTool.current) return;
+      const { col, row } = snapToGrid(this.stage!, this.cellSize);
+      this.measurementTool.update(col, row);
+      this.renderMeasurements();
+
+      // Throttled so a raw mousemove stream doesn't flood the socket.
+      // Only the DM's measurements go out over the wire — everyone should see those.
+      // A player's own measurement stays local-only (drawn above via renderMeasurements()),
+      // so nobody else, including the DM, sees another player's ruler.
+      if (this.auth.isAdmin()) {
+        const now = Date.now();
+        if (now - this.lastMeasureBroadcast > 50) {
+          this.lastMeasureBroadcast = now;
+          this.mapService.sendMeasure(this.mapId, this.measurementTool.current);
+        }
+      }
+    });
+
+    this.stage.on('mouseup touchend', () => {
+      if (this.fogTool.isPaintingBrush) {
+        this.fogTool.endBrush();
+        this.renderFog();
+        return;
+      }
+      if (this.fogTool.isDraggingRect) {
+        this.fogTool.endRect(this.activeFogTool() === 'reveal-rect');
+        this.renderFog();
+        return;
+      }
+      if (!this.measurementTool.current) return;
+      this.measurementTool.end();
+      this.renderMeasurements();
+      if (this.auth.isAdmin()) {
+        this.mapService.sendMeasure(this.mapId, null);
       }
     });
 
     this.tokenSub = this.mapService.watchTokens(this.mapId).subscribe(tokens => {
       this.tokens.set(tokens);
       this.lastTokens = tokens;
-      this.renderTokens(tokens, this.cellSize);
+      this.renderTokens(tokens);
+    });
+
+    this.measureSub = this.mapService.watchMeasurements(this.mapId).subscribe(({ senderId, measurement }) => {
+      this.measurementTool.setRemote(senderId, measurement);
+      this.renderMeasurements();
+    });
+
+    this.fogSub = this.mapService.watchFog(this.mapId).subscribe(fog => {
+      this.fog.set(fog);
+      this.renderFog();
     });
 
     this.resizeObserver = new ResizeObserver(() => this.reflow());
@@ -241,160 +451,61 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
     this.konvaImg!.width(w);
     this.konvaImg!.height(h);
 
-    this.drawGrid(w, h, this.cellSize);
-    this.renderTokens(this.lastTokens, this.cellSize);
+    drawGrid(this.gridLayer!, w, h, this.cellSize);
+    this.renderFog();
+    this.renderTokens(this.lastTokens);
+    renderMoveRange(this.moveRangeLayer!, this.stage, this.cellSize, this.showMoveRange(), this.myToken(), this.moveRangeSquares());
   }
 
-  private drawGrid(w: number, h: number, cellSize: number) {
-    const layer = this.gridLayer!;
-    // reflow() calls this again on every resize, so the previous frame's shape has to go first —
-    // same reasoning as renderTokens()'s own destroyChildren() below.
-    layer.destroyChildren();
-    // One Konva.Shape drawing every line itself, rather than one Konva.Line per line (which can
-    // easily be hundreds on a large map). Every Konva Shape gets a unique hit-test color assigned
-    // in its constructor regardless of `listening` — on a browser with canvas anti-fingerprinting
-    // ("farbling"), that assignment can retry up to 10,000 times before giving up, and doing that
-    // for hundreds of shapes synchronously is what was freezing the tab. Collapsing to a single
-    // shape makes that a one-time bounded cost instead of one per gridline.
-    layer.add(new Konva.Shape({
-      listening: false,
-      stroke: 'rgba(255,255,255,0.12)',
-      strokeWidth: 1,
-      sceneFunc: (context, shape) => {
-        context.beginPath();
-        for (let x = 0; x <= w; x += cellSize) {
-          context.moveTo(x, 0);
-          context.lineTo(x, h);
-        }
-        for (let y = 0; y <= h; y += cellSize) {
-          context.moveTo(0, y);
-          context.lineTo(w, y);
-        }
-        context.strokeShape(shape);
-      },
-    }));
-    layer.draw();
+  private renderFog() {
+    const layer = this.fogLayer;
+    if (!layer) return;
+    this.fogTool.render(
+      layer, this.fog(), this.auth.isAdmin(), this.img, this.gridSize, this.cellSize,
+      this.activeFogTool() === 'reveal-rect',
+    );
   }
 
-  private renderTokens(tokens: MapToken[], cellSize: number) {
-    const layer = this.tokenLayer!;
-    layer.destroyChildren();
-    for (const token of tokens) {
-      const r = (cellSize * token.size) / 2;
-      const cx = token.x * cellSize + r;
-      const cy = token.y * cellSize + r;
-      const label = token.label.substring(0, 3).toUpperCase();
-      const labelFontSize = r * 0.7;
-      // Character HP is party-visible (anyone with data for it in `characterHp`, players
-      // included); monster HP stays DM-only intel — see hpFor.
-      const hp = this.hpFor(token);
+  private renderTokens(tokens: MapToken[]) {
+    const layer = this.tokenLayer;
+    if (!layer) return;
+    renderTokens(layer, tokens, {
+      cellSize: this.cellSize,
+      fog: this.fog(),
+      isAdmin: this.auth.isAdmin(),
+      activeMeasureTool: this.activeMeasureTool(),
+      currentTurnTokenId: this.currentTurnTokenId(),
+      characterHp: this.characterHp(),
+      characterPortraits: this.resolvePortraitImages(this.characterPortraits()),
+      onTokenClick: token => this.tokenClicked.emit(token),
+      onTokenMoved: (token, col, row) => this.mapService.upsertToken({ ...token, x: col, y: row }),
+      onTokenContextMenu: token => this.removeToken(token),
+    });
+  }
 
-      // One Konva.Shape drawing the token's circle, label, and HP badge itself, instead of a
-      // Group with up to 4 child shapes (Circle/Text/Rect/Text) — same rationale as drawGrid:
-      // every extra Konva Shape is another hit-color assignment at construction time, and that
-      // gets expensive on canvas-farbling browsers (Firefox/Safari private-browsing windows in
-      // particular default to it even when the regular window doesn't).
-      const shape = new Konva.Shape({
-        x: cx,
-        y: cy,
-        draggable: this.auth.isAdmin(),
-        // Never actually rendered (sceneFunc paints the real look manually) — just needs to be
-        // truthy so Konva's hasFill() considers this shape fillable, which fillStrokeShape() in
-        // hitFunc below requires before it will paint anything to the hit canvas at all.
-        fill: '#000',
-        // Konva can only reuse sceneFunc for hit-testing automatically when it draws via its own
-        // fillStrokeShape()/context helpers — ours paints with raw context.fillStyle/fill() calls
-        // (needed for the label/HP badge), which Konva has no way to intercept, so the hit canvas
-        // ends up with the shape's real visual colors instead of its assigned lookup color and
-        // hit-testing never resolves to it: clicks and drags silently fall through to the map
-        // image underneath. This explicit hitFunc — using fillStrokeShape(), which Konva *does*
-        // swap the color on — gives it a real (if simplified, circle-only) clickable region.
-        hitFunc: (context, hitShape) => {
-          context.beginPath();
-          context.arc(0, 0, r - 3, 0, Math.PI * 2);
-          context.closePath();
-          context.fillStrokeShape(hitShape);
-        },
-        sceneFunc: context => {
-          context.beginPath();
-          context.arc(0, 0, r - 3, 0, Math.PI * 2);
-          context.closePath();
-          context.fillStyle = token.color;
-          context.fill();
-          context.lineWidth = 2;
-          context.strokeStyle = '#fff';
-          context.stroke();
-
-          context.font = `${labelFontSize}px Arial`;
-          context.textAlign = 'center';
-          context.textBaseline = 'middle';
-          context.fillStyle = '#fff';
-          context.fillText(label, 0, 0);
-
-          if (hp) {
-            const text = `${hp.hp}/${hp.max_hp}`;
-            const fontSize = Math.max(10, Math.min(13, r * 0.4));
-            context.font = `bold ${fontSize}px Arial`;
-            const padX = 4, padY = 2;
-            const labelW = context.measureText(text).width;
-            const labelH = fontSize;
-            const bgY = -(r + labelH + padY * 2 + 4);
-            const rectX = -labelW / 2 - padX;
-            const rectW = labelW + padX * 2;
-            const rectH = labelH + padY * 2;
-            const radius = 3;
-
-            context.beginPath();
-            context.moveTo(rectX + radius, bgY);
-            context.arcTo(rectX + rectW, bgY, rectX + rectW, bgY + rectH, radius);
-            context.arcTo(rectX + rectW, bgY + rectH, rectX, bgY + rectH, radius);
-            context.arcTo(rectX, bgY + rectH, rectX, bgY, radius);
-            context.arcTo(rectX, bgY, rectX + rectW, bgY, radius);
-            context.closePath();
-            context.fillStyle = 'rgba(20, 18, 14, 0.75)';
-            context.fill();
-
-            context.textAlign = 'center';
-            context.textBaseline = 'middle';
-            context.fillStyle = this.hpLabelColor(hp.hp, hp.max_hp);
-            context.fillText(text, 0, bgY + rectH / 2);
-          }
-        },
-      });
-      // Konva can't infer a bounding box from an arbitrary sceneFunc, so a plain custom Shape
-      // reports a zero-size getSelfRect() by default. Left unset, that zero-size box can make
-      // hit-testing skip the shape entirely (falling through to the map image beneath it) —
-      // clicks silently fail to select the token, and drags never start. This just tells Konva
-      // where the shape actually is; it doesn't touch how sceneFunc draws it.
-      shape.getSelfRect = () => ({ x: -r, y: -r, width: r * 2, height: r * 2 });
-
-      shape.on('click tap', () => this.tokenClicked.emit(token));
-      if (this.auth.isAdmin()) {
-        shape.on('dragend', async () => {
-          const pos = shape.position();
-          await this.mapService.upsertToken({ ...token, x: Math.floor(pos.x / cellSize), y: Math.floor(pos.y / cellSize) });
-        });
-        shape.on('contextmenu', (e) => { e.evt.preventDefault(); this.removeToken(token); });
+  // Resolves seeds to loaded <img>s for token-renderer to draw, decoding lazily and caching by
+  // `${characterId}:${seed}`. A seed not yet decoded is simply omitted this pass (the token falls
+  // back to its plain color fill) — the onload handler triggers a redraw once it's ready.
+  private resolvePortraitImages(seeds: Record<string, string>): Record<string, HTMLImageElement> {
+    const resolved: Record<string, HTMLImageElement> = {};
+    for (const [characterId, seed] of Object.entries(seeds)) {
+      const cacheKey = `${characterId}:${seed}`;
+      let img = this.portraitImageCache[cacheKey];
+      if (!img) {
+        img = new Image();
+        img.onload = () => this.renderTokens(this.lastTokens);
+        img.src = portraitDataUri(seed);
+        this.portraitImageCache[cacheKey] = img;
       }
-      layer.add(shape);
+      if (img.complete && img.naturalWidth) resolved[characterId] = img;
     }
-    layer.draw();
+    return resolved;
   }
 
-  private hpFor(token: MapToken): { hp: number; max_hp: number } | null {
-    if (token.character_id) return this.characterHp()[token.character_id] ?? null;
-    // Monster hp/max_hp lives directly on the token, but stays hidden from players — standard
-    // hide-the-enemy's-exact-HP table convention, unlike character HP which is party-visible.
-    if (this.auth.isAdmin() && token.hp != null && token.max_hp != null) return { hp: token.hp, max_hp: token.max_hp };
-    return null;
-  }
-
-  private hpLabelColor(hp: number, maxHp: number): string {
-    if (!maxHp) return '#ede9df';
-    const pct = (hp / maxHp) * 100;
-    if (pct <= 25) return '#e05252';
-    if (pct <= 50) return '#eab308';
-    return '#4caf82';
+  private renderMeasurements() {
+    const layer = this.measureLayer;
+    if (!layer) return;
+    this.measurementTool.render(layer, this.cellSize);
   }
 
   async removeToken(token: MapToken) {
@@ -416,7 +527,7 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
     await this.mapService.rerollInitiative(this.mapId, token.id!);
   }
 
-  private async addTokenAt(col: number, row: number, _cellSize: number) {
+  private async addTokenAt(col: number, row: number) {
     const entity = this.placingEntity();
     if (entity) {
       await this.mapService.upsertToken({

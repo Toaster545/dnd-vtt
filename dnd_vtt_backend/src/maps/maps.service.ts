@@ -154,6 +154,74 @@ export class MapsService {
     return tokens.find((t: any) => t.id === tokenId);
   }
 
+  // `hidden_cells` empty means every cell is visible — a freshly-enabled map starts fully
+  // revealed, and the DM paints/rect-selects areas to hide rather than areas to reveal.
+  async getFog(mapId: string) {
+    const result = await this.db.execute(
+      'SELECT * FROM map_fog WHERE map_id = ?',
+      [mapId],
+    );
+    const row = result.rows[0];
+    if (!row) return { enabled: false, hidden_cells: [] as string[] };
+    return {
+      enabled: !!row.enabled,
+      hidden_cells: this.db.parseJson<string[]>(
+        row.hidden_cells as string,
+        [],
+      ),
+    };
+  }
+
+  async setFogEnabled(mapId: string, enabled: boolean) {
+    const fog = await this.getFog(mapId);
+    await this.upsertFog(mapId, enabled, fog.hidden_cells);
+    return this.broadcastFog(mapId);
+  }
+
+  // `revealed: true` un-hides the painted cells, `false` hides them — same signature as before
+  // the hidden/revealed flip, just inverted internally.
+  async paintFog(
+    mapId: string,
+    cells: { col: number; row: number }[],
+    revealed: boolean,
+  ) {
+    const fog = await this.getFog(mapId);
+    const cellSet = new Set(fog.hidden_cells);
+    for (const { col, row } of cells) {
+      const key = `${col},${row}`;
+      if (revealed) cellSet.delete(key);
+      else cellSet.add(key);
+    }
+    await this.upsertFog(mapId, fog.enabled, [...cellSet]);
+    return this.broadcastFog(mapId);
+  }
+
+  // "Reset" now means "back to the fully-visible default" — clears whatever's been hidden.
+  async resetFog(mapId: string) {
+    const fog = await this.getFog(mapId);
+    await this.upsertFog(mapId, fog.enabled, []);
+    return this.broadcastFog(mapId);
+  }
+
+  private async upsertFog(
+    mapId: string,
+    enabled: boolean,
+    hiddenCells: string[],
+  ) {
+    await this.db.execute(
+      `INSERT INTO map_fog (map_id, enabled, hidden_cells) VALUES (?,?,?)
+       ON CONFLICT(map_id) DO UPDATE SET
+         enabled=excluded.enabled, hidden_cells=excluded.hidden_cells`,
+      [mapId, enabled ? 1 : 0, JSON.stringify(hiddenCells)],
+    );
+  }
+
+  private async broadcastFog(mapId: string) {
+    const fog = await this.getFog(mapId);
+    this.gateway.broadcastFog(mapId, fog);
+    return fog;
+  }
+
   private rollMonsterInitiative(monsterIndex: string): number | null {
     try {
       const monster = this.content.getMonster(monsterIndex) as {

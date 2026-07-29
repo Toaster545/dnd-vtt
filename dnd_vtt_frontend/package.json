@@ -21,6 +21,8 @@
     "@angular/material": "^22.0.6",
     "@angular/platform-browser": "^22.0.0",
     "@angular/router": "^22.0.0",
+    "@dicebear/core": "^9.4.3",
+    "@dicebear/lorelei": "^9.4.2",
     "konva": "^10.3.0",
     "rxjs": "~7.8.0",
     "socket.io-client": "^4.8.3",

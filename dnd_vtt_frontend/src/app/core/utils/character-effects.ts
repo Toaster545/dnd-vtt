@@ -3,10 +3,27 @@ import { DndClass, DndFeat, DndItem, DndRace, EffectCondition, TraitEffect, Trai
 
 // One selected class's data paired with its stored trait picks — the minimal shape needed to
 // walk `grants` and resolve what a character actually chose, shared between the wizard's live
-// draft state (ClassEntry) and a saved Character's `classes[].choices`.
+// draft state (ClassEntry) and a saved Character's `classes[].choices`. `level` and `subclass`
+// gate which grants actually count (see reachableGrants) — without them a level-1 character
+// would incorrectly get every level's features (and every subclass's, not just the chosen one).
 export interface ClassChoiceSource {
   data: DndClass;
   choices: Record<string, string[]>;
+  level: number;
+  subclass?: string;
+}
+
+// Every grant a class (plus its chosen subclass, if reached) actually contributes at `level` —
+// the single place that decides "is this grant currently part of the character." A subclass's
+// levels never start below its class's `subclass_level`, so a level below that threshold already
+// excludes every subclass grant here without needing a separate check.
+export function reachableGrants(cls: DndClass, subclassName: string | undefined, level: number): TraitGrant[] {
+  const subclass = subclassName ? cls.subclasses.find(s => s.name === subclassName) : undefined;
+  const levels = [
+    ...cls.levels.filter(l => l.level <= level),
+    ...(subclass ? subclass.levels.filter(l => l.level <= level) : []),
+  ];
+  return levels.flatMap(l => l.grants ?? []);
 }
 
 export interface RaceChoiceSource {
@@ -37,19 +54,16 @@ export function resolveCharacterFeatPicks(
 ): FeatPick[] {
   const out: FeatPick[] = [];
   const byIndex = (index: string) => feats.find(f => f.index === index);
-  for (const { data, choices } of classes) {
-    const levels = [...data.levels, ...data.subclasses.flatMap(s => s.levels)];
-    for (const lvl of levels) {
-      for (const grant of lvl.grants ?? []) {
-        if (grant.type === 'ability_choice') {
-          const featIndex = choices[`${grant.key}:feat`]?.[0];
-          const feat = featIndex ? byIndex(featIndex) : undefined;
+  for (const { data, choices, level, subclass } of classes) {
+    for (const grant of reachableGrants(data, subclass, level)) {
+      if (grant.type === 'ability_choice') {
+        const featIndex = choices[`${grant.key}:feat`]?.[0];
+        const feat = featIndex ? byIndex(featIndex) : undefined;
+        if (feat) out.push({ feat, ability: choices[`${grant.key}:feat_ability`]?.[0] });
+      } else if (grant.type === 'feat_pick') {
+        for (const featIndex of choices[grant.key] ?? []) {
+          const feat = byIndex(featIndex);
           if (feat) out.push({ feat, ability: choices[`${grant.key}:feat_ability`]?.[0] });
-        } else if (grant.type === 'feat_pick') {
-          for (const featIndex of choices[grant.key] ?? []) {
-            const feat = byIndex(featIndex);
-            if (feat) out.push({ feat, ability: choices[`${grant.key}:feat_ability`]?.[0] });
-          }
         }
       }
     }
@@ -64,6 +78,14 @@ export function resolveCharacterFeatPicks(
     }
   }
   return out;
+}
+
+// Average hit-die progression: max Hit Die + CON at level 1, then average roll (die/2 + 1) + CON
+// per level after — the formula behind a character's HP, extracted so the wizard's live preview
+// and the stats service's suggested_max_hp read off the same math and can't drift apart.
+export function averageHpFormula(level: number, hitDie: number, conMod: number, perLevelBonus = 0): number {
+  const base = Math.max(1, hitDie + conMod + (level - 1) * (Math.floor(hitDie / 2) + 1 + conMod));
+  return base + perLevelBonus * level;
 }
 
 // Every structured TraitEffect the character currently carries — from an embedded class
@@ -88,11 +110,8 @@ export function collectTraitEffects(
       }
     }
   };
-  for (const { data, choices } of classes) {
-    const levels = [...data.levels, ...data.subclasses.flatMap(s => s.levels)];
-    for (const lvl of levels) {
-      collectGrantEffects(lvl.grants ?? [], choices);
-    }
+  for (const { data, choices, level, subclass } of classes) {
+    collectGrantEffects(reachableGrants(data, subclass, level), choices);
   }
   if (race) collectGrantEffects(activeRaceGrants(race), race.choices);
   for (const { feat } of resolveCharacterFeatPicks(classes, feats, race)) {

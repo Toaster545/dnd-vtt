@@ -49,4 +49,19 @@ export class CampaignService {
   removeMember(campaignId: string, userId: string): Promise<void> {
     return firstValueFrom(this.http.delete<void>(`${API}/campaigns/${campaignId}/members/${userId}`));
   }
+
+  setMemberEditAccess(campaignId: string, userId: string, unlocked: boolean): Promise<{ edit_unlocked: boolean }> {
+    return firstValueFrom(
+      this.http.patch<{ edit_unlocked: boolean }>(
+        `${API}/campaigns/${campaignId}/members/${userId}/edit-access`,
+        { unlocked },
+      ),
+    );
+  }
+
+  setPartyLevel(campaignId: string, level: number): Promise<CampaignHub> {
+    return firstValueFrom(
+      this.http.patch<CampaignHub>(`${API}/campaigns/${campaignId}/party-level`, { level }),
+    );
+  }
 }

@@ -77,6 +77,18 @@ export class EncountersController {
     return this.encounters.stop(id, user.id);
   }
 
+  @Post(':id/turn/next')
+  @UseGuards(AdminGuard)
+  nextTurn(@Param('id') id: string, @CurrentUser() user: RequestUser) {
+    return this.encounters.nextTurn(id, user.id);
+  }
+
+  @Post(':id/turn/previous')
+  @UseGuards(AdminGuard)
+  previousTurn(@Param('id') id: string, @CurrentUser() user: RequestUser) {
+    return this.encounters.previousTurn(id, user.id);
+  }
+
   @Patch(':id/visibility')
   @UseGuards(AdminGuard)
   setVisibility(

@@ -125,6 +125,7 @@ export interface Character {
   notes: string;
 
   avatar_url?: string;
+  portrait_seed?: string; // DiceBear (Lorelei style) seed for the generated portrait shown next to the character's name
   created_at?: string;
   updated_at?: string;
 }

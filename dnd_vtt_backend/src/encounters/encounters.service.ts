@@ -2,6 +2,7 @@ import {
   Injectable,
   NotFoundException,
   ForbiddenException,
+  BadRequestException,
 } from '@nestjs/common';
 import { randomUUID } from 'crypto';
 import { DatabaseService } from '../common/database.service';
@@ -145,9 +146,11 @@ export class EncountersService {
     );
 
     // Starting play necessarily reveals the encounter — players need to see it to join it. The DM
-    // can still re-hide it afterward via setVisibility.
+    // can still re-hide it afterward via setVisibility. Also resets any turn tracking left over
+    // from a previous run of this encounter, so play always starts from "no active turn, round 1".
     await this.db.execute(
-      `UPDATE encounters SET status='active', join_code=?, visible_to_players=1, updated_at=? WHERE id=?`,
+      `UPDATE encounters SET status='active', join_code=?, visible_to_players=1,
+       current_turn_token_id=NULL, round_number=1, updated_at=? WHERE id=?`,
       [code, new Date().toISOString(), id],
     );
     const updated = await this.findOne(id, dmId);
@@ -224,8 +227,86 @@ export class EncountersService {
       join_code: row.join_code,
       summary: row.summary ?? '',
       visible_to_players: !!row.visible_to_players,
+      current_turn_token_id: row.current_turn_token_id ?? null,
+      round_number: (row.round_number as number) ?? 1,
       created_at: row.created_at,
       updated_at: row.updated_at,
     };
+  }
+
+  // Tokens on the encounter's map, ordered the same way the frontend's own `turnOrder` computed
+  // sorts them (battle-map.ts): highest initiative first, unrolled (null) tokens last.
+  private async getTurnOrderIds(mapId: string): Promise<string[]> {
+    const result = await this.db.execute(
+      `SELECT id FROM map_tokens WHERE map_id = ? ORDER BY (initiative IS NULL) ASC, initiative DESC`,
+      [mapId],
+    );
+    return result.rows.map((r) => r.id as string);
+  }
+
+  async nextTurn(id: string, dmId: string) {
+    const encounter = await this.findOne(id, dmId);
+    if (!encounter.map_id)
+      throw new BadRequestException('Encounter has no map attached');
+    const order = await this.getTurnOrderIds(encounter.map_id as string);
+    if (order.length === 0)
+      throw new BadRequestException('No tokens on the map yet');
+
+    const currentId = encounter.current_turn_token_id as string | null;
+    const idx = currentId ? order.indexOf(currentId) : -1;
+    let round = encounter.round_number as number;
+    let nextIdx: number;
+    if (idx === -1) {
+      // Not started yet, or the previously-active token is no longer on the map.
+      nextIdx = 0;
+    } else {
+      nextIdx = idx + 1;
+      if (nextIdx >= order.length) {
+        nextIdx = 0;
+        round += 1;
+      }
+    }
+
+    return this.applyTurn(id, dmId, order[nextIdx], round);
+  }
+
+  async previousTurn(id: string, dmId: string) {
+    const encounter = await this.findOne(id, dmId);
+    if (!encounter.map_id)
+      throw new BadRequestException('Encounter has no map attached');
+    const order = await this.getTurnOrderIds(encounter.map_id as string);
+    if (order.length === 0)
+      throw new BadRequestException('No tokens on the map yet');
+
+    const currentId = encounter.current_turn_token_id as string | null;
+    const idx = currentId ? order.indexOf(currentId) : -1;
+    let round = encounter.round_number as number;
+    let prevIdx: number;
+    if (idx <= 0) {
+      prevIdx = order.length - 1;
+      round = Math.max(1, round - 1);
+    } else {
+      prevIdx = idx - 1;
+    }
+
+    return this.applyTurn(id, dmId, order[prevIdx], round);
+  }
+
+  private async applyTurn(
+    id: string,
+    dmId: string,
+    tokenId: string,
+    round: number,
+  ) {
+    await this.db.execute(
+      `UPDATE encounters SET current_turn_token_id=?, round_number=?, updated_at=? WHERE id=?`,
+      [tokenId, round, new Date().toISOString(), id],
+    );
+    const updated = await this.findOne(id, dmId);
+    this.presence.broadcastTurnState(id, {
+      current_turn_token_id: updated.current_turn_token_id as string | null,
+      round_number: updated.round_number as number,
+    });
+    return updated;
   }
 }
