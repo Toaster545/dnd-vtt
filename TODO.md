@@ -8,7 +8,16 @@
 - [ ] Dashboard
 - [ ] Spells
 - [ ] Equipement
-- [ ] 
+- [ ] Party Inventory
+- [ ] Defenses (resistances n shit)
+- [ ] Physical descriptions (character creation)
+- [ ] Backstory text section
+- [ ] Pets/Familiars
+- [ ] Note taking
+- [ ] Integrated music/Sound effects
+- [ ] display account/mode for streaming to a TV or other device
+- [ ] DM secrets (letters, items etc)
+- [ ] Popups for leveling up and other shi
 
 ## Mathieu
 
@@ -17,14 +26,14 @@
     - [x] Assign Users
     - [ ] lock user characters (not to much and add options)
     - [x] add encounters
-    - [x] add notes
+    - [x] add comments
     - [ ] customize campaign
     - [ ] 
 - [ ] Encounters
     - [x] Add Turns
     - [ ] Measuring and player movement
     - [ ] fog of war
-    - [ ] 
+    - [ ] Add player icons
 
 ## Andre
 
