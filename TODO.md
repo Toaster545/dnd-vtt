@@ -17,6 +17,10 @@
 - [ ] display account/mode for streaming to a TV or other device
 - [ ] DM secrets (letters, items etc)
 - [ ] Popups for leveling up and other shi
+- [ ] character icon customization
+- [ ] Effect/ concentration on players in map
+- [ ] players can hide race
+- [ ] 
 
 ## Mathieu
 
@@ -31,13 +35,16 @@
 - [ ] Encounters
     - [x] Add Turns
     - [x] Measuring and player movement
-    - [ ] fog of war
-    - [ ] Add player icons
+    - [x] fog of war
+    - [x] Add player icons
 - [ ] Dashboard
     - [ ] Latest campaign and character
     - [ ] Updates to character (leveling up)
     - [ ] 
-- [ ] 
+- [ ] Monster Creation
+- [ ] Auto deployement pipeline
+    - [ ] Testing
+    - [ ] pull from main
 
 ## Andre
 
