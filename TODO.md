@@ -5,8 +5,6 @@
 ## General
 - [ ] Rests (short long)
 - [ ] Shop?
-- [ ] Spells
-- [ ] Equipement
 - [ ] Party Inventory
 - [ ] Defenses (resistances n shit)
 - [ ] Physical descriptions (character creation)
@@ -50,3 +48,13 @@
     - [ ] add customizability (background, for instance)
 
 ## Anthony
+
+- [ ] Spells
+    - [] Add cantrips and make a distinction between them and spells
+    - [x] Adding spells to a character
+    - [] Fix prerequisite to access a spell
+    - [] Add spellcasting
+    - [] Fix visual for Spell slots
+- [ ] Equipement
+    - [] Equipment creator
+    - []  DM can add equipment for the players
