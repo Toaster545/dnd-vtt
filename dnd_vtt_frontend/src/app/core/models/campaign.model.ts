@@ -76,6 +76,19 @@ export interface MapToken {
   initiative?: number | null;
 }
 
+// A Roll20-style ruler/cone/sphere measurement, drawn while dragging on the map and broadcast live
+// to everyone else viewing it (see BattleMapService.watchMeasurements) — never persisted. Grid-cell
+// coordinates (fractional, snapped to intersections), not pixels, so it renders correctly for
+// every viewer regardless of their own canvas scale.
+export type MeasureShape = 'line' | 'cone' | 'sphere';
+export interface Measurement {
+  shape: MeasureShape;
+  originCol: number;
+  originRow: number;
+  pointCol: number;
+  pointRow: number;
+}
+
 // What's "armed" from an encounter's roster sidebar, ready to be dropped onto the map on the next
 // click — built by the roster UI (from a Character or a DndMonster), consumed by BattleMapComponent
 // to fill in a new token's fields instead of a manually-typed label/color.

@@ -96,6 +96,15 @@ export class EncounterPresenceGateway implements OnGatewayDisconnect {
       .emit('encounter_players_updated', players);
   }
 
+  // DM advanced/reversed the current turn — pushed to the same room presence already tracks, so
+  // both the DM's own other tabs and every joined player pick it up without a separate room/join.
+  broadcastTurnState(
+    encounterId: string,
+    state: { current_turn_token_id: string | null; round_number: number },
+  ) {
+    this.server.to(`encounter-presence:${encounterId}`).emit('turn_changed', state);
+  }
+
   // Global broadcast (no room) so any connected player's client can decide for itself whether the
   // encounter belongs to one of their own campaigns and surface a "join now" alert — this app is
   // single-server/self-hosted at a small scale (see CLAUDE.md), so there's no need for per-campaign

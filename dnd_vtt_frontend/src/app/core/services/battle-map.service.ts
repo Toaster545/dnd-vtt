@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { firstValueFrom, Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { SocketService } from './socket.service';
-import { BattleMap, MapToken } from '../models/campaign.model';
+import { BattleMap, MapToken, Measurement } from '../models/campaign.model';
 
 const API = environment.apiUrl;
 
@@ -71,6 +71,28 @@ export class BattleMapService {
       return () => {
         socket.emit('leave_map', mapId);
         socket.off('tokens_updated', handleUpdate);
+      };
+    });
+  }
+
+  // Fire-and-forget — broadcasts the local drag to everyone else viewing this map. `null` clears
+  // it (drag released / tool deselected).
+  sendMeasure(mapId: string, measurement: Measurement | null): void {
+    this.socketService.socket.emit('measure', { mapId, measurement });
+  }
+
+  // WebSocket subscription for other viewers' live measurements, keyed by their socket id so
+  // several people can measure at once without clobbering each other.
+  watchMeasurements(mapId: string): Observable<{ senderId: string; measurement: Measurement | null }> {
+    return new Observable(observer => {
+      const socket = this.socketService.socket;
+      const handleUpdate = (event: { senderId: string; measurement: Measurement | null }) => observer.next(event);
+
+      socket.connect();
+      socket.on('measure', handleUpdate);
+
+      return () => {
+        socket.off('measure', handleUpdate);
       };
     });
   }

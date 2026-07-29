@@ -11,7 +11,7 @@ import { BattleMapService } from '../../../../core/services/battle-map.service';
 import { AuthService } from '../../../../core/services/auth.service';
 import { Encounter, PresentPlayer } from '../../../../core/models/encounter.model';
 import { Character } from '../../../../core/models/character.model';
-import { BattleMap } from '../../../../core/models/campaign.model';
+import { BattleMap, MapToken } from '../../../../core/models/campaign.model';
 import { Session } from '../../../../core/models/session.model';
 import { BattleMapComponent } from '../../../battle-map/battle-map';
 import { CharacterPlaySheetComponent } from '../../../dm/dm-play/character-play-sheet/character-play-sheet';
@@ -69,6 +69,11 @@ export class PlayerCampaignSessionComponent implements OnInit, OnDestroy {
   presentPlayers = signal<PresentPlayer[]>([]);
   private presenceSub?: Subscription;
 
+  // Resolved from the battle-map's own token list via (currentTurnTokenChanged) — pushed live by
+  // the DM stepping turns, see watchTurnState() below.
+  currentTurnToken = signal<MapToken | null>(null);
+  private turnSub?: Subscription;
+
   private pendingAutojoinId: string | null = null;
 
   characterHp = computed(() => {
@@ -95,6 +100,7 @@ export class PlayerCampaignSessionComponent implements OnInit, OnDestroy {
     const encounter = this.activeEncounter();
     if (encounter?.id) this.encounterService.leavePresence(encounter.id);
     this.presenceSub?.unsubscribe();
+    this.turnSub?.unsubscribe();
   }
 
   private async loadSession() {
@@ -158,6 +164,10 @@ export class PlayerCampaignSessionComponent implements OnInit, OnDestroy {
       this.announceSelf(joined.id!, character);
       this.presenceSub = this.encounterService.watchPresence(joined.id!)
         .subscribe(players => this.presentPlayers.set(players));
+      this.turnSub = this.encounterService.watchTurnState(joined.id!)
+        .subscribe(state => this.activeEncounter.update(e => e ? {
+          ...e, current_turn_token_id: state.current_turn_token_id, round_number: state.round_number,
+        } : e));
     } catch {
       this.clearStoredRejoin();
     } finally {
@@ -169,7 +179,9 @@ export class PlayerCampaignSessionComponent implements OnInit, OnDestroy {
     const encounter = this.activeEncounter();
     if (encounter?.id) this.encounterService.leavePresence(encounter.id);
     this.presenceSub?.unsubscribe();
+    this.turnSub?.unsubscribe();
     this.presentPlayers.set([]);
+    this.currentTurnToken.set(null);
     this.activeEncounter.set(null);
     this.activeCharacter.set(null);
     this.clearStoredRejoin();

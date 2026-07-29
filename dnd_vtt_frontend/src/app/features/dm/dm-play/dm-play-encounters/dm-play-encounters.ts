@@ -35,6 +35,11 @@ export class DmPlayEncountersComponent implements OnInit, OnDestroy {
   selected = signal<Encounter | null>(null);
   togglingStatus = signal(false);
 
+  // Resolved from the battle-map's own token list via (currentTurnTokenChanged) — the encounter
+  // record only carries the current turn's token id, not its name/color for display.
+  currentTurnToken = signal<MapToken | null>(null);
+  togglingTurn = signal(false);
+
   // Live "who's got this encounter open right now" — see EncounterPresenceGateway.
   presentPlayers = signal<PresentPlayer[]>([]);
   private presenceSub?: Subscription;
@@ -140,6 +145,7 @@ export class DmPlayEncountersComponent implements OnInit, OnDestroy {
     this.viewingMonsterToken.set(null);
     this.showMonsterSearch.set(false);
     this.monsterSearchQuery.set('');
+    this.currentTurnToken.set(null);
     this.presenceSub?.unsubscribe();
     this.presentPlayers.set([]);
     this.extraCharacters.set({});
@@ -187,6 +193,32 @@ export class DmPlayEncountersComponent implements OnInit, OnDestroy {
       this.encounters.update(list => list.map(e => e.id === updated.id ? updated : e));
     } finally {
       this.togglingStatus.set(false);
+    }
+  }
+
+  async nextTurn() {
+    const encounter = this.selected();
+    if (!encounter?.id) return;
+    this.togglingTurn.set(true);
+    try {
+      const updated = await this.encounterService.nextTurn(encounter.id);
+      this.selected.set(updated);
+      this.encounters.update(list => list.map(e => e.id === updated.id ? updated : e));
+    } finally {
+      this.togglingTurn.set(false);
+    }
+  }
+
+  async previousTurn() {
+    const encounter = this.selected();
+    if (!encounter?.id) return;
+    this.togglingTurn.set(true);
+    try {
+      const updated = await this.encounterService.previousTurn(encounter.id);
+      this.selected.set(updated);
+      this.encounters.update(list => list.map(e => e.id === updated.id ? updated : e));
+    } finally {
+      this.togglingTurn.set(false);
     }
   }
 

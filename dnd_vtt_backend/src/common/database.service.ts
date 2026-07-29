@@ -62,6 +62,7 @@ export class DatabaseService implements OnModuleInit {
     if (version < 7) await this.applyV7();
     if (version < 8) await this.applyV8();
     if (version < 9) await this.applyV9();
+    if (version < 10) await this.applyV10();
   }
 
   // ── V1: initial schema (explicit columns on characters) ─────────────────────
@@ -391,5 +392,18 @@ export class DatabaseService implements OnModuleInit {
     this.logger.log(
       'Applied schema migration v9 (campaign/session backgrounds)',
     );
+  }
+
+  // ── V10: encounter turn tracking ─────────────────────────────────────────────
+  private async applyV10() {
+    await this.db.execute(
+      `ALTER TABLE encounters ADD COLUMN current_turn_token_id TEXT REFERENCES map_tokens(id) ON DELETE SET NULL`,
+    );
+    await this.db.execute(
+      `ALTER TABLE encounters ADD COLUMN round_number INTEGER NOT NULL DEFAULT 1`,
+    );
+
+    await this.db.execute(`PRAGMA user_version = 10`);
+    this.logger.log('Applied schema migration v10 (encounter turn tracking)');
   }
 }

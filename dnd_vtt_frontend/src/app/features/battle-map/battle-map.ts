@@ -9,7 +9,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { BattleMapService } from '../../core/services/battle-map.service';
 import { AuthService } from '../../core/services/auth.service';
-import { MapToken, BattleMap, PlacingEntity } from '../../core/models/campaign.model';
+import { MapToken, BattleMap, PlacingEntity, MeasureShape, Measurement } from '../../core/models/campaign.model';
 import { ConfirmService } from '../../shared/confirm.service';
 import { ResizeHandleDirective } from '../../shared/directives/resize-handle.directive';
 
@@ -34,8 +34,15 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
   // the token). Fed from the DM's already-loaded roster, or from encounter presence on the
   // player's view — hence party-visible here, unlike monster HP which stays admin-only.
   readonly characterHp = input<Record<string, { hp: number; max_hp: number }>>({});
+  // Id of the token whose turn it currently is (from the embedding parent's Encounter record) —
+  // drives the highlight ring drawn in renderTokens() and the turn-order row highlight below.
+  readonly currentTurnTokenId = input<string | null>(null);
   // Fired when an already-placed token is clicked, so an embedding parent can show its stat block/HP.
   readonly tokenClicked = output<MapToken>();
+  // Fired whenever the resolved current-turn token changes, so an embedding parent — which only
+  // has the id above — can show the token's name (e.g. a "X's Turn" header label) without having
+  // to duplicate token state of its own.
+  readonly currentTurnTokenChanged = output<MapToken | null>();
 
   mapService = inject(BattleMapService);
   auth = inject(AuthService);
@@ -59,6 +66,16 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
     this.rightAsideWidth.update(w => Math.min(420, Math.max(220, w - dx)));
   }
 
+  // Roll20-style ruler/cone/sphere — null is the normal select/place/drag mode. Available to
+  // every viewer (DM and players), not gated by auth.isAdmin(). Toggling this suspends token
+  // placement/dragging (see the `stage.on('click tap', ...)` guard and renderTokens()'s
+  // `draggable` below) while a measure tool is active.
+  activeMeasureTool = signal<MeasureShape | null>(null);
+
+  toggleMeasureTool(shape: MeasureShape) {
+    this.activeMeasureTool.update(current => current === shape ? null : shape);
+  }
+
   // The token list re-sorted by initiative, highest first, with unrolled tokens sorted last.
   turnOrder = computed(() => {
     return [...this.tokens()].sort((a, b) => {
@@ -69,10 +86,15 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   });
 
+  currentTurnToken = computed(() =>
+    this.tokens().find(t => t.id === this.currentTurnTokenId()) ?? null
+  );
+
   private stage?: Konva.Stage;
   private mapLayer?: Konva.Layer;
   private tokenLayer?: Konva.Layer;
   private gridLayer?: Konva.Layer;
+  private measureLayer?: Konva.Layer;
   private konvaImg?: Konva.Image;
   private img?: HTMLImageElement;
   private gridSize = 50;
@@ -81,6 +103,12 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
   // firing a window resize event.
   private resizeObserver?: ResizeObserver;
   private tokenSub?: Subscription;
+  private measureSub?: Subscription;
+  // This viewer's own in-progress drag — rendered instantly, no round trip. Cleared on mouseup.
+  private localMeasurement: Measurement | null = null;
+  // Everyone else's live measurements on this map, keyed by their socket id.
+  private remoteMeasurements = new Map<string, Measurement>();
+  private lastMeasureBroadcast = 0;
   private mapId!: string;
   private routeMapId: string | null = null;
   private viewReady = signal(false);
@@ -102,13 +130,22 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
       this.loadMap(id);
     });
 
-    // A character's HP changing (e.g. the DM adjusting it from the roster's character sheet)
-    // doesn't touch the token list itself, so it needs its own redraw trigger.
+    // A character's HP changing (e.g. the DM adjusting it from the roster's character sheet), the
+    // current turn changing, or the measure tool being toggled (which flips whether tokens are
+    // draggable) doesn't touch the token list itself, so each needs its own redraw trigger.
     effect(() => {
       this.characterHp();
+      this.currentTurnTokenId();
+      this.activeMeasureTool();
       if (this.tokenLayer && this.cellSize) {
         this.renderTokens(this.lastTokens, this.cellSize);
       }
+    });
+
+    // Lets an embedding parent (which only holds the current-turn token *id*) resolve it to the
+    // actual token for display, e.g. a "X's Turn" header label.
+    effect(() => {
+      this.currentTurnTokenChanged.emit(this.currentTurnToken());
     });
   }
 
@@ -122,6 +159,7 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnDestroy() {
     this.tokenSub?.unsubscribe();
+    this.measureSub?.unsubscribe();
     this.resizeObserver?.disconnect();
     this.stage?.destroy();
   }
@@ -132,6 +170,10 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
     this.error.set(null);
     this.tokenSub?.unsubscribe();
     this.tokenSub = undefined;
+    this.measureSub?.unsubscribe();
+    this.measureSub = undefined;
+    this.localMeasurement = null;
+    this.remoteMeasurements.clear();
     // #stageContainer is a stable element reused across map loads (see the template comment), so
     // the observer from a previous map must be torn down before buildStage() attaches a new one —
     // otherwise every map switch would stack another observer on the same element.
@@ -187,7 +229,11 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
     this.mapLayer = new Konva.Layer();
     this.gridLayer = new Konva.Layer();
     this.tokenLayer = new Konva.Layer();
-    this.stage.add(this.mapLayer, this.gridLayer, this.tokenLayer);
+    this.measureLayer = new Konva.Layer();
+    this.stage.add(this.mapLayer, this.gridLayer, this.tokenLayer, this.measureLayer);
+    // Purely visual — the ruler/cone/sphere itself is never clicked or dragged, only the stage's
+    // own mousedown/mousemove/mouseup handlers below drive it.
+    this.measureLayer.listening(false);
 
     // Grid lines are purely decorative — nothing on this layer is ever clicked or dragged.
     // Konva otherwise assigns every shape a unique hit-test color, and a grid can easily be
@@ -202,7 +248,7 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
     this.mapLayer.add(this.konvaImg);
 
     this.stage.on('click tap', (e) => {
-      if (e.target === this.konvaImg && this.auth.isAdmin()) {
+      if (e.target === this.konvaImg && this.auth.isAdmin() && !this.activeMeasureTool()) {
         const pos = this.stage!.getPointerPosition()!;
         const col = Math.floor(pos.x / this.cellSize);
         const row = Math.floor(pos.y / this.cellSize);
@@ -210,10 +256,44 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     });
 
+    this.stage.on('mousedown touchstart', () => {
+      const shape = this.activeMeasureTool();
+      if (!shape) return;
+      const { col, row } = this.snapToGrid();
+      this.localMeasurement = { shape, originCol: col, originRow: row, pointCol: col, pointRow: row };
+    });
+
+    this.stage.on('mousemove touchmove', () => {
+      if (!this.localMeasurement) return;
+      const { col, row } = this.snapToGrid();
+      this.localMeasurement = { ...this.localMeasurement, pointCol: col, pointRow: row };
+      this.renderMeasurements();
+
+      // Throttled so a raw mousemove stream doesn't flood the socket.
+      const now = Date.now();
+      if (now - this.lastMeasureBroadcast > 50) {
+        this.lastMeasureBroadcast = now;
+        this.mapService.sendMeasure(this.mapId, this.localMeasurement);
+      }
+    });
+
+    this.stage.on('mouseup touchend', () => {
+      if (!this.localMeasurement) return;
+      this.localMeasurement = null;
+      this.renderMeasurements();
+      this.mapService.sendMeasure(this.mapId, null);
+    });
+
     this.tokenSub = this.mapService.watchTokens(this.mapId).subscribe(tokens => {
       this.tokens.set(tokens);
       this.lastTokens = tokens;
       this.renderTokens(tokens, this.cellSize);
+    });
+
+    this.measureSub = this.mapService.watchMeasurements(this.mapId).subscribe(({ senderId, measurement }) => {
+      if (measurement) this.remoteMeasurements.set(senderId, measurement);
+      else this.remoteMeasurements.delete(senderId);
+      this.renderMeasurements();
     });
 
     this.resizeObserver = new ResizeObserver(() => this.reflow());
@@ -297,7 +377,7 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
       const shape = new Konva.Shape({
         x: cx,
         y: cy,
-        draggable: this.auth.isAdmin(),
+        draggable: this.auth.isAdmin() && !this.activeMeasureTool(),
         // Never actually rendered (sceneFunc paints the real look manually) — just needs to be
         // truthy so Konva's hasFill() considers this shape fillable, which fillStrokeShape() in
         // hitFunc below requires before it will paint anything to the hit canvas at all.
@@ -324,6 +404,14 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
           context.lineWidth = 2;
           context.strokeStyle = '#fff';
           context.stroke();
+
+          if (token.id === this.currentTurnTokenId()) {
+            context.beginPath();
+            context.arc(0, 0, r + 2, 0, Math.PI * 2);
+            context.lineWidth = 3;
+            context.strokeStyle = '#f5d67a';
+            context.stroke();
+          }
 
           context.font = `${labelFontSize}px Arial`;
           context.textAlign = 'center';
@@ -379,6 +467,79 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
       layer.add(shape);
     }
     layer.draw();
+  }
+
+  // Distance is snapped to grid intersections (rounded, not floored like token placement, so a
+  // drag that ends mid-square still reads as a clean whole-square distance) and assumes the 5e
+  // default of 1 square = 5 ft — this map has no per-map scale to read instead.
+  private static readonly FEET_PER_SQUARE = 5;
+
+  private snapToGrid(): { col: number; row: number } {
+    const pos = this.stage!.getPointerPosition()!;
+    return {
+      col: Math.round(pos.x / this.cellSize),
+      row: Math.round(pos.y / this.cellSize),
+    };
+  }
+
+  private renderMeasurements() {
+    const layer = this.measureLayer;
+    if (!layer) return;
+    layer.destroyChildren();
+
+    const all = [...this.remoteMeasurements.values()];
+    if (this.localMeasurement) all.push(this.localMeasurement);
+
+    for (const m of all) {
+      if (m.originCol === m.pointCol && m.originRow === m.pointRow) continue;
+      this.drawMeasurement(layer, m);
+    }
+    layer.draw();
+  }
+
+  private drawMeasurement(layer: Konva.Layer, m: Measurement) {
+    const cs = this.cellSize;
+    const ox = m.originCol * cs, oy = m.originRow * cs;
+    const px = m.pointCol * cs, py = m.pointRow * cs;
+    const dx = px - ox, dy = py - oy;
+    const distancePx = Math.hypot(dx, dy);
+    const squares = distancePx / cs;
+    const feet = Math.round(squares * BattleMapComponent.FEET_PER_SQUARE);
+    const color = '#f5d67a';
+
+    if (m.shape === 'line') {
+      layer.add(new Konva.Line({ points: [ox, oy, px, py], stroke: color, strokeWidth: 3, lineCap: 'round' }));
+      layer.add(new Konva.Circle({ x: ox, y: oy, radius: 4, fill: color }));
+      layer.add(new Konva.Circle({ x: px, y: py, radius: 4, fill: color }));
+      this.addMeasureLabel(layer, `${feet} ft`, (ox + px) / 2, (oy + py) / 2);
+    } else if (m.shape === 'sphere') {
+      layer.add(new Konva.Circle({
+        x: ox, y: oy, radius: distancePx,
+        stroke: color, strokeWidth: 2, fill: 'rgba(245, 214, 122, 0.15)',
+      }));
+      this.addMeasureLabel(layer, `${feet} ft`, ox, oy);
+    } else {
+      // Cone: apex at the origin, width at the far end equals the cone's length (the 5e
+      // convention) — an isoceles triangle from the origin out to two points straddling the
+      // drag point, offset perpendicular to the drag direction by half the length.
+      const nx = -dy / distancePx, ny = dx / distancePx;
+      const half = distancePx / 2;
+      const leftX = px + nx * half, leftY = py + ny * half;
+      const rightX = px - nx * half, rightY = py - ny * half;
+      layer.add(new Konva.Line({
+        points: [ox, oy, leftX, leftY, rightX, rightY],
+        closed: true, stroke: color, strokeWidth: 2, fill: 'rgba(245, 214, 122, 0.15)',
+      }));
+      this.addMeasureLabel(layer, `${feet} ft`, px, py);
+    }
+  }
+
+  private addMeasureLabel(layer: Konva.Layer, text: string, x: number, y: number) {
+    layer.add(new Konva.Text({
+      x, y, text, fontSize: 14, fontStyle: 'bold',
+      fill: '#fff', offsetX: text.length * 3.5, offsetY: 20,
+      shadowColor: '#000', shadowBlur: 4, shadowOpacity: 0.8,
+    }));
   }
 
   private hpFor(token: MapToken): { hp: number; max_hp: number } | null {
