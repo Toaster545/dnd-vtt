@@ -30,7 +30,7 @@
     - [ ] 
 - [ ] Encounters
     - [x] Add Turns
-    - [ ] Measuring and player movement
+    - [x] Measuring and player movement
     - [ ] fog of war
     - [ ] Add player icons
 - [ ] Dashboard
