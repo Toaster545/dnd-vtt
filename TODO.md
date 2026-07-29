@@ -34,6 +34,11 @@
     - [ ] Measuring and player movement
     - [ ] fog of war
     - [ ] Add player icons
+- [ ] Dashboard
+    - [ ] Latest campaign and character
+    - [ ] Updates to character (leveling up)
+    - [ ] 
+- [ ] 
 
 ## Andre
 
