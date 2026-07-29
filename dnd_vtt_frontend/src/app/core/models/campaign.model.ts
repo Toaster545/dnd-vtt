@@ -21,6 +21,7 @@ export interface CampaignMember {
   character_max_hp?: number | null;
   character_current_hp?: number | null;
   character_armor_class?: number | null;
+  character_portrait_seed?: string | null;
   source_character_id?: string | null;
   status?: 'active' | 'removed';
   joined_at?: string;

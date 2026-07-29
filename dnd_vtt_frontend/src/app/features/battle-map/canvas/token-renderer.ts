@@ -8,6 +8,10 @@ export interface TokenRenderContext {
   activeMeasureTool: MeasureShape | null;
   currentTurnTokenId: string | null;
   characterHp: Record<string, { hp: number; max_hp: number }>;
+  // Loaded portrait image per character_id — only present once decoded (see
+  // BattleMapComponent.resolvePortraitImages), so a token with a character_id but no entry here
+  // just falls back to its plain color fill for this render pass.
+  characterPortraits: Record<string, HTMLImageElement>;
   onTokenClick: (token: MapToken) => void;
   onTokenMoved: (token: MapToken, col: number, row: number) => void;
   onTokenContextMenu: (token: MapToken) => void;
@@ -55,6 +59,7 @@ export function renderTokens(layer: Konva.Layer, tokens: MapToken[], ctx: TokenR
     // Character HP is party-visible (anyone with data for it in `characterHp`, players
     // included); monster HP stays DM-only intel — see hpFor.
     const hp = hpFor(token, ctx);
+    const portrait = token.character_id ? ctx.characterPortraits[token.character_id] : undefined;
 
     // One Konva.Shape drawing the token's circle, label, and HP badge itself, instead of a
     // Group with up to 4 child shapes (Circle/Text/Rect/Text) — same rationale as drawGrid:
@@ -86,10 +91,21 @@ export function renderTokens(layer: Konva.Layer, tokens: MapToken[], ctx: TokenR
         context.beginPath();
         context.arc(0, 0, r - 3, 0, Math.PI * 2);
         context.closePath();
-        context.fillStyle = token.color;
-        context.fill();
-        context.lineWidth = 2;
-        context.strokeStyle = '#fff';
+        if (portrait) {
+          // Clip the portrait to the same circle the plain color fill would otherwise use, then
+          // stroke a ring in the token's own color (in place of the plain-fill fallback's white
+          // ring) so it stays identifiable at a glance even with a face now filling the token.
+          context.save();
+          context.clip();
+          const d = (r - 3) * 2;
+          context.drawImage(portrait, -(r - 3), -(r - 3), d, d);
+          context.restore();
+        } else {
+          context.fillStyle = token.color;
+          context.fill();
+        }
+        context.lineWidth = portrait ? 3 : 2;
+        context.strokeStyle = portrait ? token.color : '#fff';
         context.stroke();
 
         if (token.id === ctx.currentTurnTokenId) {
@@ -100,11 +116,15 @@ export function renderTokens(layer: Konva.Layer, tokens: MapToken[], ctx: TokenR
           context.stroke();
         }
 
-        context.font = `${labelFontSize}px Arial`;
-        context.textAlign = 'center';
-        context.textBaseline = 'middle';
-        context.fillStyle = '#fff';
-        context.fillText(label, 0, 0);
+        // The label is redundant once a portrait is shown (and would just clutter the face) —
+        // skipped there, but still drawn for monsters/players whose portrait hasn't loaded yet.
+        if (!portrait) {
+          context.font = `${labelFontSize}px Arial`;
+          context.textAlign = 'center';
+          context.textBaseline = 'middle';
+          context.fillStyle = '#fff';
+          context.fillText(label, 0, 0);
+        }
 
         if (hp) {
           const text = `${hp.hp}/${hp.max_hp}`;

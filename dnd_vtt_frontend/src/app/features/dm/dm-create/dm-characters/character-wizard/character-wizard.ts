@@ -1,12 +1,15 @@
 import { Component, inject, signal, computed, effect, output, OnInit, OnDestroy, input } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
 import { ContentService, DndRace, DndClass, DndBackground, DndItem, DndSpell, DndFeat, TraitEffect, TraitGrant } from '../../../../../core/services/content.service';
 import { ClassChoiceSource, averageHpFormula, collectTraitEffects, reachableGrants } from '../../../../../core/utils/character-effects';
 import { isStructuredEquipment, resolveStartingEquipment } from '../../../../../core/utils/starting-equipment';
 import { resolveBackgroundSkills } from '../../../../../core/utils/background-skills';
+import { portraitDataUri, randomPortraitSeed } from '../../../../../core/utils/avatar';
 import { CharacterService } from '../../../../../core/services/character.service';
 import { CharacterStatsService } from '../../../../../core/services/character-stats.service';
 import { Character, Ability, ABILITIES, defaultCharacter, abilityModifier } from '../../../../../core/models/character.model';
+import { PortraitPickerDialogComponent } from '../../../../../shared/portrait-picker-dialog/portrait-picker-dialog';
 import { RaceStepComponent, Subrace, RaceChoice } from './steps/race-step/race-step';
 import { ClassStepComponent, ClassEntry } from './steps/class-step/class-step';
 import { BackgroundStepComponent, BackgroundChoice } from './steps/background-step/background-step';
@@ -38,6 +41,7 @@ export class CharacterWizardComponent implements OnInit, OnDestroy {
   private content          = inject(ContentService);
   private characterService = inject(CharacterService);
   private statsService     = inject(CharacterStatsService);
+  private dialog           = inject(MatDialog);
 
   readonly character = input<Character | null>(null);
   readonly saved     = output<void>();
@@ -84,6 +88,8 @@ export class CharacterWizardComponent implements OnInit, OnDestroy {
   });
 
   characterName = signal('');
+  portraitSeed  = signal(randomPortraitSeed());
+  portraitUri   = computed(() => portraitDataUri(this.portraitSeed()));
   level         = signal(1);
   alignment     = signal('True Neutral');
   currentHp     = signal<number | null>(null);
@@ -289,6 +295,7 @@ export class CharacterWizardComponent implements OnInit, OnDestroy {
       ...defaultCharacter(),
       id: this.characterId() ?? undefined,
       name: this.characterName().trim() || 'Unnamed Character',
+      portrait_seed: this.portraitSeed(),
       race: this.selectedRace()?.name ?? '',
       subrace: this.selectedSubrace()?.name ?? '',
       race_choices: this.raceTraits(),
@@ -357,7 +364,7 @@ export class CharacterWizardComponent implements OnInit, OnDestroy {
     });
 
     effect(() => {
-      this.characterName(); this.level(); this.alignment();
+      this.characterName(); this.portraitSeed(); this.level(); this.alignment();
       this.selectedRace(); this.selectedSubrace(); this.raceTraits(); this.selectedClasses();
       this.selectedBackground(); this.backgroundTraits();
       this.assignments(); this.selectedItemIndices(); this.selectedSpellIndices();
@@ -395,6 +402,7 @@ export class CharacterWizardComponent implements OnInit, OnDestroy {
     if (existing) {
       this.characterId.set(existing.id ?? null);
       this.characterName.set(existing.name);
+      this.portraitSeed.set(existing.portrait_seed ?? randomPortraitSeed());
       this.level.set(existing.level);
       this.alignment.set(existing.alignment);
       this.currentHp.set(existing.current_hp);
@@ -441,6 +449,15 @@ export class CharacterWizardComponent implements OnInit, OnDestroy {
     if (this.saveTimer) clearTimeout(this.saveTimer);
     this.saveStatus.set('saving');
     this.saveTimer = setTimeout(() => this.save(), 1500);
+  }
+
+  openPortraitPicker() {
+    this.dialog.open(PortraitPickerDialogComponent, {
+      data: { seed: this.portraitSeed() },
+      width: '440px',
+    }).afterClosed().subscribe((result: string | null | undefined) => {
+      if (result) this.portraitSeed.set(result);
+    });
   }
 
   onRaceChosen(choice: RaceChoice) {

@@ -287,6 +287,7 @@ export class CampaignsService {
       character_max_hp: data.max_hp ?? null,
       character_current_hp: data.current_hp ?? null,
       character_armor_class: data.armor_class ?? null,
+      character_portrait_seed: data.portrait_seed ?? null,
     };
   }
 

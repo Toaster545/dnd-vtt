@@ -6,6 +6,17 @@
   } @else {
 
     <div class="flex items-end gap-3 flex-shrink-0 px-6 pt-4">
+      <div class="field">
+        <label class="field-label">Portrait</label>
+        <button
+          type="button"
+          class="w-9 h-9 rounded-full overflow-hidden border border-white/10 hover:border-gold/60 transition-colors cursor-pointer p-0"
+          (click)="openPortraitPicker()"
+          title="Choose character portrait"
+        >
+          <img [src]="portraitUri()" class="w-full h-full" alt="" />
+        </button>
+      </div>
       <div class="field flex-1 max-w-xs">
         <label class="field-label">Character Name</label>
         <input class="field-input py-1 text-sm" [ngModel]="characterName()" (ngModelChange)="characterName.set($event)" placeholder="Unnamed Character" name="charName" />

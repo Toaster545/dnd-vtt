@@ -1,4 +1,6 @@
-@if (selected(); as encounter) {
+@if (loading()) {
+  <div class="flex justify-center mt-10"><span class="spinner-lg"></span></div>
+} @else if (selected(); as encounter) {
   @if (viewingCharacter(); as char) {
     <!-- Character token clicked: full detail area swap, same pattern as the Characters play tab -->
     <div class="flex items-center gap-2 px-4 py-2.5 border-b border-white/10 flex-shrink-0">
@@ -11,8 +13,8 @@
     <div class="flex flex-col h-full overflow-hidden">
       <div class="flex items-center gap-2 px-4 py-2.5 border-b border-white/10 flex-shrink-0">
         <div class="flex items-center gap-2 flex-1 min-w-0">
-          <button class="btn-ghost text-sm" (click)="backToList()">
-            <mat-icon class="text-base">arrow_back</mat-icon> Encounters
+          <button class="btn-ghost text-sm" (click)="backToSession()">
+            <mat-icon class="text-base">arrow_back</mat-icon> Session
           </button>
           <span class="text-parchment font-medium text-sm ml-2 truncate">{{ encounter.name }}</span>
         </div>
@@ -227,7 +229,8 @@
         <!-- Map -->
         @if (encounter.map_id) {
           <app-battle-map [mapIdInput]="encounter.map_id" [embedded]="true" [placingEntity]="armedEntity()"
-            [characterHp]="characterHp()" [currentTurnTokenId]="encounter.current_turn_token_id ?? null"
+            [characterHp]="characterHp()" [characterPortraits]="characterPortraits()"
+            [currentTurnTokenId]="encounter.current_turn_token_id ?? null"
             (tokenClicked)="onTokenClicked($event)" (currentTurnTokenChanged)="currentTurnToken.set($event)"
             class="flex-1 min-w-0" />
         } @else {
@@ -238,34 +241,4 @@
       </div>
     </div>
   }
-} @else {
-  <div class="p-6 overflow-y-auto h-full">
-    <h2 class="font-brand text-lg text-parchment m-0 mb-5">Encounters</h2>
-
-    @if (loading()) {
-      <div class="flex justify-center mt-10"><span class="spinner-lg"></span></div>
-    } @else if (encounters().length === 0) {
-      <p class="text-slate text-sm">No encounters yet. Create one in the <strong class="text-parchment">Create</strong> tab.</p>
-    } @else {
-      <ul class="divide-y divide-white/8">
-        @for (encounter of encounters(); track encounter.id) {
-          <li class="flex items-center py-3 gap-3 cursor-pointer" (click)="openEncounter(encounter)">
-            <div class="flex-1 min-w-0">
-              <p class="text-parchment font-medium truncate m-0 flex items-center gap-2">
-                {{ encounter.name }}
-                @if (encounter.status === 'active') { <span class="tag text-[10px] text-danger border-danger/40">LIVE</span> }
-              </p>
-              <p class="text-slate text-xs m-0 mt-0.5">
-                {{ encounter.monsters.length }} monster type{{ encounter.monsters.length === 1 ? '' : 's' }}
-                · {{ encounter.character_ids.length }} character{{ encounter.character_ids.length === 1 ? '' : 's' }}
-                @if (encounter.map_id) { · map attached }
-                · {{ formatDate(encounter.created_at) }}
-              </p>
-            </div>
-            <mat-icon class="text-slate">chevron_right</mat-icon>
-          </li>
-        }
-      </ul>
-    }
-  </div>
 }

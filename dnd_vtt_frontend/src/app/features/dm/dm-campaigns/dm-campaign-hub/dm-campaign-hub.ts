@@ -12,6 +12,7 @@ import { ClassChoiceSource } from '../../../../core/utils/character-effects';
 import { CampaignHub, CampaignMember } from '../../../../core/models/campaign.model';
 import { Session } from '../../../../core/models/session.model';
 import { Character } from '../../../../core/models/character.model';
+import { portraitDataUri } from '../../../../core/utils/avatar';
 import { ConfirmService } from '../../../../shared/confirm.service';
 import { NotesPanelComponent } from '../../../../shared/components/notes-panel/notes-panel';
 import { CharacterWizardComponent } from '../../dm-create/dm-characters/character-wizard/character-wizard';
@@ -243,6 +244,12 @@ export class DmCampaignHubComponent implements OnInit {
 
   // Prefer the live-recomputed value (see loadMemberMaxHp) — falls back to the stored value while
   // that computation is still in flight, or if it failed for this member.
+  // Falls back to the character id as the DiceBear seed for members created before portraits
+  // existed — still deterministic per-character, just not one the player ever explicitly picked.
+  portraitFor(member: CampaignMember): string {
+    return portraitDataUri(member.character_portrait_seed || member.character_id);
+  }
+
   maxHpFor(member: CampaignMember): number | null {
     return this.memberMaxHp()[member.character_id] ?? member.character_max_hp ?? null;
   }

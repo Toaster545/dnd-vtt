@@ -7,6 +7,7 @@ import { CharacterService } from '../../../../core/services/character.service';
 import { AuthService } from '../../../../core/services/auth.service';
 import { CampaignHub, CampaignMember } from '../../../../core/models/campaign.model';
 import { Character } from '../../../../core/models/character.model';
+import { portraitDataUri } from '../../../../core/utils/avatar';
 import { NotesPanelComponent } from '../../../../shared/components/notes-panel/notes-panel';
 import { CharacterWizardComponent } from '../../../dm/dm-create/dm-characters/character-wizard/character-wizard';
 
@@ -46,6 +47,12 @@ export class PlayerCampaignHubComponent implements OnInit {
 
   isMe(member: CampaignMember): boolean {
     return member.user_id === this.auth.profile()?.id;
+  }
+
+  // Falls back to the character id as the DiceBear seed for members created before portraits
+  // existed — still deterministic per-character, just not one the player ever explicitly picked.
+  portraitFor(member: CampaignMember): string {
+    return portraitDataUri(member.character_portrait_seed || member.character_id);
   }
 
   // The DM grants this per member (see DmCampaignHubComponent.toggleEditAccess) — otherwise a

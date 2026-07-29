@@ -14,6 +14,7 @@ import { ResizeHandleDirective } from '../../shared/directives/resize-handle.dir
 import { drawGrid } from './canvas/grid-renderer';
 import { renderMoveRange } from './canvas/move-range-renderer';
 import { renderTokens } from './canvas/token-renderer';
+import { portraitDataUri } from '../../core/utils/avatar';
 import { MeasurementTool, snapToGrid, FEET_PER_SQUARE } from './canvas/measurement-tool';
 import { FogTool, cellUnderPointer } from './canvas/fog-tool';
 import { MapToolbarComponent } from './components/map-toolbar/map-toolbar';
@@ -44,6 +45,10 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
   // the token). Fed from the DM's already-loaded roster, or from encounter presence on the
   // player's view — hence party-visible here, unlike monster HP which stays admin-only.
   readonly characterHp = input<Record<string, { hp: number; max_hp: number }>>({});
+  // Portrait seed for character tokens, keyed by character_id — same sourcing story as
+  // characterHp above (DM roster vs. player presence). Resolved to loaded <img>s in
+  // resolvePortraitImages() below before being handed to renderTokens().
+  readonly characterPortraits = input<Record<string, string>>({});
   // Id of the token whose turn it currently is (from the embedding parent's Encounter record) —
   // drives the highlight ring drawn in renderTokens() and the turn-order row highlight below.
   readonly currentTurnTokenId = input<string | null>(null);
@@ -173,6 +178,11 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
   // Mirrors the `tokens` signal as a plain field so the characterHp redraw effect below can read
   // it without also re-triggering on every token change (the socket subscription already redraws directly).
   private lastTokens: MapToken[] = [];
+  // Loaded portrait <img>s, keyed by `${characterId}:${seed}` so a changed seed (re-picked
+  // portrait) naturally gets its own entry instead of showing a stale cached image. Populated
+  // lazily by resolvePortraitImages() — decoding a data URI into an Image is still async even
+  // though portraitDataUri() itself returns synchronously.
+  private portraitImageCache: Record<string, HTMLImageElement> = {};
 
   constructor() {
     // Triggers the load once both the input/route map id and the view are ready, whichever
@@ -191,6 +201,7 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
     // draggable) doesn't touch the token list itself, so each needs its own redraw trigger.
     effect(() => {
       this.characterHp();
+      this.characterPortraits();
       this.currentTurnTokenId();
       this.activeMeasureTool();
       this.fog();
@@ -458,10 +469,30 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
       activeMeasureTool: this.activeMeasureTool(),
       currentTurnTokenId: this.currentTurnTokenId(),
       characterHp: this.characterHp(),
+      characterPortraits: this.resolvePortraitImages(this.characterPortraits()),
       onTokenClick: token => this.tokenClicked.emit(token),
       onTokenMoved: (token, col, row) => this.mapService.upsertToken({ ...token, x: col, y: row }),
       onTokenContextMenu: token => this.removeToken(token),
     });
+  }
+
+  // Resolves seeds to loaded <img>s for token-renderer to draw, decoding lazily and caching by
+  // `${characterId}:${seed}`. A seed not yet decoded is simply omitted this pass (the token falls
+  // back to its plain color fill) — the onload handler triggers a redraw once it's ready.
+  private resolvePortraitImages(seeds: Record<string, string>): Record<string, HTMLImageElement> {
+    const resolved: Record<string, HTMLImageElement> = {};
+    for (const [characterId, seed] of Object.entries(seeds)) {
+      const cacheKey = `${characterId}:${seed}`;
+      let img = this.portraitImageCache[cacheKey];
+      if (!img) {
+        img = new Image();
+        img.onload = () => this.renderTokens(this.lastTokens);
+        img.src = portraitDataUri(seed);
+        this.portraitImageCache[cacheKey] = img;
+      }
+      if (img.complete && img.naturalWidth) resolved[characterId] = img;
+    }
+    return resolved;
   }
 
   private renderMeasurements() {

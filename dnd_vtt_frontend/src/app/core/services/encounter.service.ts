@@ -20,6 +20,10 @@ export class EncounterService {
     return firstValueFrom(this.http.get<Encounter[]>(`${API}/encounters`, { params: { sessionId } }));
   }
 
+  getById(id: string): Promise<Encounter> {
+    return firstValueFrom(this.http.get<Encounter>(`${API}/encounters/${id}`));
+  }
+
   create(encounter: Partial<Encounter>): Promise<Encounter> {
     return firstValueFrom(this.http.post<Encounter>(`${API}/encounters`, encounter));
   }
@@ -79,6 +83,7 @@ export class EncounterService {
   // given character — fire-and-forget, the DM's watchPresence() picks up the broadcast.
   announcePresence(encounterId: string, info: {
     username: string; characterId: string; characterName: string; hp?: number; max_hp?: number;
+    portraitSeed?: string;
   }) {
     const socket = this.socketService.socket;
     socket.connect();

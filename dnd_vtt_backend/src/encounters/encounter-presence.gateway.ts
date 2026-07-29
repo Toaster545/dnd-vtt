@@ -18,6 +18,7 @@ interface PresentPlayer {
   // up character reads across accounts the way the DM's admin-only endpoint does.
   hp?: number;
   max_hp?: number;
+  portraitSeed?: string;
 }
 
 // Tracks which players currently have an encounter open (for the DM's "Players" roster section) —
@@ -53,6 +54,7 @@ export class EncounterPresenceGateway implements OnGatewayDisconnect {
       characterName: string;
       hp?: number;
       max_hp?: number;
+      portraitSeed?: string;
     },
   ) {
     client.join(`encounter-presence:${data.encounterId}`);
@@ -66,6 +68,7 @@ export class EncounterPresenceGateway implements OnGatewayDisconnect {
       characterName: data.characterName,
       hp: data.hp,
       max_hp: data.max_hp,
+      portraitSeed: data.portraitSeed,
     });
     this.broadcast(data.encounterId);
   }

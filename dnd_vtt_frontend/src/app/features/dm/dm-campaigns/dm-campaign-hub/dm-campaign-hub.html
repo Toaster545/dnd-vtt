@@ -132,6 +132,7 @@
         <ul class="divide-y divide-white/8">
           @for (member of c.members; track member.user_id) {
             <li class="flex items-center py-2.5 gap-2 cursor-pointer" (click)="openMember(member)">
+              <img [src]="portraitFor(member)" class="w-8 h-8 rounded-full flex-shrink-0" alt="" />
               <div class="flex-1 min-w-0">
                 <p class="text-parchment text-sm font-medium truncate m-0">{{ member.character_name }}</p>
                 <p class="text-slate text-xs m-0">

@@ -84,6 +84,16 @@ export class PlayerCampaignSessionComponent implements OnInit, OnDestroy {
     return map;
   });
 
+  // Same idea as characterHp above — self-reported presence data, not a fetched Character, so a
+  // present player's token can show their portrait without the DM's Character-fetch machinery.
+  characterPortraits = computed(() => {
+    const map: Record<string, string> = {};
+    for (const p of this.presentPlayers()) {
+      if (p.characterId && p.portraitSeed) map[p.characterId] = p.portraitSeed;
+    }
+    return map;
+  });
+
   ngOnInit() {
     this.route.paramMap.subscribe(params => {
       this.campaignId = params.get('campaignId')!;
@@ -200,6 +210,7 @@ export class PlayerCampaignSessionComponent implements OnInit, OnDestroy {
       characterName: character.name,
       hp: character.current_hp,
       max_hp: character.max_hp,
+      portraitSeed: character.portrait_seed,
     });
   }
 

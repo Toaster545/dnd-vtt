@@ -36,4 +36,5 @@ export interface PresentPlayer {
   // Self-reported by that player's own client — read-only for anyone else watching presence.
   hp?: number;
   max_hp?: number;
+  portraitSeed?: string;
 }
