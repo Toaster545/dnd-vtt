@@ -2,12 +2,20 @@
 
 # TODO
 
+## General
+- [ ] Rests (short long)
+- [ ] Shop?
+- [ ] Dashboard
+- [ ] Spells
+- [ ] Equipement
+- [ ] 
+
 ## Mathieu
 
 - [ ] Campaign logic
     - [x] Creating campaign
     - [x] Assign Users
-    - [x] lock user characters
+    - [ ] lock user characters (not to much and add options)
     - [x] add encounters
     - [x] add notes
     - [ ] customize campaign
