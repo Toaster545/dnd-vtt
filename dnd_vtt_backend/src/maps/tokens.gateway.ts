@@ -36,6 +36,10 @@ export class TokensGateway implements OnGatewayDisconnect {
     this.server.to(`map:${mapId}`).emit('tokens_updated', tokens);
   }
 
+  broadcastFog(mapId: string, fog: unknown) {
+    this.server.to(`map:${mapId}`).emit('fog_updated', fog);
+  }
+
   // Ephemeral ruler/cone/sphere measurements — never persisted, purely relayed to everyone else
   // currently viewing the same map (already in `map:${mapId}` via join_map above). `measurement:
   // null` means the sender released the drag; relayed as-is so viewers clear it too. Tracked on

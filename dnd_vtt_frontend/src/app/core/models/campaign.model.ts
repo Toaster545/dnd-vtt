@@ -79,6 +79,14 @@ export interface MapToken {
   initiative?: number | null;
 }
 
+// Manual reveal-brush fog of war. `hidden_cells` is a set of "col,row" keys — everything else on
+// the grid is visible. A freshly-enabled map starts with an empty set (fully visible); the DM
+// paints/rect-selects areas to hide. Persisted per map and broadcast live, same as tokens.
+export interface MapFog {
+  enabled: boolean;
+  hidden_cells: string[];
+}
+
 // A Roll20-style ruler/cone/sphere measurement, drawn while dragging on the map and broadcast live
 // to everyone else viewing it (see BattleMapService.watchMeasurements) — never persisted. Grid-cell
 // coordinates (fractional, snapped to intersections), not pixels, so it renders correctly for
@@ -91,6 +99,9 @@ export interface Measurement {
   pointCol: number;
   pointRow: number;
 }
+
+// Which fog-of-war brush/rectangle tool is currently armed on the battle map toolbar.
+export type FogToolName = 'reveal-brush' | 'hide-brush' | 'reveal-rect' | 'hide-rect';
 
 // What's "armed" from an encounter's roster sidebar, ready to be dropped onto the map on the next
 // click — built by the roster UI (from a Character or a DndMonster), consumed by BattleMapComponent

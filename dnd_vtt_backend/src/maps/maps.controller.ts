@@ -73,4 +73,30 @@ export class MapsController {
   ) {
     return this.maps.rerollInitiative(mapId, tokenId);
   }
+
+  @Get(':id/fog')
+  getFog(@Param('id') id: string) {
+    return this.maps.getFog(id);
+  }
+
+  @Post(':id/fog/toggle')
+  @UseGuards(AdminGuard)
+  setFogEnabled(@Param('id') id: string, @Body() body: { enabled: boolean }) {
+    return this.maps.setFogEnabled(id, !!body.enabled);
+  }
+
+  @Post(':id/fog/paint')
+  @UseGuards(AdminGuard)
+  paintFog(
+    @Param('id') id: string,
+    @Body() body: { cells: { col: number; row: number }[]; revealed: boolean },
+  ) {
+    return this.maps.paintFog(id, body.cells ?? [], !!body.revealed);
+  }
+
+  @Post(':id/fog/reset')
+  @UseGuards(AdminGuard)
+  resetFog(@Param('id') id: string) {
+    return this.maps.resetFog(id);
+  }
 }

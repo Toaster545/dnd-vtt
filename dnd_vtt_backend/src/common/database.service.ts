@@ -64,6 +64,8 @@ export class DatabaseService implements OnModuleInit {
     if (version < 9) await this.applyV9();
     if (version < 10) await this.applyV10();
     if (version < 11) await this.applyV11();
+    if (version < 12) await this.applyV12();
+    if (version < 13) await this.applyV13();
   }
 
   // ── V1: initial schema (explicit columns on characters) ─────────────────────
@@ -418,5 +420,31 @@ export class DatabaseService implements OnModuleInit {
     this.logger.log(
       'Applied schema migration v11 (campaign member edit access)',
     );
+  }
+
+  // ── V12: fog of war ───────────────────────────────────────────────────────
+  private async applyV12() {
+    await this.db.execute(`
+      CREATE TABLE IF NOT EXISTS map_fog (
+        map_id         TEXT PRIMARY KEY REFERENCES battle_maps(id) ON DELETE CASCADE,
+        enabled        INTEGER NOT NULL DEFAULT 0,
+        revealed_cells TEXT NOT NULL DEFAULT '[]'
+      )
+    `);
+
+    await this.db.execute(`PRAGMA user_version = 12`);
+    this.logger.log('Applied schema migration v12 (fog of war)');
+  }
+
+  // ── V13: fog of war starts fully visible — a map defaults to nothing hidden, the DM paints
+  // areas to hide rather than areas to reveal, so the stored set flips from "what's revealed" to
+  // "what's hidden" (an empty set now means "everything visible" instead of "everything hidden").
+  private async applyV13() {
+    await this.db.execute(
+      `ALTER TABLE map_fog RENAME COLUMN revealed_cells TO hidden_cells`,
+    );
+
+    await this.db.execute(`PRAGMA user_version = 13`);
+    this.logger.log('Applied schema migration v13 (fog defaults to visible)');
   }
 }
