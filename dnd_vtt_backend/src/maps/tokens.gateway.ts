@@ -24,12 +24,12 @@ export class TokensGateway implements OnGatewayDisconnect {
 
   @SubscribeMessage('join_map')
   handleJoin(@ConnectedSocket() client: Socket, @MessageBody() mapId: string) {
-    client.join(`map:${mapId}`);
+    void client.join(`map:${mapId}`);
   }
 
   @SubscribeMessage('leave_map')
   handleLeave(@ConnectedSocket() client: Socket, @MessageBody() mapId: string) {
-    client.leave(`map:${mapId}`);
+    void client.leave(`map:${mapId}`);
   }
 
   broadcastTokens(mapId: string, tokens: unknown[]) {
@@ -51,8 +51,9 @@ export class TokensGateway implements OnGatewayDisconnect {
     @ConnectedSocket() client: Socket,
     @MessageBody() data: { mapId: string; measurement: Measurement | null },
   ) {
-    if (data.measurement) client.data.measuringMapId = data.mapId;
-    else delete client.data.measuringMapId;
+    const socketData = client.data as { measuringMapId?: string };
+    if (data.measurement) socketData.measuringMapId = data.mapId;
+    else delete socketData.measuringMapId;
     client.to(`map:${data.mapId}`).emit('measure', {
       senderId: client.id,
       measurement: data.measurement,
@@ -60,7 +61,8 @@ export class TokensGateway implements OnGatewayDisconnect {
   }
 
   handleDisconnect(client: Socket) {
-    const mapId = client.data?.measuringMapId as string | undefined;
+    const mapId = (client.data as { measuringMapId?: string } | undefined)
+      ?.measuringMapId;
     if (mapId) {
       this.server
         .to(`map:${mapId}`)

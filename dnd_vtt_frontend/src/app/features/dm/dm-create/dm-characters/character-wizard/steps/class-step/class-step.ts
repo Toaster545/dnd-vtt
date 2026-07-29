@@ -508,7 +508,7 @@ export class ClassStepComponent implements OnInit {
   toggleGrantCollapsed(key: string) {
     this.collapsedGrants.update(set => {
       const next = new Set(set);
-      next.has(key) ? next.delete(key) : next.add(key);
+      if (next.has(key)) next.delete(key); else next.add(key);
       return next;
     });
   }

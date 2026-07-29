@@ -31,18 +31,27 @@ async function bootstrap() {
   // Register directly on the raw Express instance to guarantee order
   const staticOpts =
     process.env.DEV_BYPASS === 'true'
-      ? { setHeaders: (res: any) => res.setHeader('Cache-Control', 'no-store') }
+      ? {
+          setHeaders: (res: express.Response) =>
+            res.setHeader('Cache-Control', 'no-store'),
+        }
       : {};
 
   server.use('/uploads', express.static(join(process.cwd(), 'uploads')));
   server.use(express.static(distPath, staticOpts));
-  server.use((req: any, res: any, next: any) => {
-    if (req.path.startsWith('/api') || req.path.startsWith('/socket.io'))
-      return next();
-    res.sendFile(indexPath);
-  });
+  server.use(
+    (
+      req: express.Request,
+      res: express.Response,
+      next: express.NextFunction,
+    ) => {
+      if (req.path.startsWith('/api') || req.path.startsWith('/socket.io'))
+        return next();
+      res.sendFile(indexPath);
+    },
+  );
 
   await app.listen(process.env.PORT ?? 3000, '0.0.0.0');
   console.log(`Running at http://0.0.0.0:${process.env.PORT ?? 3000}`);
 }
-bootstrap();
+void bootstrap();

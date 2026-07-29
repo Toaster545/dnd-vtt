@@ -2,6 +2,7 @@ import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
+import { getErrorMessage } from '../../../core/utils/error-message';
 
 @Component({
   selector: 'app-register',
@@ -30,8 +31,8 @@ export class RegisterComponent {
     try {
       await this.auth.signUp(this.form.value.email!, this.form.value.password!, this.form.value.username!);
       this.success.set(true);
-    } catch (e: any) {
-      this.error.set(e.message);
+    } catch (e) {
+      this.error.set(getErrorMessage(e));
     } finally {
       this.loading.set(false);
     }

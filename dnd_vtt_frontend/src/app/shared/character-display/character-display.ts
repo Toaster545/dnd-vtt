@@ -1,7 +1,7 @@
 import { Component, inject, signal, computed, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
-import { Character, Ability, ABILITIES, ABILITY_SHORT, SKILLS } from '../../core/models/character.model';
+import { Character, ABILITIES, ABILITY_SHORT, SKILLS } from '../../core/models/character.model';
 import { ContentService, DndClass, DndRace, DndBackground, DndFeat, DndItem } from '../../core/services/content.service';
 import { CharacterStatsService } from '../../core/services/character-stats.service';
 import { ClassChoiceSource } from '../../core/utils/character-effects';

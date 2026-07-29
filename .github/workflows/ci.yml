@@ -1,0 +1,65 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  backend-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: dnd_vtt_backend/package-lock.json
+
+      - name: Install backend dependencies
+        working-directory: dnd_vtt_backend
+        run: npm ci
+
+      - name: Run backend unit tests
+        working-directory: dnd_vtt_backend
+        run: npm test
+
+  backend-lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: dnd_vtt_backend/package-lock.json
+
+      - name: Install backend dependencies
+        working-directory: dnd_vtt_backend
+        run: npm ci
+
+      # Not `npm run lint` — that script runs `eslint --fix`, which would silently patch over
+      # fixable issues in this ephemeral checkout and still exit 0, defeating the point of a gate.
+      - name: Lint backend
+        working-directory: dnd_vtt_backend
+        run: npx eslint "{src,apps,libs,test}/**/*.ts"
+
+  frontend-lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: dnd_vtt_frontend/package-lock.json
+
+      - name: Install frontend dependencies
+        working-directory: dnd_vtt_frontend
+        run: npm ci
+
+      - name: Lint frontend
+        working-directory: dnd_vtt_frontend
+        run: npm run lint

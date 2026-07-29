@@ -15,6 +15,7 @@ import { drawGrid } from './canvas/grid-renderer';
 import { renderMoveRange } from './canvas/move-range-renderer';
 import { renderTokens } from './canvas/token-renderer';
 import { portraitDataUri } from '../../core/utils/avatar';
+import { getErrorMessage } from '../../core/utils/error-message';
 import { MeasurementTool, pointerToGridPos, FEET_PER_SQUARE } from './canvas/measurement-tool';
 import { FogTool, cellUnderPointer } from './canvas/fog-tool';
 import { MapToolbarComponent } from './components/map-toolbar/map-toolbar';
@@ -270,8 +271,8 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
       const map = await this.mapService.getMap(id);
       this.map.set(map);
       this.initStage();
-    } catch (e: any) {
-      this.error.set(e.message);
+    } catch (e) {
+      this.error.set(getErrorMessage(e));
       this.loading.set(false);
     }
   }
@@ -419,7 +420,7 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
       this.renderTokens(tokens);
     });
 
-    this.measureSub = this.mapService.watchMeasurements(this.mapId).subscribe(({ senderId, measurement }) => {
+    this.measureSub = this.mapService.watchMeasurements().subscribe(({ senderId, measurement }) => {
       this.measurementTool.setRemote(senderId, measurement);
       this.renderMeasurements();
     });

@@ -227,9 +227,7 @@ export class CampaignsService {
       `SELECT character_id FROM campaign_members WHERE campaign_id = ? AND user_id = ? AND status = 'active'`,
       [campaignId, userId],
     );
-    const characterId = membership.rows[0]?.character_id as
-      | string
-      | undefined;
+    const characterId = membership.rows[0]?.character_id as string | undefined;
     await this.db.execute(
       `UPDATE campaign_members SET status = 'removed' WHERE campaign_id = ? AND user_id = ? AND status = 'active'`,
       [campaignId, userId],

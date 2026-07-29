@@ -262,7 +262,7 @@ export class DmCampaignSessionComponent implements OnInit, OnDestroy {
   toggleMonster(index: string) {
     this.selectedMonsterIndices.update(set => {
       const next = new Set(set);
-      next.has(index) ? next.delete(index) : next.add(index);
+      if (next.has(index)) next.delete(index); else next.add(index);
       return next;
     });
   }
@@ -274,7 +274,7 @@ export class DmCampaignSessionComponent implements OnInit, OnDestroy {
   toggleCharacter(id: string) {
     this.selectedCharacterIds.update(set => {
       const next = new Set(set);
-      next.has(id) ? next.delete(id) : next.add(id);
+      if (next.has(id)) next.delete(id); else next.add(id);
       return next;
     });
   }

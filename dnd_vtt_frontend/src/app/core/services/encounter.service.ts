@@ -97,7 +97,7 @@ export class EncounterService {
   // Live turn-state push (current token + round) after the DM steps the turn forward/back. Relies
   // on the caller already being in the `encounter-presence:${id}` room via watchPresence()
   // (DM side) or announcePresence() (player side) — this doesn't do its own join/emit.
-  watchTurnState(encounterId: string): Observable<{ current_turn_token_id: string | null; round_number: number }> {
+  watchTurnState(): Observable<{ current_turn_token_id: string | null; round_number: number }> {
     return new Observable(observer => {
       const socket = this.socketService.socket;
       const handleUpdate = (state: { current_turn_token_id: string | null; round_number: number }) => observer.next(state);

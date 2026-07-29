@@ -5,6 +5,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { BattleMapService } from '../../core/services/battle-map.service';
 import { BattleMap } from '../../core/models/campaign.model';
+import { getErrorMessage } from '../../core/utils/error-message';
 
 const CAMPAIGN_ID = 'default';
 
@@ -29,7 +30,7 @@ export class MapManagerComponent implements OnInit {
   private async loadMaps() {
     this.loading.set(true);
     try { this.maps.set(await this.mapService.getAllMaps()); }
-    catch (e: any) { this.error.set(e.message); }
+    catch (e) { this.error.set(getErrorMessage(e)); }
     finally { this.loading.set(false); }
   }
 
@@ -49,7 +50,7 @@ export class MapManagerComponent implements OnInit {
       this.newMapName = '';
       this.selectedFile = null;
       await this.loadMaps();
-    } catch (e: any) { this.error.set(e.message); }
+    } catch (e) { this.error.set(getErrorMessage(e)); }
     finally { this.uploading.set(false); }
   }
 }

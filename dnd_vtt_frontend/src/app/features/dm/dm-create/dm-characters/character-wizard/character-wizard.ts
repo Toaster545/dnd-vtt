@@ -488,11 +488,11 @@ export class CharacterWizardComponent implements OnInit, OnDestroy {
   }
 
   toggleItem(index: string) {
-    this.selectedItemIndices.update(s => { const n = new Set(s); n.has(index) ? n.delete(index) : n.add(index); return n; });
+    this.selectedItemIndices.update(s => { const n = new Set(s); if (n.has(index)) n.delete(index); else n.add(index); return n; });
   }
 
   toggleSpell(index: string) {
-    this.selectedSpellIndices.update(s => { const n = new Set(s); n.has(index) ? n.delete(index) : n.add(index); return n; });
+    this.selectedSpellIndices.update(s => { const n = new Set(s); if (n.has(index)) n.delete(index); else n.add(index); return n; });
   }
 
   async save() {

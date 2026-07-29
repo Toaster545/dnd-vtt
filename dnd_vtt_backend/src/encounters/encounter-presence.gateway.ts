@@ -38,7 +38,7 @@ export class EncounterPresenceGateway implements OnGatewayDisconnect {
     @ConnectedSocket() client: Socket,
     @MessageBody() encounterId: string,
   ) {
-    client.join(`encounter-presence:${encounterId}`);
+    void client.join(`encounter-presence:${encounterId}`);
     this.broadcast(encounterId);
   }
 
@@ -57,8 +57,9 @@ export class EncounterPresenceGateway implements OnGatewayDisconnect {
       portraitSeed?: string;
     },
   ) {
-    client.join(`encounter-presence:${data.encounterId}`);
-    client.data.presenceEncounterId = data.encounterId;
+    void client.join(`encounter-presence:${data.encounterId}`);
+    (client.data as { presenceEncounterId?: string }).presenceEncounterId =
+      data.encounterId;
     if (!this.presence.has(data.encounterId))
       this.presence.set(data.encounterId, new Map());
     this.presence.get(data.encounterId)!.set(client.id, {
@@ -83,7 +84,9 @@ export class EncounterPresenceGateway implements OnGatewayDisconnect {
 
   // Safety net for a closed tab/dropped connection that never got to emit `leave_presence`.
   handleDisconnect(client: Socket) {
-    const encounterId = client.data?.presenceEncounterId as string | undefined;
+    const encounterId = (
+      client.data as { presenceEncounterId?: string } | undefined
+    )?.presenceEncounterId;
     if (encounterId) this.removePresence(client.id, encounterId);
   }
 
@@ -105,7 +108,9 @@ export class EncounterPresenceGateway implements OnGatewayDisconnect {
     encounterId: string,
     state: { current_turn_token_id: string | null; round_number: number },
   ) {
-    this.server.to(`encounter-presence:${encounterId}`).emit('turn_changed', state);
+    this.server
+      .to(`encounter-presence:${encounterId}`)
+      .emit('turn_changed', state);
   }
 
   // Global broadcast (no room) so any connected player's client can decide for itself whether the
