@@ -10,12 +10,18 @@ const API = environment.apiUrl;
 export class SessionService {
   private http = inject(HttpClient);
 
-  getAll(): Promise<Session[]> {
-    return firstValueFrom(this.http.get<Session[]>(`${API}/sessions`));
+  getAllForCampaign(campaignId: string): Promise<Session[]> {
+    return firstValueFrom(this.http.get<Session[]>(`${API}/sessions`, { params: { campaignId } }));
   }
 
-  create(name: string, description: string): Promise<Session> {
-    return firstValueFrom(this.http.post<Session>(`${API}/sessions`, { name, description }));
+  create(campaignId: string, name: string, description: string): Promise<Session> {
+    return firstValueFrom(
+      this.http.post<Session>(`${API}/sessions`, { campaign_id: campaignId, name, description }),
+    );
+  }
+
+  setVisibility(id: string, visible: boolean): Promise<Session> {
+    return firstValueFrom(this.http.patch<Session>(`${API}/sessions/${id}/visibility`, { visible }));
   }
 
   remove(id: string): Promise<void> {

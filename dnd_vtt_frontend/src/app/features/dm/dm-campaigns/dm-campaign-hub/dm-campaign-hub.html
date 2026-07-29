@@ -1,0 +1,107 @@
+@if (loading()) {
+  <div class="flex justify-center mt-10"><span class="spinner-lg"></span></div>
+} @else if (campaign(); as c) {
+  <div class="flex-1 min-h-0 overflow-y-auto p-6">
+    <div class="flex items-center gap-2 mb-4">
+      <button class="btn-icon" (click)="backToList()" matTooltip="Back to campaigns">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <div class="flex-1 min-w-0">
+        <h2 class="font-brand text-lg text-parchment m-0">{{ c.name }}</h2>
+        @if (c.description) { <p class="text-slate text-sm m-0 mt-0.5">{{ c.description }}</p> }
+      </div>
+      <button class="btn-outline text-sm gap-1.5" (click)="copyJoinCode()" matTooltip="Copy join code">
+        <mat-icon class="text-base">{{ copied() ? 'check' : 'content_copy' }}</mat-icon>
+        Join code: <span class="font-mono text-gold">{{ c.join_code }}</span>
+      </button>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div class="lg:col-span-2">
+        <div class="flex items-center gap-3 mb-3">
+          <h3 class="font-brand text-sm text-parchment m-0 flex-1">Sessions</h3>
+          <button class="btn-outline text-sm" (click)="showForm.set(!showForm())">
+            {{ showForm() ? 'Cancel' : '+ New Session' }}
+          </button>
+        </div>
+
+        @if (showForm()) {
+          <div class="card card-body mb-4">
+            <form (ngSubmit)="createSession()" class="flex flex-col gap-3">
+              <div class="field">
+                <label class="field-label">Session name</label>
+                <input class="field-input" [(ngModel)]="newName" name="name" required autofocus />
+              </div>
+              <div class="field">
+                <label class="field-label">Description (optional)</label>
+                <textarea class="field-input" [(ngModel)]="newDescription" name="description" rows="3"></textarea>
+              </div>
+              <div>
+                <button class="btn-primary" type="submit" [disabled]="!newName.trim() || saving()">
+                  @if (saving()) { <span class="spinner-sm"></span> } @else { Create Session }
+                </button>
+              </div>
+            </form>
+          </div>
+        }
+
+        <ul class="divide-y divide-white/8">
+          @for (session of c.sessions; track session.id) {
+            <li>
+              <a
+                [routerLink]="['/dm/campaigns', campaignId, 'sessions', session.id]"
+                class="flex items-center py-3 gap-3 cursor-pointer no-underline"
+              >
+                <div class="flex-1 min-w-0">
+                  <p class="text-parchment font-medium truncate m-0">{{ session.name }}</p>
+                  <p class="text-slate text-xs m-0 mt-0.5">{{ formatDate(session.created_at) }}</p>
+                </div>
+                <button
+                  class="btn-icon"
+                  [class]="session.visible_to_players ? 'text-gold' : 'text-slate hover:text-parchment'"
+                  (click)="toggleSessionVisibility(session, $event)"
+                  [matTooltip]="session.visible_to_players ? 'Visible to players — click to hide' : 'Hidden from players — click to reveal'"
+                >
+                  <mat-icon>{{ session.visible_to_players ? 'visibility' : 'visibility_off' }}</mat-icon>
+                </button>
+                <button class="btn-icon text-danger/70 hover:text-danger"
+                        (click)="deleteSession(session, $event)"
+                        matTooltip="Delete session">
+                  <mat-icon>delete</mat-icon>
+                </button>
+                <mat-icon class="text-slate">chevron_right</mat-icon>
+              </a>
+            </li>
+          } @empty {
+            <p class="text-slate text-sm py-4">No sessions yet.</p>
+          }
+        </ul>
+
+        <div class="mt-6">
+          <app-notes-panel entityType="campaign" [entityId]="campaignId" />
+        </div>
+      </div>
+
+      <div>
+        <h3 class="font-brand text-sm text-parchment m-0 mb-3">Party</h3>
+        <ul class="divide-y divide-white/8">
+          @for (member of c.members; track member.user_id) {
+            <li class="flex items-center py-2.5 gap-2">
+              <div class="flex-1 min-w-0">
+                <p class="text-parchment text-sm font-medium truncate m-0">{{ member.username }}</p>
+                <p class="text-slate text-xs m-0">{{ member.character_name }}</p>
+              </div>
+              <button class="btn-icon text-danger/70 hover:text-danger"
+                      (click)="removeMember(member.user_id, member.username)"
+                      matTooltip="Remove from campaign">
+                <mat-icon class="text-base">person_remove</mat-icon>
+              </button>
+            </li>
+          } @empty {
+            <p class="text-slate text-sm py-2">No players have joined yet.</p>
+          }
+        </ul>
+      </div>
+    </div>
+  </div>
+}

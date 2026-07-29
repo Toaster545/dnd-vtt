@@ -1,7 +1,7 @@
 <div [class]="embedded() ? 'flex flex-col h-full' : 'flex flex-col h-screen'">
   @if (!embedded()) {
     <header class="app-toolbar">
-      <button class="btn-icon" routerLink="/dashboard" matTooltip="Back">
+      <button class="btn-icon" [routerLink]="auth.isAdmin() ? '/dm' : '/player'" matTooltip="Back">
         <mat-icon>arrow_back</mat-icon>
       </button>
       <span class="toolbar-title flex-1">{{ map()?.name ?? 'Battle Map' }}</span>

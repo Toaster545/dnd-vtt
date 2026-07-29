@@ -1,5 +1,6 @@
-import { Component, ElementRef, ViewChild, inject, signal, effect, OnInit, OnDestroy } from '@angular/core';
+import { Component, ElementRef, ViewChild, inject, signal, computed, effect, OnInit, OnDestroy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import Konva from 'konva';
@@ -11,24 +12,26 @@ import { Encounter } from '../../../../core/models/encounter.model';
 import { Character } from '../../../../core/models/character.model';
 import { BattleMap, UniversalVTTData } from '../../../../core/models/campaign.model';
 import { ConfirmService } from '../../../../shared/confirm.service';
-
-// Maps created here aren't tied to a real campaign concept yet — matches the map-manager's
-// existing use of a hardcoded 'default' campaign id.
-const CAMPAIGN_ID = 'default';
+import { NotesPanelComponent } from '../../../../shared/components/notes-panel/notes-panel';
 
 @Component({
-  selector: 'app-dm-encounters',
-  imports: [FormsModule, MatIconModule, MatTooltipModule],
-  templateUrl: './dm-encounters.html',
+  selector: 'app-dm-campaign-session',
+  imports: [FormsModule, RouterLink, MatIconModule, MatTooltipModule, NotesPanelComponent],
+  templateUrl: './dm-campaign-session.html',
 })
-export class DmEncountersComponent implements OnInit, OnDestroy {
+export class DmCampaignSessionComponent implements OnInit, OnDestroy {
   @ViewChild('previewContainer') previewContainer?: ElementRef<HTMLDivElement>;
 
-  private encounterService = inject(EncounterService);
-  private content          = inject(ContentService);
-  private characterService = inject(CharacterService);
-  private mapService       = inject(BattleMapService);
-  private confirm          = inject(ConfirmService);
+  private route             = inject(ActivatedRoute);
+  private router            = inject(Router);
+  private encounterService  = inject(EncounterService);
+  private content           = inject(ContentService);
+  private characterService  = inject(CharacterService);
+  private mapService        = inject(BattleMapService);
+  private confirm           = inject(ConfirmService);
+
+  campaignId = this.route.snapshot.paramMap.get('campaignId')!;
+  sessionId  = this.route.snapshot.paramMap.get('sessionId')!;
 
   encounters = signal<Encounter[]>([]);
   monsters   = signal<DndMonster[]>([]);
@@ -37,36 +40,34 @@ export class DmEncountersComponent implements OnInit, OnDestroy {
 
   showForm  = signal(false);
   saving    = signal(false);
-  // Non-null while editing an existing encounter rather than creating a new one — drives the
-  // form's title/submit label and whether `save()` calls update() vs create().
   editingId = signal<string | null>(null);
 
   name = '';
-  // The encounter's current map when editing one that already has one — shown as a reference
-  // (name/thumbnail/grid) unless the DM picks a new .dd2vtt file to replace it.
+  summary = '';
   existingMap = signal<BattleMap | null>(null);
-  // A DungeonDraft "Universal VTT" export (.dd2vtt) is a JSON file bundling a base64 image plus
-  // resolution.pixels_per_grid — so the grid cell size comes straight from the file instead of
-  // being calibrated by hand (see `UniversalVTTData` in campaign.model.ts).
   uploadError     = signal<string | null>(null);
   parsingFile     = signal(false);
   imagePreviewUrl = signal<string | null>(null);
   pixelsPerGrid   = signal(0);
   mapCols         = signal(0);
   mapRows         = signal(0);
-  // The decoded image, ready to upload — computed once at file-select time (see onFileChange),
-  // not at Submit time.
   private mapFile: File | null = null;
 
   selectedMonsterIndices = signal<Set<string>>(new Set());
   selectedCharacterIds   = signal<Set<string>>(new Set());
+
+  monsterSearchQuery = signal('');
+  filteredMonsters = computed(() => {
+    const query = this.monsterSearchQuery().trim().toLowerCase();
+    if (!query) return this.monsters();
+    return this.monsters().filter(m => m.name.toLowerCase().includes(query));
+  });
 
   private stage?: Konva.Stage;
   private imageLayer?: Konva.Layer;
   private gridLayer?: Konva.Layer;
 
   constructor() {
-    // Redraws the grid overlay whenever a new file is parsed, using the pixels_per_grid it embeds.
     effect(() => {
       const url = this.imagePreviewUrl();
       const cell = this.pixelsPerGrid();
@@ -76,7 +77,7 @@ export class DmEncountersComponent implements OnInit, OnDestroy {
 
   async ngOnInit() {
     const [encounters, monsters, characters] = await Promise.all([
-      this.encounterService.getAll(),
+      this.encounterService.getBySession(this.sessionId),
       this.content.getMonsters(),
       this.characterService.getMyCharacters(),
     ]);
@@ -90,6 +91,10 @@ export class DmEncountersComponent implements OnInit, OnDestroy {
     this.stage?.destroy();
   }
 
+  backToHub() {
+    void this.router.navigate(['/dm/campaigns', this.campaignId]);
+  }
+
   startCreate() {
     this.resetForm();
     this.showForm.set(true);
@@ -99,6 +104,7 @@ export class DmEncountersComponent implements OnInit, OnDestroy {
     this.resetForm();
     this.editingId.set(encounter.id!);
     this.name = encounter.name;
+    this.summary = encounter.summary ?? '';
     this.selectedMonsterIndices.set(new Set(encounter.monsters));
     this.selectedCharacterIds.set(new Set(encounter.character_ids));
     if (encounter.map_id) {
@@ -136,9 +142,6 @@ export class DmEncountersComponent implements OnInit, OnDestroy {
       this.mapCols.set(data.resolution.map_size?.x ?? 0);
       this.mapRows.set(data.resolution.map_size?.y ?? 0);
 
-      // Decode the (often tens-of-MB) base64 image to a real File right away, while the DM is
-      // already waiting on the file picker — not later at Submit, which used to make clicking
-      // "Create"/"Save" feel like it was hanging on a huge image it hadn't touched yet.
       const dataUrl = `data:image/png;base64,${data.image}`;
       this.mapFile = await this.dataUrlToFile(dataUrl, 'map.png');
       this.imagePreviewUrl.set(dataUrl);
@@ -162,6 +165,8 @@ export class DmEncountersComponent implements OnInit, OnDestroy {
         this.imageLayer = new Konva.Layer();
         this.gridLayer = new Konva.Layer();
         this.stage.add(this.imageLayer, this.gridLayer);
+        // Purely decorative preview grid — see the identical fix/comment in BattleMapComponent.
+        this.gridLayer.listening(false);
       }
 
       this.imageLayer!.destroyChildren();
@@ -170,12 +175,26 @@ export class DmEncountersComponent implements OnInit, OnDestroy {
 
       this.gridLayer!.destroyChildren();
       const cell = cellSize * scale;
-      for (let x = 0; x <= w; x += cell) {
-        this.gridLayer!.add(new Konva.Line({ points: [x, 0, x, h], stroke: 'rgba(255,255,255,0.35)', strokeWidth: 1 }));
-      }
-      for (let y = 0; y <= h; y += cell) {
-        this.gridLayer!.add(new Konva.Line({ points: [0, y, w, y], stroke: 'rgba(255,255,255,0.35)', strokeWidth: 1 }));
-      }
+      // Single shape drawing the whole grid itself — see the identical fix/comment on
+      // BattleMapComponent.drawGrid; one Konva.Line per gridline could freeze the tab on browsers
+      // with canvas anti-fingerprinting protection.
+      this.gridLayer!.add(new Konva.Shape({
+        listening: false,
+        stroke: 'rgba(255,255,255,0.35)',
+        strokeWidth: 1,
+        sceneFunc: (context, shape) => {
+          context.beginPath();
+          for (let x = 0; x <= w; x += cell) {
+            context.moveTo(x, 0);
+            context.lineTo(x, h);
+          }
+          for (let y = 0; y <= h; y += cell) {
+            context.moveTo(0, y);
+            context.lineTo(w, y);
+          }
+          context.strokeShape(shape);
+        },
+      }));
       this.gridLayer!.draw();
     };
     img.src = url;
@@ -209,13 +228,11 @@ export class DmEncountersComponent implements OnInit, OnDestroy {
     if (!this.name.trim()) return;
     this.saving.set(true);
     try {
-      // A newly picked file always wins; otherwise keep whatever map (if any) the encounter
-      // already had — editing monsters/characters shouldn't silently detach the map.
       let map_id = this.existingMap()?.id;
       if (this.mapFile) {
-        const image_url = await this.mapService.uploadMapImage(this.mapFile, CAMPAIGN_ID);
+        const image_url = await this.mapService.uploadMapImage(this.mapFile, this.campaignId);
         const map = await this.mapService.createMap({
-          campaign_id: CAMPAIGN_ID,
+          campaign_id: this.campaignId,
           name: this.name.trim(),
           image_url,
           grid_size: this.pixelsPerGrid() || 50,
@@ -225,9 +242,11 @@ export class DmEncountersComponent implements OnInit, OnDestroy {
 
       const payload = {
         name: this.name.trim(),
+        session_id: this.sessionId,
         map_id,
         monsters: [...this.selectedMonsterIndices()],
         character_ids: [...this.selectedCharacterIds()],
+        summary: this.summary.trim(),
       };
 
       const editingId = this.editingId();
@@ -239,7 +258,7 @@ export class DmEncountersComponent implements OnInit, OnDestroy {
 
       this.showForm.set(false);
       this.resetForm();
-      this.encounters.set(await this.encounterService.getAll());
+      this.encounters.set(await this.encounterService.getBySession(this.sessionId));
     } finally {
       this.saving.set(false);
     }
@@ -255,7 +274,13 @@ export class DmEncountersComponent implements OnInit, OnDestroy {
     const enc = this.encounters().find(e => e.id === id);
     if (!await this.confirm.confirm(`Delete "${enc?.name ?? 'this encounter'}"? This cannot be undone.`, 'Delete Encounter')) return;
     await this.encounterService.remove(id);
-    this.encounters.set(await this.encounterService.getAll());
+    this.encounters.set(await this.encounterService.getBySession(this.sessionId));
+  }
+
+  async toggleVisibility(encounter: Encounter, event: Event) {
+    event.stopPropagation();
+    await this.encounterService.setVisibility(encounter.id!, !encounter.visible_to_players);
+    this.encounters.set(await this.encounterService.getBySession(this.sessionId));
   }
 
   monsterName(index: string): string {
@@ -270,6 +295,7 @@ export class DmEncountersComponent implements OnInit, OnDestroy {
     this.editingId.set(null);
     this.existingMap.set(null);
     this.name = '';
+    this.summary = '';
     this.uploadError.set(null);
     this.imagePreviewUrl.set(null);
     this.mapFile = null;
@@ -278,6 +304,7 @@ export class DmEncountersComponent implements OnInit, OnDestroy {
     this.mapRows.set(0);
     this.selectedMonsterIndices.set(new Set());
     this.selectedCharacterIds.set(new Set());
+    this.monsterSearchQuery.set('');
     this.stage?.destroy();
     this.stage = undefined;
     this.imageLayer = undefined;

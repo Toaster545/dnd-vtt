@@ -1,5 +1,6 @@
 import { Component, inject, signal, computed, OnInit, OnDestroy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { Subscription } from 'rxjs';
@@ -19,6 +20,7 @@ import { CharacterPlaySheetComponent } from '../character-play-sheet/character-p
   templateUrl: './dm-play-encounters.html',
 })
 export class DmPlayEncountersComponent implements OnInit, OnDestroy {
+  private route             = inject(ActivatedRoute);
   private encounterService = inject(EncounterService);
   private content          = inject(ContentService);
   private characterService = inject(CharacterService);
@@ -101,6 +103,12 @@ export class DmPlayEncountersComponent implements OnInit, OnDestroy {
     this.monsters.set(monsters);
     this.characters.set(characters);
     this.loading.set(false);
+
+    // A campaign session's "Play" link hands off here with ?encounterId= so the DM lands directly
+    // on that encounter's board instead of having to find it again in the flat list.
+    const encounterId = this.route.snapshot.queryParamMap.get('encounterId');
+    const target = encounterId && this.encounters().find(e => e.id === encounterId);
+    if (target) this.openEncounter(target);
   }
 
   openEncounter(encounter: Encounter) {

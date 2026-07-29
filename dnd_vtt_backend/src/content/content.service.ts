@@ -12,8 +12,10 @@ export class ContentService {
     const key = `all:${type}`;
     if (this.cache.has(key)) return this.cache.get(key) as T[];
     const dir = join(CONTENT_PATH, type);
-    const files = readdirSync(dir).filter(f => f.endsWith('.json'));
-    const items = files.map(f => JSON.parse(readFileSync(join(dir, f), 'utf-8')) as T);
+    const files = readdirSync(dir).filter((f) => f.endsWith('.json'));
+    const items = files.map(
+      (f) => JSON.parse(readFileSync(join(dir, f), 'utf-8')) as T,
+    );
     this.cache.set(key, items);
     return items;
   }
@@ -31,18 +33,46 @@ export class ContentService {
     }
   }
 
-  getClasses()                  { return this.loadAll('classes'); }
-  getClass(index: string)       { return this.loadOne('classes', index); }
-  getRaces()                    { return this.loadAll('races'); }
-  getRace(index: string)        { return this.loadOne('races', index); }
-  getBackgrounds()              { return this.loadAll('backgrounds'); }
-  getBackground(index: string)  { return this.loadOne('backgrounds', index); }
-  getItems()                    { return this.loadAll('items'); }
-  getItem(index: string)        { return this.loadOne('items', index); }
-  getSpells()                   { return this.loadAll('spells'); }
-  getSpell(index: string)       { return this.loadOne('spells', index); }
-  getFeats()                    { return this.loadAll('feats'); }
-  getFeat(index: string)        { return this.loadOne('feats', index); }
-  getMonsters()                 { return this.loadAll('monsters'); }
-  getMonster(index: string)     { return this.loadOne('monsters', index); }
+  getClasses() {
+    return this.loadAll('classes');
+  }
+  getClass(index: string) {
+    return this.loadOne('classes', index);
+  }
+  getRaces() {
+    return this.loadAll('races');
+  }
+  getRace(index: string) {
+    return this.loadOne('races', index);
+  }
+  getBackgrounds() {
+    return this.loadAll('backgrounds');
+  }
+  getBackground(index: string) {
+    return this.loadOne('backgrounds', index);
+  }
+  getItems() {
+    return this.loadAll('items');
+  }
+  getItem(index: string) {
+    return this.loadOne('items', index);
+  }
+  getSpells() {
+    return this.loadAll('spells');
+  }
+  getSpell(index: string) {
+    return this.loadOne('spells', index);
+  }
+  getFeats() {
+    return this.loadAll('feats');
+  }
+  getFeat(index: string) {
+    return this.loadOne('feats', index);
+  }
+  getMonsters() {
+    return this.loadAll('monsters');
+  }
+  getMonster(index: string) {
+    return this.loadOne('monsters', index);
+  }
 }

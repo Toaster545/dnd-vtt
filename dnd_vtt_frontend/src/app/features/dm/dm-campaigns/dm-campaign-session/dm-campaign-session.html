@@ -1,0 +1,171 @@
+<div class="flex-1 min-h-0 overflow-y-auto p-6">
+  <div class="flex items-center gap-3 mb-5">
+    <button class="btn-icon" (click)="backToHub()" matTooltip="Back to campaign">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+    <h2 class="font-brand text-lg text-parchment m-0 flex-1">Encounters</h2>
+    @if (showForm()) {
+      <button class="btn-outline text-sm" (click)="cancelForm()">Cancel</button>
+    } @else {
+      <button class="btn-outline text-sm" (click)="startCreate()">+ New Encounter</button>
+    }
+  </div>
+
+  @if (showForm()) {
+    <div class="card card-body mb-5 max-w-5xl max-h-[80vh] overflow-y-auto">
+      <h3 class="font-brand text-sm text-parchment m-0 mb-3">{{ editingId() ? 'Edit Encounter' : 'New Encounter' }}</h3>
+      <form (ngSubmit)="save()" class="flex flex-col gap-4">
+        <div class="field">
+          <label class="field-label">Encounter name</label>
+          <input class="field-input" [(ngModel)]="name" name="name" required autofocus />
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <!-- Left: map -->
+          <div class="field">
+            <label class="field-label">
+              {{ existingMap() ? 'Replace map' : 'Map (optional)' }} — DungeonDraft Universal VTT export
+            </label>
+
+            @if (existingMap() && !imagePreviewUrl()) {
+              <div class="flex items-center gap-3 mb-2 px-3 py-2 rounded border border-white/10">
+                <mat-icon class="text-slate">map</mat-icon>
+                <div class="min-w-0">
+                  <p class="text-parchment text-sm m-0 truncate">{{ existingMap()!.name }}</p>
+                  <p class="text-coal text-xs m-0">{{ existingMap()!.grid_size }} px/cell · current map</p>
+                </div>
+              </div>
+            }
+
+            <input class="field-input" type="file" accept=".dd2vtt" [disabled]="parsingFile()" (change)="onFileChange($event)" />
+
+            @if (parsingFile()) {
+              <p class="text-slate text-xs mt-1"><span class="spinner-sm"></span> Processing map file…</p>
+            }
+
+            @if (uploadError()) {
+              <p class="text-danger text-xs mt-1">{{ uploadError() }}</p>
+            }
+
+            @if (imagePreviewUrl()) {
+              <p class="text-xs text-coal mt-2">
+                {{ mapCols() }} × {{ mapRows() }} cells · {{ pixelsPerGrid() }} px/cell (from file)
+              </p>
+            }
+            <div #previewContainer class="w-full h-80 mt-2 rounded border border-white/10 bg-black/20"></div>
+          </div>
+
+          <!-- Right: characters (top) + monsters (search + scrollable list) -->
+          <div class="flex flex-col gap-4 min-w-0">
+            <div class="field">
+              <label class="field-label">Characters</label>
+              <div class="flex flex-col gap-1 max-h-48 overflow-y-auto pr-1">
+                @for (character of characters(); track character.id) {
+                  <button type="button"
+                    class="flex items-center gap-2 px-3 py-1.5 rounded border text-left text-sm w-full cursor-pointer"
+                    [class]="isCharacterSelected(character.id!) ? 'border-gold/50 bg-gold/5' : 'border-white/10 hover:border-white/30'"
+                    (click)="toggleCharacter(character.id!)"
+                    style="font-family: inherit;"
+                  >
+                    <span class="w-4 h-4 rounded-full border flex items-center justify-center shrink-0 text-[9px]"
+                      [class]="isCharacterSelected(character.id!) ? 'bg-gold border-gold text-canvas font-bold' : 'border-slate/50 text-transparent'">●</span>
+                    <span class="text-parchment">{{ character.name }}</span>
+                    <span class="text-coal text-xs">Level {{ character.level }} {{ character.class }}</span>
+                  </button>
+                } @empty {
+                  <p class="text-slate text-sm">No characters yet — create one under the Characters tab first.</p>
+                }
+              </div>
+            </div>
+
+            <div class="field flex-1 min-h-0 flex flex-col">
+              <label class="field-label">Monsters</label>
+              <input
+                class="field-input mb-2"
+                type="text"
+                placeholder="Search monsters…"
+                [(ngModel)]="monsterSearchQuery"
+                [ngModelOptions]="{ standalone: true }"
+              />
+              <div class="flex flex-col gap-1 max-h-56 overflow-y-auto pr-1">
+                @for (monster of filteredMonsters(); track monster.index) {
+                  <button type="button"
+                    class="flex items-center gap-2 px-3 py-1.5 rounded border text-left text-sm w-full cursor-pointer"
+                    [class]="isMonsterSelected(monster.index) ? 'border-gold/50 bg-gold/5' : 'border-white/10 hover:border-white/30'"
+                    (click)="toggleMonster(monster.index)"
+                    style="font-family: inherit;"
+                  >
+                    <span class="w-4 h-4 rounded-full border flex items-center justify-center shrink-0 text-[9px]"
+                      [class]="isMonsterSelected(monster.index) ? 'bg-gold border-gold text-canvas font-bold' : 'border-slate/50 text-transparent'">●</span>
+                    <span class="text-parchment">{{ monster.name }}</span>
+                    <span class="text-coal text-xs">CR {{ monster.challenge_rating }}</span>
+                  </button>
+                } @empty {
+                  <p class="text-slate text-sm">No monsters match your search.</p>
+                }
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="field-label">Recap / summary (shown to players once revealed)</label>
+          <textarea class="field-input" [(ngModel)]="summary" name="summary" rows="3"
+                     placeholder="What happened in this encounter…"></textarea>
+        </div>
+
+        <div>
+          <button class="btn-primary" type="submit" [disabled]="!name.trim() || saving()">
+            @if (saving()) { <span class="spinner-sm"></span> } @else { {{ editingId() ? 'Save Changes' : 'Create Encounter' }} }
+          </button>
+        </div>
+      </form>
+    </div>
+  }
+
+  @if (!loading()) {
+    <ul class="divide-y divide-white/8">
+      @for (encounter of encounters(); track encounter.id) {
+        <li class="flex items-center py-3 gap-3">
+          <div class="flex-1 min-w-0">
+            <p class="text-parchment font-medium truncate m-0">
+              {{ encounter.name }}
+              <span class="text-xs text-coal border border-white/10 rounded px-1.5 py-0.5 ml-1">{{ encounter.status }}</span>
+            </p>
+            <p class="text-slate text-xs m-0 mt-0.5">
+              {{ encounter.monsters.length }} monster type{{ encounter.monsters.length === 1 ? '' : 's' }}
+              · {{ encounter.character_ids.length }} character{{ encounter.character_ids.length === 1 ? '' : 's' }}
+              @if (encounter.map_id) { · map attached }
+              · {{ formatDate(encounter.created_at) }}
+            </p>
+          </div>
+          <a class="btn-outline text-xs" [routerLink]="['/dm']" [queryParams]="{ view: 'play-encounters', encounterId: encounter.id }">
+            Play
+          </a>
+          <button class="btn-icon"
+                  [class]="encounter.visible_to_players ? 'text-gold' : 'text-slate hover:text-parchment'"
+                  (click)="toggleVisibility(encounter, $event)"
+                  [matTooltip]="encounter.visible_to_players ? 'Visible to players — click to hide' : 'Hidden from players — click to reveal'">
+            <mat-icon>{{ encounter.visible_to_players ? 'visibility' : 'visibility_off' }}</mat-icon>
+          </button>
+          <button class="btn-icon text-slate hover:text-parchment"
+                  (click)="startEdit(encounter)"
+                  matTooltip="Edit encounter">
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button class="btn-icon text-danger/70 hover:text-danger"
+                  (click)="deleteEncounter(encounter.id!)"
+                  matTooltip="Delete encounter">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </li>
+      } @empty {
+        <p class="text-slate text-sm py-4">No encounters yet.</p>
+      }
+    </ul>
+  }
+
+  <div class="mt-6 max-w-2xl">
+    <app-notes-panel entityType="session" [entityId]="sessionId" />
+  </div>
+</div>

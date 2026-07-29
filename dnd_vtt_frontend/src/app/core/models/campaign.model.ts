@@ -1,9 +1,41 @@
 export interface Campaign {
-  id?: string;
-  admin_id: string;
+  id: string;
+  dm_id: string;
   name: string;
   description?: string;
+  join_code: string;
   created_at?: string;
+  updated_at?: string;
+}
+
+export interface CampaignMember {
+  id?: string;
+  user_id: string;
+  username: string;
+  character_id: string;
+  character_name: string;
+  source_character_id?: string | null;
+  status?: 'active' | 'removed';
+  joined_at?: string;
+}
+
+// GET /campaigns/:id payload — the campaign plus what's inside it, scoped to whatever the caller
+// (owning DM, or active member) is allowed to see.
+export interface CampaignHub extends Campaign {
+  sessions: CampaignSession[];
+  members: CampaignMember[];
+}
+
+// Session shape as returned nested inside a CampaignHub — see session.model.ts for the standalone
+// Session interface used by SessionService.
+export interface CampaignSession {
+  id: string;
+  name: string;
+  description: string;
+  dm_id: string;
+  campaign_id: string;
+  visible_to_players: boolean | number;
+  created_at: string;
 }
 
 export interface BattleMap {

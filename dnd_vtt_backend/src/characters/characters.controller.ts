@@ -1,4 +1,13 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Put,
+  UseGuards,
+} from '@nestjs/common';
 import { CharactersService } from './characters.service';
 import { JwtGuard } from '../auth/jwt.guard';
 import { CurrentUser } from '../common/current-user.decorator';
@@ -20,7 +29,10 @@ export class CharactersController {
   }
 
   @Post()
-  create(@CurrentUser() user: RequestUser, @Body() body: Record<string, unknown>) {
+  create(
+    @CurrentUser() user: RequestUser,
+    @Body() body: Record<string, unknown>,
+  ) {
     return this.characters.create(user.id, body);
   }
 

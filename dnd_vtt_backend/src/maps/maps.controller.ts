@@ -1,6 +1,14 @@
 import {
-  Body, Controller, Delete, Get, Param, Post, UploadedFile,
-  UseGuards, UseInterceptors, Query,
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  UploadedFile,
+  UseGuards,
+  UseInterceptors,
+  Query,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { MapsService } from './maps.service';
@@ -35,7 +43,9 @@ export class MapsController {
     @UploadedFile() file: Express.Multer.File,
     @Query('campaignId') campaignId: string,
   ) {
-    return this.maps.uploadImage(file, campaignId ?? 'default').then(url => ({ url }));
+    return this.maps
+      .uploadImage(file, campaignId ?? 'default')
+      .then((url) => ({ url }));
   }
 
   @Get(':id/tokens')
@@ -57,7 +67,10 @@ export class MapsController {
 
   @Post(':id/tokens/:tokenId/reroll-initiative')
   @UseGuards(AdminGuard)
-  rerollInitiative(@Param('id') mapId: string, @Param('tokenId') tokenId: string) {
+  rerollInitiative(
+    @Param('id') mapId: string,
+    @Param('tokenId') tokenId: string,
+  ) {
     return this.maps.rerollInitiative(mapId, tokenId);
   }
 }

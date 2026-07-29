@@ -143,6 +143,15 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
       this.tokenLayer = new Konva.Layer();
       this.stage.add(this.mapLayer, this.gridLayer, this.tokenLayer);
 
+      // Grid lines are purely decorative — nothing on this layer is ever clicked or dragged.
+      // Konva otherwise assigns every shape a unique hit-test color, and a grid can easily be
+      // hundreds of lines; browsers with canvas anti-fingerprinting ("farbling", e.g. Firefox's
+      // resistFingerprinting, or Brave) perturb the hit-canvas pixels enough that Konva can't
+      // read back the color it just assigned, so it keeps retrying and warning per shape — which
+      // can make the whole board janky or unresponsive. Marking the layer non-listening skips hit
+      // registration for all of it.
+      this.gridLayer.listening(false);
+
       const konvaImg = new Konva.Image({ image: img, x: 0, y: 0, width: w, height: h });
       this.mapLayer.add(konvaImg);
       this.drawGrid(w, h, gridSize * scale);
@@ -165,17 +174,40 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
 
       this.loading.set(false);
     };
+    // Without this, a broken/missing image URL (moved upload, wrong host, etc.) leaves the view
+    // stuck on the loading spinner forever with no indication anything went wrong.
+    img.onerror = () => {
+      this.error.set('Failed to load the map image.');
+      this.loading.set(false);
+    };
     img.src = map.image_url;
   }
 
   private drawGrid(w: number, h: number, cellSize: number) {
     const layer = this.gridLayer!;
-    for (let x = 0; x <= w; x += cellSize) {
-      layer.add(new Konva.Line({ points: [x, 0, x, h], stroke: 'rgba(255,255,255,0.12)', strokeWidth: 1 }));
-    }
-    for (let y = 0; y <= h; y += cellSize) {
-      layer.add(new Konva.Line({ points: [0, y, w, y], stroke: 'rgba(255,255,255,0.12)', strokeWidth: 1 }));
-    }
+    // One Konva.Shape drawing every line itself, rather than one Konva.Line per line (which can
+    // easily be hundreds on a large map). Every Konva Shape gets a unique hit-test color assigned
+    // in its constructor regardless of `listening` — on a browser with canvas anti-fingerprinting
+    // ("farbling"), that assignment can retry up to 10,000 times before giving up, and doing that
+    // for hundreds of shapes synchronously is what was freezing the tab. Collapsing to a single
+    // shape makes that a one-time bounded cost instead of one per gridline.
+    layer.add(new Konva.Shape({
+      listening: false,
+      stroke: 'rgba(255,255,255,0.12)',
+      strokeWidth: 1,
+      sceneFunc: (context, shape) => {
+        context.beginPath();
+        for (let x = 0; x <= w; x += cellSize) {
+          context.moveTo(x, 0);
+          context.lineTo(x, h);
+        }
+        for (let y = 0; y <= h; y += cellSize) {
+          context.moveTo(0, y);
+          context.lineTo(w, y);
+        }
+        context.strokeShape(shape);
+      },
+    }));
     layer.draw();
   }
 
@@ -186,50 +218,79 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
       const r = (cellSize * token.size) / 2;
       const cx = token.x * cellSize + r;
       const cy = token.y * cellSize + r;
-      const group = new Konva.Group({ x: cx, y: cy, draggable: this.auth.isAdmin() });
-      group.add(new Konva.Circle({ radius: r - 3, fill: token.color, stroke: '#fff', strokeWidth: 2 }));
-      group.add(new Konva.Text({
-        text: token.label.substring(0, 3).toUpperCase(),
-        fontSize: r * 0.7,
-        fill: '#fff',
-        align: 'center',
-        verticalAlign: 'middle',
-        offsetX: (r * 0.7 / 2) * 1.5,
-        offsetY: r * 0.7 / 2,
-      }));
-
+      const label = token.label.substring(0, 3).toUpperCase();
+      const labelFontSize = r * 0.7;
       // Character HP is party-visible (anyone with data for it in `characterHp`, players
       // included); monster HP stays DM-only intel — see hpFor.
       const hp = this.hpFor(token);
-      if (hp) {
-        const text = `${hp.hp}/${hp.max_hp}`;
-        const fontSize = Math.max(10, Math.min(13, r * 0.4));
-        const hpLabel = new Konva.Text({ text, fontSize, fontStyle: 'bold', fill: this.hpLabelColor(hp.hp, hp.max_hp) });
-        const padX = 4, padY = 2;
-        const labelW = hpLabel.width();
-        const labelH = hpLabel.height();
-        const bgY = -(r + labelH + padY * 2 + 4);
-        hpLabel.position({ x: -labelW / 2, y: bgY + padY });
-        group.add(new Konva.Rect({
-          x: -labelW / 2 - padX,
-          y: bgY,
-          width: labelW + padX * 2,
-          height: labelH + padY * 2,
-          fill: 'rgba(20, 18, 14, 0.75)',
-          cornerRadius: 3,
-        }));
-        group.add(hpLabel);
-      }
 
-      group.on('click tap', () => this.tokenClicked.emit(token));
+      // One Konva.Shape drawing the token's circle, label, and HP badge itself, instead of a
+      // Group with up to 4 child shapes (Circle/Text/Rect/Text) — same rationale as drawGrid:
+      // every extra Konva Shape is another hit-color assignment at construction time, and that
+      // gets expensive on canvas-farbling browsers (Firefox/Safari private-browsing windows in
+      // particular default to it even when the regular window doesn't). Konva reuses this same
+      // sceneFunc for hit-testing by default (swapping in the shape's assigned hit color), so
+      // click/drag/tap behave exactly as before with no separate hitFunc needed.
+      const shape = new Konva.Shape({
+        x: cx,
+        y: cy,
+        draggable: this.auth.isAdmin(),
+        sceneFunc: context => {
+          context.beginPath();
+          context.arc(0, 0, r - 3, 0, Math.PI * 2);
+          context.closePath();
+          context.fillStyle = token.color;
+          context.fill();
+          context.lineWidth = 2;
+          context.strokeStyle = '#fff';
+          context.stroke();
+
+          context.font = `${labelFontSize}px Arial`;
+          context.textAlign = 'center';
+          context.textBaseline = 'middle';
+          context.fillStyle = '#fff';
+          context.fillText(label, 0, 0);
+
+          if (hp) {
+            const text = `${hp.hp}/${hp.max_hp}`;
+            const fontSize = Math.max(10, Math.min(13, r * 0.4));
+            context.font = `bold ${fontSize}px Arial`;
+            const padX = 4, padY = 2;
+            const labelW = context.measureText(text).width;
+            const labelH = fontSize;
+            const bgY = -(r + labelH + padY * 2 + 4);
+            const rectX = -labelW / 2 - padX;
+            const rectW = labelW + padX * 2;
+            const rectH = labelH + padY * 2;
+            const radius = 3;
+
+            context.beginPath();
+            context.moveTo(rectX + radius, bgY);
+            context.arcTo(rectX + rectW, bgY, rectX + rectW, bgY + rectH, radius);
+            context.arcTo(rectX + rectW, bgY + rectH, rectX, bgY + rectH, radius);
+            context.arcTo(rectX, bgY + rectH, rectX, bgY, radius);
+            context.arcTo(rectX, bgY, rectX + rectW, bgY, radius);
+            context.closePath();
+            context.fillStyle = 'rgba(20, 18, 14, 0.75)';
+            context.fill();
+
+            context.textAlign = 'center';
+            context.textBaseline = 'middle';
+            context.fillStyle = this.hpLabelColor(hp.hp, hp.max_hp);
+            context.fillText(text, 0, bgY + rectH / 2);
+          }
+        },
+      });
+
+      shape.on('click tap', () => this.tokenClicked.emit(token));
       if (this.auth.isAdmin()) {
-        group.on('dragend', async () => {
-          const pos = group.position();
+        shape.on('dragend', async () => {
+          const pos = shape.position();
           await this.mapService.upsertToken({ ...token, x: Math.floor(pos.x / cellSize), y: Math.floor(pos.y / cellSize) });
         });
-        group.on('contextmenu', (e) => { e.evt.preventDefault(); this.removeToken(token); });
+        shape.on('contextmenu', (e) => { e.evt.preventDefault(); this.removeToken(token); });
       }
-      layer.add(group);
+      layer.add(shape);
     }
     layer.draw();
   }
