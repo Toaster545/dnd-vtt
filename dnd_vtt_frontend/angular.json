@@ -67,7 +67,7 @@
         "serve": {
           "builder": "@angular/build:dev-server",
           "options": {
-            "allowedHosts": ["dnd.mathomelab.ca"],
+            "allowedHosts": ["dnd.mathomelab.ca", "dev.dnd.mathomelab.ca"],
             "proxyConfig": "proxy.conf.json"
           },
           "configurations": {
