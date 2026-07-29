@@ -1,16 +1,18 @@
 import Konva from 'konva';
 import { Measurement, MeasureShape } from '../../../core/models/campaign.model';
 
-// Distance is snapped to grid intersections (rounded, not floored like token placement, so a
-// drag that ends mid-square still reads as a clean whole-square distance) and assumes the 5e
-// default of 1 square = 5 ft — this map has no per-map scale to read instead.
+// Assumes the 5e default of 1 square = 5 ft — this map has no per-map scale to read instead.
 export const FEET_PER_SQUARE = 5;
 
-export function snapToGrid(stage: Konva.Stage, cellSize: number): { col: number; row: number } {
+// Free-form pointer position expressed in grid units (fractional, not snapped to the grid) so the
+// ruler/cone/sphere tools can start and end anywhere under the cursor rather than only at
+// intersections. Kept in grid units (not raw pixels) since Measurement/drawMeasurement already
+// work in col/row and multiply back by cellSize.
+export function pointerToGridPos(stage: Konva.Stage, cellSize: number): { col: number; row: number } {
   const pos = stage.getPointerPosition()!;
   return {
-    col: Math.round(pos.x / cellSize),
-    row: Math.round(pos.y / cellSize),
+    col: pos.x / cellSize,
+    row: pos.y / cellSize,
   };
 }
 

@@ -6,6 +6,15 @@
     (saved)="onCharacterSaved()"
     (cancelled)="onCharacterCancelled()"
   />
+} @else if (sheetCharacter(); as sc) {
+  <div class="flex flex-col flex-1 min-h-0 overflow-hidden">
+    <div class="flex items-center gap-2 px-4 py-2.5 border-b border-white/10 flex-shrink-0">
+      <button class="btn-ghost text-sm" (click)="closeCharacterSheet()">
+        <mat-icon class="text-base">arrow_back</mat-icon> Back to campaign
+      </button>
+    </div>
+    <app-character-play-sheet class="flex-1 min-h-0" [character]="sc" (saved)="onCharacterSheetSaved($event)" />
+  </div>
 } @else if (campaign(); as c) {
   <div class="flex-1 min-h-0 overflow-y-auto p-6 bg-cover bg-center"
        [style.background-image]="c.background_url ? 'linear-gradient(rgba(13,14,22,0.88), rgba(13,14,22,0.88)), url(' + c.background_url + ')' : null">
@@ -68,6 +77,12 @@
                 <span class="text-xs text-slate border border-white/10 rounded px-2 py-0.5 flex-shrink-0">
                   AC {{ member.character_armor_class }}
                 </span>
+              }
+              @if (isMe(member)) {
+                <button class="btn-outline text-xs px-2 py-1 flex-shrink-0" (click)="viewMyCharacter(member)"
+                        matTooltip="View your character sheet">
+                  <mat-icon class="text-base">badge</mat-icon> Character
+                </button>
               }
               @if (isMe(member) && member.edit_unlocked) {
                 <button class="btn-outline text-xs px-2 py-1 flex-shrink-0" (click)="editMyCharacter(member)"

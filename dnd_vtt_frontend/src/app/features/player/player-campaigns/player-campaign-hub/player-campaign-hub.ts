@@ -10,10 +10,14 @@ import { Character } from '../../../../core/models/character.model';
 import { portraitDataUri } from '../../../../core/utils/avatar';
 import { NotesPanelComponent } from '../../../../shared/components/notes-panel/notes-panel';
 import { CharacterWizardComponent } from '../../../dm/dm-create/dm-characters/character-wizard/character-wizard';
+import { CharacterPlaySheetComponent } from '../../../dm/dm-play/character-play-sheet/character-play-sheet';
 
 @Component({
   selector: 'app-player-campaign-hub',
-  imports: [RouterLink, MatIconModule, MatTooltipModule, NotesPanelComponent, CharacterWizardComponent],
+  imports: [
+    RouterLink, MatIconModule, MatTooltipModule, NotesPanelComponent, CharacterWizardComponent,
+    CharacterPlaySheetComponent,
+  ],
   templateUrl: './player-campaign-hub.html',
   // Routed in via player-shell's <router-outlet>, so without a host sizing class this stays an
   // unstyled inline element and the template's flex-1/min-h-0/overflow-y-auto root div has no
@@ -35,6 +39,7 @@ export class PlayerCampaignHubComponent implements OnInit {
 
   editingCharacter = signal<Character | null>(null);
   showWizard       = signal(false);
+  sheetCharacter = signal<Character | null>(null);
 
   async ngOnInit() {
     this.campaign.set(await this.campaignService.getById(this.campaignId));
@@ -69,6 +74,22 @@ export class PlayerCampaignHubComponent implements OnInit {
 
   onCharacterCancelled() {
     this.showWizard.set(false);
+  }
+
+  async viewMyCharacter(member: CampaignMember) {
+    this.sheetCharacter.set(await this.characterService.getCharacter(member.character_id));
+  }
+
+  // The play sheet's (saved) emits the updated character after every persist — keep the sheet in
+  // sync and refresh the Party roster's HP/AC badges to match, but stay on the sheet (unlike the
+  // wizard's onCharacterSaved, which navigates back to the hub).
+  async onCharacterSheetSaved(character: Character) {
+    this.sheetCharacter.set(character);
+    this.campaign.set(await this.campaignService.getById(this.campaignId));
+  }
+
+  closeCharacterSheet() {
+    this.sheetCharacter.set(null);
   }
 
   formatDate(iso?: string): string {

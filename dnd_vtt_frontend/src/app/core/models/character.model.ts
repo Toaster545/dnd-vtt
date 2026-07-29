@@ -64,6 +64,9 @@ export interface DeathSaves {
 export interface Character {
   id?: string;
   user_id?: string;
+  // Set once a template is cloned into a campaign (see CampaignsService.join on the backend) —
+  // null/undefined for a portable template character not yet tied to any campaign.
+  campaign_id?: string | null;
 
   // Identity (reference content by name)
   name: string;
