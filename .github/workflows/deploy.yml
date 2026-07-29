@@ -1,0 +1,40 @@
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: self-hosted
+    steps:
+      # clean:false is required here — the default (true) runs `git clean -ffdx`
+      # before checkout, which would wipe the gitignored SQLite DB (dnd_vtt_backend/data/),
+      # uploaded map images (dnd_vtt_backend/uploads/) and .env on this machine.
+      - uses: actions/checkout@v4
+        with:
+          clean: false
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install frontend dependencies
+        working-directory: dnd_vtt_frontend
+        run: npm ci
+
+      - name: Build frontend
+        working-directory: dnd_vtt_frontend
+        run: npm run build
+
+      - name: Install backend dependencies
+        working-directory: dnd_vtt_backend
+        run: npm ci
+
+      - name: Build backend
+        working-directory: dnd_vtt_backend
+        run: npm run build
+
+      - name: Deploy with pm2
+        working-directory: dnd_vtt_backend
+        run: npx --yes pm2@latest startOrReload ecosystem.config.js
