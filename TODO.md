@@ -23,7 +23,7 @@
 - [ ] Campaign logic
     - [x] Creating campaign
     - [x] Assign Users
-    - [ ] lock user characters (not to much and add options)
+    - [x] lock user characters (not to much and add options)
     - [x] add encounters
     - [x] add comments
     - [ ] customize campaign
