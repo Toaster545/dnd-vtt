@@ -7,9 +7,9 @@
 - [ ] Campaign logic
     - [x] Creating campaign
     - [x] Assign Users
-    - [ ] lock user characters
+    - [x] lock user characters
     - [x] add encounters
-    - [ ] add notes
+    - [x] add notes
     - [ ] customize campaign
     - [ ] 
 - [ ] Encounters
