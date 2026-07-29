@@ -2,6 +2,8 @@ import { Injectable, OnModuleInit, Logger } from '@nestjs/common';
 import { createClient, Client, ResultSet } from '@libsql/client';
 import { existsSync, mkdirSync } from 'fs';
 import { dirname } from 'path';
+import { randomUUID } from 'crypto';
+import { generateJoinCode } from './join-code.util';
 
 @Injectable()
 export class DatabaseService implements OnModuleInit {
@@ -24,20 +26,26 @@ export class DatabaseService implements OnModuleInit {
 
   async executeMany(statements: { sql: string; args?: any[] }[]) {
     return this.db.batch(
-      statements.map(s => ({ sql: s.sql, args: s.args ?? [] })),
+      statements.map((s) => ({ sql: s.sql, args: s.args ?? [] })),
     );
   }
 
   parseJson<T>(value: string | null, fallback: T): T {
     if (!value) return fallback;
-    try { return JSON.parse(value) as T; } catch { return fallback; }
+    try {
+      return JSON.parse(value) as T;
+    } catch {
+      return fallback;
+    }
   }
 
   private async runMigrations() {
     await this.db.execute(`PRAGMA foreign_keys = ON`);
 
     // Determine current schema version
-    let version = Number((await this.db.execute(`PRAGMA user_version`)).rows[0]?.user_version ?? 0);
+    let version = Number(
+      (await this.db.execute(`PRAGMA user_version`)).rows[0]?.user_version ?? 0,
+    );
 
     // Tables exist but predate versioning → treat as v1
     if (version === 0) {
@@ -51,6 +59,13 @@ export class DatabaseService implements OnModuleInit {
     if (version < 4) await this.applyV4();
     if (version < 5) await this.applyV5();
     if (version < 6) await this.applyV6();
+    if (version < 7) await this.applyV7();
+    if (version < 8) await this.applyV8();
+    if (version < 9) await this.applyV9();
+    if (version < 10) await this.applyV10();
+    if (version < 11) await this.applyV11();
+    if (version < 12) await this.applyV12();
+    if (version < 13) await this.applyV13();
   }
 
   // ── V1: initial schema (explicit columns on characters) ─────────────────────
@@ -215,11 +230,17 @@ export class DatabaseService implements OnModuleInit {
 
   // ── V4: map_tokens reference their source (character or monster type) ───────
   private async applyV4() {
-    await this.db.execute(`ALTER TABLE map_tokens ADD COLUMN character_id TEXT REFERENCES characters(id) ON DELETE SET NULL`);
-    await this.db.execute(`ALTER TABLE map_tokens ADD COLUMN monster_index TEXT`);
+    await this.db.execute(
+      `ALTER TABLE map_tokens ADD COLUMN character_id TEXT REFERENCES characters(id) ON DELETE SET NULL`,
+    );
+    await this.db.execute(
+      `ALTER TABLE map_tokens ADD COLUMN monster_index TEXT`,
+    );
 
     await this.db.execute(`PRAGMA user_version = 4`);
-    this.logger.log('Applied schema migration v4 (map_tokens source references)');
+    this.logger.log(
+      'Applied schema migration v4 (map_tokens source references)',
+    );
   }
 
   // ── V5: encounter join codes ──────────────────────────────────────────────────
@@ -236,5 +257,194 @@ export class DatabaseService implements OnModuleInit {
 
     await this.db.execute(`PRAGMA user_version = 6`);
     this.logger.log('Applied schema migration v6 (token initiative)');
+  }
+
+  // ── V7: campaigns ─────────────────────────────────────────────────────────────
+  private async applyV7() {
+    await this.db.execute(`
+      CREATE TABLE IF NOT EXISTS campaigns (
+        id          TEXT PRIMARY KEY,
+        dm_id       TEXT NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
+        name        TEXT NOT NULL,
+        description TEXT NOT NULL DEFAULT '',
+        join_code   TEXT NOT NULL UNIQUE,
+        data        TEXT NOT NULL DEFAULT '{}',
+        created_at  TEXT NOT NULL DEFAULT (datetime('now')),
+        updated_at  TEXT NOT NULL DEFAULT (datetime('now'))
+      )
+    `);
+
+    await this.db.execute(`
+      CREATE TABLE IF NOT EXISTS campaign_members (
+        id                  TEXT PRIMARY KEY,
+        campaign_id         TEXT NOT NULL REFERENCES campaigns(id) ON DELETE CASCADE,
+        user_id             TEXT NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
+        character_id        TEXT NOT NULL REFERENCES characters(id) ON DELETE CASCADE,
+        source_character_id TEXT REFERENCES characters(id) ON DELETE SET NULL,
+        status              TEXT NOT NULL DEFAULT 'active' CHECK(status IN ('active','removed')),
+        joined_at           TEXT NOT NULL DEFAULT (datetime('now'))
+      )
+    `);
+    // One active membership per player per campaign; removed rows stick around for history.
+    await this.db.execute(`
+      CREATE UNIQUE INDEX IF NOT EXISTS idx_campaign_members_active
+      ON campaign_members(campaign_id, user_id) WHERE status = 'active'
+    `);
+
+    await this.db.execute(`
+      CREATE TABLE IF NOT EXISTS notes (
+        id          TEXT PRIMARY KEY,
+        entity_type TEXT NOT NULL CHECK(entity_type IN ('campaign','session','encounter')),
+        entity_id   TEXT NOT NULL,
+        author_id   TEXT NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
+        visibility  TEXT NOT NULL DEFAULT 'shared' CHECK(visibility IN ('shared','dm_only')),
+        content     TEXT NOT NULL,
+        created_at  TEXT NOT NULL DEFAULT (datetime('now')),
+        updated_at  TEXT NOT NULL DEFAULT (datetime('now'))
+      )
+    `);
+    await this.db.execute(`
+      CREATE INDEX IF NOT EXISTS idx_notes_entity ON notes(entity_type, entity_id)
+    `);
+
+    await this.db.execute(
+      `ALTER TABLE sessions ADD COLUMN campaign_id TEXT REFERENCES campaigns(id) ON DELETE CASCADE`,
+    );
+    await this.db.execute(
+      `ALTER TABLE sessions ADD COLUMN visible_to_players INTEGER NOT NULL DEFAULT 0`,
+    );
+    await this.db.execute(
+      `ALTER TABLE characters ADD COLUMN campaign_id TEXT REFERENCES campaigns(id) ON DELETE SET NULL`,
+    );
+    await this.db.execute(
+      `ALTER TABLE encounters ADD COLUMN visible_to_players INTEGER NOT NULL DEFAULT 0`,
+    );
+    await this.db.execute(
+      `ALTER TABLE encounters ADD COLUMN summary TEXT NOT NULL DEFAULT ''`,
+    );
+
+    // Backfill: every DM who already has sessions gets a "Legacy Campaign" so their existing
+    // sessions (and, transitively, encounters) aren't orphaned by the new required campaign_id.
+    const dms = await this.db.execute(
+      `SELECT DISTINCT dm_id FROM sessions WHERE dm_id IS NOT NULL`,
+    );
+    for (const row of dms.rows) {
+      const dmId = row.dm_id as string;
+      const campaignId = randomUUID();
+      let joinCode: string;
+      do {
+        joinCode = generateJoinCode();
+      } while (
+        (
+          await this.db.execute(
+            `SELECT id FROM campaigns WHERE join_code = ?`,
+            [joinCode],
+          )
+        ).rows.length > 0
+      );
+
+      await this.db.execute(
+        `INSERT INTO campaigns (id, dm_id, name, join_code) VALUES (?, ?, 'Legacy Campaign', ?)`,
+        [campaignId, dmId, joinCode],
+      );
+      await this.db.execute(
+        `UPDATE sessions SET campaign_id = ? WHERE dm_id = ?`,
+        [campaignId, dmId],
+      );
+    }
+
+    await this.db.execute(`PRAGMA user_version = 7`);
+    this.logger.log('Applied schema migration v7 (campaigns)');
+  }
+
+  // ── V8: relative map image URLs ──────────────────────────────────────────────
+  // Uploaded map images used to be stored with a baked-in absolute host (defaulting to
+  // http://localhost:3000). That's wrong for anything accessed through a different host — e.g. a
+  // Cloudflare Tunnel domain — and outright breaks under https (mixed-content blocking). Strip any
+  // existing `scheme://host[:port]` prefix down to the relative `/uploads/...` path, which resolves
+  // correctly against whatever origin actually served the page. See MapsService.uploadImage.
+  private async applyV8() {
+    const rows = await this.db.execute(
+      `SELECT id, image_url FROM battle_maps WHERE image_url LIKE 'http://%' OR image_url LIKE 'https://%'`,
+    );
+    for (const row of rows.rows) {
+      const url = row.image_url as string;
+      const relative = url.replace(/^https?:\/\/[^/]+/, '');
+      await this.db.execute(
+        `UPDATE battle_maps SET image_url = ? WHERE id = ?`,
+        [relative, row.id],
+      );
+    }
+
+    await this.db.execute(`PRAGMA user_version = 8`);
+    this.logger.log(
+      `Applied schema migration v8 (relative map image URLs, fixed ${rows.rows.length} row(s))`,
+    );
+  }
+
+  // ── V9: campaign/session background images ──────────────────────────────────
+  private async applyV9() {
+    await this.db.execute(
+      `ALTER TABLE campaigns ADD COLUMN background_url TEXT`,
+    );
+    await this.db.execute(
+      `ALTER TABLE sessions ADD COLUMN background_url TEXT`,
+    );
+
+    await this.db.execute(`PRAGMA user_version = 9`);
+    this.logger.log(
+      'Applied schema migration v9 (campaign/session backgrounds)',
+    );
+  }
+
+  // ── V10: encounter turn tracking ─────────────────────────────────────────────
+  private async applyV10() {
+    await this.db.execute(
+      `ALTER TABLE encounters ADD COLUMN current_turn_token_id TEXT REFERENCES map_tokens(id) ON DELETE SET NULL`,
+    );
+    await this.db.execute(
+      `ALTER TABLE encounters ADD COLUMN round_number INTEGER NOT NULL DEFAULT 1`,
+    );
+
+    await this.db.execute(`PRAGMA user_version = 10`);
+    this.logger.log('Applied schema migration v10 (encounter turn tracking)');
+  }
+
+  // ── V11: DM-grantable full edit access to a player's campaign character copy ────
+  private async applyV11() {
+    await this.db.execute(
+      `ALTER TABLE campaign_members ADD COLUMN edit_unlocked INTEGER NOT NULL DEFAULT 0`,
+    );
+
+    await this.db.execute(`PRAGMA user_version = 11`);
+    this.logger.log(
+      'Applied schema migration v11 (campaign member edit access)',
+    );
+  }
+
+  // ── V12: fog of war ───────────────────────────────────────────────────────
+  private async applyV12() {
+    await this.db.execute(`
+      CREATE TABLE IF NOT EXISTS map_fog (
+        map_id         TEXT PRIMARY KEY REFERENCES battle_maps(id) ON DELETE CASCADE,
+        enabled        INTEGER NOT NULL DEFAULT 0,
+        revealed_cells TEXT NOT NULL DEFAULT '[]'
+      )
+    `);
+
+    await this.db.execute(`PRAGMA user_version = 12`);
+    this.logger.log('Applied schema migration v12 (fog of war)');
+  }
+
+  // ── V13: fog of war starts fully visible — a map defaults to nothing hidden, the DM paints
+  // areas to hide rather than areas to reveal, so the stored set flips from "what's revealed" to
+  // "what's hidden" (an empty set now means "everything visible" instead of "everything hidden").
+  private async applyV13() {
+    await this.db.execute(
+      `ALTER TABLE map_fog RENAME COLUMN revealed_cells TO hidden_cells`,
+    );
+
+    await this.db.execute(`PRAGMA user_version = 13`);
+    this.logger.log('Applied schema migration v13 (fog defaults to visible)');
   }
 }

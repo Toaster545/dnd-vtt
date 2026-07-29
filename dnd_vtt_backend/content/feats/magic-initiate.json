@@ -1,0 +1,7 @@
+{
+  "index": "magic-initiate",
+  "name": "Magic Initiate",
+  "description": "Choose the Cleric, Druid, or Wizard spell list. Learn two cantrips and one level 1 spell from it, and choose Intelligence, Wisdom, or Charisma as their spellcasting ability. The level 1 spell is always prepared and can be cast once per Long Rest without a spell slot or with your spell slots. You may replace one chosen spell with an eligible spell whenever you gain a level.",
+  "category": "origin",
+  "repeatable": true
+}

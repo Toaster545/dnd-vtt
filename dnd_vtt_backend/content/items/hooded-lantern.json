@@ -1,0 +1,5 @@
+{
+  "index": "hooded-lantern", "name": "Hooded Lantern", "type": "gear", "category": "Adventuring Gear",
+  "damage": null, "damage_type": null, "properties": [], "weight": 2, "cost": "5 gp",
+  "description": "An oil-burning lantern with shutters that can conceal its light."
+}

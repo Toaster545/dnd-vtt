@@ -1,88 +1,34 @@
 {
   "index": "dwarf",
   "name": "Dwarf",
-  "description": "Bold and hardy, dwarves are known as skilled warriors, miners, and workers of stone and metal. Though they stand well under 5 feet tall, dwarves are so broad and compact that they can weigh as much as a human standing nearly two feet taller.",
-  "speed": 25,
+  "description": "Dwarves were raised from the earth by gods of the forge. Their affinity for stone and metal is matched by mountain-like resilience, and their lives can span about 350 years.",
+  "creature_type": "Humanoid",
+  "speed": 30,
   "size": "Medium",
-  "traits": [
-    "Darkvision (60 ft)",
-    "Dwarven Resilience",
-    "Dwarven Combat Training",
-    "Tool Proficiency",
-    "Stonecunning"
-  ],
+  "traits": ["Darkvision", "Dwarven Resilience", "Dwarven Toughness", "Stonecunning"],
   "grants": [
     {
       "type": "feature",
-      "name": "Darkvision (60 ft)",
-      "description": "See in dim light within 60 ft. as if it were bright light, and in darkness as if it were dim light (no color, only shades of gray)."
+      "name": "Darkvision",
+      "description": "You have Darkvision out to 120 feet."
     },
     {
       "type": "feature",
       "name": "Dwarven Resilience",
-      "description": "Advantage on saving throws against poison, and resistance to poison damage."
+      "description": "You resist Poison damage and have Advantage on saving throws made to avoid or end the Poisoned condition."
     },
     {
       "type": "feature",
-      "name": "Dwarven Combat Training",
-      "description": "Proficiency with the battleaxe, handaxe, light hammer, and warhammer."
-    },
-    {
-      "type": "choice",
-      "key": "tool_proficiency",
-      "name": "Tool Proficiency",
-      "choose": 1,
-      "description": "Gain proficiency with one type of artisan's tools of your choice.",
-      "options": [
-        {
-          "name": "Smith's Tools"
-        },
-        {
-          "name": "Brewer's Supplies"
-        },
-        {
-          "name": "Mason's Tools"
-        }
-      ]
+      "name": "Dwarven Toughness",
+      "description": "Your Hit Point maximum increases by 1 now and by 1 whenever you gain a level.",
+      "effects": [{ "type": "hp_bonus_per_level", "value": 1 }]
     },
     {
       "type": "feature",
       "name": "Stonecunning",
-      "description": "Whenever you make an Intelligence (History) check related to the origin of stonework, you're considered proficient and add double your proficiency bonus."
+      "description": "As a Bonus Action while touching a natural or worked stone surface, gain Tremorsense out to 60 feet for 10 minutes. You can do this a number of times equal to your Proficiency Bonus per Long Rest."
     }
   ],
-  "languages": [
-    "Common",
-    "Dwarvish"
-  ],
-  "subraces": [
-    {
-      "index": "hill-dwarf",
-      "name": "Hill Dwarf",
-      "traits": [
-        "Dwarven Toughness"
-      ],
-      "grants": [
-        {
-          "type": "feature",
-          "name": "Dwarven Toughness",
-          "description": "Your hit point maximum increases by 1, and increases by 1 again every time you gain a level."
-        }
-      ]
-    },
-    {
-      "index": "mountain-dwarf",
-      "name": "Mountain Dwarf",
-      "traits": [
-        "Dwarven Armor Training"
-      ],
-      "grants": [
-        {
-          "type": "feature",
-          "name": "Dwarven Armor Training",
-          "description": "Proficiency with light and medium armor."
-        }
-      ]
-    }
-  ]
+  "languages": [],
+  "subraces": []
 }

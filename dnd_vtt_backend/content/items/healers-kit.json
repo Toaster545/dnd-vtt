@@ -1,0 +1,5 @@
+{
+  "index": "healers-kit", "name": "Healer's Kit", "type": "gear", "category": "Adventuring Gear",
+  "damage": null, "damage_type": null, "properties": [], "weight": 3, "cost": "5 gp",
+  "description": "Bandages, salves, and splints used to treat injuries."
+}

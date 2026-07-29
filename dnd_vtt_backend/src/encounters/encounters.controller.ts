@@ -1,4 +1,15 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+  Put,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
 import { EncountersService } from './encounters.service';
 import { CreateEncounterDto } from './dto/create-encounter.dto';
 import { JwtGuard } from '../auth/jwt.guard';
@@ -12,7 +23,11 @@ export class EncountersController {
   constructor(private encounters: EncountersService) {}
 
   @Get()
-  findAll(@CurrentUser() user: RequestUser) {
+  findAll(
+    @Query('sessionId') sessionId: string | undefined,
+    @CurrentUser() user: RequestUser,
+  ) {
+    if (sessionId) return this.encounters.findBySession(sessionId, user);
     return this.encounters.findAllForUser(user.id);
   }
 
@@ -36,7 +51,11 @@ export class EncountersController {
 
   @Put(':id')
   @UseGuards(AdminGuard)
-  update(@Param('id') id: string, @Body() body: Record<string, unknown>, @CurrentUser() user: RequestUser) {
+  update(
+    @Param('id') id: string,
+    @Body() body: Record<string, unknown>,
+    @CurrentUser() user: RequestUser,
+  ) {
     return this.encounters.update(id, user.id, body);
   }
 
@@ -56,5 +75,27 @@ export class EncountersController {
   @UseGuards(AdminGuard)
   stop(@Param('id') id: string, @CurrentUser() user: RequestUser) {
     return this.encounters.stop(id, user.id);
+  }
+
+  @Post(':id/turn/next')
+  @UseGuards(AdminGuard)
+  nextTurn(@Param('id') id: string, @CurrentUser() user: RequestUser) {
+    return this.encounters.nextTurn(id, user.id);
+  }
+
+  @Post(':id/turn/previous')
+  @UseGuards(AdminGuard)
+  previousTurn(@Param('id') id: string, @CurrentUser() user: RequestUser) {
+    return this.encounters.previousTurn(id, user.id);
+  }
+
+  @Patch(':id/visibility')
+  @UseGuards(AdminGuard)
+  setVisibility(
+    @Param('id') id: string,
+    @Body() body: { visible: boolean },
+    @CurrentUser() user: RequestUser,
+  ) {
+    return this.encounters.setVisibility(id, user.id, body.visible);
   }
 }

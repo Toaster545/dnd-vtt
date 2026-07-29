@@ -1,0 +1,54 @@
+{
+  "index": "artisan",
+  "name": "Artisan",
+  "skill_proficiencies": ["Investigation", "Persuasion"],
+  "tool_proficiencies": ["Artisan's Tools (one kind)"],
+  "languages": "None",
+  "starting_equipment": {
+    "fixed": [
+      { "key": "artisans-tools", "item": "artisans-tools" },
+      { "key": "pouches", "item": "pouch", "quantity": 2 },
+      { "key": "clothes", "item": "travelers-clothes" }
+    ],
+    "groups": [],
+    "gold": 32,
+    "goldAlternative": 50
+  },
+  "feature": "Origin Feat: Crafter",
+  "grants": [
+    {
+      "type": "ability_choice",
+      "key": "ability_scores",
+      "name": "Ability Scores",
+      "description": "Increase one listed ability by 2 and a different one by 1, or increase all three by 1. No score can be increased above 20 this way.",
+      "points": 3,
+      "abilities": ["strength", "dexterity", "intelligence"]
+    },
+    {
+      "type": "choice",
+      "key": "artisans_tools",
+      "name": "Tool Proficiency",
+      "description": "Choose one kind of Artisan's Tools.",
+      "choose": 1,
+      "options": [
+        { "name": "Alchemist's Supplies" },
+        { "name": "Brewer's Supplies" },
+        { "name": "Calligrapher's Supplies" },
+        { "name": "Carpenter's Tools" },
+        { "name": "Cartographer's Tools" },
+        { "name": "Cobbler's Tools" },
+        { "name": "Cook's Utensils" },
+        { "name": "Glassblower's Tools" },
+        { "name": "Jeweler's Tools" },
+        { "name": "Leatherworker's Tools" },
+        { "name": "Mason's Tools" },
+        { "name": "Painter's Supplies" },
+        { "name": "Potter's Tools" },
+        { "name": "Smith's Tools" },
+        { "name": "Tinker's Tools" },
+        { "name": "Weaver's Tools" },
+        { "name": "Woodcarver's Tools" }
+      ]
+    }
+  ]
+}

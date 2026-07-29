@@ -1,34 +1,30 @@
 {
   "index": "hermit",
   "name": "Hermit",
-  "skill_proficiencies": [
-    "Medicine",
-    "Religion"
-  ],
-  "tool_proficiencies": [
-    "Herbalism kit"
-  ],
-  "languages": "One of your choice",
-  "starting_equipment": [
-    "Scroll case with notes",
-    "Winter blanket",
-    "Common clothes",
-    "Herbalism kit",
-    "5 gp"
-  ],
-  "feature": "Discovery",
-  "grants": [
-    {
-      "type": "ability_choice",
-      "key": "ability_scores",
-      "name": "Ability Scores",
-      "description": "Increase one of the abilities below by 2 and a different one by 1, or increase all three by 1 each. No score can be increased above 20 this way.",
-      "points": 3,
-      "abilities": [
-        "constitution",
-        "wisdom",
-        "charisma"
-      ]
-    }
-  ]
+  "skill_proficiencies": ["Medicine", "Religion"],
+  "tool_proficiencies": ["Herbalism Kit"],
+  "languages": "None",
+  "starting_equipment": {
+    "fixed": [
+      { "key": "quarterstaff", "item": "quarterstaff" },
+      { "key": "herbalism-kit", "item": "herbalism-kit" },
+      { "key": "bedroll", "item": "bedroll" },
+      { "key": "philosophy-book", "item": "book" },
+      { "key": "lamp", "item": "lamp" },
+      { "key": "oil", "item": "oil", "quantity": 3 },
+      { "key": "clothes", "item": "travelers-clothes" }
+    ],
+    "groups": [],
+    "gold": 16,
+    "goldAlternative": 50
+  },
+  "feature": "Origin Feat: Healer",
+  "grants": [{
+    "type": "ability_choice",
+    "key": "ability_scores",
+    "name": "Ability Scores",
+    "description": "Increase one listed ability by 2 and a different one by 1, or increase all three by 1. No score can be increased above 20 this way.",
+    "points": 3,
+    "abilities": ["constitution", "wisdom", "charisma"]
+  }]
 }

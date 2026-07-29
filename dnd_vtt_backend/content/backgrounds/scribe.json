@@ -1,0 +1,28 @@
+{
+  "index": "scribe",
+  "name": "Scribe",
+  "skill_proficiencies": ["Investigation", "Perception"],
+  "tool_proficiencies": ["Calligrapher's Supplies"],
+  "languages": "None",
+  "starting_equipment": {
+    "fixed": [
+      { "key": "calligraphers-supplies", "item": "calligraphers-supplies" },
+      { "key": "fine-clothes", "item": "fine-clothes" },
+      { "key": "lamp", "item": "lamp" },
+      { "key": "oil", "item": "oil", "quantity": 3 },
+      { "key": "parchment", "item": "parchment", "quantity": 12 }
+    ],
+    "groups": [],
+    "gold": 23,
+    "goldAlternative": 50
+  },
+  "feature": "Origin Feat: Skilled",
+  "grants": [{
+    "type": "ability_choice",
+    "key": "ability_scores",
+    "name": "Ability Scores",
+    "description": "Increase one listed ability by 2 and a different one by 1, or increase all three by 1. No score can be increased above 20 this way.",
+    "points": 3,
+    "abilities": ["dexterity", "intelligence", "wisdom"]
+  }]
+}

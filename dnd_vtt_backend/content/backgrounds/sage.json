@@ -1,33 +1,28 @@
 {
   "index": "sage",
   "name": "Sage",
-  "skill_proficiencies": [
-    "Arcana",
-    "History"
-  ],
-  "tool_proficiencies": [],
-  "languages": "Two of your choice",
-  "starting_equipment": [
-    "Bottle of black ink",
-    "Quill",
-    "Small knife",
-    "Letter with an unanswered question",
-    "Common clothes",
-    "Belt pouch with 10 gp"
-  ],
-  "feature": "Researcher",
-  "grants": [
-    {
-      "type": "ability_choice",
-      "key": "ability_scores",
-      "name": "Ability Scores",
-      "description": "Increase one of the abilities below by 2 and a different one by 1, or increase all three by 1 each. No score can be increased above 20 this way.",
-      "points": 3,
-      "abilities": [
-        "constitution",
-        "intelligence",
-        "wisdom"
-      ]
-    }
-  ]
+  "skill_proficiencies": ["Arcana", "History"],
+  "tool_proficiencies": ["Calligrapher's Supplies"],
+  "languages": "None",
+  "starting_equipment": {
+    "fixed": [
+      { "key": "quarterstaff", "item": "quarterstaff" },
+      { "key": "calligraphers-supplies", "item": "calligraphers-supplies" },
+      { "key": "history-book", "item": "book" },
+      { "key": "parchment", "item": "parchment", "quantity": 8 },
+      { "key": "robe", "item": "robe" }
+    ],
+    "groups": [],
+    "gold": 8,
+    "goldAlternative": 50
+  },
+  "feature": "Origin Feat: Magic Initiate (Wizard)",
+  "grants": [{
+    "type": "ability_choice",
+    "key": "ability_scores",
+    "name": "Ability Scores",
+    "description": "Increase one listed ability by 2 and a different one by 1, or increase all three by 1. No score can be increased above 20 this way.",
+    "points": 3,
+    "abilities": ["constitution", "intelligence", "wisdom"]
+  }]
 }

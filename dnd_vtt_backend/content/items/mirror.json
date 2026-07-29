@@ -1,0 +1,5 @@
+{
+  "index": "mirror", "name": "Mirror", "type": "gear", "category": "Adventuring Gear",
+  "damage": null, "damage_type": null, "properties": [], "weight": 0.5, "cost": "5 gp",
+  "description": "A small polished steel mirror."
+}

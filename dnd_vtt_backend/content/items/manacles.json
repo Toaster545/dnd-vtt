@@ -1,0 +1,5 @@
+{
+  "index": "manacles", "name": "Manacles", "type": "gear", "category": "Adventuring Gear",
+  "damage": null, "damage_type": null, "properties": [], "weight": 6, "cost": "2 gp",
+  "description": "Metal restraints designed to bind a Small or Medium creature."
+}

@@ -1,0 +1,5 @@
+{
+  "index": "rope", "name": "Rope (50 feet)", "type": "gear", "category": "Adventuring Gear",
+  "damage": null, "damage_type": null, "properties": [], "weight": 10, "cost": "1 gp",
+  "description": "A 50-foot coil of hempen rope."
+}

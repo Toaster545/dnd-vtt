@@ -76,13 +76,12 @@ export interface Character {
   classes?: { name: string; level: number; subclass?: string; choices?: Record<string, string[]>; skills?: string[] }[]; // multiclass
   background: string;
   background_choices?: Record<string, string[]>; // background trait picks, incl. ability score increase
+  languages?: string[]; // Common plus the character's selected/feature-granted languages
   alignment: string;
 
-  // Starting-equipment picks — which of a class/background's `StartingEquipment` groups were
-  // chosen (and any category-ref item picks within them), or gold instead. Same
-  // `Record<string, string[]>` shape as background_choices/classes[].choices, keyed by
-  // `mode` / `group:<key>` / `cat:<key>` (see core/utils/starting-equipment.ts). Only the
-  // primary class's equipment is tracked — starting gear is a level-1 concern, not per-class.
+  // Starting-equipment picks (chosen groups/category items, or gold instead), keyed by
+  // `mode` / `group:<key>` / `cat:<key>` — see core/utils/starting-equipment.ts. Only the
+  // primary class's equipment is tracked, since starting gear is a level-1 concern.
   class_equipment_choices?: Record<string, string[]>;
   background_equipment_choices?: Record<string, string[]>;
 
@@ -126,6 +125,7 @@ export interface Character {
   notes: string;
 
   avatar_url?: string;
+  portrait_seed?: string; // DiceBear (Lorelei style) seed for the generated portrait shown next to the character's name
   created_at?: string;
   updated_at?: string;
 }
@@ -140,7 +140,7 @@ export function proficiencyBonus(level: number): number {
 
 export function defaultCharacter(): Omit<Character, 'name'> {
   return {
-    race: '', class: '', level: 1, background: '', alignment: 'True Neutral',
+    race: '', class: '', level: 1, background: '', languages: ['Common'], alignment: 'True Neutral',
     ability_scores: { strength: 10, dexterity: 10, constitution: 10, intelligence: 10, wisdom: 10, charisma: 10 },
     max_hp: 10, current_hp: 10, temp_hp: 0, hit_dice_used: 0,
     death_saves: { successes: 0, failures: 0 },

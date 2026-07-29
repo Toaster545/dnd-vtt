@@ -1,0 +1,86 @@
+@if (loading()) {
+  <div class="flex justify-center mt-10"><span class="spinner-lg"></span></div>
+} @else if (showWizard()) {
+  <app-character-wizard class="flex flex-col flex-1 min-h-0"
+    [character]="editingCharacter()"
+    (saved)="onCharacterSaved()"
+    (cancelled)="onCharacterCancelled()"
+  />
+} @else if (campaign(); as c) {
+  <div class="flex-1 min-h-0 overflow-y-auto p-6 bg-cover bg-center"
+       [style.background-image]="c.background_url ? 'linear-gradient(rgba(13,14,22,0.88), rgba(13,14,22,0.88)), url(' + c.background_url + ')' : null">
+    <div class="flex items-center gap-2 mb-5">
+      <button class="btn-icon" (click)="backToList()" matTooltip="Back to campaigns">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <div class="flex-1 min-w-0">
+        <h2 class="font-brand text-lg text-parchment m-0">{{ c.name }}</h2>
+        @if (c.description) { <p class="text-slate text-sm m-0 mt-0.5">{{ c.description }}</p> }
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div class="lg:col-span-2">
+        <h3 class="font-brand text-sm text-parchment m-0 mb-3">Sessions</h3>
+        <ul class="divide-y divide-white/8">
+          @for (session of c.sessions; track session.id) {
+            <li>
+              <a [routerLink]="['/player/campaigns', campaignId, 'sessions', session.id]"
+                 class="flex items-center py-3 gap-3 cursor-pointer no-underline">
+                <div class="flex-1 min-w-0">
+                  <p class="text-parchment font-medium truncate m-0">{{ session.name }}</p>
+                  @if (session.description) { <p class="text-slate text-xs m-0 mt-0.5">{{ session.description }}</p> }
+                </div>
+                <mat-icon class="text-slate">chevron_right</mat-icon>
+              </a>
+            </li>
+          } @empty {
+            <p class="text-slate text-sm py-4">Nothing revealed yet — check back once your DM starts the session.</p>
+          }
+        </ul>
+
+        <div class="mt-6">
+          <app-notes-panel entityType="campaign" [entityId]="campaignId" />
+        </div>
+      </div>
+
+      <div>
+        <h3 class="font-brand text-sm text-parchment m-0 mb-3">Party</h3>
+        <ul class="divide-y divide-white/8">
+          @for (member of c.members; track member.user_id) {
+            <li class="flex items-center py-2.5 gap-2">
+              <img [src]="portraitFor(member)" class="w-8 h-8 rounded-full flex-shrink-0" alt="" />
+              <div class="flex-1 min-w-0">
+                <p class="text-parchment text-sm font-medium truncate m-0">{{ member.character_name }}</p>
+                <p class="text-slate text-xs m-0">
+                  {{ member.username }}
+                  @if (member.character_race || member.character_class) {
+                    · {{ member.character_race || '—' }} {{ member.character_class || '—' }} · Lv {{ member.character_level }}
+                  }
+                </p>
+              </div>
+              @if (member.character_max_hp != null) {
+                <span class="text-xs text-slate border border-white/10 rounded px-2 py-0.5 flex-shrink-0">
+                  HP {{ member.character_current_hp }}/{{ member.character_max_hp }}
+                </span>
+              }
+              @if (member.character_armor_class != null) {
+                <span class="text-xs text-slate border border-white/10 rounded px-2 py-0.5 flex-shrink-0">
+                  AC {{ member.character_armor_class }}
+                </span>
+              }
+              @if (isMe(member) && member.edit_unlocked) {
+                <button class="btn-outline text-xs px-2 py-1 flex-shrink-0" (click)="editMyCharacter(member)"
+                        matTooltip="Your DM has given you access to edit this character">
+                  <mat-icon class="text-base">edit</mat-icon> Edit
+                </button>
+              }
+            </li>
+          } @empty {
+            <p class="text-slate text-sm py-2">No players have joined yet.</p>
+          }
+        </ul>
+      </div>
+    </div>
+  </div>
+}

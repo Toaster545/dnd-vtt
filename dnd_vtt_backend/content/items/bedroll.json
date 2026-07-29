@@ -1,0 +1,5 @@
+{
+  "index": "bedroll", "name": "Bedroll", "type": "gear", "category": "Adventuring Gear",
+  "damage": null, "damage_type": null, "properties": [], "weight": 7, "cost": "1 gp",
+  "description": "A portable roll of bedding for sleeping while traveling."
+}

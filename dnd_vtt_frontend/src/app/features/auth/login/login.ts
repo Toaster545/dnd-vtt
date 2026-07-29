@@ -28,7 +28,7 @@ export class LoginComponent {
     this.error.set(null);
     try {
       const res = await this.auth.signIn(this.form.value.email!, this.form.value.password!);
-      this.router.navigate([res.profile.role === 'admin' ? '/dm' : '/dashboard']);
+      this.router.navigate([res.profile.role === 'admin' ? '/dm' : '/player']);
     } catch (e: any) {
       this.error.set(e.message);
     } finally {

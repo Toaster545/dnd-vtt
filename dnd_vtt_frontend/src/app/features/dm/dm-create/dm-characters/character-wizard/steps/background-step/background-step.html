@@ -56,9 +56,39 @@
     <div>
       <p class="text-xs font-bold text-slate uppercase tracking-wide mb-2">Quick Reference</p>
       <div class="flex flex-col gap-1 text-sm">
-        <div class="flex gap-2">
+        <div class="flex gap-2 items-start">
           <span class="text-coal w-28 flex-shrink-0">Skills</span>
-          <span class="text-slate">{{ bg.skill_proficiencies.join(', ') }}</span>
+          @if (!editingSkills()) {
+            <span class="text-slate">{{ backgroundSkills(bg).join(', ') }}</span>
+            <button
+              type="button"
+              class="btn-icon w-6 h-6 -mt-0.5"
+              aria-label="Customize background skills"
+              title="Customize background skills"
+              (click)="startEditingSkills(bg)"
+            >
+              <mat-icon class="text-base">edit</mat-icon>
+            </button>
+          } @else {
+            <div class="flex flex-wrap items-center gap-1.5 flex-1">
+              @for (selectedSkill of backgroundSkills(bg); track $index) {
+                <select
+                  class="field-input w-40 max-w-full text-xs py-1 px-2"
+                  [ngModel]="selectedSkill"
+                  (ngModelChange)="updateSkill($index, $event)"
+                  [ngModelOptions]="{ standalone: true }"
+                  [attr.aria-label]="'Background skill ' + ($index + 1)"
+                >
+                  @for (skill of allSkills; track skill) {
+                    <option [value]="skill" [disabled]="skillUsedInOtherSlot(skill, $index, bg)">{{ skill }}</option>
+                  }
+                </select>
+              }
+              <button type="button" class="btn-outline text-xs px-2 py-1" (click)="finishEditingSkills()">Done</button>
+              <button type="button" class="btn-ghost text-xs px-2 py-1" (click)="cancelEditingSkills()">Cancel</button>
+              <button type="button" class="btn-ghost text-xs px-2 py-1" (click)="restoreDefaultSkills()">Defaults</button>
+            </div>
+          }
         </div>
         @if (bg.tool_proficiencies.length) {
           <div class="flex gap-2">

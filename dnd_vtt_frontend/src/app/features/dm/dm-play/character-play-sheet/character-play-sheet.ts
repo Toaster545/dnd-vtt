@@ -72,7 +72,7 @@ export class CharacterPlaySheetComponent {
   stats = computed(() => {
     const char = this.localChar();
     if (!char) return null;
-    const classesForFeats = this.resolvedClasses().map(rc => ({ data: rc.data, choices: rc.choices }));
+    const classesForFeats = this.resolvedClasses().map(rc => ({ data: rc.data, choices: rc.choices, level: rc.level, subclass: rc.subclassName }));
     return this.statsService.compute(
       char, this.primaryClass(), this.raceData(), this.featsAll(), classesForFeats, this.itemsAll(),
     );
@@ -139,10 +139,20 @@ export class CharacterPlaySheetComponent {
 
   spellcastingClass = computed(() => this.resolvedClasses().find(rc => !!rc.data.spellcasting_ability) ?? null);
 
+  currentPactMagic = computed(() => {
+    const rc = this.spellcastingClass();
+    if (!rc) return null;
+    return rc.data.levels.find(l => l.level === rc.level)?.pact_magic ?? null;
+  });
+
   currentSpellSlots = computed<SpellSlots>(() => {
     const rc = this.spellcastingClass();
     if (!rc) return {};
-    return rc.data.levels.find(l => l.level === rc.level)?.spell_slots ?? {};
+    const level = rc.data.levels.find(l => l.level === rc.level);
+    if (level?.spell_slots) return level.spell_slots;
+    return level?.pact_magic
+      ? { [String(level.pact_magic.slot_level)]: level.pact_magic.slots } as SpellSlots
+      : {};
   });
 
   spellSlotLevels = computed(() => Object.entries(this.currentSpellSlots()).filter(([, n]) => (n ?? 0) > 0));
@@ -201,6 +211,7 @@ export class CharacterPlaySheetComponent {
       case 'feature':
         return [{ source, name: grant.name, detail: grant.description }];
       case 'choice':
+      case 'skill_choice':
       case 'weapon_mastery': {
         const picked = choices[grant.key] ?? [];
         if (!picked.length) return [];
@@ -220,6 +231,12 @@ export class CharacterPlaySheetComponent {
           .map(([a, n]) => `+${n} ${a.charAt(0).toUpperCase()}${a.slice(1)}`)
           .join(', ');
         return [{ source, name: grant.name, detail }];
+      }
+      case 'feat_pick': {
+        return (choices[grant.key] ?? [])
+          .map(index => this.featsAll().find(feat => feat.index === index))
+          .filter((feat): feat is DndFeat => !!feat)
+          .map(feat => ({ source, name: feat.name, detail: feat.description }));
       }
       default:
         return [];
@@ -281,11 +298,24 @@ export class CharacterPlaySheetComponent {
     this.loading.set(false);
   }
 
+  // char.armor_class is a stored field, not derived (see character.model.ts) — everywhere outside
+  // this sheet (campaign hub, encounter roster) reads it directly, so a stale value there would
+  // sit at whatever the wizard last set regardless of what's actually equipped now. Keep it in
+  // sync with the same live formula the sheet itself displays (`stats().computed_ac`) every time
+  // something is persisted, not just on equip toggles — cheap, and never wrong.
+  private computeArmorClass(char: Character): number {
+    const classesForFeats = this.resolvedClasses().map(rc => ({ data: rc.data, choices: rc.choices, level: rc.level, subclass: rc.subclassName }));
+    return this.statsService.compute(
+      char, this.primaryClass(), this.raceData(), this.featsAll(), classesForFeats, this.itemsAll(),
+    ).computed_ac;
+  }
+
   private async persist(next: Character) {
-    this.localChar.set(next);
+    const withAc = { ...next, armor_class: this.computeArmorClass(next) };
+    this.localChar.set(withAc);
     this.persisting.set(true);
     try {
-      const result = await this.characterService.saveCharacter(next);
+      const result = await this.characterService.saveCharacter(withAc);
       this.localChar.set(result);
       this.saved.emit(result);
     } finally {
@@ -336,7 +366,12 @@ export class CharacterPlaySheetComponent {
   rest(type: 'short_rest' | 'long_rest') {
     const char = this.localChar();
     if (!char) return;
-    this.persist({ ...char, resource_uses: this.actionsService.rest(char.resource_uses ?? {}, this.actions(), type) });
+    const restoresSlots = type === 'long_rest' || (type === 'short_rest' && !!this.currentPactMagic());
+    this.persist({
+      ...char,
+      resource_uses: this.actionsService.rest(char.resource_uses ?? {}, this.actions(), type),
+      spell_slots_used: restoresSlots ? {} : char.spell_slots_used,
+    });
   }
 
   // Inventory

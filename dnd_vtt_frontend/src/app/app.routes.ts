@@ -1,9 +1,10 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './core/guards/auth.guard';
 import { adminGuard } from './core/guards/admin.guard';
+import { homeRedirectGuard } from './core/guards/home-redirect.guard';
 
 export const routes: Routes = [
-  { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
+  { path: '', canActivate: [homeRedirectGuard], children: [] },
   {
     path: 'auth',
     children: [
@@ -16,11 +17,6 @@ export const routes: Routes = [
         loadComponent: () => import('./features/auth/register/register').then(m => m.RegisterComponent),
       },
     ],
-  },
-  {
-    path: 'dashboard',
-    canActivate: [authGuard],
-    loadComponent: () => import('./features/dashboard/dashboard').then(m => m.DashboardComponent),
   },
   {
     path: 'battle-map',
@@ -36,16 +32,63 @@ export const routes: Routes = [
     path: 'dm',
     canActivate: [authGuard, adminGuard],
     loadComponent: () => import('./features/dm/dm-shell').then(m => m.DmShellComponent),
+    children: [
+      {
+        path: 'campaigns',
+        loadComponent: () =>
+          import('./features/dm/dm-campaigns/dm-campaigns').then(m => m.DmCampaignsComponent),
+      },
+      {
+        path: 'campaigns/:campaignId',
+        loadComponent: () =>
+          import('./features/dm/dm-campaigns/dm-campaign-hub/dm-campaign-hub').then(m => m.DmCampaignHubComponent),
+      },
+      {
+        path: 'campaigns/:campaignId/sessions/:sessionId',
+        loadComponent: () =>
+          import('./features/dm/dm-campaigns/dm-campaign-session/dm-campaign-session').then(
+            m => m.DmCampaignSessionComponent,
+          ),
+      },
+      {
+        path: 'campaigns/:campaignId/sessions/:sessionId/encounters/:encounterId',
+        loadComponent: () =>
+          import('./features/dm/dm-campaigns/dm-encounter-play/dm-encounter-play').then(
+            m => m.DmEncounterPlayComponent,
+          ),
+      },
+    ],
   },
   {
     path: 'player',
     canActivate: [authGuard],
     loadComponent: () => import('./features/player/player-shell').then(m => m.PlayerShellComponent),
+    children: [
+      {
+        path: 'campaigns',
+        loadComponent: () =>
+          import('./features/player/player-campaigns/player-campaigns').then(m => m.PlayerCampaignsComponent),
+      },
+      {
+        path: 'campaigns/:campaignId',
+        loadComponent: () =>
+          import('./features/player/player-campaigns/player-campaign-hub/player-campaign-hub').then(
+            m => m.PlayerCampaignHubComponent,
+          ),
+      },
+      {
+        path: 'campaigns/:campaignId/sessions/:sessionId',
+        loadComponent: () =>
+          import('./features/player/player-campaigns/player-campaign-session/player-campaign-session').then(
+            m => m.PlayerCampaignSessionComponent,
+          ),
+      },
+    ],
   },
   {
     path: 'admin/maps',
     canActivate: [authGuard, adminGuard],
     loadComponent: () => import('./features/admin/map-manager').then(m => m.MapManagerComponent),
   },
-  { path: '**', redirectTo: 'dashboard' },
+  { path: '**', canActivate: [homeRedirectGuard], children: [] },
 ];

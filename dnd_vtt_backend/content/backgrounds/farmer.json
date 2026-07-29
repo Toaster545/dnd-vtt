@@ -1,0 +1,29 @@
+{
+  "index": "farmer",
+  "name": "Farmer",
+  "skill_proficiencies": ["Animal Handling", "Nature"],
+  "tool_proficiencies": ["Carpenter's Tools"],
+  "languages": "None",
+  "starting_equipment": {
+    "fixed": [
+      { "key": "sickle", "item": "sickle" },
+      { "key": "carpenters-tools", "item": "carpenters-tools" },
+      { "key": "healers-kit", "item": "healers-kit" },
+      { "key": "iron-pot", "item": "iron-pot" },
+      { "key": "shovel", "item": "shovel" },
+      { "key": "clothes", "item": "travelers-clothes" }
+    ],
+    "groups": [],
+    "gold": 30,
+    "goldAlternative": 50
+  },
+  "feature": "Origin Feat: Tough",
+  "grants": [{
+    "type": "ability_choice",
+    "key": "ability_scores",
+    "name": "Ability Scores",
+    "description": "Increase one listed ability by 2 and a different one by 1, or increase all three by 1. No score can be increased above 20 this way.",
+    "points": 3,
+    "abilities": ["strength", "constitution", "wisdom"]
+  }]
+}

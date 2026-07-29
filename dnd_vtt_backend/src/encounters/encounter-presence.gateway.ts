@@ -1,6 +1,10 @@
 import {
-  WebSocketGateway, WebSocketServer, SubscribeMessage,
-  MessageBody, ConnectedSocket, OnGatewayDisconnect,
+  WebSocketGateway,
+  WebSocketServer,
+  SubscribeMessage,
+  MessageBody,
+  ConnectedSocket,
+  OnGatewayDisconnect,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 
@@ -14,6 +18,7 @@ interface PresentPlayer {
   // up character reads across accounts the way the DM's admin-only endpoint does.
   hp?: number;
   max_hp?: number;
+  portraitSeed?: string;
 }
 
 // Tracks which players currently have an encounter open (for the DM's "Players" roster section) —
@@ -29,7 +34,10 @@ export class EncounterPresenceGateway implements OnGatewayDisconnect {
 
   // DM side: join the room to receive broadcasts, without appearing in the roster themselves.
   @SubscribeMessage('watch_encounter_presence')
-  handleWatch(@ConnectedSocket() client: Socket, @MessageBody() encounterId: string) {
+  handleWatch(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() encounterId: string,
+  ) {
     client.join(`encounter-presence:${encounterId}`);
     this.broadcast(encounterId);
   }
@@ -38,14 +46,21 @@ export class EncounterPresenceGateway implements OnGatewayDisconnect {
   @SubscribeMessage('announce_presence')
   handleAnnounce(
     @ConnectedSocket() client: Socket,
-    @MessageBody() data: {
-      encounterId: string; username: string; characterId: string; characterName: string;
-      hp?: number; max_hp?: number;
+    @MessageBody()
+    data: {
+      encounterId: string;
+      username: string;
+      characterId: string;
+      characterName: string;
+      hp?: number;
+      max_hp?: number;
+      portraitSeed?: string;
     },
   ) {
     client.join(`encounter-presence:${data.encounterId}`);
     client.data.presenceEncounterId = data.encounterId;
-    if (!this.presence.has(data.encounterId)) this.presence.set(data.encounterId, new Map());
+    if (!this.presence.has(data.encounterId))
+      this.presence.set(data.encounterId, new Map());
     this.presence.get(data.encounterId)!.set(client.id, {
       socketId: client.id,
       username: data.username,
@@ -53,12 +68,16 @@ export class EncounterPresenceGateway implements OnGatewayDisconnect {
       characterName: data.characterName,
       hp: data.hp,
       max_hp: data.max_hp,
+      portraitSeed: data.portraitSeed,
     });
     this.broadcast(data.encounterId);
   }
 
   @SubscribeMessage('leave_presence')
-  handleLeave(@ConnectedSocket() client: Socket, @MessageBody() encounterId: string) {
+  handleLeave(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() encounterId: string,
+  ) {
     this.removePresence(client.id, encounterId);
   }
 
@@ -75,6 +94,30 @@ export class EncounterPresenceGateway implements OnGatewayDisconnect {
 
   private broadcast(encounterId: string) {
     const players = [...(this.presence.get(encounterId)?.values() ?? [])];
-    this.server.to(`encounter-presence:${encounterId}`).emit('encounter_players_updated', players);
+    this.server
+      .to(`encounter-presence:${encounterId}`)
+      .emit('encounter_players_updated', players);
+  }
+
+  // DM advanced/reversed the current turn — pushed to the same room presence already tracks, so
+  // both the DM's own other tabs and every joined player pick it up without a separate room/join.
+  broadcastTurnState(
+    encounterId: string,
+    state: { current_turn_token_id: string | null; round_number: number },
+  ) {
+    this.server.to(`encounter-presence:${encounterId}`).emit('turn_changed', state);
+  }
+
+  // Global broadcast (no room) so any connected player's client can decide for itself whether the
+  // encounter belongs to one of their own campaigns and surface a "join now" alert — this app is
+  // single-server/self-hosted at a small scale (see CLAUDE.md), so there's no need for per-campaign
+  // socket rooms just to avoid a broadcast reaching clients that will simply ignore it.
+  notifyEncounterStarted(payload: {
+    encounterId: string;
+    sessionId: string;
+    campaignId: string;
+    name: string;
+  }) {
+    this.server.emit('encounter_started', payload);
   }
 }

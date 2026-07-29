@@ -1,4 +1,9 @@
-import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  CanActivate,
+  ExecutionContext,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { DatabaseService } from '../common/database.service';
 
@@ -22,7 +27,10 @@ export class JwtGuard implements CanActivate {
         "SELECT id, email, username, role FROM profiles WHERE role = 'admin' LIMIT 1",
       );
       const user = result.rows[0];
-      if (!user) throw new UnauthorizedException('No admin account found — register one first');
+      if (!user)
+        throw new UnauthorizedException(
+          'No admin account found — register one first',
+        );
       req.user = user;
       return true;
     }

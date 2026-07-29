@@ -1,35 +1,27 @@
 {
   "index": "sailor",
   "name": "Sailor",
-  "skill_proficiencies": [
-    "Athletics",
-    "Perception"
-  ],
-  "tool_proficiencies": [
-    "Navigator's tools",
-    "Vehicles (water)"
-  ],
+  "skill_proficiencies": ["Acrobatics", "Perception"],
+  "tool_proficiencies": ["Navigator's Tools"],
   "languages": "None",
-  "starting_equipment": [
-    "Belaying pin (club)",
-    "50 ft of silk rope",
-    "Lucky charm (rabbit's foot or similar)",
-    "Common clothes",
-    "Belt pouch with 10 gp"
-  ],
-  "feature": "Ship's Passage",
-  "grants": [
-    {
-      "type": "ability_choice",
-      "key": "ability_scores",
-      "name": "Ability Scores",
-      "description": "Increase one of the abilities below by 2 and a different one by 1, or increase all three by 1 each. No score can be increased above 20 this way.",
-      "points": 3,
-      "abilities": [
-        "strength",
-        "dexterity",
-        "wisdom"
-      ]
-    }
-  ]
+  "starting_equipment": {
+    "fixed": [
+      { "key": "dagger", "item": "dagger" },
+      { "key": "navigators-tools", "item": "navigators-tools" },
+      { "key": "rope", "item": "rope" },
+      { "key": "clothes", "item": "travelers-clothes" }
+    ],
+    "groups": [],
+    "gold": 20,
+    "goldAlternative": 50
+  },
+  "feature": "Origin Feat: Tavern Brawler",
+  "grants": [{
+    "type": "ability_choice",
+    "key": "ability_scores",
+    "name": "Ability Scores",
+    "description": "Increase one listed ability by 2 and a different one by 1, or increase all three by 1. No score can be increased above 20 this way.",
+    "points": 3,
+    "abilities": ["strength", "dexterity", "wisdom"]
+  }]
 }

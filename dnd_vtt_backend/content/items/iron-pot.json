@@ -1,0 +1,5 @@
+{
+  "index": "iron-pot", "name": "Iron Pot", "type": "gear", "category": "Adventuring Gear",
+  "damage": null, "damage_type": null, "properties": [], "weight": 10, "cost": "2 gp",
+  "description": "A durable iron cooking pot."
+}

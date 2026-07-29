@@ -1,43 +1,38 @@
 {
   "index": "noble",
   "name": "Noble",
-  "skill_proficiencies": [
-    "History",
-    "Persuasion"
-  ],
-  "tool_proficiencies": [],
-  "languages": "One of your choice",
-  "starting_equipment": [
-    "Fine clothes",
-    "Signet ring",
-    "Scroll of pedigree",
-    "Purse with 25 gp"
-  ],
-  "feature": "Position of Privilege",
+  "skill_proficiencies": ["History", "Persuasion"],
+  "tool_proficiencies": ["Gaming Set (one kind)"],
+  "languages": "None",
+  "starting_equipment": {
+    "fixed": [
+      { "key": "gaming-set", "item": "gaming-set" },
+      { "key": "fine-clothes", "item": "fine-clothes" },
+      { "key": "perfume", "item": "perfume" }
+    ],
+    "groups": [],
+    "gold": 29,
+    "goldAlternative": 50
+  },
+  "feature": "Origin Feat: Skilled",
   "grants": [
     {
       "type": "ability_choice",
       "key": "ability_scores",
       "name": "Ability Scores",
-      "description": "Increase one of the abilities below by 2 and a different one by 1, or increase all three by 1 each. No score can be increased above 20 this way.",
+      "description": "Increase one listed ability by 2 and a different one by 1, or increase all three by 1. No score can be increased above 20 this way.",
       "points": 3,
-      "abilities": [
-        "strength",
-        "intelligence",
-        "charisma"
-      ]
+      "abilities": ["strength", "intelligence", "charisma"]
     },
     {
       "type": "choice",
       "key": "gaming_set",
       "name": "Tool Proficiency",
-      "description": "Choose one kind of gaming set.",
+      "description": "Choose one kind of Gaming Set.",
       "choose": 1,
       "options": [
-        { "name": "Dice Set" },
-        { "name": "Dragonchess Set" },
-        { "name": "Playing Card Set" },
-        { "name": "Three-Dragon Ante Set" }
+        { "name": "Dice Set" }, { "name": "Dragonchess Set" },
+        { "name": "Playing Card Set" }, { "name": "Three-Dragon Ante Set" }
       ]
     }
   ]

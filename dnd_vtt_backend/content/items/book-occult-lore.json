@@ -1,0 +1,12 @@
+{
+  "index": "book-occult-lore",
+  "name": "Book (Occult Lore)",
+  "type": "gear",
+  "category": "Adventuring Gear",
+  "damage": null,
+  "damage_type": null,
+  "properties": [],
+  "weight": 5,
+  "cost": "25 gp",
+  "description": "A book of forbidden lore, strange rites, and notes about supernatural beings."
+}

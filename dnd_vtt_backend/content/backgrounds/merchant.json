@@ -1,0 +1,26 @@
+{
+  "index": "merchant",
+  "name": "Merchant",
+  "skill_proficiencies": ["Animal Handling", "Persuasion"],
+  "tool_proficiencies": ["Navigator's Tools"],
+  "languages": "None",
+  "starting_equipment": {
+    "fixed": [
+      { "key": "navigators-tools", "item": "navigators-tools" },
+      { "key": "pouches", "item": "pouch", "quantity": 2 },
+      { "key": "clothes", "item": "travelers-clothes" }
+    ],
+    "groups": [],
+    "gold": 22,
+    "goldAlternative": 50
+  },
+  "feature": "Origin Feat: Lucky",
+  "grants": [{
+    "type": "ability_choice",
+    "key": "ability_scores",
+    "name": "Ability Scores",
+    "description": "Increase one listed ability by 2 and a different one by 1, or increase all three by 1. No score can be increased above 20 this way.",
+    "points": 3,
+    "abilities": ["constitution", "intelligence", "charisma"]
+  }]
+}
