@@ -7,6 +7,9 @@
   "range": "Touch",
   "components": ["V", "S"],
   "duration": "Instantaneous",
-  "classes": ["Bard", "Cleric", "Druid", "Paladin", "Ranger"],
-  "description": "A creature you touch regains a number of hit points equal to 1d8 + your spellcasting ability modifier. This spell has no effect on undead or constructs."
+  "classes": ["Bard", "Cleric", "Druid", "Paladin", "Ranger", "Artificer"],
+  "races": ["Halfling"],
+  "subraces": ["Mark of Healing"],
+  "description": "A creature you touch regains a number of hit points equal to 2d8 + your spellcasting ability modifier. This spell has no effect on undead or constructs.",
+  "higher_level": "The healing increases by 2d8 for each spell slot level above 1."
 }

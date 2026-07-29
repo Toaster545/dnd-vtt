@@ -258,6 +258,9 @@ export interface DndSpell {
   components: string[];
   duration: string;
   classes: string[];
+  races: string[];
+  subraces: string[];
+  higher_level: string;
   description: string;
 }
 

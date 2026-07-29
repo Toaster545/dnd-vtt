@@ -350,12 +350,18 @@ export class CharacterWizardComponent implements OnInit, OnDestroy {
     this.loading.set(false);
 
     const existing = this.character();
+    console.log(this.character());
     if (existing) {
       this.characterId.set(existing.id ?? null);
       this.characterName.set(existing.name);
       this.level.set(existing.level);
       this.alignment.set(existing.alignment);
       this.currentHp.set(existing.current_hp);
+      if (existing.spells.length > 0) {
+        for (let spell of existing.spells) {
+          this.selectedSpellIndices().add(spell.spellIndex)
+        }
+      }
       const race = races.find(r => r.name === existing.race) ?? null;
       const bg   = backgrounds.find(b => b.name === existing.background) ?? null;
       this.selectedRace.set(race);

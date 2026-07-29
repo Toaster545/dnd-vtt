@@ -8,5 +8,6 @@
   "components": ["V", "S", "M"],
   "duration": "Instantaneous",
   "classes": ["Sorcerer", "Wizard"],
+  "races": ["Halfling"],
   "description": "A bright streak flashes from your pointing finger to a point you choose within range, then blossoms with a low roar into an explosion of flame. Each creature in a 20-foot-radius sphere must make a Dexterity saving throw. A target takes 8d6 fire damage on a failed save, or half on a success."
 }

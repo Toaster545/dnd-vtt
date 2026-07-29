@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "concurrently --names \"api,web\" --prefix-colors \"yellow,cyan\" \"npm run dev:api\" \"npm run dev:web\"",
     "dev:api": "cd dnd_vtt_backend && npm run start:dev",
-    "dev:web": "cd dnd_vtt_frontend && npm run watch",
+    "dev:web": "cd dnd_vtt_frontend && npm start",
     "build": "cd dnd_vtt_frontend && npm run build && cd ../dnd_vtt_backend && npm run build",
     "start": "cd dnd_vtt_backend && npm run start:prod"
   },
