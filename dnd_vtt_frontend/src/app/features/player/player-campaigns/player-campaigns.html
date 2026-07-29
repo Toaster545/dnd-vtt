@@ -54,26 +54,29 @@
       </div>
     }
 
-    @if (loading()) {
-      <div class="flex justify-center mt-10"><span class="spinner-lg"></span></div>
-    } @else {
-      <ul class="divide-y divide-white/8">
-        @for (campaign of campaigns(); track campaign.id) {
-          <li>
-            <a [routerLink]="['/player/campaigns', campaign.id]" class="flex items-center py-3 gap-3 cursor-pointer no-underline">
-              <div class="flex-1 min-w-0">
-                <p class="text-parchment font-medium truncate m-0">{{ campaign.name }}</p>
-                @if (campaign.description) { <p class="text-slate text-xs m-0 mt-0.5">{{ campaign.description }}</p> }
-              </div>
-              <mat-icon class="text-slate">chevron_right</mat-icon>
-            </a>
-          </li>
-        } @empty {
-          <p class="text-slate text-sm py-4">
-            You haven't joined a campaign yet. Ask your DM for a join code.
-          </p>
-        }
-      </ul>
-    }
   </div>
+
+  @if (loading()) {
+    <div class="flex justify-center mt-10"><span class="spinner-lg"></span></div>
+  } @else {
+    <div class="flex flex-col gap-4">
+      @for (campaign of campaigns(); track campaign.id) {
+        <a
+          [routerLink]="['/player/campaigns', campaign.id]"
+          class="relative block rounded-lg overflow-hidden border border-white/10 bg-cover bg-center bg-elevated min-h-20 cursor-pointer no-underline"
+          [style.background-image]="campaign.background_url ? 'linear-gradient(to bottom, rgba(13,14,22,0.25), rgba(13,14,22,0.92)), url(' + campaign.background_url + ')' : null"
+        >
+          <div class="flex flex-col justify-end h-full min-h-20 p-5">
+            <p class="text-parchment font-brand text-2xl m-0">{{ campaign.name }}</p>
+            @if (campaign.description) { <p class="text-slate text-sm m-0 mt-1 max-w-2xl">{{ campaign.description }}</p> }
+          </div>
+          <mat-icon class="text-slate absolute top-3 right-3">chevron_right</mat-icon>
+        </a>
+      } @empty {
+        <p class="text-slate text-sm py-4 max-w-lg mx-auto">
+          You haven't joined a campaign yet. Ask your DM for a join code.
+        </p>
+      }
+    </div>
+  }
 </div>

@@ -57,61 +57,73 @@
 } @else {
   <div class="flex-1 min-h-0 overflow-y-auto p-6 bg-cover bg-center"
        [style.background-image]="session()?.background_url ? 'linear-gradient(rgba(13,14,22,0.88), rgba(13,14,22,0.88)), url(' + session()!.background_url + ')' : null">
-    <div class="flex items-center gap-2 mb-5 max-w-2xl">
+    <div class="flex items-center gap-2 mb-5">
       <button class="btn-icon" (click)="backToHub()" matTooltip="Back to campaign">
         <mat-icon>arrow_back</mat-icon>
       </button>
-      <h2 class="font-brand text-lg text-parchment m-0">Encounters</h2>
+      <div class="flex-1 min-w-0">
+        <h2 class="font-brand text-lg text-parchment m-0">{{ session()?.name }}</h2>
+        @if (session()?.description) { <p class="text-slate text-sm m-0 mt-0.5">{{ session()!.description }}</p> }
+      </div>
     </div>
 
     @if (loading()) {
       <div class="flex justify-center mt-10"><span class="spinner-lg"></span></div>
     } @else {
-      <ul class="divide-y divide-white/8 max-w-2xl">
-        @for (encounter of encounters(); track encounter.id) {
-          <li class="py-3">
-            <div class="flex items-center gap-3">
-              <div class="flex-1 min-w-0">
-                <p class="text-parchment font-medium truncate m-0">
-                  {{ encounter.name }}
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div class="lg:col-span-2">
+          <ul class="divide-y divide-white/8">
+            @for (encounter of encounters(); track encounter.id) {
+              <li class="py-3">
+                <div class="flex items-center gap-3">
+                  <div class="flex-1 min-w-0">
+                    <p class="text-parchment font-medium truncate m-0">
+                      {{ encounter.name }}
+                      @if (encounter.status === 'active') {
+                        <span class="text-xs text-gold border border-gold/30 rounded px-1.5 py-0.5 ml-1">live</span>
+                      } @else if (encounter.status === 'ended') {
+                        <span class="text-xs text-coal border border-white/10 rounded px-1.5 py-0.5 ml-1">recap</span>
+                      }
+                    </p>
+                    @if (encounter.summary) {
+                      <p class="text-slate text-xs m-0 mt-0.5 line-clamp-2">{{ encounter.summary }}</p>
+                    }
+                  </div>
+
                   @if (encounter.status === 'active') {
-                    <span class="text-xs text-gold border border-gold/30 rounded px-1.5 py-0.5 ml-1">live</span>
-                  } @else if (encounter.status === 'ended') {
-                    <span class="text-xs text-coal border border-white/10 rounded px-1.5 py-0.5 ml-1">recap</span>
+                    <button class="btn-primary text-sm" [disabled]="joiningId() === encounter.id" (click)="join(encounter)">
+                      @if (joiningId() === encounter.id) { <span class="spinner-sm"></span> } @else { Join }
+                    </button>
                   }
-                </p>
-                @if (encounter.summary) {
-                  <p class="text-slate text-xs m-0 mt-0.5 line-clamp-2">{{ encounter.summary }}</p>
+                  <button class="btn-icon text-slate hover:text-parchment" (click)="toggleNotes(encounter.id!)" matTooltip="Notes">
+                    <mat-icon class="text-base">sticky_note_2</mat-icon>
+                  </button>
+                </div>
+
+                @if (mapFor(encounter); as map) {
+                  <img [src]="map.image_url" [alt]="encounter.name" class="mt-2 rounded border border-white/10 max-h-48 w-auto" />
                 }
-              </div>
 
-              @if (encounter.status === 'active') {
-                <button class="btn-primary text-sm" [disabled]="joiningId() === encounter.id" (click)="join(encounter)">
-                  @if (joiningId() === encounter.id) { <span class="spinner-sm"></span> } @else { Join }
-                </button>
-              }
-              <button class="btn-icon text-slate hover:text-parchment" (click)="toggleNotes(encounter.id!)" matTooltip="Notes">
-                <mat-icon class="text-base">sticky_note_2</mat-icon>
-              </button>
-            </div>
-
-            @if (mapFor(encounter); as map) {
-              <img [src]="map.image_url" [alt]="encounter.name" class="mt-2 rounded border border-white/10 max-h-48 w-auto" />
+                @if (notesExpanded(encounter.id!)) {
+                  <div class="mt-3">
+                    <app-notes-panel entityType="encounter" [entityId]="encounter.id!" />
+                  </div>
+                }
+              </li>
+            } @empty {
+              <p class="text-slate text-sm py-4">Nothing revealed yet — check back once your DM adds an encounter.</p>
             }
+          </ul>
 
-            @if (notesExpanded(encounter.id!)) {
-              <div class="mt-3">
-                <app-notes-panel entityType="encounter" [entityId]="encounter.id!" />
-              </div>
-            }
-          </li>
-        } @empty {
-          <p class="text-slate text-sm py-4">Nothing revealed yet — check back once your DM adds an encounter.</p>
-        }
-      </ul>
+          <div class="mt-6">
+            <app-notes-panel entityType="session" [entityId]="sessionId" title="Comments" />
+          </div>
+        </div>
 
-      <div class="mt-6 max-w-2xl">
-        <app-notes-panel entityType="session" [entityId]="sessionId" />
+        <div>
+          <h3 class="font-brand text-sm text-parchment m-0 mb-3">Party</h3>
+          <app-party-list [members]="members()" [currentUserId]="auth.profile()?.id ?? null" />
+        </div>
       </div>
     }
   </div>

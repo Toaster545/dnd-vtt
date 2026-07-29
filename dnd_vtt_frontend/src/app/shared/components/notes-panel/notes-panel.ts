@@ -9,7 +9,8 @@ import { Note, NoteEntityType, NoteVisibility } from '../../../core/models/notes
 
 // Identical in every place it's used (campaign/session/encounter, DM and player) — the one
 // genuinely shared component in the app rather than the usual copy-per-feature pattern, since
-// there's no per-context variation beyond which entity it's pointed at.
+// there's no per-context variation beyond which entity it's pointed at and the displayed title
+// (campaign/session hubs call it "Comments"; encounter usages keep the default "Notes").
 @Component({
   selector: 'app-notes-panel',
   imports: [FormsModule, MatIconModule, MatTooltipModule],
@@ -22,6 +23,7 @@ export class NotesPanelComponent {
 
   readonly entityType = input.required<NoteEntityType>();
   readonly entityId = input.required<string>();
+  readonly title = input<string>('Notes');
 
   notes = signal<Note[]>([]);
   loading = signal(true);

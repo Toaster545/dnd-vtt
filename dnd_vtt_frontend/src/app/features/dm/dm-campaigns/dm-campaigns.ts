@@ -23,6 +23,8 @@ export class DmCampaignsComponent implements OnInit {
   newName        = '';
   newDescription = '';
 
+  uploadingBackgroundId = signal<string | null>(null);
+
   async ngOnInit() { await this.load(); }
   private async load() {
     this.campaigns.set(await this.campaignService.getAll());
@@ -46,6 +48,27 @@ export class DmCampaignsComponent implements OnInit {
     event.preventDefault();
     if (!await this.confirm.confirm(`Delete "${campaign.name}"? This cannot be undone.`, 'Delete Campaign')) return;
     await this.campaignService.remove(campaign.id);
+    await this.load();
+  }
+
+  async onBackgroundFileChange(campaign: Campaign, event: Event) {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    input.value = '';
+    if (!file) return;
+    this.uploadingBackgroundId.set(campaign.id);
+    try {
+      await this.campaignService.uploadBackground(campaign.id, file);
+      await this.load();
+    } finally {
+      this.uploadingBackgroundId.set(null);
+    }
+  }
+
+  async clearBackground(campaign: Campaign, event: Event) {
+    event.stopPropagation();
+    event.preventDefault();
+    await this.campaignService.update(campaign.id, { background_url: null });
     await this.load();
   }
 

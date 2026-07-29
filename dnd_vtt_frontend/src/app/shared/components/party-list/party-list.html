@@ -1,0 +1,71 @@
+<ul class="divide-y divide-white/8">
+  @for (member of members(); track member.user_id) {
+    <li class="flex items-center py-2.5 gap-2"
+        [class.cursor-pointer]="clickableRows()"
+        (click)="onRowClick(member)">
+      <img [src]="portraitFor(member)" class="w-8 h-8 rounded-full flex-shrink-0" alt="" />
+      <div class="flex-1 min-w-0">
+        <p class="text-parchment text-sm font-medium truncate m-0">{{ member.character_name }}</p>
+        <p class="text-slate text-xs m-0">
+          {{ member.username }}
+          @if (member.character_race || member.character_class) {
+            · {{ member.character_race || '—' }} {{ member.character_class || '—' }} · Lv {{ member.character_level }}
+          }
+        </p>
+      </div>
+      @if (maxHpFor(member) != null) {
+        <span class="text-xs text-slate border border-white/10 rounded px-2 py-0.5 flex-shrink-0">
+          HP {{ currentHpFor(member) }}/{{ maxHpFor(member) }}
+        </span>
+      }
+      @if (member.character_armor_class != null) {
+        <span class="text-xs text-slate border border-white/10 rounded px-2 py-0.5 flex-shrink-0">
+          AC {{ member.character_armor_class }}
+        </span>
+      }
+
+      @if (showSelfControls() && isMe(member)) {
+        <button class="btn-icon flex-shrink-0"
+                [class]="member.show_race_class ? 'text-gold' : 'text-slate hover:text-parchment'"
+                (click)="$event.stopPropagation(); toggleRaceClassVisibility.emit(member)"
+                [matTooltip]="member.show_race_class ? 'Your race/class is visible to the party — click to hide' : 'Your race/class is hidden from the party — click to reveal'">
+          <mat-icon class="text-base">{{ member.show_race_class ? 'visibility' : 'visibility_off' }}</mat-icon>
+        </button>
+        <button class="btn-outline text-xs px-2 py-1 flex-shrink-0"
+                (click)="$event.stopPropagation(); viewCharacter.emit(member)"
+                matTooltip="View your character sheet">
+          <mat-icon class="text-base">badge</mat-icon> Character
+        </button>
+        @if (member.edit_unlocked) {
+          <button class="btn-outline text-xs px-2 py-1 flex-shrink-0"
+                  (click)="$event.stopPropagation(); editCharacter.emit(member)"
+                  matTooltip="Your DM has given you access to edit this character">
+            <mat-icon class="text-base">edit</mat-icon> Edit
+          </button>
+        }
+      }
+
+      @if (showManagement()) {
+        <button class="btn-icon flex-shrink-0"
+                [class]="member.visible_to_party === false ? 'text-slate hover:text-parchment' : 'text-gold'"
+                (click)="$event.stopPropagation(); togglePartyVisibility.emit(member)"
+                [matTooltip]="member.visible_to_party === false ? 'Hidden from the rest of the party — click to show' : 'Visible to the rest of the party — click to hide'">
+          <mat-icon class="text-base">{{ member.visible_to_party === false ? 'visibility_off' : 'visibility' }}</mat-icon>
+        </button>
+        <button class="btn-icon flex-shrink-0"
+                [class]="member.edit_unlocked ? 'text-gold' : 'text-slate hover:text-parchment'"
+                (click)="$event.stopPropagation(); toggleEditAccess.emit(member)"
+                [matTooltip]="member.edit_unlocked ? 'Player can edit this character — click to revoke' : 'Grant this player access to the character wizard'">
+          <mat-icon class="text-base">{{ member.edit_unlocked ? 'lock_open' : 'lock' }}</mat-icon>
+        </button>
+        <button class="btn-icon text-danger/70 hover:text-danger flex-shrink-0"
+                (click)="$event.stopPropagation(); removeMember.emit(member)"
+                matTooltip="Remove from campaign">
+          <mat-icon class="text-base">person_remove</mat-icon>
+        </button>
+      }
+    </li>
+  } @empty {
+    <p class="text-slate text-sm py-2">{{ emptyMessage() }}</p>
+  }
+</ul>

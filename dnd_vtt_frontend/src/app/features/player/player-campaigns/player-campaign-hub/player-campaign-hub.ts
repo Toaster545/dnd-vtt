@@ -7,15 +7,15 @@ import { CharacterService } from '../../../../core/services/character.service';
 import { AuthService } from '../../../../core/services/auth.service';
 import { CampaignHub, CampaignMember } from '../../../../core/models/campaign.model';
 import { Character } from '../../../../core/models/character.model';
-import { portraitDataUri } from '../../../../core/utils/avatar';
 import { NotesPanelComponent } from '../../../../shared/components/notes-panel/notes-panel';
+import { PartyListComponent } from '../../../../shared/components/party-list/party-list';
 import { CharacterWizardComponent } from '../../../dm/dm-create/dm-characters/character-wizard/character-wizard';
 import { CharacterPlaySheetComponent } from '../../../dm/dm-play/character-play-sheet/character-play-sheet';
 
 @Component({
   selector: 'app-player-campaign-hub',
   imports: [
-    RouterLink, MatIconModule, MatTooltipModule, NotesPanelComponent, CharacterWizardComponent,
+    RouterLink, MatIconModule, MatTooltipModule, NotesPanelComponent, PartyListComponent, CharacterWizardComponent,
     CharacterPlaySheetComponent,
   ],
   templateUrl: './player-campaign-hub.html',
@@ -30,7 +30,7 @@ export class PlayerCampaignHubComponent implements OnInit {
   private router           = inject(Router);
   private campaignService  = inject(CampaignService);
   private characterService = inject(CharacterService);
-  private auth              = inject(AuthService);
+  auth                     = inject(AuthService);
 
   campaignId = this.route.snapshot.paramMap.get('campaignId')!;
 
@@ -50,21 +50,19 @@ export class PlayerCampaignHubComponent implements OnInit {
     void this.router.navigate(['/player/campaigns']);
   }
 
-  isMe(member: CampaignMember): boolean {
-    return member.user_id === this.auth.profile()?.id;
-  }
-
-  // Falls back to the character id as the DiceBear seed for members created before portraits
-  // existed — still deterministic per-character, just not one the player ever explicitly picked.
-  portraitFor(member: CampaignMember): string {
-    return portraitDataUri(member.character_portrait_seed || member.character_id);
-  }
-
   // The DM grants this per member (see DmCampaignHubComponent.toggleEditAccess) — otherwise a
   // player's campaign copy only accepts the play sheet's limited HP/rest/equipment writes.
   async editMyCharacter(member: CampaignMember) {
     this.editingCharacter.set(await this.characterService.getCharacter(member.character_id));
     this.showWizard.set(true);
+  }
+
+  // Player's own choice, hidden from the rest of the party by default (see CampaignsService V14
+  // migration / setOwnRaceClassVisibility) — the DM always sees it regardless of this toggle.
+  async toggleRaceClassVisibility(member: CampaignMember) {
+    this.campaign.set(
+      await this.campaignService.setOwnRaceClassVisibility(this.campaignId, !member.show_race_class),
+    );
   }
 
   async onCharacterSaved() {

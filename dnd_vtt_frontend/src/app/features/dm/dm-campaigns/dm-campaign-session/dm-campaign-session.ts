@@ -1,24 +1,29 @@
 import { Component, ElementRef, ViewChild, inject, signal, computed, effect, OnInit, OnDestroy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { firstValueFrom } from 'rxjs';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatDialog } from '@angular/material/dialog';
 import Konva from 'konva';
 import { EncounterService } from '../../../../core/services/encounter.service';
 import { ContentService, DndMonster } from '../../../../core/services/content.service';
 import { CharacterService } from '../../../../core/services/character.service';
 import { BattleMapService } from '../../../../core/services/battle-map.service';
 import { SessionService } from '../../../../core/services/session.service';
+import { CampaignService } from '../../../../core/services/campaign.service';
 import { Encounter } from '../../../../core/models/encounter.model';
 import { Character } from '../../../../core/models/character.model';
-import { BattleMap, UniversalVTTData } from '../../../../core/models/campaign.model';
+import { BattleMap, CampaignMember, UniversalVTTData } from '../../../../core/models/campaign.model';
 import { Session } from '../../../../core/models/session.model';
 import { ConfirmService } from '../../../../shared/confirm.service';
 import { NotesPanelComponent } from '../../../../shared/components/notes-panel/notes-panel';
+import { PartyListComponent } from '../../../../shared/components/party-list/party-list';
+import { DescriptionDialogComponent } from '../../../../shared/components/description-dialog/description-dialog';
 
 @Component({
   selector: 'app-dm-campaign-session',
-  imports: [FormsModule, RouterLink, MatIconModule, MatTooltipModule, NotesPanelComponent],
+  imports: [FormsModule, RouterLink, MatIconModule, MatTooltipModule, NotesPanelComponent, PartyListComponent],
   templateUrl: './dm-campaign-session.html',
   // Routed in via dm-shell's <router-outlet>, so without a host sizing class this stays an
   // unstyled inline element and the template's flex-1/min-h-0/overflow-y-auto root div has no
@@ -36,7 +41,9 @@ export class DmCampaignSessionComponent implements OnInit, OnDestroy {
   private characterService  = inject(CharacterService);
   private mapService        = inject(BattleMapService);
   private sessionService    = inject(SessionService);
+  private campaignService   = inject(CampaignService);
   private confirm           = inject(ConfirmService);
+  private dialog            = inject(MatDialog);
 
   campaignId = this.route.snapshot.paramMap.get('campaignId')!;
   sessionId  = this.route.snapshot.paramMap.get('sessionId')!;
@@ -45,18 +52,10 @@ export class DmCampaignSessionComponent implements OnInit, OnDestroy {
   encounters = signal<Encounter[]>([]);
   monsters   = signal<DndMonster[]>([]);
   characters = signal<Character[]>([]);
+  members    = signal<CampaignMember[]>([]);
   loading    = signal(true);
 
-  descriptionDraft    = '';
-  savingDescription   = signal(false);
   uploadingBackground = signal(false);
-
-  // A plain method, not computed() — descriptionDraft is an ngModel-bound field, not a signal, so
-  // a computed() here would only re-evaluate when the session() signal changes and would ignore
-  // every keystroke, leaving the Save button's [disabled] stuck at its first-render value.
-  descriptionDirty(): boolean {
-    return this.descriptionDraft.trim() !== (this.session()?.description ?? '').trim();
-  }
 
   showForm  = signal(false);
   saving    = signal(false);
@@ -96,27 +95,34 @@ export class DmCampaignSessionComponent implements OnInit, OnDestroy {
   }
 
   async ngOnInit() {
-    const [session, encounters, monsters, characters] = await Promise.all([
+    const [session, encounters, monsters, characters, campaign] = await Promise.all([
       this.sessionService.getById(this.sessionId),
       this.encounterService.getBySession(this.sessionId),
       this.content.getMonsters(),
       this.characterService.getMyCharacters(),
+      this.campaignService.getById(this.campaignId),
     ]);
     this.session.set(session);
-    this.descriptionDraft = session.description ?? '';
     this.encounters.set(encounters);
     this.monsters.set(monsters);
     this.characters.set(characters);
+    this.members.set(campaign.members);
     this.loading.set(false);
   }
 
-  async saveDescription() {
-    this.savingDescription.set(true);
-    try {
-      this.session.set(await this.sessionService.update(this.sessionId, { description: this.descriptionDraft.trim() }));
-    } finally {
-      this.savingDescription.set(false);
-    }
+  async openDescriptionDialog() {
+    const description: string | undefined = await firstValueFrom(
+      this.dialog.open(DescriptionDialogComponent, {
+        data: {
+          title: 'Session Description',
+          description: this.session()?.description ?? '',
+          placeholder: "What's this session about…",
+        },
+        width: '480px',
+      }).afterClosed(),
+    );
+    if (description === undefined) return;
+    this.session.set(await this.sessionService.update(this.sessionId, { description: description.trim() }));
   }
 
   async onBackgroundFileChange(event: Event) {
