@@ -104,10 +104,18 @@ export class DmEncounterPlayComponent implements OnInit, OnDestroy {
   // Clicking a character token takes over the whole detail area (map + roster hidden), matching
   // how the existing Characters play tab already does list→full-sheet.
   viewingCharacter = signal<Character | null>(null);
+  // The specific token instance that was clicked to get here — kept separately from
+  // viewingCharacter (a Character record, not a per-map placement) purely so the header's color
+  // swatch has something to write to.
+  viewingCharacterToken = signal<MapToken | null>(null);
   // Clicking a monster token instead just swaps the roster sidebar's own content — the map stays
   // visible, since a stat block is much narrower than the full character play sheet.
   viewingMonsterToken = signal<{ token: MapToken; monster: DndMonster } | null>(null);
   hpAdjustAmount = signal(0);
+  // Clicking a token placed via the "add empty token" tool (no character_id/monster_index)
+  // instead swaps the roster sidebar to a small name/color/size editor — same slot-in-place
+  // pattern as viewingMonsterToken.
+  viewingCustomToken = signal<MapToken | null>(null);
 
   // Adding a monster type to the encounter's roster mid-play (e.g. reinforcements) — a small
   // search box next to the "Monsters" header, filtered to types not already in the roster.
@@ -278,6 +286,18 @@ export class DmEncounterPlayComponent implements OnInit, OnDestroy {
     return !!e && e.kind === 'character' && e.characterId === id;
   }
 
+  isArmedCustomToken(): boolean {
+    return this.armedEntity()?.kind === 'custom';
+  }
+
+  // "Add empty token" tool — arms a blank, unnamed token instead of one built from a roster
+  // entry. Clicking the map drops it as-is; the DM then clicks the placed token to name it and
+  // pick a color/size (see onTokenClicked/viewingCustomToken below), rather than being forced to
+  // fill those in up front the way the roster-driven monster/character flow works.
+  toggleArmCustomToken() {
+    this.toggleArm({ kind: 'custom', label: 'New Token', color: '#94a3b8', size: 1 });
+  }
+
   toggleArmMonster(monster: DndMonster) {
     this.toggleArm({
       kind: 'monster',
@@ -352,6 +372,9 @@ export class DmEncounterPlayComponent implements OnInit, OnDestroy {
   colorForMonster(monsterIndex: string): string {
     const override = this.monsterColorOverrides()[monsterIndex];
     if (override) return override;
+    // The monster's own wizard-set default, if it has one, beats the arbitrary palette fallback.
+    const defined = this.monsterFor(monsterIndex)?.color;
+    if (defined) return defined;
     const idx = (this.selected()?.monsters ?? []).indexOf(monsterIndex);
     return this.monsterPalette[idx >= 0 ? idx % this.monsterPalette.length : 0];
   }
@@ -374,17 +397,58 @@ export class DmEncounterPlayComponent implements OnInit, OnDestroy {
   onTokenClicked(token: MapToken) {
     if (token.character_id) {
       const character = this.characterFor(token.character_id);
-      if (character) this.viewingCharacter.set(character);
+      if (character) {
+        this.viewingCharacter.set(character);
+        this.viewingCharacterToken.set(token);
+      }
       return;
     }
     if (token.monster_index) {
       const monster = this.monsterFor(token.monster_index);
       if (monster) this.viewingMonsterToken.set({ token, monster });
+      return;
     }
+    this.viewingCustomToken.set(token);
+  }
+
+  closeCustomTokenView() {
+    this.viewingCustomToken.set(null);
+  }
+
+  async setCustomTokenLabel(label: string) {
+    const token = this.viewingCustomToken();
+    if (!token || !label.trim()) return;
+    this.viewingCustomToken.set(await this.mapService.upsertToken({ ...token, label: label.trim() }));
+  }
+
+  async setCustomTokenColor(color: string) {
+    const token = this.viewingCustomToken();
+    if (!token) return;
+    this.viewingCustomToken.set(await this.mapService.upsertToken({ ...token, color }));
+  }
+
+  async setCustomTokenSize(size: number) {
+    const token = this.viewingCustomToken();
+    if (!token) return;
+    this.viewingCustomToken.set(await this.mapService.upsertToken({ ...token, size }));
+  }
+
+  async removeCustomToken() {
+    const token = this.viewingCustomToken();
+    if (!token?.id) return;
+    await this.mapService.deleteToken(token.id, token.map_id);
+    this.viewingCustomToken.set(null);
+  }
+
+  async setCharacterTokenColor(color: string) {
+    const token = this.viewingCharacterToken();
+    if (!token) return;
+    this.viewingCharacterToken.set(await this.mapService.upsertToken({ ...token, color }));
   }
 
   closeCharacterView() {
     this.viewingCharacter.set(null);
+    this.viewingCharacterToken.set(null);
   }
 
   onCharacterSaved(character: Character) {
@@ -413,6 +477,13 @@ export class DmEncounterPlayComponent implements OnInit, OnDestroy {
     const next = Math.max(0, Math.min(maxHp, currentHp + delta));
     if (next === currentHp) return;
     const updated = await this.mapService.upsertToken({ ...current.token, hp: next });
+    this.viewingMonsterToken.set({ token: updated, monster: current.monster });
+  }
+
+  async setMonsterTokenColor(color: string) {
+    const current = this.viewingMonsterToken();
+    if (!current) return;
+    const updated = await this.mapService.upsertToken({ ...current.token, color });
     this.viewingMonsterToken.set({ token: updated, monster: current.monster });
   }
 }

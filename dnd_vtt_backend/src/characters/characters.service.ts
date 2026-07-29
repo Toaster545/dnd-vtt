@@ -56,6 +56,25 @@ export class CharactersService {
     return result.rows.map((r) => this.deserialize(r));
   }
 
+  // Campaign copies only — the per-campaign clones created when a player joins (see
+  // CampaignsService.join), the counterpart to findAllForUser's templates-only list. Powers the
+  // player's "Characters" tab, which lists each campaign's local copy alongside which campaign
+  // it belongs to (campaign_id is NOT NULL ... REFERENCES campaigns, so the inner join is safe).
+  async findCampaignCopiesForUser(userId: string) {
+    const result = await this.db.execute(
+      `SELECT ch.*, c.name AS campaign_name
+       FROM characters ch
+       JOIN campaigns c ON c.id = ch.campaign_id
+       WHERE ch.user_id = ? AND ch.campaign_id IS NOT NULL
+       ORDER BY ch.updated_at DESC`,
+      [userId],
+    );
+    return result.rows.map((r) => ({
+      ...this.deserialize(r),
+      campaign_name: r.campaign_name,
+    }));
+  }
+
   async findOne(id: string, userId: string) {
     const result = await this.db.execute(
       'SELECT * FROM characters WHERE id = ?',

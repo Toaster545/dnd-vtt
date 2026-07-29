@@ -14,6 +14,14 @@ export class CharacterService {
     return firstValueFrom(this.http.get<Character[]>(`${API}/characters`));
   }
 
+  // Per-campaign copies (campaign_id set), each with a `campaign_name` tacked on — the
+  // counterpart to getMyCharacters()'s portable templates. Powers the player's "Characters" tab.
+  async getMyCampaignCopies(): Promise<(Character & { campaign_name: string })[]> {
+    return firstValueFrom(
+      this.http.get<(Character & { campaign_name: string })[]>(`${API}/characters/copies`)
+    );
+  }
+
   async getCharacter(id: string): Promise<Character> {
     return firstValueFrom(this.http.get<Character>(`${API}/characters/${id}`));
   }

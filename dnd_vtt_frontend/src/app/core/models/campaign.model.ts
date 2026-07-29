@@ -28,6 +28,15 @@ export interface CampaignMember {
   // DM-grantable full edit access to this member's campaign character copy — see
   // CampaignService.setMemberEditAccess / CharactersService.update's edit_unlocked check.
   edit_unlocked?: boolean;
+  // Player-controlled visibility of their own race/class to the rest of the party (hidden by
+  // default) — see CampaignService.setOwnRaceClassVisibility. character_race/character_class
+  // above already come back redacted from the backend when this is false and it isn't your own row.
+  show_race_class?: boolean;
+  // DM-controlled visibility of this member in the party list shown to the rest of the party
+  // (defaults to true) — see CampaignService.setMemberPartyVisibility. A hidden member is simply
+  // omitted from the `members` array returned to other players; the DM and the member themselves
+  // always see it regardless of this flag.
+  visible_to_party?: boolean;
 }
 
 // GET /campaigns/:id payload — the campaign plus what's inside it, scoped to whatever the caller
@@ -110,7 +119,7 @@ export type FogToolName = 'reveal-brush' | 'hide-brush' | 'reveal-rect' | 'hide-
 // click — built by the roster UI (from a Character or a DndMonster), consumed by BattleMapComponent
 // to fill in a new token's fields instead of a manually-typed label/color.
 export interface PlacingEntity {
-  kind: 'monster' | 'character';
+  kind: 'monster' | 'character' | 'custom';
   label: string;
   color: string;
   size: number;

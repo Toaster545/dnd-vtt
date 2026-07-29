@@ -26,6 +26,9 @@
           <mat-icon>hide_image</mat-icon>
         </button>
       }
+      <button class="btn-icon" (click)="openDescriptionDialog()" matTooltip="Edit description">
+        <mat-icon>edit_note</mat-icon>
+      </button>
       <button class="btn-outline text-sm gap-1.5" (click)="copyJoinCode()" matTooltip="Copy join code">
         <mat-icon class="text-base">{{ copied() ? 'check' : 'content_copy' }}</mat-icon>
         Join code: <span class="font-mono text-gold">{{ c.join_code }}</span>
@@ -66,7 +69,7 @@
             <li>
               <a
                 [routerLink]="['/dm/campaigns', campaignId, 'sessions', session.id]"
-                class="flex items-center py-3 gap-3 cursor-pointer no-underline"
+                class="flex items-center py-3 px-2 -mx-2 gap-3 rounded cursor-pointer no-underline hover:bg-white/5 transition-colors"
               >
                 <div class="flex-1 min-w-0">
                   <p class="text-parchment font-medium truncate m-0">{{ session.name }}</p>
@@ -94,19 +97,7 @@
         </ul>
 
         <div class="mt-6">
-          <h3 class="font-brand text-sm text-parchment m-0 mb-3">Description</h3>
-          <div class="card card-body flex flex-col gap-2">
-            <textarea class="field-input" rows="4" placeholder="Campaign overview, tone, hooks…"
-                      [(ngModel)]="descriptionDraft" name="campaignDescription"></textarea>
-            <button class="btn-primary text-sm self-end" (click)="saveDescription()"
-                    [disabled]="!descriptionDirty() || savingDescription()">
-              @if (savingDescription()) { <span class="spinner-sm"></span> } @else { Save }
-            </button>
-          </div>
-        </div>
-
-        <div class="mt-6">
-          <app-notes-panel entityType="campaign" [entityId]="campaignId" />
+          <app-notes-panel entityType="campaign" [entityId]="campaignId" title="Comments" />
         </div>
       </div>
 
@@ -129,45 +120,11 @@
           </button>
         </div>
 
-        <ul class="divide-y divide-white/8">
-          @for (member of c.members; track member.user_id) {
-            <li class="flex items-center py-2.5 gap-2 cursor-pointer" (click)="openMember(member)">
-              <img [src]="portraitFor(member)" class="w-8 h-8 rounded-full flex-shrink-0" alt="" />
-              <div class="flex-1 min-w-0">
-                <p class="text-parchment text-sm font-medium truncate m-0">{{ member.character_name }}</p>
-                <p class="text-slate text-xs m-0">
-                  {{ member.username }}
-                  @if (member.character_race || member.character_class) {
-                    · {{ member.character_race || '—' }} {{ member.character_class || '—' }} · Lv {{ member.character_level }}
-                  }
-                </p>
-              </div>
-              @if (maxHpFor(member) != null) {
-                <span class="text-xs text-slate border border-white/10 rounded px-2 py-0.5 flex-shrink-0">
-                  HP {{ currentHpFor(member) }}/{{ maxHpFor(member) }}
-                </span>
-              }
-              @if (member.character_armor_class != null) {
-                <span class="text-xs text-slate border border-white/10 rounded px-2 py-0.5 flex-shrink-0">
-                  AC {{ member.character_armor_class }}
-                </span>
-              }
-              <button class="btn-icon flex-shrink-0"
-                      [class]="member.edit_unlocked ? 'text-gold' : 'text-slate hover:text-parchment'"
-                      (click)="toggleEditAccess(member, $event)"
-                      [matTooltip]="member.edit_unlocked ? 'Player can edit this character — click to revoke' : 'Grant this player access to the character wizard'">
-                <mat-icon class="text-base">{{ member.edit_unlocked ? 'lock_open' : 'lock' }}</mat-icon>
-              </button>
-              <button class="btn-icon text-danger/70 hover:text-danger flex-shrink-0"
-                      (click)="$event.stopPropagation(); removeMember(member.user_id, member.username)"
-                      matTooltip="Remove from campaign">
-                <mat-icon class="text-base">person_remove</mat-icon>
-              </button>
-            </li>
-          } @empty {
-            <p class="text-slate text-sm py-2">No players have joined yet.</p>
-          }
-        </ul>
+        <app-party-list [members]="c.members" [memberMaxHp]="memberMaxHp()" [showManagement]="true" [clickableRows]="true"
+          (rowClick)="openMember($event)"
+          (toggleEditAccess)="toggleEditAccess($event)"
+          (togglePartyVisibility)="togglePartyVisibility($event)"
+          (removeMember)="removeMember($event.user_id, $event.username)" />
       </div>
     </div>
   </div>

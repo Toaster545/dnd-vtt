@@ -3,8 +3,8 @@ import { MapFog } from '../../../core/models/campaign.model';
 
 interface Cell { col: number; row: number; }
 
-// Cell the pointer is currently over, floored like token placement (not the intersection-round
-// used by snapToGrid() for measurements) — fog tools target whole cells, not their corners.
+// Cell the pointer is currently over, floored like token placement — fog tools target whole
+// cells, not free positions like the measure tool does.
 export function cellUnderPointer(stage: Konva.Stage, cellSize: number): Cell | null {
   const pos = stage.getPointerPosition();
   if (!pos || !cellSize) return null;

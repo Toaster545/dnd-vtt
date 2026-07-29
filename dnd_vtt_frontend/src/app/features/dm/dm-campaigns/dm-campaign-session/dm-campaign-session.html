@@ -4,7 +4,10 @@
     <button class="btn-icon" (click)="backToHub()" matTooltip="Back to campaign">
       <mat-icon>arrow_back</mat-icon>
     </button>
-    <h2 class="font-brand text-lg text-parchment m-0 flex-1">Encounters</h2>
+    <div class="flex-1 min-w-0">
+      <h2 class="font-brand text-lg text-parchment m-0">{{ session()?.name }}</h2>
+      @if (session()?.description) { <p class="text-slate text-sm m-0 mt-0.5">{{ session()!.description }}</p> }
+    </div>
     <input #bgInput type="file" accept="image/*" class="hidden" (change)="onBackgroundFileChange($event)" />
     <button class="btn-icon" (click)="bgInput.click()" [disabled]="uploadingBackground()" matTooltip="Set background image">
       @if (uploadingBackground()) { <span class="spinner-sm"></span> } @else { <mat-icon>image</mat-icon> }
@@ -14,6 +17,9 @@
         <mat-icon>hide_image</mat-icon>
       </button>
     }
+    <button class="btn-icon" (click)="openDescriptionDialog()" matTooltip="Edit description">
+      <mat-icon>edit_note</mat-icon>
+    </button>
     @if (showForm()) {
       <button class="btn-outline text-sm" (click)="cancelForm()">Cancel</button>
     } @else {
@@ -133,61 +139,58 @@
     </div>
   }
 
-  @if (!loading()) {
-    <ul class="divide-y divide-white/8">
-      @for (encounter of encounters(); track encounter.id) {
-        <li class="flex items-center py-3 gap-3">
-          <div class="flex-1 min-w-0">
-            <p class="text-parchment font-medium truncate m-0">
-              {{ encounter.name }}
-              <span class="text-xs text-coal border border-white/10 rounded px-1.5 py-0.5 ml-1">{{ encounter.status }}</span>
-            </p>
-            <p class="text-slate text-xs m-0 mt-0.5">
-              {{ encounter.monsters.length }} monster type{{ encounter.monsters.length === 1 ? '' : 's' }}
-              · {{ encounter.character_ids.length }} character{{ encounter.character_ids.length === 1 ? '' : 's' }}
-              @if (encounter.map_id) { · map attached }
-              · {{ formatDate(encounter.created_at) }}
-            </p>
-          </div>
-          <a class="btn-outline text-xs" [routerLink]="['/dm/campaigns', campaignId, 'sessions', sessionId, 'encounters', encounter.id]">
-            Play
-          </a>
-          <button class="btn-icon"
-                  [class]="encounter.visible_to_players ? 'text-gold' : 'text-slate hover:text-parchment'"
-                  (click)="toggleVisibility(encounter, $event)"
-                  [matTooltip]="encounter.visible_to_players ? 'Visible to players — click to hide' : 'Hidden from players — click to reveal'">
-            <mat-icon>{{ encounter.visible_to_players ? 'visibility' : 'visibility_off' }}</mat-icon>
-          </button>
-          <button class="btn-icon text-slate hover:text-parchment"
-                  (click)="startEdit(encounter)"
-                  matTooltip="Edit encounter">
-            <mat-icon>edit</mat-icon>
-          </button>
-          <button class="btn-icon text-danger/70 hover:text-danger"
-                  (click)="deleteEncounter(encounter.id!)"
-                  matTooltip="Delete encounter">
-            <mat-icon>delete</mat-icon>
-          </button>
-        </li>
-      } @empty {
-        <p class="text-slate text-sm py-4">No encounters yet.</p>
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <div class="lg:col-span-2">
+      @if (!loading()) {
+        <ul class="divide-y divide-white/8">
+          @for (encounter of encounters(); track encounter.id) {
+            <li class="flex items-center py-3 gap-3">
+              <div class="flex-1 min-w-0">
+                <p class="text-parchment font-medium truncate m-0">
+                  {{ encounter.name }}
+                  <span class="text-xs text-coal border border-white/10 rounded px-1.5 py-0.5 ml-1">{{ encounter.status }}</span>
+                </p>
+                <p class="text-slate text-xs m-0 mt-0.5">
+                  {{ encounter.monsters.length }} monster type{{ encounter.monsters.length === 1 ? '' : 's' }}
+                  · {{ encounter.character_ids.length }} character{{ encounter.character_ids.length === 1 ? '' : 's' }}
+                  @if (encounter.map_id) { · map attached }
+                  · {{ formatDate(encounter.created_at) }}
+                </p>
+              </div>
+              <a class="btn-outline text-xs" [routerLink]="['/dm/campaigns', campaignId, 'sessions', sessionId, 'encounters', encounter.id]">
+                Play
+              </a>
+              <button class="btn-icon"
+                      [class]="encounter.visible_to_players ? 'text-gold' : 'text-slate hover:text-parchment'"
+                      (click)="toggleVisibility(encounter, $event)"
+                      [matTooltip]="encounter.visible_to_players ? 'Visible to players — click to hide' : 'Hidden from players — click to reveal'">
+                <mat-icon>{{ encounter.visible_to_players ? 'visibility' : 'visibility_off' }}</mat-icon>
+              </button>
+              <button class="btn-icon text-slate hover:text-parchment"
+                      (click)="startEdit(encounter)"
+                      matTooltip="Edit encounter">
+                <mat-icon>edit</mat-icon>
+              </button>
+              <button class="btn-icon text-danger/70 hover:text-danger"
+                      (click)="deleteEncounter(encounter.id!)"
+                      matTooltip="Delete encounter">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </li>
+          } @empty {
+            <p class="text-slate text-sm py-4">No encounters yet.</p>
+          }
+        </ul>
       }
-    </ul>
-  }
 
-  <div class="mt-6 max-w-2xl">
-    <h3 class="font-brand text-sm text-parchment m-0 mb-3">Description</h3>
-    <div class="card card-body flex flex-col gap-2">
-      <textarea class="field-input" rows="4" placeholder="What's this session about…"
-                [(ngModel)]="descriptionDraft" name="sessionDescription"></textarea>
-      <button class="btn-primary text-sm self-end" (click)="saveDescription()"
-              [disabled]="!descriptionDirty() || savingDescription()">
-        @if (savingDescription()) { <span class="spinner-sm"></span> } @else { Save }
-      </button>
+      <div class="mt-6">
+        <app-notes-panel entityType="session" [entityId]="sessionId" title="Comments" />
+      </div>
     </div>
-  </div>
 
-  <div class="mt-6 max-w-2xl">
-    <app-notes-panel entityType="session" [entityId]="sessionId" />
+    <div>
+      <h3 class="font-brand text-sm text-parchment m-0 mb-3">Party</h3>
+      <app-party-list [members]="members()" />
+    </div>
   </div>
 </div>

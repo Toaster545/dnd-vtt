@@ -59,9 +59,27 @@ export class CampaignService {
     );
   }
 
+  setMemberPartyVisibility(campaignId: string, userId: string, visible: boolean): Promise<{ visible_to_party: boolean }> {
+    return firstValueFrom(
+      this.http.patch<{ visible_to_party: boolean }>(
+        `${API}/campaigns/${campaignId}/members/${userId}/party-visibility`,
+        { visible },
+      ),
+    );
+  }
+
   setPartyLevel(campaignId: string, level: number): Promise<CampaignHub> {
     return firstValueFrom(
       this.http.patch<CampaignHub>(`${API}/campaigns/${campaignId}/party-level`, { level }),
+    );
+  }
+
+  setOwnRaceClassVisibility(campaignId: string, visible: boolean): Promise<CampaignHub> {
+    return firstValueFrom(
+      this.http.patch<CampaignHub>(
+        `${API}/campaigns/${campaignId}/members/me/race-class-visibility`,
+        { visible },
+      ),
     );
   }
 }

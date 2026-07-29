@@ -67,9 +67,10 @@ export class CampaignsService {
     );
 
     const members = await this.db.execute(
-      `SELECT m.user_id, p.username, m.character_id, m.edit_unlocked, ch.name AS character_name,
-              ch.race AS character_race, ch.class AS character_class, ch.level AS character_level,
-              ch.data AS character_data
+      `SELECT m.user_id, p.username, m.character_id, m.edit_unlocked, m.show_race_class,
+              m.visible_to_party,
+              ch.name AS character_name, ch.race AS character_race, ch.class AS character_class,
+              ch.level AS character_level, ch.data AS character_data
        FROM campaign_members m
        JOIN profiles p ON p.id = m.user_id
        JOIN characters ch ON ch.id = m.character_id
@@ -81,7 +82,11 @@ export class CampaignsService {
     return {
       ...this.deserialize(campaign),
       sessions: sessions.rows,
-      members: members.rows.map((row) => this.deserializeMember(row)),
+      // The DM manages the full roster regardless of visibility; a player sees everyone the DM
+      // has left visible, plus always their own row (so they can still reach their own character).
+      members: members.rows
+        .map((row) => this.deserializeMember(row, { id: user.id, isOwner }))
+        .filter((m) => isOwner || m.visible_to_party || m.user_id === user.id),
     };
   }
 
@@ -155,6 +160,19 @@ export class CampaignsService {
     if (source.campaign_id)
       throw new ForbiddenException('That character is already a campaign copy');
 
+    // There's no standalone "campaign level" column — the campaign's level is whatever the
+    // existing party's character copies are already at (kept in sync by setPartyLevel). A
+    // freshly joining character should start there too rather than at its own source level, so
+    // it doesn't show up under- or over-leveled relative to the rest of the party.
+    const partyLevelResult = await this.db.execute(
+      `SELECT MAX(ch.level) AS level FROM campaign_members m
+       JOIN characters ch ON ch.id = m.character_id
+       WHERE m.campaign_id = ? AND m.status = 'active'`,
+      [campaign.id],
+    );
+    const campaignLevel =
+      (partyLevelResult.rows[0]?.level as number | null) ?? source.level;
+
     const copyId = randomUUID();
     const now = new Date().toISOString();
     await this.db.execute(
@@ -166,7 +184,7 @@ export class CampaignsService {
         source.name,
         source.race,
         source.class,
-        source.level,
+        campaignLevel,
         source.data,
         campaign.id,
         now,
@@ -176,8 +194,10 @@ export class CampaignsService {
 
     const membershipId = randomUUID();
     await this.db.execute(
-      `INSERT INTO campaign_members (id, campaign_id, user_id, character_id, source_character_id)
-       VALUES (?, ?, ?, ?, ?)`,
+      // New members start hidden from the rest of the party's list — the DM opts each one in via
+      // setMemberPartyVisibility rather than everyone being visible by default (see V15).
+      `INSERT INTO campaign_members (id, campaign_id, user_id, character_id, source_character_id, visible_to_party)
+       VALUES (?, ?, ?, ?, ?, 0)`,
       [membershipId, campaign.id, user.id, copyId, dto.characterId],
     );
 
@@ -203,10 +223,26 @@ export class CampaignsService {
   async removeMember(campaignId: string, dmId: string, userId: string) {
     const campaign = await this.getCampaignRow(campaignId);
     if (campaign.dm_id !== dmId) throw new ForbiddenException();
+    const membership = await this.db.execute(
+      `SELECT character_id FROM campaign_members WHERE campaign_id = ? AND user_id = ? AND status = 'active'`,
+      [campaignId, userId],
+    );
+    const characterId = membership.rows[0]?.character_id as
+      | string
+      | undefined;
     await this.db.execute(
       `UPDATE campaign_members SET status = 'removed' WHERE campaign_id = ? AND user_id = ? AND status = 'active'`,
       [campaignId, userId],
     );
+    // Detach the campaign copy so it goes back to being a normal, fully player-editable character
+    // instead of sitting orphaned with a campaign_id the player can no longer access (see
+    // CharactersService.update, which DM-locks a character purely based on campaign_id being set).
+    if (characterId) {
+      await this.db.execute(
+        `UPDATE characters SET campaign_id = NULL, updated_at = ? WHERE id = ?`,
+        [new Date().toISOString(), characterId],
+      );
+    }
     return { removed: true };
   }
 
@@ -228,6 +264,45 @@ export class CampaignsService {
     if (result.rowsAffected === 0)
       throw new NotFoundException('Member not found');
     return { edit_unlocked: unlocked };
+  }
+
+  // DM-controlled: hides a member from the party list shown to the rest of the party (e.g. an
+  // absent player, or a companion character not yet meant to be public) — findOne's post-query
+  // filter still always shows the DM everyone, and shows each player their own row regardless.
+  async setMemberPartyVisibility(
+    campaignId: string,
+    dmId: string,
+    userId: string,
+    visible: boolean,
+  ) {
+    const campaign = await this.getCampaignRow(campaignId);
+    if (campaign.dm_id !== dmId) throw new ForbiddenException();
+    const result = await this.db.execute(
+      `UPDATE campaign_members SET visible_to_party = ? WHERE campaign_id = ? AND user_id = ? AND status = 'active'`,
+      [visible ? 1 : 0, campaignId, userId],
+    );
+    if (result.rowsAffected === 0)
+      throw new NotFoundException('Member not found');
+    return { visible_to_party: visible };
+  }
+
+  // Player-controlled, not DM-gated like setMemberEditAccess — a player decides for themselves
+  // whether the rest of the party sees their race/class in the roster (hidden by default, see V14).
+  async setOwnRaceClassVisibility(
+    campaignId: string,
+    userId: string,
+    visible: boolean,
+  ) {
+    const result = await this.db.execute(
+      `UPDATE campaign_members SET show_race_class = ? WHERE campaign_id = ? AND user_id = ? AND status = 'active'`,
+      [visible ? 1 : 0, campaignId, userId],
+    );
+    if (result.rowsAffected === 0)
+      throw new NotFoundException('Membership not found');
+    return this.findOne(campaignId, {
+      id: userId,
+      role: 'player',
+    } as RequestUser);
   }
 
   // Sets every active member's campaign-copy character to the same level in one shot — used by
@@ -270,24 +345,34 @@ export class CampaignsService {
   // The member row's own top-level columns (name/race/class/level) are fast to select directly;
   // HP/AC only exist inside the character's JSON `data` blob, so pull just those for the hub's
   // party-list summary rather than shipping the whole character document down for every member.
-  private deserializeMember(row: Record<string, unknown>) {
+  private deserializeMember(
+    row: Record<string, unknown>,
+    viewer: { id: string; isOwner: boolean },
+  ) {
     const data = this.db.parseJson<Record<string, unknown>>(
       row.character_data as string,
       {},
     );
+    const showRaceClass = !!row.show_race_class;
+    // Hidden from the rest of the party by default (see V14) — a player only sees their own
+    // race/class plus anyone who's opted in; the DM always sees everyone's regardless.
+    const revealRaceClass =
+      viewer.isOwner || row.user_id === viewer.id || showRaceClass;
     return {
       user_id: row.user_id,
       username: row.username,
       character_id: row.character_id,
       edit_unlocked: !!row.edit_unlocked,
       character_name: row.character_name,
-      character_race: row.character_race,
-      character_class: row.character_class,
+      character_race: revealRaceClass ? row.character_race : null,
+      character_class: revealRaceClass ? row.character_class : null,
       character_level: row.character_level,
       character_max_hp: data.max_hp ?? null,
       character_current_hp: data.current_hp ?? null,
       character_armor_class: data.armor_class ?? null,
       character_portrait_seed: data.portrait_seed ?? null,
+      show_race_class: showRaceClass,
+      visible_to_party: !!row.visible_to_party,
     };
   }
 

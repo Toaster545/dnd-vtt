@@ -1,8 +1,10 @@
 import { Component, inject, signal, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { firstValueFrom } from 'rxjs';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatDialog } from '@angular/material/dialog';
 import { CampaignService } from '../../../../core/services/campaign.service';
 import { SessionService } from '../../../../core/services/session.service';
 import { CharacterService } from '../../../../core/services/character.service';
@@ -12,10 +14,11 @@ import { ClassChoiceSource } from '../../../../core/utils/character-effects';
 import { CampaignHub, CampaignMember } from '../../../../core/models/campaign.model';
 import { Session } from '../../../../core/models/session.model';
 import { Character } from '../../../../core/models/character.model';
-import { portraitDataUri } from '../../../../core/utils/avatar';
 import { ConfirmService } from '../../../../shared/confirm.service';
 import { NotesPanelComponent } from '../../../../shared/components/notes-panel/notes-panel';
+import { PartyListComponent } from '../../../../shared/components/party-list/party-list';
 import { CharacterWizardComponent } from '../../dm-create/dm-characters/character-wizard/character-wizard';
+import { DescriptionDialogComponent } from '../../../../shared/components/description-dialog/description-dialog';
 
 function toContentIndex(name: string): string {
   return name.toLowerCase().replace(/\s+/g, '-');
@@ -23,7 +26,7 @@ function toContentIndex(name: string): string {
 
 @Component({
   selector: 'app-dm-campaign-hub',
-  imports: [FormsModule, RouterLink, MatIconModule, MatTooltipModule, NotesPanelComponent, CharacterWizardComponent],
+  imports: [FormsModule, RouterLink, MatIconModule, MatTooltipModule, NotesPanelComponent, PartyListComponent, CharacterWizardComponent],
   templateUrl: './dm-campaign-hub.html',
   // Routed in via dm-shell's <router-outlet>, so without a host sizing class this stays an
   // unstyled inline element and the template's flex-1/min-h-0 scroll chain has no bounded parent
@@ -41,6 +44,7 @@ export class DmCampaignHubComponent implements OnInit {
   private content          = inject(ContentService);
   private statsService     = inject(CharacterStatsService);
   private confirm          = inject(ConfirmService);
+  private dialog           = inject(MatDialog);
 
   campaignId = this.route.snapshot.paramMap.get('campaignId')!;
 
@@ -56,8 +60,6 @@ export class DmCampaignHubComponent implements OnInit {
   newName        = '';
   newDescription = '';
 
-  descriptionDraft    = '';
-  savingDescription   = signal(false);
   uploadingBackground = signal(false);
 
   partyLevel     = 1;
@@ -69,13 +71,6 @@ export class DmCampaignHubComponent implements OnInit {
   // for display, so the hub doesn't show a stale number until the DM reopens that character.
   memberMaxHp = signal<Record<string, number>>({});
 
-  // A plain method, not computed() — descriptionDraft is an ngModel-bound field, not a signal, so
-  // a computed() here would only re-evaluate when the campaign() signal changes and would ignore
-  // every keystroke, leaving the Save button's [disabled] stuck at its first-render value.
-  descriptionDirty(): boolean {
-    return this.descriptionDraft.trim() !== (this.campaign()?.description ?? '').trim();
-  }
-
   async ngOnInit() { await this.load(); }
 
   private async load() {
@@ -83,7 +78,6 @@ export class DmCampaignHubComponent implements OnInit {
     try {
       const campaign = await this.campaignService.getById(this.campaignId);
       this.campaign.set(campaign);
-      this.descriptionDraft = campaign.description ?? '';
       this.partyLevel = campaign.members.reduce((max, m) => Math.max(max, m.character_level ?? 1), 1);
       void this.loadMemberMaxHp(campaign.members);
     } finally {
@@ -119,13 +113,19 @@ export class DmCampaignHubComponent implements OnInit {
     this.memberMaxHp.set(map);
   }
 
-  async saveDescription() {
-    this.savingDescription.set(true);
-    try {
-      this.campaign.set(await this.campaignService.update(this.campaignId, { description: this.descriptionDraft.trim() }));
-    } finally {
-      this.savingDescription.set(false);
-    }
+  async openDescriptionDialog() {
+    const description: string | undefined = await firstValueFrom(
+      this.dialog.open(DescriptionDialogComponent, {
+        data: {
+          title: 'Campaign Description',
+          description: this.campaign()?.description ?? '',
+          placeholder: 'Campaign overview, tone, hooks…',
+        },
+        width: '480px',
+      }).afterClosed(),
+    );
+    if (description === undefined) return;
+    this.campaign.set(await this.campaignService.update(this.campaignId, { description: description.trim() }));
   }
 
   async onBackgroundFileChange(event: Event) {
@@ -207,9 +207,17 @@ export class DmCampaignHubComponent implements OnInit {
   // Toggles whether this player can open the character wizard on their own campaign copy (see
   // CharactersService.update's edit_unlocked check) — otherwise only HP/rest/equipment/spell-prep
   // changes from the in-encounter play sheet are player-writable.
-  async toggleEditAccess(member: CampaignMember, event: Event) {
-    event.stopPropagation();
+  async toggleEditAccess(member: CampaignMember) {
     await this.campaignService.setMemberEditAccess(this.campaignId, member.user_id, !member.edit_unlocked);
+    await this.load();
+  }
+
+  async togglePartyVisibility(member: CampaignMember) {
+    await this.campaignService.setMemberPartyVisibility(
+      this.campaignId,
+      member.user_id,
+      member.visible_to_party === false,
+    );
     await this.load();
   }
 
@@ -240,26 +248,6 @@ export class DmCampaignHubComponent implements OnInit {
 
   backToList() {
     void this.router.navigate(['/dm/campaigns']);
-  }
-
-  // Prefer the live-recomputed value (see loadMemberMaxHp) — falls back to the stored value while
-  // that computation is still in flight, or if it failed for this member.
-  // Falls back to the character id as the DiceBear seed for members created before portraits
-  // existed — still deterministic per-character, just not one the player ever explicitly picked.
-  portraitFor(member: CampaignMember): string {
-    return portraitDataUri(member.character_portrait_seed || member.character_id);
-  }
-
-  maxHpFor(member: CampaignMember): number | null {
-    return this.memberMaxHp()[member.character_id] ?? member.character_max_hp ?? null;
-  }
-
-  // Clamped to the live max so a stale current_hp (from before a level-down, before the DM
-  // reopens the wizard) doesn't display as over 100%.
-  currentHpFor(member: CampaignMember): number | null {
-    if (member.character_current_hp == null) return null;
-    const max = this.maxHpFor(member);
-    return max != null ? Math.min(member.character_current_hp, max) : member.character_current_hp;
   }
 
   formatDate(iso?: string): string {

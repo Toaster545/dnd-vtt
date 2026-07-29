@@ -7,6 +7,9 @@ export interface TokenRenderContext {
   isAdmin: boolean;
   activeMeasureTool: MeasureShape | null;
   currentTurnTokenId: string | null;
+  // The last token clicked (by this viewer) — drawn last so it renders above any overlapping
+  // tokens instead of being hidden underneath ones added earlier in the list.
+  selectedTokenId: string | null;
   characterHp: Record<string, { hp: number; max_hp: number }>;
   // Loaded portrait image per character_id — only present once decoded (see
   // BattleMapComponent.resolvePortraitImages), so a token with a character_id but no entry here
@@ -49,7 +52,13 @@ export function renderTokens(layer: Konva.Layer, tokens: MapToken[], ctx: TokenR
     }
     return true;
   };
-  for (const token of tokens) {
+  // Konva layers draw children in add order (last added = topmost) and layer.destroyChildren()
+  // above wipes any z-order a previous moveToTop()-style tweak would have set — so the selected
+  // token has to be sorted to the end of the draw list on every render, not just nudged once.
+  const orderedTokens = ctx.selectedTokenId
+    ? [...tokens.filter(t => t.id !== ctx.selectedTokenId), ...tokens.filter(t => t.id === ctx.selectedTokenId)]
+    : tokens;
+  for (const token of orderedTokens) {
     if (hiddenByFog(token)) continue;
     const r = (cellSize * token.size) / 2;
     const cx = token.x * cellSize + r;
@@ -165,6 +174,13 @@ export function renderTokens(layer: Konva.Layer, tokens: MapToken[], ctx: TokenR
 
     shape.on('click tap', () => ctx.onTokenClick(token));
     if (ctx.isAdmin) {
+      // A drag that starts without a preceding click (pick-up-and-move in one motion) doesn't
+      // reliably fire 'click' first. moveToTop() reorders this *same* Konva node in place —
+      // unlike the selectedTokenId-driven ordering above, it doesn't touch Angular state or
+      // rebuild the layer, so it's safe to call mid-drag without killing the drag Konva is
+      // currently tracking on this exact node (a full renderTokens() rebuild here would destroy
+      // and recreate the node, silently ending the drag).
+      shape.on('dragstart', () => shape.moveToTop());
       shape.on('dragend', () => {
         const pos = shape.position();
         ctx.onTokenMoved(token, Math.floor(pos.x / cellSize), Math.floor(pos.y / cellSize));

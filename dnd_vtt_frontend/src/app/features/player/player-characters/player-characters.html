@@ -1,0 +1,50 @@
+@if (sheetCharacter(); as sc) {
+  <div class="flex items-center gap-2 px-4 py-2.5 border-b border-white/10 flex-shrink-0">
+    <button class="btn-ghost text-sm" (click)="closeSheet()">
+      <mat-icon class="text-base">arrow_back</mat-icon> Back to characters
+    </button>
+    @if (sheetCampaignId()) {
+      <button class="btn-ghost text-sm ml-auto" (click)="openCampaign()">
+        Open campaign <mat-icon class="text-base">chevron_right</mat-icon>
+      </button>
+    }
+  </div>
+  <app-character-play-sheet class="flex-1 min-h-0" [character]="sc" (saved)="onCharacterSheetSaved($event)" />
+} @else {
+  <div class="p-6">
+    <h2 class="font-brand text-lg text-parchment m-0 mb-5">Characters</h2>
+
+    @if (loading()) {
+      <div class="flex justify-center mt-10"><span class="spinner-lg"></span></div>
+    } @else if (characters().length === 0) {
+      <p class="text-slate text-sm">No characters yet — create one in the Create tab.</p>
+    } @else {
+      <ul class="divide-y divide-white/8">
+        @for (c of characters(); track c.id) {
+          <li class="flex items-center py-3 gap-3 cursor-pointer" (click)="viewCharacter(c)">
+            <div class="flex-1 min-w-0">
+              <p class="text-parchment font-medium truncate m-0">{{ c.name }}</p>
+              <p class="text-slate text-xs m-0 mt-0.5">
+                {{ c.race || '—' }} · {{ classLabel(c) || '—' }} · Lv {{ c.level }}
+                @if (c.campaign_name) {
+                  · <span class="text-gold">{{ c.campaign_name }}</span>
+                } @else {
+                  · <span class="text-slate/70">Not in a campaign</span>
+                }
+              </p>
+            </div>
+            <div class="flex items-center gap-1.5">
+              <span class="text-xs text-slate border border-white/10 rounded px-2 py-0.5">
+                HP {{ c.current_hp }}/{{ c.max_hp }}
+              </span>
+              <span class="text-xs text-slate border border-white/10 rounded px-2 py-0.5">AC {{ c.armor_class }}</span>
+              <button class="btn-icon" (click)="$event.stopPropagation(); viewCharacter(c)" matTooltip="View sheet">
+                <mat-icon>badge</mat-icon>
+              </button>
+            </div>
+          </li>
+        }
+      </ul>
+    }
+  </div>
+}

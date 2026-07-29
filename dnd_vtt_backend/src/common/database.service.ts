@@ -66,6 +66,8 @@ export class DatabaseService implements OnModuleInit {
     if (version < 11) await this.applyV11();
     if (version < 12) await this.applyV12();
     if (version < 13) await this.applyV13();
+    if (version < 14) await this.applyV14();
+    if (version < 15) await this.applyV15();
   }
 
   // ── V1: initial schema (explicit columns on characters) ─────────────────────
@@ -446,5 +448,32 @@ export class DatabaseService implements OnModuleInit {
 
     await this.db.execute(`PRAGMA user_version = 13`);
     this.logger.log('Applied schema migration v13 (fog defaults to visible)');
+  }
+
+  // ── V14: player-controlled race/class visibility in the campaign roster — hidden from the rest
+  // of the party by default, the DM always sees it regardless (see CampaignsService.deserializeMember).
+  private async applyV14() {
+    await this.db.execute(
+      `ALTER TABLE campaign_members ADD COLUMN show_race_class INTEGER NOT NULL DEFAULT 0`,
+    );
+
+    await this.db.execute(`PRAGMA user_version = 14`);
+    this.logger.log(
+      'Applied schema migration v14 (campaign member race/class visibility)',
+    );
+  }
+
+  // ── V15: DM-controlled per-member party list visibility — hidden from the rest of the party
+  // by default (the DM opts each member in), but always visible to the DM and to the member
+  // themselves (see CampaignsService.deserializeMember / findOne's post-query filter).
+  private async applyV15() {
+    await this.db.execute(
+      `ALTER TABLE campaign_members ADD COLUMN visible_to_party INTEGER NOT NULL DEFAULT 0`,
+    );
+
+    await this.db.execute(`PRAGMA user_version = 15`);
+    this.logger.log(
+      'Applied schema migration v15 (campaign member party visibility)',
+    );
   }
 }

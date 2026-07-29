@@ -23,6 +23,12 @@ export class CharactersController {
     return this.characters.findAllForUser(user.id);
   }
 
+  // Must come before @Get(':id') — otherwise Nest/Express would match "copies" as an :id.
+  @Get('copies')
+  findCopies(@CurrentUser() user: RequestUser) {
+    return this.characters.findCampaignCopiesForUser(user.id);
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string, @CurrentUser() user: RequestUser) {
     return this.characters.findOneReadable(id, user);

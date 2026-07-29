@@ -11,18 +11,19 @@ import { BattleMapService } from '../../../../core/services/battle-map.service';
 import { AuthService } from '../../../../core/services/auth.service';
 import { Encounter, PresentPlayer } from '../../../../core/models/encounter.model';
 import { Character } from '../../../../core/models/character.model';
-import { BattleMap, MapToken } from '../../../../core/models/campaign.model';
+import { BattleMap, CampaignMember, MapToken } from '../../../../core/models/campaign.model';
 import { Session } from '../../../../core/models/session.model';
 import { BattleMapComponent } from '../../../battle-map/battle-map';
 import { CharacterPlaySheetComponent } from '../../../dm/dm-play/character-play-sheet/character-play-sheet';
 import { NotesPanelComponent } from '../../../../shared/components/notes-panel/notes-panel';
+import { PartyListComponent } from '../../../../shared/components/party-list/party-list';
 
 const REJOIN_KEY = 'dnd-player-campaign-encounter';
 interface StoredRejoin { encounterId: string; }
 
 @Component({
   selector: 'app-player-campaign-session',
-  imports: [MatIconModule, MatTooltipModule, BattleMapComponent, CharacterPlaySheetComponent, NotesPanelComponent],
+  imports: [MatIconModule, MatTooltipModule, BattleMapComponent, CharacterPlaySheetComponent, NotesPanelComponent, PartyListComponent],
   templateUrl: './player-campaign-session.html',
   // Routed in via player-shell's <router-outlet> rather than embedded with an explicit sizing
   // class the way e.g. <app-battle-map class="flex-1 min-w-0"> is — the router inserts this
@@ -40,7 +41,7 @@ export class PlayerCampaignSessionComponent implements OnInit, OnDestroy {
   private campaignService  = inject(CampaignService);
   private sessionService   = inject(SessionService);
   private mapService       = inject(BattleMapService);
-  private auth              = inject(AuthService);
+  auth                     = inject(AuthService);
 
   // Angular reuses this component instance across navigations to the same route config even when
   // :campaignId/:sessionId change (e.g. the live-alert banner in player-shell can send someone
@@ -52,6 +53,7 @@ export class PlayerCampaignSessionComponent implements OnInit, OnDestroy {
   session    = signal<Session | null>(null);
   encounters = signal<Encounter[]>([]);
   recapMaps  = signal<Record<string, BattleMap>>({});
+  members    = signal<CampaignMember[]>([]);
   loading    = signal(true);
   joiningId  = signal<string | null>(null);
 
@@ -114,7 +116,7 @@ export class PlayerCampaignSessionComponent implements OnInit, OnDestroy {
   }
 
   private async loadSession() {
-    this.leaveEncounter();
+    this.resetEncounterState();
     this.loading.set(true);
     const [hub, encounters, session] = await Promise.all([
       this.campaignService.getById(this.campaignId),
@@ -125,6 +127,7 @@ export class PlayerCampaignSessionComponent implements OnInit, OnDestroy {
     this.myCharacterId = me?.character_id ?? null;
     this.session.set(session);
     this.encounters.set(encounters);
+    this.members.set(hub.members);
     this.loading.set(false);
     void this.loadRecapMaps(encounters);
 
@@ -185,7 +188,16 @@ export class PlayerCampaignSessionComponent implements OnInit, OnDestroy {
     }
   }
 
+  // Explicit "Leave" action — also forgets the rejoin target so a later refresh doesn't pull the
+  // player back in.
   leaveEncounter() {
+    this.resetEncounterState();
+    this.clearStoredRejoin();
+  }
+
+  // Tears down local/live state without touching the stored rejoin target — used at the top of
+  // loadSession(), which needs to read that target right after to decide whether to auto-rejoin.
+  private resetEncounterState() {
     const encounter = this.activeEncounter();
     if (encounter?.id) this.encounterService.leavePresence(encounter.id);
     this.presenceSub?.unsubscribe();
@@ -194,7 +206,6 @@ export class PlayerCampaignSessionComponent implements OnInit, OnDestroy {
     this.currentTurnToken.set(null);
     this.activeEncounter.set(null);
     this.activeCharacter.set(null);
-    this.clearStoredRejoin();
   }
 
   onCharacterSaved(character: Character) {

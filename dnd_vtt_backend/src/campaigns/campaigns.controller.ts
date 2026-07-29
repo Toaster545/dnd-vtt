@@ -16,7 +16,9 @@ import { CreateCampaignDto } from './dto/create-campaign.dto';
 import { JoinCampaignDto } from './dto/join-campaign.dto';
 import { UpdateCampaignDto } from './dto/update-campaign.dto';
 import { SetEditAccessDto } from './dto/set-edit-access.dto';
+import { SetPartyVisibilityDto } from './dto/set-party-visibility.dto';
 import { SetPartyLevelDto } from './dto/set-party-level.dto';
+import { SetRaceClassVisibilityDto } from './dto/set-race-class-visibility.dto';
 import { JwtGuard } from '../auth/jwt.guard';
 import { AdminGuard } from '../auth/admin.guard';
 import { CurrentUser } from '../common/current-user.decorator';
@@ -114,6 +116,37 @@ export class CampaignsController {
       user.id,
       userId,
       dto.unlocked,
+    );
+  }
+
+  @Patch(':id/members/:userId/party-visibility')
+  @UseGuards(AdminGuard)
+  setMemberPartyVisibility(
+    @Param('id') id: string,
+    @Param('userId') userId: string,
+    @Body() dto: SetPartyVisibilityDto,
+    @CurrentUser() user: RequestUser,
+  ) {
+    return this.campaigns.setMemberPartyVisibility(
+      id,
+      user.id,
+      userId,
+      dto.visible,
+    );
+  }
+
+  // Player-only, self-service — no AdminGuard, since this is the player's own choice about their
+  // own membership row rather than something the DM grants (contrast setMemberEditAccess above).
+  @Patch(':id/members/me/race-class-visibility')
+  setOwnRaceClassVisibility(
+    @Param('id') id: string,
+    @Body() dto: SetRaceClassVisibilityDto,
+    @CurrentUser() user: RequestUser,
+  ) {
+    return this.campaigns.setOwnRaceClassVisibility(
+      id,
+      user.id,
+      dto.visible,
     );
   }
 }

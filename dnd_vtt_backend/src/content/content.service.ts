@@ -1,6 +1,12 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { readdirSync, readFileSync } from 'fs';
+import {
+  BadRequestException,
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
+import { existsSync, readdirSync, readFileSync, writeFileSync } from 'fs';
 import { join } from 'path';
+import { CreateMonsterDto } from './dto/create-monster.dto';
 
 const CONTENT_PATH = join(process.cwd(), 'content');
 
@@ -74,5 +80,34 @@ export class ContentService {
   }
   getMonster(index: string) {
     return this.loadOne('monsters', index);
+  }
+
+  // Persists a DM-authored monster as a new content/monsters/<index>.json file, alongside the
+  // built-in SRD-derived ones. Refuses to overwrite an existing index rather than clobbering it.
+  saveMonster(dto: CreateMonsterDto) {
+    const file = join(CONTENT_PATH, 'monsters', `${dto.index}.json`);
+    if (existsSync(file)) {
+      throw new ConflictException(`Monster "${dto.index}" already exists`);
+    }
+    writeFileSync(file, JSON.stringify(dto, null, 2) + '\n', 'utf-8');
+    this.cache.delete('all:monsters');
+    this.cache.set(`monsters:${dto.index}`, dto);
+    return dto;
+  }
+
+  // The index is the filename, so it can't be changed from an edit — the caller renames by
+  // deleting and re-creating instead (not currently exposed; no delete endpoint yet either).
+  updateMonster(index: string, dto: CreateMonsterDto) {
+    if (dto.index !== index) {
+      throw new BadRequestException('Monster index cannot be changed');
+    }
+    const file = join(CONTENT_PATH, 'monsters', `${index}.json`);
+    if (!existsSync(file)) {
+      throw new NotFoundException(`Monster "${index}" not found`);
+    }
+    writeFileSync(file, JSON.stringify(dto, null, 2) + '\n', 'utf-8');
+    this.cache.delete('all:monsters');
+    this.cache.set(`monsters:${index}`, dto);
+    return dto;
   }
 }

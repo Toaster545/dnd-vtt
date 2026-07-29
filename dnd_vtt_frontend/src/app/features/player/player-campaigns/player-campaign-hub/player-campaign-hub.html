@@ -6,6 +6,15 @@
     (saved)="onCharacterSaved()"
     (cancelled)="onCharacterCancelled()"
   />
+} @else if (sheetCharacter(); as sc) {
+  <div class="flex flex-col flex-1 min-h-0 overflow-hidden">
+    <div class="flex items-center gap-2 px-4 py-2.5 border-b border-white/10 flex-shrink-0">
+      <button class="btn-ghost text-sm" (click)="closeCharacterSheet()">
+        <mat-icon class="text-base">arrow_back</mat-icon> Back to campaign
+      </button>
+    </div>
+    <app-character-play-sheet class="flex-1 min-h-0" [character]="sc" (saved)="onCharacterSheetSaved($event)" />
+  </div>
 } @else if (campaign(); as c) {
   <div class="flex-1 min-h-0 overflow-y-auto p-6 bg-cover bg-center"
        [style.background-image]="c.background_url ? 'linear-gradient(rgba(13,14,22,0.88), rgba(13,14,22,0.88)), url(' + c.background_url + ')' : null">
@@ -26,7 +35,7 @@
           @for (session of c.sessions; track session.id) {
             <li>
               <a [routerLink]="['/player/campaigns', campaignId, 'sessions', session.id]"
-                 class="flex items-center py-3 gap-3 cursor-pointer no-underline">
+                 class="flex items-center py-3 px-2 -mx-2 gap-3 rounded cursor-pointer no-underline hover:bg-white/5 transition-colors">
                 <div class="flex-1 min-w-0">
                   <p class="text-parchment font-medium truncate m-0">{{ session.name }}</p>
                   @if (session.description) { <p class="text-slate text-xs m-0 mt-0.5">{{ session.description }}</p> }
@@ -40,46 +49,16 @@
         </ul>
 
         <div class="mt-6">
-          <app-notes-panel entityType="campaign" [entityId]="campaignId" />
+          <app-notes-panel entityType="campaign" [entityId]="campaignId" title="Comments" />
         </div>
       </div>
 
       <div>
         <h3 class="font-brand text-sm text-parchment m-0 mb-3">Party</h3>
-        <ul class="divide-y divide-white/8">
-          @for (member of c.members; track member.user_id) {
-            <li class="flex items-center py-2.5 gap-2">
-              <img [src]="portraitFor(member)" class="w-8 h-8 rounded-full flex-shrink-0" alt="" />
-              <div class="flex-1 min-w-0">
-                <p class="text-parchment text-sm font-medium truncate m-0">{{ member.character_name }}</p>
-                <p class="text-slate text-xs m-0">
-                  {{ member.username }}
-                  @if (member.character_race || member.character_class) {
-                    · {{ member.character_race || '—' }} {{ member.character_class || '—' }} · Lv {{ member.character_level }}
-                  }
-                </p>
-              </div>
-              @if (member.character_max_hp != null) {
-                <span class="text-xs text-slate border border-white/10 rounded px-2 py-0.5 flex-shrink-0">
-                  HP {{ member.character_current_hp }}/{{ member.character_max_hp }}
-                </span>
-              }
-              @if (member.character_armor_class != null) {
-                <span class="text-xs text-slate border border-white/10 rounded px-2 py-0.5 flex-shrink-0">
-                  AC {{ member.character_armor_class }}
-                </span>
-              }
-              @if (isMe(member) && member.edit_unlocked) {
-                <button class="btn-outline text-xs px-2 py-1 flex-shrink-0" (click)="editMyCharacter(member)"
-                        matTooltip="Your DM has given you access to edit this character">
-                  <mat-icon class="text-base">edit</mat-icon> Edit
-                </button>
-              }
-            </li>
-          } @empty {
-            <p class="text-slate text-sm py-2">No players have joined yet.</p>
-          }
-        </ul>
+        <app-party-list [members]="c.members" [currentUserId]="auth.profile()?.id ?? null" [showSelfControls]="true"
+          (toggleRaceClassVisibility)="toggleRaceClassVisibility($event)"
+          (viewCharacter)="viewMyCharacter($event)"
+          (editCharacter)="editMyCharacter($event)" />
       </div>
     </div>
   </div>

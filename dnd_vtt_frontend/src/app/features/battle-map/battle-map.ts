@@ -15,17 +15,16 @@ import { drawGrid } from './canvas/grid-renderer';
 import { renderMoveRange } from './canvas/move-range-renderer';
 import { renderTokens } from './canvas/token-renderer';
 import { portraitDataUri } from '../../core/utils/avatar';
-import { MeasurementTool, snapToGrid, FEET_PER_SQUARE } from './canvas/measurement-tool';
+import { MeasurementTool, pointerToGridPos, FEET_PER_SQUARE } from './canvas/measurement-tool';
 import { FogTool, cellUnderPointer } from './canvas/fog-tool';
 import { MapToolbarComponent } from './components/map-toolbar/map-toolbar';
-import { AddTokenPanelComponent } from './components/add-token-panel/add-token-panel';
 import { TurnOrderPanelComponent } from './components/turn-order-panel/turn-order-panel';
 
 @Component({
   selector: 'app-battle-map',
   imports: [
     RouterLink, MatIconModule, MatTooltipModule, ResizeHandleDirective,
-    MapToolbarComponent, AddTokenPanelComponent, TurnOrderPanelComponent,
+    MapToolbarComponent, TurnOrderPanelComponent,
   ],
   templateUrl: './battle-map.html',
   styleUrl: './battle-map.scss',
@@ -74,6 +73,9 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
   tokens = signal<MapToken[]>([]);
   loading = signal(true);
   error = signal<string | null>(null);
+  // Last token this viewer clicked — kept purely so it renders above any tokens it overlaps
+  // (see token-renderer.ts's ordering). Local to this viewer only; never broadcast.
+  selectedTokenId = signal<string | null>(null);
 
   newToken = { label: 'Token', color: '#e74c3c', size: 1, is_player: false };
 
@@ -205,6 +207,7 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
       this.currentTurnTokenId();
       this.activeMeasureTool();
       this.fog();
+      this.selectedTokenId();
       if (this.tokenLayer && this.cellSize) {
         this.renderTokens(this.lastTokens);
       }
@@ -358,7 +361,7 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
       }
       const shape = this.activeMeasureTool();
       if (!shape) return;
-      const { col, row } = snapToGrid(this.stage!, this.cellSize);
+      const { col, row } = pointerToGridPos(this.stage!, this.cellSize);
       this.measurementTool.begin(shape, col, row);
     });
 
@@ -374,7 +377,7 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
         return;
       }
       if (!this.measurementTool.current) return;
-      const { col, row } = snapToGrid(this.stage!, this.cellSize);
+      const { col, row } = pointerToGridPos(this.stage!, this.cellSize);
       this.measurementTool.update(col, row);
       this.renderMeasurements();
 
@@ -475,10 +478,21 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
       isAdmin: this.auth.isAdmin(),
       activeMeasureTool: this.activeMeasureTool(),
       currentTurnTokenId: this.currentTurnTokenId(),
+      selectedTokenId: this.selectedTokenId(),
       characterHp: this.characterHp(),
       characterPortraits: this.resolvePortraitImages(this.characterPortraits()),
-      onTokenClick: token => this.tokenClicked.emit(token),
-      onTokenMoved: (token, col, row) => this.mapService.upsertToken({ ...token, x: col, y: row }),
+      onTokenClick: token => {
+        this.selectedTokenId.set(token.id ?? null);
+        this.tokenClicked.emit(token);
+      },
+      // The drag itself is kept on top via token-renderer's moveToTop() (safe mid-drag, since it
+      // doesn't touch this component's state). Persisting the selection here, once the drag has
+      // actually ended, makes it stick across future full redraws too (HP changes, fog, other
+      // players' token updates) without risking a rebuild while Konva still owns the drag.
+      onTokenMoved: (token, col, row) => {
+        this.selectedTokenId.set(token.id ?? null);
+        return this.mapService.upsertToken({ ...token, x: col, y: row });
+      },
       onTokenContextMenu: token => this.removeToken(token),
     });
   }
@@ -544,6 +558,12 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
       });
       return;
     }
+    // Embedded views (encounter play, player session) have no `newToken` form on screen — an
+    // encounter's roster sidebar arms a PlacingEntity (including the "Add Empty Token" tool)
+    // instead, so an unarmed click there should be a no-op rather than silently dropping a
+    // default red "Token". Only the standalone map editor, where the Add Token sidebar form is
+    // visible and pre-fillable, should place from `newToken` on a bare click.
+    if (this.embedded()) return;
     await this.mapService.upsertToken({
       map_id: this.mapId,
       label: this.newToken.label,
