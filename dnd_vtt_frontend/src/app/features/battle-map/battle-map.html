@@ -1,7 +1,7 @@
 <div [class]="embedded() ? 'flex flex-col h-full' : 'flex flex-col h-screen'">
   @if (!embedded()) {
     <header class="app-toolbar">
-      <button class="btn-icon" routerLink="/dashboard" matTooltip="Back">
+      <button class="btn-icon" [routerLink]="auth.isAdmin() ? '/dm' : '/player'" matTooltip="Back">
         <mat-icon>arrow_back</mat-icon>
       </button>
       <span class="toolbar-title flex-1">{{ map()?.name ?? 'Battle Map' }}</span>
@@ -33,7 +33,9 @@
 
     <!-- DM sidebar -->
     @if (auth.isAdmin() && map()) {
-      <aside class="w-64 border-l border-white/10 overflow-y-auto flex-shrink-0 bg-surface">
+      <div appResizeHandle (resize)="onRightAsideResize($event)"
+           class="w-1.5 flex-shrink-0 hover:bg-gold/40 active:bg-gold/60 transition-colors"></div>
+      <aside [style.width.px]="rightAsideWidth()" class="border-l border-white/10 overflow-y-auto flex-shrink-0 bg-surface">
         <div class="p-4 flex flex-col gap-4">
 
           @if (!embedded()) {
@@ -119,7 +121,9 @@
       </aside>
     } @else if (map() && tokens().length > 0) {
       <!-- Player-facing read-only turn order — same list, no editing controls. -->
-      <aside class="w-56 border-l border-white/10 overflow-y-auto flex-shrink-0 bg-surface">
+      <div appResizeHandle (resize)="onRightAsideResize($event)"
+           class="w-1.5 flex-shrink-0 hover:bg-gold/40 active:bg-gold/60 transition-colors"></div>
+      <aside [style.width.px]="rightAsideWidth()" class="border-l border-white/10 overflow-y-auto flex-shrink-0 bg-surface">
         <div class="p-4">
           <p class="text-xs font-semibold text-slate uppercase tracking-wider mb-2">Turn Order</p>
           @for (token of turnOrder(); track token.id) {

@@ -2,7 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { firstValueFrom, Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import { Encounter, PresentPlayer } from '../models/encounter.model';
+import { Encounter, EncounterStartedEvent, PresentPlayer } from '../models/encounter.model';
 import { SocketService } from './socket.service';
 
 const API = environment.apiUrl;
@@ -16,12 +16,20 @@ export class EncounterService {
     return firstValueFrom(this.http.get<Encounter[]>(`${API}/encounters`));
   }
 
+  getBySession(sessionId: string): Promise<Encounter[]> {
+    return firstValueFrom(this.http.get<Encounter[]>(`${API}/encounters`, { params: { sessionId } }));
+  }
+
   create(encounter: Partial<Encounter>): Promise<Encounter> {
     return firstValueFrom(this.http.post<Encounter>(`${API}/encounters`, encounter));
   }
 
   update(id: string, encounter: Partial<Encounter>): Promise<Encounter> {
     return firstValueFrom(this.http.put<Encounter>(`${API}/encounters/${id}`, encounter));
+  }
+
+  setVisibility(id: string, visible: boolean): Promise<Encounter> {
+    return firstValueFrom(this.http.patch<Encounter>(`${API}/encounters/${id}/visibility`, { visible }));
   }
 
   remove(id: string): Promise<void> {
@@ -71,5 +79,20 @@ export class EncounterService {
 
   leavePresence(encounterId: string) {
     this.socketService.socket.emit('leave_presence', encounterId);
+  }
+
+  // Player side: fires whenever any encounter goes live, regardless of campaign — the caller is
+  // responsible for filtering to campaigns it actually cares about (see PlayerShellComponent).
+  watchEncounterStarted(): Observable<EncounterStartedEvent> {
+    return new Observable(observer => {
+      const socket = this.socketService.socket;
+      const handleStart = (event: EncounterStartedEvent) => observer.next(event);
+      socket.connect();
+      socket.on('encounter_started', handleStart);
+
+      return () => {
+        socket.off('encounter_started', handleStart);
+      };
+    });
   }
 }

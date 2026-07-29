@@ -5,12 +5,12 @@
     <nav class="flex gap-1 mx-auto">
       <button class="btn-ghost text-sm gap-1.5"
               [class.bg-white/10]="activeTab() === 'create'"
-              (click)="activeTab.set('create')">
+              (click)="selectCreate()">
         <mat-icon class="text-base">create</mat-icon> Create
       </button>
       <button class="btn-ghost text-sm gap-1.5"
               [class.bg-white/10]="activeTab() === 'play'"
-              (click)="activeTab.set('play')">
+              (click)="goToPlay()">
         <mat-icon class="text-base">play_arrow</mat-icon> Play
       </button>
     </nav>
@@ -24,11 +24,26 @@
     </div>
   </header>
 
+  @if (liveAlert(); as alert) {
+    <div class="flex items-center gap-3 px-4 py-2.5 bg-gold/10 border-b border-gold/30 flex-shrink-0">
+      <mat-icon class="text-gold text-base">bolt</mat-icon>
+      <span class="text-sm text-parchment flex-1">
+        <strong>{{ alert.name }}</strong> just went live!
+      </span>
+      <button class="btn-primary text-xs px-3 py-1.5" (click)="joinLiveAlert()">Join now</button>
+      <button class="btn-icon" (click)="dismissAlert()" matTooltip="Dismiss">
+        <mat-icon class="text-base">close</mat-icon>
+      </button>
+    </div>
+  }
+
   <div class="flex-1 overflow-hidden flex flex-col min-h-0">
     @if (activeTab() === 'create') {
       <app-dm-characters class="flex flex-col flex-1 min-h-0" />
     } @else {
-      <app-player-play class="flex-1 min-h-0" />
+      <div class="flex-1 min-h-0 overflow-hidden flex flex-col">
+        <router-outlet></router-outlet>
+      </div>
     }
   </div>
 </div>

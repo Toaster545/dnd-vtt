@@ -1,22 +1,67 @@
-import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  ForbiddenException,
+} from '@nestjs/common';
 import { randomUUID } from 'crypto';
 import { DatabaseService } from '../common/database.service';
 import { CreateEncounterDto } from './dto/create-encounter.dto';
+import { generateJoinCode } from '../common/join-code.util';
+import { EncounterPresenceGateway } from './encounter-presence.gateway';
+import type { RequestUser } from '../common/current-user.decorator';
 
 @Injectable()
 export class EncountersService {
-  constructor(private db: DatabaseService) {}
+  constructor(
+    private db: DatabaseService,
+    private presence: EncounterPresenceGateway,
+  ) {}
 
   async findAllForUser(dmId: string) {
     const result = await this.db.execute(
       'SELECT * FROM encounters WHERE dm_id = ? ORDER BY created_at DESC',
       [dmId],
     );
-    return result.rows.map(r => this.deserialize(r));
+    return result.rows.map((r) => this.deserialize(r));
+  }
+
+  // Encounters within a session, for whoever the caller is: the owning DM sees everything
+  // (including hidden/draft encounters, for planning ahead); an active campaign member only sees
+  // encounters the DM has revealed (`visible_to_players`).
+  async findBySession(sessionId: string, user: RequestUser) {
+    const session = await this.db.execute(
+      'SELECT * FROM sessions WHERE id = ?',
+      [sessionId],
+    );
+    const sessionRow = session.rows[0];
+    if (!sessionRow) throw new NotFoundException('Session not found');
+
+    const isOwner = sessionRow.dm_id === user.id;
+    if (!isOwner)
+      await this.assertActiveMember(sessionRow.campaign_id as string, user.id);
+
+    const result = await this.db.execute(
+      isOwner
+        ? 'SELECT * FROM encounters WHERE session_id = ? ORDER BY created_at DESC'
+        : `SELECT * FROM encounters WHERE session_id = ? AND visible_to_players = 1 ORDER BY created_at DESC`,
+      [sessionId],
+    );
+    return result.rows.map((r) => this.deserialize(r));
+  }
+
+  private async assertActiveMember(campaignId: string, userId: string) {
+    const membership = await this.db.execute(
+      `SELECT id FROM campaign_members WHERE campaign_id = ? AND user_id = ? AND status = 'active'`,
+      [campaignId, userId],
+    );
+    if (membership.rows.length === 0) throw new ForbiddenException();
   }
 
   async findOne(id: string, dmId: string) {
-    const result = await this.db.execute('SELECT * FROM encounters WHERE id = ?', [id]);
+    const result = await this.db.execute(
+      'SELECT * FROM encounters WHERE id = ?',
+      [id],
+    );
     const row = result.rows[0];
     if (!row) throw new NotFoundException('Encounter not found');
     if (row.dm_id !== dmId) throw new ForbiddenException();
@@ -26,11 +71,16 @@ export class EncountersService {
   async create(dmId: string, dto: CreateEncounterDto) {
     const id = randomUUID();
     await this.db.execute(
-      `INSERT INTO encounters (id, dm_id, name, map_id, monsters, character_ids)
-       VALUES (?, ?, ?, ?, ?, ?)`,
+      `INSERT INTO encounters (id, dm_id, session_id, name, map_id, monsters, character_ids)
+       VALUES (?, ?, ?, ?, ?, ?, ?)`,
       [
-        id, dmId, dto.name, dto.map_id ?? null,
-        JSON.stringify(dto.monsters ?? []), JSON.stringify(dto.character_ids ?? []),
+        id,
+        dmId,
+        dto.session_id,
+        dto.name,
+        dto.map_id ?? null,
+        JSON.stringify(dto.monsters ?? []),
+        JSON.stringify(dto.character_ids ?? []),
       ],
     );
     return this.findOne(id, dmId);
@@ -38,13 +88,38 @@ export class EncountersService {
 
   async update(id: string, dmId: string, body: Record<string, unknown>) {
     const current = await this.findOne(id, dmId);
-    const name          = (body.name as string | undefined) ?? current.name;
-    const map_id         = body.map_id !== undefined ? (body.map_id as string | null) : current.map_id;
-    const monsters       = body.monsters !== undefined ? body.monsters : current.monsters;
-    const character_ids  = body.character_ids !== undefined ? body.character_ids : current.character_ids;
+    const name = (body.name as string | undefined) ?? current.name;
+    const map_id =
+      body.map_id !== undefined
+        ? (body.map_id as string | null)
+        : current.map_id;
+    const monsters =
+      body.monsters !== undefined ? body.monsters : current.monsters;
+    const character_ids =
+      body.character_ids !== undefined
+        ? body.character_ids
+        : current.character_ids;
+    const summary = (body.summary as string | undefined) ?? current.summary;
     await this.db.execute(
-      `UPDATE encounters SET name=?, map_id=?, monsters=?, character_ids=?, updated_at=? WHERE id=?`,
-      [name, map_id, JSON.stringify(monsters), JSON.stringify(character_ids), new Date().toISOString(), id],
+      `UPDATE encounters SET name=?, map_id=?, monsters=?, character_ids=?, summary=?, updated_at=? WHERE id=?`,
+      [
+        name,
+        map_id,
+        JSON.stringify(monsters),
+        JSON.stringify(character_ids),
+        summary,
+        new Date().toISOString(),
+        id,
+      ],
+    );
+    return this.findOne(id, dmId);
+  }
+
+  async setVisibility(id: string, dmId: string, visible: boolean) {
+    await this.findOne(id, dmId);
+    await this.db.execute(
+      `UPDATE encounters SET visible_to_players=?, updated_at=? WHERE id=?`,
+      [visible ? 1 : 0, new Date().toISOString(), id],
     );
     return this.findOne(id, dmId);
   }
@@ -55,32 +130,54 @@ export class EncountersService {
     return { deleted: true };
   }
 
-  // Unambiguous alphabet — no 0/O/1/I — since a DM reads this out loud or over chat for players
-  // to type back in.
-  private static readonly CODE_ALPHABET = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-
-  private generateJoinCode(): string {
-    let code = '';
-    for (let i = 0; i < 6; i++) {
-      code += EncountersService.CODE_ALPHABET[Math.floor(Math.random() * EncountersService.CODE_ALPHABET.length)];
-    }
-    return code;
-  }
-
   async start(id: string, dmId: string) {
     await this.findOne(id, dmId);
     let code: string;
     do {
-      code = this.generateJoinCode();
-    } while ((await this.db.execute(
-      `SELECT id FROM encounters WHERE join_code = ? AND status = 'active'`, [code],
-    )).rows.length > 0);
+      code = generateJoinCode();
+    } while (
+      (
+        await this.db.execute(
+          `SELECT id FROM encounters WHERE join_code = ? AND status = 'active'`,
+          [code],
+        )
+      ).rows.length > 0
+    );
 
+    // Starting play necessarily reveals the encounter — players need to see it to join it. The DM
+    // can still re-hide it afterward via setVisibility.
     await this.db.execute(
-      `UPDATE encounters SET status='active', join_code=?, updated_at=? WHERE id=?`,
+      `UPDATE encounters SET status='active', join_code=?, visible_to_players=1, updated_at=? WHERE id=?`,
       [code, new Date().toISOString(), id],
     );
-    return this.findOne(id, dmId);
+    const updated = await this.findOne(id, dmId);
+
+    if (updated.session_id) {
+      // The session itself gates whether a player even sees it in their campaign hub's session
+      // list (see CampaignsService.findOne) — without this, a DM could start an encounter that's
+      // now individually visible, but players would have no way to navigate to it because its
+      // parent session was never separately revealed.
+      await this.db.execute(
+        `UPDATE sessions SET visible_to_players=1 WHERE id=?`,
+        [updated.session_id],
+      );
+
+      const session = await this.db.execute(
+        'SELECT campaign_id FROM sessions WHERE id = ?',
+        [updated.session_id],
+      );
+      const campaignId = session.rows[0]?.campaign_id as string | undefined;
+      if (campaignId) {
+        this.presence.notifyEncounterStarted({
+          encounterId: updated.id as string,
+          sessionId: updated.session_id as string,
+          campaignId,
+          name: updated.name as string,
+        });
+      }
+    }
+
+    return updated;
   }
 
   async stop(id: string, dmId: string) {
@@ -107,8 +204,13 @@ export class EncountersService {
   private deserialize(row: Record<string, unknown>) {
     // Older rows may still carry the pre-simplification `{ monsterIndex, quantity }` shape;
     // normalize to plain indices so callers never have to care which shape a given row used.
-    const monsters = this.db.parseJson<unknown[]>(row.monsters as string, [])
-      .map(m => (typeof m === 'string' ? m : (m as { monsterIndex: string }).monsterIndex));
+    const monsters = this.db
+      .parseJson<unknown[]>(row.monsters as string, [])
+      .map((m) =>
+        typeof m === 'string'
+          ? m
+          : (m as { monsterIndex: string }).monsterIndex,
+      );
 
     return {
       id: row.id,
@@ -120,6 +222,8 @@ export class EncountersService {
       character_ids: this.db.parseJson(row.character_ids as string, []),
       status: row.status,
       join_code: row.join_code,
+      summary: row.summary ?? '',
+      visible_to_players: !!row.visible_to_players,
       created_at: row.created_at,
       updated_at: row.updated_at,
     };

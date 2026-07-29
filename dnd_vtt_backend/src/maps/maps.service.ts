@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { randomUUID } from 'crypto';
 import { existsSync, mkdirSync, writeFileSync } from 'fs';
 import { join } from 'path';
@@ -35,12 +39,21 @@ export class MapsService {
     const id = randomUUID();
     await this.db.execute(
       'INSERT INTO battle_maps (id, campaign_id, name, image_url, grid_size) VALUES (?,?,?,?,?)',
-      [id, body.campaign_id ?? 'default', body.name, body.image_url, body.grid_size ?? 50],
+      [
+        id,
+        body.campaign_id ?? 'default',
+        body.name,
+        body.image_url,
+        body.grid_size ?? 50,
+      ],
     );
     return this.findOne(id);
   }
 
-  async uploadImage(file: Express.Multer.File, campaignId: string): Promise<string> {
+  async uploadImage(
+    file: Express.Multer.File,
+    campaignId: string,
+  ): Promise<string> {
     const uploadDir = join(process.cwd(), 'uploads', 'maps', campaignId);
     if (!existsSync(uploadDir)) mkdirSync(uploadDir, { recursive: true });
 
@@ -48,8 +61,13 @@ export class MapsService {
     const filepath = join(uploadDir, filename);
     writeFileSync(filepath, file.buffer);
 
-    const baseUrl = process.env.BACKEND_URL ?? 'http://localhost:3000';
-    return `${baseUrl}/uploads/maps/${campaignId}/${filename}`;
+    // Deliberately relative, not an absolute `http://host:port/...` URL: per CLAUDE.md this app is
+    // single-origin (the browser always loads the frontend from the same host/port it should fetch
+    // uploads from, whether that's localhost:3000 directly or a domain fronted by a Cloudflare
+    // Tunnel). A baked-in absolute host would only ever be right for one of those, and baking in
+    // `http://` specifically breaks entirely once the tunnel serves the app over https (browsers
+    // block that as mixed content).
+    return `/uploads/maps/${campaignId}/${filename}`;
   }
 
   async getTokens(mapId: string) {
@@ -57,7 +75,7 @@ export class MapsService {
       'SELECT * FROM map_tokens WHERE map_id = ?',
       [mapId],
     );
-    return result.rows.map(r => ({ ...r, is_player: !!r.is_player }));
+    return result.rows.map((r) => ({ ...r, is_player: !!r.is_player }));
   }
 
   async upsertToken(mapId: string, token: Record<string, unknown>) {
@@ -68,7 +86,12 @@ export class MapsService {
     // initiative until the DM enters the player's roll. Explicit values (edits, rerolls) pass
     // through untouched — this only fires for a brand-new monster token.
     let initiative = (token.initiative as number | null | undefined) ?? null;
-    if (isNew && !token.is_player && token.monster_index && initiative == null) {
+    if (
+      isNew &&
+      !token.is_player &&
+      token.monster_index &&
+      initiative == null
+    ) {
       initiative = this.rollMonsterInitiative(token.monster_index as string);
     }
 
@@ -82,12 +105,18 @@ export class MapsService {
          character_id=excluded.character_id, monster_index=excluded.monster_index,
          initiative=excluded.initiative`,
       [
-        id, mapId,
-        token.label ?? 'Token', token.color ?? '#e74c3c',
-        token.x ?? 0, token.y ?? 0, token.size ?? 1,
-        token.hp ?? null, token.max_hp ?? null,
+        id,
+        mapId,
+        token.label ?? 'Token',
+        token.color ?? '#e74c3c',
+        token.x ?? 0,
+        token.y ?? 0,
+        token.size ?? 1,
+        token.hp ?? null,
+        token.max_hp ?? null,
         token.is_player ? 1 : 0,
-        token.character_id ?? null, token.monster_index ?? null,
+        token.character_id ?? null,
+        token.monster_index ?? null,
         initiative,
       ],
     );
@@ -110,15 +139,21 @@ export class MapsService {
     );
     const row = result.rows[0];
     if (!row) throw new NotFoundException('Token not found');
-    if (!row.monster_index) throw new BadRequestException('Only monster tokens can reroll initiative');
+    if (!row.monster_index)
+      throw new BadRequestException(
+        'Only monster tokens can reroll initiative',
+      );
 
     const initiative = this.rollMonsterInitiative(row.monster_index as string);
-    await this.db.execute('UPDATE map_tokens SET initiative = ? WHERE id = ?', [initiative, tokenId]);
+    await this.db.execute('UPDATE map_tokens SET initiative = ? WHERE id = ?', [
+      initiative,
+      tokenId,
+    ]);
     const tokens = await this.getTokens(mapId);
     this.gateway.broadcastTokens(mapId, tokens);
     return tokens.find((t: any) => t.id === tokenId);
   }
-  
+
   private rollMonsterInitiative(monsterIndex: string): number | null {
     try {
       const monster = this.content.getMonster(monsterIndex) as {

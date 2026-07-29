@@ -12,24 +12,33 @@ async function bootstrap() {
 
   const origins = (process.env.CORS_ORIGINS ?? 'http://localhost:4200')
     .split(',')
-    .map(o => o.trim());
+    .map((o) => o.trim());
   app.enableCors({ origin: origins, credentials: true });
 
   app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
 
-  const distPath = join(process.cwd(), '..', 'dnd_vtt_frontend', 'dist', 'dnd-app', 'browser');
+  const distPath = join(
+    process.cwd(),
+    '..',
+    'dnd_vtt_frontend',
+    'dist',
+    'dnd-app',
+    'browser',
+  );
   const indexPath = join(distPath, 'index.html');
   const server = app.getHttpAdapter().getInstance();
 
   // Register directly on the raw Express instance to guarantee order
-  const staticOpts = process.env.DEV_BYPASS === 'true'
-    ? { setHeaders: (res: any) => res.setHeader('Cache-Control', 'no-store') }
-    : {};
+  const staticOpts =
+    process.env.DEV_BYPASS === 'true'
+      ? { setHeaders: (res: any) => res.setHeader('Cache-Control', 'no-store') }
+      : {};
 
   server.use('/uploads', express.static(join(process.cwd(), 'uploads')));
   server.use(express.static(distPath, staticOpts));
   server.use((req: any, res: any, next: any) => {
-    if (req.path.startsWith('/api') || req.path.startsWith('/socket.io')) return next();
+    if (req.path.startsWith('/api') || req.path.startsWith('/socket.io'))
+      return next();
     res.sendFile(indexPath);
   });
 

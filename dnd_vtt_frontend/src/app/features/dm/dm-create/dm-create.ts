@@ -1,14 +1,12 @@
 import { Component, signal } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { DmCharactersComponent } from './dm-characters/dm-characters';
-import { DmSessionsComponent } from './dm-sessions/dm-sessions';
-import { DmEncountersComponent } from './dm-encounters/dm-encounters';
 
-type CreateSection = 'sessions' | 'encounters' | 'characters' | 'equipement' | 'spells';
+type CreateSection = 'characters' | 'equipement' | 'spells';
 
 @Component({
   selector: 'app-dm-create',
-  imports: [MatIconModule, DmCharactersComponent, DmSessionsComponent, DmEncountersComponent],
+  imports: [MatIconModule, DmCharactersComponent],
   templateUrl: './dm-create.html',
   styleUrl: './dm-create.scss',
 })

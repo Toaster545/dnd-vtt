@@ -6,6 +6,8 @@ import { ContentModule } from './content/content.module';
 import { MapsModule } from './maps/maps.module';
 import { SessionsModule } from './sessions/sessions.module';
 import { EncountersModule } from './encounters/encounters.module';
+import { CampaignsModule } from './campaigns/campaigns.module';
+import { NotesModule } from './notes/notes.module';
 
 @Module({
   imports: [
@@ -16,6 +18,8 @@ import { EncountersModule } from './encounters/encounters.module';
     MapsModule,
     SessionsModule,
     EncountersModule,
+    CampaignsModule,
+    NotesModule,
   ],
 })
 export class AppModule {}

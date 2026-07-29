@@ -1,0 +1,59 @@
+<div class="p-6 overflow-y-auto flex-1 min-h-0">
+  <div class="flex items-center gap-3 mb-5">
+    <h2 class="font-brand text-lg text-parchment m-0 flex-1">Campaigns</h2>
+    <button class="btn-outline text-sm" (click)="showForm.set(!showForm())">
+      {{ showForm() ? 'Cancel' : '+ New Campaign' }}
+    </button>
+  </div>
+
+  @if (showForm()) {
+    <div class="card card-body mb-4 max-w-lg">
+      <form (ngSubmit)="createCampaign()" class="flex flex-col gap-3">
+        <div class="field">
+          <label class="field-label">Campaign name</label>
+          <input class="field-input" [(ngModel)]="newName" name="name" required autofocus />
+        </div>
+        <div class="field">
+          <label class="field-label">Description (optional)</label>
+          <textarea class="field-input" [(ngModel)]="newDescription" name="description" rows="3"></textarea>
+        </div>
+        <div>
+          <button class="btn-primary" type="submit" [disabled]="!newName.trim() || saving()">
+            @if (saving()) { <span class="spinner-sm"></span> } @else { Create Campaign }
+          </button>
+        </div>
+      </form>
+    </div>
+  }
+
+  @if (loading()) {
+    <div class="flex justify-center mt-10"><span class="spinner-lg"></span></div>
+  } @else {
+    <ul class="divide-y divide-white/8">
+      @for (campaign of campaigns(); track campaign.id) {
+        <li>
+          <a
+            [routerLink]="['/dm/campaigns', campaign.id]"
+            class="flex items-center py-3 gap-3 cursor-pointer no-underline"
+          >
+            <div class="flex-1 min-w-0">
+              <p class="text-parchment font-medium truncate m-0">{{ campaign.name }}</p>
+              <p class="text-slate text-xs m-0 mt-0.5">
+                Join code <span class="text-gold font-mono">{{ campaign.join_code }}</span>
+                · {{ formatDate(campaign.created_at) }}
+              </p>
+            </div>
+            <mat-icon class="text-slate">chevron_right</mat-icon>
+            <button class="btn-icon text-danger/70 hover:text-danger"
+                    (click)="deleteCampaign(campaign, $event)"
+                    matTooltip="Delete campaign">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </a>
+        </li>
+      } @empty {
+        <p class="text-slate text-sm py-4">No campaigns yet.</p>
+      }
+    </ul>
+  }
+</div>

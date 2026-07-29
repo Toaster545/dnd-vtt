@@ -1,0 +1,79 @@
+<div class="p-6 overflow-y-auto flex-1 min-h-0">
+  <div class="max-w-lg mx-auto">
+    <div class="flex items-center gap-3 mb-5">
+      <h2 class="font-brand text-lg text-parchment m-0 flex-1">Your Campaigns</h2>
+      <button class="btn-outline text-sm" (click)="showJoinForm.set(!showJoinForm())">
+        {{ showJoinForm() ? 'Cancel' : '+ Join Campaign' }}
+      </button>
+    </div>
+
+    @if (showJoinForm()) {
+      <div class="card card-body mb-5">
+        <h3 class="font-brand text-sm text-parchment m-0 mb-3">Join a Campaign</h3>
+
+        @if (characters().length === 0) {
+          <p class="text-slate text-sm">
+            You don't have any characters yet — create one in the <strong class="text-parchment">Create</strong> tab first.
+          </p>
+        } @else {
+          <div class="field mb-4">
+            <label class="field-label">Which character?</label>
+            <div class="flex flex-col gap-1.5">
+              @for (character of characters(); track character.id) {
+                <button type="button"
+                  class="flex items-center gap-2 px-3 py-2 rounded border text-left text-sm w-full cursor-pointer"
+                  [class]="selectedCharacterId() === character.id ? 'border-gold/50 bg-gold/5' : 'border-white/10 hover:border-white/30'"
+                  (click)="selectCharacter(character.id!)"
+                  style="font-family: inherit;"
+                >
+                  <span class="w-4 h-4 rounded-full border flex items-center justify-center shrink-0 text-[9px]"
+                    [class]="selectedCharacterId() === character.id ? 'bg-gold border-gold text-canvas font-bold' : 'border-slate/50 text-transparent'">●</span>
+                  <span class="text-parchment">{{ character.name }}</span>
+                  <span class="text-coal text-xs">Level {{ character.level }} {{ classLabel(character) }}</span>
+                </button>
+              }
+            </div>
+            <p class="text-coal text-xs mt-2">
+              A DM-editable copy of this character is made for the campaign — your original stays untouched.
+            </p>
+          </div>
+
+          <div class="field mb-4">
+            <label class="field-label">Campaign join code</label>
+            <input class="field-input uppercase tracking-widest" [(ngModel)]="joinCode" name="joinCode" maxlength="6" placeholder="ABC123" />
+          </div>
+
+          @if (joinError()) {
+            <p class="text-danger text-sm mb-3">{{ joinError() }}</p>
+          }
+
+          <button class="btn-primary" [disabled]="!selectedCharacterId() || !joinCode.trim() || joining()" (click)="join()">
+            @if (joining()) { <span class="spinner-sm"></span> } @else { Join Campaign }
+          </button>
+        }
+      </div>
+    }
+
+    @if (loading()) {
+      <div class="flex justify-center mt-10"><span class="spinner-lg"></span></div>
+    } @else {
+      <ul class="divide-y divide-white/8">
+        @for (campaign of campaigns(); track campaign.id) {
+          <li>
+            <a [routerLink]="['/player/campaigns', campaign.id]" class="flex items-center py-3 gap-3 cursor-pointer no-underline">
+              <div class="flex-1 min-w-0">
+                <p class="text-parchment font-medium truncate m-0">{{ campaign.name }}</p>
+                @if (campaign.description) { <p class="text-slate text-xs m-0 mt-0.5">{{ campaign.description }}</p> }
+              </div>
+              <mat-icon class="text-slate">chevron_right</mat-icon>
+            </a>
+          </li>
+        } @empty {
+          <p class="text-slate text-sm py-4">
+            You haven't joined a campaign yet. Ask your DM for a join code.
+          </p>
+        }
+      </ul>
+    }
+  </div>
+</div>

@@ -1,5 +1,6 @@
 import { Component, inject, signal, computed, OnInit, OnDestroy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { Subscription } from 'rxjs';
@@ -8,17 +9,19 @@ import { ContentService, DndMonster } from '../../../../core/services/content.se
 import { CharacterService } from '../../../../core/services/character.service';
 import { BattleMapService } from '../../../../core/services/battle-map.service';
 import { Encounter, PresentPlayer } from '../../../../core/models/encounter.model';
-import { Character } from '../../../../core/models/character.model';
+import { Character, ABILITY_SHORT, Ability } from '../../../../core/models/character.model';
 import { MapToken, PlacingEntity } from '../../../../core/models/campaign.model';
 import { BattleMapComponent } from '../../../battle-map/battle-map';
 import { CharacterPlaySheetComponent } from '../character-play-sheet/character-play-sheet';
+import { ResizeHandleDirective } from '../../../../shared/directives/resize-handle.directive';
 
 @Component({
   selector: 'app-dm-play-encounters',
-  imports: [FormsModule, MatIconModule, MatTooltipModule, BattleMapComponent, CharacterPlaySheetComponent],
+  imports: [FormsModule, MatIconModule, MatTooltipModule, BattleMapComponent, CharacterPlaySheetComponent, ResizeHandleDirective],
   templateUrl: './dm-play-encounters.html',
 })
 export class DmPlayEncountersComponent implements OnInit, OnDestroy {
+  private route             = inject(ActivatedRoute);
   private encounterService = inject(EncounterService);
   private content          = inject(ContentService);
   private characterService = inject(CharacterService);
@@ -46,6 +49,14 @@ export class DmPlayEncountersComponent implements OnInit, OnDestroy {
   // Which roster entry is "armed" — clicking the map in the embedded battle-map places a token
   // built from this. Stays armed across repeated placements (see PlacingEntity in battle-map.ts).
   armedEntity = signal<PlacingEntity | null>(null);
+
+  // Roster sidebar width, drag-resizable via the handle between it and the map (see
+  // ResizeHandleDirective). Dragging right grows it, since the handle sits on its right edge.
+  rosterWidth = signal(288);
+
+  onRosterResize(dx: number) {
+    this.rosterWidth.update(w => Math.min(480, Math.max(220, w + dx)));
+  }
 
   // Every character the DM can currently see, DM-owned or a present player's own — the single
   // source `characterFor()` and `characterHp` both read from, so a joined player's token behaves
@@ -101,6 +112,12 @@ export class DmPlayEncountersComponent implements OnInit, OnDestroy {
     this.monsters.set(monsters);
     this.characters.set(characters);
     this.loading.set(false);
+
+    // A campaign session's "Play" link hands off here with ?encounterId= so the DM lands directly
+    // on that encounter's board instead of having to find it again in the flat list.
+    const encounterId = this.route.snapshot.queryParamMap.get('encounterId');
+    const target = encounterId && this.encounters().find(e => e.id === encounterId);
+    if (target) this.openEncounter(target);
   }
 
   openEncounter(encounter: Encounter) {
@@ -207,6 +224,18 @@ export class DmPlayEncountersComponent implements OnInit, OnDestroy {
 
   classLabel(c: Character): string {
     return c.subclass ? `${c.subclass} (${c.class})` : c.class;
+  }
+
+  // Content JSON keys saving throws by full ability name ("Dexterity"), capitalized — lowercase
+  // to key into ABILITY_SHORT and get the usual three-letter stat-block abbreviation instead.
+  savingThrows(monster: DndMonster): string {
+    const entries = Object.entries(monster.saving_throws ?? {});
+    return entries
+      .map(([ability, bonus]) => {
+        const short = ABILITY_SHORT[ability.toLowerCase() as Ability] ?? ability.slice(0, 3).toUpperCase();
+        return `${short} ${bonus >= 0 ? '+' : ''}${bonus}`;
+      })
+      .join(', ');
   }
 
   // Large/Huge/Gargantuan creatures occupy more than one grid cell; everything else (including

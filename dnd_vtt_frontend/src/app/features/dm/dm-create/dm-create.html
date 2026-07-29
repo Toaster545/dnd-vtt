@@ -5,14 +5,6 @@
       <mat-icon class="text-lg">person</mat-icon>
       Characters
     </button>
-    <button class="nav-item" [class.active]="activeSection() === 'sessions'" (click)="activeSection.set('sessions')">
-      <mat-icon class="text-lg">event_note</mat-icon>
-      Sessions
-    </button>
-    <button class="nav-item" [class.active]="activeSection() === 'encounters'" (click)="activeSection.set('encounters')">
-      <mat-icon class="text-lg">sports_martial_arts</mat-icon>
-      Encounters
-    </button>
     <button class="nav-item" [class.active]="activeSection() === 'equipement'" (click)="activeSection.set('equipement')">
       <mat-icon class="text-lg">backpack</mat-icon>
       Equipement
@@ -27,12 +19,6 @@
   <div class="flex-1 overflow-hidden flex flex-col">
     @switch (activeSection()) {
       @case ('characters') { <app-dm-characters class="flex flex-col flex-1 min-h-0" /> }
-      @case ('sessions') {
-        <div class="flex-1 overflow-auto p-6"><app-dm-sessions /></div>
-      }
-      @case ('encounters') {
-        <div class="flex-1 overflow-auto p-6"><app-dm-encounters /></div>
-      }
       @case ('equipement') {
         <div class="flex-1 overflow-auto p-6">
           <h2 class="font-brand text-lg text-parchment mb-3">Equipement</h2>
