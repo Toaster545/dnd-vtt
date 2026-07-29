@@ -27,7 +27,7 @@
 
       <div class="flex flex-1 overflow-hidden">
         <!-- Roster sidebar (or monster token detail, swapped in place) -->
-        <aside class="w-72 border-r border-white/10 overflow-y-auto flex-shrink-0 p-4">
+        <aside [style.width.px]="rosterWidth()" class="border-r border-white/10 overflow-y-auto flex-shrink-0 p-4">
           @if (viewingMonsterToken(); as sel) {
             <button class="btn-ghost text-sm mb-3" (click)="closeMonsterTokenView()">
               <mat-icon class="text-base">arrow_back</mat-icon> Roster
@@ -61,7 +61,12 @@
               <span class="text-xs text-slate ml-1">HP</span>
             </div>
 
-            <p class="text-xs text-slate mb-3">Speed {{ sel.monster.speed.walk ?? 0 }} ft.</p>
+            <p class="text-xs text-slate" [class.mb-3]="!savingThrows(sel.monster)">
+              Speed {{ sel.monster.speed.walk ?? 0 }} ft.
+            </p>
+            @if (savingThrows(sel.monster); as saves) {
+              <p class="text-xs text-slate mb-3">Saving Throws {{ saves }}</p>
+            }
 
             @if (sel.monster.traits?.length) {
               <h4 class="text-xs font-semibold text-slate uppercase tracking-wider mb-1.5">Traits</h4>
@@ -197,6 +202,9 @@
             }
           }
         </aside>
+
+        <div appResizeHandle (resize)="onRosterResize($event)"
+             class="w-1.5 flex-shrink-0 hover:bg-gold/40 active:bg-gold/60 transition-colors"></div>
 
         <!-- Map -->
         @if (encounter.map_id) {

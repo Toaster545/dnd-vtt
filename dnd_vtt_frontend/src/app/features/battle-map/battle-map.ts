@@ -11,10 +11,11 @@ import { BattleMapService } from '../../core/services/battle-map.service';
 import { AuthService } from '../../core/services/auth.service';
 import { MapToken, BattleMap, PlacingEntity } from '../../core/models/campaign.model';
 import { ConfirmService } from '../../shared/confirm.service';
+import { ResizeHandleDirective } from '../../shared/directives/resize-handle.directive';
 
 @Component({
   selector: 'app-battle-map',
-  imports: [RouterLink, FormsModule, MatIconModule, MatTooltipModule],
+  imports: [RouterLink, FormsModule, MatIconModule, MatTooltipModule, ResizeHandleDirective],
   templateUrl: './battle-map.html',
   styleUrl: './battle-map.scss',
 })
@@ -48,6 +49,16 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
 
   newToken = { label: 'Token', color: '#e74c3c', size: 1, is_player: false };
 
+  // Right-hand sidebar width — the DM's Place a Token/Turn Order panel or the player's read-only
+  // Turn Order panel, whichever is showing (they're mutually exclusive, so one signal covers
+  // both). Drag-resizable via the handle between it and the map; that handle sits on the
+  // sidebar's left edge, so dragging right shrinks it.
+  rightAsideWidth = signal(256);
+
+  onRightAsideResize(dx: number) {
+    this.rightAsideWidth.update(w => Math.min(420, Math.max(220, w - dx)));
+  }
+
   // The token list re-sorted by initiative, highest first, with unrolled tokens sorted last.
   turnOrder = computed(() => {
     return [...this.tokens()].sort((a, b) => {
@@ -62,6 +73,13 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
   private mapLayer?: Konva.Layer;
   private tokenLayer?: Konva.Layer;
   private gridLayer?: Konva.Layer;
+  private konvaImg?: Konva.Image;
+  private img?: HTMLImageElement;
+  private gridSize = 50;
+  // Watches the canvas's own container rather than the window, since dragging either flanking
+  // sidebar's resize handle (see ResizeHandleDirective) resizes this container without ever
+  // firing a window resize event.
+  private resizeObserver?: ResizeObserver;
   private tokenSub?: Subscription;
   private mapId!: string;
   private routeMapId: string | null = null;
@@ -104,6 +122,7 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnDestroy() {
     this.tokenSub?.unsubscribe();
+    this.resizeObserver?.disconnect();
     this.stage?.destroy();
   }
 
@@ -113,6 +132,11 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
     this.error.set(null);
     this.tokenSub?.unsubscribe();
     this.tokenSub = undefined;
+    // #stageContainer is a stable element reused across map loads (see the template comment), so
+    // the observer from a previous map must be torn down before buildStage() attaches a new one —
+    // otherwise every map switch would stack another observer on the same element.
+    this.resizeObserver?.disconnect();
+    this.resizeObserver = undefined;
     this.stage?.destroy();
     this.stage = undefined;
 
@@ -128,51 +152,12 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private initStage() {
     const map = this.map()!;
-    const container = this.stageContainer.nativeElement;
-    const gridSize = map.grid_size || 50;
+    this.gridSize = map.grid_size || 50;
 
     const img = new Image();
     img.onload = () => {
-      const scale = Math.min(container.clientWidth / img.width, container.clientHeight / img.height);
-      const w = img.width * scale;
-      const h = img.height * scale;
-
-      this.stage = new Konva.Stage({ container, width: container.clientWidth, height: container.clientHeight });
-      this.mapLayer = new Konva.Layer();
-      this.gridLayer = new Konva.Layer();
-      this.tokenLayer = new Konva.Layer();
-      this.stage.add(this.mapLayer, this.gridLayer, this.tokenLayer);
-
-      // Grid lines are purely decorative — nothing on this layer is ever clicked or dragged.
-      // Konva otherwise assigns every shape a unique hit-test color, and a grid can easily be
-      // hundreds of lines; browsers with canvas anti-fingerprinting ("farbling", e.g. Firefox's
-      // resistFingerprinting, or Brave) perturb the hit-canvas pixels enough that Konva can't
-      // read back the color it just assigned, so it keeps retrying and warning per shape — which
-      // can make the whole board janky or unresponsive. Marking the layer non-listening skips hit
-      // registration for all of it.
-      this.gridLayer.listening(false);
-
-      const konvaImg = new Konva.Image({ image: img, x: 0, y: 0, width: w, height: h });
-      this.mapLayer.add(konvaImg);
-      this.drawGrid(w, h, gridSize * scale);
-      this.cellSize = gridSize * scale;
-
-      this.stage.on('click tap', (e) => {
-        if (e.target === konvaImg && this.auth.isAdmin()) {
-          const pos = this.stage!.getPointerPosition()!;
-          const col = Math.floor(pos.x / (gridSize * scale));
-          const row = Math.floor(pos.y / (gridSize * scale));
-          this.addTokenAt(col, row, gridSize * scale);
-        }
-      });
-
-      this.tokenSub = this.mapService.watchTokens(this.mapId).subscribe(tokens => {
-        this.tokens.set(tokens);
-        this.lastTokens = tokens;
-        this.renderTokens(tokens, gridSize * scale);
-      });
-
-      this.loading.set(false);
+      this.img = img;
+      this.buildStage();
     };
     // Without this, a broken/missing image URL (moved upload, wrong host, etc.) leaves the view
     // stuck on the loading spinner forever with no indication anything went wrong.
@@ -183,8 +168,88 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
     img.src = map.image_url;
   }
 
+  // Creates the Konva stage/layers once the image has decoded, then hands off to reflow() for
+  // the actual size-dependent layout — both the initial one and every one after, so there's a
+  // single source of truth for "given the current container size, what should this look like."
+  private buildStage() {
+    const container = this.stageContainer.nativeElement;
+    // The container can still be laid out at zero size the instant the image finishes decoding
+    // (e.g. an ancestor flex chain that hasn't stretched yet) — proceeding would leave `cellSize`
+    // at 0, and drawGrid's `for (x += cellSize)` loop would then spin forever with x stuck at 0,
+    // hanging the tab. Retrying on the next frame costs nothing once real layout lands, and never
+    // blocks the main thread the way that loop would.
+    if (!container.clientWidth || !container.clientHeight) {
+      requestAnimationFrame(() => this.buildStage());
+      return;
+    }
+
+    this.stage = new Konva.Stage({ container, width: container.clientWidth, height: container.clientHeight });
+    this.mapLayer = new Konva.Layer();
+    this.gridLayer = new Konva.Layer();
+    this.tokenLayer = new Konva.Layer();
+    this.stage.add(this.mapLayer, this.gridLayer, this.tokenLayer);
+
+    // Grid lines are purely decorative — nothing on this layer is ever clicked or dragged.
+    // Konva otherwise assigns every shape a unique hit-test color, and a grid can easily be
+    // hundreds of lines; browsers with canvas anti-fingerprinting ("farbling", e.g. Firefox's
+    // resistFingerprinting, or Brave) perturb the hit-canvas pixels enough that Konva can't
+    // read back the color it just assigned, so it keeps retrying and warning per shape — which
+    // can make the whole board janky or unresponsive. Marking the layer non-listening skips hit
+    // registration for all of it.
+    this.gridLayer.listening(false);
+
+    this.konvaImg = new Konva.Image({ image: this.img!, x: 0, y: 0, width: 0, height: 0 });
+    this.mapLayer.add(this.konvaImg);
+
+    this.stage.on('click tap', (e) => {
+      if (e.target === this.konvaImg && this.auth.isAdmin()) {
+        const pos = this.stage!.getPointerPosition()!;
+        const col = Math.floor(pos.x / this.cellSize);
+        const row = Math.floor(pos.y / this.cellSize);
+        this.addTokenAt(col, row, this.cellSize);
+      }
+    });
+
+    this.tokenSub = this.mapService.watchTokens(this.mapId).subscribe(tokens => {
+      this.tokens.set(tokens);
+      this.lastTokens = tokens;
+      this.renderTokens(tokens, this.cellSize);
+    });
+
+    this.resizeObserver = new ResizeObserver(() => this.reflow());
+    this.resizeObserver.observe(container);
+
+    this.reflow();
+    this.loading.set(false);
+  }
+
+  // Recomputes scale from the container's current size and redraws everything that depends on
+  // it. Called once right after the stage is built, and again on every container resize (a
+  // no-op if the container is momentarily at zero size — the observer fires again once it isn't).
+  private reflow() {
+    const container = this.stageContainer.nativeElement;
+    const img = this.img;
+    if (!this.stage || !img || !container.clientWidth || !container.clientHeight) return;
+
+    const scale = Math.min(container.clientWidth / img.width, container.clientHeight / img.height);
+    const w = img.width * scale;
+    const h = img.height * scale;
+    this.cellSize = this.gridSize * scale;
+
+    this.stage.width(container.clientWidth);
+    this.stage.height(container.clientHeight);
+    this.konvaImg!.width(w);
+    this.konvaImg!.height(h);
+
+    this.drawGrid(w, h, this.cellSize);
+    this.renderTokens(this.lastTokens, this.cellSize);
+  }
+
   private drawGrid(w: number, h: number, cellSize: number) {
     const layer = this.gridLayer!;
+    // reflow() calls this again on every resize, so the previous frame's shape has to go first —
+    // same reasoning as renderTokens()'s own destroyChildren() below.
+    layer.destroyChildren();
     // One Konva.Shape drawing every line itself, rather than one Konva.Line per line (which can
     // easily be hundreds on a large map). Every Konva Shape gets a unique hit-test color assigned
     // in its constructor regardless of `listening` — on a browser with canvas anti-fingerprinting
@@ -228,13 +293,28 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
       // Group with up to 4 child shapes (Circle/Text/Rect/Text) — same rationale as drawGrid:
       // every extra Konva Shape is another hit-color assignment at construction time, and that
       // gets expensive on canvas-farbling browsers (Firefox/Safari private-browsing windows in
-      // particular default to it even when the regular window doesn't). Konva reuses this same
-      // sceneFunc for hit-testing by default (swapping in the shape's assigned hit color), so
-      // click/drag/tap behave exactly as before with no separate hitFunc needed.
+      // particular default to it even when the regular window doesn't).
       const shape = new Konva.Shape({
         x: cx,
         y: cy,
         draggable: this.auth.isAdmin(),
+        // Never actually rendered (sceneFunc paints the real look manually) — just needs to be
+        // truthy so Konva's hasFill() considers this shape fillable, which fillStrokeShape() in
+        // hitFunc below requires before it will paint anything to the hit canvas at all.
+        fill: '#000',
+        // Konva can only reuse sceneFunc for hit-testing automatically when it draws via its own
+        // fillStrokeShape()/context helpers — ours paints with raw context.fillStyle/fill() calls
+        // (needed for the label/HP badge), which Konva has no way to intercept, so the hit canvas
+        // ends up with the shape's real visual colors instead of its assigned lookup color and
+        // hit-testing never resolves to it: clicks and drags silently fall through to the map
+        // image underneath. This explicit hitFunc — using fillStrokeShape(), which Konva *does*
+        // swap the color on — gives it a real (if simplified, circle-only) clickable region.
+        hitFunc: (context, hitShape) => {
+          context.beginPath();
+          context.arc(0, 0, r - 3, 0, Math.PI * 2);
+          context.closePath();
+          context.fillStrokeShape(hitShape);
+        },
         sceneFunc: context => {
           context.beginPath();
           context.arc(0, 0, r - 3, 0, Math.PI * 2);
@@ -281,6 +361,12 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
           }
         },
       });
+      // Konva can't infer a bounding box from an arbitrary sceneFunc, so a plain custom Shape
+      // reports a zero-size getSelfRect() by default. Left unset, that zero-size box can make
+      // hit-testing skip the shape entirely (falling through to the map image beneath it) —
+      // clicks silently fail to select the token, and drags never start. This just tells Konva
+      // where the shape actually is; it doesn't touch how sceneFunc draws it.
+      shape.getSelfRect = () => ({ x: -r, y: -r, width: r * 2, height: r * 2 });
 
       shape.on('click tap', () => this.tokenClicked.emit(token));
       if (this.auth.isAdmin()) {

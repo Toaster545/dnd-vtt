@@ -22,6 +22,13 @@ interface StoredRejoin { encounterId: string; }
   selector: 'app-player-campaign-session',
   imports: [MatIconModule, MatTooltipModule, BattleMapComponent, CharacterPlaySheetComponent, NotesPanelComponent],
   templateUrl: './player-campaign-session.html',
+  // Routed in via player-shell's <router-outlet> rather than embedded with an explicit sizing
+  // class the way e.g. <app-battle-map class="flex-1 min-w-0"> is — the router inserts this
+  // component as a plain sibling of the outlet, so without a host class it stays an unsized
+  // inline element and the template's `h-full` has nothing to be 100% of. That left the battle
+  // map's container at clientHeight 0, which drove its grid-drawing loop into a tab-hanging
+  // infinite loop the moment a player joined an active encounter.
+  host: { class: 'flex flex-col flex-1 min-h-0 overflow-hidden' },
 })
 export class PlayerCampaignSessionComponent implements OnInit, OnDestroy {
   private route            = inject(ActivatedRoute);
