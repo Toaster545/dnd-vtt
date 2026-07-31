@@ -20,9 +20,11 @@ export class MapsService {
     private content: ContentService,
   ) {}
 
-  async findAll() {
+  async findAll(campaignId: string, user: RequestUser) {
+    await this.assertCampaignAccess(campaignId, user);
     const result = await this.db.execute(
-      'SELECT * FROM battle_maps ORDER BY created_at DESC',
+      'SELECT * FROM battle_maps WHERE campaign_id = ? ORDER BY created_at DESC',
+      [campaignId],
     );
     return result.rows;
   }

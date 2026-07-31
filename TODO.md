@@ -39,6 +39,7 @@
     - [x] Measuring and player movement
     - [x] fog of war
     - [x] Add player icons
+    - [ ] Creating encounters with images
 - [ ] Dashboard
     - [ ] Latest campaign and character
     - [ ] Updates to character (leveling up)

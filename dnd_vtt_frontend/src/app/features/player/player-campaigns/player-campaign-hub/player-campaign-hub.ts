@@ -5,6 +5,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { CampaignService } from '../../../../core/services/campaign.service';
 import { CharacterService } from '../../../../core/services/character.service';
 import { AuthService } from '../../../../core/services/auth.service';
+import { RecentActivityService } from '../../../../core/services/recent-activity.service';
 import { CampaignHub, CampaignMember } from '../../../../core/models/campaign.model';
 import { Character } from '../../../../core/models/character.model';
 import { NotesPanelComponent } from '../../../../shared/components/notes-panel/notes-panel';
@@ -30,6 +31,7 @@ export class PlayerCampaignHubComponent implements OnInit {
   private router           = inject(Router);
   private campaignService  = inject(CampaignService);
   private characterService = inject(CharacterService);
+  private recentActivity   = inject(RecentActivityService);
   auth                     = inject(AuthService);
 
   campaignId = this.route.snapshot.paramMap.get('campaignId')!;
@@ -42,6 +44,7 @@ export class PlayerCampaignHubComponent implements OnInit {
   sheetCharacter = signal<Character | null>(null);
 
   async ngOnInit() {
+    this.recentActivity.markCampaignViewed(this.campaignId);
     this.campaign.set(await this.campaignService.getById(this.campaignId));
     this.loading.set(false);
   }

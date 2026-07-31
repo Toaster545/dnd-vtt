@@ -1,12 +1,8 @@
-<div [class]="embedded() ? 'flex flex-col h-full' : 'flex flex-col h-screen'">
+<app-main-layout [embedded]="embedded()">
   @if (!embedded()) {
-    <header class="app-toolbar">
-      <button class="btn-icon" routerLink="/home" matTooltip="Back">
-        <mat-icon>arrow_back</mat-icon>
-      </button>
-      <span class="toolbar-title flex-1">{{ map()?.name ?? 'Battle Map' }}</span>
+    <app-page-header layoutHeader [title]="map()?.name ?? 'Battle Map'">
       @if (controlsMap()) { <span class="toolbar-badge">DM View</span> }
-    </header>
+    </app-page-header>
   }
 
   <div class="flex flex-1 overflow-hidden">
@@ -73,4 +69,4 @@
       </aside>
     }
   </div>
-</div>
+</app-main-layout>

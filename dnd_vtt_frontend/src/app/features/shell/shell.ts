@@ -8,6 +8,8 @@ import { CampaignService } from '../../core/services/campaign.service';
 import { EncounterService } from '../../core/services/encounter.service';
 import { EncounterStartedEvent } from '../../core/models/encounter.model';
 import { CharactersComponent } from '../characters/characters';
+import { MainLayoutComponent } from '../../shared/layout/main-layout/main-layout';
+import { AppHeaderComponent } from '../../shared/layout/app-header/app-header';
 
 type Tab = 'characters' | 'campaigns';
 
@@ -19,7 +21,7 @@ type Tab = 'characters' | 'campaigns';
 // global role — see app.routes.ts.
 @Component({
   selector: 'app-shell',
-  imports: [MatIconModule, MatTooltipModule, RouterOutlet, CharactersComponent],
+  imports: [MatIconModule, MatTooltipModule, RouterOutlet, CharactersComponent, MainLayoutComponent, AppHeaderComponent],
   templateUrl: './shell.html',
 })
 export class ShellComponent implements OnInit, OnDestroy {
@@ -80,5 +82,13 @@ export class ShellComponent implements OnInit, OnDestroy {
   goToCampaigns() {
     this.activeTab.set('campaigns');
     void this.router.navigate(['/home/campaigns']);
+  }
+
+  goToDashboard() {
+    void this.router.navigate(['/dashboard']);
+  }
+
+  goToSettings() {
+    void this.router.navigate(['/settings']);
   }
 }
