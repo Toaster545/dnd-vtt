@@ -5,8 +5,6 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { CharacterService } from '../../core/services/character.service';
 import { RecentActivityService } from '../../core/services/recent-activity.service';
 import { Character } from '../../core/models/character.model';
-import { CharacterWizardComponent } from './character-wizard/character-wizard';
-import { CharacterPlaySheetComponent } from './character-play-sheet/character-play-sheet';
 import { ConfirmService } from '../../shared/confirm.service';
 
 // campaign_name/edit_unlocked are only present on campaign copies (joined in from the campaigns/
@@ -14,11 +12,16 @@ import { ConfirmService } from '../../shared/confirm.service';
 // attached to any campaign yet.
 type CharacterListItem = Character & { campaign_name?: string; edit_unlocked?: boolean };
 
+// The list only — creating/editing (the wizard) and viewing/playing (the sheet) are their own
+// routes (/home/characters/new, /home/characters/:id/edit, /home/characters/:id — see
+// character-wizard-page/ and character-sheet-page/), not signal-toggled sub-views of this
+// component, so they're deep-linkable and can carry their own route data.
 @Component({
   selector: 'app-characters',
-  imports: [CharacterWizardComponent, CharacterPlaySheetComponent, MatIconModule, MatTooltipModule],
+  imports: [MatIconModule, MatTooltipModule],
   templateUrl: './characters.html',
   styleUrl: './characters.scss',
+  host: { class: 'flex flex-col flex-1 min-h-0' },
 })
 export class CharactersComponent implements OnInit {
   private characterService = inject(CharacterService);
@@ -27,11 +30,6 @@ export class CharactersComponent implements OnInit {
   private router = inject(Router);
 
   characters = signal<CharacterListItem[]>([]);
-  editingCharacter = signal<Character | null>(null);
-  showWizard = signal(false);
-
-  sheetCharacter = signal<Character | null>(null);
-  sheetCampaignId = signal<string | null>(null);
 
   async ngOnInit() { await this.load(); }
 
@@ -43,17 +41,6 @@ export class CharactersComponent implements OnInit {
     this.characters.set(this.recentActivity.sortByRecentlyViewed([...copies, ...templates]));
   }
 
-  // Strip campaign_name back off before handing the character to the play sheet — it's a joined
-  // display field, not a real character column, and would otherwise get pulled into the JSON
-  // data blob the next time the sheet persists a change.
-  viewSheet(item: CharacterListItem) {
-    if (item.id) this.recentActivity.markCharacterViewed(item.id);
-    const { campaign_name, edit_unlocked, ...character } = item;
-    void campaign_name; void edit_unlocked;
-    this.sheetCharacter.set(character);
-    this.sheetCampaignId.set(character.campaign_id ?? null);
-  }
-
   // A campaign copy is DM-locked to the build wizard by default — the DM can grant full edit
   // access per-member (campaign_members.edit_unlocked, toggled from the campaign hub roster).
   // Mirrors the same rule CharactersService.update() enforces server-side; hiding the button here
@@ -62,33 +49,21 @@ export class CharactersComponent implements OnInit {
     return !c.campaign_id || !!c.edit_unlocked;
   }
 
-  async onCharacterSheetSaved(character: Character) {
-    this.sheetCharacter.set(character);
-    await this.load();
+  openRow(c: CharacterListItem) {
+    void this.router.navigate(this.canEdit(c) ? ['/home/characters', c.id, 'edit'] : ['/home/characters', c.id]);
   }
 
-  closeSheet() {
-    this.sheetCharacter.set(null);
-    this.sheetCampaignId.set(null);
+  viewSheet(c: CharacterListItem) {
+    void this.router.navigate(['/home/characters', c.id]);
   }
 
-  // getMyCampaignCopies() only ever returns campaigns the caller has actively joined as a member
-  // (see CharacterService.getMyCampaignCopies), so this always lands on the member hub view, even
-  // if the caller also happens to own other campaigns elsewhere.
-  openCampaign() {
-    const id = this.sheetCampaignId();
-    if (!id) return;
-    void this.router.navigate(['/home/campaigns', id]);
+  openEdit(c: CharacterListItem) {
+    void this.router.navigate(['/home/characters', c.id, 'edit']);
   }
 
-  openCreate() { this.editingCharacter.set(null); this.showWizard.set(true); }
-  openEdit(character: Character) {
-    if (character.id) this.recentActivity.markCharacterViewed(character.id);
-    this.editingCharacter.set(character);
-    this.showWizard.set(true);
+  openCreate() {
+    void this.router.navigate(['/home/characters/new']);
   }
-  async onSaved() { this.showWizard.set(false); await this.load(); }
-  onCancelled() { this.showWizard.set(false); this.load(); }
 
   async deleteCharacter(id: string) {
     const char = this.characters().find(c => c.id === id);

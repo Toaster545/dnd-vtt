@@ -1,6 +1,8 @@
 import { Component, inject, signal, computed, effect, output, OnInit, OnDestroy, input } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
+import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { ContentService, DndRace, DndClass, DndBackground, DndItem, DndSpell, DndFeat, TraitEffect, TraitGrant } from '../../../core/services/content.service';
 import { ClassChoiceSource, averageHpFormula, collectTraitEffects, reachableGrants, unarmoredDefenseBonus } from '../../../core/utils/character-effects';
 import { isStructuredEquipment, resolveStartingEquipment } from '../../../core/utils/starting-equipment';
@@ -32,6 +34,8 @@ const STEPS = ['Race', 'Class', 'Background', 'Abilities', 'Equipment', 'Spells'
   selector: 'app-character-wizard',
   imports: [
     FormsModule,
+    MatIconModule,
+    MatTooltipModule,
     RaceStepComponent,
     ClassStepComponent,
     BackgroundStepComponent,
@@ -431,6 +435,7 @@ export class CharacterWizardComponent implements OnInit, OnDestroy {
   }
 
   async ngOnInit() {
+
     const [races, classes, backgrounds, items, spells, feats] = await Promise.all([
       this.content.getRaces(),
       this.content.getClasses(),

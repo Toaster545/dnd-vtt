@@ -68,6 +68,7 @@ export class DatabaseService implements OnModuleInit {
     if (version < 13) await this.applyV13();
     if (version < 14) await this.applyV14();
     if (version < 15) await this.applyV15();
+    if (version < 16) await this.applyV16();
   }
 
   // ── V1: initial schema (explicit columns on characters) ─────────────────────
@@ -475,5 +476,22 @@ export class DatabaseService implements OnModuleInit {
     this.logger.log(
       'Applied schema migration v15 (campaign member party visibility)',
     );
+  }
+
+  // ── V16: per-user "last visited" tracking for campaigns, so the campaign list can be ordered
+  // by recency of use rather than just creation date — one row per (campaign, user), upserted
+  // every time that user successfully loads the campaign hub (see CampaignsService.findOne).
+  private async applyV16() {
+    await this.db.execute(`
+      CREATE TABLE campaign_visits (
+        campaign_id TEXT NOT NULL REFERENCES campaigns(id) ON DELETE CASCADE,
+        user_id TEXT NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
+        visited_at TEXT NOT NULL,
+        PRIMARY KEY (campaign_id, user_id)
+      )
+    `);
+
+    await this.db.execute(`PRAGMA user_version = 16`);
+    this.logger.log('Applied schema migration v16 (campaign last-visited tracking)');
   }
 }

@@ -5,12 +5,14 @@
     </div>
   } @else {
 
-    <div class="flex items-end gap-3 flex-shrink-0 px-6 pt-4">
+    <div class="flex items-end gap-3 flex-shrink-0 px-6 pt-4 bg-black/40">
+      <button class="btn-icon" (click)="cancelAndSave()" matTooltip="Back to characters">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
       <div class="field">
-        <label class="field-label">Portrait</label>
         <button
           type="button"
-          class="w-9 h-9 rounded-full overflow-hidden border border-white/10 hover:border-gold/60 transition-colors cursor-pointer p-0"
+          class="w-11 h-11 rounded-full overflow-hidden border border-white/10 hover:border-gold/60 transition-colors cursor-pointer p-0"
           (click)="openPortraitPicker()"
           title="Choose character portrait"
         >
@@ -28,7 +30,7 @@
     </div>
 
     <!-- Step tabs -->
-    <div class="flex border-b border-white/10 overflow-x-auto flex-shrink-0">
+    <div class="flex border-b border-white/10 overflow-x-auto flex-shrink-0 bg-black/40">
       @for (label of steps; track $index) {
         <button
           class="flex items-center gap-2 px-5 py-3.5 text-sm font-medium whitespace-nowrap border-b-2 transition-colors border-0 cursor-pointer"

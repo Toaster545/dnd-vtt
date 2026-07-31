@@ -95,7 +95,7 @@
     <div class="flex flex-col gap-4">
       @for (campaign of campaigns(); track campaign.id) {
         <div
-          class="relative rounded-lg overflow-hidden border border-white/10 bg-cover bg-center bg-elevated min-h-20"
+          class="relative rounded-lg overflow-hidden border border-transparent bg-cover bg-center bg-elevated min-h-20 hover:border-white/10"
           [style.background-image]="campaign.background_url ? 'linear-gradient(to bottom, rgba(13,14,22,0.25), rgba(13,14,22,0.92)), url(' + campaign.background_url + ')' : null"
         >
           <a [routerLink]="campaignLink(campaign)" class="flex flex-col justify-end h-full min-h-30 p-5 cursor-pointer no-underline">

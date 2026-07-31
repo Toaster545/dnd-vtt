@@ -24,13 +24,41 @@
             <span class="text-slate">Email</span>
             <span class="text-parchment">{{ auth.profile()?.email }}</span>
           </div>
-          <div class="flex justify-between text-sm">
-            <span class="text-slate">Role</span>
-            <span class="text-parchment capitalize">{{ auth.profile()?.role }}</span>
-          </div>
-          <div class="flex justify-between text-sm">
-            <span class="text-slate">Member Since</span>
-            <span class="text-parchment">{{ formatDate(auth.profile()?.created_at) }}</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header border-b border-white/10">
+          <h3 class="font-brand text-parchment m-0">Appearance</h3>
+        </div>
+        <div class="card-body">
+          <div class="field-label mb-2">Background</div>
+          <div class="grid grid-cols-2 sm:grid-cols-5 gap-3">
+            @for (option of background.options(); track option.id) {
+              <button
+                type="button"
+                class="flex flex-col items-center gap-1.5 rounded-md border p-1.5 transition-colors cursor-pointer"
+                [class.border-gold]="background.current() === option.id"
+                [class.border-white/10]="background.current() !== option.id"
+                (click)="background.set(option.id)"
+              >
+                @if (option.imageUrl) {
+                  <span
+                    class="block w-full h-12 rounded bg-cover bg-center"
+                    [style.background-image]="customBackgroundCss(option.imageUrl)"
+                  ></span>
+                } @else {
+                  <span class="bg-canvas bg-image-{{ option.id }} block w-full h-12 rounded"></span>
+                }
+                <span
+                  class="text-xs truncate max-w-full"
+                  [class.text-gold]="background.current() === option.id"
+                  [class.text-slate]="background.current() !== option.id"
+                >
+                  {{ option.label }}
+                </span>
+              </button>
+            }
           </div>
         </div>
       </div>
