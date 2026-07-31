@@ -129,6 +129,7 @@ export class CharacterDisplayComponent implements OnInit {
       weapon_masteries: 'Weapon Masteries',
       bardic_die: 'Bardic Inspiration Die',
       channel_divinity: 'Channel Divinity',
+      wild_shape_uses: 'Wild Shape',
     };
     const values = Object.entries(lvl.class_specific ?? {}).map(([k, v]) => ({
       label: LABELS[k] ?? k,
