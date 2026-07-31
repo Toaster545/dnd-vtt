@@ -1,0 +1,49 @@
+<div class="flex flex-col h-screen">
+  <header class="app-toolbar">
+    <span class="toolbar-title">D&amp;D Campaign</span>
+
+    <nav class="flex gap-1 mx-auto">
+      <button class="btn-ghost text-sm gap-1.5"
+              [class.bg-white/10]="activeTab() === 'characters'"
+              (click)="selectCharacters()">
+        <mat-icon class="text-base">badge</mat-icon> Characters
+      </button>
+      <button class="btn-ghost text-sm gap-1.5"
+              [class.bg-white/10]="activeTab() === 'campaigns'"
+              (click)="goToCampaigns()">
+        <mat-icon class="text-base">groups</mat-icon> Campaigns
+      </button>
+    </nav>
+
+    <div class="flex items-center gap-2 ml-auto">
+      <span class="text-sm text-slate">{{ auth.profile()?.username }}</span>
+      @if (auth.isAdmin()) { <span class="toolbar-badge">Admin</span> }
+      <button class="btn-icon" (click)="auth.signOut()" matTooltip="Sign out">
+        <mat-icon>logout</mat-icon>
+      </button>
+    </div>
+  </header>
+
+  @if (liveAlert(); as alert) {
+    <div class="flex items-center gap-3 px-4 py-2.5 bg-gold/10 border-b border-gold/30 flex-shrink-0">
+      <mat-icon class="text-gold text-base">bolt</mat-icon>
+      <span class="text-sm text-parchment flex-1">
+        <strong>{{ alert.name }}</strong> just went live!
+      </span>
+      <button class="btn-primary text-xs px-3 py-1.5" (click)="joinLiveAlert()">Join now</button>
+      <button class="btn-icon" (click)="dismissAlert()" matTooltip="Dismiss">
+        <mat-icon class="text-base">close</mat-icon>
+      </button>
+    </div>
+  }
+
+  <div class="flex-1 overflow-hidden flex flex-col min-h-0">
+    @if (activeTab() === 'characters') {
+      <app-characters class="flex flex-col flex-1 min-h-0" />
+    } @else {
+      <div class="flex-1 min-h-0 overflow-hidden flex flex-col">
+        <router-outlet></router-outlet>
+      </div>
+    }
+  </div>
+</div>

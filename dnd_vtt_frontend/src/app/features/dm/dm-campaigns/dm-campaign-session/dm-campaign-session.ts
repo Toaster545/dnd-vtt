@@ -147,7 +147,7 @@ export class DmCampaignSessionComponent implements OnInit, OnDestroy {
   }
 
   backToHub() {
-    void this.router.navigate(['/dm/campaigns', this.campaignId]);
+    void this.router.navigate(['/home/campaigns/manage', this.campaignId]);
   }
 
   startCreate() {

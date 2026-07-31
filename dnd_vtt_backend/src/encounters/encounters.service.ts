@@ -70,6 +70,14 @@ export class EncountersService {
   }
 
   async create(dmId: string, dto: CreateEncounterDto) {
+    const session = await this.db.execute(
+      'SELECT dm_id FROM sessions WHERE id = ?',
+      [dto.session_id],
+    );
+    const sessionRow = session.rows[0];
+    if (!sessionRow) throw new NotFoundException('Session not found');
+    if (sessionRow.dm_id !== dmId) throw new ForbiddenException();
+
     const id = randomUUID();
     await this.db.execute(
       `INSERT INTO encounters (id, dm_id, session_id, name, map_id, monsters, character_ids)

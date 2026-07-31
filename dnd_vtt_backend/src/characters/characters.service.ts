@@ -57,11 +57,16 @@ export class CharactersService {
   // CampaignsService.join), the counterpart to findAllForUser's templates-only list. Powers the
   // player's "Characters" tab, which lists each campaign's local copy alongside which campaign
   // it belongs to (campaign_id is NOT NULL ... REFERENCES campaigns, so the inner join is safe).
+  // Also joins campaign_members.edit_unlocked (same campaign_id + user_id, since a copy's owner
+  // is always its own campaign_members row) so the list can show/hide the full-edit wizard entry
+  // point without a second round trip — mirrors the same flag CharactersService.update() enforces.
   async findCampaignCopiesForUser(userId: string) {
     const result = await this.db.execute(
-      `SELECT ch.*, c.name AS campaign_name
+      `SELECT ch.*, c.name AS campaign_name, cm.edit_unlocked AS edit_unlocked
        FROM characters ch
        JOIN campaigns c ON c.id = ch.campaign_id
+       LEFT JOIN campaign_members cm
+         ON cm.campaign_id = ch.campaign_id AND cm.user_id = ch.user_id AND cm.status = 'active'
        WHERE ch.user_id = ? AND ch.campaign_id IS NOT NULL
        ORDER BY ch.updated_at DESC`,
       [userId],
@@ -69,6 +74,7 @@ export class CharactersService {
     return result.rows.map((r) => ({
       ...this.deserialize(r),
       campaign_name: r.campaign_name,
+      edit_unlocked: !!r.edit_unlocked,
     }));
   }
 
@@ -83,19 +89,35 @@ export class CharactersService {
     return this.deserialize(row);
   }
 
-  // Same lookup, but a DM (admin) can read/edit any character, not just ones their own account
-  // happens to own. This app is single-campaign self-hosted (see CLAUDE.md) — "admin" means the
-  // DM running the game, who needs to see and manage whatever character a player actually brings
-  // into an encounter, not just characters created under the DM's own login.
+  // Same lookup, but the DM owning a character's campaign can read/edit it too, not just their
+  // own account's characters — a DM needs to see and manage whatever character copy a player
+  // actually brings into their campaign, not just characters created under the DM's own login.
   async findOneReadable(id: string, user: RequestUser) {
-    if (user.role !== 'admin') return this.findOne(id, user.id);
     const result = await this.db.execute(
       'SELECT * FROM characters WHERE id = ?',
       [id],
     );
     const row = result.rows[0];
     if (!row) throw new NotFoundException('Character not found');
-    return this.deserialize(row);
+    if (row.user_id === user.id) return this.deserialize(row);
+    if (
+      row.campaign_id &&
+      (await this.isCampaignOwner(row.campaign_id as string, user.id))
+    ) {
+      return this.deserialize(row);
+    }
+    throw new ForbiddenException();
+  }
+
+  private async isCampaignOwner(
+    campaignId: string,
+    userId: string,
+  ): Promise<boolean> {
+    const result = await this.db.execute(
+      'SELECT id FROM campaigns WHERE id = ? AND dm_id = ?',
+      [campaignId, userId],
+    );
+    return result.rows.length > 0;
   }
 
   async create(userId: string, body: Record<string, unknown>) {
@@ -127,7 +149,10 @@ export class CharactersService {
     // carve-outs: the DM can grant full edit access per-member (campaign_members.edit_unlocked),
     // and regardless of that grant, a small whitelist of play-sheet fields (HP, rest/resource
     // uses, equip/prepare toggles) is always player-writable — see PLAYER_EDITABLE_FIELDS.
-    if (existing.campaign_id && user.role !== 'admin') {
+    const isOwningDm =
+      !!existing.campaign_id &&
+      (await this.isCampaignOwner(existing.campaign_id as string, user.id));
+    if (existing.campaign_id && !isOwningDm) {
       const unlocked = await this.hasEditAccess(
         existing.campaign_id as string,
         user.id,

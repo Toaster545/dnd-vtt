@@ -34,7 +34,7 @@
         <ul class="divide-y divide-white/8">
           @for (session of c.sessions; track session.id) {
             <li>
-              <a [routerLink]="['/player/campaigns', campaignId, 'sessions', session.id]"
+              <a [routerLink]="['/home/campaigns', campaignId, 'sessions', session.id]"
                  class="flex items-center py-3 px-2 -mx-2 gap-3 rounded cursor-pointer no-underline hover:bg-white/5 transition-colors">
                 <div class="flex-1 min-w-0">
                   <p class="text-parchment font-medium truncate m-0">{{ session.name }}</p>

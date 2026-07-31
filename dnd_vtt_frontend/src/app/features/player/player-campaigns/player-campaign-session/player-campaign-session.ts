@@ -14,7 +14,7 @@ import { Character } from '../../../../core/models/character.model';
 import { BattleMap, CampaignMember, MapToken } from '../../../../core/models/campaign.model';
 import { Session } from '../../../../core/models/session.model';
 import { BattleMapComponent } from '../../../battle-map/battle-map';
-import { CharacterPlaySheetComponent } from '../../../dm/dm-play/character-play-sheet/character-play-sheet';
+import { CharacterPlaySheetComponent } from '../../../characters/character-play-sheet/character-play-sheet';
 import { NotesPanelComponent } from '../../../../shared/components/notes-panel/notes-panel';
 import { PartyListComponent } from '../../../../shared/components/party-list/party-list';
 
@@ -152,7 +152,7 @@ export class PlayerCampaignSessionComponent implements OnInit, OnDestroy {
   }
 
   backToHub() {
-    void this.router.navigate(['/player/campaigns', this.campaignId]);
+    void this.router.navigate(['/home/campaigns', this.campaignId]);
   }
 
   private async loadRecapMaps(encounters: Encounter[]) {

@@ -28,46 +28,44 @@ export const routes: Routes = [
     canActivate: [authGuard],
     loadComponent: () => import('./features/battle-map/battle-map').then(m => m.BattleMapComponent),
   },
+  // Single shell for every logged-in user — no more /dm vs /player split. Which of a campaign's
+  // two hub views you land on is decided by ownership (see CampaignsComponent.campaignLink), not
+  // by a route-level role guard: 'campaigns/manage/...' is the owning-DM view (still gated inside
+  // each backend endpoint by campaign.dm_id, not by adminGuard), 'campaigns/:campaignId' is the
+  // joined-member view.
   {
-    path: 'dm',
-    canActivate: [authGuard, adminGuard],
-    loadComponent: () => import('./features/dm/dm-shell').then(m => m.DmShellComponent),
+    path: 'home',
+    canActivate: [authGuard],
+    loadComponent: () => import('./features/shell/shell').then(m => m.ShellComponent),
     children: [
       {
         path: 'campaigns',
         loadComponent: () =>
-          import('./features/dm/dm-campaigns/dm-campaigns').then(m => m.DmCampaignsComponent),
+          import('./features/campaigns/campaigns').then(m => m.CampaignsComponent),
       },
       {
-        path: 'campaigns/:campaignId',
+        path: 'campaigns/manage/:campaignId',
         loadComponent: () =>
           import('./features/dm/dm-campaigns/dm-campaign-hub/dm-campaign-hub').then(m => m.DmCampaignHubComponent),
       },
       {
-        path: 'campaigns/:campaignId/sessions/:sessionId',
+        path: 'campaigns/manage/:campaignId/create',
+        loadComponent: () =>
+          import('./features/create-content/create-content').then(m => m.CreateContentComponent),
+      },
+      {
+        path: 'campaigns/manage/:campaignId/sessions/:sessionId',
         loadComponent: () =>
           import('./features/dm/dm-campaigns/dm-campaign-session/dm-campaign-session').then(
             m => m.DmCampaignSessionComponent,
           ),
       },
       {
-        path: 'campaigns/:campaignId/sessions/:sessionId/encounters/:encounterId',
+        path: 'campaigns/manage/:campaignId/sessions/:sessionId/encounters/:encounterId',
         loadComponent: () =>
           import('./features/dm/dm-campaigns/dm-encounter-play/dm-encounter-play').then(
             m => m.DmEncounterPlayComponent,
           ),
-      },
-    ],
-  },
-  {
-    path: 'player',
-    canActivate: [authGuard],
-    loadComponent: () => import('./features/player/player-shell').then(m => m.PlayerShellComponent),
-    children: [
-      {
-        path: 'campaigns',
-        loadComponent: () =>
-          import('./features/player/player-campaigns/player-campaigns').then(m => m.PlayerCampaignsComponent),
       },
       {
         path: 'campaigns/:campaignId',

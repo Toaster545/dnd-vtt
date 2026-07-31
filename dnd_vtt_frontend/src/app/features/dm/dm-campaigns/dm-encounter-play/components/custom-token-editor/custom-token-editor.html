@@ -1,0 +1,29 @@
+<button class="btn-ghost text-sm mb-3" (click)="back.emit()">
+  <mat-icon class="text-base">arrow_back</mat-icon> Roster
+</button>
+
+<div class="flex flex-col gap-3">
+  <div class="field">
+    <label class="field-label">Name</label>
+    <input class="field-input" maxlength="20"
+      [ngModel]="token().label" (ngModelChange)="labelChanged.emit($event)" name="customTokenLabel" />
+  </div>
+  <div class="flex items-center gap-3">
+    <span class="field-label">Color</span>
+    <input type="color" class="h-8 w-14 rounded cursor-pointer border border-white/10 bg-transparent"
+      [ngModel]="token().color" (ngModelChange)="colorChanged.emit($event)" name="customTokenColor" />
+  </div>
+  <div class="field">
+    <label class="field-label">Size (cells)</label>
+    <select class="field-input"
+      [ngModel]="token().size" (ngModelChange)="sizeChanged.emit($event)" name="customTokenSize">
+      <option [ngValue]="1">Small / Medium (1)</option>
+      <option [ngValue]="2">Large (2)</option>
+      <option [ngValue]="3">Huge (3)</option>
+      <option [ngValue]="4">Gargantuan (4)</option>
+    </select>
+  </div>
+  <button class="btn-outline text-xs px-2 py-1 text-danger" (click)="remove.emit()">
+    Remove Token
+  </button>
+</div>

@@ -9,8 +9,8 @@ import { CampaignHub, CampaignMember } from '../../../../core/models/campaign.mo
 import { Character } from '../../../../core/models/character.model';
 import { NotesPanelComponent } from '../../../../shared/components/notes-panel/notes-panel';
 import { PartyListComponent } from '../../../../shared/components/party-list/party-list';
-import { CharacterWizardComponent } from '../../../dm/dm-create/dm-characters/character-wizard/character-wizard';
-import { CharacterPlaySheetComponent } from '../../../dm/dm-play/character-play-sheet/character-play-sheet';
+import { CharacterWizardComponent } from '../../../characters/character-wizard/character-wizard';
+import { CharacterPlaySheetComponent } from '../../../characters/character-play-sheet/character-play-sheet';
 
 @Component({
   selector: 'app-player-campaign-hub',
@@ -47,7 +47,7 @@ export class PlayerCampaignHubComponent implements OnInit {
   }
 
   backToList() {
-    void this.router.navigate(['/player/campaigns']);
+    void this.router.navigate(['/home/campaigns']);
   }
 
   // The DM grants this per member (see DmCampaignHubComponent.toggleEditAccess) — otherwise a

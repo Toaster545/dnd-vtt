@@ -14,11 +14,12 @@ export class CharacterService {
     return firstValueFrom(this.http.get<Character[]>(`${API}/characters`));
   }
 
-  // Per-campaign copies (campaign_id set), each with a `campaign_name` tacked on — the
-  // counterpart to getMyCharacters()'s portable templates. Powers the player's "Characters" tab.
-  async getMyCampaignCopies(): Promise<(Character & { campaign_name: string })[]> {
+  // Per-campaign copies (campaign_id set), each with a `campaign_name` and `edit_unlocked`
+  // (campaign_members.edit_unlocked) tacked on — the counterpart to getMyCharacters()'s portable
+  // templates. Powers the player's "Characters" tab.
+  async getMyCampaignCopies(): Promise<(Character & { campaign_name: string; edit_unlocked: boolean })[]> {
     return firstValueFrom(
-      this.http.get<(Character & { campaign_name: string })[]>(`${API}/characters/copies`)
+      this.http.get<(Character & { campaign_name: string; edit_unlocked: boolean })[]>(`${API}/characters/copies`)
     );
   }
 

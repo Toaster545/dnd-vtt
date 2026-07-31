@@ -1,11 +1,11 @@
 <div [class]="embedded() ? 'flex flex-col h-full' : 'flex flex-col h-screen'">
   @if (!embedded()) {
     <header class="app-toolbar">
-      <button class="btn-icon" [routerLink]="auth.isAdmin() ? '/dm' : '/player'" matTooltip="Back">
+      <button class="btn-icon" routerLink="/home" matTooltip="Back">
         <mat-icon>arrow_back</mat-icon>
       </button>
       <span class="toolbar-title flex-1">{{ map()?.name ?? 'Battle Map' }}</span>
-      @if (auth.isAdmin()) { <span class="toolbar-badge">DM View</span> }
+      @if (controlsMap()) { <span class="toolbar-badge">DM View</span> }
     </header>
   }
 
@@ -23,7 +23,7 @@
           [fogEnabled]="fog().enabled"
           [showMoveRange]="showMoveRange()"
           [hasMyToken]="!!myToken()"
-          [isAdmin]="auth.isAdmin()"
+          [isAdmin]="controlsMap()"
           (selectPointerTool)="selectPointerTool()"
           (measureToolToggled)="toggleMeasureTool($event)"
           (moveRangeToggled)="showMoveRange.set(!showMoveRange())"
@@ -48,8 +48,7 @@
       }
     </div>
 
-    <!-- DM sidebar -->
-    @if (auth.isAdmin() && map()) {
+    @if (controlsMap() && map()) {
       <div appResizeHandle (resizeDrag)="onRightAsideResize($event)"
            class="w-1.5 flex-shrink-0 hover:bg-gold/40 active:bg-gold/60 transition-colors"></div>
       <aside [style.width.px]="rightAsideWidth()" class="border-l border-white/10 overflow-y-auto flex-shrink-0 bg-surface">
@@ -65,7 +64,6 @@
         </div>
       </aside>
     } @else if (map() && tokens().length > 0) {
-      <!-- Player-facing read-only turn order — same list, no editing controls. -->
       <div appResizeHandle (resizeDrag)="onRightAsideResize($event)"
            class="w-1.5 flex-shrink-0 hover:bg-gold/40 active:bg-gold/60 transition-colors"></div>
       <aside [style.width.px]="rightAsideWidth()" class="border-l border-white/10 overflow-y-auto flex-shrink-0 bg-surface">
