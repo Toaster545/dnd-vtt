@@ -1,52 +1,25 @@
-import { existsSync, readFileSync } from 'node:fs';
-import { join } from 'node:path';
+import {
+  ClassContent,
+  expectEquipmentItemsToExist,
+  expectLevelsOneThroughTwenty,
+  loadClassContent,
+} from './class-content-test.utils';
 
-interface Grant {
-  type: string;
-  key?: string;
-  choose?: number;
-  chooseByLevel?: Record<string, number>;
-  options?: {
-    name: string;
-    prerequisite?: { level?: number; selections?: string[] };
-  }[];
-}
-
-interface WarlockContent {
-  index: string;
-  primary_abilities: string[];
-  subclass_level: number;
-  starting_equipment: {
-    fixed: { item: string }[];
-    groups: unknown[];
-    gold: number;
-    goldAlternative: number;
-  };
-  subclasses: {
-    index: string;
-    levels: { level: number; grants?: Grant[] }[];
-  }[];
-  levels: {
-    level: number;
-    grants?: Grant[];
+interface WarlockContent extends ClassContent {
+  levels: (ClassContent['levels'][number] & {
     pact_magic: { slots: number; slot_level: number };
     class_specific: { invocations_known: number };
-  }[];
+  })[];
 }
 
 describe('Warlock class content', () => {
-  const contentRoot = join(process.cwd(), 'content');
-  const warlock = JSON.parse(
-    readFileSync(join(contentRoot, 'classes', 'warlock.json'), 'utf8'),
-  ) as WarlockContent;
+  const warlock = loadClassContent<WarlockContent>('warlock');
 
-  it('uses the same complete structured class shape as Fighter', () => {
+  it('uses the complete structured class shape and 2024 subclasses', () => {
     expect(warlock.index).toBe('warlock');
     expect(warlock.primary_abilities).toEqual(['charisma']);
     expect(warlock.subclass_level).toBe(3);
-    expect(warlock.levels.map((level) => level.level)).toEqual(
-      Array.from({ length: 20 }, (_, index) => index + 1),
-    );
+    expectLevelsOneThroughTwenty(warlock);
     expect(warlock.subclasses.map((subclass) => subclass.index)).toEqual([
       'archfey',
       'celestial',
@@ -89,15 +62,10 @@ describe('Warlock class content', () => {
     expect(warlock.levels[19].class_specific.invocations_known).toBe(10);
   });
 
-  it('resolves every structured starting-equipment item to an item file', () => {
+  it('uses the structured starting-equipment package', () => {
     expect(warlock.starting_equipment.groups).toEqual([]);
     expect(warlock.starting_equipment.gold).toBe(15);
     expect(warlock.starting_equipment.goldAlternative).toBe(100);
-
-    for (const ref of warlock.starting_equipment.fixed) {
-      expect(existsSync(join(contentRoot, 'items', `${ref.item}.json`))).toBe(
-        true,
-      );
-    }
+    expectEquipmentItemsToExist(warlock.starting_equipment);
   });
 });

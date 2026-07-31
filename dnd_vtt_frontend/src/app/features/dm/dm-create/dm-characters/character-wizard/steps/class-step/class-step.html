@@ -363,16 +363,16 @@
                       </button>
                       @if (!collapsed) {
                         <div class="flex flex-wrap gap-1.5 mt-1.5 pl-3.5">
-                          @for (skill of cls.skill_choices.from; track skill) {
-                            @let picked = draftSkills().includes(skill);
-                            @let full   = !picked && !needsChoice;
+                          @for (skill of skillOptions(grant, cls); track skill) {
+                            @let picked = skillSelections(grant).includes(skill);
+                            @let full   = !picked && (!needsChoice || skillTakenElsewhere(grant, skill));
                             <button
                               class="px-2.5 py-1 rounded text-xs border transition-all"
                               [class]="picked ? 'border-gold/60 bg-gold/10 text-parchment cursor-pointer'
                                 : full || !unlocked ? 'border-white/8 text-coal cursor-not-allowed'
                                         : 'border-white/15 text-slate hover:border-white/30 hover:text-parchment cursor-pointer'"
                               [disabled]="full || !unlocked"
-                              (click)="toggleDraftSkill(skill, cls)"
+                              (click)="toggleDraftSkill(grant, skill)"
                               style="font-family: inherit;"
                             >{{ skill }}</button>
                           }

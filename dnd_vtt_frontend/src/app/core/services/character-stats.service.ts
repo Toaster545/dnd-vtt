@@ -3,6 +3,7 @@ import { Character, Ability, ABILITIES, SKILLS, abilityModifier, proficiencyBonu
 import { DndClass, DndFeat, DndItem, DndRace } from './content.service';
 import {
   ClassChoiceSource, RaceChoiceSource, activeEffects, averageHpFormula, baseArmorClass, collectTraitEffects, equippedItems, resolveCharacterFeatPicks,
+  unarmoredDefenseBonus,
 } from '../utils/character-effects';
 
 export interface WeaponAttack {
@@ -108,7 +109,11 @@ export class CharacterStatsService {
 
     const conditionalAcBonus = activeEffects(allEffects.filter(e => e.type === 'ac_bonus'), char.equipment, items)
       .reduce((sum, e) => sum + (e.value ?? 0), 0);
-    const computed_ac = baseArmorClass(char.equipment, items, mods.dexterity) + conditionalAcBonus;
+    const unarmoredBonus = unarmoredDefenseBonus(
+      activeEffects(allEffects.filter(e => e.type === 'unarmored_defense'), char.equipment, items),
+      mods,
+    );
+    const computed_ac = baseArmorClass(char.equipment, items, mods.dexterity) + conditionalAcBonus + unarmoredBonus;
 
     const skill_bonuses = Object.fromEntries(
       Object.entries(SKILLS).map(([skill, ability]) => {

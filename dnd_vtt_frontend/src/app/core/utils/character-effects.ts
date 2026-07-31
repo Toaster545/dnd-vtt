@@ -145,6 +145,7 @@ export function evaluateCondition(condition: EffectCondition, equipment: Equipme
   switch (condition) {
     case 'wearing_armor':   return equipped.some(isArmorItem);
     case 'no_armor':        return !equipped.some(isArmorItem);
+    case 'no_heavy_armor':  return !equipped.some(it => isArmorItem(it) && it.category.includes('Heavy'));
     case 'wielding_shield': return equipped.some(isShieldItem);
     case 'two_handed_melee':
       return equipped.some(it => isWeapon(it) && isMelee(it) && isTwoHanded(it));
@@ -188,4 +189,14 @@ export function baseArmorClass(equipment: EquipmentEntry[], items: DndItem[], de
   const shield = equipped.find(isShieldItem);
   const base = armor ? armorClassBase(armor.armor_class) + armorDexBonus(armor.category, dexMod) : 10 + dexMod;
   return base + (shield ? armorClassBase(shield.armor_class) : 0);
+}
+
+// An unarmored-defense feature contributes the modifier named by its first tag (Constitution
+// for Barbarian). The caller has already filtered out the effect whenever armor is equipped.
+export function unarmoredDefenseBonus(effects: TraitEffect[], abilityModifiers: Record<string, number>): number {
+  const bonuses = effects.map(effect => {
+    const ability = effect.tags?.[0];
+    return ability ? (abilityModifiers[ability] ?? 0) : 0;
+  });
+  return bonuses.length ? Math.max(...bonuses) : 0;
 }
