@@ -45,6 +45,9 @@ function classGrantsProficiency(weapon: DndItem, classData: DndClass): boolean {
   return classData.weapon_proficiencies.some(p =>
     (p === 'Simple Weapons' && weapon.category.startsWith('Simple')) ||
     (p === 'Martial Weapons' && weapon.category.startsWith('Martial')) ||
+    (p === 'Martial Weapons with the Light property' &&
+      weapon.category.startsWith('Martial') &&
+      weapon.properties.includes('Light')) ||
     p.replace(/s$/, '').toLowerCase() === weapon.name.toLowerCase(),
   );
 }
@@ -95,6 +98,9 @@ export class CharacterStatsService {
     const suggested_max_hp = averageHpFormula(char.level, hit_die, mods.constitution, hpBonusPerLevel);
 
     const saveProfSet = new Set(classData?.saving_throws ?? []);
+    for (const effect of allEffects.filter(effect => effect.type === 'saving_throw_proficiency')) {
+      for (const ability of effect.tags ?? []) saveProfSet.add(ability);
+    }
     // Resilient-pattern feats grant save proficiency in whichever ability their abilityIncrease
     // increased (the player-chosen one, when the feat offers more than one option).
     for (const { feat, ability } of resolveCharacterFeatPicks(classesForFeats, feats, raceForFeats)) {

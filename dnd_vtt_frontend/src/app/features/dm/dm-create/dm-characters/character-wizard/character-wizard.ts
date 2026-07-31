@@ -271,7 +271,9 @@ export class CharacterWizardComponent implements OnInit, OnDestroy {
     const raceSkills = [...(race?.grants ?? []), ...(subrace?.grants ?? [])]
       .filter((grant): grant is Extract<TraitGrant, { type: 'skill_choice' }> => grant.type === 'skill_choice')
       .flatMap(grant => this.raceTraits()[grant.key] ?? []);
-    return [...new Set([...bgSkills, ...classSkills, ...additionalClassSkills, ...raceSkills])]
+    const effectSkills = this.selectedEffects('skill_proficiency')
+      .flatMap(effect => effect.tags ?? []);
+    return [...new Set([...bgSkills, ...classSkills, ...additionalClassSkills, ...raceSkills, ...effectSkills])]
       .reduce((acc, s) => ({ ...acc, [s]: true }), {} as Record<string, boolean>);
   });
 

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { Character, defaultCharacter } from '../models/character.model';
-import { DndClass } from './content.service';
+import { DndClass, DndItem } from './content.service';
 import { CharacterStatsService } from './character-stats.service';
 
 const bard = {
@@ -16,6 +16,29 @@ const bard = {
           type: 'feature',
           name: 'Jack of All Trades',
           effects: [{ type: 'untrained_skill_bonus', tags: ['half_proficiency'] }],
+        },
+      ],
+    },
+  ],
+  subclasses: [],
+} as unknown as DndClass;
+
+const monk = {
+  name: 'Monk',
+  hit_die: 8,
+  saving_throws: ['strength', 'dexterity'],
+  weapon_proficiencies: ['Simple Weapons', 'Martial Weapons with the Light property'],
+  levels: [
+    {
+      level: 14,
+      grants: [
+        {
+          type: 'feature',
+          name: 'Disciplined Survivor',
+          effects: [{
+            type: 'saving_throw_proficiency',
+            tags: ['strength', 'dexterity', 'constitution', 'intelligence', 'wisdom', 'charisma'],
+          }],
         },
       ],
     },
@@ -144,5 +167,51 @@ describe('CharacterStatsService', () => {
 
     expect(stats.skill_bonuses['Arcana']).toBe(0);
     expect(stats.skill_bonuses['Religion']).toBe(0);
+  });
+
+  it('adds saving throw proficiencies granted by a class effect', () => {
+    const character: Character = {
+      ...defaultCharacter(),
+      name: 'Disciplined Monk',
+      class: 'Monk',
+      level: 14,
+    };
+    const stats = new CharacterStatsService().compute(
+      character, monk, null, [], [{ data: monk, choices: {}, level: 14 }],
+    );
+
+    expect([...stats.saving_throw_proficient]).toEqual([
+      'strength', 'dexterity', 'constitution', 'intelligence', 'wisdom', 'charisma',
+    ]);
+    expect(stats.saving_throw_bonuses.wisdom).toBe(5);
+  });
+
+  it('limits a Monk martial-weapon proficiency to weapons with Light', () => {
+    const weapons: DndItem[] = [
+      {
+        index: 'shortsword', name: 'Shortsword', type: 'weapon', category: 'Martial Melee',
+        damage: '1d6', damage_type: 'Piercing', properties: ['Finesse', 'Light'],
+        weight: 2, cost: '10 GP', description: '',
+      },
+      {
+        index: 'longsword', name: 'Longsword', type: 'weapon', category: 'Martial Melee',
+        damage: '1d8', damage_type: 'Slashing', properties: ['Versatile'],
+        weight: 3, cost: '15 GP', description: '',
+      },
+    ];
+    const character: Character = {
+      ...defaultCharacter(),
+      name: 'Armed Monk',
+      class: 'Monk',
+      level: 1,
+      equipment: weapons.map(weapon => ({
+        itemIndex: weapon.index, name: weapon.name, quantity: 1, equipped: true,
+      })),
+    };
+    const stats = new CharacterStatsService().compute(
+      character, monk, null, [], [{ data: monk, choices: {}, level: 1 }], weapons,
+    );
+
+    expect(stats.weapon_attacks.map(attack => attack.attack_bonus)).toEqual([2, 0]);
   });
 });

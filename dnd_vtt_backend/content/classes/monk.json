@@ -1,77 +1,887 @@
 {
   "index": "monk",
   "name": "Monk",
+  "description": "Monks are disciplined martial artists who channel supernatural focus through their bodies. Their speed, defense, and unarmed techniques let them control the battlefield without armor.",
+  "primary_abilities": ["dexterity", "wisdom"],
   "hit_die": 8,
   "saving_throws": ["strength", "dexterity"],
   "armor_training": [],
-  "weapon_proficiencies": ["Simple Weapons", "Shortswords"],
-  "tool_proficiencies": ["One type of artisan's tools or one musical instrument"],
+  "weapon_proficiencies": [
+    "Simple Weapons",
+    "Martial Weapons with the Light property"
+  ],
+  "tool_proficiencies": [
+    "Choose one type of Artisan's Tools or Musical Instrument"
+  ],
   "skill_choices": {
     "count": 2,
-    "from": ["Acrobatics", "Athletics", "History", "Insight", "Religion", "Stealth"]
+    "from": [
+      "Acrobatics",
+      "Athletics",
+      "History",
+      "Insight",
+      "Religion",
+      "Stealth"
+    ]
   },
-  "starting_equipment": [
-    { "choice": true, "options": ["Shortsword", "Any simple weapon"] },
-    { "choice": true, "options": ["Dungeoneer's pack", "Explorer's pack"] },
-    { "fixed": ["10 darts"] }
-  ],
+  "starting_equipment": {
+    "fixed": [
+      { "key": "monk-spear", "item": "spear", "quantity": 1 },
+      { "key": "monk-daggers", "item": "dagger", "quantity": 5 },
+      {
+        "key": "monk-explorers-pack",
+        "item": "explorers-pack",
+        "quantity": 1
+      }
+    ],
+    "groups": [
+      {
+        "key": "monk-tools",
+        "options": [
+          {
+            "key": "monk-artisans-tools",
+            "label": "Artisan's Tools",
+            "items": [
+              {
+                "key": "monk-artisans-tools-item",
+                "item": "artisans-tools",
+                "quantity": 1
+              }
+            ]
+          },
+          {
+            "key": "monk-musical-instrument",
+            "label": "Musical Instrument",
+            "items": [
+              {
+                "key": "monk-musical-instrument-item",
+                "item": "musical-instrument",
+                "quantity": 1
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "gold": 11,
+    "goldAlternative": 50
+  },
   "spellcasting_ability": null,
   "subclass_level": 3,
   "subclasses": [
     {
-      "index": "open-hand",
-      "name": "Way of the Open Hand",
-      "description": "Master unarmed combat techniques and learn to manipulate ki to heal or harm.",
+      "index": "mercy",
+      "name": "Warrior of Mercy",
+      "description": "Warriors of Mercy manipulate life force to mend wounds or inflict supernatural pain.",
       "levels": [
-        { "level": 3,  "features": ["Open Hand Technique"] },
-        { "level": 6,  "features": ["Wholeness of Body"] },
-        { "level": 11, "features": ["Tranquility"] },
-        { "level": 17, "features": ["Quivering Palm"] }
+        {
+          "level": 3,
+          "features": [
+            "Hand of Harm",
+            "Hand of Healing",
+            "Implements of Mercy"
+          ],
+          "grants": [
+            {
+              "type": "feature",
+              "name": "Hand of Harm",
+              "description": "Once per turn when you hit with an Unarmed Strike and deal damage, you can expend 1 Focus Point to deal extra Necrotic damage equal to one roll of your Martial Arts die plus your Wisdom modifier."
+            },
+            {
+              "type": "feature",
+              "name": "Hand of Healing",
+              "description": "As a Magic action, expend 1 Focus Point and touch a creature to restore Hit Points equal to one Martial Arts die plus your Wisdom modifier. When you use Flurry of Blows, you can replace one strike with this healing without spending another Focus Point."
+            },
+            {
+              "type": "feature",
+              "name": "Implements of Mercy",
+              "description": "You gain proficiency in Insight and Medicine and with the Herbalism Kit.",
+              "effects": [
+                {
+                  "type": "skill_proficiency",
+                  "tags": ["Insight", "Medicine"]
+                },
+                {
+                  "type": "tool_proficiency",
+                  "tags": ["Herbalism Kit"]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "level": 6,
+          "features": ["Physician's Touch"],
+          "grants": [
+            {
+              "type": "feature",
+              "name": "Physician's Touch",
+              "description": "Hand of Harm can also give the Poisoned condition until the end of your next turn. Hand of Healing can also end one of these conditions on its target: Blinded, Deafened, Paralyzed, Poisoned, or Stunned."
+            }
+          ]
+        },
+        {
+          "level": 11,
+          "features": ["Flurry of Healing and Harm"],
+          "grants": [
+            {
+              "type": "feature",
+              "key": "flurry-healing-and-harm",
+              "name": "Flurry of Healing and Harm",
+              "description": "When you use Flurry of Blows, you can replace each strike with Hand of Healing without spending Focus Points for those replacements. When you make a Flurry strike that deals damage, you can use Hand of Harm without spending a Focus Point. You can use either benefit a total number of times equal to your Wisdom modifier (minimum once), regaining all uses after a Long Rest.",
+              "action": {
+                "activation": "bonus_action",
+                "uses": {
+                  "max": 1,
+                  "maxAbilityModifier": "wisdom",
+                  "minimum": 1,
+                  "per": "long_rest"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "level": 17,
+          "features": ["Hand of Ultimate Mercy"],
+          "grants": [
+            {
+              "type": "feature",
+              "key": "hand-of-ultimate-mercy",
+              "name": "Hand of Ultimate Mercy",
+              "description": "As a Magic action, touch a creature that died within the past 24 hours and expend 5 Focus Points. The creature returns to life with Hit Points equal to 4d10 plus your Wisdom modifier, and the Blinded, Deafened, Paralyzed, Poisoned, and Stunned conditions end on it. Once used, this feature cannot be used again until you finish a Long Rest.",
+              "action": {
+                "activation": "action",
+                "uses": { "max": 1, "per": "long_rest" }
+              }
+            }
+          ]
+        }
       ]
     },
     {
       "index": "shadow",
-      "name": "Way of the Shadow",
-      "description": "Follow a tradition that values stealth and subterfuge, serving as a ninja-like agent.",
+      "name": "Warrior of Shadow",
+      "description": "Warriors of Shadow wield magical darkness, concealment, and teleportation to strike unseen.",
       "levels": [
-        { "level": 3,  "features": ["Shadow Arts"] },
-        { "level": 6,  "features": ["Shadow Step"] },
-        { "level": 11, "features": ["Cloak of Shadows"] },
-        { "level": 17, "features": ["Opportunist"] }
+        {
+          "level": 3,
+          "features": ["Shadow Arts"],
+          "grants": [
+            {
+              "type": "feature",
+              "name": "Shadow Arts",
+              "description": "You gain Darkvision to 60 feet, or extend existing Darkvision by 60 feet, and know Minor Illusion, using Wisdom as your spellcasting ability. You can expend 1 Focus Point to cast Darkness without components. You can see through that spell's darkness and, at the start of each of your turns, move its area to a point within 60 feet."
+            }
+          ]
+        },
+        {
+          "level": 6,
+          "features": ["Shadow Step"],
+          "grants": [
+            {
+              "type": "feature",
+              "name": "Shadow Step",
+              "description": "While entirely in Dim Light or Darkness, use a Bonus Action to teleport up to 60 feet to an unoccupied space you can see that is also in Dim Light or Darkness. You then have Advantage on the next melee attack you make before the end of the current turn."
+            }
+          ]
+        },
+        {
+          "level": 11,
+          "features": ["Improved Shadow Step"],
+          "grants": [
+            {
+              "type": "feature",
+              "name": "Improved Shadow Step",
+              "description": "When you use Shadow Step, you can expend 1 Focus Point to ignore its lighting requirements. As part of the same Bonus Action, make one Unarmed Strike immediately after teleporting."
+            }
+          ]
+        },
+        {
+          "level": 17,
+          "features": ["Cloak of Shadows"],
+          "grants": [
+            {
+              "type": "feature",
+              "name": "Cloak of Shadows",
+              "description": "While entirely in Dim Light or Darkness, take a Magic action and expend 3 Focus Points to cloak yourself for 1 minute, until Incapacitated, or until you end your turn in Bright Light. While cloaked, you are Invisible, can move through occupied spaces as Difficult Terrain, and can use Flurry of Blows without spending Focus Points. If you end your turn in an occupied space, you are shunted to the last unoccupied space you occupied."
+            }
+          ]
+        }
       ]
     },
     {
-      "index": "four-elements",
-      "name": "Way of the Four Elements",
-      "description": "Harness the elements — air, earth, fire, and water — as extensions of your ki.",
+      "index": "elements",
+      "name": "Warrior of the Elements",
+      "description": "Warriors of the Elements empower their martial arts with elemental energy and reshape the battlefield around them.",
       "levels": [
-        { "level": 3,  "features": ["Disciple of the Elements"] },
-        { "level": 6,  "features": ["Elemental Discipline (improved)"] },
-        { "level": 11, "features": ["Elemental Discipline (improved)"] },
-        { "level": 17, "features": ["Elemental Discipline (improved)"] }
+        {
+          "level": 3,
+          "features": ["Elemental Attunement", "Manipulate Elements"],
+          "grants": [
+            {
+              "type": "feature",
+              "name": "Elemental Attunement",
+              "description": "At the start of your turn, expend 1 Focus Point to empower yourself for 10 minutes or until Incapacitated. Your Unarmed Strikes gain 10 feet of reach, can deal Acid, Cold, Fire, Lightning, or Thunder damage, and can force a Strength save on a hit to move the target up to 10 feet toward or away from you."
+            },
+            {
+              "type": "feature",
+              "name": "Manipulate Elements",
+              "description": "You know the Elementalism cantrip and use Wisdom as your spellcasting ability for it."
+            }
+          ]
+        },
+        {
+          "level": 6,
+          "features": ["Elemental Burst"],
+          "grants": [
+            {
+              "type": "feature",
+              "name": "Elemental Burst",
+              "description": "As a Magic action, expend 2 Focus Points and choose a point within 120 feet. Creatures in a 20-foot-radius sphere make a Dexterity save, taking damage equal to three Martial Arts dice on a failed save or half on a success. Choose Acid, Cold, Fire, Lightning, or Thunder each time."
+            }
+          ]
+        },
+        {
+          "level": 11,
+          "features": ["Stride of the Elements"],
+          "grants": [
+            {
+              "type": "feature",
+              "name": "Stride of the Elements",
+              "description": "While Elemental Attunement is active, you have a Fly Speed and a Swim Speed equal to your Speed."
+            }
+          ]
+        },
+        {
+          "level": 17,
+          "features": ["Elemental Epitome"],
+          "grants": [
+            {
+              "type": "feature",
+              "name": "Elemental Epitome",
+              "description": "While Elemental Attunement is active, choose resistance to Acid, Cold, Fire, Lightning, or Thunder at the start of each turn; when you use Step of the Wind, your Speed increases by 20 feet and creatures you move within 5 feet of can take one Martial Arts die of a chosen elemental damage type once per turn; and once per turn an Unarmed Strike can deal one extra Martial Arts die of its chosen elemental damage."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "index": "open-hand",
+      "name": "Warrior of the Open Hand",
+      "description": "Warriors of the Open Hand master unarmed techniques that topple, reposition, and disable their foes.",
+      "levels": [
+        {
+          "level": 3,
+          "features": ["Open Hand Technique"],
+          "grants": [
+            {
+              "type": "feature",
+              "name": "Open Hand Technique",
+              "description": "Whenever a Flurry of Blows attack hits, choose one effect: Addle prevents Opportunity Attacks until the target's next turn; Push forces a Strength save or moves the target up to 15 feet away; Topple forces a Dexterity save or gives the Prone condition."
+            }
+          ]
+        },
+        {
+          "level": 6,
+          "features": ["Wholeness of Body"],
+          "grants": [
+            {
+              "type": "feature",
+              "key": "wholeness-of-body",
+              "name": "Wholeness of Body",
+              "description": "As a Bonus Action, regain Hit Points equal to one roll of your Martial Arts die plus your Wisdom modifier (minimum 1 Hit Point). You can use this feature a number of times equal to your Wisdom modifier (minimum once), regaining all uses after a Long Rest.",
+              "action": {
+                "activation": "bonus_action",
+                "uses": {
+                  "max": 1,
+                  "maxAbilityModifier": "wisdom",
+                  "minimum": 1,
+                  "per": "long_rest"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "level": 11,
+          "features": ["Fleet Step"],
+          "grants": [
+            {
+              "type": "feature",
+              "name": "Fleet Step",
+              "description": "Immediately after taking a Bonus Action other than Step of the Wind, you can use Step of the Wind."
+            }
+          ]
+        },
+        {
+          "level": 17,
+          "features": ["Quivering Palm"],
+          "grants": [
+            {
+              "type": "feature",
+              "name": "Quivering Palm",
+              "description": "When you hit a creature with an Unarmed Strike, expend 4 Focus Points to begin imperceptible vibrations that last for a number of days equal to your Monk level. While on the same plane, take an action or replace one Attack-action attack to end them: the target makes a Constitution save, taking 10d12 Force damage on a failure or half on a success. Only one creature can bear these vibrations at a time, and you can end them harmlessly without an action."
+            }
+          ]
+        }
       ]
     }
   ],
   "levels": [
-    { "level": 1,  "proficiency_bonus": 2, "features": ["Unarmored Defense", "Martial Arts"],                       "class_specific": { "martial_arts": "1d4", "ki_points": 0,  "unarmored_movement_bonus": 0  } },
-    { "level": 2,  "proficiency_bonus": 2, "features": ["Ki", "Unarmored Movement"],                                "class_specific": { "martial_arts": "1d4", "ki_points": 2,  "unarmored_movement_bonus": 10 } },
-    { "level": 3,  "proficiency_bonus": 2, "features": ["Monastic Tradition", "Deflect Missiles"],                  "class_specific": { "martial_arts": "1d4", "ki_points": 3,  "unarmored_movement_bonus": 10 } },
-    { "level": 4,  "proficiency_bonus": 2, "features": ["Ability Score Improvement", "Slow Fall"],                  "class_specific": { "martial_arts": "1d4", "ki_points": 4,  "unarmored_movement_bonus": 10 } },
-    { "level": 5,  "proficiency_bonus": 3, "features": ["Extra Attack", "Stunning Strike"],                         "class_specific": { "martial_arts": "1d6", "ki_points": 5,  "unarmored_movement_bonus": 10 } },
-    { "level": 6,  "proficiency_bonus": 3, "features": ["Ki-Empowered Strikes", "Monastic Tradition Feature"],      "class_specific": { "martial_arts": "1d6", "ki_points": 6,  "unarmored_movement_bonus": 15 } },
-    { "level": 7,  "proficiency_bonus": 3, "features": ["Evasion", "Stillness of Mind"],                            "class_specific": { "martial_arts": "1d6", "ki_points": 7,  "unarmored_movement_bonus": 15 } },
-    { "level": 8,  "proficiency_bonus": 3, "features": ["Ability Score Improvement"],                               "class_specific": { "martial_arts": "1d6", "ki_points": 8,  "unarmored_movement_bonus": 15 } },
-    { "level": 9,  "proficiency_bonus": 4, "features": ["Unarmored Movement Improvement"],                          "class_specific": { "martial_arts": "1d6", "ki_points": 9,  "unarmored_movement_bonus": 15 } },
-    { "level": 10, "proficiency_bonus": 4, "features": ["Purity of Body"],                                          "class_specific": { "martial_arts": "1d6", "ki_points": 10, "unarmored_movement_bonus": 20 } },
-    { "level": 11, "proficiency_bonus": 4, "features": ["Monastic Tradition Feature"],                              "class_specific": { "martial_arts": "1d8", "ki_points": 11, "unarmored_movement_bonus": 20 } },
-    { "level": 12, "proficiency_bonus": 4, "features": ["Ability Score Improvement"],                               "class_specific": { "martial_arts": "1d8", "ki_points": 12, "unarmored_movement_bonus": 20 } },
-    { "level": 13, "proficiency_bonus": 5, "features": ["Tongue of the Sun and Moon"],                              "class_specific": { "martial_arts": "1d8", "ki_points": 13, "unarmored_movement_bonus": 20 } },
-    { "level": 14, "proficiency_bonus": 5, "features": ["Diamond Soul"],                                            "class_specific": { "martial_arts": "1d8", "ki_points": 14, "unarmored_movement_bonus": 25 } },
-    { "level": 15, "proficiency_bonus": 5, "features": ["Timeless Body"],                                           "class_specific": { "martial_arts": "1d8", "ki_points": 15, "unarmored_movement_bonus": 25 } },
-    { "level": 16, "proficiency_bonus": 5, "features": ["Ability Score Improvement"],                               "class_specific": { "martial_arts": "1d8", "ki_points": 16, "unarmored_movement_bonus": 25 } },
-    { "level": 17, "proficiency_bonus": 6, "features": ["Monastic Tradition Feature"],                              "class_specific": { "martial_arts": "1d10","ki_points": 17, "unarmored_movement_bonus": 25 } },
-    { "level": 18, "proficiency_bonus": 6, "features": ["Empty Body"],                                              "class_specific": { "martial_arts": "1d10","ki_points": 18, "unarmored_movement_bonus": 30 } },
-    { "level": 19, "proficiency_bonus": 6, "features": ["Ability Score Improvement"],                               "class_specific": { "martial_arts": "1d10","ki_points": 19, "unarmored_movement_bonus": 30 } },
-    { "level": 20, "proficiency_bonus": 6, "features": ["Perfect Self"],                                            "class_specific": { "martial_arts": "1d10","ki_points": 20, "unarmored_movement_bonus": 30 } }
+    {
+      "level": 1,
+      "proficiency_bonus": 2,
+      "features": ["Martial Arts", "Unarmored Defense"],
+      "class_specific": {
+        "martial_arts": "1d6",
+        "focus_points": 0,
+        "unarmored_movement_bonus": 0
+      },
+      "grants": [
+        {
+          "type": "skill_choice",
+          "key": "skills",
+          "name": "Monk Skill Proficiencies",
+          "choose": 2,
+          "description": "Choose two Monk skill proficiencies."
+        },
+        {
+          "type": "choice",
+          "key": "monk_tools",
+          "name": "Monk Tool Proficiency",
+          "choose": 1,
+          "description": "Choose one type of Artisan's Tools or Musical Instrument.",
+          "options": [
+            { "name": "Alchemist's Supplies" },
+            { "name": "Brewer's Supplies" },
+            { "name": "Calligrapher's Supplies" },
+            { "name": "Carpenter's Tools" },
+            { "name": "Cartographer's Tools" },
+            { "name": "Cobbler's Tools" },
+            { "name": "Cook's Utensils" },
+            { "name": "Glassblower's Tools" },
+            { "name": "Jeweler's Tools" },
+            { "name": "Leatherworker's Tools" },
+            { "name": "Mason's Tools" },
+            { "name": "Painter's Supplies" },
+            { "name": "Potter's Tools" },
+            { "name": "Smith's Tools" },
+            { "name": "Tinker's Tools" },
+            { "name": "Weaver's Tools" },
+            { "name": "Woodcarver's Tools" },
+            { "name": "Bagpipes" },
+            { "name": "Drum" },
+            { "name": "Dulcimer" },
+            { "name": "Flute" },
+            { "name": "Horn" },
+            { "name": "Lute" },
+            { "name": "Lyre" },
+            { "name": "Pan Flute" },
+            { "name": "Shawm" },
+            { "name": "Viol" }
+          ]
+        },
+        {
+          "type": "feature",
+          "name": "Martial Arts",
+          "description": "While unarmed or wielding only Monk weapons and not wearing armor or wielding a Shield, use Dexterity instead of Strength for attack and damage rolls and for your Grapple or Shove save DC; replace normal weapon or Unarmed Strike damage with your Martial Arts die; and make one Unarmed Strike as a Bonus Action. Monk weapons are Simple Melee weapons and Martial Melee weapons with the Light property."
+        },
+        {
+          "type": "feature",
+          "name": "Unarmored Defense",
+          "description": "While you aren't wearing armor or wielding a Shield, your base Armor Class equals 10 plus your Dexterity modifier plus your Wisdom modifier.",
+          "effects": [
+            {
+              "type": "unarmored_defense",
+              "tags": ["wisdom"],
+              "condition": "no_armor_or_shield"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "level": 2,
+      "proficiency_bonus": 2,
+      "features": ["Monk's Focus", "Unarmored Movement", "Uncanny Metabolism"],
+      "class_specific": {
+        "martial_arts": "1d6",
+        "focus_points": 2,
+        "unarmored_movement_bonus": 10
+      },
+      "grants": [
+        {
+          "type": "feature",
+          "key": "monk-focus-points",
+          "name": "Monk's Focus",
+          "description": "You have Focus Points equal to your Monk level and regain all expended points after a Short or Long Rest. Spend 1 point for Flurry of Blows (two Unarmed Strikes as a Bonus Action), Patient Defense (Disengage and Dodge as a Bonus Action), or Step of the Wind (Disengage and Dash as a Bonus Action, with doubled jump distance). Patient Defense can Disengage without spending Focus, and Step of the Wind can Dash without spending Focus.",
+          "action": {
+            "activation": "free",
+            "uses": {
+              "max": 2,
+              "maxByLevel": {
+                "3": 3,
+                "4": 4,
+                "5": 5,
+                "6": 6,
+                "7": 7,
+                "8": 8,
+                "9": 9,
+                "10": 10,
+                "11": 11,
+                "12": 12,
+                "13": 13,
+                "14": 14,
+                "15": 15,
+                "16": 16,
+                "17": 17,
+                "18": 18,
+                "19": 19,
+                "20": 20
+              },
+              "per": "short_rest"
+            }
+          }
+        },
+        {
+          "type": "feature",
+          "name": "Unarmored Movement",
+          "description": "Your Speed increases by 10 feet while you aren't wearing armor or wielding a Shield.",
+          "effects": [
+            {
+              "type": "speed_bonus",
+              "value": 10,
+              "condition": "no_armor_or_shield"
+            }
+          ]
+        },
+        {
+          "type": "feature",
+          "key": "uncanny-metabolism",
+          "name": "Uncanny Metabolism",
+          "description": "When Initiative is rolled, regain all expended Focus Points and then regain Hit Points equal to your Monk level plus one roll of your Martial Arts die. Once used, this feature cannot be used again until you finish a Long Rest.",
+          "action": {
+            "activation": "free",
+            "uses": { "max": 1, "per": "long_rest" }
+          }
+        }
+      ]
+    },
+    {
+      "level": 3,
+      "proficiency_bonus": 2,
+      "features": ["Deflect Attacks", "Monk Subclass"],
+      "class_specific": {
+        "martial_arts": "1d6",
+        "focus_points": 3,
+        "unarmored_movement_bonus": 10
+      },
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Deflect Attacks",
+          "description": "When an attack roll deals Bludgeoning, Piercing, or Slashing damage to you, use your Reaction to reduce the damage by 1d10 plus your Dexterity modifier plus your Monk level. If reduced to 0, expend 1 Focus Point to redirect it at a creature you can see: within 5 feet if the attack was melee, or within 60 feet and not behind Total Cover if it was ranged. The creature makes a Dexterity save and takes damage equal to two Martial Arts dice plus your Dexterity modifier on a failure, of the same type as the attack."
+        },
+        {
+          "type": "feature",
+          "name": "Monk Subclass",
+          "description": "Choose a Monk subclass, gaining its features now and again at Monk levels 6, 11, and 17."
+        }
+      ]
+    },
+    {
+      "level": 4,
+      "proficiency_bonus": 2,
+      "features": ["Ability Score Improvement", "Slow Fall"],
+      "class_specific": {
+        "martial_arts": "1d6",
+        "focus_points": 4,
+        "unarmored_movement_bonus": 10
+      },
+      "grants": [
+        {
+          "type": "ability_choice",
+          "key": "asi_4",
+          "name": "Ability Score Improvement",
+          "description": "Increase one ability score by 2, or two scores by 1 each, to a maximum of 20 (or take a feat).",
+          "points": 2,
+          "allowFeat": true
+        },
+        {
+          "type": "feature",
+          "name": "Slow Fall",
+          "description": "When you fall, use your Reaction to reduce the falling damage you take by five times your Monk level."
+        }
+      ]
+    },
+    {
+      "level": 5,
+      "proficiency_bonus": 3,
+      "features": ["Extra Attack", "Stunning Strike"],
+      "class_specific": {
+        "martial_arts": "1d8",
+        "focus_points": 5,
+        "unarmored_movement_bonus": 10
+      },
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Extra Attack",
+          "description": "Attack twice instead of once whenever you take the Attack action on your turn."
+        },
+        {
+          "type": "feature",
+          "name": "Stunning Strike",
+          "description": "Once per turn when you hit with a Monk weapon or Unarmed Strike, expend 1 Focus Point. The target makes a Constitution save. On a failure it is Stunned until the start of your next turn. On a success its Speed is halved until then, and the next attack against it has Advantage."
+        }
+      ]
+    },
+    {
+      "level": 6,
+      "proficiency_bonus": 3,
+      "features": [
+        "Empowered Strikes",
+        "Monk Subclass Feature",
+        "Unarmored Movement Improvement"
+      ],
+      "class_specific": {
+        "martial_arts": "1d8",
+        "focus_points": 6,
+        "unarmored_movement_bonus": 15
+      },
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Empowered Strikes",
+          "description": "Whenever an Unarmed Strike deals damage, it can deal Force damage or its normal damage type."
+        },
+        {
+          "type": "feature",
+          "name": "Monk Subclass Feature",
+          "description": "Gain a feature from your chosen subclass."
+        },
+        {
+          "type": "feature",
+          "name": "Unarmored Movement Improvement (+5 feet)",
+          "description": "Your Unarmored Movement bonus increases by 5 feet, to a total of 15 feet.",
+          "effects": [
+            {
+              "type": "speed_bonus",
+              "value": 5,
+              "condition": "no_armor_or_shield"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "level": 7,
+      "proficiency_bonus": 3,
+      "features": ["Evasion"],
+      "class_specific": {
+        "martial_arts": "1d8",
+        "focus_points": 7,
+        "unarmored_movement_bonus": 15
+      },
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Evasion",
+          "description": "When an effect allows a Dexterity save for half damage, take no damage on a success and half on a failure. You cannot use this while Incapacitated."
+        }
+      ]
+    },
+    {
+      "level": 8,
+      "proficiency_bonus": 3,
+      "features": ["Ability Score Improvement"],
+      "class_specific": {
+        "martial_arts": "1d8",
+        "focus_points": 8,
+        "unarmored_movement_bonus": 15
+      },
+      "grants": [
+        {
+          "type": "ability_choice",
+          "key": "asi_8",
+          "name": "Ability Score Improvement",
+          "description": "Increase one ability score by 2, or two scores by 1 each, to a maximum of 20 (or take a feat).",
+          "points": 2,
+          "allowFeat": true
+        }
+      ]
+    },
+    {
+      "level": 9,
+      "proficiency_bonus": 4,
+      "features": ["Acrobatic Movement"],
+      "class_specific": {
+        "martial_arts": "1d8",
+        "focus_points": 9,
+        "unarmored_movement_bonus": 15
+      },
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Acrobatic Movement",
+          "description": "While you aren't wearing armor or wielding a Shield, you can move along vertical surfaces and across liquids on your turn without falling during that movement."
+        }
+      ]
+    },
+    {
+      "level": 10,
+      "proficiency_bonus": 4,
+      "features": [
+        "Heightened Focus",
+        "Self-Restoration",
+        "Unarmored Movement Improvement"
+      ],
+      "class_specific": {
+        "martial_arts": "1d8",
+        "focus_points": 10,
+        "unarmored_movement_bonus": 20
+      },
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Heightened Focus",
+          "description": "Flurry of Blows now makes three Unarmed Strikes. The Focus Point version of Patient Defense also gives Temporary Hit Points equal to two Martial Arts dice. The Focus Point version of Step of the Wind lets you move one willing Large-or-smaller creature within 5 feet with you until your turn ends, and neither of you provokes Opportunity Attacks."
+        },
+        {
+          "type": "feature",
+          "name": "Self-Restoration",
+          "description": "At the end of each of your turns, end Charmed, Frightened, or Poisoned on yourself. You also suffer no Exhaustion from lack of food or drink."
+        },
+        {
+          "type": "feature",
+          "name": "Unarmored Movement Improvement (+5 feet)",
+          "description": "Your Unarmored Movement bonus increases by 5 feet, to a total of 20 feet.",
+          "effects": [
+            {
+              "type": "speed_bonus",
+              "value": 5,
+              "condition": "no_armor_or_shield"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "level": 11,
+      "proficiency_bonus": 4,
+      "features": ["Monk Subclass Feature"],
+      "class_specific": {
+        "martial_arts": "1d10",
+        "focus_points": 11,
+        "unarmored_movement_bonus": 20
+      },
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Monk Subclass Feature",
+          "description": "Gain a feature from your chosen subclass."
+        }
+      ]
+    },
+    {
+      "level": 12,
+      "proficiency_bonus": 4,
+      "features": ["Ability Score Improvement"],
+      "class_specific": {
+        "martial_arts": "1d10",
+        "focus_points": 12,
+        "unarmored_movement_bonus": 20
+      },
+      "grants": [
+        {
+          "type": "ability_choice",
+          "key": "asi_12",
+          "name": "Ability Score Improvement",
+          "description": "Increase one ability score by 2, or two scores by 1 each, to a maximum of 20 (or take a feat).",
+          "points": 2,
+          "allowFeat": true
+        }
+      ]
+    },
+    {
+      "level": 13,
+      "proficiency_bonus": 5,
+      "features": ["Deflect Energy"],
+      "class_specific": {
+        "martial_arts": "1d10",
+        "focus_points": 13,
+        "unarmored_movement_bonus": 20
+      },
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Deflect Energy",
+          "description": "Deflect Attacks can now reduce damage of any type, not only Bludgeoning, Piercing, and Slashing."
+        }
+      ]
+    },
+    {
+      "level": 14,
+      "proficiency_bonus": 5,
+      "features": ["Disciplined Survivor", "Unarmored Movement Improvement"],
+      "class_specific": {
+        "martial_arts": "1d10",
+        "focus_points": 14,
+        "unarmored_movement_bonus": 25
+      },
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Disciplined Survivor",
+          "description": "You gain proficiency in all saving throws. Whenever you fail a saving throw, expend 1 Focus Point to reroll it and use the new roll.",
+          "effects": [
+            {
+              "type": "saving_throw_proficiency",
+              "tags": [
+                "strength",
+                "dexterity",
+                "constitution",
+                "intelligence",
+                "wisdom",
+                "charisma"
+              ]
+            }
+          ]
+        },
+        {
+          "type": "feature",
+          "name": "Unarmored Movement Improvement (+5 feet)",
+          "description": "Your Unarmored Movement bonus increases by 5 feet, to a total of 25 feet.",
+          "effects": [
+            {
+              "type": "speed_bonus",
+              "value": 5,
+              "condition": "no_armor_or_shield"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "level": 15,
+      "proficiency_bonus": 5,
+      "features": ["Perfect Focus"],
+      "class_specific": {
+        "martial_arts": "1d10",
+        "focus_points": 15,
+        "unarmored_movement_bonus": 25
+      },
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Perfect Focus",
+          "description": "When Initiative is rolled and you do not use Uncanny Metabolism, regain Focus Points until you have 4 if you currently have 3 or fewer."
+        }
+      ]
+    },
+    {
+      "level": 16,
+      "proficiency_bonus": 5,
+      "features": ["Ability Score Improvement"],
+      "class_specific": {
+        "martial_arts": "1d10",
+        "focus_points": 16,
+        "unarmored_movement_bonus": 25
+      },
+      "grants": [
+        {
+          "type": "ability_choice",
+          "key": "asi_16",
+          "name": "Ability Score Improvement",
+          "description": "Increase one ability score by 2, or two scores by 1 each, to a maximum of 20 (or take a feat).",
+          "points": 2,
+          "allowFeat": true
+        }
+      ]
+    },
+    {
+      "level": 17,
+      "proficiency_bonus": 6,
+      "features": ["Monk Subclass Feature"],
+      "class_specific": {
+        "martial_arts": "1d12",
+        "focus_points": 17,
+        "unarmored_movement_bonus": 25
+      },
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Monk Subclass Feature",
+          "description": "Gain a feature from your chosen subclass."
+        }
+      ]
+    },
+    {
+      "level": 18,
+      "proficiency_bonus": 6,
+      "features": ["Superior Defense", "Unarmored Movement Improvement"],
+      "class_specific": {
+        "martial_arts": "1d12",
+        "focus_points": 18,
+        "unarmored_movement_bonus": 30
+      },
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Superior Defense",
+          "description": "At the start of your turn, expend 3 Focus Points to gain resistance to all damage except Force for 1 minute or until Incapacitated."
+        },
+        {
+          "type": "feature",
+          "name": "Unarmored Movement Improvement (+5 feet)",
+          "description": "Your Unarmored Movement bonus increases by 5 feet, to a total of 30 feet.",
+          "effects": [
+            {
+              "type": "speed_bonus",
+              "value": 5,
+              "condition": "no_armor_or_shield"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "level": 19,
+      "proficiency_bonus": 6,
+      "features": ["Epic Boon"],
+      "class_specific": {
+        "martial_arts": "1d12",
+        "focus_points": 19,
+        "unarmored_movement_bonus": 30
+      },
+      "grants": [
+        {
+          "type": "feat_pick",
+          "key": "epic_boon_19",
+          "name": "Epic Boon",
+          "choose": 1,
+          "description": "Choose an Epic Boon feat or another feat for which you qualify. Boon of Irresistible Offense is recommended.",
+          "category": "epic"
+        }
+      ]
+    },
+    {
+      "level": 20,
+      "proficiency_bonus": 6,
+      "features": ["Body and Mind"],
+      "class_specific": {
+        "martial_arts": "1d12",
+        "focus_points": 20,
+        "unarmored_movement_bonus": 30
+      },
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Body and Mind",
+          "description": "Your Dexterity and Wisdom scores each increase by 4, to a maximum of 25."
+        }
+      ]
+    }
   ]
 }
