@@ -127,6 +127,7 @@ export class CharacterDisplayComponent implements OnInit {
       sneak_attack: 'Sneak Attack', sorcery_points: 'Sorcery Points',
       invocations_known: 'Invocations Known',
       weapon_masteries: 'Weapon Masteries',
+      second_wind: 'Second Wind',
       bardic_die: 'Bardic Inspiration Die',
       channel_divinity: 'Channel Divinity',
       wild_shape_uses: 'Wild Shape',
