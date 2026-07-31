@@ -145,6 +145,8 @@ export function evaluateCondition(condition: EffectCondition, equipment: Equipme
   switch (condition) {
     case 'wearing_armor':   return equipped.some(isArmorItem);
     case 'no_armor':        return !equipped.some(isArmorItem);
+    case 'no_armor_or_shield':
+      return !equipped.some(it => isArmorItem(it) || isShieldItem(it));
     case 'no_heavy_armor':  return !equipped.some(it => isArmorItem(it) && it.category.includes('Heavy'));
     case 'wielding_shield': return equipped.some(isShieldItem);
     case 'two_handed_melee':

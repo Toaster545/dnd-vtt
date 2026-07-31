@@ -82,7 +82,7 @@ export class CharacterPlaySheetComponent {
     const char = this.localChar();
     if (!char) return [];
     const classes = this.resolvedClasses().map(rc => ({ data: rc.data, level: rc.level, subclass: rc.subclass }));
-    return this.actionsService.compute(classes, char.resource_uses ?? {});
+    return this.actionsService.compute(classes, char.resource_uses ?? {}, char.ability_scores);
   });
 
   // The four Actions-tab groups, in display order: weapon/spell attacks (below), then

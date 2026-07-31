@@ -39,6 +39,7 @@ describe('character wizard completion indicators', () => {
           level: 1,
           grants: [
             { type: 'skill_choice', key: 'skills', name: 'Skills', choose: 2 },
+            { type: 'expertise_choice', key: 'expertise', name: 'Expertise', choose: 2 },
             {
               type: 'choice', key: 'pool', name: 'Pool', choose: 1,
               chooseByLevel: { '1': 1, '4': 3 }, options: [],
@@ -53,10 +54,15 @@ describe('character wizard completion indicators', () => {
       level: 4,
       subclass: '',
       skills: ['Athletics', 'Survival'],
-      traits: { pool: ['One', 'Two', 'Three'] },
+      traits: { pool: ['One', 'Two', 'Three'], expertise: ['Athletics'] },
     };
     expect(areClassSelectionsComplete([entry], [])).toBe(false);
-    expect(areClassSelectionsComplete([{ ...entry, subclass: 'Path' }], [])).toBe(true);
+    expect(areClassSelectionsComplete([{ ...entry, subclass: 'Path' }], [])).toBe(false);
+    expect(areClassSelectionsComplete([{
+      ...entry,
+      subclass: 'Path',
+      traits: { ...entry.traits, expertise: ['Athletics', 'Survival'] },
+    }], [])).toBe(true);
   });
 
   it('checks every background grant and all six ability assignments', () => {

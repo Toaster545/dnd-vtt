@@ -18,7 +18,10 @@ export interface Grant {
     uses?: {
       max: number;
       maxByLevel?: Record<string, number>;
+      maxAbilityModifier?: string;
+      minimum?: number;
       per: string;
+      perByLevel?: Record<string, string>;
       shortRestRestore?: number;
     };
   };
@@ -54,6 +57,9 @@ export interface ClassContent {
     level: number;
     grants?: Grant[];
     pact_magic?: { slots: number; slot_level: number };
+    spell_slots?: Record<string, number>;
+    cantrips_known?: number;
+    prepared_spells?: number;
     class_specific?: Record<string, number | string>;
   }[];
 }

@@ -1,0 +1,12 @@
+{
+  "index": "entertainers-pack",
+  "name": "Entertainer's Pack",
+  "type": "gear",
+  "category": "Adventuring Gear",
+  "damage": null,
+  "damage_type": null,
+  "properties": [],
+  "weight": 58.5,
+  "cost": "40 gp",
+  "description": "Contains a backpack, bedroll, bell, bullseye lantern, three costumes, mirror, eight flasks of oil, nine days of rations, a tinderbox, and a waterskin."
+}

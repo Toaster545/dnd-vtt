@@ -275,6 +275,15 @@ export class CharacterWizardComponent implements OnInit, OnDestroy {
       .reduce((acc, s) => ({ ...acc, [s]: true }), {} as Record<string, boolean>);
   });
 
+  proficientSkillNames = computed(() => Object.keys(this.skillsRecord()));
+
+  private expertiseRecord = computed(() => this.selectedClasses()
+    .flatMap(entry => reachableGrants(entry.cls, entry.subclass, entry.level)
+      .filter((grant): grant is Extract<TraitGrant, { type: 'expertise_choice' }> =>
+        grant.type === 'expertise_choice')
+      .flatMap(grant => entry.traits[grant.key] ?? []))
+    .reduce((record, skill) => ({ ...record, [skill]: true }), {} as Record<string, boolean>));
+
   private languages = computed(() => [
     'Common',
     ...new Set(this.raceTraits()['languages'] ?? []),
@@ -354,6 +363,7 @@ export class CharacterWizardComponent implements OnInit, OnDestroy {
       armor_class: this.armorClass(),
       speed: this.speed(),
       skills: this.skillsRecord(),
+      expertise: this.expertiseRecord(),
       equipment,
       currency: this.startingCurrency(),
       spells,

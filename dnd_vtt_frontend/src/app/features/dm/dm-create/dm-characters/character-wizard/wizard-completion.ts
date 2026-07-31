@@ -55,6 +55,8 @@ function classGrantComplete(
       return grant.key === 'skills'
         ? entry.skills.length >= grant.choose
         : picked(entry.traits, grant.key) >= grant.choose;
+    case 'expertise_choice':
+      return picked(entry.traits, grant.key) >= grant.choose;
     case 'choice':
       return picked(entry.traits, grant.key) >=
         resolveProgressiveChoiceLimit(grant.choose, grant.chooseByLevel, entry.level);

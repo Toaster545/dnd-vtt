@@ -381,6 +381,54 @@
                     </div>
                   }
 
+                  @case ('expertise_choice') {
+                    @let needsChoice = choicesLeft(grant) > 0;
+                    @let collapsed   = isGrantCollapsed(grant.key);
+                    <div>
+                      <button
+                        class="flex items-center gap-2 w-full text-left cursor-pointer"
+                        (click)="toggleGrantCollapsed(grant.key)"
+                        style="font-family: inherit;"
+                      >
+                        <span class="w-1.5 h-1.5 rounded-full flex-shrink-0" [class]="needsChoice ? 'bg-gold' : 'bg-success/70'" [title]="needsChoice ? 'Choice needed' : 'Complete'"></span>
+                        <p class="text-sm text-parchment font-medium flex-1">
+                          {{ grant.name }} &mdash; choose {{ grant.choose }} proficient skills
+                          @if (needsChoice) { <span class="text-gold font-normal text-xs">({{ choicesLeft(grant) }} left)</span> }
+                          @if (!needsChoice) { <span class="text-success font-normal text-xs">&#10003;</span> }
+                        </p>
+                        @if (collapsed) {
+                          <span class="text-coal text-xs flex-shrink-0" aria-hidden="true">&#9656;</span>
+                        } @else {
+                          <span class="text-coal text-xs flex-shrink-0" aria-hidden="true">&#9662;</span>
+                        }
+                      </button>
+                      @if (!collapsed) {
+                        <div class="pl-3.5 mt-1.5">
+                          @if (grant.description) { <p class="text-xs text-coal mb-2">{{ grant.description }}</p> }
+                          @if (expertiseOptions().length === 0) {
+                            <p class="text-xs text-gold">Choose skill proficiencies first, then return here.</p>
+                          } @else {
+                            <div class="flex flex-wrap gap-1.5">
+                              @for (skill of expertiseOptions(); track skill) {
+                                @let picked = traitSelected(grant, skill);
+                                @let full   = !picked && (!needsChoice || expertiseTakenElsewhere(grant, skill));
+                                <button
+                                  class="px-2.5 py-1 rounded text-xs border transition-all"
+                                  [class]="picked ? 'border-gold/60 bg-gold/10 text-parchment cursor-pointer'
+                                    : full || !unlocked ? 'border-white/8 text-coal cursor-not-allowed'
+                                            : 'border-white/15 text-slate hover:border-white/30 hover:text-parchment cursor-pointer'"
+                                  [disabled]="full || !unlocked"
+                                  (click)="toggleExpertise(grant, skill)"
+                                  style="font-family: inherit;"
+                                >{{ skill }}</button>
+                              }
+                            </div>
+                          }
+                        </div>
+                      }
+                    </div>
+                  }
+
                   @case ('weapon_mastery') {
                     @let needsChoice = choicesLeft(grant) > 0;
                     @let collapsed   = isGrantCollapsed(grant.key);
