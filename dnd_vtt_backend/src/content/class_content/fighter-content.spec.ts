@@ -39,11 +39,17 @@ describe('Fighter class content', () => {
     });
     expect(
       grantsAt(1).find((grant) => grant.key === 'fighting_style'),
-    ).toMatchObject({ type: 'feat_pick', choose: 1, category: 'fighting_style' });
+    ).toMatchObject({
+      type: 'feat_pick',
+      choose: 1,
+      category: 'fighting_style',
+    });
     expect(
       grantsAt(1).find((grant) => grant.key === 'weapon_mastery'),
     ).toMatchObject({ type: 'weapon_mastery', choose: 3 });
-    expect(grantsAt(1).find((grant) => grant.key === 'second-wind')?.action).toEqual({
+    expect(
+      grantsAt(1).find((grant) => grant.key === 'second-wind')?.action,
+    ).toEqual({
       activation: 'bonus_action',
       uses: { max: 2, per: 'long_rest' },
     });
@@ -73,7 +79,9 @@ describe('Fighter class content', () => {
         .filter((grant) => grant.type === 'weapon_mastery')
         .map((grant) => grant.choose),
     ).toEqual([3, 1, 1, 1]);
-    expect(grantsAt(19).find((grant) => grant.key === 'epic_boon_19')).toMatchObject({
+    expect(
+      grantsAt(19).find((grant) => grant.key === 'epic_boon_19'),
+    ).toMatchObject({
       type: 'feat_pick',
       choose: 1,
       category: 'epic',

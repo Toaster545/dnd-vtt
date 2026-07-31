@@ -72,7 +72,9 @@ export function expectLevelsOneThroughTwenty(content: ClassContent): void {
   );
 }
 
-export function expectEquipmentItemsToExist(equipment: StructuredEquipment): void {
+export function expectEquipmentItemsToExist(
+  equipment: StructuredEquipment,
+): void {
   const refs = [
     ...equipment.fixed,
     ...equipment.groups.flatMap((group) =>

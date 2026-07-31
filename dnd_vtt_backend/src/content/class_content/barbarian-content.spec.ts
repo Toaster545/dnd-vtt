@@ -41,19 +41,15 @@ describe('Barbarian class content', () => {
   });
 
   it('tracks Rage, Rage Damage, and Weapon Mastery at every level', () => {
-    expect(barbarian.levels.map((level) => level.class_specific.rages)).toEqual([
-      2, 2, 3, 3, 3, 4, 4, 4, 4, 4, 4, 5, 5, 5, 5, 5, 6, 6, 6, 6,
-    ]);
+    expect(barbarian.levels.map((level) => level.class_specific.rages)).toEqual(
+      [2, 2, 3, 3, 3, 4, 4, 4, 4, 4, 4, 5, 5, 5, 5, 5, 6, 6, 6, 6],
+    );
     expect(
       barbarian.levels.map((level) => level.class_specific.rage_damage),
-    ).toEqual([
-      2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4,
-    ]);
+    ).toEqual([2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4]);
     expect(
       barbarian.levels.map((level) => level.class_specific.weapon_masteries),
-    ).toEqual([
-      2, 2, 2, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,
-    ]);
+    ).toEqual([2, 2, 2, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4]);
   });
 
   it('declares progressive Rage uses and partial Short Rest recovery once', () => {
