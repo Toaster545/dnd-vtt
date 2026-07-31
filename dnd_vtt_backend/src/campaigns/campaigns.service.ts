@@ -55,7 +55,10 @@ export class CampaignsService {
       ),
     ]);
     const visitedAt = new Map<string, string>(
-      visits.rows.map((row) => [row.campaign_id as string, row.visited_at as string]),
+      visits.rows.map((row) => [
+        row.campaign_id as string,
+        row.visited_at as string,
+      ]),
     );
     const byId = new Map<
       string,

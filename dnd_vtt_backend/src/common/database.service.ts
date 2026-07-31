@@ -492,6 +492,8 @@ export class DatabaseService implements OnModuleInit {
     `);
 
     await this.db.execute(`PRAGMA user_version = 16`);
-    this.logger.log('Applied schema migration v16 (campaign last-visited tracking)');
+    this.logger.log(
+      'Applied schema migration v16 (campaign last-visited tracking)',
+    );
   }
 }
