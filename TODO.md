@@ -48,12 +48,25 @@
 
 ## Andre
 
-- [ ] Push `andre_setup` to `main` and ensure everything works.
-- [x] Build a functioning Warlock class.
+- [x] Push `andre_setup` to `main` and ensure everything works.
+- [ ] Build all classes.
+    - [ ] Build a functioning Barbarian class.
+    - [ ] Build a functioning Bard class.
+    - [ ] Build a functioning Cleric class.
+    - [ ] Build a functioning Druid class.
+    - [x] Build a functioning Fighter class. (Mat did this one)
+    - [ ] Build a functioning Monk class.
+    - [ ] Build a functioning Paladin class.
+    - [ ] Build a functioning Ranger class.
+    - [ ] Build a functioning Rogue class.
+    - [ ] Build a functioning Sorcerer class.
+    - [x] Build a functioning Warlock class.
+    - [ ] Build a functioning Wizard class.
 - [ ] Character Creation:
     - [x] fix backgrounds (2024 version)
     - [x] Races choices and traits
-    - [ ] ability score increases
-    - [ ] add customizability (background, for instance)
+    - [ ] add customizability based on class (background, for instance)
+    - [ ] unlock race choices (don't need to complete whole thing to save)
+- [ ] check general todo list
 
 ## Anthony
