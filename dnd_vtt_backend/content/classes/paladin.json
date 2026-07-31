@@ -1,82 +1,707 @@
 {
   "index": "paladin",
   "name": "Paladin",
+  "description": "Paladins are armored champions whose sacred oaths empower healing, divine magic, devastating strikes, and protective auras.",
+  "primary_abilities": ["strength", "charisma"],
   "hit_die": 10,
   "saving_throws": ["wisdom", "charisma"],
-  "armor_training": ["All Armor", "Shields"],
+  "armor_training": ["Light Armor", "Medium Armor", "Heavy Armor", "Shields"],
   "weapon_proficiencies": ["Simple Weapons", "Martial Weapons"],
   "tool_proficiencies": [],
   "skill_choices": {
     "count": 2,
-    "from": ["Athletics", "Insight", "Intimidation", "Medicine", "Persuasion", "Religion"]
+    "from": [
+      "Athletics",
+      "Insight",
+      "Intimidation",
+      "Medicine",
+      "Persuasion",
+      "Religion"
+    ]
   },
-  "starting_equipment": [
-    { "choice": true, "options": ["Martial weapon and a shield", "Two martial weapons"] },
-    { "choice": true, "options": ["5 javelins", "Any simple melee weapon"] },
-    { "choice": true, "options": ["Priest's pack", "Explorer's pack"] },
-    { "fixed": ["Chain mail", "Holy symbol"] }
-  ],
+  "starting_equipment": {
+    "fixed": [
+      { "key": "paladin-chain-mail", "item": "chain-mail", "quantity": 1 },
+      { "key": "paladin-shield", "item": "shield", "quantity": 1 },
+      { "key": "paladin-longsword", "item": "longsword", "quantity": 1 },
+      { "key": "paladin-javelins", "item": "javelin", "quantity": 6 },
+      { "key": "paladin-holy-symbol", "item": "holy-symbol", "quantity": 1 },
+      { "key": "paladin-priests-pack", "item": "priests-pack", "quantity": 1 }
+    ],
+    "groups": [],
+    "gold": 9,
+    "goldAlternative": 150
+  },
   "spellcasting_ability": "charisma",
   "subclass_level": 3,
   "subclasses": [
     {
       "index": "devotion",
       "name": "Oath of Devotion",
-      "description": "Uphold the highest ideals of justice and order, wielding holy power against evil.",
+      "description": "Uphold justice and order as an archetypal holy knight whose word, courage, and honorable deeds inspire others.",
       "levels": [
-        { "level": 3,  "features": ["Sacred Weapon", "Turn the Unholy"] },
-        { "level": 7,  "features": ["Aura of Devotion"] },
-        { "level": 15, "features": ["Purity of Spirit"] },
-        { "level": 20, "features": ["Holy Nimbus"] }
+        {
+          "level": 3,
+          "features": ["Oath of Devotion Spells", "Sacred Weapon"],
+          "grants": [
+            {
+              "type": "feature",
+              "name": "Oath of Devotion Spells",
+              "description": "These spells are always prepared and don't count against your prepared-spell limit: at Paladin level 3, Protection from Evil and Good and Shield of Faith; level 5, Aid and Zone of Truth; level 9, Beacon of Hope and Dispel Magic; level 13, Freedom of Movement and Guardian of Faith; level 17, Commune and Flame Strike."
+            },
+            {
+              "type": "feature",
+              "name": "Sacred Weapon",
+              "description": "When you take the Attack action, expend one Channel Divinity use to empower a Melee weapon you hold for 10 minutes or until used again. Add your Charisma modifier (minimum +1) to attack rolls with it; on a hit, choose its normal damage type or Radiant. It emits Bright Light for 20 feet and Dim Light for 20 feet more. You can end the effect freely, and it ends if you stop carrying the weapon."
+            }
+          ]
+        },
+        {
+          "level": 7,
+          "features": ["Aura of Devotion"],
+          "grants": [
+            {
+              "type": "feature",
+              "name": "Aura of Devotion",
+              "description": "You and your allies are immune to the Charmed condition while in your Aura of Protection. Charmed has no effect on an ally while that ally is in the aura."
+            }
+          ]
+        },
+        {
+          "level": 15,
+          "features": ["Smite of Protection"],
+          "grants": [
+            {
+              "type": "feature",
+              "name": "Smite of Protection",
+              "description": "Whenever you cast Divine Smite, you and your allies have Half Cover while in your Aura of Protection until the start of your next turn."
+            }
+          ]
+        },
+        {
+          "level": 20,
+          "features": ["Holy Nimbus"],
+          "grants": [
+            {
+              "type": "feature",
+              "key": "holy-nimbus",
+              "name": "Holy Nimbus",
+              "description": "As a Bonus Action, empower your Aura of Protection for 10 minutes or until you end it. You have Advantage on saves forced by Fiends and Undead; an enemy that starts its turn in the aura takes Radiant damage equal to your Charisma modifier plus your Proficiency Bonus; and the aura is filled with Bright Light that is sunlight. Regain the use after a Long Rest, or restore it by expending a level 5 spell slot.",
+              "action": {
+                "activation": "bonus_action",
+                "uses": { "max": 1, "per": "long_rest" }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "index": "glory",
+      "name": "Oath of Glory",
+      "description": "Strive for legendary heroism through courage, athletic excellence, and deeds that inspire companions to achieve greatness.",
+      "levels": [
+        {
+          "level": 3,
+          "features": [
+            "Inspiring Smite",
+            "Oath of Glory Spells",
+            "Peerless Athlete"
+          ],
+          "grants": [
+            {
+              "type": "feature",
+              "name": "Inspiring Smite",
+              "description": "Immediately after casting Divine Smite, expend one Channel Divinity use to distribute Temporary Hit Points equal to 2d8 plus your Paladin level among creatures of your choice within 30 feet, including yourself."
+            },
+            {
+              "type": "feature",
+              "name": "Oath of Glory Spells",
+              "description": "These spells are always prepared and don't count against your prepared-spell limit: at Paladin level 3, Guiding Bolt and Heroism; level 5, Enhance Ability and Magic Weapon; level 9, Haste and Protection from Energy; level 13, Compulsion and Freedom of Movement; level 17, Legend Lore and Yolande's Regal Presence."
+            },
+            {
+              "type": "feature",
+              "name": "Peerless Athlete",
+              "description": "As a Bonus Action, expend one Channel Divinity use. For 1 hour, you have Advantage on Strength (Athletics) and Dexterity (Acrobatics) checks, and your Long and High Jump distances increase by 10 feet, still costing movement."
+            }
+          ]
+        },
+        {
+          "level": 7,
+          "features": ["Aura of Alacrity"],
+          "grants": [
+            {
+              "type": "feature",
+              "name": "Aura of Alacrity",
+              "description": "Your Speed increases by 10 feet. Whenever an ally first enters your Aura of Protection on a turn or starts a turn there, that ally's Speed increases by 10 feet until the end of its next turn.",
+              "effects": [{ "type": "speed_bonus", "value": 10 }]
+            }
+          ]
+        },
+        {
+          "level": 15,
+          "features": ["Glorious Defense"],
+          "grants": [
+            {
+              "type": "feature",
+              "key": "glorious-defense",
+              "name": "Glorious Defense",
+              "description": "When you or a creature you can see within 10 feet is hit by an attack roll, use your Reaction to add your Charisma modifier (minimum +1) to the target's AC against that attack. If it misses, you can make one weapon attack against the attacker as part of the Reaction if it is within range. Uses equal your Charisma modifier (minimum once) per Long Rest.",
+              "action": {
+                "activation": "reaction",
+                "uses": {
+                  "max": 1,
+                  "maxAbilityModifier": "charisma",
+                  "minimum": 1,
+                  "per": "long_rest"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "level": 20,
+          "features": ["Living Legend"],
+          "grants": [
+            {
+              "type": "feature",
+              "key": "living-legend",
+              "name": "Living Legend",
+              "description": "As a Bonus Action for 10 minutes, gain Advantage on all Charisma checks; when you fail a saving throw, you can use a Reaction to reroll and must use the new roll; and once on each turn when you miss with a weapon attack, you can make it hit instead. Regain the use after a Long Rest, or restore it by expending a level 5 spell slot.",
+              "action": {
+                "activation": "bonus_action",
+                "uses": { "max": 1, "per": "long_rest" }
+              }
+            }
+          ]
+        }
       ]
     },
     {
       "index": "ancients",
       "name": "Oath of the Ancients",
-      "description": "Protect the natural world and stand with the light against the encroaching darkness.",
+      "description": "Preserve life, hope, beauty, and the light of the natural world with primal divine power.",
       "levels": [
-        { "level": 3,  "features": ["Nature's Wrath", "Turn the Faithless"] },
-        { "level": 7,  "features": ["Aura of Warding"] },
-        { "level": 15, "features": ["Undying Sentinel"] },
-        { "level": 20, "features": ["Elder Champion"] }
+        {
+          "level": 3,
+          "features": ["Nature's Wrath", "Oath of the Ancients Spells"],
+          "grants": [
+            {
+              "type": "feature",
+              "name": "Nature's Wrath",
+              "description": "As a Magic action, expend one Channel Divinity use. Each creature of your choice that you can see within 15 feet makes a Strength save or is Restrained for 1 minute. A Restrained creature repeats the save at the end of each turn, ending the effect on itself on a success."
+            },
+            {
+              "type": "feature",
+              "name": "Oath of the Ancients Spells",
+              "description": "These spells are always prepared and don't count against your prepared-spell limit: at Paladin level 3, Ensnaring Strike and Speak with Animals; level 5, Misty Step and Moonbeam; level 9, Plant Growth and Protection from Energy; level 13, Ice Storm and Stoneskin; level 17, Commune with Nature and Tree Stride."
+            }
+          ]
+        },
+        {
+          "level": 7,
+          "features": ["Aura of Warding"],
+          "grants": [
+            {
+              "type": "feature",
+              "name": "Aura of Warding",
+              "description": "You and your allies have Resistance to Necrotic, Psychic, and Radiant damage while in your Aura of Protection."
+            }
+          ]
+        },
+        {
+          "level": 15,
+          "features": ["Undying Sentinel"],
+          "grants": [
+            {
+              "type": "feature",
+              "key": "undying-sentinel",
+              "name": "Undying Sentinel",
+              "description": "When reduced to 0 Hit Points but not killed outright, drop to 1 Hit Point instead and regain Hit Points equal to three times your Paladin level. Regain the use after a Long Rest. You can't be aged magically and cease visibly aging.",
+              "action": {
+                "activation": "free",
+                "uses": { "max": 1, "per": "long_rest" }
+              }
+            }
+          ]
+        },
+        {
+          "level": 20,
+          "features": ["Elder Champion"],
+          "grants": [
+            {
+              "type": "feature",
+              "key": "elder-champion",
+              "name": "Elder Champion",
+              "description": "As a Bonus Action, empower your Aura of Protection for 1 minute. Enemies in it have Disadvantage on saves against your spells and Channel Divinity options; you regain 10 Hit Points at the start of each turn; and spells with an action casting time can be cast as a Bonus Action. Regain the use after a Long Rest, or restore it by expending a level 5 spell slot.",
+              "action": {
+                "activation": "bonus_action",
+                "uses": { "max": 1, "per": "long_rest" }
+              }
+            }
+          ]
+        }
       ]
     },
     {
       "index": "vengeance",
       "name": "Oath of Vengeance",
-      "description": "Hunt down evildoers with relentless focus and righteous fury.",
+      "description": "Pursue and punish grievous evildoers with relentless supernatural focus, accepting no escape from justice.",
       "levels": [
-        { "level": 3,  "features": ["Abjure Enemy", "Vow of Enmity"] },
-        { "level": 7,  "features": ["Relentless Avenger"] },
-        { "level": 15, "features": ["Soul of Vengeance"] },
-        { "level": 20, "features": ["Avenging Angel"] }
+        {
+          "level": 3,
+          "features": ["Oath of Vengeance Spells", "Vow of Enmity"],
+          "grants": [
+            {
+              "type": "feature",
+              "name": "Oath of Vengeance Spells",
+              "description": "These spells are always prepared and don't count against your prepared-spell limit: at Paladin level 3, Bane and Hunter's Mark; level 5, Hold Person and Misty Step; level 9, Haste and Protection from Energy; level 13, Banishment and Dimension Door; level 17, Hold Monster and Scrying."
+            },
+            {
+              "type": "feature",
+              "name": "Vow of Enmity",
+              "description": "When you take the Attack action, expend one Channel Divinity use to mark a creature you can see within 30 feet for 1 minute or until used again. You have Advantage on attacks against it. If it drops to 0 Hit Points before the vow ends, transfer the vow to another creature within 30 feet without an action."
+            }
+          ]
+        },
+        {
+          "level": 7,
+          "features": ["Relentless Avenger"],
+          "grants": [
+            {
+              "type": "feature",
+              "name": "Relentless Avenger",
+              "description": "When you hit with an Opportunity Attack, reduce the creature's Speed to 0 until the end of the current turn, then move up to half your Speed as part of the same Reaction without provoking Opportunity Attacks."
+            }
+          ]
+        },
+        {
+          "level": 15,
+          "features": ["Soul of Vengeance"],
+          "grants": [
+            {
+              "type": "feature",
+              "name": "Soul of Vengeance",
+              "description": "Immediately after a creature under your Vow of Enmity hits or misses with an attack roll, use your Reaction to make a melee attack against it if it is within range."
+            }
+          ]
+        },
+        {
+          "level": 20,
+          "features": ["Avenging Angel"],
+          "grants": [
+            {
+              "type": "feature",
+              "key": "avenging-angel",
+              "name": "Avenging Angel",
+              "description": "As a Bonus Action for 10 minutes, gain a 60-foot Fly Speed and hover. Whenever an enemy starts its turn in your Aura of Protection, it makes a Wisdom save or becomes Frightened for 1 minute or until damaged; attacks against it have Advantage while it is Frightened this way. Regain the use after a Long Rest, or restore it by expending a level 5 spell slot.",
+              "action": {
+                "activation": "bonus_action",
+                "uses": { "max": 1, "per": "long_rest" }
+              }
+            }
+          ]
+        }
       ]
     }
   ],
   "levels": [
-    { "level": 1,  "proficiency_bonus": 2, "features": ["Divine Sense", "Lay on Hands"],                           "spell_slots": {} },
-    { "level": 2,  "proficiency_bonus": 2, "features": ["Fighting Style", "Spellcasting", "Divine Smite"],         "spell_slots": { "1": 2 },
+    {
+      "level": 1,
+      "proficiency_bonus": 2,
+      "features": ["Lay On Hands", "Spellcasting", "Weapon Mastery"],
+      "prepared_spells": 2,
+      "spell_slots": { "1": 2 },
+      "class_specific": { "channel_divinity": 0, "weapon_masteries": 2 },
       "grants": [
-        { "type": "feat_pick", "key": "fighting_style", "name": "Fighting Style", "choose": 1, "description": "Adopt a particular style of fighting as your specialty.", "category": "fighting_style" }
+        {
+          "type": "skill_choice",
+          "key": "skills",
+          "name": "Paladin Skill Proficiencies",
+          "choose": 2,
+          "description": "Choose two Paladin skill proficiencies."
+        },
+        {
+          "type": "feature",
+          "key": "lay-on-hands",
+          "name": "Lay On Hands",
+          "description": "You have a healing pool equal to five times your Paladin level that fully replenishes after a Long Rest. As a Bonus Action, touch a creature, including yourself, and spend any number of remaining points to restore that many Hit Points. Instead, spend 5 points to remove Poisoned without restoring Hit Points.",
+          "action": {
+            "activation": "bonus_action",
+            "uses": {
+              "max": 5,
+              "maxByLevel": {
+                "2": 10,
+                "3": 15,
+                "4": 20,
+                "5": 25,
+                "6": 30,
+                "7": 35,
+                "8": 40,
+                "9": 45,
+                "10": 50,
+                "11": 55,
+                "12": 60,
+                "13": 65,
+                "14": 70,
+                "15": 75,
+                "16": 80,
+                "17": 85,
+                "18": 90,
+                "19": 95,
+                "20": 100
+              },
+              "per": "long_rest"
+            }
+          }
+        },
+        {
+          "type": "feature",
+          "name": "Spellcasting",
+          "description": "Cast prepared Paladin spells using Charisma and a Holy Symbol as a Spellcasting Focus. You start with two prepared level 1 spells and can replace one prepared Paladin spell after each Long Rest. The prepared-spell and spell-slot progressions are shown for every Paladin level; complete spell selection is deferred to the shared spell-system pass."
+        },
+        {
+          "type": "weapon_mastery",
+          "key": "weapon_mastery",
+          "name": "Weapon Mastery",
+          "choose": 2,
+          "description": "Choose two weapons you have proficiency with. You can use their mastery properties and can change the choices after a Long Rest.",
+          "proficiency": ["Simple", "Martial"]
+        }
       ]
     },
-    { "level": 3,  "proficiency_bonus": 2, "features": ["Divine Health", "Sacred Oath"],                           "spell_slots": { "1": 3 } },
-    { "level": 4,  "proficiency_bonus": 2, "features": ["Ability Score Improvement"],                              "spell_slots": { "1": 3 } },
-    { "level": 5,  "proficiency_bonus": 3, "features": ["Extra Attack"],                                           "spell_slots": { "1": 4, "2": 2 } },
-    { "level": 6,  "proficiency_bonus": 3, "features": ["Aura of Protection"],                                     "spell_slots": { "1": 4, "2": 2 } },
-    { "level": 7,  "proficiency_bonus": 3, "features": ["Sacred Oath Feature"],                                    "spell_slots": { "1": 4, "2": 3 } },
-    { "level": 8,  "proficiency_bonus": 3, "features": ["Ability Score Improvement"],                              "spell_slots": { "1": 4, "2": 3 } },
-    { "level": 9,  "proficiency_bonus": 4, "features": [],                                                         "spell_slots": { "1": 4, "2": 3, "3": 2 } },
-    { "level": 10, "proficiency_bonus": 4, "features": ["Aura of Courage"],                                        "spell_slots": { "1": 4, "2": 3, "3": 2 } },
-    { "level": 11, "proficiency_bonus": 4, "features": ["Improved Divine Smite"],                                  "spell_slots": { "1": 4, "2": 3, "3": 3 } },
-    { "level": 12, "proficiency_bonus": 4, "features": ["Ability Score Improvement"],                              "spell_slots": { "1": 4, "2": 3, "3": 3 } },
-    { "level": 13, "proficiency_bonus": 5, "features": [],                                                         "spell_slots": { "1": 4, "2": 3, "3": 3, "4": 1 } },
-    { "level": 14, "proficiency_bonus": 5, "features": ["Cleansing Touch"],                                        "spell_slots": { "1": 4, "2": 3, "3": 3, "4": 1 } },
-    { "level": 15, "proficiency_bonus": 5, "features": ["Sacred Oath Feature"],                                    "spell_slots": { "1": 4, "2": 3, "3": 3, "4": 2 } },
-    { "level": 16, "proficiency_bonus": 5, "features": ["Ability Score Improvement"],                              "spell_slots": { "1": 4, "2": 3, "3": 3, "4": 2 } },
-    { "level": 17, "proficiency_bonus": 6, "features": [],                                                         "spell_slots": { "1": 4, "2": 3, "3": 3, "4": 3, "5": 1 } },
-    { "level": 18, "proficiency_bonus": 6, "features": ["Aura Improvements"],                                      "spell_slots": { "1": 4, "2": 3, "3": 3, "4": 3, "5": 1 } },
-    { "level": 19, "proficiency_bonus": 6, "features": ["Ability Score Improvement"],                              "spell_slots": { "1": 4, "2": 3, "3": 3, "4": 3, "5": 2 } },
-    { "level": 20, "proficiency_bonus": 6, "features": ["Sacred Oath Feature"],                                    "spell_slots": { "1": 4, "2": 3, "3": 3, "4": 3, "5": 2 } }
+    {
+      "level": 2,
+      "proficiency_bonus": 2,
+      "features": ["Fighting Style", "Paladin's Smite"],
+      "prepared_spells": 3,
+      "spell_slots": { "1": 2 },
+      "class_specific": { "channel_divinity": 0, "weapon_masteries": 2 },
+      "grants": [
+        {
+          "type": "feat_pick",
+          "key": "fighting_style",
+          "name": "Fighting Style",
+          "choose": 1,
+          "description": "Gain one Fighting Style feat or choose Blessed Warrior to learn two Cleric cantrips that use Charisma and count as Paladin spells.",
+          "category": "fighting_style"
+        },
+        {
+          "type": "feature",
+          "key": "paladins-smite",
+          "name": "Paladin's Smite",
+          "description": "Divine Smite is always prepared and doesn't count against your prepared-spell limit. Cast it once without a spell slot, regaining that free casting after a Long Rest.",
+          "action": {
+            "activation": "bonus_action",
+            "uses": { "max": 1, "per": "long_rest" }
+          }
+        }
+      ]
+    },
+    {
+      "level": 3,
+      "proficiency_bonus": 2,
+      "features": ["Channel Divinity", "Paladin Subclass"],
+      "prepared_spells": 4,
+      "spell_slots": { "1": 3 },
+      "class_specific": { "channel_divinity": 2, "weapon_masteries": 2 },
+      "grants": [
+        {
+          "type": "feature",
+          "key": "paladin-channel-divinity",
+          "name": "Channel Divinity",
+          "description": "You have two Channel Divinity uses for Divine Sense, your oath option, and later Abjure Foes. Divine Sense is a Bonus Action that detects the location and type of Celestials, Fiends, and Undead within 60 feet, plus consecrated or desecrated places and objects, for 10 minutes or until Incapacitated. A Short Rest restores one use; a Long Rest restores all uses. At level 11, the pool increases to three uses.",
+          "action": {
+            "activation": "free",
+            "uses": {
+              "max": 2,
+              "maxByLevel": { "11": 3 },
+              "per": "long_rest",
+              "shortRestRestore": 1
+            }
+          }
+        },
+        {
+          "type": "feature",
+          "name": "Paladin Subclass",
+          "description": "Choose a Paladin oath, gaining its features now and again at Paladin levels 7, 15, and 20."
+        }
+      ]
+    },
+    {
+      "level": 4,
+      "proficiency_bonus": 2,
+      "features": ["Ability Score Improvement"],
+      "prepared_spells": 5,
+      "spell_slots": { "1": 3 },
+      "class_specific": { "channel_divinity": 2, "weapon_masteries": 2 },
+      "grants": [
+        {
+          "type": "ability_choice",
+          "key": "asi_4",
+          "name": "Ability Score Improvement",
+          "description": "Increase one ability score by 2, or two scores by 1 each, to a maximum of 20 (or take a feat).",
+          "points": 2,
+          "allowFeat": true
+        }
+      ]
+    },
+    {
+      "level": 5,
+      "proficiency_bonus": 3,
+      "features": ["Extra Attack", "Faithful Steed"],
+      "prepared_spells": 6,
+      "spell_slots": { "1": 4, "2": 2 },
+      "class_specific": { "channel_divinity": 2, "weapon_masteries": 2 },
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Extra Attack",
+          "description": "Attack twice instead of once whenever you take the Attack action on your turn."
+        },
+        {
+          "type": "feature",
+          "key": "faithful-steed",
+          "name": "Faithful Steed",
+          "description": "Find Steed is always prepared and doesn't count against your prepared-spell limit. Cast it once without a spell slot, regaining that free casting after a Long Rest.",
+          "action": {
+            "activation": "action",
+            "uses": { "max": 1, "per": "long_rest" }
+          }
+        }
+      ]
+    },
+    {
+      "level": 6,
+      "proficiency_bonus": 3,
+      "features": ["Aura of Protection"],
+      "prepared_spells": 6,
+      "spell_slots": { "1": 4, "2": 2 },
+      "class_specific": { "channel_divinity": 2, "weapon_masteries": 2 },
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Aura of Protection",
+          "description": "While you aren't Incapacitated, you radiate a 10-foot aura. You and allies in it add your Charisma modifier (minimum +1) to saving throws. A creature can benefit from only one Aura of Protection at a time.",
+          "effects": [
+            {
+              "type": "saving_throw_ability_bonus",
+              "ability": "charisma",
+              "minimum": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "level": 7,
+      "proficiency_bonus": 3,
+      "features": ["Paladin Subclass Feature"],
+      "prepared_spells": 7,
+      "spell_slots": { "1": 4, "2": 3 },
+      "class_specific": { "channel_divinity": 2, "weapon_masteries": 2 },
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Paladin Subclass Feature",
+          "description": "Gain a feature from your chosen oath."
+        }
+      ]
+    },
+    {
+      "level": 8,
+      "proficiency_bonus": 3,
+      "features": ["Ability Score Improvement"],
+      "prepared_spells": 7,
+      "spell_slots": { "1": 4, "2": 3 },
+      "class_specific": { "channel_divinity": 2, "weapon_masteries": 2 },
+      "grants": [
+        {
+          "type": "ability_choice",
+          "key": "asi_8",
+          "name": "Ability Score Improvement",
+          "description": "Increase one ability score by 2, or two scores by 1 each, to a maximum of 20 (or take a feat).",
+          "points": 2,
+          "allowFeat": true
+        }
+      ]
+    },
+    {
+      "level": 9,
+      "proficiency_bonus": 4,
+      "features": ["Abjure Foes"],
+      "prepared_spells": 9,
+      "spell_slots": { "1": 4, "2": 3, "3": 2 },
+      "class_specific": { "channel_divinity": 2, "weapon_masteries": 2 },
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Abjure Foes",
+          "description": "As a Magic action, expend one Channel Divinity use and target creatures you can see within 60 feet, up to your Charisma modifier (minimum one). Each makes a Wisdom save or is Frightened for 1 minute or until damaged. While Frightened this way, it can only move, take an action, or take a Bonus Action on each turn."
+        }
+      ]
+    },
+    {
+      "level": 10,
+      "proficiency_bonus": 4,
+      "features": ["Aura of Courage"],
+      "prepared_spells": 9,
+      "spell_slots": { "1": 4, "2": 3, "3": 2 },
+      "class_specific": { "channel_divinity": 2, "weapon_masteries": 2 },
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Aura of Courage",
+          "description": "You and allies are immune to the Frightened condition while in your Aura of Protection. Frightened has no effect on an ally while that ally is in the aura."
+        }
+      ]
+    },
+    {
+      "level": 11,
+      "proficiency_bonus": 4,
+      "features": ["Radiant Strikes"],
+      "prepared_spells": 10,
+      "spell_slots": { "1": 4, "2": 3, "3": 3 },
+      "class_specific": { "channel_divinity": 3, "weapon_masteries": 2 },
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Radiant Strikes",
+          "description": "When you hit with an attack roll using a Melee weapon or an Unarmed Strike, the target takes an extra 1d8 Radiant damage."
+        }
+      ]
+    },
+    {
+      "level": 12,
+      "proficiency_bonus": 4,
+      "features": ["Ability Score Improvement"],
+      "prepared_spells": 10,
+      "spell_slots": { "1": 4, "2": 3, "3": 3 },
+      "class_specific": { "channel_divinity": 3, "weapon_masteries": 2 },
+      "grants": [
+        {
+          "type": "ability_choice",
+          "key": "asi_12",
+          "name": "Ability Score Improvement",
+          "description": "Increase one ability score by 2, or two scores by 1 each, to a maximum of 20 (or take a feat).",
+          "points": 2,
+          "allowFeat": true
+        }
+      ]
+    },
+    {
+      "level": 13,
+      "proficiency_bonus": 5,
+      "features": [],
+      "prepared_spells": 11,
+      "spell_slots": { "1": 4, "2": 3, "3": 3, "4": 1 },
+      "class_specific": { "channel_divinity": 3, "weapon_masteries": 2 },
+      "grants": []
+    },
+    {
+      "level": 14,
+      "proficiency_bonus": 5,
+      "features": ["Restoring Touch"],
+      "prepared_spells": 11,
+      "spell_slots": { "1": 4, "2": 3, "3": 3, "4": 1 },
+      "class_specific": { "channel_divinity": 3, "weapon_masteries": 2 },
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Restoring Touch",
+          "description": "When using Lay On Hands, spend 5 healing-pool points for each condition you remove from the target: Blinded, Charmed, Deafened, Frightened, Paralyzed, or Stunned. Points spent this way don't restore Hit Points."
+        }
+      ]
+    },
+    {
+      "level": 15,
+      "proficiency_bonus": 5,
+      "features": ["Paladin Subclass Feature"],
+      "prepared_spells": 12,
+      "spell_slots": { "1": 4, "2": 3, "3": 3, "4": 2 },
+      "class_specific": { "channel_divinity": 3, "weapon_masteries": 2 },
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Paladin Subclass Feature",
+          "description": "Gain a feature from your chosen oath."
+        }
+      ]
+    },
+    {
+      "level": 16,
+      "proficiency_bonus": 5,
+      "features": ["Ability Score Improvement"],
+      "prepared_spells": 12,
+      "spell_slots": { "1": 4, "2": 3, "3": 3, "4": 2 },
+      "class_specific": { "channel_divinity": 3, "weapon_masteries": 2 },
+      "grants": [
+        {
+          "type": "ability_choice",
+          "key": "asi_16",
+          "name": "Ability Score Improvement",
+          "description": "Increase one ability score by 2, or two scores by 1 each, to a maximum of 20 (or take a feat).",
+          "points": 2,
+          "allowFeat": true
+        }
+      ]
+    },
+    {
+      "level": 17,
+      "proficiency_bonus": 6,
+      "features": [],
+      "prepared_spells": 14,
+      "spell_slots": { "1": 4, "2": 3, "3": 3, "4": 3, "5": 1 },
+      "class_specific": { "channel_divinity": 3, "weapon_masteries": 2 },
+      "grants": []
+    },
+    {
+      "level": 18,
+      "proficiency_bonus": 6,
+      "features": ["Aura Expansion"],
+      "prepared_spells": 14,
+      "spell_slots": { "1": 4, "2": 3, "3": 3, "4": 3, "5": 1 },
+      "class_specific": { "channel_divinity": 3, "weapon_masteries": 2 },
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Aura Expansion",
+          "description": "Your Aura of Protection becomes a 30-foot Emanation. Features that refer to that aura use its expanded area."
+        }
+      ]
+    },
+    {
+      "level": 19,
+      "proficiency_bonus": 6,
+      "features": ["Epic Boon"],
+      "prepared_spells": 15,
+      "spell_slots": { "1": 4, "2": 3, "3": 3, "4": 3, "5": 2 },
+      "class_specific": { "channel_divinity": 3, "weapon_masteries": 2 },
+      "grants": [
+        {
+          "type": "feat_pick",
+          "key": "epic_boon_19",
+          "name": "Epic Boon",
+          "choose": 1,
+          "description": "Choose an Epic Boon feat or another feat for which you qualify. Boon of Truesight is recommended.",
+          "category": "epic"
+        }
+      ]
+    },
+    {
+      "level": 20,
+      "proficiency_bonus": 6,
+      "features": ["Paladin Subclass Feature"],
+      "prepared_spells": 15,
+      "spell_slots": { "1": 4, "2": 3, "3": 3, "4": 3, "5": 2 },
+      "class_specific": { "channel_divinity": 3, "weapon_masteries": 2 },
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Paladin Subclass Feature",
+          "description": "Gain your oath's capstone feature."
+        }
+      ]
+    }
   ]
 }
