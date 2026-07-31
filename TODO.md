@@ -67,6 +67,8 @@
     - [x] Races choices and traits
     - [ ] add customizability based on class (background, for instance)
     - [ ] unlock race choices (don't need to complete whole thing to save)
+    - [ ] once spells are made, integrate them into every spellcasting class!
 - [ ] check general todo list
 
 ## Anthony
+- [ ] spells
