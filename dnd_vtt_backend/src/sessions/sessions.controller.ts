@@ -16,10 +16,11 @@ import { SessionsService } from './sessions.service';
 import { CreateSessionDto } from './dto/create-session.dto';
 import { UpdateSessionDto } from './dto/update-session.dto';
 import { JwtGuard } from '../auth/jwt.guard';
-import { AdminGuard } from '../auth/admin.guard';
 import { CurrentUser } from '../common/current-user.decorator';
 import type { RequestUser } from '../common/current-user.decorator';
 
+// No AdminGuard — session ownership is scoped to campaign.dm_id and checked inside
+// SessionsService (see create/remove there), not a global role.
 @Controller('sessions')
 @UseGuards(JwtGuard)
 export class SessionsController {
@@ -34,7 +35,6 @@ export class SessionsController {
   }
 
   @Post()
-  @UseGuards(AdminGuard)
   create(@Body() dto: CreateSessionDto, @CurrentUser() user: RequestUser) {
     return this.sessions.create(user.id, dto);
   }
@@ -45,7 +45,6 @@ export class SessionsController {
   }
 
   @Patch(':id')
-  @UseGuards(AdminGuard)
   update(
     @Param('id') id: string,
     @Body() dto: UpdateSessionDto,
@@ -55,7 +54,6 @@ export class SessionsController {
   }
 
   @Post(':id/background')
-  @UseGuards(AdminGuard)
   @UseInterceptors(FileInterceptor('file'))
   uploadBackground(
     @Param('id') id: string,
@@ -66,7 +64,6 @@ export class SessionsController {
   }
 
   @Patch(':id/visibility')
-  @UseGuards(AdminGuard)
   setVisibility(
     @Param('id') id: string,
     @Body() body: { visible: boolean },
@@ -76,8 +73,7 @@ export class SessionsController {
   }
 
   @Delete(':id')
-  @UseGuards(AdminGuard)
-  remove(@Param('id') id: string) {
-    return this.sessions.remove(id);
+  remove(@Param('id') id: string, @CurrentUser() user: RequestUser) {
+    return this.sessions.remove(id, user.id);
   }
 }

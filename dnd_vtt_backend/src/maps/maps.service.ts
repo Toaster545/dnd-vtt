@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  ForbiddenException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -9,6 +10,7 @@ import { join } from 'path';
 import { DatabaseService } from '../common/database.service';
 import { ContentService } from '../content/content.service';
 import { TokensGateway } from './tokens.gateway';
+import type { RequestUser } from '../common/current-user.decorator';
 
 @Injectable()
 export class MapsService {
@@ -35,22 +37,30 @@ export class MapsService {
     return row;
   }
 
-  async create(body: Record<string, unknown>) {
+  async create(body: Record<string, unknown>, user: RequestUser) {
+    const campaignId = (body.campaign_id as string | undefined) ?? 'default';
+    await this.assertCampaignAccess(campaignId, user);
     const id = randomUUID();
     await this.db.execute(
       'INSERT INTO battle_maps (id, campaign_id, name, image_url, grid_size) VALUES (?,?,?,?,?)',
-      [
-        id,
-        body.campaign_id ?? 'default',
-        body.name,
-        body.image_url,
-        body.grid_size ?? 50,
-      ],
+      [id, campaignId, body.name, body.image_url, body.grid_size ?? 50],
     );
     return this.findOne(id);
   }
 
-  uploadImage(file: Express.Multer.File, campaignId: string): Promise<string> {
+  async uploadImage(
+    file: Express.Multer.File,
+    campaignId: string,
+    user: RequestUser,
+  ): Promise<string> {
+    await this.assertCampaignAccess(campaignId, user);
+    return this.saveImage(file, campaignId);
+  }
+
+  private saveImage(
+    file: Express.Multer.File,
+    campaignId: string,
+  ): Promise<string> {
     const uploadDir = join(process.cwd(), 'uploads', 'maps', campaignId);
     if (!existsSync(uploadDir)) mkdirSync(uploadDir, { recursive: true });
 
@@ -58,12 +68,6 @@ export class MapsService {
     const filepath = join(uploadDir, filename);
     writeFileSync(filepath, file.buffer);
 
-    // Deliberately relative, not an absolute `http://host:port/...` URL: per CLAUDE.md this app is
-    // single-origin (the browser always loads the frontend from the same host/port it should fetch
-    // uploads from, whether that's localhost:3000 directly or a domain fronted by a Cloudflare
-    // Tunnel). A baked-in absolute host would only ever be right for one of those, and baking in
-    // `http://` specifically breaks entirely once the tunnel serves the app over https (browsers
-    // block that as mixed content).
     return Promise.resolve(`/uploads/maps/${campaignId}/${filename}`);
   }
 
@@ -75,7 +79,12 @@ export class MapsService {
     return result.rows.map((r) => ({ ...r, is_player: !!r.is_player }));
   }
 
-  async upsertToken(mapId: string, token: Record<string, unknown>) {
+  async upsertToken(
+    mapId: string,
+    token: Record<string, unknown>,
+    user: RequestUser,
+  ) {
+    await this.assertMapAccess(mapId, user);
     const isNew = !token.id;
     const id = (token.id as string) || randomUUID();
 
@@ -122,14 +131,16 @@ export class MapsService {
     return tokens.find((t) => t.id === id);
   }
 
-  async deleteToken(tokenId: string, mapId: string) {
+  async deleteToken(tokenId: string, mapId: string, user: RequestUser) {
+    await this.assertMapAccess(mapId, user);
     await this.db.execute('DELETE FROM map_tokens WHERE id = ?', [tokenId]);
     const tokens = await this.getTokens(mapId);
     this.gateway.broadcastTokens(mapId, tokens);
     return { deleted: true };
   }
 
-  async rerollInitiative(mapId: string, tokenId: string) {
+  async rerollInitiative(mapId: string, tokenId: string, user: RequestUser) {
+    await this.assertMapAccess(mapId, user);
     const result = await this.db.execute(
       'SELECT monster_index FROM map_tokens WHERE id = ? AND map_id = ?',
       [tokenId, mapId],
@@ -166,7 +177,8 @@ export class MapsService {
     };
   }
 
-  async setFogEnabled(mapId: string, enabled: boolean) {
+  async setFogEnabled(mapId: string, enabled: boolean, user: RequestUser) {
+    await this.assertMapAccess(mapId, user);
     const fog = await this.getFog(mapId);
     await this.upsertFog(mapId, enabled, fog.hidden_cells);
     return this.broadcastFog(mapId);
@@ -178,7 +190,9 @@ export class MapsService {
     mapId: string,
     cells: { col: number; row: number }[],
     revealed: boolean,
+    user: RequestUser,
   ) {
+    await this.assertMapAccess(mapId, user);
     const fog = await this.getFog(mapId);
     const cellSet = new Set(fog.hidden_cells);
     for (const { col, row } of cells) {
@@ -191,7 +205,8 @@ export class MapsService {
   }
 
   // "Reset" now means "back to the fully-visible default" — clears whatever's been hidden.
-  async resetFog(mapId: string) {
+  async resetFog(mapId: string, user: RequestUser) {
+    await this.assertMapAccess(mapId, user);
     const fog = await this.getFog(mapId);
     await this.upsertFog(mapId, fog.enabled, []);
     return this.broadcastFog(mapId);
@@ -214,6 +229,25 @@ export class MapsService {
     const fog = await this.getFog(mapId);
     this.gateway.broadcastFog(mapId, fog);
     return fog;
+  }
+
+  private async assertCampaignAccess(campaignId: string, user: RequestUser) {
+    if (campaignId === 'default') {
+      if (user.role !== 'admin') throw new ForbiddenException();
+      return;
+    }
+    const result = await this.db.execute(
+      'SELECT dm_id FROM campaigns WHERE id = ?',
+      [campaignId],
+    );
+    const row = result.rows[0];
+    if (!row) throw new NotFoundException('Campaign not found');
+    if (row.dm_id !== user.id) throw new ForbiddenException();
+  }
+
+  private async assertMapAccess(mapId: string, user: RequestUser) {
+    const map = await this.findOne(mapId);
+    await this.assertCampaignAccess(map.campaign_id as string, user);
   }
 
   private rollMonsterInitiative(monsterIndex: string): number | null {

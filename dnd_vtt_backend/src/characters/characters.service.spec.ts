@@ -67,20 +67,30 @@ describe('CharactersService', () => {
     );
   });
 
-  it('lets an admin read any character via findOneReadable', async () => {
+  it('lets the owning DM read a campaign copy via findOneReadable', async () => {
     const created = await service.create(ownerId, { name: 'Aria' });
-    const adminId = await insertProfile(db, 'admin');
+    const campaignId = randomUUID();
+    const dmId = await insertProfile(db);
+    await db.execute(
+      `INSERT INTO campaigns (id, dm_id, name, join_code) VALUES (?, ?, 'Test Campaign', ?)`,
+      [campaignId, dmId, randomUUID().slice(0, 6).toUpperCase()],
+    );
+    await db.execute('UPDATE characters SET campaign_id = ? WHERE id = ?', [
+      campaignId,
+      created.id,
+    ]);
+
     const found = await service.findOneReadable(
       created.id as string,
       {
-        id: adminId,
-        role: 'admin',
+        id: dmId,
+        role: 'player',
       } as RequestUser,
     );
     expect(found.name).toBe('Aria');
   });
 
-  it('blocks a non-owner, non-admin from reading via findOneReadable', async () => {
+  it('blocks a non-owner who does not own the character or its campaign from reading via findOneReadable', async () => {
     const created = await service.create(ownerId, { name: 'Aria' });
     const otherId = await insertProfile(db);
     await expect(
@@ -113,7 +123,7 @@ describe('CharactersService', () => {
         notes: 'secret DM notes',
       });
       const campaignId = randomUUID();
-      const dmId = await insertProfile(db, 'admin');
+      const dmId = await insertProfile(db);
       await db.execute(
         `INSERT INTO campaigns (id, dm_id, name, join_code) VALUES (?, ?, 'Test Campaign', ?)`,
         [campaignId, dmId, randomUUID().slice(0, 6).toUpperCase()],
@@ -127,11 +137,11 @@ describe('CharactersService', () => {
          VALUES (?, ?, ?, ?, ?)`,
         [randomUUID(), campaignId, ownerId, created.id, editUnlocked ? 1 : 0],
       );
-      return created;
+      return { created, dmId };
     }
 
     it('only lets the player write the whitelisted play-sheet fields when locked', async () => {
-      const created = await makeLockedCampaignCopy(false);
+      const { created } = await makeLockedCampaignCopy(false);
 
       const updated = await service.update(created.id as string, owner, {
         name: 'Renamed',
@@ -148,7 +158,7 @@ describe('CharactersService', () => {
     });
 
     it('lets the player fully rewrite the copy once the DM unlocks edit access', async () => {
-      const created = await makeLockedCampaignCopy(true);
+      const { created } = await makeLockedCampaignCopy(true);
 
       const updated = await service.update(created.id as string, owner, {
         name: 'Fully Renamed',
@@ -157,11 +167,11 @@ describe('CharactersService', () => {
       expect(updated.name).toBe('Fully Renamed');
     });
 
-    it('lets the DM write the copy regardless of edit_unlocked', async () => {
-      const created = await makeLockedCampaignCopy(false);
-      const admin = { id: randomUUID(), role: 'admin' } as RequestUser;
+    it('lets the owning DM write the copy regardless of edit_unlocked', async () => {
+      const { created, dmId } = await makeLockedCampaignCopy(false);
+      const dm = { id: dmId, role: 'player' } as RequestUser;
 
-      const updated = await service.update(created.id as string, admin, {
+      const updated = await service.update(created.id as string, dm, {
         name: 'DM Renamed',
       });
 

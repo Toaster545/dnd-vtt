@@ -5,6 +5,7 @@ import { firstValueFrom } from 'rxjs';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatDialog } from '@angular/material/dialog';
+import { AuthService } from '../../../../core/services/auth.service';
 import { CampaignService } from '../../../../core/services/campaign.service';
 import { SessionService } from '../../../../core/services/session.service';
 import { CharacterService } from '../../../../core/services/character.service';
@@ -17,7 +18,7 @@ import { Character } from '../../../../core/models/character.model';
 import { ConfirmService } from '../../../../shared/confirm.service';
 import { NotesPanelComponent } from '../../../../shared/components/notes-panel/notes-panel';
 import { PartyListComponent } from '../../../../shared/components/party-list/party-list';
-import { CharacterWizardComponent } from '../../dm-create/dm-characters/character-wizard/character-wizard';
+import { CharacterWizardComponent } from '../../../characters/character-wizard/character-wizard';
 import { DescriptionDialogComponent } from '../../../../shared/components/description-dialog/description-dialog';
 
 function toContentIndex(name: string): string {
@@ -45,6 +46,7 @@ export class DmCampaignHubComponent implements OnInit {
   private statsService     = inject(CharacterStatsService);
   private confirm          = inject(ConfirmService);
   private dialog           = inject(MatDialog);
+  auth = inject(AuthService);
 
   campaignId = this.route.snapshot.paramMap.get('campaignId')!;
 
@@ -247,7 +249,7 @@ export class DmCampaignHubComponent implements OnInit {
   }
 
   backToList() {
-    void this.router.navigate(['/dm/campaigns']);
+    void this.router.navigate(['/home/campaigns']);
   }
 
   formatDate(iso?: string): string {

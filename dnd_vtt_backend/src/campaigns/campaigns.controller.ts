@@ -20,10 +20,13 @@ import { SetPartyVisibilityDto } from './dto/set-party-visibility.dto';
 import { SetPartyLevelDto } from './dto/set-party-level.dto';
 import { SetRaceClassVisibilityDto } from './dto/set-race-class-visibility.dto';
 import { JwtGuard } from '../auth/jwt.guard';
-import { AdminGuard } from '../auth/admin.guard';
 import { CurrentUser } from '../common/current-user.decorator';
 import type { RequestUser } from '../common/current-user.decorator';
 
+// No AdminGuard on any route here — campaign creation and management is scoped by ownership
+// (campaign.dm_id === the caller), enforced inside CampaignsService itself, not by a global role.
+// Any authenticated user can create a campaign (becoming its DM) or join one (becoming a member);
+// see findAllForUser, which returns the union of both for the current user.
 @Controller('campaigns')
 @UseGuards(JwtGuard)
 export class CampaignsController {
@@ -35,7 +38,6 @@ export class CampaignsController {
   }
 
   @Post()
-  @UseGuards(AdminGuard)
   create(@Body() dto: CreateCampaignDto, @CurrentUser() user: RequestUser) {
     return this.campaigns.create(user.id, dto);
   }
@@ -51,7 +53,6 @@ export class CampaignsController {
   }
 
   @Patch(':id')
-  @UseGuards(AdminGuard)
   update(
     @Param('id') id: string,
     @Body() dto: UpdateCampaignDto,
@@ -61,7 +62,6 @@ export class CampaignsController {
   }
 
   @Post(':id/background')
-  @UseGuards(AdminGuard)
   @UseInterceptors(FileInterceptor('file'))
   uploadBackground(
     @Param('id') id: string,
@@ -72,19 +72,16 @@ export class CampaignsController {
   }
 
   @Delete(':id')
-  @UseGuards(AdminGuard)
   remove(@Param('id') id: string, @CurrentUser() user: RequestUser) {
     return this.campaigns.remove(id, user.id);
   }
 
   @Get(':id/members')
-  @UseGuards(AdminGuard)
   getMembers(@Param('id') id: string, @CurrentUser() user: RequestUser) {
     return this.campaigns.getMembers(id, user.id);
   }
 
   @Patch(':id/party-level')
-  @UseGuards(AdminGuard)
   setPartyLevel(
     @Param('id') id: string,
     @Body() dto: SetPartyLevelDto,
@@ -94,7 +91,6 @@ export class CampaignsController {
   }
 
   @Delete(':id/members/:userId')
-  @UseGuards(AdminGuard)
   removeMember(
     @Param('id') id: string,
     @Param('userId') userId: string,
@@ -104,7 +100,6 @@ export class CampaignsController {
   }
 
   @Patch(':id/members/:userId/edit-access')
-  @UseGuards(AdminGuard)
   setMemberEditAccess(
     @Param('id') id: string,
     @Param('userId') userId: string,
@@ -120,7 +115,6 @@ export class CampaignsController {
   }
 
   @Patch(':id/members/:userId/party-visibility')
-  @UseGuards(AdminGuard)
   setMemberPartyVisibility(
     @Param('id') id: string,
     @Param('userId') userId: string,
@@ -135,8 +129,8 @@ export class CampaignsController {
     );
   }
 
-  // Player-only, self-service — no AdminGuard, since this is the player's own choice about their
-  // own membership row rather than something the DM grants (contrast setMemberEditAccess above).
+  // Self-service — this is the player's own choice about their own membership row rather than
+  // something the DM grants (contrast setMemberEditAccess above).
   @Patch(':id/members/me/race-class-visibility')
   setOwnRaceClassVisibility(
     @Param('id') id: string,

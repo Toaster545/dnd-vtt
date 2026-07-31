@@ -1,0 +1,147 @@
+<div class="p-6 overflow-y-auto flex-1 min-h-0">
+  <div class="max-w-lg mx-auto">
+    <div class="flex items-center gap-3 mb-5">
+      <h2 class="font-brand text-lg text-parchment m-0 flex-1">Campaigns</h2>
+      @if (showForm()) {
+        <button class="btn-outline text-sm" (click)="closeForm()">Cancel</button>
+      } @else {
+        <button class="btn-outline text-sm" (click)="openForm('join')">+ New Campaign</button>
+      }
+    </div>
+
+    @if (showForm()) {
+      <div class="card card-body mb-5">
+        <div class="flex gap-1 mb-4 border border-white/10 rounded p-0.5 w-fit">
+          <button type="button" class="px-3 py-1 rounded text-sm"
+                  [class]="mode() === 'join' ? 'bg-gold/15 text-gold' : 'text-slate hover:text-parchment'"
+                  (click)="mode.set('join')">
+            Join
+          </button>
+          <button type="button" class="px-3 py-1 rounded text-sm"
+                  [class]="mode() === 'create' ? 'bg-gold/15 text-gold' : 'text-slate hover:text-parchment'"
+                  (click)="mode.set('create')">
+            Create
+          </button>
+        </div>
+
+        @if (mode() === 'join') {
+          <h3 class="font-brand text-sm text-parchment m-0 mb-3">Join a Campaign</h3>
+
+          @if (characters().length === 0) {
+            <p class="text-slate text-sm">
+              You don't have any characters yet — create one in the <strong class="text-parchment">Characters</strong> tab first.
+            </p>
+          } @else {
+            <div class="field mb-4">
+              <label class="field-label">Which character?</label>
+              <div class="flex flex-col gap-1.5">
+                @for (character of characters(); track character.id) {
+                  <button type="button"
+                    class="flex items-center gap-2 px-3 py-2 rounded border text-left text-sm w-full cursor-pointer"
+                    [class]="selectedCharacterId() === character.id ? 'border-gold/50 bg-gold/5' : 'border-white/10 hover:border-white/30'"
+                    (click)="selectCharacter(character.id!)"
+                    style="font-family: inherit;"
+                  >
+                    <span class="w-4 h-4 rounded-full border flex items-center justify-center shrink-0 text-[9px]"
+                      [class]="selectedCharacterId() === character.id ? 'bg-gold border-gold text-canvas font-bold' : 'border-slate/50 text-transparent'">●</span>
+                    <span class="text-parchment">{{ character.name }}</span>
+                    <span class="text-coal text-xs">Level {{ character.level }} {{ classLabel(character) }}</span>
+                  </button>
+                }
+              </div>
+              <p class="text-coal text-xs mt-2">
+                A DM-editable copy of this character is made for the campaign — your original stays untouched.
+              </p>
+            </div>
+
+            <div class="field mb-4">
+              <label class="field-label">Campaign join code</label>
+              <input class="field-input uppercase tracking-widest" [(ngModel)]="joinCode" name="joinCode" maxlength="6" placeholder="ABC123" />
+            </div>
+
+            @if (joinError()) {
+              <p class="text-danger text-sm mb-3">{{ joinError() }}</p>
+            }
+
+            <button class="btn-primary" [disabled]="!selectedCharacterId() || !joinCode.trim() || joining()" (click)="join()">
+              @if (joining()) { <span class="spinner-sm"></span> } @else { Join Campaign }
+            </button>
+          }
+        } @else {
+          <h3 class="font-brand text-sm text-parchment m-0 mb-3">Create a Campaign</h3>
+          <form (ngSubmit)="createCampaign()" class="flex flex-col gap-3">
+            <div class="field">
+              <label class="field-label">Campaign name</label>
+              <input class="field-input" [(ngModel)]="newName" name="name" required autofocus />
+            </div>
+            <div class="field">
+              <label class="field-label">Description (optional)</label>
+              <textarea class="field-input" [(ngModel)]="newDescription" name="description" rows="3"></textarea>
+            </div>
+            <div>
+              <button class="btn-primary" type="submit" [disabled]="!newName.trim() || saving()">
+                @if (saving()) { <span class="spinner-sm"></span> } @else { Create Campaign }
+              </button>
+            </div>
+          </form>
+        }
+      </div>
+    }
+  </div>
+
+  @if (loading()) {
+    <div class="flex justify-center mt-10"><span class="spinner-lg"></span></div>
+  } @else {
+    <div class="flex flex-col gap-4">
+      @for (campaign of campaigns(); track campaign.id) {
+        <div
+          class="relative rounded-lg overflow-hidden border border-white/10 bg-cover bg-center bg-elevated min-h-20"
+          [style.background-image]="campaign.background_url ? 'linear-gradient(to bottom, rgba(13,14,22,0.25), rgba(13,14,22,0.92)), url(' + campaign.background_url + ')' : null"
+        >
+          <a [routerLink]="campaignLink(campaign)" class="flex flex-col justify-end h-full min-h-30 p-5 cursor-pointer no-underline">
+            <div class="flex items-center gap-2">
+              <p class="text-parchment font-brand text-2xl m-0">{{ campaign.name }}</p>
+              @if (campaign.is_owner) {
+                <span class="toolbar-badge text-[10px]">DM</span>
+              }
+            </div>
+            @if (campaign.description) { <p class="text-slate text-sm m-0 mt-1 max-w-2xl">{{ campaign.description }}</p> }
+            @if (campaign.is_owner) {
+              <p class="text-slate text-xs m-0 mt-2">
+                Join code <span class="text-gold font-mono">{{ campaign.join_code }}</span>
+                · {{ formatDate(campaign.created_at) }}
+              </p>
+            }
+          </a>
+
+          @if (campaign.is_owner) {
+            <div class="absolute top-3 right-3 flex items-center gap-1">
+              <input #bgInput type="file" accept="image/*" class="hidden" (change)="onBackgroundFileChange(campaign, $event)" />
+              <button class="btn-icon bg-canvas/50 hover:bg-canvas/70" (click)="bgInput.click()"
+                      [disabled]="uploadingBackgroundId() === campaign.id" matTooltip="Set banner image">
+                @if (uploadingBackgroundId() === campaign.id) { <span class="spinner-sm"></span> } @else { <mat-icon>image</mat-icon> }
+              </button>
+              @if (campaign.background_url) {
+                <button class="btn-icon bg-canvas/50 hover:bg-canvas/70 text-danger/70 hover:text-danger"
+                        (click)="clearBackground(campaign, $event)" matTooltip="Remove banner image">
+                  <mat-icon>hide_image</mat-icon>
+                </button>
+              }
+              <button class="btn-icon bg-canvas/50 hover:bg-canvas/70 text-danger/70 hover:text-danger"
+                      (click)="deleteCampaign(campaign, $event)"
+                      matTooltip="Delete campaign">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </div>
+          } @else {
+            <mat-icon class="text-slate absolute top-3 right-3">chevron_right</mat-icon>
+          }
+        </div>
+      } @empty {
+        <p class="text-slate text-sm py-4 max-w-lg mx-auto">
+          No campaigns yet — create one, or ask a DM for a join code.
+        </p>
+      }
+    </div>
+  }
+</div>

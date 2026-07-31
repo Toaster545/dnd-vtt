@@ -36,22 +36,31 @@ export class CampaignsService {
     return this.findOne(id, { id: dmId, role: 'admin' } as RequestUser);
   }
 
-  // Role-aware: the DM sees campaigns they own; a player sees campaigns they've actively joined.
+  // Ownership-aware, not role-aware: a user can simultaneously own campaigns (created, dm_id
+  // theirs) and belong to others (joined via a code) — this returns the union, each row tagged
+  // `is_owner` so the frontend can route to the right hub view. If a campaign somehow appears in
+  // both sets (a DM who also joined their own campaign), the owned copy wins.
   async findAllForUser(user: RequestUser) {
-    const result =
-      user.role === 'admin'
-        ? await this.db.execute(
-            'SELECT * FROM campaigns WHERE dm_id = ? ORDER BY created_at DESC',
-            [user.id],
-          )
-        : await this.db.execute(
-            `SELECT c.* FROM campaigns c
-             JOIN campaign_members m ON m.campaign_id = c.id
-             WHERE m.user_id = ? AND m.status = 'active'
-             ORDER BY c.created_at DESC`,
-            [user.id],
-          );
-    return result.rows.map((r) => this.deserialize(r));
+    const [owned, joined] = await Promise.all([
+      this.db.execute('SELECT * FROM campaigns WHERE dm_id = ?', [user.id]),
+      this.db.execute(
+        `SELECT c.* FROM campaigns c
+         JOIN campaign_members m ON m.campaign_id = c.id
+         WHERE m.user_id = ? AND m.status = 'active'`,
+        [user.id],
+      ),
+    ]);
+    const byId = new Map<
+      string,
+      ReturnType<typeof this.deserialize> & { is_owner: boolean }
+    >();
+    for (const row of joined.rows)
+      byId.set(row.id as string, { ...this.deserialize(row), is_owner: false });
+    for (const row of owned.rows)
+      byId.set(row.id as string, { ...this.deserialize(row), is_owner: true });
+    return [...byId.values()].sort((a, b) =>
+      String(b.created_at).localeCompare(String(a.created_at)),
+    );
   }
 
   async findOne(id: string, user: RequestUser) {

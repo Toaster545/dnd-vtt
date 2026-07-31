@@ -28,8 +28,8 @@ export class LoginComponent {
     this.loading.set(true);
     this.error.set(null);
     try {
-      const res = await this.auth.signIn(this.form.value.email!, this.form.value.password!);
-      this.router.navigate([res.profile.role === 'admin' ? '/dm' : '/player']);
+      await this.auth.signIn(this.form.value.email!, this.form.value.password!);
+      this.router.navigate(['/home']);
     } catch (e) {
       this.error.set(getErrorMessage(e));
     } finally {

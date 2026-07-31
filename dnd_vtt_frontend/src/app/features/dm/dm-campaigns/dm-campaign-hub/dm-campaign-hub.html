@@ -33,6 +33,12 @@
         <mat-icon class="text-base">{{ copied() ? 'check' : 'content_copy' }}</mat-icon>
         Join code: <span class="font-mono text-gold">{{ c.join_code }}</span>
       </button>
+      @if (auth.isAdmin()) {
+        <a class="btn-outline text-sm gap-1.5" [routerLink]="['/home/campaigns/manage', campaignId, 'create']" matTooltip="Author monsters, equipment, and spells">
+          <mat-icon class="text-base">auto_stories</mat-icon>
+          Create
+        </a>
+      }
     </div>
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -68,7 +74,7 @@
           @for (session of c.sessions; track session.id) {
             <li>
               <a
-                [routerLink]="['/dm/campaigns', campaignId, 'sessions', session.id]"
+                [routerLink]="['/home/campaigns/manage', campaignId, 'sessions', session.id]"
                 class="flex items-center py-3 px-2 -mx-2 gap-3 rounded cursor-pointer no-underline hover:bg-white/5 transition-colors"
               >
                 <div class="flex-1 min-w-0">
