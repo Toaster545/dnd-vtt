@@ -1,0 +1,12 @@
+{
+  "index": "priests-pack",
+  "name": "Priest's Pack",
+  "type": "gear",
+  "category": "Adventuring Gear",
+  "damage": null,
+  "damage_type": null,
+  "properties": [],
+  "weight": 29,
+  "cost": "33 gp",
+  "description": "Contains a backpack, blanket, holy water, lamp, seven days of rations, robe, and tinderbox."
+}
