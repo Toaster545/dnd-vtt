@@ -122,7 +122,7 @@ export class CharacterDisplayComponent implements OnInit {
     if (!lvl) return [];
     const LABELS: Record<string, string> = {
       rages: 'Rages/day', rage_damage: 'Rage Dmg Bonus',
-      ki_points: 'Ki Points', martial_arts: 'Martial Arts Die',
+      ki_points: 'Ki Points', focus_points: 'Focus Points', martial_arts: 'Martial Arts Die',
       unarmored_movement_bonus: 'Unarmored Move +',
       sneak_attack: 'Sneak Attack', sorcery_points: 'Sorcery Points',
       invocations_known: 'Invocations Known',
