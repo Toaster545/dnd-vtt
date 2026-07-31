@@ -33,6 +33,10 @@ $error-container:   #3b1111;
 
 $success:           #4caf82;
 
+// Small identity accent for subclass headings and source labels. Change this one value to
+// adjust the subclass accent application-wide.
+$subclass-accent: #b89cc4;
+
 
 // ── Typography ─────────────────────────────────────────────────
 
@@ -140,6 +144,7 @@ $shadow-lg:  0 8px 28px rgba(0, 0, 0, 0.75);
   --dnd-outline-strong: #{$outline-strong};
   --dnd-error:          #{$error};
   --dnd-success:        #{$success};
+  --dnd-subclass-accent: #{$subclass-accent};
 
   // Typography
   --dnd-font-brand:     #{$font-brand};

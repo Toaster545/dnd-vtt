@@ -165,17 +165,21 @@
             style="font-family: inherit;"
           >
             <span class="w-1.5 h-1.5 rounded-full flex-shrink-0" [class]="subNeedsChoice ? 'bg-gold' : 'bg-success/70'" [title]="subNeedsChoice ? 'Choice needed' : 'Complete'"></span>
-            <p class="text-xs font-bold text-slate uppercase tracking-wide flex-1">
+            <p class="text-xs font-bold text-subclass uppercase tracking-wide flex-1">
               Subclass
               @if (subNeedsChoice) { <span class="text-gold font-normal normal-case text-xs ml-1">(choice needed)</span> }
-              @if (!subNeedsChoice) { <span class="text-success font-normal normal-case text-xs ml-1">✓</span> }
+              @if (!subNeedsChoice) { <span class="text-success font-normal normal-case text-xs ml-1">&#10003;</span> }
             </p>
-            <span class="text-coal text-xs flex-shrink-0">{{ subCollapsed ? '▸' : '▾' }}</span>
+            @if (subCollapsed) {
+              <span class="text-coal text-xs flex-shrink-0" aria-hidden="true">&#9656;</span>
+            } @else {
+              <span class="text-coal text-xs flex-shrink-0" aria-hidden="true">&#9662;</span>
+            }
           </button>
         } @else {
-          <p class="text-xs font-bold text-slate uppercase tracking-wide mb-2">
+          <p class="text-xs font-bold text-subclass uppercase tracking-wide mb-2">
             Subclass
-            <span class="text-coal font-normal normal-case ml-1">— available at level {{ cls.subclass_level }}</span>
+            <span class="text-coal font-normal normal-case ml-1">&mdash; available at level {{ cls.subclass_level }}</span>
           </p>
         }
         @if (subUnlocked && !subCollapsed) {
@@ -189,7 +193,7 @@
                 style="font-family: inherit;"
               >
                 <div class="flex items-center gap-2">
-                  @if (picked) { <span class="text-gold text-xs">✓</span> }
+                  @if (picked) { <span class="text-gold text-xs">&#10003;</span> }
                   <span class="text-sm" [class]="picked ? 'text-parchment' : 'text-slate group-hover:text-parchment'">{{ sub.name }}</span>
                 </div>
                 @if (sub.description) {
@@ -223,7 +227,10 @@
                     <div>
                       <p class="text-sm text-parchment font-medium">
                         {{ grant.name }}
-                        @if (item.fromSubclass) { <span class="text-coal font-normal text-xs normal-case ml-1">— {{ draftSubclass() }}</span> }
+                        @if (item.fromSubclass) {
+                          <span class="text-parchment font-normal text-xs normal-case ml-1">&mdash;</span>
+                          <span class="text-subclass font-semibold text-xs normal-case ml-1">{{ draftSubclass() }}</span>
+                        }
                       </p>
                       @if (grant.description) { <p class="text-xs text-coal mt-0.5">{{ grant.description }}</p> }
                     </div>
@@ -240,7 +247,11 @@
                       >
                         <span class="w-1.5 h-1.5 rounded-full flex-shrink-0" [class]="needsChoice ? 'bg-gold' : 'bg-success/70'" [title]="needsChoice ? 'Choice needed' : 'Complete'"></span>
                         <p class="text-sm text-parchment font-medium flex-1">
-                          {{ grant.name }} — {{ grant.points }} points
+                          {{ grant.name }} &mdash; {{ grant.points }} points
+                          @if (item.fromSubclass) {
+                            <span class="text-parchment font-normal text-xs normal-case">&mdash;</span>
+                            <span class="text-subclass font-semibold text-xs normal-case ml-1">{{ draftSubclass() }}</span>
+                          }
                           @if (needsChoice) { <span class="text-gold font-normal text-xs">({{ choicesLeft(grant) }} left)</span> }
                           @if (!needsChoice) { <span class="text-success font-normal text-xs">✓</span> }
                         </p>
@@ -354,8 +365,11 @@
                       >
                         <span class="w-1.5 h-1.5 rounded-full flex-shrink-0" [class]="needsChoice ? 'bg-gold' : 'bg-success/70'" [title]="needsChoice ? 'Choice needed' : 'Complete'"></span>
                         <p class="text-sm text-parchment font-medium flex-1">
-                          {{ grant.name }} — choose {{ grant.choose }}
-                          @if (item.fromSubclass) { <span class="text-coal font-normal text-xs normal-case">— {{ draftSubclass() }}</span> }
+                          {{ grant.name }} &mdash; choose {{ grant.choose }}
+                          @if (item.fromSubclass) {
+                            <span class="text-parchment font-normal text-xs normal-case">&mdash;</span>
+                            <span class="text-subclass font-semibold text-xs normal-case ml-1">{{ draftSubclass() }}</span>
+                          }
                           @if (needsChoice) { <span class="text-gold font-normal text-xs">({{ choicesLeft(grant) }} left)</span> }
                           @if (!needsChoice) { <span class="text-success font-normal text-xs">✓</span> }
                         </p>
@@ -393,6 +407,10 @@
                         <span class="w-1.5 h-1.5 rounded-full flex-shrink-0" [class]="needsChoice ? 'bg-gold' : 'bg-success/70'" [title]="needsChoice ? 'Choice needed' : 'Complete'"></span>
                         <p class="text-sm text-parchment font-medium flex-1">
                           {{ grant.name }} &mdash; choose {{ grant.choose }} proficient skills
+                          @if (item.fromSubclass) {
+                            <span class="text-parchment font-normal text-xs normal-case">&mdash;</span>
+                            <span class="text-subclass font-semibold text-xs normal-case ml-1">{{ draftSubclass() }}</span>
+                          }
                           @if (needsChoice) { <span class="text-gold font-normal text-xs">({{ choicesLeft(grant) }} left)</span> }
                           @if (!needsChoice) { <span class="text-success font-normal text-xs">&#10003;</span> }
                         </p>
@@ -440,8 +458,11 @@
                       >
                         <span class="w-1.5 h-1.5 rounded-full flex-shrink-0" [class]="needsChoice ? 'bg-gold' : 'bg-success/70'" [title]="needsChoice ? 'Choice needed' : 'Complete'"></span>
                         <p class="text-sm text-parchment font-medium flex-1">
-                          {{ grant.name }} — choose {{ grant.choose }}
-                          @if (item.fromSubclass) { <span class="text-coal font-normal text-xs normal-case">— {{ draftSubclass() }}</span> }
+                          {{ grant.name }} &mdash; choose {{ grant.choose }}
+                          @if (item.fromSubclass) {
+                            <span class="text-parchment font-normal text-xs normal-case">&mdash;</span>
+                            <span class="text-subclass font-semibold text-xs normal-case ml-1">{{ draftSubclass() }}</span>
+                          }
                           @if (needsChoice) { <span class="text-gold font-normal text-xs">({{ choicesLeft(grant) }} left)</span> }
                           @if (!needsChoice) { <span class="text-success font-normal text-xs">✓</span> }
                         </p>
@@ -489,8 +510,11 @@
                       >
                         <span class="w-1.5 h-1.5 rounded-full flex-shrink-0" [class]="needsChoice ? 'bg-gold' : 'bg-success/70'" [title]="needsChoice ? 'Choice needed' : 'Complete'"></span>
                         <p class="text-sm text-parchment font-medium flex-1">
-                          {{ grant.name }} — choose {{ grant.choose }}
-                          @if (item.fromSubclass) { <span class="text-coal font-normal text-xs normal-case">— {{ draftSubclass() }}</span> }
+                          {{ grant.name }} &mdash; choose {{ grant.choose }}
+                          @if (item.fromSubclass) {
+                            <span class="text-parchment font-normal text-xs normal-case">&mdash;</span>
+                            <span class="text-subclass font-semibold text-xs normal-case ml-1">{{ draftSubclass() }}</span>
+                          }
                           @if (needsChoice) { <span class="text-gold font-normal text-xs">({{ choicesLeft(grant) }} left)</span> }
                           @if (!needsChoice) { <span class="text-success font-normal text-xs">✓</span> }
                         </p>
@@ -536,8 +560,11 @@
                       >
                         <span class="w-1.5 h-1.5 rounded-full flex-shrink-0" [class]="needsChoice ? 'bg-gold' : 'bg-success/70'" [title]="needsChoice ? 'Choice needed' : 'Complete'"></span>
                         <p class="text-sm text-parchment font-medium flex-1">
-                          {{ grant.name }} — choose {{ choiceLimit(grant) }}
-                          @if (item.fromSubclass) { <span class="text-coal font-normal text-xs normal-case">— {{ draftSubclass() }}</span> }
+                          {{ grant.name }} &mdash; choose {{ choiceLimit(grant) }}
+                          @if (item.fromSubclass) {
+                            <span class="text-parchment font-normal text-xs normal-case">&mdash;</span>
+                            <span class="text-subclass font-semibold text-xs normal-case ml-1">{{ draftSubclass() }}</span>
+                          }
                           @if (needsChoice) { <span class="text-gold font-normal text-xs">({{ choicesLeft(grant) }} left)</span> }
                           @if (!needsChoice) { <span class="text-success font-normal text-xs">✓</span> }
                         </p>

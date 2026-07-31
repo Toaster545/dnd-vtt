@@ -123,7 +123,17 @@ export class CharacterStatsService {
       Object.entries(SKILLS).map(([skill, ability]) => {
         const proficient = !!(char.skills?.[skill]);
         const expert   = !!(char.expertise?.[skill]);
-        return [skill, mods[ability] + (expert ? prof * 2 : proficient ? prof : untrainedSkillBonus)];
+        const abilityBonuses = allEffects
+          .filter(effect => effect.type === 'skill_ability_bonus' && effect.tags?.includes(skill))
+          .reduce((sum, effect) => {
+            if (!effect.ability) return sum;
+            const modifier = mods[effect.ability];
+            return sum + Math.max(effect.minimum ?? modifier, modifier);
+          }, 0);
+        return [
+          skill,
+          mods[ability] + (expert ? prof * 2 : proficient ? prof : untrainedSkillBonus) + abilityBonuses,
+        ];
       }),
     );
 

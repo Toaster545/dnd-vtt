@@ -20,6 +20,7 @@ module.exports = {
         coal: '#4e4d49',
         danger: '#e05252',
         success: '#4caf82',
+        subclass: 'var(--dnd-subclass-accent)',
       },
       fontFamily: {
         brand: ['Cinzel', 'serif'],

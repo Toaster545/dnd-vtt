@@ -1,0 +1,11 @@
+{
+  "index": "chain-shirt",
+  "name": "Chain Shirt",
+  "type": "armor",
+  "category": "Medium Armor",
+  "armor_class": "13 + DEX (max 2)",
+  "properties": [],
+  "weight": 20,
+  "cost": "50 gp",
+  "description": "Interlocking metal rings worn between layers of clothing or leather offer protection while preserving mobility."
+}

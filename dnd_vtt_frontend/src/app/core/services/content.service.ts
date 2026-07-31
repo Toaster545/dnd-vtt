@@ -15,6 +15,8 @@ export interface TraitEffect {
   value?: number;
   values?: number[];
   tags?: string[];
+  ability?: 'strength' | 'dexterity' | 'constitution' | 'intelligence' | 'wisdom' | 'charisma';
+  minimum?: number;
   condition?: EffectCondition;
 }
 

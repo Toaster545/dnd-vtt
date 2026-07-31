@@ -8,7 +8,13 @@ export interface Grant {
   chooseByLevel?: Record<string, number>;
   skills?: string[];
   category?: string;
-  effects?: { type: string; condition?: string; tags?: string[] }[];
+  effects?: {
+    type: string;
+    condition?: string;
+    tags?: string[];
+    ability?: string;
+    minimum?: number;
+  }[];
   options?: {
     name: string;
     prerequisite?: { level?: number; selections?: string[] };
