@@ -1,0 +1,472 @@
+@if (loading()) {
+  <div class="flex justify-center items-center h-full"><span class="spinner-lg"></span></div>
+} @else if (localChar(); as char) {
+  <div class="flex flex-col h-full overflow-hidden">
+
+    <!-- Header -->
+    <div class="flex items-start justify-between gap-4 px-6 pt-5 pb-4 border-b border-white/10 flex-shrink-0">
+      <div class="min-w-0">
+        <h2 class="font-brand text-2xl text-parchment m-0 leading-tight truncate">{{ char.name }}</h2>
+        <p class="text-slate text-sm m-0 mt-1">
+          Level {{ char.level }} {{ char.race }}
+          @if (char.subrace) { ({{ char.subrace }}) }
+          &nbsp;·&nbsp; {{ char.class }}@if (char.subclass) { — {{ char.subclass }} }
+          @if (char.background) { &nbsp;·&nbsp; {{ char.background }} }
+        </p>
+      </div>
+      @if (stats(); as s) {
+        <div class="flex items-start gap-4 flex-shrink-0">
+          <div class="flex flex-col gap-1 justify-center">
+            <button class="btn-outline text-xs px-2 py-1" [disabled]="persisting()" (click)="rest('short_rest')">Short Rest</button>
+            <button class="btn-outline text-xs px-2 py-1" [disabled]="persisting()" (click)="rest('long_rest')">Long Rest</button>
+          </div>
+          <div class="text-center">
+            <div class="text-[10px] text-slate uppercase tracking-widest mb-0.5">AC</div>
+            <div class="font-brand text-2xl leading-none text-gold">{{ s.computed_ac }}</div>
+          </div>
+          <div class="text-center">
+            <div class="text-[10px] text-slate uppercase tracking-widest mb-0.5">Initiative</div>
+            <div class="font-brand text-2xl leading-none text-gold">{{ fmt(s.initiative) }}</div>
+          </div>
+          <div class="text-center">
+            <div class="text-[10px] text-slate uppercase tracking-widest mb-0.5">Prof. Bonus</div>
+            <div class="font-brand text-2xl leading-none text-gold">+{{ s.proficiency_bonus }}</div>
+          </div>
+          <div class="flex items-center gap-1.5">
+            <div class="flex flex-col items-center gap-0.5">
+              <button class="btn-icon w-5 h-5 text-xs" [disabled]="!hpAdjustAmount() || char.current_hp >= char.max_hp || persisting()"
+                (click)="applyHpDelta(hpAdjustAmount())" matTooltip="Heal">+</button>
+              <input class="field-input w-10 text-center text-xs py-0.5 px-1" type="number" min="0"
+                [ngModel]="hpAdjustAmount()" (ngModelChange)="setHpAdjustAmount($event)" name="hpAdjust" />
+              <button class="btn-icon w-5 h-5 text-xs" [disabled]="!hpAdjustAmount() || char.current_hp <= 0 || persisting()"
+                (click)="applyHpDelta(-hpAdjustAmount())" matTooltip="Damage">−</button>
+            </div>
+            <div class="text-center">
+              <div class="text-[10px] text-slate uppercase tracking-widest mb-0.5">Hit Points</div>
+              <div class="font-brand text-2xl leading-none" [class]="hpPercent(char) <= 25 ? 'text-danger' : 'text-parchment'">{{ char.current_hp }}</div>
+              <div class="text-xs text-slate mt-0.5">/ {{ char.max_hp }}</div>
+              <div class="w-16 h-1.5 bg-white/10 rounded-full mt-1 overflow-hidden">
+                <div class="h-full rounded-full transition-all" [class]="hpColor(char)" [style.width.%]="hpPercent(char)"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+
+    <!-- Tabs -->
+    <div class="flex border-b border-white/10 overflow-x-auto flex-shrink-0">
+      <button
+        class="flex items-center gap-2 px-5 py-3.5 text-sm font-medium whitespace-nowrap border-b-2 transition-colors border-0 cursor-pointer"
+        [class]="activeTab() === 'stats' ? 'border-gold text-gold' : 'border-transparent text-slate hover:text-parchment'"
+        (click)="activeTab.set('stats')"
+        style="background: transparent; font-family: inherit;"
+      >
+        <span class="flex items-center justify-center w-5 h-5 rounded-full text-xs font-bold flex-shrink-0"
+          [class]="activeTab() === 'stats' ? 'bg-gold text-black' : 'bg-white/10 text-slate'">1</span>
+        Stats
+      </button>
+      <button
+        class="flex items-center gap-2 px-5 py-3.5 text-sm font-medium whitespace-nowrap border-b-2 transition-colors border-0 cursor-pointer"
+        [class]="activeTab() === 'actions' ? 'border-gold text-gold' : 'border-transparent text-slate hover:text-parchment'"
+        (click)="activeTab.set('actions')"
+        style="background: transparent; font-family: inherit;"
+      >
+        <span class="flex items-center justify-center w-5 h-5 rounded-full text-xs font-bold flex-shrink-0"
+          [class]="activeTab() === 'actions' ? 'bg-gold text-black' : 'bg-white/10 text-slate'">2</span>
+        Actions
+      </button>
+      <button
+        class="flex items-center gap-2 px-5 py-3.5 text-sm font-medium whitespace-nowrap border-b-2 transition-colors border-0 cursor-pointer"
+        [class]="activeTab() === 'inventory' ? 'border-gold text-gold' : 'border-transparent text-slate hover:text-parchment'"
+        (click)="activeTab.set('inventory')"
+        style="background: transparent; font-family: inherit;"
+      >
+        <span class="flex items-center justify-center w-5 h-5 rounded-full text-xs font-bold flex-shrink-0"
+          [class]="activeTab() === 'inventory' ? 'bg-gold text-black' : 'bg-white/10 text-slate'">3</span>
+        Inventory
+      </button>
+      <button
+        class="flex items-center gap-2 px-5 py-3.5 text-sm font-medium whitespace-nowrap border-b-2 transition-colors border-0 cursor-pointer"
+        [class]="activeTab() === 'spells' ? 'border-gold text-gold' : 'border-transparent text-slate hover:text-parchment'"
+        (click)="activeTab.set('spells')"
+        style="background: transparent; font-family: inherit;"
+      >
+        <span class="flex items-center justify-center w-5 h-5 rounded-full text-xs font-bold flex-shrink-0"
+          [class]="activeTab() === 'spells' ? 'bg-gold text-black' : 'bg-white/10 text-slate'">4</span>
+        Spells
+      </button>
+    </div>
+
+    <div class="flex-1 overflow-y-auto p-6">
+      @switch (activeTab()) {
+
+        <!-- STATS -->
+        @case ('stats') {
+          @if (stats(); as s) {
+            <div class="flex flex-col gap-5">
+
+              @if (s.spell_attack_bonus !== null) {
+                <div class="grid grid-cols-2 gap-2 max-w-md">
+                  <div class="bg-elevated rounded-lg border border-white/10 text-center py-2.5">
+                    <div class="text-[10px] text-slate uppercase tracking-wide">Spell Attack</div>
+                    <div class="font-brand text-xl text-gold mt-0.5">{{ fmt(s.spell_attack_bonus!) }}</div>
+                  </div>
+                  <div class="bg-elevated rounded-lg border border-white/10 text-center py-2.5">
+                    <div class="text-[10px] text-slate uppercase tracking-wide">Spell Save DC</div>
+                    <div class="font-brand text-xl text-gold mt-0.5">{{ s.spell_save_dc }}</div>
+                  </div>
+                </div>
+              }
+
+              <div class="flex flex-wrap gap-6">
+                <div class="flex flex-col gap-1.5 flex-shrink-0">
+                  @for (ab of abilities; track ab) {
+                    <div class="bg-elevated rounded-lg border border-white/10 text-center w-[72px] py-2">
+                      <div class="text-[10px] text-slate uppercase tracking-widest">{{ abilityShort[ab] }}</div>
+                      <div class="font-brand text-2xl text-gold font-bold leading-none my-0.5">{{ fmt(s.ability_modifiers[ab]) }}</div>
+                      <div class="text-xs text-parchment">{{ char.ability_scores[ab] }}</div>
+                    </div>
+                  }
+                </div>
+
+                <div class="min-w-[150px]">
+                  <h4 class="font-brand text-gold text-xs uppercase tracking-widest m-0 pb-1.5 mb-2 border-b border-gold/25">Saving Throws</h4>
+                  <div class="flex flex-col gap-1.5">
+                    @for (ab of abilities; track ab) {
+                      <div class="flex items-center gap-2 text-sm">
+                        <span class="w-4 h-4 rounded-full border flex items-center justify-center shrink-0 text-[9px]"
+                          [class]="s.saving_throw_proficient.has(ab) ? 'bg-gold border-gold text-canvas font-bold' : 'border-slate/50 text-transparent'">●</span>
+                        <span class="font-brand text-gold text-sm w-7 text-right tabular-nums">{{ fmt(s.saving_throw_bonuses[ab]) }}</span>
+                        <span class="text-slate text-xs">{{ abilityShort[ab] }}</span>
+                      </div>
+                    }
+                  </div>
+
+                  <h4 class="font-brand text-gold text-xs uppercase tracking-widest m-0 pt-3 pb-1.5 mb-2 border-b border-gold/25">Passives</h4>
+                  <div class="flex flex-col gap-1 text-xs">
+                    <div class="flex items-center justify-between gap-2">
+                      <span class="text-slate">Perception</span>
+                      <span class="font-brand text-gold">{{ s.passive_perception }}</span>
+                    </div>
+                    <div class="flex items-center justify-between gap-2">
+                      <span class="text-slate">Investigation</span>
+                      <span class="font-brand text-gold">{{ s.passive_investigation }}</span>
+                    </div>
+                    <div class="flex items-center justify-between gap-2">
+                      <span class="text-slate">Insight</span>
+                      <span class="font-brand text-gold">{{ s.passive_insight }}</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="min-w-[210px]">
+                  <h4 class="font-brand text-gold text-xs uppercase tracking-widest m-0 pb-1.5 mb-2 border-b border-gold/25">Skills</h4>
+                  <div class="flex flex-col gap-1">
+                    @for (skill of skillList; track skill) {
+                      <div class="flex items-center gap-1.5 text-xs">
+                        <span class="w-3.5 h-3.5 rounded-full border flex items-center justify-center shrink-0 text-[8px]"
+                          [class]="char.skills?.[skill] ? 'bg-gold border-gold text-canvas font-bold' : 'border-slate/50 text-transparent'">●</span>
+                        <span class="font-brand text-gold w-6 text-right tabular-nums text-xs">{{ fmt(s.skill_bonuses[skill]) }}</span>
+                        <span class="text-slate flex-1 truncate">{{ skill }}</span>
+                        <span class="text-coal/80 text-[10px] w-7 text-right">{{ abilityShort[skillAbility[skill]] }}</span>
+                      </div>
+                    }
+                  </div>
+                </div>
+
+                <div class="flex-1 min-w-[280px]">
+                  <h4 class="font-brand text-gold text-xs uppercase tracking-widest m-0 pb-1.5 mb-2 border-b border-gold/25">Features &amp; Traits</h4>
+                  <div class="flex flex-wrap gap-2 mb-3">
+                    <span class="tag">Speed: {{ char.speed }} ft</span>
+                    @for (language of char.languages ?? []; track language) {
+                      <span class="tag">{{ language }}</span>
+                    }
+                  </div>
+                  @if (resolvedFeatures().length) {
+                    <div class="flex flex-col gap-2">
+                      @for (f of resolvedFeatures(); track f.source + f.name) {
+                        <div class="flex items-start gap-2 text-sm">
+                          <span class="tag flex-shrink-0">{{ f.source }}</span>
+                          <div>
+                            <span class="text-parchment font-medium">{{ f.name }}</span>
+                            @if (f.detail) { <span class="text-slate"> — {{ f.detail }}</span> }
+                          </div>
+                        </div>
+                      }
+                    </div>
+                  }
+                </div>
+              </div>
+
+            </div>
+          }
+        }
+
+        <!-- ACTIONS -->
+        @case ('actions') {
+          <div class="flex flex-col gap-5 max-w-6xl">
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-5 items-start">
+
+              <!-- ATTACKS: weapons + castable spells, with to-hit / dice / damage modifier -->
+              @if (stats(); as s) {
+                @if (s.weapon_attacks.length || castableSpells().length) {
+                  <div>
+                    <h4 class="font-brand text-gold text-xs uppercase tracking-widest m-0 pb-1.5 mb-2 border-b border-gold/25">Attacks</h4>
+                    <div class="flex flex-col gap-1.5">
+                      @for (w of s.weapon_attacks; track w.itemIndex) {
+                        <div class="flex items-center justify-between px-3 py-2 rounded border border-white/10 text-sm gap-3">
+                          <div class="min-w-0">
+                            <span class="text-parchment font-medium">{{ w.name }}</span>
+                            @if (w.mastery) { <span class="text-coal text-xs"> · {{ w.mastery.property }}</span> }
+                          </div>
+                          <div class="flex items-center gap-3 flex-shrink-0 text-xs">
+                            <span class="text-slate">Attack <span class="font-brand text-gold text-sm">{{ fmt(w.attack_bonus) }}</span></span>
+                            <span class="text-slate">{{ w.damage_dice }}{{ fmt(w.damage_bonus) }} <span class="text-coal">{{ w.damage_type }}</span></span>
+                          </div>
+                        </div>
+                      }
+                      @for (cs of castableSpells(); track cs.entry.spellIndex) {
+                        <div class="flex items-center justify-between px-3 py-2 rounded border border-white/10 text-sm gap-3">
+                          <div class="min-w-0">
+                            <span class="text-parchment font-medium">{{ cs.spell.name }}</span>
+                            <span class="text-coal text-xs"> · {{ cs.spell.level === 0 ? 'Cantrip' : 'Level ' + cs.spell.level }}</span>
+                          </div>
+                          <div class="flex items-center gap-3 flex-shrink-0 text-xs">
+                            @if (s.spell_attack_bonus !== null) { <span class="text-slate">Attack <span class="font-brand text-gold text-sm">{{ fmt(s.spell_attack_bonus) }}</span></span> }
+                            @if (s.spell_save_dc !== null) { <span class="text-slate">Save DC <span class="font-brand text-gold text-sm">{{ s.spell_save_dc }}</span></span> }
+                          </div>
+                        </div>
+                      }
+                    </div>
+                  </div>
+                }
+              }
+
+              <!-- BONUS + SPECIAL ACTIONS share the second column — both are usually short lists -->
+              <div class="flex flex-col gap-5">
+                @if (bonusActions().length) {
+                  <div>
+                    <h4 class="font-brand text-gold text-xs uppercase tracking-widest m-0 pb-1.5 mb-2 border-b border-gold/25">Bonus Actions</h4>
+                    <div class="flex flex-col gap-2">
+                      @for (action of bonusActions(); track action.key) {
+                        @let remaining = action.maxUses - action.usedUses;
+                        <div class="card">
+                          <div class="card-body flex items-center justify-between gap-3">
+                            <div class="min-w-0">
+                              <div class="flex items-center gap-2 flex-wrap">
+                                <span class="text-parchment font-medium text-sm">{{ action.name }}</span>
+                                <span class="text-coal text-xs">{{ action.source }}</span>
+                              </div>
+                              @if (action.description) { <p class="text-xs text-slate mt-1 mb-0">{{ action.description }}</p> }
+                            </div>
+                            <div class="flex items-center gap-2 flex-shrink-0">
+                              <span class="text-sm text-parchment tabular-nums">{{ remaining }} / {{ action.maxUses }}</span>
+                              <button class="btn-icon" [disabled]="action.usedUses === 0 || persisting()" (click)="restoreAction(action)" matTooltip="Restore a use">
+                                <mat-icon class="text-base">add</mat-icon>
+                              </button>
+                              <button class="btn-primary text-sm" [disabled]="remaining === 0 || persisting()" (click)="useAction(action)">Use</button>
+                            </div>
+                          </div>
+                        </div>
+                      }
+                    </div>
+                  </div>
+                }
+
+                <!-- SPECIAL ACTIONS: 'free' activation — resources outside the normal action economy -->
+                @if (specialActions().length) {
+                  <div>
+                    <h4 class="font-brand text-gold text-xs uppercase tracking-widest m-0 pb-1.5 mb-2 border-b border-gold/25">Special Actions</h4>
+                    <div class="flex flex-col gap-2">
+                      @for (action of specialActions(); track action.key) {
+                        @let remaining = action.maxUses - action.usedUses;
+                        <div class="card">
+                          <div class="card-body flex items-center justify-between gap-3">
+                            <div class="min-w-0">
+                              <div class="flex items-center gap-2 flex-wrap">
+                                <span class="text-parchment font-medium text-sm">{{ action.name }}</span>
+                                <span class="text-coal text-xs">{{ action.source }}</span>
+                              </div>
+                              @if (action.description) { <p class="text-xs text-slate mt-1 mb-0">{{ action.description }}</p> }
+                            </div>
+                            <div class="flex items-center gap-2 flex-shrink-0">
+                              <span class="text-sm text-parchment tabular-nums">{{ remaining }} / {{ action.maxUses }}</span>
+                              <button class="btn-icon" [disabled]="action.usedUses === 0 || persisting()" (click)="restoreAction(action)" matTooltip="Restore a use">
+                                <mat-icon class="text-base">add</mat-icon>
+                              </button>
+                              <button class="btn-primary text-sm" [disabled]="remaining === 0 || persisting()" (click)="useAction(action)">Use</button>
+                            </div>
+                          </div>
+                        </div>
+                      }
+                    </div>
+                  </div>
+                }
+              </div>
+
+            </div>
+
+            <!-- OTHER ACTIONS: trackable 'action'/'reaction' features, universal actions, weapon mastery effects -->
+            <div>
+              <h4 class="font-brand text-gold text-xs uppercase tracking-widest m-0 pb-1.5 mb-2 border-b border-gold/25">Other Actions</h4>
+              <div class="flex flex-col gap-2">
+                @for (action of otherResourceActions(); track action.key) {
+                  @let remaining = action.maxUses - action.usedUses;
+                  <div class="card">
+                    <div class="card-body flex items-center justify-between gap-3">
+                      <div class="min-w-0">
+                        <div class="flex items-center gap-2 flex-wrap">
+                          <span class="text-parchment font-medium text-sm">{{ action.name }}</span>
+                          <span class="tag text-[10px] capitalize">{{ action.activation.replace('_', ' ') }}</span>
+                          <span class="text-coal text-xs">{{ action.source }}</span>
+                        </div>
+                        @if (action.description) { <p class="text-xs text-slate mt-1 mb-0">{{ action.description }}</p> }
+                      </div>
+                      <div class="flex items-center gap-2 flex-shrink-0">
+                        <span class="text-sm text-parchment tabular-nums">{{ remaining }} / {{ action.maxUses }}</span>
+                        <button class="btn-icon" [disabled]="action.usedUses === 0 || persisting()" (click)="restoreAction(action)" matTooltip="Restore a use">
+                          <mat-icon class="text-base">add</mat-icon>
+                        </button>
+                        <button class="btn-primary text-sm" [disabled]="remaining === 0 || persisting()" (click)="useAction(action)">Use</button>
+                      </div>
+                    </div>
+                  </div>
+                }
+                @for (f of masteredWeapons(); track f.name) {
+                  <div class="flex items-start gap-2 text-sm">
+                    <span class="tag flex-shrink-0">{{ f.source }}</span>
+                    <div>
+                      <span class="text-parchment font-medium">{{ f.name }}</span>
+                      @if (f.detail) { <span class="text-slate"> — {{ f.detail }}</span> }
+                    </div>
+                  </div>
+                }
+                @for (f of universalActions; track f.name) {
+                  <div class="flex items-start gap-2 text-sm">
+                    <span class="tag flex-shrink-0">{{ f.source }}</span>
+                    <div>
+                      <span class="text-parchment font-medium">{{ f.name }}</span>
+                      @if (f.detail) { <span class="text-slate"> — {{ f.detail }}</span> }
+                    </div>
+                  </div>
+                }
+              </div>
+            </div>
+
+          </div>
+        }
+
+        <!-- INVENTORY -->
+        @case ('inventory') {
+          <div class="flex flex-col gap-5 max-w-3xl">
+            <div class="flex flex-wrap gap-2">
+              @for (c of [
+                { label: 'CP', value: char.currency.cp },
+                { label: 'SP', value: char.currency.sp },
+                { label: 'EP', value: char.currency.ep },
+                { label: 'GP', value: char.currency.gp },
+                { label: 'PP', value: char.currency.pp }
+              ]; track c.label) {
+                <div class="bg-elevated rounded-lg border border-white/10 text-center py-2 px-3 min-w-[64px]">
+                  <div class="text-[10px] text-slate uppercase tracking-wide">{{ c.label }}</div>
+                  <div class="font-brand text-lg text-gold">{{ c.value }}</div>
+                </div>
+              }
+            </div>
+
+            @if (inventoryItems().length) {
+              <div class="flex flex-col gap-1.5">
+                @for (row of inventoryItems(); track row.entry.itemIndex) {
+                  <div class="flex items-center justify-between px-3 py-2 rounded border border-white/10 gap-3">
+                    <div class="min-w-0">
+                      <div class="flex items-center gap-2">
+                        <span class="text-sm text-parchment">{{ row.entry.name }}</span>
+                        @if (row.entry.quantity > 1) { <span class="text-xs text-coal">×{{ row.entry.quantity }}</span> }
+                      </div>
+                      @if (row.item) {
+                        <p class="text-xs text-slate mt-0.5 mb-0">
+                          {{ row.item.category }}
+                          @if (row.item.damage) { · {{ row.item.damage }} {{ row.item.damage_type }} }
+                          @if (row.item.armor_class) { · AC {{ row.item.armor_class }} }
+                        </p>
+                      }
+                    </div>
+                    <button
+                      class="text-xs px-2.5 py-1 rounded border transition-all flex-shrink-0"
+                      [class]="row.entry.equipped ? 'border-gold/60 bg-gold/10 text-parchment' : 'border-white/15 text-slate hover:border-white/30'"
+                      [disabled]="persisting()"
+                      (click)="toggleEquipped(row.entry)"
+                    >{{ row.entry.equipped ? 'Equipped' : 'Equip' }}</button>
+                  </div>
+                }
+              </div>
+            } @else {
+              <p class="text-sm text-slate">No equipment yet.</p>
+            }
+          </div>
+        }
+
+        <!-- SPELLS -->
+        @case ('spells') {
+          <div class="flex flex-col gap-5 max-w-3xl">
+            @if (!spellcastingClass()) {
+              <p class="text-sm text-slate">{{ char.name }} isn't a spellcaster.</p>
+            } @else {
+              @if (spellSlotLevels().length) {
+                <div>
+                  <h4 class="font-brand text-gold text-xs uppercase tracking-widest m-0 pb-1.5 mb-2 border-b border-gold/25">
+                    {{ currentPactMagic() ? 'Pact Magic Slots (Short Rest)' : 'Spell Slots' }}
+                  </h4>
+                  <div class="flex flex-wrap gap-2">
+                    @for (slot of spellSlotLevels(); track slot[0]) {
+                      @let used = char.spell_slots_used?.[slot[0]] ?? 0;
+                      <div class="bg-elevated rounded-lg border border-white/10 px-3 py-2 text-center min-w-[80px]">
+                        <div class="text-[10px] text-slate">Level {{ slot[0] }}</div>
+                        <div class="font-brand text-gold text-xl">{{ slot[1]! - used }} / {{ slot[1] }}</div>
+                        <div class="flex items-center justify-center gap-1 mt-1">
+                          <button class="btn-icon w-5 h-5 text-xs" [disabled]="used === 0 || persisting()" (click)="restoreSlot(slot[0])">−</button>
+                          <button class="btn-icon w-5 h-5 text-xs" [disabled]="used >= slot[1]! || persisting()" (click)="useSlot(slot[0])">+</button>
+                        </div>
+                      </div>
+                    }
+                  </div>
+                </div>
+              }
+
+              @if (knownSpells().length) {
+                <div>
+                  <h4 class="font-brand text-gold text-xs uppercase tracking-widest m-0 pb-1.5 mb-2 border-b border-gold/25">Spells</h4>
+                  <div class="flex flex-col gap-1.5">
+                    @for (row of knownSpells(); track row.entry.spellIndex) {
+                      <div class="px-3 py-2 rounded border border-white/10">
+                        <div class="flex items-center justify-between gap-2">
+                          <div class="flex items-center gap-2 min-w-0">
+                            <span class="text-sm text-parchment truncate">{{ row.spell.name }}</span>
+                            <span class="text-xs text-coal flex-shrink-0">{{ row.spell.level === 0 ? 'Cantrip' : 'Lv ' + row.spell.level }} · {{ row.spell.school }}</span>
+                          </div>
+                          <button
+                            class="text-xs px-2.5 py-1 rounded border transition-all flex-shrink-0"
+                            [class]="row.entry.prepared ? 'border-gold/60 bg-gold/10 text-parchment' : 'border-white/15 text-slate hover:border-white/30'"
+                            [disabled]="persisting()"
+                            (click)="togglePrepared(row.entry)"
+                          >{{ row.entry.prepared ? 'Prepared' : 'Prepare' }}</button>
+                        </div>
+                        <p class="text-xs text-slate mt-1 mb-0">{{ row.spell.casting_time }} · {{ row.spell.range }} · {{ row.spell.duration }}</p>
+                        <p class="text-xs text-slate mt-1 mb-0">{{ row.spell.description }}</p>
+                      </div>
+                    }
+                  </div>
+                </div>
+              } @else {
+                <p class="text-sm text-slate">No spells known yet.</p>
+              }
+            }
+          </div>
+        }
+
+      }
+    </div>
+  </div>
+}
