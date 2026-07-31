@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ActionActivation, TraitGrant, DndClass, Subclass } from './content.service';
+import { resolveProgressiveChoiceLimit } from '../utils/progressive-choice';
 
 export interface CharacterAction {
   key: string;
@@ -10,6 +11,7 @@ export interface CharacterAction {
   maxUses: number;
   usedUses: number;
   per: 'short_rest' | 'long_rest';
+  shortRestRestore: number;
 }
 
 type FeatureGrant = Extract<TraitGrant, { type: 'feature' }>;
@@ -46,7 +48,10 @@ export class CharacterActionsService {
     }
 
     return [...winners.values()].map(({ grant, source, classLevel }) => {
-      const max = grant.action!.uses?.max ?? 0;
+      const uses = grant.action!.uses;
+      const max = uses
+        ? resolveProgressiveChoiceLimit(uses.max, uses.maxByLevel, classLevel)
+        : 0;
       return {
         key: grant.key!,
         name: grant.name,
@@ -55,7 +60,8 @@ export class CharacterActionsService {
         source,
         maxUses: max,
         usedUses: Math.min(resourceUses[grant.key!] ?? 0, max),
-        per: grant.action!.uses?.per ?? 'long_rest',
+        per: uses?.per ?? 'long_rest',
+        shortRestRestore: uses?.shortRestRestore ?? 0,
       };
     });
   }
@@ -70,11 +76,18 @@ export class CharacterActionsService {
     return { ...resourceUses, [action.key]: action.usedUses - 1 };
   }
 
-  // Short rest clears short_rest-recovery resources; long rest clears everything.
+  // Short rests clear short-rest pools and partially restore pools that explicitly say they do;
+  // long rests clear every expended-use counter.
   rest(resourceUses: Record<string, number>, actions: CharacterAction[], type: 'short_rest' | 'long_rest'): Record<string, number> {
     const next = { ...resourceUses };
     for (const action of actions) {
-      if (type === 'long_rest' || action.per === 'short_rest') delete next[action.key];
+      if (type === 'long_rest' || action.per === 'short_rest') {
+        delete next[action.key];
+      } else if (action.shortRestRestore > 0) {
+        const remainingUsed = Math.max(0, action.usedUses - action.shortRestRestore);
+        if (remainingUsed === 0) delete next[action.key];
+        else next[action.key] = remainingUsed;
+      }
     }
     return next;
   }

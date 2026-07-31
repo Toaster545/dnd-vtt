@@ -82,15 +82,21 @@ export class RaceStepComponent implements OnInit {
   }
 
   confirmRace() {
+    this.syncDraft();
+    this.browsingRace.set(null);
+    this.viewMode.set('selected');
+  }
+
+  // Race choices save as they are made, even while incomplete. This keeps switching wizard
+  // tabs from destroying a partially configured race and matches the wizard's global autosave.
+  private syncDraft() {
     const race = this.browsingRace();
     if (!race) return;
     this.raceChosen.emit({
       race,
       subrace: this.draftSubrace(),
-      traits: Object.fromEntries(Object.entries(this.draftTraits()).map(([k, v]) => [k, [...v]])),
+      traits: Object.fromEntries(Object.entries(this.draftTraits()).map(([key, values]) => [key, [...values]])),
     });
-    this.browsingRace.set(null);
-    this.viewMode.set('selected');
   }
 
   isCurrentSelected(): boolean {
@@ -104,6 +110,7 @@ export class RaceStepComponent implements OnInit {
 
   selectSubrace(sub: Subrace) {
     this.draftSubrace.set(sub);
+    this.syncDraft();
   }
 
   // A race's own traits, rendered the same way class features are: its structured `grants` if
@@ -163,18 +170,6 @@ export class RaceStepComponent implements OnInit {
     return ['Common', ...(this.draftTraits()[LANGUAGE_GRANT.key] ?? [])];
   }
 
-  raceComplete(race: DndRace): boolean {
-    const size = this.sizeGrant(race);
-    if (size && this.choicesLeft(size) > 0) return false;
-    if (this.choicesLeft(LANGUAGE_GRANT) > 0) return false;
-    const required = [
-      ...(race.grants ?? []),
-      ...(this.draftSubrace()?.grants ?? []),
-    ].filter((grant): grant is Extract<TraitGrant, { key: string; choose: number }> =>
-      grant.type === 'choice' || grant.type === 'skill_choice' || grant.type === 'feat_pick');
-    return required.every(grant => this.choicesLeft(grant) === 0);
-  }
-
   isGrantCollapsed(key: string): boolean {
     return this.collapsedGrants().has(key);
   }
@@ -199,5 +194,6 @@ export class RaceStepComponent implements OnInit {
       if (current.length >= grant.choose) return traits;
       return { ...traits, [grant.key]: [...current, option] };
     });
+    this.syncDraft();
   }
 }

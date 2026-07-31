@@ -21,6 +21,7 @@ export interface TraitEffect {
 export type EffectCondition =
   | 'wearing_armor'
   | 'no_armor'
+  | 'no_heavy_armor'
   | 'wielding_shield'
   | 'two_handed_melee'
   | 'one_handed_melee_no_offhand'
@@ -40,7 +41,13 @@ export type ActionActivation = 'action' | 'bonus_action' | 'reaction' | 'free';
 
 export interface TraitAction {
   activation: ActionActivation;
-  uses?: { max: number; per: 'short_rest' | 'long_rest' };
+  uses?: {
+    max: number;
+    maxByLevel?: Record<string, number>;
+    per: 'short_rest' | 'long_rest';
+    // Some long-rest pools regain a fixed number of uses on a Short Rest (for example Rage).
+    shortRestRestore?: number;
+  };
 }
 
 export type TraitGrant =

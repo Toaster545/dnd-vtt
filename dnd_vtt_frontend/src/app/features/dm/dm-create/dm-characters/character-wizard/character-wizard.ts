@@ -2,7 +2,7 @@ import { Component, inject, signal, computed, effect, output, OnInit, OnDestroy,
 import { FormsModule } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { ContentService, DndRace, DndClass, DndBackground, DndItem, DndSpell, DndFeat, TraitEffect, TraitGrant } from '../../../../../core/services/content.service';
-import { ClassChoiceSource, averageHpFormula, collectTraitEffects, reachableGrants } from '../../../../../core/utils/character-effects';
+import { ClassChoiceSource, averageHpFormula, collectTraitEffects, reachableGrants, unarmoredDefenseBonus } from '../../../../../core/utils/character-effects';
 import { isStructuredEquipment, resolveStartingEquipment } from '../../../../../core/utils/starting-equipment';
 import { resolveBackgroundSkills } from '../../../../../core/utils/background-skills';
 import { portraitDataUri, randomPortraitSeed } from '../../../../../core/utils/avatar';
@@ -18,6 +18,13 @@ import { EquipmentStepComponent } from './steps/equipment-step/equipment-step';
 import { SpellsStepComponent } from './steps/spells-step/spells-step';
 import { DetailsStepComponent } from './steps/details-step/details-step';
 import { CharacterPreviewComponent } from './character-preview/character-preview';
+import {
+  areAbilityAssignmentsComplete,
+  areClassSelectionsComplete,
+  areStartingEquipmentChoicesComplete,
+  isBackgroundSelectionComplete,
+  isRaceSelectionComplete,
+} from './wizard-completion';
 
 const STEPS = ['Race', 'Class', 'Background', 'Abilities', 'Equipment', 'Spells', 'Details'];
 
@@ -205,36 +212,66 @@ export class CharacterWizardComponent implements OnInit, OnDestroy {
   // Scans every chosen class option and feat for a structured `effects` entry of the given
   // type. Conditioned effects (e.g. Defense's ac_bonus "while wearing armor") are excluded —
   // those are evaluated live from equipped gear by CharacterStatsService instead.
-  private selectedEffects(type: string): TraitEffect[] {
+  private selectedEffects(type: string, includeConditional = false): TraitEffect[] {
     const race = this.selectedRace();
     return collectTraitEffects(
       this.selectedClasses().map(e => ({ data: e.cls, choices: e.traits, level: e.level, subclass: e.subclass })),
       this.feats(),
       race ? { data: race, choices: this.raceTraits(), subrace: this.selectedSubrace()?.name } : null,
-    ).filter(e => e.type === type && !e.condition);
+    ).filter(e => e.type === type && (includeConditional || !e.condition));
   }
 
   armorClass = computed(() => {
     const bonus = this.selectedEffects('ac_bonus').reduce((sum, e) => sum + (e.value ?? 0), 0);
-    return 10 + abilityModifier(this.finalScores().dexterity) + bonus;
+    const modifiers = Object.fromEntries(
+      ABILITIES.map(ability => [ability, abilityModifier(this.finalScores()[ability])]),
+    );
+    const unarmored = unarmoredDefenseBonus(this.selectedEffects('unarmored_defense', true), modifiers);
+    return 10 + abilityModifier(this.finalScores().dexterity) + bonus + unarmored;
   });
   speed      = computed(() => {
     const base = this.selectedRace()?.speed ?? 30;
-    const bonus = this.selectedEffects('speed_bonus').reduce((sum, effect) => sum + (effect.value ?? 0), 0);
+    // Character creation starts unarmored, so no-heavy-armor speed effects are active here;
+    // the saved value can still be manually adjusted if the character later dons Heavy Armor.
+    const bonus = this.selectedEffects('speed_bonus', true).reduce((sum, effect) => sum + (effect.value ?? 0), 0);
     return base + bonus;
   });
   isEditing  = computed(() => this.characterId() !== null);
   isLastStep = computed(() => this.activeStep() === STEPS.length - 1);
+  incompleteSteps = computed(() => [
+    !isRaceSelectionComplete(this.raceSelection()),
+    !areClassSelectionsComplete(this.selectedClasses(), this.feats()),
+    !isBackgroundSelectionComplete(this.backgroundSelection()),
+    !areAbilityAssignmentsComplete(this.assignments()),
+    !areStartingEquipmentChoicesComplete(
+      this.primaryClass(),
+      this.selectedBackground(),
+      this.classEquipChoices(),
+      this.backgroundEquipChoices(),
+    ),
+    false, // Spells are optional with the current free-form spell picker.
+    false, // Alignment has a valid default and Details has no unfilled choice.
+  ]);
+
+  stepNeedsAttention(index: number): boolean {
+    return this.incompleteSteps()[index] ?? false;
+  }
 
   private skillsRecord = computed(() => {
     const bgSkills = resolveBackgroundSkills(this.selectedBackground(), this.backgroundTraits());
     const classSkills = this.selectedClasses().flatMap(e => e.skills);
+    const additionalClassSkills = this.selectedClasses().flatMap(entry =>
+      reachableGrants(entry.cls, entry.subclass, entry.level)
+        .filter((grant): grant is Extract<TraitGrant, { type: 'skill_choice' }> =>
+          grant.type === 'skill_choice' && grant.key !== 'skills')
+        .flatMap(grant => entry.traits[grant.key] ?? []),
+    );
     const race = this.selectedRace();
     const subrace = this.selectedSubrace();
     const raceSkills = [...(race?.grants ?? []), ...(subrace?.grants ?? [])]
       .filter((grant): grant is Extract<TraitGrant, { type: 'skill_choice' }> => grant.type === 'skill_choice')
       .flatMap(grant => this.raceTraits()[grant.key] ?? []);
-    return [...new Set([...bgSkills, ...classSkills, ...raceSkills])]
+    return [...new Set([...bgSkills, ...classSkills, ...additionalClassSkills, ...raceSkills])]
       .reduce((acc, s) => ({ ...acc, [s]: true }), {} as Record<string, boolean>);
   });
 

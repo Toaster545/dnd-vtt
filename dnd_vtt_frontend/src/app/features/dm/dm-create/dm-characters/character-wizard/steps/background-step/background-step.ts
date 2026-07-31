@@ -69,14 +69,18 @@ export class BackgroundStepComponent implements OnInit {
   }
 
   confirmBackground() {
-    const bg = this.browsingBackground();
-    if (!bg) return;
-    this.backgroundChosen.emit({
-      background: bg,
-      traits: Object.fromEntries(Object.entries(this.draftTraits()).map(([k, v]) => [k, [...v]])),
-    });
+    this.syncDraft();
     this.browsingBackground.set(null);
     this.viewMode.set('selected');
+  }
+
+  private syncDraft() {
+    const background = this.browsingBackground();
+    if (!background) return;
+    this.backgroundChosen.emit({
+      background,
+      traits: Object.fromEntries(Object.entries(this.draftTraits()).map(([key, values]) => [key, [...values]])),
+    });
   }
 
   isCurrentSelected(): boolean {
@@ -101,6 +105,7 @@ export class BackgroundStepComponent implements OnInit {
       [BACKGROUND_SKILLS_KEY]: [...current],
     }));
     this.editingSkills.set(true);
+    this.syncDraft();
   }
 
   updateSkill(index: number, skill: string) {
@@ -110,6 +115,7 @@ export class BackgroundStepComponent implements OnInit {
       current[index] = skill;
       return { ...traits, [BACKGROUND_SKILLS_KEY]: current };
     });
+    this.syncDraft();
   }
 
   skillUsedInOtherSlot(skill: string, index: number, bg: DndBackground): boolean {
@@ -131,6 +137,7 @@ export class BackgroundStepComponent implements OnInit {
     });
     this.editingSkills.set(false);
     this.skillEditSnapshot = undefined;
+    this.syncDraft();
   }
 
   restoreDefaultSkills() {
@@ -141,6 +148,7 @@ export class BackgroundStepComponent implements OnInit {
     });
     this.editingSkills.set(false);
     this.skillEditSnapshot = undefined;
+    this.syncDraft();
   }
 
   // Starting equipment is picked in its own wizard step (it needs the item catalog and a
@@ -183,6 +191,7 @@ export class BackgroundStepComponent implements OnInit {
       if (current.length >= grant.choose) return traits;
       return { ...traits, [grant.key]: [...current, option] };
     });
+    this.syncDraft();
   }
 
   baseScoreFor(ability: string): number {
@@ -206,6 +215,7 @@ export class BackgroundStepComponent implements OnInit {
   increment(grant: AbilityGrant, ability: string) {
     if (!this.canIncrement(grant, ability)) return;
     this.draftTraits.update(traits => ({ ...traits, [grant.key]: [...(traits[grant.key] ?? []), ability] }));
+    this.syncDraft();
   }
 
   decrement(grant: AbilityGrant, ability: string) {
@@ -217,5 +227,6 @@ export class BackgroundStepComponent implements OnInit {
       next.splice(idx, 1);
       return { ...traits, [grant.key]: next };
     });
+    this.syncDraft();
   }
 }

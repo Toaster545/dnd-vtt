@@ -126,6 +126,7 @@ export class CharacterDisplayComponent implements OnInit {
       unarmored_movement_bonus: 'Unarmored Move +',
       sneak_attack: 'Sneak Attack', sorcery_points: 'Sorcery Points',
       invocations_known: 'Invocations Known',
+      weapon_masteries: 'Weapon Masteries',
     };
     return Object.entries(lvl.class_specific).map(([k, v]) => ({
       label: LABELS[k] ?? k,

@@ -156,12 +156,38 @@ export class ClassStepComponent implements OnInit {
     return this.effectiveLevel() >= cls.subclass_level;
   }
 
-  toggleDraftSkill(skill: string, cls: DndClass) {
-    this.draftSkills.update(skills => {
-      if (skills.includes(skill)) return skills.filter(s => s !== skill);
-      if (skills.length >= cls.skill_choices.count) return skills;
-      return [...skills, skill];
-    });
+  skillOptions(grant: Extract<TraitGrant, { type: 'skill_choice' }>, cls: DndClass): string[] {
+    return grant.skills ?? cls.skill_choices.from;
+  }
+
+  skillSelections(grant: Extract<TraitGrant, { type: 'skill_choice' }>): string[] {
+    return grant.key === 'skills' ? this.draftSkills() : (this.draftTraits()[grant.key] ?? []);
+  }
+
+  skillTakenElsewhere(grant: Extract<TraitGrant, { type: 'skill_choice' }>, skill: string): boolean {
+    const initial = grant.key === 'skills' ? [] : this.draftSkills();
+    const cls = this.browsingClass();
+    const skillKeys = new Set([
+      ...(cls?.levels ?? []),
+      ...(cls?.subclasses.flatMap(subclass => subclass.levels) ?? []),
+    ].flatMap(level => (level.grants ?? [])
+      .filter((candidate): candidate is Extract<TraitGrant, { type: 'skill_choice' }> => candidate.type === 'skill_choice')
+      .map(candidate => candidate.key)));
+    const later = Object.entries(this.draftTraits())
+      .filter(([key]) => key !== grant.key && skillKeys.has(key))
+      .flatMap(([, picks]) => picks);
+    return [...initial, ...later].includes(skill);
+  }
+
+  toggleDraftSkill(grant: Extract<TraitGrant, { type: 'skill_choice' }>, skill: string) {
+    const selections = this.skillSelections(grant);
+    if (!selections.includes(skill) && (selections.length >= grant.choose || this.skillTakenElsewhere(grant, skill))) return;
+
+    const next = selections.includes(skill)
+      ? selections.filter(selected => selected !== skill)
+      : [...selections, skill];
+    if (grant.key === 'skills') this.draftSkills.set(next);
+    else this.draftTraits.update(traits => ({ ...traits, [grant.key]: next }));
     this.syncDraft();
   }
 
@@ -229,7 +255,7 @@ export class ClassStepComponent implements OnInit {
   choicesLeft(grant: TraitGrant): number {
     switch (grant.type) {
       case 'skill_choice':
-        return grant.choose - this.draftSkills().length;
+        return Math.max(0, grant.choose - this.skillSelections(grant).length);
       case 'choice':
         return Math.max(0, this.choiceLimit(grant) - (this.draftTraits()[grant.key]?.length ?? 0));
       case 'weapon_mastery':
