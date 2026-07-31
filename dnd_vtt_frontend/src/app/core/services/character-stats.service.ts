@@ -109,8 +109,15 @@ export class CharacterStatsService {
       const granted = inc.abilities.length === 1 ? inc.abilities[0] : ability;
       if (granted) saveProfSet.add(granted);
     }
+    const savingThrowAbilityBonus = allEffects
+      .filter(effect => effect.type === 'saving_throw_ability_bonus')
+      .reduce((sum, effect) => {
+        if (!effect.ability) return sum;
+        const modifier = mods[effect.ability];
+        return sum + Math.max(effect.minimum ?? modifier, modifier);
+      }, 0);
     const saving_throw_bonuses = ABILITIES.reduce((acc, ab) => ({
-      ...acc, [ab]: mods[ab] + (saveProfSet.has(ab) ? prof : 0),
+      ...acc, [ab]: mods[ab] + (saveProfSet.has(ab) ? prof : 0) + savingThrowAbilityBonus,
     }), {} as Record<Ability, number>);
 
     const conditionalAcBonus = activeEffects(allEffects.filter(e => e.type === 'ac_bonus'), char.equipment, items)

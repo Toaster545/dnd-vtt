@@ -46,6 +46,26 @@ const monk = {
   subclasses: [],
 } as unknown as DndClass;
 
+const paladin = {
+  name: 'Paladin',
+  hit_die: 10,
+  saving_throws: ['wisdom', 'charisma'],
+  weapon_proficiencies: ['Simple Weapons', 'Martial Weapons'],
+  levels: [
+    {
+      level: 6,
+      grants: [
+        {
+          type: 'feature',
+          name: 'Aura of Protection',
+          effects: [{ type: 'saving_throw_ability_bonus', ability: 'charisma', minimum: 1 }],
+        },
+      ],
+    },
+  ],
+  subclasses: [],
+} as unknown as DndClass;
+
 const cleric = {
   name: 'Cleric',
   hit_die: 8,
@@ -213,5 +233,29 @@ describe('CharacterStatsService', () => {
     );
 
     expect(stats.weapon_attacks.map(attack => attack.attack_bonus)).toEqual([2, 0]);
+  });
+
+  it('adds an ability-based Aura of Protection bonus to every saving throw', () => {
+    const character: Character = {
+      ...defaultCharacter(),
+      name: 'Protective Paladin',
+      class: 'Paladin',
+      level: 6,
+      ability_scores: {
+        strength: 10,
+        dexterity: 10,
+        constitution: 10,
+        intelligence: 10,
+        wisdom: 10,
+        charisma: 16,
+      },
+    };
+    const stats = new CharacterStatsService().compute(
+      character, paladin, null, [], [{ data: paladin, choices: {}, level: 6 }],
+    );
+
+    expect(stats.saving_throw_bonuses.strength).toBe(3);
+    expect(stats.saving_throw_bonuses.wisdom).toBe(6);
+    expect(stats.saving_throw_bonuses.charisma).toBe(9);
   });
 });
