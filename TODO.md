@@ -19,7 +19,7 @@
 - [ ] Popups for leveling up and other shi
 - [ ] character icon customization
 - [ ] Effect/ concentration on players in map
-- [ ] players can hide race
+- [x] players can hide race
 - [ ] 
 
 ## Mathieu
@@ -42,9 +42,9 @@
     - [ ] Updates to character (leveling up)
     - [ ] 
 - [ ] Monster Creation
-- [ ] Auto deployement pipeline
-    - [ ] Testing
-    - [ ] pull from main
+- [x] Auto deployement pipeline
+    - [x] Testing
+    - [x] push to main
 
 ## Andre
 
