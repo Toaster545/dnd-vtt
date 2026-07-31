@@ -135,7 +135,14 @@ export interface Subclass {
   name: string;
   description?: string;
   // Same shape as ClassLevel; `features` is the legacy flat fallback for subclasses not yet restructured.
-  levels: { level: number; features: string[]; grants?: TraitGrant[] }[];
+  levels: {
+    level: number;
+    features: string[];
+    grants?: TraitGrant[];
+    spell_slots?: SpellSlots;
+    cantrips_known?: number;
+    prepared_spells?: number;
+  }[];
 }
 
 export interface DndClass {

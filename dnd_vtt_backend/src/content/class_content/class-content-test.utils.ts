@@ -3,6 +3,8 @@ import { join } from 'node:path';
 
 export interface Grant {
   type: string;
+  name?: string;
+  description?: string;
   key?: string;
   choose?: number;
   chooseByLevel?: Record<string, number>;
@@ -55,8 +57,11 @@ export interface ClassContent {
     index: string;
     levels: {
       level: number;
+      features: string[];
       grants?: Grant[];
       spell_slots?: Record<string, number>;
+      cantrips_known?: number;
+      prepared_spells?: number;
     }[];
   }[];
   levels: {
