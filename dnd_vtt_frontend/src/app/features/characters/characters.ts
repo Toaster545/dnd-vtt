@@ -1,19 +1,9 @@
 import { Component, inject, signal, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
-
-const CHAR_VIEWED_KEY = 'dnd-char-viewed';
-function markCharacterViewed(id: string) {
-  const views: Record<string, number> = JSON.parse(localStorage.getItem(CHAR_VIEWED_KEY) ?? '{}');
-  views[id] = Date.now();
-  localStorage.setItem(CHAR_VIEWED_KEY, JSON.stringify(views));
-}
-function sortByRecentlyViewed<T extends { id?: string }>(chars: T[]): T[] {
-  const views: Record<string, number> = JSON.parse(localStorage.getItem(CHAR_VIEWED_KEY) ?? '{}');
-  return [...chars].sort((a, b) => (views[b.id!] ?? 0) - (views[a.id!] ?? 0));
-}
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { CharacterService } from '../../core/services/character.service';
+import { RecentActivityService } from '../../core/services/recent-activity.service';
 import { Character } from '../../core/models/character.model';
 import { CharacterWizardComponent } from './character-wizard/character-wizard';
 import { CharacterPlaySheetComponent } from './character-play-sheet/character-play-sheet';
@@ -32,6 +22,7 @@ type CharacterListItem = Character & { campaign_name?: string; edit_unlocked?: b
 })
 export class CharactersComponent implements OnInit {
   private characterService = inject(CharacterService);
+  private recentActivity = inject(RecentActivityService);
   private confirm = inject(ConfirmService);
   private router = inject(Router);
 
@@ -49,14 +40,14 @@ export class CharactersComponent implements OnInit {
       this.characterService.getMyCharacters(),
       this.characterService.getMyCampaignCopies(),
     ]);
-    this.characters.set(sortByRecentlyViewed([...copies, ...templates]));
+    this.characters.set(this.recentActivity.sortByRecentlyViewed([...copies, ...templates]));
   }
 
   // Strip campaign_name back off before handing the character to the play sheet — it's a joined
   // display field, not a real character column, and would otherwise get pulled into the JSON
   // data blob the next time the sheet persists a change.
   viewSheet(item: CharacterListItem) {
-    if (item.id) markCharacterViewed(item.id);
+    if (item.id) this.recentActivity.markCharacterViewed(item.id);
     const { campaign_name, edit_unlocked, ...character } = item;
     void campaign_name; void edit_unlocked;
     this.sheetCharacter.set(character);
@@ -92,7 +83,7 @@ export class CharactersComponent implements OnInit {
 
   openCreate() { this.editingCharacter.set(null); this.showWizard.set(true); }
   openEdit(character: Character) {
-    if (character.id) markCharacterViewed(character.id);
+    if (character.id) this.recentActivity.markCharacterViewed(character.id);
     this.editingCharacter.set(character);
     this.showWizard.set(true);
   }

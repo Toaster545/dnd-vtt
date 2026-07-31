@@ -29,7 +29,7 @@ export class LoginComponent {
     this.error.set(null);
     try {
       await this.auth.signIn(this.form.value.email!, this.form.value.password!);
-      this.router.navigate(['/home']);
+      this.router.navigate(['/dashboard']);
     } catch (e) {
       this.error.set(getErrorMessage(e));
     } finally {

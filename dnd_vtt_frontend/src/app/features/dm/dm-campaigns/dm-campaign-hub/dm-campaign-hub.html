@@ -33,6 +33,10 @@
         <mat-icon class="text-base">{{ copied() ? 'check' : 'content_copy' }}</mat-icon>
         Join code: <span class="font-mono text-gold">{{ c.join_code }}</span>
       </button>
+      <a class="btn-outline text-sm gap-1.5" [routerLink]="['/home/campaigns/manage', campaignId, 'maps']" matTooltip="Upload and manage battle maps">
+        <mat-icon class="text-base">map</mat-icon>
+        Maps
+      </a>
       @if (auth.isAdmin()) {
         <a class="btn-outline text-sm gap-1.5" [routerLink]="['/home/campaigns/manage', campaignId, 'create']" matTooltip="Author monsters, equipment, and spells">
           <mat-icon class="text-base">auto_stories</mat-icon>

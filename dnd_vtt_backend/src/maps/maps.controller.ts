@@ -22,8 +22,11 @@ export class MapsController {
   constructor(private maps: MapsService) {}
 
   @Get()
-  findAll() {
-    return this.maps.findAll();
+  findAll(
+    @Query('campaignId') campaignId: string,
+    @CurrentUser() user: RequestUser,
+  ) {
+    return this.maps.findAll(campaignId, user);
   }
 
   @Get(':id')

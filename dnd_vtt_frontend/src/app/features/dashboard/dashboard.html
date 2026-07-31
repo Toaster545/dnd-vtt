@@ -1,0 +1,126 @@
+<app-main-layout>
+  <app-header
+    layoutHeader
+    (selectCharacters)="goToCharacters()"
+    (selectCampaigns)="goToCampaigns()"
+    (selectSettings)="goToSettings()"
+  />
+
+  <div class="p-6 overflow-y-auto flex-1 min-h-0">
+    <div class="max-w-3xl mx-auto flex flex-col gap-5">
+
+      <h2 class="font-brand text-lg text-parchment m-0">Dashboard</h2>
+
+      @if (loading()) {
+        <div class="flex justify-center mt-10"><span class="spinner-lg"></span></div>
+      } @else {
+
+        @if (!hasAnyCharacters() && !hasAnyCampaigns()) {
+          <div class="card card-body text-center">
+            <p class="font-brand text-lg text-parchment m-0 mb-2">Welcome!</p>
+            <p class="text-slate text-sm m-0 mb-4">
+              You don't have any characters or campaigns yet — create a character or join a
+              campaign to get started.
+            </p>
+            <div class="flex justify-center gap-3">
+              <button class="btn-primary" (click)="goToCharacters()">
+                <mat-icon>badge</mat-icon> Create a Character
+              </button>
+              <button class="btn-outline" (click)="goToCampaigns()">
+                <mat-icon>groups</mat-icon> Join a Campaign
+              </button>
+            </div>
+          </div>
+        }
+
+        @if (levelUpAlerts().length) {
+          <div class="flex flex-col gap-2">
+            @for (alert of levelUpAlerts(); track alert.character.id) {
+              <div class="card card-body flex items-center gap-3 border-gold/30 bg-gold/5">
+                <mat-icon class="text-gold">military_tech</mat-icon>
+                <div class="flex-1 min-w-0">
+                  @if (alert.character.edit_unlocked) {
+                    <p class="text-parchment text-sm m-0">
+                      <strong>{{ alert.character.name }}</strong> leveled up to
+                      <strong>{{ alert.character.level }}</strong> in
+                      <span class="text-gold">{{ alert.character.campaign_name }}</span> — update your sheet.
+                    </p>
+                  } @else {
+                    <p class="text-parchment text-sm m-0">
+                      <strong>{{ alert.character.name }}</strong> leveled up to
+                      <strong>{{ alert.character.level }}</strong> in
+                      <span class="text-gold">{{ alert.character.campaign_name }}</span>, but your DM
+                      hasn't unlocked editing yet.
+                    </p>
+                  }
+                </div>
+                @if (alert.character.edit_unlocked) {
+                  <button class="btn-primary text-sm px-3 py-1.5" (click)="goToCharacters()">Update</button>
+                }
+              </div>
+            }
+          </div>
+        }
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+
+          @if (latestCampaign(); as campaign) {
+            <div class="card overflow-hidden">
+              <div class="card-header flex items-center gap-2">
+                <mat-icon class="text-slate text-base">groups</mat-icon>
+                <h3 class="font-brand text-sm text-parchment m-0">Continue Campaign</h3>
+              </div>
+              <div
+                class="relative bg-cover bg-center bg-elevated min-h-24 flex flex-col justify-end p-4"
+                [style.background-image]="campaign.background_url ? 'linear-gradient(to bottom, rgba(13,14,22,0.25), rgba(13,14,22,0.92)), url(' + campaign.background_url + ')' : null"
+              >
+                <div class="flex items-center gap-2">
+                  <p class="text-parchment font-brand text-lg m-0">{{ campaign.name }}</p>
+                  @if (campaign.is_owner) { <span class="toolbar-badge text-[10px]">DM</span> }
+                </div>
+                @if (campaign.description) {
+                  <p class="text-slate text-xs m-0 mt-1 truncate">{{ campaign.description }}</p>
+                }
+              </div>
+              <div class="card-body pt-3">
+                <button class="btn-primary w-full" [routerLink]="campaignLink(campaign)">
+                  Resume <mat-icon class="text-base">chevron_right</mat-icon>
+                </button>
+              </div>
+            </div>
+          }
+
+          @if (latestCharacter(); as character) {
+            <div class="card">
+              <div class="card-header flex items-center gap-2">
+                <mat-icon class="text-slate text-base">badge</mat-icon>
+                <h3 class="font-brand text-sm text-parchment m-0">Continue Character</h3>
+              </div>
+              <div class="card-body">
+                <p class="text-parchment font-brand text-lg m-0">{{ character.name }}</p>
+                <p class="text-slate text-xs m-0 mt-1">
+                  {{ character.race || '—' }} · {{ classLabel(character) || '—' }} · Lv {{ character.level }}
+                  @if (character.campaign_name) {
+                    · <span class="text-gold">{{ character.campaign_name }}</span>
+                  }
+                </p>
+                <div class="flex items-center gap-1.5 mt-2 mb-3">
+                  <span class="text-xs text-slate border border-white/10 rounded px-2 py-0.5">
+                    HP {{ character.current_hp }}/{{ character.max_hp }}
+                  </span>
+                  <span class="text-xs text-slate border border-white/10 rounded px-2 py-0.5">
+                    AC {{ character.armor_class }}
+                  </span>
+                </div>
+                <button class="btn-primary w-full" (click)="goToCharacters()">
+                  Resume <mat-icon class="text-base">chevron_right</mat-icon>
+                </button>
+              </div>
+            </div>
+          }
+
+        </div>
+      }
+    </div>
+  </div>
+</app-main-layout>

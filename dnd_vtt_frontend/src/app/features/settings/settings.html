@@ -1,0 +1,59 @@
+<app-main-layout>
+  <app-header
+    layoutHeader
+    (selectCharacters)="goToCharacters()"
+    (selectCampaigns)="goToCampaigns()"
+    (selectDashboard)="goToDashboard()"
+  />
+
+  <div class="p-6 overflow-y-auto flex-1 min-h-0">
+    <div class="max-w-3xl mx-auto flex flex-col gap-5">
+
+      <h2 class="font-brand text-lg text-parchment m-0">Settings</h2>
+
+      <div class="card">
+        <div class="card-header border-b border-white/10">
+          <h3 class="font-brand text-parchment m-0">Account</h3>
+        </div>
+        <div class="card-body flex flex-col gap-3">
+          <div class="flex justify-between text-sm">
+            <span class="text-slate">Username</span>
+            <span class="text-parchment">{{ auth.profile()?.username }}</span>
+          </div>
+          <div class="flex justify-between text-sm">
+            <span class="text-slate">Email</span>
+            <span class="text-parchment">{{ auth.profile()?.email }}</span>
+          </div>
+          <div class="flex justify-between text-sm">
+            <span class="text-slate">Role</span>
+            <span class="text-parchment capitalize">{{ auth.profile()?.role }}</span>
+          </div>
+          <div class="flex justify-between text-sm">
+            <span class="text-slate">Member Since</span>
+            <span class="text-parchment">{{ formatDate(auth.profile()?.created_at) }}</span>
+          </div>
+        </div>
+      </div>
+
+      @if (auth.isAdmin()) {
+        <div class="card border-gold/30">
+          <div class="card-header border-b border-white/10 flex items-center gap-2">
+            <mat-icon class="text-gold text-base">shield</mat-icon>
+            <h3 class="font-brand text-parchment m-0">Admin</h3>
+            <span class="toolbar-badge">Admin</span>
+          </div>
+          <div class="card-body">
+            <p class="text-slate text-sm m-0">
+              You have admin access. Admin-only settings will appear here as they're added.
+            </p>
+          </div>
+        </div>
+      }
+
+      <button class="btn-outline w-fit" (click)="auth.signOut()">
+        <mat-icon>logout</mat-icon> Sign out
+      </button>
+
+    </div>
+  </div>
+</app-main-layout>

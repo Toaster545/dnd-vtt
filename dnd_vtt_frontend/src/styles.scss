@@ -65,13 +65,26 @@ html {
 
   // ── Toolbar ──────────────────────────────────────────────────
   .app-toolbar {
-    @apply flex items-center gap-2 h-14 px-3 bg-surface border-b border-white/10 flex-shrink-0;
+    @apply flex items-center gap-3 h-16 px-4 flex-shrink-0
+           bg-gradient-to-b from-elevated to-surface border-b border-gold/10 shadow-sm;
   }
   .toolbar-title {
-    @apply font-brand text-lg text-parchment;
+    @apply font-brand text-lg text-parchment tracking-wide;
   }
   .toolbar-badge {
     @apply text-xs font-bold px-2 py-0.5 rounded bg-gold-container text-gold-bright uppercase tracking-wider flex-shrink-0;
+  }
+
+  // ── Toolbar tabs ────────────────────────────────────────────
+  .tab-pill {
+    @apply flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-sm font-medium
+           text-slate hover:text-parchment hover:bg-white/5 transition-colors
+           cursor-pointer border-0 outline-none;
+    background: transparent;
+    font-family: inherit;
+  }
+  .tab-pill.active {
+    @apply bg-gold/15 text-gold-bright hover:bg-gold/15;
   }
 
   // ── Form fields ───────────────────────────────────────────────

@@ -1,11 +1,9 @@
 import {
   Component, ElementRef, inject, input, output, signal, computed, effect, OnInit, AfterViewInit, OnDestroy, ViewChild
 } from '@angular/core';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import Konva from 'konva';
 import { Subscription } from 'rxjs';
-import { MatIconModule } from '@angular/material/icon';
-import { MatTooltipModule } from '@angular/material/tooltip';
 import { BattleMapService } from '../../core/services/battle-map.service';
 import { AuthService } from '../../core/services/auth.service';
 import { MapToken, BattleMap, MapFog, PlacingEntity, MeasureShape, FogToolName } from '../../core/models/campaign.model';
@@ -21,12 +19,14 @@ import { PortraitCache } from './canvas/portrait-cache';
 import { StagePointerTools } from './canvas/stage-pointer-tools';
 import { MapToolbarComponent } from './components/map-toolbar/map-toolbar';
 import { TurnOrderPanelComponent } from './components/turn-order-panel/turn-order-panel';
+import { MainLayoutComponent } from '../../shared/layout/main-layout/main-layout';
+import { PageHeaderComponent } from '../../shared/layout/page-header/page-header';
 
 @Component({
   selector: 'app-battle-map',
   imports: [
-    RouterLink, MatIconModule, MatTooltipModule, ResizeHandleDirective,
-    MapToolbarComponent, TurnOrderPanelComponent,
+    ResizeHandleDirective, MapToolbarComponent, TurnOrderPanelComponent,
+    MainLayoutComponent, PageHeaderComponent,
   ],
   templateUrl: './battle-map.html',
   styleUrl: './battle-map.scss',

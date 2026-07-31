@@ -1,0 +1,27 @@
+<header class="app-toolbar">
+  <button
+    class="toolbar-title bg-transparent border-0 p-0 cursor-pointer hover:text-gold-bright transition-colors"
+    (click)="selectDashboard.emit()"
+    matTooltip="Dashboard"
+  >NatOne</button>
+
+  <nav class="flex gap-1 bg-black/20 rounded-full p-1">
+    <button class="tab-pill" [class.active]="activeTab() === 'characters'" (click)="selectCharacters.emit()">
+      <mat-icon class="text-base">badge</mat-icon> Characters
+    </button>
+    <button class="tab-pill" [class.active]="activeTab() === 'campaigns'" (click)="selectCampaigns.emit()">
+      <mat-icon class="text-base">groups</mat-icon> Campaigns
+    </button>
+  </nav>
+
+  <div class="flex items-center gap-2 ml-auto">
+    <span class="text-sm text-slate">{{ auth.profile()?.username }}</span>
+    @if (auth.isAdmin()) { <span class="toolbar-badge">Admin</span> }
+    <button class="btn-icon" (click)="selectSettings.emit()" matTooltip="Settings">
+      <mat-icon>settings</mat-icon>
+    </button>
+    <button class="btn-icon" (click)="auth.signOut()" matTooltip="Sign out">
+      <mat-icon>logout</mat-icon>
+    </button>
+  </div>
+</header>

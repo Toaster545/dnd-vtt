@@ -1,7 +1,7 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './core/guards/auth.guard';
-import { adminGuard } from './core/guards/admin.guard';
 import { homeRedirectGuard } from './core/guards/home-redirect.guard';
+import { staleSessionGuard } from './core/guards/stale-session.guard';
 
 export const routes: Routes = [
   { path: '', canActivate: [homeRedirectGuard], children: [] },
@@ -19,13 +19,23 @@ export const routes: Routes = [
     ],
   },
   {
-    path: 'battle-map',
+    path: 'dashboard',
     canActivate: [authGuard],
+    loadComponent: () => import('./features/dashboard/dashboard').then(m => m.DashboardComponent),
+  },
+  {
+    path: 'settings',
+    canActivate: [authGuard, staleSessionGuard],
+    loadComponent: () => import('./features/settings/settings').then(m => m.SettingsComponent),
+  },
+  {
+    path: 'battle-map',
+    canActivate: [authGuard, staleSessionGuard],
     loadComponent: () => import('./features/battle-map/battle-map').then(m => m.BattleMapComponent),
   },
   {
     path: 'battle-map/:id',
-    canActivate: [authGuard],
+    canActivate: [authGuard, staleSessionGuard],
     loadComponent: () => import('./features/battle-map/battle-map').then(m => m.BattleMapComponent),
   },
   // Single shell for every logged-in user — no more /dm vs /player split. Which of a campaign's
@@ -35,7 +45,7 @@ export const routes: Routes = [
   // joined-member view.
   {
     path: 'home',
-    canActivate: [authGuard],
+    canActivate: [authGuard, staleSessionGuard],
     loadComponent: () => import('./features/shell/shell').then(m => m.ShellComponent),
     children: [
       {
@@ -52,6 +62,13 @@ export const routes: Routes = [
         path: 'campaigns/manage/:campaignId/create',
         loadComponent: () =>
           import('./features/create-content/create-content').then(m => m.CreateContentComponent),
+      },
+      {
+        path: 'campaigns/manage/:campaignId/maps',
+        loadComponent: () =>
+          import('./features/dm/dm-campaigns/dm-campaign-maps/dm-campaign-maps').then(
+            m => m.DmCampaignMapsComponent,
+          ),
       },
       {
         path: 'campaigns/manage/:campaignId/sessions/:sessionId',
@@ -82,11 +99,6 @@ export const routes: Routes = [
           ),
       },
     ],
-  },
-  {
-    path: 'admin/maps',
-    canActivate: [authGuard, adminGuard],
-    loadComponent: () => import('./features/admin/map-manager').then(m => m.MapManagerComponent),
   },
   { path: '**', canActivate: [homeRedirectGuard], children: [] },
 ];

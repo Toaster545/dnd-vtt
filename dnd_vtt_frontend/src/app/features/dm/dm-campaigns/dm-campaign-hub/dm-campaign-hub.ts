@@ -11,6 +11,7 @@ import { SessionService } from '../../../../core/services/session.service';
 import { CharacterService } from '../../../../core/services/character.service';
 import { ContentService } from '../../../../core/services/content.service';
 import { CharacterStatsService } from '../../../../core/services/character-stats.service';
+import { RecentActivityService } from '../../../../core/services/recent-activity.service';
 import { ClassChoiceSource } from '../../../../core/utils/character-effects';
 import { CampaignHub, CampaignMember } from '../../../../core/models/campaign.model';
 import { Session } from '../../../../core/models/session.model';
@@ -46,6 +47,7 @@ export class DmCampaignHubComponent implements OnInit {
   private statsService     = inject(CharacterStatsService);
   private confirm          = inject(ConfirmService);
   private dialog           = inject(MatDialog);
+  private recentActivity   = inject(RecentActivityService);
   auth = inject(AuthService);
 
   campaignId = this.route.snapshot.paramMap.get('campaignId')!;
@@ -76,6 +78,7 @@ export class DmCampaignHubComponent implements OnInit {
   async ngOnInit() { await this.load(); }
 
   private async load() {
+    this.recentActivity.markCampaignViewed(this.campaignId);
     this.loading.set(true);
     try {
       const campaign = await this.campaignService.getById(this.campaignId);
