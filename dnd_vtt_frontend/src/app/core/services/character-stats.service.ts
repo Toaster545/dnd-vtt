@@ -115,11 +115,15 @@ export class CharacterStatsService {
     );
     const computed_ac = baseArmorClass(char.equipment, items, mods.dexterity) + conditionalAcBonus + unarmoredBonus;
 
+    const untrainedSkillBonus = allEffects
+      .filter(effect => effect.type === 'untrained_skill_bonus')
+      .reduce((sum, effect) =>
+        sum + (effect.tags?.includes('half_proficiency') ? Math.floor(prof / 2) : (effect.value ?? 0)), 0);
     const skill_bonuses = Object.fromEntries(
       Object.entries(SKILLS).map(([skill, ability]) => {
         const proficient = !!(char.skills?.[skill]);
         const expert   = !!(char.expertise?.[skill]);
-        return [skill, mods[ability] + (expert ? prof * 2 : proficient ? prof : 0)];
+        return [skill, mods[ability] + (expert ? prof * 2 : proficient ? prof : untrainedSkillBonus)];
       }),
     );
 

@@ -27,6 +27,23 @@ const barbarian = {
   ],
 } as unknown as DndClass;
 
+const bard = {
+  name: 'Bard',
+  levels: [{
+    level: 1,
+    grants: [{
+      type: 'feature', key: 'bardic-inspiration', name: 'Bardic Inspiration',
+      action: {
+        activation: 'bonus_action',
+        uses: {
+          max: 1, maxAbilityModifier: 'charisma', minimum: 1,
+          per: 'long_rest', perByLevel: { '5': 'short_rest' },
+        },
+      },
+    }],
+  }],
+} as unknown as DndClass;
+
 describe('CharacterActionsService', () => {
   const service = new CharacterActionsService();
 
@@ -46,5 +63,24 @@ describe('CharacterActionsService', () => {
     const [rage] = service.compute([{ data: barbarian, level: 6 }], { rage: 3 });
     expect(service.rest({ rage: 3 }, [rage], 'short_rest')).toEqual({ rage: 2 });
     expect(service.rest({ rage: 3 }, [rage], 'long_rest')).toEqual({});
+  });
+
+  it('uses an ability modifier for a resource maximum, with its declared minimum', () => {
+    const scores = {
+      strength: 10, dexterity: 10, constitution: 10,
+      intelligence: 10, wisdom: 10, charisma: 18,
+    };
+    const [inspiration] = service.compute([{ data: bard, level: 1 }], {}, scores);
+    expect(inspiration.maxUses).toBe(4);
+
+    const [minimum] = service.compute([{ data: bard, level: 1 }], {}, { ...scores, charisma: 8 });
+    expect(minimum.maxUses).toBe(1);
+  });
+
+  it('changes a resource recovery cadence at the configured class level', () => {
+    const [level4] = service.compute([{ data: bard, level: 4 }], {});
+    const [level5] = service.compute([{ data: bard, level: 5 }], {});
+    expect(level4.per).toBe('long_rest');
+    expect(level5.per).toBe('short_rest');
   });
 });

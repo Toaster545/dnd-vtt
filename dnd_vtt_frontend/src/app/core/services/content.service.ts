@@ -21,6 +21,7 @@ export interface TraitEffect {
 export type EffectCondition =
   | 'wearing_armor'
   | 'no_armor'
+  | 'no_armor_or_shield'
   | 'no_heavy_armor'
   | 'wielding_shield'
   | 'two_handed_melee'
@@ -44,7 +45,13 @@ export interface TraitAction {
   uses?: {
     max: number;
     maxByLevel?: Record<string, number>;
+    // Uses equal the named ability modifier (subject to `minimum`) when ability
+    // scores are available; `max` remains the safe fallback for older callers.
+    maxAbilityModifier?: 'strength' | 'dexterity' | 'constitution' | 'intelligence' | 'wisdom' | 'charisma';
+    minimum?: number;
     per: 'short_rest' | 'long_rest';
+    // Some pools change recovery cadence without becoming a second resource.
+    perByLevel?: Record<string, 'short_rest' | 'long_rest'>;
     // Some long-rest pools regain a fixed number of uses on a Short Rest (for example Rage).
     shortRestRestore?: number;
   };
@@ -58,6 +65,9 @@ export type TraitGrant =
   | { type: 'choice'; key: string; name: string; choose: number; chooseByLevel?: Record<string, number>; description?: string; options: TraitOption[] }
   // `skills` restricts to a named list (e.g. Elf's Keen Senses); omitted = any skill (Human's Skillful).
   | { type: 'skill_choice'; key: string; name: string; choose: number; description?: string; skills?: string[] }
+  // Choose existing skill proficiencies whose proficiency bonus is doubled. Options are derived
+  // from the character's live proficient-skill set rather than embedded in class JSON.
+  | { type: 'expertise_choice'; key: string; name: string; choose: number; description?: string }
   // Options are derived from weapon items (DndItem.mastery) the class is proficient with,
   // filtered by category, rather than embedded here.
   | { type: 'weapon_mastery'; key: string; name: string; choose: number; description?: string; proficiency: string[] }
@@ -114,6 +124,7 @@ export interface ClassLevel {
   pact_magic?: { slots: number; slot_level: number };
   cantrips_known?: number;
   spells_known?: number;
+  prepared_spells?: number;
   class_specific?: Record<string, number | string>;
 }
 

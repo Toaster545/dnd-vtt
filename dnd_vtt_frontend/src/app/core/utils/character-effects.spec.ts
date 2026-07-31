@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
-import { TraitEffect } from '../services/content.service';
-import { unarmoredDefenseBonus } from './character-effects';
+import { EquipmentEntry } from '../models/character.model';
+import { DndItem, TraitEffect } from '../services/content.service';
+import { evaluateCondition, unarmoredDefenseBonus } from './character-effects';
 
 describe('unarmoredDefenseBonus', () => {
   it('adds the modifier named by an active Unarmored Defense effect', () => {
@@ -19,5 +20,23 @@ describe('unarmoredDefenseBonus', () => {
 
   it('adds nothing without an active Unarmored Defense effect', () => {
     expect(unarmoredDefenseBonus([], { constitution: 4 })).toBe(0);
+  });
+});
+
+describe('no_armor_or_shield equipment condition', () => {
+  const leather = {
+    index: 'leather-armor', type: 'armor', category: 'Light Armor', properties: [],
+  } as DndItem;
+  const shield = {
+    index: 'shield', type: 'armor', category: 'Shield', properties: [],
+  } as DndItem;
+  const equipped = (itemIndex: string): EquipmentEntry[] => [
+    { itemIndex, name: itemIndex, quantity: 1, equipped: true },
+  ];
+
+  it('is active only while neither armor nor a shield is equipped', () => {
+    expect(evaluateCondition('no_armor_or_shield', [], [leather, shield])).toBe(true);
+    expect(evaluateCondition('no_armor_or_shield', equipped(leather.index), [leather, shield])).toBe(false);
+    expect(evaluateCondition('no_armor_or_shield', equipped(shield.index), [leather, shield])).toBe(false);
   });
 });

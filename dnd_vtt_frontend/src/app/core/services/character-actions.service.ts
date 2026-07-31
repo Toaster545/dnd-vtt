@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ActionActivation, TraitGrant, DndClass, Subclass } from './content.service';
 import { resolveProgressiveChoiceLimit } from '../utils/progressive-choice';
+import { AbilityScores, abilityModifier } from '../models/character.model';
 
 export interface CharacterAction {
   key: string;
@@ -16,6 +17,13 @@ export interface CharacterAction {
 
 type FeatureGrant = Extract<TraitGrant, { type: 'feature' }>;
 
+function resolveLevelValue<T>(base: T, byLevel: Record<string, T> | undefined, level: number): T {
+  if (!byLevel) return base;
+  return Object.entries(byLevel)
+    .filter(([threshold]) => Number(threshold) <= level)
+    .sort(([left], [right]) => Number(right) - Number(left))[0]?.[1] ?? base;
+}
+
 @Injectable({ providedIn: 'root' })
 export class CharacterActionsService {
   // Aggregates every actionable class feature unlocked at each class's current level into a
@@ -25,6 +33,7 @@ export class CharacterActionsService {
   compute(
     classes: { data: DndClass; level: number; subclass?: Subclass | null }[],
     resourceUses: Record<string, number>,
+    abilityScores?: AbilityScores,
   ): CharacterAction[] {
     // `level` here is the unlock threshold (which level's declaration currently wins, e.g. Action
     // Surge's 1-use-vs-2-use text) — kept separate from `classLevel`, the character's actual
@@ -49,9 +58,15 @@ export class CharacterActionsService {
 
     return [...winners.values()].map(({ grant, source, classLevel }) => {
       const uses = grant.action!.uses;
-      const max = uses
+      const progressiveMax = uses
         ? resolveProgressiveChoiceLimit(uses.max, uses.maxByLevel, classLevel)
         : 0;
+      const abilityMax = uses?.maxAbilityModifier && abilityScores
+        ? abilityModifier(abilityScores[uses.maxAbilityModifier])
+        : null;
+      const max = abilityMax == null
+        ? progressiveMax
+        : Math.max(uses?.minimum ?? 0, abilityMax);
       return {
         key: grant.key!,
         name: grant.name,
@@ -60,7 +75,7 @@ export class CharacterActionsService {
         source,
         maxUses: max,
         usedUses: Math.min(resourceUses[grant.key!] ?? 0, max),
-        per: uses?.per ?? 'long_rest',
+        per: uses ? resolveLevelValue(uses.per, uses.perByLevel, classLevel) : 'long_rest',
         shortRestRestore: uses?.shortRestRestore ?? 0,
       };
     });

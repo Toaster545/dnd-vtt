@@ -4,6 +4,7 @@ import { UpperCasePipe } from '@angular/common';
 import { DndClass, TraitGrant, TraitOption, DndItem, DndFeat } from '../../../../../../../core/services/content.service';
 import { Ability, ABILITIES } from '../../../../../../../core/models/character.model';
 import { resolveProgressiveChoiceLimit } from '../../../../../../../core/utils/progressive-choice';
+import { collectTraitEffects } from '../../../../../../../core/utils/character-effects';
 
 export interface ClassEntry {
   cls: DndClass;
@@ -27,6 +28,7 @@ export class ClassStepComponent implements OnInit {
   readonly selectedClasses   = input<ClassEntry[]>([]);
   readonly characterLevel    = input.required<number>();
   readonly baseAbilityScores = input.required<Record<Ability, number>>();
+  readonly proficientSkills  = input<string[]>([]);
   readonly classAdded        = output<ClassEntry>();
   readonly classRemoved      = output<string>();
 
@@ -74,7 +76,7 @@ export class ClassStepComponent implements OnInit {
   private grantKeys(cls: DndClass): string[] {
     const fromLevels = (levels: { grants?: TraitGrant[] }[]) => levels.flatMap(l => (l.grants ?? [])
       .filter((g): g is Extract<TraitGrant, { key: string }> =>
-        g.type === 'choice' || g.type === 'skill_choice' || g.type === 'weapon_mastery' || g.type === 'ability_choice' || g.type === 'feat_pick')
+        g.type === 'choice' || g.type === 'skill_choice' || g.type === 'expertise_choice' || g.type === 'weapon_mastery' || g.type === 'ability_choice' || g.type === 'feat_pick')
       .map(g => g.key));
     return [...fromLevels(cls.levels), ...cls.subclasses.flatMap(s => fromLevels(s.levels))];
   }
@@ -191,6 +193,41 @@ export class ClassStepComponent implements OnInit {
     this.syncDraft();
   }
 
+  expertiseOptions(): string[] {
+    const cls = this.browsingClass();
+    const laterClassSkills = [
+      ...(cls?.levels ?? []),
+      ...(cls?.subclasses.flatMap(subclass => subclass.levels) ?? []),
+    ].flatMap(level => (level.grants ?? [])
+      .filter((grant): grant is Extract<TraitGrant, { type: 'skill_choice' }> => grant.type === 'skill_choice')
+      .flatMap(grant => grant.key === 'skills' ? this.draftSkills() : (this.draftTraits()[grant.key] ?? [])));
+    return [...new Set([...this.proficientSkills(), ...this.draftSkills(), ...laterClassSkills])].sort();
+  }
+
+  expertiseTakenElsewhere(grant: Extract<TraitGrant, { type: 'expertise_choice' }>, skill: string): boolean {
+    const cls = this.browsingClass();
+    const keys = new Set([
+      ...(cls?.levels ?? []),
+      ...(cls?.subclasses.flatMap(subclass => subclass.levels) ?? []),
+    ].flatMap(level => (level.grants ?? [])
+      .filter((candidate): candidate is Extract<TraitGrant, { type: 'expertise_choice' }> => candidate.type === 'expertise_choice')
+      .map(candidate => candidate.key)));
+    return Object.entries(this.draftTraits())
+      .filter(([key]) => key !== grant.key && keys.has(key))
+      .some(([, picks]) => picks.includes(skill));
+  }
+
+  toggleExpertise(grant: Extract<TraitGrant, { type: 'expertise_choice' }>, skill: string) {
+    const selected = this.draftTraits()[grant.key] ?? [];
+    if (!selected.includes(skill) &&
+        (selected.length >= grant.choose || this.expertiseTakenElsewhere(grant, skill))) return;
+    const next = selected.includes(skill)
+      ? selected.filter(candidate => candidate !== skill)
+      : [...selected, skill];
+    this.draftTraits.update(traits => ({ ...traits, [grant.key]: next }));
+    this.syncDraft();
+  }
+
   // Level (multiclass only) and subclass are set directly from template bindings — routed
   // through methods (rather than `draftLevel.set(...)` inline) so they can also autosave.
   setDraftLevel(level: number) {
@@ -256,6 +293,8 @@ export class ClassStepComponent implements OnInit {
     switch (grant.type) {
       case 'skill_choice':
         return Math.max(0, grant.choose - this.skillSelections(grant).length);
+      case 'expertise_choice':
+        return Math.max(0, grant.choose - (this.draftTraits()[grant.key]?.length ?? 0));
       case 'choice':
         return Math.max(0, this.choiceLimit(grant) - (this.draftTraits()[grant.key]?.length ?? 0));
       case 'weapon_mastery':
@@ -430,14 +469,21 @@ export class ClassStepComponent implements OnInit {
     ];
   }
 
-  // A feat can grant armor proficiency directly (e.g. Heavily Armored →
-  // `effects: [{ type: 'armor_proficiency', tags: ['heavy'] }]`), same as a class's
-  // `armor_training` list — both count toward qualifying for a later armor-gated prerequisite.
-  private armorProficiencyTagsFromFeats(): string[] {
-    return this.allFeatPickEntries()
-      .map(e => this.feats().find(f => f.index === e.featIndex))
-      .filter((f): f is DndFeat => !!f)
-      .flatMap(f => f.effects ?? [])
+  // Subclass features and feats can grant armor training through the same structured effect.
+  private armorProficiencyTagsFromEffects(): string[] {
+    const browsing = this.browsingClass();
+    const sources = this.selectedClasses().map(entry => browsing?.index === entry.cls.index
+      ? { data: browsing, choices: this.draftTraits(), level: this.effectiveLevel(), subclass: this.draftSubclass() }
+      : { data: entry.cls, choices: entry.traits, level: entry.level, subclass: entry.subclass });
+    if (browsing && !sources.some(source => source.data.index === browsing.index)) {
+      sources.push({
+        data: browsing,
+        choices: this.draftTraits(),
+        level: this.effectiveLevel(),
+        subclass: this.draftSubclass(),
+      });
+    }
+    return collectTraitEffects(sources, this.feats())
       .filter(eff => eff.type === 'armor_proficiency')
       .flatMap(eff => eff.tags ?? []);
   }
@@ -447,7 +493,7 @@ export class ClassStepComponent implements OnInit {
       const lower = t.toLowerCase();
       return lower.includes('all armor') || lower.includes(kind);
     });
-    return fromClasses || this.armorProficiencyTagsFromFeats().includes(kind);
+    return fromClasses || this.armorProficiencyTagsFromEffects().includes(kind);
   }
 
   // Every feat currently picked via any `ability_choice`/`feat_pick` grant on any selected

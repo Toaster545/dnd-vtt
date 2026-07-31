@@ -119,7 +119,7 @@ export class CharacterDisplayComponent implements OnInit {
 
   classSpecific(): { label: string; value: string }[] {
     const lvl = this.currentLvl();
-    if (!lvl?.class_specific) return [];
+    if (!lvl) return [];
     const LABELS: Record<string, string> = {
       rages: 'Rages/day', rage_damage: 'Rage Dmg Bonus',
       ki_points: 'Ki Points', martial_arts: 'Martial Arts Die',
@@ -127,11 +127,15 @@ export class CharacterDisplayComponent implements OnInit {
       sneak_attack: 'Sneak Attack', sorcery_points: 'Sorcery Points',
       invocations_known: 'Invocations Known',
       weapon_masteries: 'Weapon Masteries',
+      bardic_die: 'Bardic Inspiration Die',
     };
-    return Object.entries(lvl.class_specific).map(([k, v]) => ({
+    const values = Object.entries(lvl.class_specific ?? {}).map(([k, v]) => ({
       label: LABELS[k] ?? k,
       value: k === 'rages' && v === -1 ? '∞' : String(v),
     }));
+    if (lvl.cantrips_known != null) values.push({ label: 'Cantrips', value: String(lvl.cantrips_known) });
+    if (lvl.prepared_spells != null) values.push({ label: 'Prepared Spells', value: String(lvl.prepared_spells) });
+    return values;
   }
 
   hpPercent(): number {
