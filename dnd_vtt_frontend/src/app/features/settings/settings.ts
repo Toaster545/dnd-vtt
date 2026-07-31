@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { AuthService } from '../../core/services/auth.service';
+import { BackgroundService, customBackgroundCss } from '../../core/services/background.service';
 import { MainLayoutComponent } from '../../shared/layout/main-layout/main-layout';
 import { AppHeaderComponent } from '../../shared/layout/app-header/app-header';
 
@@ -17,6 +18,8 @@ import { AppHeaderComponent } from '../../shared/layout/app-header/app-header';
 export class SettingsComponent {
   private router = inject(Router);
   auth = inject(AuthService);
+  background = inject(BackgroundService);
+  customBackgroundCss = customBackgroundCss;
 
   goToCharacters() {
     void this.router.navigate(['/home']);

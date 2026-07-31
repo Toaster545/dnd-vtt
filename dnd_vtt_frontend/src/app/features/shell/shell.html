@@ -22,12 +22,6 @@
   }
 
   <div class="flex-1 overflow-hidden flex flex-col min-h-0">
-    @if (activeTab() === 'characters') {
-      <app-characters class="flex flex-col flex-1 min-h-0" />
-    } @else {
-      <div class="flex-1 min-h-0 overflow-hidden flex flex-col">
-        <router-outlet></router-outlet>
-      </div>
-    }
+    <router-outlet></router-outlet>
   </div>
 </app-main-layout>

@@ -41,7 +41,7 @@ export class CampaignsService {
   // `is_owner` so the frontend can route to the right hub view. If a campaign somehow appears in
   // both sets (a DM who also joined their own campaign), the owned copy wins.
   async findAllForUser(user: RequestUser) {
-    const [owned, joined] = await Promise.all([
+    const [owned, joined, visits] = await Promise.all([
       this.db.execute('SELECT * FROM campaigns WHERE dm_id = ?', [user.id]),
       this.db.execute(
         `SELECT c.* FROM campaigns c
@@ -49,7 +49,17 @@ export class CampaignsService {
          WHERE m.user_id = ? AND m.status = 'active'`,
         [user.id],
       ),
+      this.db.execute(
+        `SELECT campaign_id, visited_at FROM campaign_visits WHERE user_id = ?`,
+        [user.id],
+      ),
     ]);
+    const visitedAt = new Map<string, string>(
+      visits.rows.map((row) => [
+        row.campaign_id as string,
+        row.visited_at as string,
+      ]),
+    );
     const byId = new Map<
       string,
       ReturnType<typeof this.deserialize> & { is_owner: boolean }
@@ -58,15 +68,23 @@ export class CampaignsService {
       byId.set(row.id as string, { ...this.deserialize(row), is_owner: false });
     for (const row of owned.rows)
       byId.set(row.id as string, { ...this.deserialize(row), is_owner: true });
-    return [...byId.values()].sort((a, b) =>
-      String(b.created_at).localeCompare(String(a.created_at)),
-    );
+    // Most recently visited first; campaigns never opened yet (no row in campaign_visits) fall
+    // back to creation date and sort after anything with an actual visit.
+    return [...byId.values()].sort((a, b) => {
+      const aVisited = visitedAt.get(a.id as string);
+      const bVisited = visitedAt.get(b.id as string);
+      if (aVisited && bVisited) return bVisited.localeCompare(aVisited);
+      if (aVisited) return -1;
+      if (bVisited) return 1;
+      return String(b.created_at).localeCompare(String(a.created_at));
+    });
   }
 
   async findOne(id: string, user: RequestUser) {
     const campaign = await this.getCampaignRow(id);
     const isOwner = campaign.dm_id === user.id;
     if (!isOwner) await this.assertActiveMember(id, user.id);
+    await this.recordVisit(id, user.id);
 
     const sessions = await this.db.execute(
       isOwner
@@ -339,6 +357,17 @@ export class CampaignsService {
     const row = result.rows[0];
     if (!row) throw new NotFoundException('Campaign not found');
     return row;
+  }
+
+  // Upserted every time a user successfully opens a campaign's hub — powers findAllForUser's
+  // most-recently-visited ordering. Per-user, not per-membership, so it works the same for the
+  // owning DM (who has no campaign_members row) and for joined players.
+  private async recordVisit(campaignId: string, userId: string) {
+    await this.db.execute(
+      `INSERT INTO campaign_visits (campaign_id, user_id, visited_at) VALUES (?, ?, ?)
+       ON CONFLICT(campaign_id, user_id) DO UPDATE SET visited_at = excluded.visited_at`,
+      [campaignId, userId, new Date().toISOString()],
+    );
   }
 
   private async assertActiveMember(campaignId: string, userId: string) {

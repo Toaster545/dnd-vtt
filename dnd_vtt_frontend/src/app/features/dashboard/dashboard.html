@@ -112,7 +112,7 @@
                     AC {{ character.armor_class }}
                   </span>
                 </div>
-                <button class="btn-primary w-full" (click)="goToCharacters()">
+                <button class="btn-primary w-full" [routerLink]="characterLink(character)">
                   Resume <mat-icon class="text-base">chevron_right</mat-icon>
                 </button>
               </div>

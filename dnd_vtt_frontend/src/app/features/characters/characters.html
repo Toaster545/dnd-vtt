@@ -1,66 +1,49 @@
-@if (sheetCharacter(); as sc) {
-  <div class="flex items-center gap-2 px-4 py-2.5 border-b border-white/10 flex-shrink-0">
-    <button class="btn-ghost text-sm" (click)="closeSheet()">
-      <mat-icon class="text-base">arrow_back</mat-icon> Back to characters
+<div class="p-6">
+  <div class="flex items-center mb-5">
+    <h2 class="font-brand text-lg text-parchment m-0 flex-1">Characters</h2>
+    <button class="btn-primary" (click)="openCreate()">
+      <mat-icon>add</mat-icon> New Character
     </button>
-    @if (sheetCampaignId()) {
-      <button class="btn-ghost text-sm ml-auto" (click)="openCampaign()">
-        Open campaign <mat-icon class="text-base">chevron_right</mat-icon>
-      </button>
-    }
   </div>
-  <app-character-play-sheet class="flex-1 min-h-0" [character]="sc" (saved)="onCharacterSheetSaved($event)" />
-} @else if (showWizard()) {
-  <app-character-wizard class="flex flex-col flex-1 min-h-0"
-    [character]="editingCharacter()"
-    (saved)="onSaved()"
-    (cancelled)="onCancelled()"
-  />
-} @else {
-  <div class="p-6">
-    <div class="flex items-center mb-5">
-      <h2 class="font-brand text-lg text-parchment m-0 flex-1">Characters</h2>
-      <button class="btn-primary" (click)="openCreate()">
-        <mat-icon>add</mat-icon> New Character
-      </button>
-    </div>
 
-    @if (characters().length === 0) {
-      <p class="text-slate text-sm">No characters yet. Create your first one above.</p>
-    } @else {
-      <ul class="divide-y divide-white/8">
-        @for (c of characters(); track c.id) {
-          <li class="flex items-center py-3 gap-3" (click)="canEdit(c) ? openEdit(c) : viewSheet(c)">
-            <div class="flex-1 min-w-0">
-              <p class="text-parchment font-medium truncate m-0">{{ c.name }}</p>
-              <p class="text-slate text-xs m-0 mt-0.5">
-                {{ c.race || '—' }} · {{ classLabel(c) || '—' }} · Lv {{ c.level }}
-                @if (c.campaign_name) {
-                  · <span class="text-gold">{{ c.campaign_name }}</span>
-                  @if (!canEdit(c)) {
-                    · <mat-icon class="text-sm align-middle" matTooltip="DM hasn't unlocked full editing for this character">lock</mat-icon>
-                  }
+  @if (characters().length === 0) {
+    <p class="text-slate text-sm">No characters yet. Create your first one above.</p>
+  } @else {
+    <ul class="divide-y divide-white/8">
+      @for (c of characters(); track c.id) {
+        <li
+          class="flex items-center py-3 px-3 -mx-3 gap-3 rounded-md border border-transparent cursor-pointer transition-colors hover:bg-elevated/40 hover:border-white/10"
+          (click)="openRow(c)"
+        >
+          <div class="flex-1 min-w-0">
+            <p class="text-parchment font-medium truncate m-0">{{ c.name }}</p>
+            <p class="text-slate text-xs m-0 mt-0.5">
+              {{ c.race || '—' }} · {{ classLabel(c) || '—' }} · Lv {{ c.level }}
+              @if (c.campaign_name) {
+                · <span class="text-gold">{{ c.campaign_name }}</span>
+                @if (!canEdit(c)) {
+                  · <mat-icon class="text-sm align-middle" matTooltip="DM hasn't unlocked full editing for this character">lock</mat-icon>
                 }
-              </p>
-            </div>
-            <div class="flex items-center gap-1.5">
-              <span class="text-xs text-slate border border-white/10 rounded px-2 py-0.5">HP {{ c.current_hp }}/{{ c.max_hp }}</span>
-              <span class="text-xs text-slate border border-white/10 rounded px-2 py-0.5">AC {{ c.armor_class }}</span>
-              <button class="btn-icon" (click)="$event.stopPropagation(); viewSheet(c)" matTooltip="View sheet">
-                <mat-icon>menu_book</mat-icon>
-              </button>
-              @if (canEdit(c)) {
-                <button class="btn-icon" (click)="$event.stopPropagation(); openEdit(c)" matTooltip="Edit">
-                  <mat-icon>edit</mat-icon>
-                </button>
               }
-              <button class="btn-icon text-danger/70 hover:text-danger" (click)="$event.stopPropagation(); deleteCharacter(c.id!)" matTooltip="Delete">
-                <mat-icon>delete</mat-icon>
+            </p>
+          </div>
+          <div class="flex items-center gap-1.5">
+            <span class="text-xs text-slate border border-white/10 rounded px-2 py-0.5">HP {{ c.current_hp }}/{{ c.max_hp }}</span>
+            <span class="text-xs text-slate border border-white/10 rounded px-2 py-0.5">AC {{ c.armor_class }}</span>
+            <button class="btn-icon" (click)="$event.stopPropagation(); viewSheet(c)" matTooltip="View sheet">
+              <mat-icon>menu_book</mat-icon>
+            </button>
+            @if (canEdit(c)) {
+              <button class="btn-icon" (click)="$event.stopPropagation(); openEdit(c)" matTooltip="Edit">
+                <mat-icon>edit</mat-icon>
               </button>
-            </div>
-          </li>
-        }
-      </ul>
-    }
-  </div>
-}
+            }
+            <button class="btn-icon text-danger/70 hover:text-danger" (click)="$event.stopPropagation(); deleteCharacter(c.id!)" matTooltip="Delete">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </div>
+        </li>
+      }
+    </ul>
+  }
+</div>

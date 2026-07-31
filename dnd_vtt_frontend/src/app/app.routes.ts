@@ -22,6 +22,7 @@ export const routes: Routes = [
     path: 'dashboard',
     canActivate: [authGuard],
     loadComponent: () => import('./features/dashboard/dashboard').then(m => m.DashboardComponent),
+    data: { bgOverlay: 0.6 },
   },
   {
     path: 'settings',
@@ -38,16 +39,38 @@ export const routes: Routes = [
     canActivate: [authGuard, staleSessionGuard],
     loadComponent: () => import('./features/battle-map/battle-map').then(m => m.BattleMapComponent),
   },
-  // Single shell for every logged-in user — no more /dm vs /player split. Which of a campaign's
-  // two hub views you land on is decided by ownership (see CampaignsComponent.campaignLink), not
-  // by a route-level role guard: 'campaigns/manage/...' is the owning-DM view (still gated inside
-  // each backend endpoint by campaign.dm_id, not by adminGuard), 'campaigns/:campaignId' is the
-  // joined-member view.
   {
     path: 'home',
     canActivate: [authGuard, staleSessionGuard],
     loadComponent: () => import('./features/shell/shell').then(m => m.ShellComponent),
     children: [
+      {
+        path: '',
+        loadComponent: () => import('./features/characters/characters').then(m => m.CharactersComponent),
+      },
+      {
+        path: 'characters/new',
+        loadComponent: () =>
+          import('./features/characters/character-wizard-page/character-wizard-page').then(
+            m => m.CharacterWizardPageComponent,
+          ),
+        data: { bgOverlay: 0.6 },
+      },
+      {
+        path: 'characters/:id/edit',
+        loadComponent: () =>
+          import('./features/characters/character-wizard-page/character-wizard-page').then(
+            m => m.CharacterWizardPageComponent,
+          ),
+        data: { bgOverlay: .9 },
+      },
+      {
+        path: 'characters/:id',
+        loadComponent: () =>
+          import('./features/characters/character-sheet-page/character-sheet-page').then(
+            m => m.CharacterSheetPageComponent,
+          ),
+      },
       {
         path: 'campaigns',
         loadComponent: () =>

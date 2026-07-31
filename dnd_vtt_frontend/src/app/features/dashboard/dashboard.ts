@@ -126,6 +126,10 @@ export class DashboardComponent implements OnInit {
     return campaign.is_owner ? ['/home/campaigns/manage', campaign.id] : ['/home/campaigns', campaign.id];
   }
 
+  characterLink(character: Character): string[] {
+    return ['/home/characters', character.id!];
+  }
+
   classLabel(c: Character): string {
     return c.subclass ? `${c.subclass} (${c.class})` : c.class;
   }

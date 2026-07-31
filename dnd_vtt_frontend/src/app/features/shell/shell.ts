@@ -7,7 +7,6 @@ import { AuthService } from '../../core/services/auth.service';
 import { CampaignService } from '../../core/services/campaign.service';
 import { EncounterService } from '../../core/services/encounter.service';
 import { EncounterStartedEvent } from '../../core/models/encounter.model';
-import { CharactersComponent } from '../characters/characters';
 import { MainLayoutComponent } from '../../shared/layout/main-layout/main-layout';
 import { AppHeaderComponent } from '../../shared/layout/app-header/app-header';
 
@@ -15,13 +14,13 @@ type Tab = 'characters' | 'campaigns';
 
 // Single nav shell for every logged-in user, replacing the old dm-shell/player-shell split — DM
 // vs player was never really a property of the account, just of whether a given campaign's dm_id
-// happens to match you (see CampaignsService.findAllForUser's is_owner flag). Characters is a
-// plain signal-driven tab (no routing); Campaigns and everything below a specific campaign
-// (hub/session/encounter) is routed under /home/campaigns, gated by ownership rather than a
-// global role — see app.routes.ts.
+// happens to match you (see CampaignsService.findAllForUser's is_owner flag). Both Characters
+// (empty path + /characters/*) and Campaigns (/campaigns/*) are routed under /home via a single
+// <router-outlet> — activeTab only drives which header tab-pill is highlighted, derived from the
+// URL in syncActiveTabFromUrl, not which view renders.
 @Component({
   selector: 'app-shell',
-  imports: [MatIconModule, MatTooltipModule, RouterOutlet, CharactersComponent, MainLayoutComponent, AppHeaderComponent],
+  imports: [MatIconModule, MatTooltipModule, RouterOutlet, MainLayoutComponent, AppHeaderComponent],
   templateUrl: './shell.html',
 })
 export class ShellComponent implements OnInit, OnDestroy {
@@ -63,7 +62,6 @@ export class ShellComponent implements OnInit, OnDestroy {
     const alert = this.liveAlert();
     if (!alert) return;
     this.liveAlert.set(null);
-    this.activeTab.set('campaigns');
     void this.router.navigate(
       ['/home/campaigns', alert.campaignId, 'sessions', alert.sessionId],
       { queryParams: { autojoin: alert.encounterId } },
@@ -71,16 +69,14 @@ export class ShellComponent implements OnInit, OnDestroy {
   }
 
   private syncActiveTabFromUrl(url: string) {
-    if (url.startsWith('/home/campaigns')) this.activeTab.set('campaigns');
+    this.activeTab.set(url.startsWith('/home/campaigns') ? 'campaigns' : 'characters');
   }
 
   selectCharacters() {
-    this.activeTab.set('characters');
-    if (this.router.url.startsWith('/home/campaigns')) void this.router.navigate(['/home']);
+    void this.router.navigate(['/home']);
   }
 
   goToCampaigns() {
-    this.activeTab.set('campaigns');
     void this.router.navigate(['/home/campaigns']);
   }
 
