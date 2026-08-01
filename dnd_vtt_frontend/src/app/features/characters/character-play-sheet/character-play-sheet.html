@@ -4,15 +4,18 @@
   <div class="flex flex-col h-full overflow-hidden">
 
     <!-- Header -->
-    <div class="flex items-start justify-between gap-4 px-6 pt-5 pb-4 border-b border-white/10 flex-shrink-0">
-      <div class="min-w-0">
-        <h2 class="font-brand text-2xl text-parchment m-0 leading-tight truncate">{{ char.name }}</h2>
-        <p class="text-slate text-sm m-0 mt-1">
-          Level {{ char.level }} {{ char.race }}
-          @if (char.subrace) { ({{ char.subrace }}) }
-          &nbsp;·&nbsp; {{ char.class }}@if (char.subclass) { — {{ char.subclass }} }
-          @if (char.background) { &nbsp;·&nbsp; {{ char.background }} }
-        </p>
+    <div class="flex items-center justify-between gap-4 px-6 pt-5 pb-4 border-b border-white/10 flex-shrink-0">
+      <div class="flex items-center gap-2 min-w-0">
+        <ng-content select="[sheetHeaderLeading]" />
+        <div class="min-w-0">
+          <h2 class="font-brand text-2xl text-parchment m-0 leading-tight truncate">{{ char.name }}</h2>
+          <p class="text-slate text-sm m-0 mt-1">
+            Level {{ char.level }} {{ char.race }}
+            @if (char.subrace) { ({{ char.subrace }}) }
+            &nbsp;·&nbsp; {{ char.class }}@if (char.subclass) { — {{ char.subclass }} }
+            @if (char.background) { &nbsp;·&nbsp; {{ char.background }} }
+          </p>
+        </div>
       </div>
       @if (stats(); as s) {
         <div class="flex items-start gap-4 flex-shrink-0">
@@ -63,7 +66,7 @@
         style="background: transparent; font-family: inherit;"
       >
         <span class="flex items-center justify-center w-5 h-5 rounded-full text-xs font-bold flex-shrink-0"
-          [class]="activeTab() === 'stats' ? 'bg-gold text-black' : 'bg-white/10 text-slate'">1</span>
+          [class]="activeTab() === 'stats' ? 'bg-gold text-on-accent' : 'bg-white/10 text-slate'">1</span>
         Stats
       </button>
       <button
@@ -73,7 +76,7 @@
         style="background: transparent; font-family: inherit;"
       >
         <span class="flex items-center justify-center w-5 h-5 rounded-full text-xs font-bold flex-shrink-0"
-          [class]="activeTab() === 'actions' ? 'bg-gold text-black' : 'bg-white/10 text-slate'">2</span>
+          [class]="activeTab() === 'actions' ? 'bg-gold text-on-accent' : 'bg-white/10 text-slate'">2</span>
         Actions
       </button>
       <button
@@ -83,7 +86,7 @@
         style="background: transparent; font-family: inherit;"
       >
         <span class="flex items-center justify-center w-5 h-5 rounded-full text-xs font-bold flex-shrink-0"
-          [class]="activeTab() === 'inventory' ? 'bg-gold text-black' : 'bg-white/10 text-slate'">3</span>
+          [class]="activeTab() === 'inventory' ? 'bg-gold text-on-accent' : 'bg-white/10 text-slate'">3</span>
         Inventory
       </button>
       <button
@@ -93,7 +96,7 @@
         style="background: transparent; font-family: inherit;"
       >
         <span class="flex items-center justify-center w-5 h-5 rounded-full text-xs font-bold flex-shrink-0"
-          [class]="activeTab() === 'spells' ? 'bg-gold text-black' : 'bg-white/10 text-slate'">4</span>
+          [class]="activeTab() === 'spells' ? 'bg-gold text-on-accent' : 'bg-white/10 text-slate'">4</span>
         Spells
       </button>
     </div>
@@ -362,16 +365,24 @@
         @case ('inventory') {
           <div class="flex flex-col gap-5 max-w-3xl">
             <div class="flex flex-wrap gap-2">
-              @for (c of [
-                { label: 'CP', value: char.currency.cp },
-                { label: 'SP', value: char.currency.sp },
-                { label: 'EP', value: char.currency.ep },
-                { label: 'GP', value: char.currency.gp },
-                { label: 'PP', value: char.currency.pp }
-              ]; track c.label) {
-                <div class="bg-elevated rounded-lg border border-white/10 text-center py-2 px-3 min-w-[64px]">
-                  <div class="text-[10px] text-slate uppercase tracking-wide">{{ c.label }}</div>
-                  <div class="font-brand text-lg text-gold">{{ c.value }}</div>
+              @for (denom of currencyOrder; track denom) {
+                <div class="bg-elevated rounded-lg border text-center py-2 px-3 min-w-[76px]"
+                  [class.border-white/10]="insufficientFundsDenom() !== denom"
+                  [class.border-danger]="insufficientFundsDenom() === denom">
+                  <div class="text-[10px] text-slate uppercase tracking-wide">{{ denom }}</div>
+                  <div class="font-brand text-lg text-gold">{{ char.currency[denom] }}</div>
+                  <div class="flex items-center justify-center gap-1 mt-1.5">
+                    <button class="btn-icon w-5 h-5 text-xs" [disabled]="!currencyAdjustAmounts()[denom] || persisting()"
+                      (click)="applyCurrencyDelta(denom, -1)" matTooltip="Remove">−</button>
+                    <input class="field-input w-9 text-center text-xs py-0.5 px-1" type="number" min="0"
+                      [ngModel]="currencyAdjustAmounts()[denom]" (ngModelChange)="setCurrencyAdjustAmount(denom, $event)"
+                      [name]="'currencyAdjust-' + denom" />
+                    <button class="btn-icon w-5 h-5 text-xs" [disabled]="!currencyAdjustAmounts()[denom] || persisting()"
+                      (click)="applyCurrencyDelta(denom, 1)" matTooltip="Add">+</button>
+                  </div>
+                  @if (insufficientFundsDenom() === denom) {
+                    <div class="text-[9px] text-danger mt-1">Not enough funds</div>
+                  }
                 </div>
               }
             </div>

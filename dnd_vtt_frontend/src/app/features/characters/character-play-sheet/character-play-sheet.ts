@@ -9,8 +9,9 @@ import { CharacterService } from '../../../core/services/character.service';
 import { CharacterStatsService } from '../../../core/services/character-stats.service';
 import { CharacterActionsService, CharacterAction } from '../../../core/services/character-actions.service';
 import {
-  Character, ABILITIES, ABILITY_SHORT, SKILLS, EquipmentEntry, SpellEntry,
+  Character, ABILITIES, ABILITY_SHORT, SKILLS, EquipmentEntry, SpellEntry, Currency,
 } from '../../../core/models/character.model';
+import { adjustCurrency, CURRENCY_ORDER } from '../../../core/utils/currency';
 
 function toIndex(name: string): string {
   return name.toLowerCase().replace(/\s+/g, '-');
@@ -58,6 +59,9 @@ export class CharacterPlaySheetComponent {
   persisting  = signal(false);
 
   hpAdjustAmount  = signal<number>(0);
+  currencyOrder   = CURRENCY_ORDER;
+  currencyAdjustAmounts = signal<Record<keyof Currency, number>>({ cp: 0, sp: 0, ep: 0, gp: 0, pp: 0 });
+  insufficientFundsDenom = signal<keyof Currency | null>(null);
 
   localChar       = signal<Character | null>(null);
   raceData        = signal<DndRace | null>(null);
@@ -380,6 +384,26 @@ export class CharacterPlaySheetComponent {
     if (!char) return;
     const equipment = char.equipment.map(e => e.itemIndex === entry.itemIndex ? { ...e, equipped: !e.equipped } : e);
     this.persist({ ...char, equipment });
+  }
+
+  setCurrencyAdjustAmount(denom: keyof Currency, value: string) {
+    this.currencyAdjustAmounts.update(amounts => ({ ...amounts, [denom]: Math.max(0, Math.floor(+value || 0)) }));
+  }
+
+  // Adding is always safe; removing more than is on hand of one denomination auto-calibrates by
+  // breaking higher denominations (see adjustCurrency) and fails only if the whole purse can't
+  // cover the withdrawal, in which case we flash a brief "insufficient funds" indicator instead.
+  applyCurrencyDelta(denom: keyof Currency, sign: 1 | -1) {
+    const char = this.localChar();
+    const amount = this.currencyAdjustAmounts()[denom];
+    if (!char || !amount) return;
+    const next = adjustCurrency(char.currency, denom, sign * amount);
+    if (!next) {
+      this.insufficientFundsDenom.set(denom);
+      setTimeout(() => this.insufficientFundsDenom.set(null), 1500);
+      return;
+    }
+    this.persist({ ...char, currency: next });
   }
 
   // Spells

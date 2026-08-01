@@ -15,6 +15,15 @@ html {
   @include t.apply();
 }
 
+// Color scheme overrides — ColorSchemeService (core/services/color-scheme.service.ts) sets
+// data-theme on <html> at runtime; the 'gold' default is already baked into t.apply() above so
+// no attribute is required for it, but repeating it here is harmless.
+@each $name, $theme in t.$themes {
+  html[data-theme='#{$name}'] {
+    @include t.theme-vars($theme);
+  }
+}
+
 @layer base {
   *, *::before, *::after { box-sizing: border-box; }
   html, body {
@@ -38,7 +47,7 @@ html {
   inset: 0;
   z-index: -1;
   pointer-events: none;
-  background-color: rgba(13, 14, 22, var(--app-bg-overlay-alpha));
+  background-color: color-mix(in srgb, var(--dnd-bg-base) calc(var(--app-bg-overlay-alpha) * 100%), transparent);
   transition: background-color 0.15s ease;
 }
 
@@ -51,7 +60,7 @@ html {
     font-family: inherit;
   }
   .btn-primary {
-    @apply btn bg-gold text-black hover:bg-gold-bright active:bg-gold-dim;
+    @apply btn bg-gold text-on-accent hover:bg-gold-bright active:bg-gold-dim;
   }
   .btn-outline {
     @apply btn border border-white/20 text-parchment hover:border-white/40 hover:bg-white/5;
@@ -73,6 +82,10 @@ html {
   .card {
     @apply bg-surface rounded-md border border-white/10;
   }
+  .card-translucent {
+    @apply rounded-md border border-white/10;
+    background: color-mix(in srgb, var(--dnd-bg-surface) 85%, transparent);
+  }
   .card-body {
     @apply p-5;
   }
@@ -83,7 +96,8 @@ html {
   // ── Toolbar ──────────────────────────────────────────────────
   .app-toolbar {
     @apply flex items-center gap-3 h-16 px-4 flex-shrink-0
-           bg-gradient-to-b from-elevated to-surface border-b border-gold/10 shadow-sm;
+           bg-gradient-to-b from-elevated to-surface shadow-sm;
+    border-bottom: 1px solid color-mix(in srgb, var(--dnd-gold) 10%, transparent);
   }
   .toolbar-title {
     @apply font-brand text-lg text-parchment tracking-wide;
@@ -101,7 +115,8 @@ html {
     font-family: inherit;
   }
   .tab-pill.active {
-    @apply bg-gold/15 text-gold-bright hover:bg-gold/15;
+    @apply text-gold-bright;
+    background: color-mix(in srgb, var(--dnd-gold) 15%, transparent);
   }
 
   // ── Form fields ───────────────────────────────────────────────
@@ -113,9 +128,13 @@ html {
   }
   .field-input {
     @apply w-full bg-elevated border border-white/10 rounded px-3 py-2 text-parchment text-sm
-           focus:outline-none focus:border-gold/50 focus:ring-1 focus:ring-gold/20 transition-colors;
+           focus:outline-none focus:ring-1 transition-colors;
     font-family: inherit;
-    color-scheme: dark;
+
+    &:focus {
+      border-color: color-mix(in srgb, var(--dnd-gold) 50%, transparent);
+      --tw-ring-color: color-mix(in srgb, var(--dnd-gold) 20%, transparent);
+    }
   }
   .field-input::placeholder {
     @apply text-coal;
@@ -172,8 +191,8 @@ textarea.field-input {
 
 // Material dialog — override panel background
 .mat-mdc-dialog-container .mdc-dialog__surface {
-  background: #252641 !important;
-  border: 1px solid rgba(255,255,255,0.12);
+  background: var(--dnd-bg-overlay) !important;
+  border: 1px solid var(--dnd-outline-strong);
   border-radius: 8px !important;
 }
 
@@ -222,6 +241,26 @@ body.bg-image-starfield {
 
 body[class*='bg-image-']:not(.bg-image-none) {
   background-attachment: fixed;
+}
+
+// ── Color scheme preview swatches ────────────────────────────────
+// Used only by the scheme picker in Settings — each swatch hardcodes that
+// scheme's own accent/surface colors (mirroring $themes in _tokens.scss) so
+// it previews correctly regardless of which scheme is currently active.
+.scheme-swatch-gold {
+  background: linear-gradient(135deg, #c9a227, #171822);
+}
+.scheme-swatch-crimson {
+  background: linear-gradient(135deg, #c9524a, #221417);
+}
+.scheme-swatch-emerald {
+  background: linear-gradient(135deg, #2f9e6a, #10201a);
+}
+.scheme-swatch-royal-blue {
+  background: linear-gradient(135deg, #4a7fe0, #101a2e);
+}
+.scheme-swatch-silver {
+  background: linear-gradient(135deg, #4a5361, #ffffff);
 }
 
 .bg-image-mist {
