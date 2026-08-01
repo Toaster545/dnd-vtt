@@ -9,6 +9,7 @@ import { SessionsModule } from './sessions/sessions.module';
 import { EncountersModule } from './encounters/encounters.module';
 import { CampaignsModule } from './campaigns/campaigns.module';
 import { NotesModule } from './notes/notes.module';
+import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { NotesModule } from './notes/notes.module';
     EncountersModule,
     CampaignsModule,
     NotesModule,
+    UsersModule,
   ],
 })
 export class AppModule {}

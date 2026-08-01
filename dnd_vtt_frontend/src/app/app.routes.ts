@@ -70,6 +70,7 @@ export const routes: Routes = [
           import('./features/characters/character-sheet-page/character-sheet-page').then(
             m => m.CharacterSheetPageComponent,
           ),
+        data: { bgOverlay: 0.9 },
       },
       {
         path: 'campaigns',
@@ -99,6 +100,7 @@ export const routes: Routes = [
           import('./features/dm/dm-campaigns/dm-campaign-session/dm-campaign-session').then(
             m => m.DmCampaignSessionComponent,
           ),
+          data: { bgOverlay: 0.9 },
       },
       {
         path: 'campaigns/manage/:campaignId/sessions/:sessionId/encounters/:encounterId',
@@ -113,6 +115,7 @@ export const routes: Routes = [
           import('./features/player/player-campaigns/player-campaign-hub/player-campaign-hub').then(
             m => m.PlayerCampaignHubComponent,
           ),
+          data: { bgOverlay: 0.9 },
       },
       {
         path: 'campaigns/:campaignId/sessions/:sessionId',

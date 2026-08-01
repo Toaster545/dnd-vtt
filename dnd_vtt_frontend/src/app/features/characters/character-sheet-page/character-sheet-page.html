@@ -1,15 +1,16 @@
 @if (character(); as c) {
-  <div class="flex items-center gap-2 px-4 py-2.5 border-b border-white/10 flex-shrink-0">
-    <button class="btn-ghost text-sm" (click)="close()">
-      <mat-icon class="text-base">arrow_back</mat-icon> Back to characters
-    </button>
-    @if (c.campaign_id) {
-      <button class="btn-ghost text-sm ml-auto" (click)="openCampaign()">
-        Open campaign <mat-icon class="text-base">chevron_right</mat-icon>
+  <app-character-play-sheet class="flex-1 min-h-0" [character]="c" (saved)="onSaved($event)">
+    <div sheetHeaderLeading class="flex items-center gap-1">
+      <button class="btn-icon" (click)="close()" matTooltip="Back to characters">
+        <mat-icon>arrow_back</mat-icon>
       </button>
-    }
-  </div>
-  <app-character-play-sheet class="flex-1 min-h-0" [character]="c" (saved)="onSaved($event)" />
+      @if (c.campaign_id) {
+        <button class="btn-icon" (click)="openCampaign()" matTooltip="Open campaign">
+          <mat-icon>groups</mat-icon>
+        </button>
+      }
+    </div>
+  </app-character-play-sheet>
 } @else {
   <div class="flex-1 flex items-center justify-center">
     <span class="spinner-lg"></span>

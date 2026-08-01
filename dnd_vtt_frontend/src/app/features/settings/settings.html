@@ -31,34 +31,76 @@
         <div class="card-header border-b border-white/10">
           <h3 class="font-brand text-parchment m-0">Appearance</h3>
         </div>
-        <div class="card-body">
-          <div class="field-label mb-2">Background</div>
-          <div class="grid grid-cols-2 sm:grid-cols-5 gap-3">
-            @for (option of background.options(); track option.id) {
-              <button
-                type="button"
-                class="flex flex-col items-center gap-1.5 rounded-md border p-1.5 transition-colors cursor-pointer"
-                [class.border-gold]="background.current() === option.id"
-                [class.border-white/10]="background.current() !== option.id"
-                (click)="background.set(option.id)"
-              >
-                @if (option.imageUrl) {
-                  <span
-                    class="block w-full h-12 rounded bg-cover bg-center"
-                    [style.background-image]="customBackgroundCss(option.imageUrl)"
-                  ></span>
-                } @else {
-                  <span class="bg-canvas bg-image-{{ option.id }} block w-full h-12 rounded"></span>
-                }
-                <span
-                  class="text-xs truncate max-w-full"
-                  [class.text-gold]="background.current() === option.id"
-                  [class.text-slate]="background.current() !== option.id"
+        <div class="card-body flex flex-col gap-5">
+          <div>
+            <div class="field-label mb-2">Interface Size</div>
+            <div class="flex gap-2">
+              @for (option of uiScaleOptions; track option.value) {
+                <button
+                  type="button"
+                  class="tab-pill"
+                  [class.active]="uiScale.current() === option.value"
+                  (click)="uiScale.set(option.value)"
                 >
                   {{ option.label }}
-                </span>
-              </button>
-            }
+                </button>
+              }
+            </div>
+          </div>
+
+          <div>
+            <div class="field-label mb-2">Color Scheme</div>
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              @for (option of colorSchemeOptions; track option.id) {
+                <button
+                  type="button"
+                  class="flex flex-col items-center gap-1.5 rounded-md border p-1.5 transition-colors cursor-pointer"
+                  [class.border-gold]="colorScheme.current() === option.id"
+                  [class.border-white/10]="colorScheme.current() !== option.id"
+                  (click)="colorScheme.set(option.id)"
+                >
+                  <span class="scheme-swatch-{{ option.id }} block w-full h-12 rounded"></span>
+                  <span
+                    class="text-xs truncate max-w-full"
+                    [class.text-gold]="colorScheme.current() === option.id"
+                    [class.text-slate]="colorScheme.current() !== option.id"
+                  >
+                    {{ option.label }}
+                  </span>
+                </button>
+              }
+            </div>
+          </div>
+
+          <div>
+            <div class="field-label mb-2">Background</div>
+            <div class="grid grid-cols-2 sm:grid-cols-5 gap-3">
+              @for (option of background.options(); track option.id) {
+                <button
+                  type="button"
+                  class="flex flex-col items-center gap-1.5 rounded-md border p-1.5 transition-colors cursor-pointer"
+                  [class.border-gold]="background.current() === option.id"
+                  [class.border-white/10]="background.current() !== option.id"
+                  (click)="background.set(option.id)"
+                >
+                  @if (option.imageUrl) {
+                    <span
+                      class="block w-full h-12 rounded bg-cover bg-center"
+                      [style.background-image]="customBackgroundCss(option.imageUrl)"
+                    ></span>
+                  } @else {
+                    <span class="bg-canvas bg-image-{{ option.id }} block w-full h-12 rounded"></span>
+                  }
+                  <span
+                    class="text-xs truncate max-w-full"
+                    [class.text-gold]="background.current() === option.id"
+                    [class.text-slate]="background.current() !== option.id"
+                  >
+                    {{ option.label }}
+                  </span>
+                </button>
+              }
+            </div>
           </div>
         </div>
       </div>
@@ -67,13 +109,88 @@
         <div class="card border-gold/30">
           <div class="card-header border-b border-white/10 flex items-center gap-2">
             <mat-icon class="text-gold text-base">shield</mat-icon>
-            <h3 class="font-brand text-parchment m-0">Admin</h3>
+            <h3 class="font-brand text-parchment m-0">Users &amp; Accounts</h3>
             <span class="toolbar-badge">Admin</span>
           </div>
-          <div class="card-body">
-            <p class="text-slate text-sm m-0">
-              You have admin access. Admin-only settings will appear here as they're added.
-            </p>
+          <div class="card-body flex flex-col gap-3">
+            @if (usersError()) {
+              <p class="text-danger text-sm m-0">{{ usersError() }}</p>
+            }
+
+            @if (usersLoading()) {
+              <p class="text-slate text-sm m-0">Loading users…</p>
+            } @else {
+              <ul class="divide-y divide-white/8">
+                @for (user of users(); track user.id) {
+                  <li class="py-2.5">
+                    @if (editingUserId() === user.id) {
+                      <div class="flex flex-col gap-2">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                          <div>
+                            <div class="field-label mb-1">Username</div>
+                            <input class="field-input" [(ngModel)]="editForm.username" name="edit-username" />
+                          </div>
+                          <div>
+                            <div class="field-label mb-1">Email</div>
+                            <input class="field-input" type="email" [(ngModel)]="editForm.email" name="edit-email" />
+                          </div>
+                          <div>
+                            <div class="field-label mb-1">Role</div>
+                            <select class="field-input" [(ngModel)]="editForm.role" name="edit-role">
+                              <option value="player">Player</option>
+                              <option value="admin">Admin</option>
+                            </select>
+                          </div>
+                          <div>
+                            <div class="field-label mb-1">New Password</div>
+                            <input class="field-input" type="password" [(ngModel)]="editForm.password"
+                                   name="edit-password" placeholder="Leave blank to keep current" />
+                          </div>
+                        </div>
+                        @if (editError()) {
+                          <p class="text-danger text-xs m-0">{{ editError() }}</p>
+                        }
+                        <div class="flex gap-2 justify-end">
+                          <button class="btn-ghost text-xs px-2 py-1" (click)="cancelEditUser()">Cancel</button>
+                          <button class="btn-outline text-xs px-2 py-1"
+                                  [disabled]="savingUserId() === user.id"
+                                  (click)="saveEditUser(user)">
+                            {{ savingUserId() === user.id ? 'Saving…' : 'Save' }}
+                          </button>
+                        </div>
+                      </div>
+                    } @else {
+                      <div class="flex items-center gap-2">
+                        <div class="flex-1 min-w-0">
+                          <p class="text-parchment text-sm font-medium truncate m-0">
+                            {{ user.username }}
+                            @if (user.id === auth.profile()?.id) {
+                              <span class="text-slate text-xs">(you)</span>
+                            }
+                          </p>
+                          <p class="text-slate text-xs m-0 truncate">{{ user.email }}</p>
+                        </div>
+                        <span class="toolbar-badge flex-shrink-0">{{ user.role }}</span>
+                        <span class="text-slate text-xs flex-shrink-0 hidden sm:inline">
+                          Joined {{ formatDate(user.created_at) }}
+                        </span>
+                        <button class="btn-icon flex-shrink-0" (click)="startEditUser(user)" matTooltip="Edit account">
+                          <mat-icon class="text-base">edit</mat-icon>
+                        </button>
+                        <button class="btn-icon text-danger/70 hover:text-danger flex-shrink-0"
+                                [class.opacity-30]="user.id === auth.profile()?.id"
+                                [class.pointer-events-none]="user.id === auth.profile()?.id"
+                                (click)="deleteUser(user)" matTooltip="Delete account">
+                          <mat-icon class="text-base">delete</mat-icon>
+                        </button>
+                      </div>
+                    }
+                  </li>
+                } @empty {
+                  <p class="text-slate text-sm py-2 m-0">No users found.</p>
+                }
+              </ul>
+            }
           </div>
         </div>
       }

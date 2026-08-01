@@ -1,6 +1,7 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { CharacterPlaySheetComponent } from '../character-play-sheet/character-play-sheet';
 import { CharacterService } from '../../../core/services/character.service';
 import { RecentActivityService } from '../../../core/services/recent-activity.service';
@@ -11,7 +12,7 @@ import { Character } from '../../../core/models/character.model';
 // of the characters list.
 @Component({
   selector: 'app-character-sheet-page',
-  imports: [CharacterPlaySheetComponent, MatIconModule],
+  imports: [CharacterPlaySheetComponent, MatIconModule, MatTooltipModule],
   templateUrl: './character-sheet-page.html',
   host: { class: 'flex flex-col flex-1 min-h-0 overflow-hidden' },
 })

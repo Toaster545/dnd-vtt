@@ -20,6 +20,7 @@ import { ConfirmService } from '../../../../shared/confirm.service';
 import { NotesPanelComponent } from '../../../../shared/components/notes-panel/notes-panel';
 import { PartyListComponent } from '../../../../shared/components/party-list/party-list';
 import { CharacterWizardComponent } from '../../../characters/character-wizard/character-wizard';
+import { CharacterPlaySheetComponent } from '../../../characters/character-play-sheet/character-play-sheet';
 import { DescriptionDialogComponent } from '../../../../shared/components/description-dialog/description-dialog';
 
 function toContentIndex(name: string): string {
@@ -28,7 +29,10 @@ function toContentIndex(name: string): string {
 
 @Component({
   selector: 'app-dm-campaign-hub',
-  imports: [FormsModule, RouterLink, MatIconModule, MatTooltipModule, NotesPanelComponent, PartyListComponent, CharacterWizardComponent],
+  imports: [
+    FormsModule, RouterLink, MatIconModule, MatTooltipModule, NotesPanelComponent, PartyListComponent,
+    CharacterWizardComponent, CharacterPlaySheetComponent,
+  ],
   templateUrl: './dm-campaign-hub.html',
   // Routed in via dm-shell's <router-outlet>, so without a host sizing class this stays an
   // unstyled inline element and the template's flex-1/min-h-0 scroll chain has no bounded parent
@@ -58,6 +62,7 @@ export class DmCampaignHubComponent implements OnInit {
 
   editingCharacter = signal<Character | null>(null);
   showWizard       = signal(false);
+  sheetCharacter   = signal<Character | null>(null);
 
   showForm = signal(false);
   saving   = signal(false);
@@ -241,6 +246,26 @@ export class DmCampaignHubComponent implements OnInit {
 
   onCharacterCancelled() {
     this.showWizard.set(false);
+  }
+
+  // Quick view/edit of HP, rest, equipment, and spell prep — the same play sheet a player uses on
+  // their own character, opened here read/write for the DM without going through the full wizard.
+  async viewMember(member: CampaignMember) {
+    this.sheetCharacter.set(await this.characterService.getCharacter(member.character_id));
+  }
+
+  // Refreshes the roster's HP/AC badges to match without disturbing loading/sheetCharacter state
+  // the way load() would (that flips `loading` true/false, which — checked ahead of
+  // sheetCharacter() in the template — would bounce the DM out of the sheet mid-edit).
+  async onCharacterSheetSaved(character: Character) {
+    this.sheetCharacter.set(character);
+    const campaign = await this.campaignService.getById(this.campaignId);
+    this.campaign.set(campaign);
+    void this.loadMemberMaxHp(campaign.members);
+  }
+
+  closeCharacterSheet() {
+    this.sheetCharacter.set(null);
   }
 
   async copyJoinCode() {

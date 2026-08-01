@@ -76,6 +76,9 @@ export class CharacterWizardComponent implements OnInit, OnDestroy {
   backgroundEquipChoices = signal<Record<string, string[]>>({});
 
   characterId        = signal<string | null>(null);
+  // The full record being edited, kept as-loaded (not just the fields the wizard's own steps
+  // manage) so draftCharacter can preserve everything else — see the comment there.
+  private existingCharacter = signal<Character | null>(null);
   selectedRace       = signal<DndRace | null>(null);
   selectedSubrace    = signal<Subrace | null>(null);
   raceTraits         = signal<Record<string, string[]>>({});
@@ -326,25 +329,39 @@ export class CharacterWizardComponent implements OnInit, OnDestroy {
   // — used both to persist (save(), below) and to drive the live preview pane, so the preview
   // is never more than a re-render behind what's actually on screen (no debounce, no round trip
   // through the backend).
+  //
+  // Based on the existing record (when editing) rather than a blank default, so fields the
+  // wizard doesn't manage — equipped/prepared flags, currency spent in play, temp HP, conditions,
+  // notes, etc. — survive an edit instead of being silently reset by the next autosave.
   draftCharacter = computed<Character>(() => {
     const classes = this.reconciledClasses();
     const primary  = classes[0];
+    const existing = this.existingCharacter();
 
+    const priorEquipment = new Map((existing?.equipment ?? []).map(e => [e.itemIndex, e]));
     const itemName = (index: string) => this.items().find(it => it.index === index)?.name ?? index;
     const structuredEquipment = [...this.resolvedClassEquipment().items, ...this.resolvedBackgroundEquipment().items]
-      .map(r => ({ itemIndex: r.itemIndex, name: itemName(r.itemIndex), quantity: r.quantity, equipped: false }));
+      .map(r => ({
+        itemIndex: r.itemIndex, name: itemName(r.itemIndex), quantity: r.quantity,
+        equipped: priorEquipment.get(r.itemIndex)?.equipped ?? false,
+      }));
     const freeEquipment = this.items()
       .filter(it => this.selectedItemIndices().has(it.index))
-      .map(it => ({ itemIndex: it.index, name: it.name, quantity: 1, equipped: false }));
+      .map(it => ({
+        itemIndex: it.index, name: it.name,
+        quantity: priorEquipment.get(it.index)?.quantity ?? 1,
+        equipped: priorEquipment.get(it.index)?.equipped ?? false,
+      }));
     const equipment = [...structuredEquipment, ...freeEquipment];
 
+    const priorPrepared = new Map((existing?.spells ?? []).map(s => [s.spellIndex, s.prepared]));
     const spells = this.spells()
       .filter(sp => this.selectedSpellIndices().has(sp.index))
-      .map(sp => ({ spellIndex: sp.index, name: sp.name, prepared: false }));
+      .map(sp => ({ spellIndex: sp.index, name: sp.name, prepared: priorPrepared.get(sp.index) ?? false }));
     const hp = this.maxHP();
 
     return {
-      ...defaultCharacter(),
+      ...(existing ?? defaultCharacter()),
       id: this.characterId() ?? undefined,
       name: this.characterName().trim() || 'Unnamed Character',
       portrait_seed: this.portraitSeed(),
@@ -371,7 +388,7 @@ export class CharacterWizardComponent implements OnInit, OnDestroy {
       skills: this.skillsRecord(),
       expertise: this.expertiseRecord(),
       equipment,
-      currency: this.startingCurrency(),
+      currency: existing?.currency ?? this.startingCurrency(),
       spells,
     } as Character;
   });
@@ -454,6 +471,7 @@ export class CharacterWizardComponent implements OnInit, OnDestroy {
 
     const existing = this.character();
     if (existing) {
+      this.existingCharacter.set(existing);
       this.characterId.set(existing.id ?? null);
       this.characterName.set(existing.name);
       this.portraitSeed.set(existing.portrait_seed ?? randomPortraitSeed());

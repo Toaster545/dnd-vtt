@@ -2,17 +2,18 @@
   <div class="flex justify-center mt-10"><span class="spinner-lg"></span></div>
 } @else if (selected(); as encounter) {
   @if (viewingCharacter(); as char) {
-    <div class="flex items-center gap-2 px-4 py-2.5 border-b border-white/10 flex-shrink-0">
-      <button class="btn-ghost text-sm" (click)="closeCharacterView()">
-        <mat-icon class="text-base">arrow_back</mat-icon> {{ encounter.name }}
-      </button>
-      @if (viewingCharacterToken(); as tok) {
-        <input type="color" class="h-7 w-7 rounded cursor-pointer border border-white/10 bg-transparent ml-auto flex-shrink-0"
-          [ngModel]="tok.color" (ngModelChange)="setCharacterTokenColor($event)"
-          name="characterTokenColor" matTooltip="Token color" />
-      }
-    </div>
-    <app-character-play-sheet [character]="char" (saved)="onCharacterSaved($event)" class="block flex-1 min-h-0" />
+    <app-character-play-sheet [character]="char" (saved)="onCharacterSaved($event)" class="block flex-1 min-h-0">
+      <div sheetHeaderLeading class="flex items-center gap-1">
+        <button class="btn-icon" (click)="closeCharacterView()" [matTooltip]="'Back to ' + encounter.name">
+          <mat-icon>arrow_back</mat-icon>
+        </button>
+        @if (viewingCharacterToken(); as tok) {
+          <input type="color" class="h-7 w-7 rounded cursor-pointer border border-white/10 bg-transparent flex-shrink-0"
+            [ngModel]="tok.color" (ngModelChange)="setCharacterTokenColor($event)"
+            name="characterTokenColor" matTooltip="Token color" />
+        }
+      </div>
+    </app-character-play-sheet>
   } @else {
     <div class="flex flex-col h-full overflow-hidden">
       <app-encounter-toolbar
