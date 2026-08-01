@@ -40,9 +40,18 @@ export class UsersService {
 
     const sets: string[] = [];
     const args: unknown[] = [];
-    if (dto.username !== undefined) { sets.push('username = ?'); args.push(dto.username); }
-    if (dto.email !== undefined) { sets.push('email = ?'); args.push(dto.email); }
-    if (dto.role !== undefined) { sets.push('role = ?'); args.push(dto.role); }
+    if (dto.username !== undefined) {
+      sets.push('username = ?');
+      args.push(dto.username);
+    }
+    if (dto.email !== undefined) {
+      sets.push('email = ?');
+      args.push(dto.email);
+    }
+    if (dto.role !== undefined) {
+      sets.push('role = ?');
+      args.push(dto.role);
+    }
     if (dto.password !== undefined) {
       sets.push('password_hash = ?');
       args.push(await bcrypt.hash(dto.password, 10));
