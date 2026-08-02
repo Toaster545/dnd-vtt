@@ -11,7 +11,7 @@ export interface SpellSlots {
 // A choice's mechanical effect (AC bonus, proficiency, etc.), computed generically
 // instead of matched by display name.
 export interface TraitEffect {
-  type: string; // e.g. 'ac_bonus' | 'saving_throw_ability_bonus' | 'melee_damage_bonus' | 'armor_proficiency' | 'weapon_proficiency' | 'tool_proficiency' | 'special'
+  type: string; // e.g. 'ac_bonus' | 'initiative_ability_bonus' | 'language_proficiency' | 'saving_throw_ability_bonus' | 'melee_damage_bonus' | 'special'
   value?: number;
   values?: number[];
   tags?: string[];
@@ -112,6 +112,9 @@ export interface DndFeat {
   // class `choice` option).
   abilityIncrease?: { abilities: string[]; amount: number; grantsSaveProficiency?: boolean };
   effects?: TraitEffect[];
+  // Choices granted by the feat itself (for example Skilled's three proficiencies). These use
+  // the same data-driven grant shapes as races, classes, and backgrounds.
+  grants?: TraitGrant[];
   // Whether the feat can be taken more than once. Most can't — only set per the book. Feat
   // pickers exclude non-repeatable feats the character already has.
   repeatable?: boolean;

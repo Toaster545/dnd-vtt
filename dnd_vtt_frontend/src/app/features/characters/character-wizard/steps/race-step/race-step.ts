@@ -36,6 +36,7 @@ export class RaceStepComponent implements OnInit {
   readonly races    = input.required<DndRace[]>();
   readonly feats    = input<DndFeat[]>([]);
   readonly selected = input<RaceChoice | null>(null);
+  readonly unavailableSkills = input<string[]>([]);
   readonly raceChosen = output<RaceChoice>();
   readonly languageGrant = LANGUAGE_GRANT;
 
@@ -144,6 +145,28 @@ export class RaceStepComponent implements OnInit {
     return grant.skills?.length ? grant.skills : Object.keys(SKILLS);
   }
 
+  private skillTakenElsewhere(grant: Extract<TraitGrant, { type: 'skill_choice' }>, skill: string): boolean {
+    const race = this.browsingRace();
+    const skillKeys = [...(race?.grants ?? []), ...(this.draftSubrace()?.grants ?? [])]
+      .filter((candidate): candidate is Extract<TraitGrant, { type: 'skill_choice' }> =>
+        candidate.type === 'skill_choice' && candidate.key !== grant.key)
+      .map(candidate => candidate.key);
+    return this.unavailableSkills().includes(skill)
+      || skillKeys.some(key => this.draftTraits()[key]?.includes(skill));
+  }
+
+  skillUnavailable(grant: Extract<TraitGrant, { type: 'skill_choice' }>, skill: string): boolean {
+    return !this.traitSelected(grant, skill) && this.skillTakenElsewhere(grant, skill);
+  }
+
+  skillConflict(grant: Extract<TraitGrant, { type: 'skill_choice' }>, skill: string): boolean {
+    return this.traitSelected(grant, skill) && this.skillTakenElsewhere(grant, skill);
+  }
+
+  conflictingSkills(grant: Extract<TraitGrant, { type: 'skill_choice' }>): string[] {
+    return (this.draftTraits()[grant.key] ?? []).filter(skill => this.skillConflict(grant, skill));
+  }
+
   availableFeats(grant: Extract<TraitGrant, { type: 'feat_pick' }>): DndFeat[] {
     return this.feats()
       .filter(feat => feat.category === grant.category && (!grant.feats?.length || grant.feats.includes(feat.index)))
@@ -183,6 +206,7 @@ export class RaceStepComponent implements OnInit {
   }
 
   toggleTrait(grant: TraitGrant & { choose: number; key: string }, option: string) {
+    if (grant.type === 'skill_choice' && this.skillUnavailable(grant, option)) return;
     this.draftTraits.update(traits => {
       const current = traits[grant.key] ?? [];
       if (grant.choose === 1) {

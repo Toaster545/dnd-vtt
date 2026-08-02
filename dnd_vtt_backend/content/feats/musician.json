@@ -2,5 +2,26 @@
   "index": "musician",
   "name": "Musician",
   "description": "Gain proficiency with three Musical Instruments of your choice. After a Short or Long Rest, play an instrument to grant Heroic Inspiration to a number of allies who hear you equal to your Proficiency Bonus.",
-  "category": "origin"
+  "category": "origin",
+  "grants": [
+    {
+      "type": "choice",
+      "key": "origin_feat:musician_instruments",
+      "name": "Musical Instrument Proficiencies",
+      "description": "Choose three kinds of Musical Instruments.",
+      "choose": 3,
+      "options": [
+        { "name": "Bagpipes" },
+        { "name": "Drum" },
+        { "name": "Dulcimer" },
+        { "name": "Flute" },
+        { "name": "Horn" },
+        { "name": "Lute" },
+        { "name": "Lyre" },
+        { "name": "Pan Flute" },
+        { "name": "Shawm" },
+        { "name": "Viol" }
+      ]
+    }
+  ]
 }

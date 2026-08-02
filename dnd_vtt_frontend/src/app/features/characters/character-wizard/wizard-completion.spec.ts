@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { DndBackground, DndClass, DndRace } from '../../../core/services/content.service';
+import { DndBackground, DndClass, DndFeat, DndRace } from '../../../core/services/content.service';
 import {
   areAbilityAssignmentsComplete,
   areClassSelectionsComplete,
@@ -89,6 +89,31 @@ describe('character wizard completion indicators', () => {
       strength: 15, dexterity: 14, constitution: 13,
       intelligence: 12, wisdom: 10, charisma: 8,
     })).toBe(true);
+  });
+
+  it('keeps a background incomplete until its origin feat choices are filled', () => {
+    const background = {
+      feature: 'Origin Feat: Skilled',
+      grants: [],
+    } as unknown as DndBackground;
+    const feats = [{
+      index: 'skilled',
+      name: 'Skilled',
+      category: 'origin',
+      description: 'Choose three skills.',
+      grants: [{
+        type: 'skill_choice',
+        key: 'origin_feat:skilled_skills',
+        name: 'Skill Proficiencies',
+        choose: 3,
+      }],
+    }] satisfies DndFeat[];
+
+    expect(isBackgroundSelectionComplete({ background, traits: {} }, feats)).toBe(false);
+    expect(isBackgroundSelectionComplete({
+      background,
+      traits: { 'origin_feat:skilled_skills': ['Arcana', 'History', 'Survival'] },
+    }, feats)).toBe(true);
   });
 
   it('marks structured equipment incomplete until its package choice is resolved', () => {

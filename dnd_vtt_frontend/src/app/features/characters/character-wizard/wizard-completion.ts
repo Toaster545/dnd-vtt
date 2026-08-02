@@ -3,6 +3,7 @@ import { DndBackground, DndClass, DndFeat, DndRace, TraitGrant } from '../../../
 import { reachableGrants } from '../../../core/utils/character-effects';
 import { resolveProgressiveChoiceLimit } from '../../../core/utils/progressive-choice';
 import { isEquipmentComplete, isStructuredEquipment } from '../../../core/utils/starting-equipment';
+import { resolveBackgroundOriginFeat } from '../../../core/utils/background-origin-feat';
 
 type Choices = Record<string, string[]>;
 
@@ -85,12 +86,18 @@ export function areClassSelectionsComplete(entries: ClassCompletionSource[], fea
   });
 }
 
-export function isBackgroundSelectionComplete(selection: BackgroundCompletionSource | null): boolean {
+export function isBackgroundSelectionComplete(
+  selection: BackgroundCompletionSource | null,
+  feats: DndFeat[] = [],
+): boolean {
   if (!selection) return false;
-  return (selection.background.grants ?? []).every(grant => {
+  const backgroundComplete = (selection.background.grants ?? []).every(grant => {
     if (grant.type === 'ability_choice') return picked(selection.traits, grant.key) >= grant.points;
     return simpleGrantComplete(grant, selection.traits);
   });
+  const originFeat = resolveBackgroundOriginFeat(selection.background, feats);
+  return backgroundComplete
+    && (originFeat?.grants ?? []).every(grant => simpleGrantComplete(grant, selection.traits));
 }
 
 export function areAbilityAssignmentsComplete(assignments: Record<Ability, number | null>): boolean {

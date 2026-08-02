@@ -292,17 +292,23 @@
             @case ('skill_choice') {
               @let needsChoice = choicesLeft(grant) > 0;
               @let collapsed   = isGrantCollapsed(grant.key);
+              @let hasConflict = conflictingSkills(grant).length > 0;
               <div>
                 <button
                   class="flex items-center gap-2 w-full text-left cursor-pointer"
                   (click)="toggleGrantCollapsed(grant.key)"
                   style="font-family: inherit;"
                 >
-                  <span class="w-1.5 h-1.5 rounded-full flex-shrink-0" [class]="needsChoice ? 'bg-gold' : 'bg-success/70'" [title]="needsChoice ? 'Choice needed' : 'Complete'"></span>
+                  <span
+                    class="w-1.5 h-1.5 rounded-full flex-shrink-0"
+                    [class]="hasConflict ? 'bg-danger' : needsChoice ? 'bg-gold' : 'bg-success/70'"
+                    [title]="hasConflict ? 'Duplicate proficiency' : needsChoice ? 'Choice needed' : 'Complete'"
+                  ></span>
                   <p class="text-sm text-parchment font-medium flex-1">
                     {{ grant.name }} — choose {{ grant.choose }}
                     @if (needsChoice) { <span class="text-gold font-normal text-xs">({{ choicesLeft(grant) }} left)</span> }
-                    @if (!needsChoice) { <span class="text-success font-normal text-xs">✓</span> }
+                    @if (hasConflict) { <span class="text-danger font-bold text-sm ml-1" title="Duplicate proficiency">*</span> }
+                    @if (!needsChoice && !hasConflict) { <span class="text-success font-normal text-xs">✓</span> }
                   </p>
                   <span class="text-coal text-xs flex-shrink-0">{{ collapsed ? '▸' : '▾' }}</span>
                 </button>
@@ -312,13 +318,17 @@
                     <div class="flex flex-wrap gap-1.5">
                       @for (skill of availableSkills(grant); track skill) {
                         @let picked = traitSelected(grant, skill);
+                        @let conflict = skillConflict(grant, skill);
+                        @let unavailable = skillUnavailable(grant, skill);
                         @let full   = !picked && !needsChoice;
                         <button
                           class="px-2.5 py-1 rounded text-xs border transition-all"
-                          [class]="picked ? 'border-gold/60 bg-gold/10 text-parchment cursor-pointer'
-                            : full ? 'border-white/8 text-coal cursor-not-allowed'
-                                    : 'border-white/15 text-slate hover:border-white/30 hover:text-parchment cursor-pointer'"
-                          [disabled]="full"
+                          [class]="conflict ? 'border-danger/60 bg-danger/10 text-parchment cursor-pointer'
+                            : picked ? 'border-gold/60 bg-gold/10 text-parchment cursor-pointer'
+                            : full || unavailable ? 'border-white/8 text-coal cursor-not-allowed'
+                                                  : 'border-white/15 text-slate hover:border-white/30 hover:text-parchment cursor-pointer'"
+                          [disabled]="full || unavailable"
+                          [title]="conflict ? 'Duplicate proficiency — remove it here or from its other source' : unavailable ? 'Already proficient' : ''"
                           (click)="toggleTrait(grant, skill)"
                           style="font-family: inherit;"
                         >
@@ -327,6 +337,12 @@
                         </button>
                       }
                     </div>
+                    @if (conflictingSkills(grant).length > 0) {
+                      <p class="text-xs text-danger mt-1.5">
+                        {{ conflictingSkills(grant).join(', ') }} already selected by another proficiency source.
+                        Remove {{ conflictingSkills(grant).length === 1 ? 'it' : 'them' }} here or from the other source.
+                      </p>
+                    }
                   </div>
                 }
               </div>

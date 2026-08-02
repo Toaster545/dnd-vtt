@@ -20,6 +20,12 @@ export interface Grant {
   options?: {
     name: string;
     prerequisite?: { level?: number; selections?: string[] };
+    effects?: {
+      type: string;
+      tags?: string[];
+      ability?: string;
+      minimum?: number;
+    }[];
   }[];
   action?: {
     activation: string;

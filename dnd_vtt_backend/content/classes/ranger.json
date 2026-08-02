@@ -1,6 +1,8 @@
 {
   "index": "ranger",
   "name": "Ranger",
+  "description": "Rangers are wandering warriors who combine martial skill, wilderness expertise, and primal magic to hunt dangerous foes and protect the world beyond civilization.",
+  "primary_abilities": ["dexterity", "wisdom"],
   "hit_die": 10,
   "saving_throws": ["strength", "dexterity"],
   "armor_training": ["Light Armor", "Medium Armor", "Shields"],
@@ -8,64 +10,878 @@
   "tool_proficiencies": [],
   "skill_choices": {
     "count": 3,
-    "from": ["Animal Handling", "Athletics", "Insight", "Investigation", "Nature", "Perception", "Stealth", "Survival"]
+    "from": [
+      "Animal Handling",
+      "Athletics",
+      "Insight",
+      "Investigation",
+      "Nature",
+      "Perception",
+      "Stealth",
+      "Survival"
+    ]
   },
-  "starting_equipment": [
-    { "choice": true, "options": ["Scale mail", "Leather armor"] },
-    { "choice": true, "options": ["Two shortswords", "Two simple melee weapons"] },
-    { "choice": true, "options": ["Dungeoneer's pack", "Explorer's pack"] },
-    { "fixed": ["Longbow", "Quiver of 20 arrows"] }
-  ],
+  "starting_equipment": {
+    "fixed": [
+      { "key": "armor", "item": "studded-leather-armor" },
+      { "key": "scimitar", "item": "scimitar" },
+      { "key": "shortsword", "item": "shortsword" },
+      { "key": "longbow", "item": "longbow" },
+      { "key": "arrows", "item": "arrows" },
+      { "key": "quiver", "item": "quiver" },
+      { "key": "focus", "item": "druidic-focus-mistletoe" },
+      { "key": "pack", "item": "explorers-pack" }
+    ],
+    "groups": [],
+    "gold": 7,
+    "goldAlternative": 150
+  },
   "spellcasting_ability": "wisdom",
   "subclass_level": 3,
   "subclasses": [
     {
-      "index": "hunter",
-      "name": "Hunter",
-      "description": "Learn techniques to hunt a wide variety of enemies with devastating effectiveness.",
+      "index": "beast-master",
+      "name": "Beast Master",
+      "description": "Form a mystical bond with a primal beast that fights and explores beside you.",
       "levels": [
-        { "level": 3,  "features": ["Hunter's Prey"] },
-        { "level": 7,  "features": ["Defensive Tactics"] },
-        { "level": 11, "features": ["Multiattack"] },
-        { "level": 15, "features": ["Superior Hunter's Defense"] }
+        {
+          "level": 3,
+          "features": ["Primal Companion"],
+          "grants": [
+            {
+              "type": "feature",
+              "name": "Primal Companion",
+              "description": "Summon a friendly Beast of the Land, Sea, or Sky when you finish a Long Rest; choose its stat block and appearance each time. It acts during your turn, moving and reacting on its own but taking only Dodge unless you use a Bonus Action to command another action or replace one of your attacks to command Beast's Strike. If you are Incapacitated, it acts freely. A beast that died within the last hour can be restored after 1 minute by touching it with a Magic action and expending a spell slot. It vanishes if you die or summon another beast. Every form understands your languages, adds your Proficiency Bonus to its ability checks and saves, and uses your spell attack modifier for Beast's Strike."
+            },
+            {
+              "type": "feature",
+              "name": "Beast of the Land",
+              "description": "Medium Beast; AC 13 + Wisdom modifier; HP 5 + five times your Ranger level; Ranger-level d8 Hit Dice; Speed 40 feet, Climb 40 feet; STR 14, DEX 14, CON 15, INT 8, WIS 14, CHA 11; Darkvision 60 feet. Beast's Strike has 5-foot reach and deals 1d8 + 2 + Wisdom modifier Bludgeoning, Piercing, or Slashing damage. After moving at least 20 feet straight toward the target, a hit deals 1d6 extra damage and knocks a Large or smaller target Prone."
+            },
+            {
+              "type": "feature",
+              "name": "Beast of the Sea",
+              "description": "Medium Beast; AC 13 + Wisdom modifier; HP 5 + five times your Ranger level; Ranger-level d8 Hit Dice; Speed 5 feet, Swim 60 feet; STR 14, DEX 14, CON 15, INT 8, WIS 14, CHA 11; Darkvision 90 feet; Amphibious. Beast's Strike has 5-foot reach, deals 1d6 + 2 + Wisdom modifier Bludgeoning or Piercing damage, and Grapples the target with an escape DC equal to your spell save DC."
+            },
+            {
+              "type": "feature",
+              "name": "Beast of the Sky",
+              "description": "Small Beast; AC 13 + Wisdom modifier; HP 4 + four times your Ranger level; Ranger-level d6 Hit Dice; Speed 10 feet, Fly 60 feet; STR 6, DEX 16, CON 13, INT 8, WIS 14, CHA 11; Darkvision 60 feet. Beast's Strike has 5-foot reach and deals 1d4 + 3 + Wisdom modifier Slashing damage. Flyby prevents Opportunity Attacks when it flies out of an enemy's reach."
+            }
+          ]
+        },
+        {
+          "level": 7,
+          "features": ["Exceptional Training"],
+          "grants": [
+            {
+              "type": "feature",
+              "name": "Exceptional Training",
+              "description": "When you use a Bonus Action to command your Primal Companion to take an action, it can also take Dash, Disengage, Dodge, or Help as its Bonus Action. Whenever its attack deals damage, you can make that damage Force damage instead of its normal type."
+            }
+          ]
+        },
+        {
+          "level": 11,
+          "features": ["Bestial Fury"],
+          "grants": [
+            {
+              "type": "feature",
+              "name": "Bestial Fury",
+              "description": "When commanded to take Beast's Strike, your Primal Companion uses it twice. The first time each turn it hits a creature affected by your Hunter's Mark, it also deals Force damage equal to the spell's bonus damage."
+            }
+          ]
+        },
+        {
+          "level": 15,
+          "features": ["Share Spells"],
+          "grants": [
+            {
+              "type": "feature",
+              "name": "Share Spells",
+              "description": "When you cast a spell that targets yourself, you can also affect your Primal Companion with it while the beast is within 30 feet of you."
+            }
+          ]
+        }
       ]
     },
     {
-      "index": "beast-master",
-      "name": "Beast Master",
-      "description": "Form a deep bond with an animal companion that fights alongside you.",
+      "index": "fey-wanderer",
+      "name": "Fey Wanderer",
+      "description": "Wield the beguiling mirth and dreadful fury of the Feywild.",
       "levels": [
-        { "level": 3,  "features": ["Ranger's Companion"] },
-        { "level": 7,  "features": ["Exceptional Training"] },
-        { "level": 11, "features": ["Bestial Fury"] },
-        { "level": 15, "features": ["Share Spells"] }
+        {
+          "level": 3,
+          "features": [
+            "Dreadful Strikes",
+            "Fey Wanderer Spells",
+            "Feywild Gift",
+            "Otherworldly Glamour"
+          ],
+          "grants": [
+            {
+              "type": "feature",
+              "name": "Dreadful Strikes",
+              "description": "When you hit a creature with a weapon, deal an extra 1d4 Psychic damage to it. A creature can take this extra damage only once per turn. The die becomes 1d6 at Ranger level 11."
+            },
+            {
+              "type": "feature",
+              "name": "Fey Wanderer Spells",
+              "description": "Always prepare Charm Person at Ranger level 3, Misty Step at level 5, Summon Fey at level 9, Dimension Door at level 13, and Mislead at level 17. These are Ranger spells for you and don't count against your prepared-spell limit."
+            },
+            {
+              "type": "choice",
+              "key": "feywild_gift",
+              "name": "Feywild Gift",
+              "choose": 1,
+              "description": "Choose or randomly determine the visible sign of your Feywild blessing.",
+              "options": [
+                {
+                  "name": "Resting Butterflies",
+                  "description": "Illusory butterflies flutter around you while you take a Short or Long Rest."
+                },
+                {
+                  "name": "Dawn Flowers",
+                  "description": "Flowers bloom from your hair each dawn."
+                },
+                {
+                  "name": "Comforting Scent",
+                  "description": "You faintly smell of cinnamon, lavender, nutmeg, or another comforting herb or spice."
+                },
+                {
+                  "name": "Dancing Shadow",
+                  "description": "Your shadow dances while no one is looking directly at it."
+                },
+                {
+                  "name": "Horns or Antlers",
+                  "description": "Horns or antlers sprout from your head."
+                },
+                {
+                  "name": "Changing Colors",
+                  "description": "Your skin and hair change color each dawn."
+                }
+              ]
+            },
+            {
+              "type": "feature",
+              "name": "Otherworldly Glamour",
+              "description": "Add your Wisdom modifier (minimum +1) to every Charisma check.",
+              "effects": [
+                {
+                  "type": "skill_ability_bonus",
+                  "tags": [
+                    "Deception",
+                    "Intimidation",
+                    "Performance",
+                    "Persuasion"
+                  ],
+                  "ability": "wisdom",
+                  "minimum": 1
+                }
+              ]
+            },
+            {
+              "type": "skill_choice",
+              "key": "otherworldly_glamour_skill",
+              "name": "Otherworldly Glamour Skill",
+              "choose": 1,
+              "description": "Gain proficiency in Deception, Performance, or Persuasion.",
+              "skills": ["Deception", "Performance", "Persuasion"]
+            }
+          ]
+        },
+        {
+          "level": 7,
+          "features": ["Beguiling Twist"],
+          "grants": [
+            {
+              "type": "feature",
+              "name": "Beguiling Twist",
+              "description": "You have Advantage on saves to avoid or end Charmed or Frightened. When you or a creature you can see within 120 feet succeeds on such a save, use your Reaction to force a different creature you can see within 120 feet to make a Wisdom save against your spell save DC. On a failure, choose Charmed or Frightened for 1 minute; the creature repeats the save at the end of each turn."
+            }
+          ]
+        },
+        {
+          "level": 11,
+          "features": ["Fey Reinforcements"],
+          "grants": [
+            {
+              "type": "feature",
+              "key": "fey-reinforcements",
+              "name": "Fey Reinforcements",
+              "description": "Cast Summon Fey without its Material component. Cast it once without a spell slot per Long Rest. When you start casting it, you can remove Concentration and make the duration 1 minute for that casting.",
+              "action": {
+                "activation": "action",
+                "uses": { "max": 1, "per": "long_rest" }
+              }
+            }
+          ]
+        },
+        {
+          "level": 15,
+          "features": ["Misty Wanderer"],
+          "grants": [
+            {
+              "type": "feature",
+              "key": "misty-wanderer",
+              "name": "Misty Wanderer",
+              "description": "Cast Misty Step without a spell slot a number of times equal to your Wisdom modifier (minimum once), regaining all uses after a Long Rest. Whenever you cast it, you can bring one willing creature within 5 feet of you; it appears within 5 feet of your destination.",
+              "action": {
+                "activation": "bonus_action",
+                "uses": {
+                  "max": 1,
+                  "maxAbilityModifier": "wisdom",
+                  "minimum": 1,
+                  "per": "long_rest"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "index": "gloom-stalker",
+      "name": "Gloom Stalker",
+      "description": "Draw on Shadowfell magic to ambush foes and hunt creatures in the dark.",
+      "levels": [
+        {
+          "level": 3,
+          "features": [
+            "Dread Ambusher",
+            "Gloom Stalker Spells",
+            "Umbral Sight"
+          ],
+          "grants": [
+            {
+              "type": "feature",
+              "name": "Dread Ambusher",
+              "description": "At the start of your first turn in each combat, your Speed increases by 10 feet until that turn ends. You also add your Wisdom modifier to Initiative.",
+              "effects": [
+                { "type": "initiative_ability_bonus", "ability": "wisdom" }
+              ]
+            },
+            {
+              "type": "feature",
+              "key": "dreadful-strike",
+              "name": "Dreadful Strike",
+              "description": "Once per turn when you hit with a weapon, deal an extra 2d6 Psychic damage. Use this benefit a number of times equal to your Wisdom modifier (minimum once) per Long Rest.",
+              "action": {
+                "activation": "free",
+                "uses": {
+                  "max": 1,
+                  "maxAbilityModifier": "wisdom",
+                  "minimum": 1,
+                  "per": "long_rest"
+                }
+              }
+            },
+            {
+              "type": "feature",
+              "name": "Gloom Stalker Spells",
+              "description": "Always prepare Disguise Self at Ranger level 3, Rope Trick at level 5, Fear at level 9, Greater Invisibility at level 13, and Seeming at level 17. These are Ranger spells for you and don't count against your prepared-spell limit."
+            },
+            {
+              "type": "feature",
+              "name": "Umbral Sight",
+              "description": "Gain Darkvision out to 60 feet, or extend your existing Darkvision by 60 feet. While entirely in Darkness, you are Invisible to any creature that relies on Darkvision to see you there."
+            }
+          ]
+        },
+        {
+          "level": 7,
+          "features": ["Iron Mind"],
+          "grants": [
+            {
+              "type": "feature",
+              "name": "Iron Mind",
+              "description": "Gain proficiency in Wisdom saving throws. If you already have it, gain proficiency in Intelligence or Charisma saving throws instead.",
+              "effects": [
+                { "type": "saving_throw_proficiency", "tags": ["wisdom"] }
+              ]
+            }
+          ]
+        },
+        {
+          "level": 11,
+          "features": ["Stalker's Flurry"],
+          "grants": [
+            {
+              "type": "feature",
+              "name": "Stalker's Flurry",
+              "description": "Dreadful Strike becomes 2d8. Whenever you use it, choose Sudden Strike to make another attack with the same weapon against a different creature within 5 feet of the first and within range, or Mass Fear to force the target and every creature within 10 feet of it to make a Wisdom save or become Frightened until your next turn starts."
+            }
+          ]
+        },
+        {
+          "level": 15,
+          "features": ["Shadowy Dodge"],
+          "grants": [
+            {
+              "type": "feature",
+              "name": "Shadowy Dodge",
+              "description": "When a creature makes an attack roll against you, use your Reaction to impose Disadvantage on the roll. Hit or miss, you can then teleport up to 30 feet to an unoccupied space you can see."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "index": "hunter",
+      "name": "Hunter",
+      "description": "Master adaptable techniques for identifying, pursuing, and defeating dangerous prey.",
+      "levels": [
+        {
+          "level": 3,
+          "features": ["Hunter's Lore", "Hunter's Prey"],
+          "grants": [
+            {
+              "type": "feature",
+              "name": "Hunter's Lore",
+              "description": "While a creature is marked by your Hunter's Mark, you know whether it has any Immunities, Resistances, or Vulnerabilities and what they are."
+            },
+            {
+              "type": "feature",
+              "name": "Hunter's Prey",
+              "description": "Choose Colossus Slayer or Horde Breaker whenever you finish a Short or Long Rest. Colossus Slayer deals an extra 1d8 weapon damage once per turn when you hit a creature missing any Hit Points. Horde Breaker lets you make one additional attack each turn with the same weapon against a different creature within 5 feet of the original target, within range, and not yet attacked by you that turn."
+            }
+          ]
+        },
+        {
+          "level": 7,
+          "features": ["Defensive Tactics"],
+          "grants": [
+            {
+              "type": "feature",
+              "name": "Defensive Tactics",
+              "description": "Choose Escape the Horde or Multiattack Defense whenever you finish a Short or Long Rest. Escape the Horde gives Opportunity Attacks Disadvantage against you. With Multiattack Defense, after a creature hits you with an attack roll, it has Disadvantage on all other attack rolls against you for the rest of that turn."
+            }
+          ]
+        },
+        {
+          "level": 11,
+          "features": ["Superior Hunter's Prey"],
+          "grants": [
+            {
+              "type": "feature",
+              "name": "Superior Hunter's Prey",
+              "description": "Once per turn when you damage a creature marked by Hunter's Mark, deal the spell's extra damage to a different creature you can see within 30 feet of the first creature."
+            }
+          ]
+        },
+        {
+          "level": 15,
+          "features": ["Superior Hunter's Defense"],
+          "grants": [
+            {
+              "type": "feature",
+              "name": "Superior Hunter's Defense",
+              "description": "When you take damage, use your Reaction to gain Resistance to that damage and all other damage of the same type until the current turn ends."
+            }
+          ]
+        }
       ]
     }
   ],
   "levels": [
-    { "level": 1,  "proficiency_bonus": 2, "features": ["Favored Enemy", "Natural Explorer"],                          "spell_slots": {} },
-    { "level": 2,  "proficiency_bonus": 2, "features": ["Fighting Style", "Spellcasting"],                             "spell_slots": { "1": 2 },
+    {
+      "level": 1,
+      "proficiency_bonus": 2,
+      "features": ["Spellcasting", "Favored Enemy", "Weapon Mastery"],
+      "prepared_spells": 2,
+      "spell_slots": { "1": 2 },
+      "class_specific": { "favored_enemy_uses": 2, "weapon_masteries": 2 },
       "grants": [
-        { "type": "feat_pick", "key": "fighting_style", "name": "Fighting Style", "choose": 1, "description": "Adopt a particular style of fighting as your specialty.", "category": "fighting_style" }
+        {
+          "type": "skill_choice",
+          "key": "skills",
+          "name": "Ranger Skill Proficiencies",
+          "choose": 3,
+          "description": "Choose three skills from the Ranger skill list."
+        },
+        {
+          "type": "feature",
+          "name": "Spellcasting",
+          "description": "Cast prepared Ranger spells using Wisdom and a Druidic Focus. Start with two prepared level 1 Ranger spells and replace one prepared spell whenever you finish a Long Rest. The prepared-spell and spell-slot progressions are shown at every Ranger level; complete spell selection is deferred to the shared spell-system pass."
+        },
+        {
+          "type": "feature",
+          "key": "favored-enemy",
+          "name": "Favored Enemy",
+          "description": "Hunter's Mark is always prepared and doesn't count against your prepared-spell limit. Cast it without a spell slot twice per Long Rest, increasing to three uses at Ranger level 5, four at level 9, five at level 13, and six at level 17.",
+          "action": {
+            "activation": "bonus_action",
+            "uses": {
+              "max": 2,
+              "maxByLevel": { "5": 3, "9": 4, "13": 5, "17": 6 },
+              "per": "long_rest"
+            }
+          }
+        },
+        {
+          "type": "weapon_mastery",
+          "key": "weapon_mastery",
+          "name": "Weapon Mastery",
+          "choose": 2,
+          "description": "Choose two weapons you have proficiency with. You can use their mastery properties and can change the choices after a Long Rest.",
+          "proficiency": ["Simple", "Martial"]
+        }
       ]
     },
-    { "level": 3,  "proficiency_bonus": 2, "features": ["Ranger Archetype", "Primeval Awareness"],                     "spell_slots": { "1": 3 } },
-    { "level": 4,  "proficiency_bonus": 2, "features": ["Ability Score Improvement"],                                  "spell_slots": { "1": 3 } },
-    { "level": 5,  "proficiency_bonus": 3, "features": ["Extra Attack"],                                               "spell_slots": { "1": 4, "2": 2 } },
-    { "level": 6,  "proficiency_bonus": 3, "features": ["Favored Enemy Improvement", "Natural Explorer Improvement"],  "spell_slots": { "1": 4, "2": 2 } },
-    { "level": 7,  "proficiency_bonus": 3, "features": ["Ranger Archetype Feature"],                                   "spell_slots": { "1": 4, "2": 3 } },
-    { "level": 8,  "proficiency_bonus": 3, "features": ["Ability Score Improvement", "Land's Stride"],                 "spell_slots": { "1": 4, "2": 3 } },
-    { "level": 9,  "proficiency_bonus": 4, "features": [],                                                             "spell_slots": { "1": 4, "2": 3, "3": 2 } },
-    { "level": 10, "proficiency_bonus": 4, "features": ["Natural Explorer Improvement", "Hide in Plain Sight"],        "spell_slots": { "1": 4, "2": 3, "3": 2 } },
-    { "level": 11, "proficiency_bonus": 4, "features": ["Ranger Archetype Feature"],                                   "spell_slots": { "1": 4, "2": 3, "3": 3 } },
-    { "level": 12, "proficiency_bonus": 4, "features": ["Ability Score Improvement"],                                  "spell_slots": { "1": 4, "2": 3, "3": 3 } },
-    { "level": 13, "proficiency_bonus": 5, "features": [],                                                             "spell_slots": { "1": 4, "2": 3, "3": 3, "4": 1 } },
-    { "level": 14, "proficiency_bonus": 5, "features": ["Favored Enemy Improvement", "Vanish"],                        "spell_slots": { "1": 4, "2": 3, "3": 3, "4": 1 } },
-    { "level": 15, "proficiency_bonus": 5, "features": ["Ranger Archetype Feature"],                                   "spell_slots": { "1": 4, "2": 3, "3": 3, "4": 2 } },
-    { "level": 16, "proficiency_bonus": 5, "features": ["Ability Score Improvement"],                                  "spell_slots": { "1": 4, "2": 3, "3": 3, "4": 2 } },
-    { "level": 17, "proficiency_bonus": 6, "features": [],                                                             "spell_slots": { "1": 4, "2": 3, "3": 3, "4": 3, "5": 1 } },
-    { "level": 18, "proficiency_bonus": 6, "features": ["Feral Senses"],                                               "spell_slots": { "1": 4, "2": 3, "3": 3, "4": 3, "5": 1 } },
-    { "level": 19, "proficiency_bonus": 6, "features": ["Ability Score Improvement"],                                  "spell_slots": { "1": 4, "2": 3, "3": 3, "4": 3, "5": 2 } },
-    { "level": 20, "proficiency_bonus": 6, "features": ["Foe Slayer"],                                                 "spell_slots": { "1": 4, "2": 3, "3": 3, "4": 3, "5": 2 } }
+    {
+      "level": 2,
+      "proficiency_bonus": 2,
+      "features": ["Deft Explorer", "Fighting Style"],
+      "prepared_spells": 3,
+      "spell_slots": { "1": 2 },
+      "class_specific": { "favored_enemy_uses": 2, "weapon_masteries": 2 },
+      "grants": [
+        {
+          "type": "expertise_choice",
+          "key": "deft_explorer_expertise",
+          "name": "Deft Explorer Expertise",
+          "choose": 1,
+          "description": "Choose one of your skill proficiencies in which you don't already have Expertise."
+        },
+        {
+          "type": "choice",
+          "key": "deft_explorer_languages",
+          "name": "Deft Explorer Languages",
+          "choose": 2,
+          "description": "Learn two languages of your choice from the standard and rare language tables.",
+          "options": [
+            {
+              "name": "Common Sign Language",
+              "effects": [
+                {
+                  "type": "language_proficiency",
+                  "tags": ["Common Sign Language"]
+                }
+              ]
+            },
+            {
+              "name": "Draconic",
+              "effects": [
+                { "type": "language_proficiency", "tags": ["Draconic"] }
+              ]
+            },
+            {
+              "name": "Dwarvish",
+              "effects": [
+                { "type": "language_proficiency", "tags": ["Dwarvish"] }
+              ]
+            },
+            {
+              "name": "Elvish",
+              "effects": [
+                { "type": "language_proficiency", "tags": ["Elvish"] }
+              ]
+            },
+            {
+              "name": "Giant",
+              "effects": [{ "type": "language_proficiency", "tags": ["Giant"] }]
+            },
+            {
+              "name": "Gnomish",
+              "effects": [
+                { "type": "language_proficiency", "tags": ["Gnomish"] }
+              ]
+            },
+            {
+              "name": "Goblin",
+              "effects": [
+                { "type": "language_proficiency", "tags": ["Goblin"] }
+              ]
+            },
+            {
+              "name": "Halfling",
+              "effects": [
+                { "type": "language_proficiency", "tags": ["Halfling"] }
+              ]
+            },
+            {
+              "name": "Orc",
+              "effects": [{ "type": "language_proficiency", "tags": ["Orc"] }]
+            },
+            {
+              "name": "Abyssal",
+              "effects": [
+                { "type": "language_proficiency", "tags": ["Abyssal"] }
+              ]
+            },
+            {
+              "name": "Celestial",
+              "effects": [
+                { "type": "language_proficiency", "tags": ["Celestial"] }
+              ]
+            },
+            {
+              "name": "Deep Speech",
+              "effects": [
+                { "type": "language_proficiency", "tags": ["Deep Speech"] }
+              ]
+            },
+            {
+              "name": "Druidic",
+              "effects": [
+                { "type": "language_proficiency", "tags": ["Druidic"] }
+              ]
+            },
+            {
+              "name": "Infernal",
+              "effects": [
+                { "type": "language_proficiency", "tags": ["Infernal"] }
+              ]
+            },
+            {
+              "name": "Primordial",
+              "effects": [
+                { "type": "language_proficiency", "tags": ["Primordial"] }
+              ]
+            },
+            {
+              "name": "Sylvan",
+              "effects": [
+                { "type": "language_proficiency", "tags": ["Sylvan"] }
+              ]
+            },
+            {
+              "name": "Thieves' Cant",
+              "effects": [
+                { "type": "language_proficiency", "tags": ["Thieves' Cant"] }
+              ]
+            },
+            {
+              "name": "Undercommon",
+              "effects": [
+                { "type": "language_proficiency", "tags": ["Undercommon"] }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "feat_pick",
+          "key": "fighting_style",
+          "name": "Fighting Style",
+          "choose": 1,
+          "description": "Gain one Fighting Style feat or choose Druidic Warrior to learn two Druid cantrips that use Wisdom and count as Ranger spells.",
+          "category": "fighting_style"
+        }
+      ]
+    },
+    {
+      "level": 3,
+      "proficiency_bonus": 2,
+      "features": ["Ranger Subclass"],
+      "prepared_spells": 4,
+      "spell_slots": { "1": 3 },
+      "class_specific": { "favored_enemy_uses": 2, "weapon_masteries": 2 },
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Ranger Subclass",
+          "description": "Choose a Ranger subclass, gaining its features now and again at Ranger levels 7, 11, and 15."
+        }
+      ]
+    },
+    {
+      "level": 4,
+      "proficiency_bonus": 2,
+      "features": ["Ability Score Improvement"],
+      "prepared_spells": 5,
+      "spell_slots": { "1": 3 },
+      "class_specific": { "favored_enemy_uses": 2, "weapon_masteries": 2 },
+      "grants": [
+        {
+          "type": "ability_choice",
+          "key": "asi_4",
+          "name": "Ability Score Improvement",
+          "description": "Increase one ability score by 2, or two scores by 1 each, to a maximum of 20 (or take a feat).",
+          "points": 2,
+          "allowFeat": true
+        }
+      ]
+    },
+    {
+      "level": 5,
+      "proficiency_bonus": 3,
+      "features": ["Extra Attack"],
+      "prepared_spells": 6,
+      "spell_slots": { "1": 4, "2": 2 },
+      "class_specific": { "favored_enemy_uses": 3, "weapon_masteries": 2 },
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Extra Attack",
+          "description": "Attack twice instead of once whenever you take the Attack action on your turn."
+        }
+      ]
+    },
+    {
+      "level": 6,
+      "proficiency_bonus": 3,
+      "features": ["Roving"],
+      "prepared_spells": 6,
+      "spell_slots": { "1": 4, "2": 2 },
+      "class_specific": { "favored_enemy_uses": 3, "weapon_masteries": 2 },
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Roving",
+          "description": "Your Speed increases by 10 feet while you aren't wearing Heavy Armor. You also gain a Climb Speed and Swim Speed equal to your Speed.",
+          "effects": [
+            {
+              "type": "speed_bonus",
+              "value": 10,
+              "condition": "no_heavy_armor"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "level": 7,
+      "proficiency_bonus": 3,
+      "features": ["Ranger Subclass Feature"],
+      "prepared_spells": 7,
+      "spell_slots": { "1": 4, "2": 3 },
+      "class_specific": { "favored_enemy_uses": 3, "weapon_masteries": 2 },
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Ranger Subclass Feature",
+          "description": "Gain a feature from your chosen Ranger subclass."
+        }
+      ]
+    },
+    {
+      "level": 8,
+      "proficiency_bonus": 3,
+      "features": ["Ability Score Improvement"],
+      "prepared_spells": 7,
+      "spell_slots": { "1": 4, "2": 3 },
+      "class_specific": { "favored_enemy_uses": 3, "weapon_masteries": 2 },
+      "grants": [
+        {
+          "type": "ability_choice",
+          "key": "asi_8",
+          "name": "Ability Score Improvement",
+          "description": "Increase one ability score by 2, or two scores by 1 each, to a maximum of 20 (or take a feat).",
+          "points": 2,
+          "allowFeat": true
+        }
+      ]
+    },
+    {
+      "level": 9,
+      "proficiency_bonus": 4,
+      "features": ["Expertise"],
+      "prepared_spells": 9,
+      "spell_slots": { "1": 4, "2": 3, "3": 2 },
+      "class_specific": { "favored_enemy_uses": 4, "weapon_masteries": 2 },
+      "grants": [
+        {
+          "type": "expertise_choice",
+          "key": "expertise_9",
+          "name": "Expertise",
+          "choose": 2,
+          "description": "Choose two more skill proficiencies in which you don't already have Expertise."
+        }
+      ]
+    },
+    {
+      "level": 10,
+      "proficiency_bonus": 4,
+      "features": ["Tireless"],
+      "prepared_spells": 9,
+      "spell_slots": { "1": 4, "2": 3, "3": 2 },
+      "class_specific": { "favored_enemy_uses": 4, "weapon_masteries": 2 },
+      "grants": [
+        {
+          "type": "feature",
+          "key": "tireless",
+          "name": "Tireless",
+          "description": "As a Magic action, gain Temporary Hit Points equal to 1d8 plus your Wisdom modifier (minimum 1). Use this a number of times equal to your Wisdom modifier (minimum once) per Long Rest. Whenever you finish a Short Rest, reduce your Exhaustion level by 1.",
+          "action": {
+            "activation": "action",
+            "uses": {
+              "max": 1,
+              "maxAbilityModifier": "wisdom",
+              "minimum": 1,
+              "per": "long_rest"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "level": 11,
+      "proficiency_bonus": 4,
+      "features": ["Ranger Subclass Feature"],
+      "prepared_spells": 10,
+      "spell_slots": { "1": 4, "2": 3, "3": 3 },
+      "class_specific": { "favored_enemy_uses": 4, "weapon_masteries": 2 },
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Ranger Subclass Feature",
+          "description": "Gain a feature from your chosen Ranger subclass."
+        }
+      ]
+    },
+    {
+      "level": 12,
+      "proficiency_bonus": 4,
+      "features": ["Ability Score Improvement"],
+      "prepared_spells": 10,
+      "spell_slots": { "1": 4, "2": 3, "3": 3 },
+      "class_specific": { "favored_enemy_uses": 4, "weapon_masteries": 2 },
+      "grants": [
+        {
+          "type": "ability_choice",
+          "key": "asi_12",
+          "name": "Ability Score Improvement",
+          "description": "Increase one ability score by 2, or two scores by 1 each, to a maximum of 20 (or take a feat).",
+          "points": 2,
+          "allowFeat": true
+        }
+      ]
+    },
+    {
+      "level": 13,
+      "proficiency_bonus": 5,
+      "features": ["Relentless Hunter"],
+      "prepared_spells": 11,
+      "spell_slots": { "1": 4, "2": 3, "3": 3, "4": 1 },
+      "class_specific": { "favored_enemy_uses": 5, "weapon_masteries": 2 },
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Relentless Hunter",
+          "description": "Taking damage can't break your Concentration on Hunter's Mark."
+        }
+      ]
+    },
+    {
+      "level": 14,
+      "proficiency_bonus": 5,
+      "features": ["Nature's Veil"],
+      "prepared_spells": 11,
+      "spell_slots": { "1": 4, "2": 3, "3": 3, "4": 1 },
+      "class_specific": { "favored_enemy_uses": 5, "weapon_masteries": 2 },
+      "grants": [
+        {
+          "type": "feature",
+          "key": "natures-veil",
+          "name": "Nature's Veil",
+          "description": "As a Bonus Action, become Invisible until the end of your next turn. Use this a number of times equal to your Wisdom modifier (minimum once) per Long Rest.",
+          "action": {
+            "activation": "bonus_action",
+            "uses": {
+              "max": 1,
+              "maxAbilityModifier": "wisdom",
+              "minimum": 1,
+              "per": "long_rest"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "level": 15,
+      "proficiency_bonus": 5,
+      "features": ["Ranger Subclass Feature"],
+      "prepared_spells": 12,
+      "spell_slots": { "1": 4, "2": 3, "3": 3, "4": 2 },
+      "class_specific": { "favored_enemy_uses": 5, "weapon_masteries": 2 },
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Ranger Subclass Feature",
+          "description": "Gain a feature from your chosen Ranger subclass."
+        }
+      ]
+    },
+    {
+      "level": 16,
+      "proficiency_bonus": 5,
+      "features": ["Ability Score Improvement"],
+      "prepared_spells": 12,
+      "spell_slots": { "1": 4, "2": 3, "3": 3, "4": 2 },
+      "class_specific": { "favored_enemy_uses": 5, "weapon_masteries": 2 },
+      "grants": [
+        {
+          "type": "ability_choice",
+          "key": "asi_16",
+          "name": "Ability Score Improvement",
+          "description": "Increase one ability score by 2, or two scores by 1 each, to a maximum of 20 (or take a feat).",
+          "points": 2,
+          "allowFeat": true
+        }
+      ]
+    },
+    {
+      "level": 17,
+      "proficiency_bonus": 6,
+      "features": ["Precise Hunter"],
+      "prepared_spells": 14,
+      "spell_slots": { "1": 4, "2": 3, "3": 3, "4": 3, "5": 1 },
+      "class_specific": { "favored_enemy_uses": 6, "weapon_masteries": 2 },
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Precise Hunter",
+          "description": "You have Advantage on attack rolls against the creature currently marked by your Hunter's Mark."
+        }
+      ]
+    },
+    {
+      "level": 18,
+      "proficiency_bonus": 6,
+      "features": ["Feral Senses"],
+      "prepared_spells": 14,
+      "spell_slots": { "1": 4, "2": 3, "3": 3, "4": 3, "5": 1 },
+      "class_specific": { "favored_enemy_uses": 6, "weapon_masteries": 2 },
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Feral Senses",
+          "description": "Gain Blindsight with a range of 30 feet."
+        }
+      ]
+    },
+    {
+      "level": 19,
+      "proficiency_bonus": 6,
+      "features": ["Epic Boon"],
+      "prepared_spells": 15,
+      "spell_slots": { "1": 4, "2": 3, "3": 3, "4": 3, "5": 2 },
+      "class_specific": { "favored_enemy_uses": 6, "weapon_masteries": 2 },
+      "grants": [
+        {
+          "type": "feat_pick",
+          "key": "epic_boon_19",
+          "name": "Epic Boon",
+          "choose": 1,
+          "description": "Choose an Epic Boon feat or another feat for which you qualify. Boon of Dimensional Travel is recommended.",
+          "category": "epic"
+        }
+      ]
+    },
+    {
+      "level": 20,
+      "proficiency_bonus": 6,
+      "features": ["Foe Slayer"],
+      "prepared_spells": 15,
+      "spell_slots": { "1": 4, "2": 3, "3": 3, "4": 3, "5": 2 },
+      "class_specific": { "favored_enemy_uses": 6, "weapon_masteries": 2 },
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Foe Slayer",
+          "description": "The extra damage die of your Hunter's Mark becomes a d10 instead of a d6."
+        }
+      ]
+    }
   ]
 }

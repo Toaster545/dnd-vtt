@@ -1,7 +1,16 @@
 {
   "index": "skilled",
   "name": "Skilled",
-  "description": "Gain proficiency in any combination of three skills or tools of your choice.",
+  "description": "Gain proficiency in three skills of your choice.",
   "category": "origin",
+  "grants": [
+    {
+      "type": "skill_choice",
+      "key": "origin_feat:skilled_skills",
+      "name": "Skill Proficiencies",
+      "description": "Choose three skills in which you aren't already proficient.",
+      "choose": 3
+    }
+  ],
   "repeatable": true
 }

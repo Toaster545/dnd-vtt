@@ -4,7 +4,7 @@ import { UpperCasePipe } from '@angular/common';
 import { DndClass, TraitGrant, TraitOption, DndItem, DndFeat } from '../../../../../core/services/content.service';
 import { Ability, ABILITIES } from '../../../../../core/models/character.model';
 import { resolveProgressiveChoiceLimit } from '../../../../../core/utils/progressive-choice';
-import { collectTraitEffects } from '../../../../../core/utils/character-effects';
+import { collectTraitEffects, reachableGrants } from '../../../../../core/utils/character-effects';
 
 export interface ClassEntry {
   cls: DndClass;
@@ -29,6 +29,7 @@ export class ClassStepComponent implements OnInit {
   readonly characterLevel    = input.required<number>();
   readonly baseAbilityScores = input.required<Record<Ability, number>>();
   readonly proficientSkills  = input<string[]>([]);
+  readonly unavailableSkills = input<string[]>([]);
   readonly classAdded        = output<ClassEntry>();
   readonly classRemoved      = output<string>();
 
@@ -178,7 +179,24 @@ export class ClassStepComponent implements OnInit {
     const later = Object.entries(this.draftTraits())
       .filter(([key]) => key !== grant.key && skillKeys.has(key))
       .flatMap(([, picks]) => picks);
-    return [...initial, ...later].includes(skill);
+    const otherClasses = this.selectedClasses()
+      .filter(entry => entry.cls.index !== cls?.index)
+      .flatMap(entry => [
+        ...entry.skills,
+        ...reachableGrants(entry.cls, entry.subclass, entry.level)
+          .filter((candidate): candidate is Extract<TraitGrant, { type: 'skill_choice' }> =>
+            candidate.type === 'skill_choice' && candidate.key !== 'skills')
+          .flatMap(candidate => entry.traits[candidate.key] ?? []),
+      ]);
+    return [...this.unavailableSkills(), ...otherClasses, ...initial, ...later].includes(skill);
+  }
+
+  skillConflict(grant: Extract<TraitGrant, { type: 'skill_choice' }>, skill: string): boolean {
+    return this.skillSelections(grant).includes(skill) && this.skillTakenElsewhere(grant, skill);
+  }
+
+  conflictingSkills(grant: Extract<TraitGrant, { type: 'skill_choice' }>): string[] {
+    return this.skillSelections(grant).filter(skill => this.skillConflict(grant, skill));
   }
 
   toggleDraftSkill(grant: Extract<TraitGrant, { type: 'skill_choice' }>, skill: string) {

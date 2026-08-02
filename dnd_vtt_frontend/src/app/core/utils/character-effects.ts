@@ -120,6 +120,17 @@ export function collectTraitEffects(
   return out;
 }
 
+// Languages selected through class features are represented as ordinary choice effects so the
+// generic class-choice UI can persist them without introducing a Ranger-specific save field.
+export function resolveLanguageProficiencies(
+  raceLanguages: string[], effects: TraitEffect[],
+): string[] {
+  const classLanguages = effects
+    .filter(effect => effect.type === 'language_proficiency')
+    .flatMap(effect => effect.tags ?? []);
+  return ['Common', ...new Set([...raceLanguages, ...classLanguages].filter(language => language !== 'Common'))];
+}
+
 // What's actually equipped right now, resolved against the item catalog — the shared basis for
 // both condition evaluation and AC computation below, so they can never disagree about what
 // "wearing armor" means.
