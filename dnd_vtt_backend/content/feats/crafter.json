@@ -2,5 +2,33 @@
   "index": "crafter",
   "name": "Crafter",
   "description": "Gain proficiency with three Artisan's Tools of your choice. You receive a 20 percent discount when buying nonmagical items, and after a Long Rest you can use a proficient tool to create one temporary item from the feat's Fast Crafting table.",
-  "category": "origin"
+  "category": "origin",
+  "grants": [
+    {
+      "type": "choice",
+      "key": "origin_feat:crafter_tools",
+      "name": "Artisan's Tool Proficiencies",
+      "description": "Choose three kinds of Artisan's Tools.",
+      "choose": 3,
+      "options": [
+        { "name": "Alchemist's Supplies" },
+        { "name": "Brewer's Supplies" },
+        { "name": "Calligrapher's Supplies" },
+        { "name": "Carpenter's Tools" },
+        { "name": "Cartographer's Tools" },
+        { "name": "Cobbler's Tools" },
+        { "name": "Cook's Utensils" },
+        { "name": "Glassblower's Tools" },
+        { "name": "Jeweler's Tools" },
+        { "name": "Leatherworker's Tools" },
+        { "name": "Mason's Tools" },
+        { "name": "Painter's Supplies" },
+        { "name": "Potter's Tools" },
+        { "name": "Smith's Tools" },
+        { "name": "Tinker's Tools" },
+        { "name": "Weaver's Tools" },
+        { "name": "Woodcarver's Tools" }
+      ]
+    }
+  ]
 }

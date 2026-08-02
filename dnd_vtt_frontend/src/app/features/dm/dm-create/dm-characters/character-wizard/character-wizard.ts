@@ -5,6 +5,7 @@ import { ContentService, DndRace, DndClass, DndBackground, DndItem, DndSpell, Dn
 import { ClassChoiceSource, averageHpFormula, collectTraitEffects, reachableGrants, resolveLanguageProficiencies, unarmoredDefenseBonus } from '../../../../../core/utils/character-effects';
 import { isStructuredEquipment, resolveStartingEquipment } from '../../../../../core/utils/starting-equipment';
 import { resolveBackgroundSkills } from '../../../../../core/utils/background-skills';
+import { resolveBackgroundOriginFeat } from '../../../../../core/utils/background-origin-feat';
 import { portraitDataUri, randomPortraitSeed } from '../../../../../core/utils/avatar';
 import { CharacterService } from '../../../../../core/services/character.service';
 import { CharacterStatsService } from '../../../../../core/services/character-stats.service';
@@ -214,11 +215,21 @@ export class CharacterWizardComponent implements OnInit, OnDestroy {
   // those are evaluated live from equipped gear by CharacterStatsService instead.
   private selectedEffects(type: string, includeConditional = false): TraitEffect[] {
     const race = this.selectedRace();
-    return collectTraitEffects(
+    const backgroundFeat = resolveBackgroundOriginFeat(this.selectedBackground(), this.feats());
+    const backgroundFeatEffects = [
+      ...(backgroundFeat?.effects ?? []),
+      ...(backgroundFeat?.grants ?? [])
+        .filter((grant): grant is Extract<TraitGrant, { type: 'choice' }> => grant.type === 'choice')
+        .flatMap(grant => grant.options
+          .filter(option => this.backgroundTraits()[grant.key]?.includes(option.name))
+          .flatMap(option => option.effects ?? [])),
+    ];
+    return [...collectTraitEffects(
       this.selectedClasses().map(e => ({ data: e.cls, choices: e.traits, level: e.level, subclass: e.subclass })),
       this.feats(),
       race ? { data: race, choices: this.raceTraits(), subrace: this.selectedSubrace()?.name } : null,
-    ).filter(e => e.type === type && (includeConditional || !e.condition));
+    ), ...backgroundFeatEffects]
+      .filter(e => e.type === type && (includeConditional || !e.condition));
   }
 
   armorClass = computed(() => {
@@ -239,9 +250,9 @@ export class CharacterWizardComponent implements OnInit, OnDestroy {
   isEditing  = computed(() => this.characterId() !== null);
   isLastStep = computed(() => this.activeStep() === STEPS.length - 1);
   incompleteSteps = computed(() => [
-    !isRaceSelectionComplete(this.raceSelection()),
-    !areClassSelectionsComplete(this.selectedClasses(), this.feats()),
-    !isBackgroundSelectionComplete(this.backgroundSelection()),
+    !isRaceSelectionComplete(this.raceSelection()) || this.raceHasSkillConflict(),
+    !areClassSelectionsComplete(this.selectedClasses(), this.feats()) || this.classHasSkillConflict(),
+    !isBackgroundSelectionComplete(this.backgroundSelection(), this.feats()) || this.backgroundHasSkillConflict(),
     !areAbilityAssignmentsComplete(this.assignments()),
     !areStartingEquipmentChoicesComplete(
       this.primaryClass(),
@@ -257,23 +268,70 @@ export class CharacterWizardComponent implements OnInit, OnDestroy {
     return this.incompleteSteps()[index] ?? false;
   }
 
-  private skillsRecord = computed(() => {
-    const bgSkills = resolveBackgroundSkills(this.selectedBackground(), this.backgroundTraits());
-    const classSkills = this.selectedClasses().flatMap(e => e.skills);
-    const additionalClassSkills = this.selectedClasses().flatMap(entry =>
+  private backgroundSkillNames = computed(() => {
+    const ordinary = resolveBackgroundSkills(this.selectedBackground(), this.backgroundTraits());
+    const originFeat = resolveBackgroundOriginFeat(this.selectedBackground(), this.feats());
+    const fromFeat = (originFeat?.grants ?? [])
+      .filter((grant): grant is Extract<TraitGrant, { type: 'skill_choice' }> => grant.type === 'skill_choice')
+      .flatMap(grant => this.backgroundTraits()[grant.key] ?? []);
+    return [...ordinary, ...fromFeat];
+  });
+
+  private classSkillNames = computed(() => {
+    const initial = this.selectedClasses().flatMap(entry => entry.skills);
+    const additional = this.selectedClasses().flatMap(entry =>
       reachableGrants(entry.cls, entry.subclass, entry.level)
         .filter((grant): grant is Extract<TraitGrant, { type: 'skill_choice' }> =>
           grant.type === 'skill_choice' && grant.key !== 'skills')
         .flatMap(grant => entry.traits[grant.key] ?? []),
     );
+    return [...initial, ...additional];
+  });
+
+  private raceSkillNames = computed(() => {
     const race = this.selectedRace();
     const subrace = this.selectedSubrace();
-    const raceSkills = [...(race?.grants ?? []), ...(subrace?.grants ?? [])]
+    return [...(race?.grants ?? []), ...(subrace?.grants ?? [])]
       .filter((grant): grant is Extract<TraitGrant, { type: 'skill_choice' }> => grant.type === 'skill_choice')
       .flatMap(grant => this.raceTraits()[grant.key] ?? []);
+  });
+
+  raceUnavailableSkills = computed(() => [...new Set([
+    ...this.classSkillNames(),
+    ...this.backgroundSkillNames(),
+  ])]);
+
+  classUnavailableSkills = computed(() => [...new Set([
+    ...this.raceSkillNames(),
+    ...this.backgroundSkillNames(),
+  ])]);
+
+  backgroundUnavailableSkills = computed(() => [...new Set([
+    ...this.raceSkillNames(),
+    ...this.classSkillNames(),
+  ])]);
+
+  private raceHasSkillConflict = computed(() =>
+    this.raceSkillNames().some(skill => this.raceUnavailableSkills().includes(skill))
+    || new Set(this.raceSkillNames()).size !== this.raceSkillNames().length);
+
+  private classHasSkillConflict = computed(() =>
+    this.classSkillNames().some(skill => this.classUnavailableSkills().includes(skill))
+    || new Set(this.classSkillNames()).size !== this.classSkillNames().length);
+
+  private backgroundHasSkillConflict = computed(() =>
+    this.backgroundSkillNames().some(skill => this.backgroundUnavailableSkills().includes(skill))
+    || new Set(this.backgroundSkillNames()).size !== this.backgroundSkillNames().length);
+
+  private skillsRecord = computed(() => {
     const effectSkills = this.selectedEffects('skill_proficiency')
       .flatMap(effect => effect.tags ?? []);
-    return [...new Set([...bgSkills, ...classSkills, ...additionalClassSkills, ...raceSkills, ...effectSkills])]
+    return [...new Set([
+      ...this.backgroundSkillNames(),
+      ...this.classSkillNames(),
+      ...this.raceSkillNames(),
+      ...effectSkills,
+    ])]
       .reduce((acc, s) => ({ ...acc, [s]: true }), {} as Record<string, boolean>);
   });
 

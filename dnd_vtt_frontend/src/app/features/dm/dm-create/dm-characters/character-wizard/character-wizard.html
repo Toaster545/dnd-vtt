@@ -58,6 +58,7 @@
           [races]="races()"
           [feats]="feats()"
           [selected]="raceSelection()"
+          [unavailableSkills]="raceUnavailableSkills()"
           (raceChosen)="onRaceChosen($event)"
         />
       }
@@ -70,6 +71,7 @@
           [characterLevel]="level()"
           [baseAbilityScores]="scoresBeforeClassASI()"
           [proficientSkills]="proficientSkillNames()"
+          [unavailableSkills]="classUnavailableSkills()"
           (classAdded)="onClassAdded($event)"
           (classRemoved)="onClassRemoved($event)"
         />
@@ -77,8 +79,10 @@
       @if (activeStep() === 2) {
         <app-background-step
           [backgrounds]="backgrounds()"
+          [feats]="feats()"
           [selected]="backgroundSelection()"
           [baseAbilityScores]="scoresBeforeBackgroundASI()"
+          [unavailableSkills]="backgroundUnavailableSkills()"
           (backgroundChosen)="onBackgroundChosen($event)"
         />
       }

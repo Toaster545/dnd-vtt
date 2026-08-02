@@ -112,6 +112,9 @@ export interface DndFeat {
   // class `choice` option).
   abilityIncrease?: { abilities: string[]; amount: number; grantsSaveProficiency?: boolean };
   effects?: TraitEffect[];
+  // Choices granted by the feat itself (for example Skilled's three proficiencies). These use
+  // the same data-driven grant shapes as races, classes, and backgrounds.
+  grants?: TraitGrant[];
   // Whether the feat can be taken more than once. Most can't — only set per the book. Feat
   // pickers exclude non-repeatable feats the character already has.
   repeatable?: boolean;

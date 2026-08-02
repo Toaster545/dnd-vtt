@@ -41,6 +41,7 @@
 @if (viewMode() === 'detail') {
   @let bg = browsingBackground()!;
   @let grant = abilityChoiceGrant(bg);
+  @let feat = originFeat(bg);
 
   <div class="flex items-start justify-between mb-5">
     <div>
@@ -74,13 +75,17 @@
               @for (selectedSkill of backgroundSkills(bg); track $index) {
                 <select
                   class="field-input w-40 max-w-full text-xs py-1 px-2"
+                  [class.border-danger]="backgroundSkillConflict(selectedSkill, $index, bg)"
                   [ngModel]="selectedSkill"
                   (ngModelChange)="updateSkill($index, $event)"
                   [ngModelOptions]="{ standalone: true }"
                   [attr.aria-label]="'Background skill ' + ($index + 1)"
                 >
                   @for (skill of allSkills; track skill) {
-                    <option [value]="skill" [disabled]="skillUsedInOtherSlot(skill, $index, bg)">{{ skill }}</option>
+                    <option
+                      [value]="skill"
+                      [disabled]="skillUsedInOtherSlot(skill, $index, bg) || backgroundSkillUnavailable(skill, $index, bg)"
+                    >{{ skill }}{{ backgroundSkillUnavailable(skill, $index, bg) || backgroundSkillConflict(skill, $index, bg) ? ' (already proficient)' : '' }}</option>
                   }
                 </select>
               }
@@ -90,6 +95,12 @@
             </div>
           }
         </div>
+        @if (hasBackgroundSkillConflict(bg)) {
+          <p class="text-xs text-danger mt-1 ml-[7.5rem]">
+            {{ conflictingBackgroundSkills(bg).join(', ') }} already selected by another proficiency source.
+            Remove {{ conflictingBackgroundSkills(bg).length === 1 ? 'it' : 'them' }} here or from the other source.
+          </p>
+        }
         @if (bg.tool_proficiencies.length) {
           <div class="flex gap-2">
             <span class="text-coal w-28 flex-shrink-0">Tools</span>
@@ -104,11 +115,107 @@
           <span class="text-coal w-28 flex-shrink-0">Equipment</span>
           <span class="text-slate">{{ equipmentPreview(bg) }}</span>
         </div>
-        <div class="flex gap-2">
-          <span class="text-coal w-28 flex-shrink-0">Feature</span>
-          <span class="text-slate">{{ bg.feature }}</span>
-        </div>
       </div>
+    </div>
+
+    <!-- Origin feat details and any choices granted by the feat itself. -->
+    <div>
+      <button
+        type="button"
+        class="flex items-center gap-2 w-full text-left cursor-pointer"
+        (click)="originFeatCollapsed.set(!originFeatCollapsed())"
+        style="font-family: inherit;"
+        [attr.aria-expanded]="!originFeatCollapsed()"
+      >
+        <span
+          class="w-1.5 h-1.5 rounded-full flex-shrink-0"
+          [class]="originFeatHasSkillConflict(bg) ? 'bg-danger' : originFeatChoicesLeft(bg) > 0 ? 'bg-gold' : 'bg-success/70'"
+        ></span>
+        <p class="text-xs font-bold text-slate uppercase tracking-wide flex-1 m-0">
+          Origin Feat &mdash; <span class="text-parchment normal-case">{{ feat?.name ?? bg.feature }}</span>
+          @if (originFeatChoicesLeft(bg) > 0) {
+            <span class="text-gold font-normal normal-case ml-1">({{ originFeatChoicesLeft(bg) }} left)</span>
+          }
+          @if (originFeatHasSkillConflict(bg)) {
+            <span class="text-danger font-bold text-sm ml-1" title="Duplicate proficiency">*</span>
+          }
+        </p>
+        <span class="text-coal text-xs flex-shrink-0">{{ originFeatCollapsed() ? '&#9656;' : '&#9662;' }}</span>
+      </button>
+
+      @if (!originFeatCollapsed()) {
+        <div class="pl-3.5 mt-2 flex flex-col gap-4">
+          <p class="text-sm text-slate m-0">{{ feat?.description ?? 'This background grants ' + bg.feature + '.' }}</p>
+
+          @for (choice of originFeatChoiceGrants(bg); track choice.key) {
+            <div>
+              <p class="text-xs font-bold text-slate uppercase tracking-wide mb-2">
+                {{ choice.name }} &mdash; choose {{ choice.choose }}
+                @if (choiceLeft(choice) > 0) {
+                  <span class="text-gold font-normal normal-case ml-1">({{ choiceLeft(choice) }} left)</span>
+                }
+              </p>
+              @if (choice.description) { <p class="text-xs text-coal mb-2">{{ choice.description }}</p> }
+              <div class="flex flex-wrap gap-1.5">
+                @for (opt of choice.options; track opt.name) {
+                  @let picked = traitSelected(choice, opt.name);
+                  @let full = !picked && choiceLeft(choice) === 0;
+                  <button
+                    type="button"
+                    class="px-2.5 py-1 rounded text-xs border transition-all"
+                    [class]="picked ? 'border-gold/60 bg-gold/10 text-parchment cursor-pointer'
+                      : full ? 'border-white/8 text-coal cursor-not-allowed'
+                             : 'border-white/15 text-slate hover:border-white/30 hover:text-parchment cursor-pointer'"
+                    [disabled]="full"
+                    (click)="toggleChoice(choice, opt.name)"
+                    style="font-family: inherit;"
+                  >{{ opt.name }}</button>
+                }
+              </div>
+            </div>
+          }
+
+          @for (skillGrant of originFeatSkillGrants(bg); track skillGrant.key) {
+            <div>
+              <p class="text-xs font-bold text-slate uppercase tracking-wide mb-2">
+                {{ skillGrant.name }} &mdash; choose {{ skillGrant.choose }}
+                @if ((draftTraits()[skillGrant.key]?.length ?? 0) < skillGrant.choose) {
+                  <span class="text-gold font-normal normal-case ml-1">
+                    ({{ skillGrant.choose - (draftTraits()[skillGrant.key]?.length ?? 0) }} left)
+                  </span>
+                }
+              </p>
+              @if (skillGrant.description) { <p class="text-xs text-coal mb-2">{{ skillGrant.description }}</p> }
+              <div class="flex flex-wrap gap-1.5">
+                @for (skill of allSkills; track skill) {
+                  @let picked = featSkillSelected(skillGrant, skill);
+                  @let conflict = featSkillConflict(bg, skillGrant, skill);
+                  @let unavailable = featSkillUnavailable(bg, skillGrant, skill);
+                  @let full = !picked && (draftTraits()[skillGrant.key]?.length ?? 0) >= skillGrant.choose;
+                  <button
+                    type="button"
+                    class="px-2.5 py-1 rounded text-xs border transition-all"
+                    [class]="conflict ? 'border-danger/60 bg-danger/10 text-parchment cursor-pointer'
+                      : picked ? 'border-gold/60 bg-gold/10 text-parchment cursor-pointer'
+                      : unavailable || full ? 'border-white/8 text-coal cursor-not-allowed'
+                                           : 'border-white/15 text-slate hover:border-white/30 hover:text-parchment cursor-pointer'"
+                    [disabled]="unavailable || full"
+                    [title]="conflict ? 'Duplicate proficiency — remove it here or from its other source' : unavailable ? 'Already proficient' : ''"
+                    (click)="toggleFeatSkill(bg, skillGrant, skill)"
+                    style="font-family: inherit;"
+                  >{{ skill }}</button>
+                }
+              </div>
+              @if (conflictingFeatSkills(bg, skillGrant).length > 0) {
+                <p class="text-xs text-danger mt-1.5">
+                  {{ conflictingFeatSkills(bg, skillGrant).join(', ') }} already selected by another proficiency source.
+                  Remove {{ conflictingFeatSkills(bg, skillGrant).length === 1 ? 'it' : 'them' }} here or from the other source.
+                </p>
+              }
+            </div>
+          }
+        </div>
+      }
     </div>
 
     <!-- Skill/Tool choices (e.g. Soldier's 2 skills, choice of gaming set) -->

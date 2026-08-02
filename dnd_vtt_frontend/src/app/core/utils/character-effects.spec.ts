@@ -30,10 +30,10 @@ describe('unarmoredDefenseBonus', () => {
 describe('no_armor_or_shield equipment condition', () => {
   const leather = {
     index: 'leather-armor', type: 'armor', category: 'Light Armor', properties: [],
-  } as DndItem;
+  } as unknown as DndItem;
   const shield = {
     index: 'shield', type: 'armor', category: 'Shield', properties: [],
-  } as DndItem;
+  } as unknown as DndItem;
   const equipped = (itemIndex: string): EquipmentEntry[] => [
     { itemIndex, name: itemIndex, quantity: 1, equipped: true },
   ];
