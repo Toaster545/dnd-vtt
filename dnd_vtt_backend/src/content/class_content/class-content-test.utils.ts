@@ -79,6 +79,7 @@ export interface ClassContent {
     pact_magic?: { slots: number; slot_level: number };
     spell_slots?: Record<string, number>;
     cantrips_known?: number;
+    spells_known?: number;
     prepared_spells?: number;
     class_specific?: Record<string, number | string>;
   }[];

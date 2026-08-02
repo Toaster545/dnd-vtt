@@ -14,7 +14,6 @@ export interface ClassEntry {
   skills: string[];
   traits: Record<string, string[]>;
 }
-
 type ViewMode = 'list' | 'my-classes' | 'detail';
 
 @Component({
@@ -212,7 +211,7 @@ export class ClassStepComponent implements OnInit {
     this.syncDraft();
   }
 
-  expertiseOptions(): string[] {
+  expertiseOptions(grant: Extract<TraitGrant, { type: 'expertise_choice' }>): string[] {
     const cls = this.browsingClass();
     const laterClassSkills = [
       ...(cls?.levels ?? []),
@@ -220,7 +219,12 @@ export class ClassStepComponent implements OnInit {
     ].flatMap(level => (level.grants ?? [])
       .filter((grant): grant is Extract<TraitGrant, { type: 'skill_choice' }> => grant.type === 'skill_choice')
       .flatMap(grant => grant.key === 'skills' ? this.draftSkills() : (this.draftTraits()[grant.key] ?? [])));
-    return [...new Set([...this.proficientSkills(), ...this.draftSkills(), ...laterClassSkills])].sort();
+    const proficient = [...new Set([...this.proficientSkills(), ...this.draftSkills(), ...laterClassSkills])];
+    const eligible = grant.skills
+      ? proficient.filter(skill => grant.skills?.includes(skill))
+      : proficient;
+    // Keep stale/ineligible saved picks visible so the player can always remove them.
+    return [...new Set([...eligible, ...(this.draftTraits()[grant.key] ?? [])])].sort();
   }
 
   expertiseTakenElsewhere(grant: Extract<TraitGrant, { type: 'expertise_choice' }>, skill: string): boolean {
@@ -239,7 +243,9 @@ export class ClassStepComponent implements OnInit {
   toggleExpertise(grant: Extract<TraitGrant, { type: 'expertise_choice' }>, skill: string) {
     const selected = this.draftTraits()[grant.key] ?? [];
     if (!selected.includes(skill) &&
-        (selected.length >= grant.choose || this.expertiseTakenElsewhere(grant, skill))) return;
+        (!this.expertiseOptions(grant).includes(skill) ||
+         selected.length >= grant.choose ||
+         this.expertiseTakenElsewhere(grant, skill))) return;
     const next = selected.includes(skill)
       ? selected.filter(candidate => candidate !== skill)
       : [...selected, skill];

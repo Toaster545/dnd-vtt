@@ -7,7 +7,6 @@ export interface SpellSlots {
   '1'?: number; '2'?: number; '3'?: number; '4'?: number; '5'?: number;
   '6'?: number; '7'?: number; '8'?: number; '9'?: number;
 }
-
 // A choice's mechanical effect (AC bonus, proficiency, etc.), computed generically
 // instead of matched by display name.
 export interface TraitEffect {
@@ -68,8 +67,8 @@ export type TraitGrant =
   // `skills` restricts to a named list (e.g. Elf's Keen Senses); omitted = any skill (Human's Skillful).
   | { type: 'skill_choice'; key: string; name: string; choose: number; description?: string; skills?: string[] }
   // Choose existing skill proficiencies whose proficiency bonus is doubled. Options are derived
-  // from the character's live proficient-skill set rather than embedded in class JSON.
-  | { type: 'expertise_choice'; key: string; name: string; choose: number; description?: string }
+  // from the character's live proficient-skill set; `skills` optionally narrows the eligible set.
+  | { type: 'expertise_choice'; key: string; name: string; choose: number; description?: string; skills?: string[] }
   // Options are derived from weapon items (DndItem.mastery) the class is proficient with,
   // filtered by category, rather than embedded here.
   | { type: 'weapon_mastery'; key: string; name: string; choose: number; description?: string; proficiency: string[] }

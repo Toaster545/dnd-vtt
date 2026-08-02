@@ -1,133 +1,695 @@
 {
   "index": "wizard",
   "name": "Wizard",
+  "description": "Wizards master magic through exhaustive study, recording spells in a personal spellbook and preparing the precise tools an adventure demands. Their unmatched breadth of arcane knowledge rewards planning, experimentation, and scholarly specialization.",
+  "primary_abilities": ["intelligence"],
   "hit_die": 6,
   "saving_throws": ["intelligence", "wisdom"],
   "armor_training": [],
-  "weapon_proficiencies": ["Daggers", "Darts", "Slings", "Quarterstaffs", "Light Crossbows"],
+  "weapon_proficiencies": ["Simple Weapons"],
   "tool_proficiencies": [],
   "skill_choices": {
     "count": 2,
-    "from": ["Arcana", "History", "Insight", "Investigation", "Medicine", "Religion"]
+    "from": [
+      "Arcana",
+      "History",
+      "Insight",
+      "Investigation",
+      "Medicine",
+      "Nature",
+      "Religion"
+    ]
   },
-  "starting_equipment": [
-    { "choice": true, "options": ["Quarterstaff", "Dagger"] },
-    { "choice": true, "options": ["Component pouch", "Arcane focus"] },
-    { "choice": true, "options": ["Scholar's pack", "Explorer's pack"] },
-    { "fixed": ["Spellbook"] }
-  ],
+  "starting_equipment": {
+    "fixed": [
+      { "key": "daggers", "item": "dagger", "quantity": 2 },
+      { "key": "focus", "item": "arcane-focus-quarterstaff" },
+      { "key": "clothing", "item": "robe" },
+      { "key": "spellbook", "item": "spellbook" },
+      { "key": "pack", "item": "scholars-pack" }
+    ],
+    "groups": [],
+    "gold": 5,
+    "goldAlternative": 55
+  },
   "spellcasting_ability": "intelligence",
-  "subclass_level": 2,
+  "subclass_level": 3,
   "subclasses": [
     {
       "index": "abjuration",
-      "name": "School of Abjuration",
-      "description": "Master protective magic to ward allies and resist the spells of enemies.",
+      "name": "Abjurer",
+      "description": "Specialize in protective magic, raising a renewable Arcane Ward, shielding allies, breaking hostile spells, and resisting magical harm.",
       "levels": [
-        { "level": 2,  "features": ["Abjuration Savant", "Arcane Ward"] },
-        { "level": 6,  "features": ["Projected Ward"] },
-        { "level": 10, "features": ["Improved Abjuration"] },
-        { "level": 14, "features": ["Spell Resistance"] }
-      ]
-    },
-    {
-      "index": "conjuration",
-      "name": "School of Conjuration",
-      "description": "Summon creatures and objects, and teleport across the battlefield.",
-      "levels": [
-        { "level": 2,  "features": ["Conjuration Savant", "Minor Conjuration"] },
-        { "level": 6,  "features": ["Benign Transposition"] },
-        { "level": 10, "features": ["Focused Conjuration"] },
-        { "level": 14, "features": ["Durable Summons"] }
+        {
+          "level": 3,
+          "features": ["Abjuration Savant", "Arcane Ward"],
+          "grants": [
+            {
+              "type": "feature",
+              "name": "Abjuration Savant",
+              "description": "Add two Abjuration spells of level 2 or lower to your spellbook for free. Whenever a Wizard level first gives you access to a new spell-slot level, add one Wizard spell from the Abjuration school of an eligible level to your spellbook for free. Detailed spell selection will use the shared spell system."
+            },
+            {
+              "type": "feature",
+              "name": "Arcane Ward",
+              "description": "When you cast an Abjuration spell with a spell slot, you can create a ward that lasts until your next Long Rest. It has Hit Points equal to twice your Wizard level plus your Intelligence modifier and takes damage before you do. Casting another Abjuration spell with a spell slot restores Hit Points equal to twice the slot's level. As a Bonus Action, you can also expend a spell slot to restore twice its level in Hit Points. The ward remains at 0 Hit Points until restored."
+            }
+          ]
+        },
+        {
+          "level": 6,
+          "features": ["Projected Ward"],
+          "grants": [
+            {
+              "type": "feature",
+              "name": "Projected Ward",
+              "description": "When a creature you can see within 30 feet takes damage, use your Reaction to have your Arcane Ward absorb that damage. Apply the creature's Resistances and Vulnerabilities before reducing the ward's Hit Points; any excess damage affects the creature."
+            }
+          ]
+        },
+        {
+          "level": 10,
+          "features": ["Spell Breaker"],
+          "grants": [
+            {
+              "type": "feature",
+              "name": "Spell Breaker",
+              "description": "Counterspell and Dispel Magic are always prepared and don't count against your prepared-spell limit. Cast Dispel Magic as a Bonus Action, and add your Proficiency Bonus to its ability check. When you cast either spell with a spell slot and fail to stop or end a spell, that spell slot isn't expended."
+            }
+          ]
+        },
+        {
+          "level": 14,
+          "features": ["Spell Resistance"],
+          "grants": [
+            {
+              "type": "feature",
+              "name": "Spell Resistance",
+              "description": "You have Advantage on saving throws against spells and Resistance to damage dealt by spells."
+            }
+          ]
+        }
       ]
     },
     {
       "index": "divination",
-      "name": "School of Divination",
-      "description": "Peer into the future to gain foreknowledge and manipulate fate.",
+      "name": "Diviner",
+      "description": "Study magic that reveals hidden truths and possible futures, recording prophetic rolls and turning expended divinations into renewed magical power.",
       "levels": [
-        { "level": 2,  "features": ["Divination Savant", "Portent"] },
-        { "level": 6,  "features": ["Expert Divination"] },
-        { "level": 10, "features": ["The Third Eye"] },
-        { "level": 14, "features": ["Greater Portent"] }
-      ]
-    },
-    {
-      "index": "enchantment",
-      "name": "School of Enchantment",
-      "description": "Charm and beguile others, manipulating their minds to follow your will.",
-      "levels": [
-        { "level": 2,  "features": ["Enchantment Savant", "Hypnotic Gaze"] },
-        { "level": 6,  "features": ["Instinctive Charm"] },
-        { "level": 10, "features": ["Split Enchantment"] },
-        { "level": 14, "features": ["Alter Memories"] }
+        {
+          "level": 3,
+          "features": ["Divination Savant", "Portent"],
+          "grants": [
+            {
+              "type": "feature",
+              "name": "Divination Savant",
+              "description": "Add two Divination spells of level 2 or lower to your spellbook for free. Whenever a Wizard level first gives you access to a new spell-slot level, add one Wizard spell from the Divination school of an eligible level to your spellbook for free. Detailed spell selection will use the shared spell system."
+            },
+            {
+              "type": "feature",
+              "key": "portent",
+              "name": "Portent",
+              "description": "After each Long Rest, roll two d20s and record the results. Before you or a creature you can see makes a D20 Test, replace the roll with one recorded result; each result can be used once and unused results vanish on your next Long Rest. At Wizard level 14, roll and record three d20s instead.",
+              "action": {
+                "activation": "free",
+                "uses": {
+                  "max": 2,
+                  "maxByLevel": { "14": 3 },
+                  "per": "long_rest"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "level": 6,
+          "features": ["Expert Divination"],
+          "grants": [
+            {
+              "type": "feature",
+              "name": "Expert Divination",
+              "description": "When you cast a level 2+ Divination spell with a spell slot, regain one expended spell slot. The regained slot must be lower than the slot you expended and can't be higher than level 5."
+            }
+          ]
+        },
+        {
+          "level": 10,
+          "features": ["The Third Eye"],
+          "grants": [
+            {
+              "type": "feature",
+              "key": "the-third-eye",
+              "name": "The Third Eye",
+              "description": "As a Bonus Action, choose one benefit until you start a Short or Long Rest or become Incapacitated: Darkvision out to 120 feet; the ability to read any language; or the ability to cast See Invisibility without a spell slot. Once per Short or Long Rest.",
+              "action": {
+                "activation": "bonus_action",
+                "uses": { "max": 1, "per": "short_rest" }
+              }
+            }
+          ]
+        },
+        {
+          "level": 14,
+          "features": ["Greater Portent"],
+          "grants": [
+            {
+              "type": "feature",
+              "name": "Greater Portent",
+              "description": "Roll three d20s for Portent after a Long Rest instead of two. The progressive Portent resource above automatically increases to three uses at this level."
+            }
+          ]
+        }
       ]
     },
     {
       "index": "evocation",
-      "name": "School of Evocation",
-      "description": "Wield the raw power of fire, lightning, and thunder to devastate your foes.",
+      "name": "Evoker",
+      "description": "Shape explosive elemental magic with precision, making cantrips reliable, shielding allies from your areas of effect, and driving spell damage to its maximum.",
       "levels": [
-        { "level": 2,  "features": ["Evocation Savant", "Sculpt Spells"] },
-        { "level": 6,  "features": ["Potent Cantrip"] },
-        { "level": 10, "features": ["Empowered Evocation"] },
-        { "level": 14, "features": ["Overchannel"] }
+        {
+          "level": 3,
+          "features": ["Evocation Savant", "Potent Cantrip"],
+          "grants": [
+            {
+              "type": "feature",
+              "name": "Evocation Savant",
+              "description": "Add two Evocation spells of level 2 or lower to your spellbook for free. Whenever a Wizard level first gives you access to a new spell-slot level, add one Wizard spell from the Evocation school of an eligible level to your spellbook for free. Detailed spell selection will use the shared spell system."
+            },
+            {
+              "type": "feature",
+              "name": "Potent Cantrip",
+              "description": "When you cast a damaging cantrip at a creature and miss its attack roll or the target succeeds on its saving throw, the target takes half the cantrip's damage, if any, but suffers no additional effect."
+            }
+          ]
+        },
+        {
+          "level": 6,
+          "features": ["Sculpt Spells"],
+          "grants": [
+            {
+              "type": "feature",
+              "name": "Sculpt Spells",
+              "description": "When you cast an Evocation spell that affects other creatures you can see, choose a number of them equal to 1 plus the spell's level. They automatically succeed on saves against the spell and take no damage if a successful save would normally deal half damage."
+            }
+          ]
+        },
+        {
+          "level": 10,
+          "features": ["Empowered Evocation"],
+          "grants": [
+            {
+              "type": "feature",
+              "name": "Empowered Evocation",
+              "description": "Whenever you cast a Wizard spell from the Evocation school, add your Intelligence modifier to one damage roll of that spell."
+            }
+          ]
+        },
+        {
+          "level": 14,
+          "features": ["Overchannel"],
+          "grants": [
+            {
+              "type": "feature",
+              "name": "Overchannel",
+              "description": "When you cast a damaging Wizard spell with a level 1-5 spell slot, deal maximum damage with it on the turn you cast it. The first use before a Long Rest is safe. Each later use deals 2d12 Necrotic damage per level of the slot immediately afterward, ignoring Resistance and Immunity; increase this damage by 1d12 per slot level after each additional use."
+            }
+          ]
+        }
       ]
     },
     {
       "index": "illusion",
-      "name": "School of Illusion",
-      "description": "Weave illusions to deceive the senses and create false realities.",
+      "name": "Illusionist",
+      "description": "Refine deceptive magic until illusions are faster, quieter, farther-reaching, capable of conjuring spectral creatures, and eventually able to become briefly real.",
       "levels": [
-        { "level": 2,  "features": ["Illusion Savant", "Improved Minor Illusion"] },
-        { "level": 6,  "features": ["Malleable Illusions"] },
-        { "level": 10, "features": ["Illusory Self"] },
-        { "level": 14, "features": ["Illusory Reality"] }
-      ]
-    },
-    {
-      "index": "necromancy",
-      "name": "School of Necromancy",
-      "description": "Tap into the power of life and death, animating the dead to serve you.",
-      "levels": [
-        { "level": 2,  "features": ["Necromancy Savant", "Grim Harvest"] },
-        { "level": 6,  "features": ["Undead Thralls"] },
-        { "level": 10, "features": ["Inured to Undeath"] },
-        { "level": 14, "features": ["Command Undead"] }
-      ]
-    },
-    {
-      "index": "transmutation",
-      "name": "School of Transmutation",
-      "description": "Alter the properties of matter and energy, transforming objects and creatures.",
-      "levels": [
-        { "level": 2,  "features": ["Transmutation Savant", "Minor Alchemy"] },
-        { "level": 6,  "features": ["Transmuter's Stone"] },
-        { "level": 10, "features": ["Shapechanger"] },
-        { "level": 14, "features": ["Master Transmuter"] }
+        {
+          "level": 3,
+          "features": ["Illusion Savant", "Improved Illusions"],
+          "grants": [
+            {
+              "type": "feature",
+              "name": "Illusion Savant",
+              "description": "Add two Illusion spells of level 2 or lower to your spellbook for free. Whenever a Wizard level first gives you access to a new spell-slot level, add one Wizard spell from the Illusion school of an eligible level to your spellbook for free. Detailed spell selection will use the shared spell system."
+            },
+            {
+              "type": "feature",
+              "name": "Improved Illusions",
+              "description": "Minor Illusion is always prepared; if you already know it, learn another Wizard cantrip. Cast Minor Illusion as a Bonus Action. Illusion spells you cast need no Verbal component, and if such a spell has a range of 10 feet or more, its range increases by 60 feet."
+            }
+          ]
+        },
+        {
+          "level": 6,
+          "features": ["Phantasmal Creatures"],
+          "grants": [
+            {
+              "type": "feature",
+              "key": "phantasmal-summon-beast",
+              "name": "Phantasmal Creatures — Summon Beast",
+              "description": "Summon Beast is always prepared and doesn't count against your prepared-spell limit. Cast it as an Illusion spell without a spell slot once per Long Rest; the summoned creature appears spectral and has half its normal Hit Points.",
+              "action": {
+                "activation": "action",
+                "uses": { "max": 1, "per": "long_rest" }
+              }
+            },
+            {
+              "type": "feature",
+              "key": "phantasmal-summon-fey",
+              "name": "Phantasmal Creatures — Summon Fey",
+              "description": "Summon Fey is always prepared and doesn't count against your prepared-spell limit. Cast it as an Illusion spell without a spell slot once per Long Rest; the summoned creature appears spectral and has half its normal Hit Points.",
+              "action": {
+                "activation": "action",
+                "uses": { "max": 1, "per": "long_rest" }
+              }
+            }
+          ]
+        },
+        {
+          "level": 10,
+          "features": ["Illusory Self"],
+          "grants": [
+            {
+              "type": "feature",
+              "key": "illusory-self",
+              "name": "Illusory Self",
+              "description": "When a creature hits you with an attack roll, use your Reaction to interpose an illusory duplicate and make the attack miss. Once per Short or Long Rest, or restore the use by expending a level 2+ spell slot without an action.",
+              "action": {
+                "activation": "reaction",
+                "uses": { "max": 1, "per": "short_rest" }
+              }
+            }
+          ]
+        },
+        {
+          "level": 14,
+          "features": ["Illusory Reality"],
+          "grants": [
+            {
+              "type": "feature",
+              "name": "Illusory Reality",
+              "description": "When you cast an Illusion spell with a spell slot, choose one inanimate, nonmagical object that is part of the illusion. As a Bonus Action while the spell lasts, make that object real for 1 minute. It can't deal damage or give any creature a condition."
+            }
+          ]
+        }
       ]
     }
   ],
   "levels": [
-    { "level": 1,  "proficiency_bonus": 2, "features": ["Spellcasting", "Arcane Recovery"],       "cantrips_known": 3, "spells_known": 6,  "spell_slots": { "1": 2 } },
-    { "level": 2,  "proficiency_bonus": 2, "features": ["Arcane Tradition"],                      "cantrips_known": 3, "spells_known": 8,  "spell_slots": { "1": 3 } },
-    { "level": 3,  "proficiency_bonus": 2, "features": [],                                        "cantrips_known": 3, "spells_known": 10, "spell_slots": { "1": 4, "2": 2 } },
-    { "level": 4,  "proficiency_bonus": 2, "features": ["Ability Score Improvement"],             "cantrips_known": 4, "spells_known": 12, "spell_slots": { "1": 4, "2": 3 } },
-    { "level": 5,  "proficiency_bonus": 3, "features": [],                                        "cantrips_known": 4, "spells_known": 14, "spell_slots": { "1": 4, "2": 3, "3": 2 } },
-    { "level": 6,  "proficiency_bonus": 3, "features": ["Arcane Tradition Feature"],              "cantrips_known": 4, "spells_known": 16, "spell_slots": { "1": 4, "2": 3, "3": 3 } },
-    { "level": 7,  "proficiency_bonus": 3, "features": [],                                        "cantrips_known": 4, "spells_known": 18, "spell_slots": { "1": 4, "2": 3, "3": 3, "4": 1 } },
-    { "level": 8,  "proficiency_bonus": 3, "features": ["Ability Score Improvement"],             "cantrips_known": 4, "spells_known": 20, "spell_slots": { "1": 4, "2": 3, "3": 3, "4": 2 } },
-    { "level": 9,  "proficiency_bonus": 4, "features": [],                                        "cantrips_known": 4, "spells_known": 22, "spell_slots": { "1": 4, "2": 3, "3": 3, "4": 3, "5": 1 } },
-    { "level": 10, "proficiency_bonus": 4, "features": ["Arcane Tradition Feature"],              "cantrips_known": 5, "spells_known": 24, "spell_slots": { "1": 4, "2": 3, "3": 3, "4": 3, "5": 2 } },
-    { "level": 11, "proficiency_bonus": 4, "features": [],                                        "cantrips_known": 5, "spells_known": 26, "spell_slots": { "1": 4, "2": 3, "3": 3, "4": 3, "5": 2, "6": 1 } },
-    { "level": 12, "proficiency_bonus": 4, "features": ["Ability Score Improvement"],             "cantrips_known": 5, "spells_known": 28, "spell_slots": { "1": 4, "2": 3, "3": 3, "4": 3, "5": 2, "6": 1 } },
-    { "level": 13, "proficiency_bonus": 5, "features": [],                                        "cantrips_known": 5, "spells_known": 30, "spell_slots": { "1": 4, "2": 3, "3": 3, "4": 3, "5": 2, "6": 1, "7": 1 } },
-    { "level": 14, "proficiency_bonus": 5, "features": ["Arcane Tradition Feature"],              "cantrips_known": 5, "spells_known": 32, "spell_slots": { "1": 4, "2": 3, "3": 3, "4": 3, "5": 2, "6": 1, "7": 1 } },
-    { "level": 15, "proficiency_bonus": 5, "features": [],                                        "cantrips_known": 5, "spells_known": 34, "spell_slots": { "1": 4, "2": 3, "3": 3, "4": 3, "5": 2, "6": 1, "7": 1, "8": 1 } },
-    { "level": 16, "proficiency_bonus": 5, "features": ["Ability Score Improvement"],             "cantrips_known": 5, "spells_known": 36, "spell_slots": { "1": 4, "2": 3, "3": 3, "4": 3, "5": 2, "6": 1, "7": 1, "8": 1 } },
-    { "level": 17, "proficiency_bonus": 6, "features": [],                                        "cantrips_known": 5, "spells_known": 38, "spell_slots": { "1": 4, "2": 3, "3": 3, "4": 3, "5": 2, "6": 1, "7": 1, "8": 1, "9": 1 } },
-    { "level": 18, "proficiency_bonus": 6, "features": ["Spell Mastery"],                         "cantrips_known": 5, "spells_known": 40, "spell_slots": { "1": 4, "2": 3, "3": 3, "4": 3, "5": 3, "6": 1, "7": 1, "8": 1, "9": 1 } },
-    { "level": 19, "proficiency_bonus": 6, "features": ["Ability Score Improvement"],             "cantrips_known": 5, "spells_known": 42, "spell_slots": { "1": 4, "2": 3, "3": 3, "4": 3, "5": 3, "6": 2, "7": 1, "8": 1, "9": 1 } },
-    { "level": 20, "proficiency_bonus": 6, "features": ["Signature Spells"],                      "cantrips_known": 5, "spells_known": 44, "spell_slots": { "1": 4, "2": 3, "3": 3, "4": 3, "5": 3, "6": 2, "7": 2, "8": 1, "9": 1 } }
+    {
+      "level": 1,
+      "proficiency_bonus": 2,
+      "features": ["Spellcasting", "Ritual Adept", "Arcane Recovery"],
+      "cantrips_known": 3,
+      "spells_known": 6,
+      "prepared_spells": 4,
+      "spell_slots": { "1": 2 },
+      "grants": [
+        {
+          "type": "skill_choice",
+          "key": "skills",
+          "name": "Wizard Skill Proficiencies",
+          "choose": 2,
+          "description": "Choose two Wizard skill proficiencies.",
+          "skills": [
+            "Arcana",
+            "History",
+            "Insight",
+            "Investigation",
+            "Medicine",
+            "Nature",
+            "Religion"
+          ]
+        },
+        {
+          "type": "feature",
+          "name": "Spellcasting",
+          "description": "Cast Wizard spells with Intelligence using an Arcane Focus or your spellbook. Your spellbook starts with six level 1 Wizard spells and gains two eligible Wizard spells whenever you gain another Wizard level; found Wizard spells can be copied for 2 hours and 50 GP per spell level. Prepare the number of spells shown in the Wizard table, change them after a Long Rest, and regain spell slots after a Long Rest. You can replace one Wizard cantrip after each Long Rest. Detailed spellbook and prepared-spell selection will use the shared spell system."
+        },
+        {
+          "type": "feature",
+          "name": "Ritual Adept",
+          "description": "Cast a spell as a Ritual if it has the Ritual tag and is in your spellbook. It needn't be prepared, but you must read it from the spellbook while casting."
+        },
+        {
+          "type": "feature",
+          "key": "arcane-recovery",
+          "name": "Arcane Recovery",
+          "description": "After finishing a Short Rest, recover expended spell slots whose combined levels are no more than half your Wizard level, rounded up. No recovered slot can be level 6 or higher. Once per Long Rest.",
+          "action": {
+            "activation": "free",
+            "uses": { "max": 1, "per": "long_rest" }
+          }
+        }
+      ]
+    },
+    {
+      "level": 2,
+      "proficiency_bonus": 2,
+      "features": ["Scholar"],
+      "cantrips_known": 3,
+      "spells_known": 8,
+      "prepared_spells": 5,
+      "spell_slots": { "1": 3 },
+      "grants": [
+        {
+          "type": "expertise_choice",
+          "key": "scholar_expertise",
+          "name": "Scholar",
+          "choose": 1,
+          "description": "Choose one listed skill in which you are proficient; your Proficiency Bonus is doubled for checks using it.",
+          "skills": [
+            "Arcana",
+            "History",
+            "Investigation",
+            "Medicine",
+            "Nature",
+            "Religion"
+          ]
+        }
+      ]
+    },
+    {
+      "level": 3,
+      "proficiency_bonus": 2,
+      "features": ["Wizard Subclass"],
+      "cantrips_known": 3,
+      "spells_known": 10,
+      "prepared_spells": 6,
+      "spell_slots": { "1": 4, "2": 2 },
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Wizard Subclass",
+          "description": "Choose a Wizard specialization, gaining its features at this level and again at Wizard levels 6, 10, and 14."
+        }
+      ]
+    },
+    {
+      "level": 4,
+      "proficiency_bonus": 2,
+      "features": ["Ability Score Improvement"],
+      "cantrips_known": 4,
+      "spells_known": 12,
+      "prepared_spells": 7,
+      "spell_slots": { "1": 4, "2": 3 },
+      "grants": [
+        {
+          "type": "ability_choice",
+          "key": "asi_4",
+          "name": "Ability Score Improvement",
+          "description": "Increase one ability score by 2, or two scores by 1 each, to a maximum of 20 (or take a feat).",
+          "points": 2,
+          "allowFeat": true
+        }
+      ]
+    },
+    {
+      "level": 5,
+      "proficiency_bonus": 3,
+      "features": ["Memorize Spell"],
+      "cantrips_known": 4,
+      "spells_known": 14,
+      "prepared_spells": 9,
+      "spell_slots": { "1": 4, "2": 3, "3": 2 },
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Memorize Spell",
+          "description": "Whenever you finish a Short Rest, replace one prepared level 1+ Wizard spell with another eligible level 1+ spell from your spellbook."
+        }
+      ]
+    },
+    {
+      "level": 6,
+      "proficiency_bonus": 3,
+      "features": ["Wizard Subclass Feature"],
+      "cantrips_known": 4,
+      "spells_known": 16,
+      "prepared_spells": 10,
+      "spell_slots": { "1": 4, "2": 3, "3": 3 },
+      "grants": []
+    },
+    {
+      "level": 7,
+      "proficiency_bonus": 3,
+      "features": [],
+      "cantrips_known": 4,
+      "spells_known": 18,
+      "prepared_spells": 11,
+      "spell_slots": { "1": 4, "2": 3, "3": 3, "4": 1 },
+      "grants": []
+    },
+    {
+      "level": 8,
+      "proficiency_bonus": 3,
+      "features": ["Ability Score Improvement"],
+      "cantrips_known": 4,
+      "spells_known": 20,
+      "prepared_spells": 12,
+      "spell_slots": { "1": 4, "2": 3, "3": 3, "4": 2 },
+      "grants": [
+        {
+          "type": "ability_choice",
+          "key": "asi_8",
+          "name": "Ability Score Improvement",
+          "description": "Increase one ability score by 2, or two scores by 1 each, to a maximum of 20 (or take a feat).",
+          "points": 2,
+          "allowFeat": true
+        }
+      ]
+    },
+    {
+      "level": 9,
+      "proficiency_bonus": 4,
+      "features": [],
+      "cantrips_known": 4,
+      "spells_known": 22,
+      "prepared_spells": 14,
+      "spell_slots": { "1": 4, "2": 3, "3": 3, "4": 3, "5": 1 },
+      "grants": []
+    },
+    {
+      "level": 10,
+      "proficiency_bonus": 4,
+      "features": ["Wizard Subclass Feature"],
+      "cantrips_known": 5,
+      "spells_known": 24,
+      "prepared_spells": 15,
+      "spell_slots": { "1": 4, "2": 3, "3": 3, "4": 3, "5": 2 },
+      "grants": []
+    },
+    {
+      "level": 11,
+      "proficiency_bonus": 4,
+      "features": [],
+      "cantrips_known": 5,
+      "spells_known": 26,
+      "prepared_spells": 16,
+      "spell_slots": { "1": 4, "2": 3, "3": 3, "4": 3, "5": 2, "6": 1 },
+      "grants": []
+    },
+    {
+      "level": 12,
+      "proficiency_bonus": 4,
+      "features": ["Ability Score Improvement"],
+      "cantrips_known": 5,
+      "spells_known": 28,
+      "prepared_spells": 16,
+      "spell_slots": { "1": 4, "2": 3, "3": 3, "4": 3, "5": 2, "6": 1 },
+      "grants": [
+        {
+          "type": "ability_choice",
+          "key": "asi_12",
+          "name": "Ability Score Improvement",
+          "description": "Increase one ability score by 2, or two scores by 1 each, to a maximum of 20 (or take a feat).",
+          "points": 2,
+          "allowFeat": true
+        }
+      ]
+    },
+    {
+      "level": 13,
+      "proficiency_bonus": 5,
+      "features": [],
+      "cantrips_known": 5,
+      "spells_known": 30,
+      "prepared_spells": 17,
+      "spell_slots": {
+        "1": 4,
+        "2": 3,
+        "3": 3,
+        "4": 3,
+        "5": 2,
+        "6": 1,
+        "7": 1
+      },
+      "grants": []
+    },
+    {
+      "level": 14,
+      "proficiency_bonus": 5,
+      "features": ["Wizard Subclass Feature"],
+      "cantrips_known": 5,
+      "spells_known": 32,
+      "prepared_spells": 18,
+      "spell_slots": {
+        "1": 4,
+        "2": 3,
+        "3": 3,
+        "4": 3,
+        "5": 2,
+        "6": 1,
+        "7": 1
+      },
+      "grants": []
+    },
+    {
+      "level": 15,
+      "proficiency_bonus": 5,
+      "features": [],
+      "cantrips_known": 5,
+      "spells_known": 34,
+      "prepared_spells": 19,
+      "spell_slots": {
+        "1": 4,
+        "2": 3,
+        "3": 3,
+        "4": 3,
+        "5": 2,
+        "6": 1,
+        "7": 1,
+        "8": 1
+      },
+      "grants": []
+    },
+    {
+      "level": 16,
+      "proficiency_bonus": 5,
+      "features": ["Ability Score Improvement"],
+      "cantrips_known": 5,
+      "spells_known": 36,
+      "prepared_spells": 21,
+      "spell_slots": {
+        "1": 4,
+        "2": 3,
+        "3": 3,
+        "4": 3,
+        "5": 2,
+        "6": 1,
+        "7": 1,
+        "8": 1
+      },
+      "grants": [
+        {
+          "type": "ability_choice",
+          "key": "asi_16",
+          "name": "Ability Score Improvement",
+          "description": "Increase one ability score by 2, or two scores by 1 each, to a maximum of 20 (or take a feat).",
+          "points": 2,
+          "allowFeat": true
+        }
+      ]
+    },
+    {
+      "level": 17,
+      "proficiency_bonus": 6,
+      "features": [],
+      "cantrips_known": 5,
+      "spells_known": 38,
+      "prepared_spells": 22,
+      "spell_slots": {
+        "1": 4,
+        "2": 3,
+        "3": 3,
+        "4": 3,
+        "5": 2,
+        "6": 1,
+        "7": 1,
+        "8": 1,
+        "9": 1
+      },
+      "grants": []
+    },
+    {
+      "level": 18,
+      "proficiency_bonus": 6,
+      "features": ["Spell Mastery"],
+      "cantrips_known": 5,
+      "spells_known": 40,
+      "prepared_spells": 23,
+      "spell_slots": {
+        "1": 4,
+        "2": 3,
+        "3": 3,
+        "4": 3,
+        "5": 3,
+        "6": 1,
+        "7": 1,
+        "8": 1,
+        "9": 1
+      },
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Spell Mastery",
+          "description": "Choose a level 1 and a level 2 spell in your spellbook that each have a casting time of an action. They are always prepared and can be cast at their lowest level without a spell slot. After a Long Rest, replace one with an eligible spell of the same level. Detailed spell selection will use the shared spell system."
+        }
+      ]
+    },
+    {
+      "level": 19,
+      "proficiency_bonus": 6,
+      "features": ["Epic Boon"],
+      "cantrips_known": 5,
+      "spells_known": 42,
+      "prepared_spells": 24,
+      "spell_slots": {
+        "1": 4,
+        "2": 3,
+        "3": 3,
+        "4": 3,
+        "5": 3,
+        "6": 2,
+        "7": 1,
+        "8": 1,
+        "9": 1
+      },
+      "grants": [
+        {
+          "type": "feat_pick",
+          "key": "epic_boon_19",
+          "name": "Epic Boon",
+          "choose": 1,
+          "category": "epic",
+          "description": "Choose an Epic Boon feat or another feat for which you qualify. Boon of Spell Recall is recommended."
+        }
+      ]
+    },
+    {
+      "level": 20,
+      "proficiency_bonus": 6,
+      "features": ["Signature Spells"],
+      "cantrips_known": 5,
+      "spells_known": 44,
+      "prepared_spells": 25,
+      "spell_slots": {
+        "1": 4,
+        "2": 3,
+        "3": 3,
+        "4": 3,
+        "5": 3,
+        "6": 2,
+        "7": 2,
+        "8": 1,
+        "9": 1
+      },
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Signature Spells",
+          "description": "Choose two level 3 spells in your spellbook. They are always prepared, and each can be cast once at level 3 without a spell slot per Short or Long Rest. Casting either at a higher level still requires a spell slot. Detailed spell selection and per-spell tracking will use the shared spell system."
+        }
+      ]
+    }
   ]
 }
