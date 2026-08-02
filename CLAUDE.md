@@ -103,25 +103,85 @@ feature) — see `fighter.json`/`paladin.json`/`ranger.json` for the pattern.
 and a socket.io gateway (`tokens.gateway.ts`) that broadcasts token position changes to all connected
 clients on the same port as the REST API (no separate WS server/port).
 
-**Modules:** `auth`, `characters`, `content`, `maps` (+ `tokens.gateway`), `sessions` — one Nest module
-each, following the standard controller/service/module triplet.
+**Modules:** `auth`, `characters`, `content`, `maps` (+ `tokens.gateway`), `sessions`, `encounters`,
+`campaigns`, `notes` — one Nest module each, following the standard controller/service/module triplet.
 
 ### Frontend structure
 
-- `core/guards` — `authGuard`, `adminGuard` (route-level)
-- `core/interceptors` — injects the Bearer token onto outgoing requests
-- `core/services` — one per backend domain (`auth`, `character`, `battle-map`, `content`, `session`,
-  `socket`), plus `open5e`/`dnd5e` for external SRD data and `character-stats` for derived character math
+Routing (`app.routes.ts`) has no route-level DM/player split — everything logged-in lives under a
+single `home` shell route (`features/shell/`), and which view of a campaign you land on is decided
+by ownership (`CampaignsComponent.campaignLink`), not by an `adminGuard`-gated path. DM-only campaign
+management screens live under `features/dm/dm-campaigns/`, gated per-endpoint on the backend by
+`campaign.dm_id` rather than by role.
+
+- `core/guards` — `authGuard`, `adminGuard`, `homeRedirectGuard`, `staleSessionGuard`
+- `core/interceptors` — `auth.interceptor.ts` injects the Bearer token onto outgoing requests
+- `core/models` — one file per backend domain (`campaign`, `character`, `encounter`, `notes`,
+  `session`, `user`)
+- `core/services` — one per backend domain (`auth`, `character`, `campaign`, `battle-map`, `content`,
+  `session`, `encounter`, `notes`, `socket`, `activity`/`recent-activity`), plus `open5e`/`dnd5e` for
+  external SRD data and `character-stats`/`character-actions` for derived character math
+- `core/utils` — pure helpers (`character-effects`, `background-skills`, `progressive-choice`,
+  `starting-equipment`, `avatar`, `error-message`)
 - `features/` — routed, lazy-loaded standalone components (`app.routes.ts` uses `loadComponent` per
   route, no NgModules)
-- `features/dm/` — DM-only area (character creation wizard, session management, live play), gated by
-  `adminGuard` at the `dm` route
-- `features/dm/dm-create/dm-characters/character-wizard/steps/` — one step component per wizard page
-  (race, class, background, abilities, equipment, spells, details)
-- `shared/` — cross-feature reusable components (confirm dialog, character display)
+- `features/characters/character-wizard/steps/` — one step component per wizard page (race, class,
+  background, abilities, equipment, spells, details)
+- `features/dm/dm-campaigns/` — DM campaign management: hub, maps, session, encounter-play
+- `features/player/player-campaigns/` — the joined-member counterpart: hub, session
+- `features/battle-map/` — Konva canvas plus toolbar/add-token-panel/turn-order-panel components
+- `features/create-content/` — DM-authored content (currently monsters)
+- `shared/layout/` — `main-layout`, `app-header`, `page-header`
+- `shared/` — other cross-feature reusable components (confirm dialog, notes-panel, party-list,
+  portrait-picker-dialog, description-dialog)
 
 Styling is SCSS with Tailwind utilities layered in (`tailwind.config.js`, `postcss.config.js`); Angular
 Material is a dependency but usage is selective, not app-wide.
+
+### Project structure (top-level, illustrative not exhaustive)
+
+```
+dnd_vtt_backend/
+  src/
+    auth/            # AuthModule, JwtGuard, AdminGuard
+    characters/       # character CRUD, JSON `data` blob (v2 schema)
+    content/           # static SRD content service (classes, races, ..., class_content/, dto/)
+    maps/               # map/token REST + tokens.gateway.ts (socket.io)
+    sessions/            # session CRUD (dto/)
+    encounters/           # encounter CRUD (dto/)
+    campaigns/             # campaign CRUD, dm_id ownership (dto/)
+    notes/                  # session/campaign notes (dto/)
+    common/                  # DatabaseService (libsql, hand-rolled migrations)
+    types/                    # shared TS types
+    app.module.ts / main.ts
+  content/                     # SRD JSON: backgrounds, classes, feats, items, monsters, races, spells
+  scripts/make-admin.mjs
+
+dnd_vtt_frontend/
+  src/app/
+    core/
+      guards/          # authGuard, adminGuard, homeRedirectGuard, staleSessionGuard
+      interceptors/     # auth.interceptor.ts
+      models/            # campaign, character, encounter, notes, session, user
+      services/           # one per backend domain + open5e/dnd5e + character-stats/-actions
+      utils/                # character-effects, background-skills, progressive-choice, ...
+    features/
+      auth/             # login, register
+      dashboard/
+      settings/
+      shell/             # single post-login shell, hosts the `home/*` child routes
+      campaigns/          # campaign list (CampaignsComponent decides DM vs player link)
+      dm/dm-campaigns/     # dm-campaign-hub, dm-campaign-maps, dm-campaign-session, dm-encounter-play
+      player/player-campaigns/  # player-campaign-hub, player-campaign-session
+      characters/          # character-play-sheet, character-wizard/steps/*, character-preview
+      battle-map/            # Konva canvas + toolbar/add-token-panel/turn-order-panel
+      create-content/          # monsters (monster-form)
+    shared/
+      layout/            # main-layout, app-header, page-header
+      components/          # notes-panel, party-list, description-dialog
+      confirm-dialog/, portrait-picker-dialog/, directives/, pipes/
+    app.routes.ts
+```
 
 ## Conventions
 

@@ -5,12 +5,13 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { CampaignService } from '../../../../core/services/campaign.service';
 import { CharacterService } from '../../../../core/services/character.service';
 import { AuthService } from '../../../../core/services/auth.service';
+import { RecentActivityService } from '../../../../core/services/recent-activity.service';
 import { CampaignHub, CampaignMember } from '../../../../core/models/campaign.model';
 import { Character } from '../../../../core/models/character.model';
 import { NotesPanelComponent } from '../../../../shared/components/notes-panel/notes-panel';
 import { PartyListComponent } from '../../../../shared/components/party-list/party-list';
-import { CharacterWizardComponent } from '../../../dm/dm-create/dm-characters/character-wizard/character-wizard';
-import { CharacterPlaySheetComponent } from '../../../dm/dm-play/character-play-sheet/character-play-sheet';
+import { CharacterWizardComponent } from '../../../characters/character-wizard/character-wizard';
+import { CharacterPlaySheetComponent } from '../../../characters/character-play-sheet/character-play-sheet';
 
 @Component({
   selector: 'app-player-campaign-hub',
@@ -30,6 +31,7 @@ export class PlayerCampaignHubComponent implements OnInit {
   private router           = inject(Router);
   private campaignService  = inject(CampaignService);
   private characterService = inject(CharacterService);
+  private recentActivity   = inject(RecentActivityService);
   auth                     = inject(AuthService);
 
   campaignId = this.route.snapshot.paramMap.get('campaignId')!;
@@ -42,12 +44,13 @@ export class PlayerCampaignHubComponent implements OnInit {
   sheetCharacter = signal<Character | null>(null);
 
   async ngOnInit() {
+    this.recentActivity.markCampaignViewed(this.campaignId);
     this.campaign.set(await this.campaignService.getById(this.campaignId));
     this.loading.set(false);
   }
 
   backToList() {
-    void this.router.navigate(['/player/campaigns']);
+    void this.router.navigate(['/home/campaigns']);
   }
 
   // The DM grants this per member (see DmCampaignHubComponent.toggleEditAccess) — otherwise a

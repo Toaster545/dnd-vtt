@@ -13,10 +13,11 @@ import {
 import { EncountersService } from './encounters.service';
 import { CreateEncounterDto } from './dto/create-encounter.dto';
 import { JwtGuard } from '../auth/jwt.guard';
-import { AdminGuard } from '../auth/admin.guard';
 import { CurrentUser } from '../common/current-user.decorator';
 import type { RequestUser } from '../common/current-user.decorator';
 
+// No AdminGuard — encounter ownership is scoped to the parent session's dm_id, checked inside
+// EncountersService (see create there; the rest already key every lookup off dm_id).
 @Controller('encounters')
 @UseGuards(JwtGuard)
 export class EncountersController {
@@ -44,13 +45,11 @@ export class EncountersController {
   }
 
   @Post()
-  @UseGuards(AdminGuard)
   create(@Body() dto: CreateEncounterDto, @CurrentUser() user: RequestUser) {
     return this.encounters.create(user.id, dto);
   }
 
   @Put(':id')
-  @UseGuards(AdminGuard)
   update(
     @Param('id') id: string,
     @Body() body: Record<string, unknown>,
@@ -60,37 +59,31 @@ export class EncountersController {
   }
 
   @Delete(':id')
-  @UseGuards(AdminGuard)
   remove(@Param('id') id: string, @CurrentUser() user: RequestUser) {
     return this.encounters.remove(id, user.id);
   }
 
   @Post(':id/start')
-  @UseGuards(AdminGuard)
   start(@Param('id') id: string, @CurrentUser() user: RequestUser) {
     return this.encounters.start(id, user.id);
   }
 
   @Post(':id/stop')
-  @UseGuards(AdminGuard)
   stop(@Param('id') id: string, @CurrentUser() user: RequestUser) {
     return this.encounters.stop(id, user.id);
   }
 
   @Post(':id/turn/next')
-  @UseGuards(AdminGuard)
   nextTurn(@Param('id') id: string, @CurrentUser() user: RequestUser) {
     return this.encounters.nextTurn(id, user.id);
   }
 
   @Post(':id/turn/previous')
-  @UseGuards(AdminGuard)
   previousTurn(@Param('id') id: string, @CurrentUser() user: RequestUser) {
     return this.encounters.previousTurn(id, user.id);
   }
 
   @Patch(':id/visibility')
-  @UseGuards(AdminGuard)
   setVisibility(
     @Param('id') id: string,
     @Body() body: { visible: boolean },

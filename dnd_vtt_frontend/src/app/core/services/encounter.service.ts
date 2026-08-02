@@ -110,8 +110,8 @@ export class EncounterService {
     });
   }
 
-  // Player side: fires whenever any encounter goes live, regardless of campaign — the caller is
-  // responsible for filtering to campaigns it actually cares about (see PlayerShellComponent).
+  // Fires whenever any encounter goes live, regardless of campaign — the caller is responsible
+  // for filtering to campaigns it actually cares about (see ShellComponent).
   watchEncounterStarted(): Observable<EncounterStartedEvent> {
     return new Observable(observer => {
       const socket = this.socketService.socket;

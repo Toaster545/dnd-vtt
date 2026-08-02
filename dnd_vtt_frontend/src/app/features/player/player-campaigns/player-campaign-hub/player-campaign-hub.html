@@ -7,14 +7,11 @@
     (cancelled)="onCharacterCancelled()"
   />
 } @else if (sheetCharacter(); as sc) {
-  <div class="flex flex-col flex-1 min-h-0 overflow-hidden">
-    <div class="flex items-center gap-2 px-4 py-2.5 border-b border-white/10 flex-shrink-0">
-      <button class="btn-ghost text-sm" (click)="closeCharacterSheet()">
-        <mat-icon class="text-base">arrow_back</mat-icon> Back to campaign
-      </button>
-    </div>
-    <app-character-play-sheet class="flex-1 min-h-0" [character]="sc" (saved)="onCharacterSheetSaved($event)" />
-  </div>
+  <app-character-play-sheet class="flex-1 min-h-0" [character]="sc" (saved)="onCharacterSheetSaved($event)">
+    <button sheetHeaderLeading class="btn-icon" (click)="closeCharacterSheet()" matTooltip="Back to campaign">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+  </app-character-play-sheet>
 } @else if (campaign(); as c) {
   <div class="flex-1 min-h-0 overflow-y-auto p-6 bg-cover bg-center"
        [style.background-image]="c.background_url ? 'linear-gradient(rgba(13,14,22,0.88), rgba(13,14,22,0.88)), url(' + c.background_url + ')' : null">
@@ -34,7 +31,7 @@
         <ul class="divide-y divide-white/8">
           @for (session of c.sessions; track session.id) {
             <li>
-              <a [routerLink]="['/player/campaigns', campaignId, 'sessions', session.id]"
+              <a [routerLink]="['/home/campaigns', campaignId, 'sessions', session.id]"
                  class="flex items-center py-3 px-2 -mx-2 gap-3 rounded cursor-pointer no-underline hover:bg-white/5 transition-colors">
                 <div class="flex-1 min-w-0">
                   <p class="text-parchment font-medium truncate m-0">{{ session.name }}</p>

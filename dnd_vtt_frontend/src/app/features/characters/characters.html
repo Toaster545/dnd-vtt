@@ -1,0 +1,61 @@
+<div class="p-6">
+  <div class="flex items-center mb-5">
+    <h2 class="font-brand text-lg text-parchment m-0 flex-1">Characters</h2>
+    <button class="btn-primary" (click)="openCreate()">
+      <mat-icon>add</mat-icon> New Character
+    </button>
+  </div>
+
+  @if (characters().length === 0) {
+    <p class="text-slate text-sm">No characters yet. Create your first one above.</p>
+  } @else {
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      @for (c of characters(); track c.id) {
+        <div
+          class="card-translucent cursor-pointer transition-colors hover:border-white/25"
+          (click)="openRow(c)"
+        >
+          <div class="card-body flex flex-col gap-3">
+            <div class="flex items-center gap-3">
+              <img [src]="portraitFor(c)" class="w-10 h-10 rounded-full flex-shrink-0" alt="" />
+              <div class="flex-1 min-w-0">
+                <p class="text-parchment font-medium truncate m-0">{{ c.name }}</p>
+                <p class="text-slate text-xs m-0 mt-0.5 truncate">
+                  {{ c.race || '—' }} · {{ classLabel(c) || '—' }} · Lv {{ c.level }}
+                </p>
+              </div>
+            </div>
+
+            @if (c.campaign_name) {
+              <p class="text-xs m-0 -mt-1 truncate">
+                <span class="text-gold">{{ c.campaign_name }}</span>
+                @if (!canEdit(c)) {
+                  <mat-icon class="text-sm align-middle" matTooltip="DM hasn't unlocked full editing for this character">lock</mat-icon>
+                }
+              </p>
+            }
+
+            <div class="flex items-center gap-1.5">
+              <span class="text-xs text-slate border border-white/10 rounded px-2 py-0.5">HP {{ c.current_hp }}/{{ c.max_hp }}</span>
+              <span class="text-xs text-slate border border-white/10 rounded px-2 py-0.5">AC {{ c.armor_class }}</span>
+            </div>
+
+            <div class="flex items-center gap-1.5 mt-auto pt-1 border-t border-white/8 -mx-5 px-5">
+              <button class="btn-icon" (click)="$event.stopPropagation(); viewSheet(c)" matTooltip="View sheet">
+                <mat-icon>menu_book</mat-icon>
+              </button>
+              @if (canEdit(c)) {
+                <button class="btn-icon" (click)="$event.stopPropagation(); openEdit(c)" matTooltip="Edit">
+                  <mat-icon>edit</mat-icon>
+                </button>
+              }
+              <button class="btn-icon text-danger/70 hover:text-danger ml-auto" (click)="$event.stopPropagation(); deleteCharacter(c.id!)" matTooltip="Delete">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  }
+</div>

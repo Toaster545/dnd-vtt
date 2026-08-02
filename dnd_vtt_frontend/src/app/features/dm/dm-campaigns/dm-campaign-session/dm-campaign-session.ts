@@ -9,9 +9,11 @@ import Konva from 'konva';
 import { EncounterService } from '../../../../core/services/encounter.service';
 import { ContentService, DndMonster } from '../../../../core/services/content.service';
 import { CharacterService } from '../../../../core/services/character.service';
+import { CharacterStatsService } from '../../../../core/services/character-stats.service';
 import { BattleMapService } from '../../../../core/services/battle-map.service';
 import { SessionService } from '../../../../core/services/session.service';
 import { CampaignService } from '../../../../core/services/campaign.service';
+import { ClassChoiceSource } from '../../../../core/utils/character-effects';
 import { Encounter } from '../../../../core/models/encounter.model';
 import { Character } from '../../../../core/models/character.model';
 import { BattleMap, CampaignMember, UniversalVTTData } from '../../../../core/models/campaign.model';
@@ -19,11 +21,20 @@ import { Session } from '../../../../core/models/session.model';
 import { ConfirmService } from '../../../../shared/confirm.service';
 import { NotesPanelComponent } from '../../../../shared/components/notes-panel/notes-panel';
 import { PartyListComponent } from '../../../../shared/components/party-list/party-list';
+import { CharacterWizardComponent } from '../../../characters/character-wizard/character-wizard';
+import { CharacterPlaySheetComponent } from '../../../characters/character-play-sheet/character-play-sheet';
 import { DescriptionDialogComponent } from '../../../../shared/components/description-dialog/description-dialog';
+
+function toContentIndex(name: string): string {
+  return name.toLowerCase().replace(/\s+/g, '-');
+}
 
 @Component({
   selector: 'app-dm-campaign-session',
-  imports: [FormsModule, RouterLink, MatIconModule, MatTooltipModule, NotesPanelComponent, PartyListComponent],
+  imports: [
+    FormsModule, RouterLink, MatIconModule, MatTooltipModule, NotesPanelComponent, PartyListComponent,
+    CharacterWizardComponent, CharacterPlaySheetComponent,
+  ],
   templateUrl: './dm-campaign-session.html',
   // Routed in via dm-shell's <router-outlet>, so without a host sizing class this stays an
   // unstyled inline element and the template's flex-1/min-h-0/overflow-y-auto root div has no
@@ -39,6 +50,7 @@ export class DmCampaignSessionComponent implements OnInit, OnDestroy {
   private encounterService  = inject(EncounterService);
   private content           = inject(ContentService);
   private characterService  = inject(CharacterService);
+  private statsService      = inject(CharacterStatsService);
   private mapService        = inject(BattleMapService);
   private sessionService    = inject(SessionService);
   private campaignService   = inject(CampaignService);
@@ -54,6 +66,15 @@ export class DmCampaignSessionComponent implements OnInit, OnDestroy {
   characters = signal<Character[]>([]);
   members    = signal<CampaignMember[]>([]);
   loading    = signal(true);
+
+  // Same live-recomputed HP as DmCampaignHubComponent.memberMaxHp — kept here too so the party
+  // tab reads identically on both pages instead of falling back to the member's stored (possibly
+  // stale) character_max_hp.
+  memberMaxHp = signal<Record<string, number>>({});
+
+  editingCharacter = signal<Character | null>(null);
+  showWizard       = signal(false);
+  sheetCharacter   = signal<Character | null>(null);
 
   uploadingBackground = signal(false);
 
@@ -108,6 +129,95 @@ export class DmCampaignSessionComponent implements OnInit, OnDestroy {
     this.characters.set(characters);
     this.members.set(campaign.members);
     this.loading.set(false);
+    void this.loadMemberMaxHp(campaign.members);
+  }
+
+  // Re-fetches the roster after a management action (edit access/visibility/remove) or a
+  // character save — mirrors DmCampaignHubComponent.load()'s member-refresh half, without
+  // touching this page's own `loading`/encounters state.
+  private async refreshMembers() {
+    const campaign = await this.campaignService.getById(this.campaignId);
+    this.members.set(campaign.members);
+    void this.loadMemberMaxHp(campaign.members);
+  }
+
+  private async loadMemberMaxHp(members: CampaignMember[]) {
+    const entries = await Promise.all(members.map(async (member) => {
+      try {
+        const char = await this.characterService.getCharacter(member.character_id);
+        const [classData, raceData, feats, items] = await Promise.all([
+          this.content.getClass(toContentIndex(char.class)).catch(() => null),
+          this.content.getRace(toContentIndex(char.race)).catch(() => null),
+          this.content.getFeats(),
+          this.content.getItems(),
+        ]);
+        const primary = char.classes?.[0];
+        const classesForFeats: ClassChoiceSource[] = classData ? [{
+          data: classData,
+          choices: primary?.choices ?? {},
+          level: primary?.level ?? char.level,
+          subclass: primary?.subclass ?? char.subclass,
+        }] : [];
+        const stats = this.statsService.compute(char, classData, raceData, feats, classesForFeats, items);
+        return [member.character_id, stats.suggested_max_hp] as const;
+      } catch {
+        return null;
+      }
+    }));
+    const map: Record<string, number> = {};
+    for (const entry of entries) if (entry) map[entry[0]] = entry[1];
+    this.memberMaxHp.set(map);
+  }
+
+  // Opens the DM's editable view of a player's campaign copy — same flow as
+  // DmCampaignHubComponent.openMember.
+  async openMember(member: CampaignMember) {
+    this.editingCharacter.set(await this.characterService.getCharacter(member.character_id));
+    this.showWizard.set(true);
+  }
+
+  async onCharacterSaved() {
+    this.showWizard.set(false);
+    await this.refreshMembers();
+  }
+
+  onCharacterCancelled() {
+    this.showWizard.set(false);
+  }
+
+  // Quick view/edit of HP, rest, equipment, and spell prep — same as
+  // DmCampaignHubComponent.viewMember.
+  async viewMember(member: CampaignMember) {
+    this.sheetCharacter.set(await this.characterService.getCharacter(member.character_id));
+  }
+
+  async onCharacterSheetSaved(character: Character) {
+    this.sheetCharacter.set(character);
+    await this.refreshMembers();
+  }
+
+  closeCharacterSheet() {
+    this.sheetCharacter.set(null);
+  }
+
+  async toggleEditAccess(member: CampaignMember) {
+    await this.campaignService.setMemberEditAccess(this.campaignId, member.user_id, !member.edit_unlocked);
+    await this.refreshMembers();
+  }
+
+  async togglePartyVisibility(member: CampaignMember) {
+    await this.campaignService.setMemberPartyVisibility(
+      this.campaignId,
+      member.user_id,
+      member.visible_to_party === false,
+    );
+    await this.refreshMembers();
+  }
+
+  async removeMember(userId: string, name: string) {
+    if (!await this.confirm.confirm(`Remove ${name} from this campaign? They can rejoin later with the campaign code.`, 'Remove Player')) return;
+    await this.campaignService.removeMember(this.campaignId, userId);
+    await this.refreshMembers();
   }
 
   async openDescriptionDialog() {
@@ -147,7 +257,7 @@ export class DmCampaignSessionComponent implements OnInit, OnDestroy {
   }
 
   backToHub() {
-    void this.router.navigate(['/dm/campaigns', this.campaignId]);
+    void this.router.navigate(['/home/campaigns/manage', this.campaignId]);
   }
 
   startCreate() {

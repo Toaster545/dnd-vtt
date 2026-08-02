@@ -5,31 +5,129 @@
 // ║  Edit this file to retheme the entire application.          ║
 // ╚══════════════════════════════════════════════════════════════╝
 
+@use 'sass:map';
+@use 'sass:color';
+
+// ── Color Schemes ────────────────────────────────────────────────
+//    Each scheme supplies EVERY theme-dependent token: accent family,
+//    background/surface tones, text/outline colors, the native
+//    `color-scheme` (dark vs light), and shadow alpha. Applied at runtime
+//    by ColorSchemeService, which sets `data-theme` on <html>; see the
+//    `@each` loop in styles.scss that emits the CSS custom properties for
+//    every entry in $themes.
+//
+//    `on-accent` is the text/icon color to use on top of a surface filled
+//    with the scheme's `accent` color (e.g. `.btn-primary`) — black for the
+//    dark schemes' bright accents, white for Silver's dark accent.
+
+@function rgb-triplet($hex) {
+  @return #{color.channel($hex, "red")} #{color.channel($hex, "green")} #{color.channel($hex, "blue")};
+}
+
+$dark-common: (
+  text-primary:   #ede9df,
+  text-secondary: #9e9b91,
+  text-disabled:  #4e4d49,
+  outline:        rgba(255, 255, 255, 0.08),
+  outline-strong: rgba(255, 255, 255, 0.18),
+  on-accent:      #000000,
+  scheme:         dark,
+  shadow-sm:      0 1px 4px  rgba(0, 0, 0, 0.50),
+  shadow-md:      0 3px 12px rgba(0, 0, 0, 0.60),
+  shadow-lg:      0 8px 28px rgba(0, 0, 0, 0.75),
+);
+
+$theme-gold: map.merge((
+  accent:              #c9a227,
+  accent-bright:        #f5d67a,
+  accent-dim:           #a07c18,
+  accent-container:     #3a2c00,
+  accent-on-container:  #f5d67a,
+  bg-base:              #0d0e16,
+  bg-surface:           #171822,
+  bg-raised:            #1e2033,
+  bg-overlay:           #252641,
+), $dark-common);
+
+$theme-crimson: map.merge((
+  accent:              #c9524a,
+  accent-bright:        #e0837a,
+  accent-dim:           #9e3a34,
+  accent-container:     #3a1218,
+  accent-on-container:  #f2a8b3,
+  bg-base:              #160d0e,
+  bg-surface:           #221417,
+  bg-raised:            #2b1a1e,
+  bg-overlay:           #341f24,
+), $dark-common);
+
+$theme-emerald: map.merge((
+  accent:              #2f9e6a,
+  accent-bright:        #6fd9a4,
+  accent-dim:           #1f7a4f,
+  accent-container:     #0d3a24,
+  accent-on-container:  #a8ecc7,
+  bg-base:              #0a140f,
+  bg-surface:           #10201a,
+  bg-raised:            #162a22,
+  bg-overlay:           #1c352b,
+), $dark-common);
+
+$theme-royal-blue: map.merge((
+  accent:              #4a7fe0,
+  accent-bright:        #8bb0f0,
+  accent-dim:           #34599c,
+  accent-container:     #10234a,
+  accent-on-container:  #b9d3f7,
+  bg-base:              #0a0f1e,
+  bg-surface:           #101a2e,
+  bg-raised:            #16233a,
+  bg-overlay:           #1c2d49,
+), $dark-common);
+
+// Light grey/white scheme. Unlike the dark schemes, its `accent` must read
+// well as *text* directly on the light page background (see the ~120
+// `text-gold`-style call sites app-wide), so it's a dark slate rather than a
+// pale tint — which in turn means its `on-accent` (for accent-filled
+// surfaces like `.btn-primary`) flips to white instead of black.
+$theme-silver: (
+  accent:              #4a5361,
+  accent-bright:        #2b3038,
+  accent-dim:           #363c44,
+  accent-container:     #e4e6e9,
+  accent-on-container:  #2b2f35,
+  bg-base:              #f2f1ee,
+  bg-surface:           #ffffff,
+  bg-raised:            #e8e7e3,
+  bg-overlay:           #dedcd7,
+  text-primary:         #23262b,
+  text-secondary:       #5f6369,
+  text-disabled:        #a8a6a1,
+  outline:              rgba(0, 0, 0, 0.08),
+  outline-strong:       rgba(0, 0, 0, 0.18),
+  on-accent:            #ffffff,
+  scheme:               light,
+  shadow-sm:            0 1px 4px  rgba(0, 0, 0, 0.10),
+  shadow-md:            0 3px 12px rgba(0, 0, 0, 0.14),
+  shadow-lg:            0 8px 28px rgba(0, 0, 0, 0.20),
+);
+
+$themes: (
+  'gold': $theme-gold,
+  'crimson': $theme-crimson,
+  'emerald': $theme-emerald,
+  'royal-blue': $theme-royal-blue,
+  'silver': $theme-silver,
+);
 
 // ── Color Palette ──────────────────────────────────────────────
-//    Core brand colors. Everything else derives from these.
-
-$gold:              #c9a227;   // primary accent — buttons, links, active states
-$gold-container:    #3a2c00;   // background behind gold text/icons
-$gold-on-container: #f5d67a;   // text/icon on gold-container
+//    Core brand colors. Everything else derives from these. These are
+//    intentionally scheme-invariant (unlike accent/bg/text/outline above).
 
 $crimson:           #8b1a1a;   // danger/destructive accent (secondary use)
 
-$bg-base:           #0d0e16;   // ← page background
-$bg-surface:        #171822;   // cards, panels, sidebars
-$bg-raised:         #1e2033;   // elevated items, hover targets
-$bg-overlay:        #252641;   // dialogs, dropdowns
-
-$text-primary:      #ede9df;   // headings and body text
-$text-secondary:    #9e9b91;   // captions, placeholders, muted labels
-$text-disabled:     #4e4d49;   // disabled controls
-
-$outline:           rgba(255, 255, 255, 0.08);   // subtle borders
-$outline-strong:    rgba(255, 255, 255, 0.18);   // focused / visible borders
-
 $error:             #e05252;
 $error-on:          #ffffff;
-$error-container:   #3b1111;
 
 $success:           #4caf82;
 
@@ -67,12 +165,84 @@ $radius-button:   6px;    // ← toolbar buttons, flat/outlined/text buttons
 $radius-nav-item: 6px;    // ← sidenav list item active indicator
 
 
-// ── Elevation / Shadows ────────────────────────────────────────
+// ══════════════════════════════════════════════════════════════
+//  theme-vars($t) — every custom property that differs between
+//  color schemes: accent family, background/surface tones, text,
+//  outline, shadows, and the native `color-scheme`. Included once
+//  unconditionally (the default scheme) and again per
+//  `html[data-theme='...']` — see the `@each` loop in styles.scss
+//  that runs this for every entry in $themes.
+// ══════════════════════════════════════════════════════════════
 
-$shadow-sm:  0 1px 4px  rgba(0, 0, 0, 0.50);
-$shadow-md:  0 3px 12px rgba(0, 0, 0, 0.60);
-$shadow-lg:  0 8px 28px rgba(0, 0, 0, 0.75);
+@mixin theme-vars($t) {
+  --dnd-gold:              #{map.get($t, accent)};
+  --dnd-gold-bright:       #{map.get($t, accent-bright)};
+  --dnd-gold-dim:          #{map.get($t, accent-dim)};
+  --dnd-gold-container:    #{map.get($t, accent-container)};
+  --dnd-gold-on-container: #{map.get($t, accent-on-container)};
+  --dnd-gold-rgb:          #{rgb-triplet(map.get($t, accent))};
+  --dnd-on-accent:         #{map.get($t, on-accent)};
 
+  --dnd-bg-base:           #{map.get($t, bg-base)};
+  --dnd-bg-surface:        #{map.get($t, bg-surface)};
+  --dnd-bg-raised:         #{map.get($t, bg-raised)};
+  --dnd-bg-overlay:        #{map.get($t, bg-overlay)};
+  --dnd-canvas-rgb:        #{rgb-triplet(map.get($t, bg-base))};
+  --dnd-surface-rgb:       #{rgb-triplet(map.get($t, bg-surface))};
+
+  --dnd-text:              #{map.get($t, text-primary)};
+  --dnd-text-muted:        #{map.get($t, text-secondary)};
+  --dnd-text-disabled:     #{map.get($t, text-disabled)};
+  --dnd-text-rgb:          #{rgb-triplet(map.get($t, text-primary))};
+  --dnd-slate-rgb:         #{rgb-triplet(map.get($t, text-secondary))};
+  --dnd-coal-rgb:          #{rgb-triplet(map.get($t, text-disabled))};
+
+  --dnd-outline:           #{map.get($t, outline)};
+  --dnd-outline-strong:    #{map.get($t, outline-strong)};
+
+  --shadow-sm: #{map.get($t, shadow-sm)};
+  --shadow-md: #{map.get($t, shadow-md)};
+  --shadow-lg: #{map.get($t, shadow-lg)};
+
+  color-scheme: #{map.get($t, scheme)};
+
+  --mat-sys-primary:               var(--dnd-gold);
+  --mat-sys-primary-container:     var(--dnd-gold-container);
+  --mat-sys-on-primary-container:  var(--dnd-gold-on-container);
+  --mat-sys-on-primary:            var(--dnd-on-accent);
+
+  --mat-sys-secondary:             var(--dnd-gold-on-container);
+  --mat-sys-secondary-container:   var(--dnd-bg-raised);
+  --mat-sys-on-secondary:          var(--dnd-on-accent);
+  --mat-sys-on-secondary-container:var(--dnd-text);
+
+  --mat-sys-background:            var(--dnd-bg-base);
+
+  --mat-sys-surface:               var(--dnd-bg-surface);
+  --mat-sys-surface-variant:       var(--dnd-bg-raised);
+  --mat-sys-surface-container:     var(--dnd-bg-surface);
+  --mat-sys-surface-container-low: var(--dnd-bg-base);
+  --mat-sys-surface-container-high:var(--dnd-bg-raised);
+  --mat-sys-surface-bright:        var(--dnd-bg-overlay);
+  --mat-sys-inverse-on-surface:    var(--dnd-bg-base);
+  --mat-sys-inverse-primary:       var(--dnd-gold-container);
+
+  --mat-sys-on-background:         var(--dnd-text);
+  --mat-sys-on-surface:            var(--dnd-text);
+  --mat-sys-on-surface-variant:    var(--dnd-text-muted);
+  --mat-sys-inverse-surface:       var(--dnd-text);
+
+  --mat-sys-outline:               var(--dnd-outline-strong);
+  --mat-sys-outline-variant:       var(--dnd-outline);
+
+  // Error/tertiary containers are derived (not stored per-theme) so they
+  // automatically land as a dark tint on dark schemes and a light tint on
+  // Silver, without hand-authoring a 5th set of hex values.
+  --mat-sys-error-container:       color-mix(in srgb, #{$error} 16%, var(--dnd-bg-base));
+  --mat-sys-on-error-container:    #{$error};
+  --mat-sys-tertiary-container:    color-mix(in srgb, #{$success} 16%, var(--dnd-bg-base));
+  --mat-sys-on-tertiary-container: #{$success};
+}
 
 // ══════════════════════════════════════════════════════════════
 //  apply() — include this inside your html {} rule after
@@ -80,49 +250,19 @@ $shadow-lg:  0 8px 28px rgba(0, 0, 0, 0.75);
 // ══════════════════════════════════════════════════════════════
 
 @mixin apply() {
-  color-scheme: dark;
+  @include theme-vars(map.get($themes, 'gold'));
 
   // ── Material system token overrides ──────────────────────
   //    Material components read --mat-sys-* CSS vars at runtime.
   //    These declarations override whatever mat.theme() generated.
-
-  --mat-sys-primary:               #{$gold};
-  --mat-sys-on-primary:            #000000;
-  --mat-sys-primary-container:     #{$gold-container};
-  --mat-sys-on-primary-container:  #{$gold-on-container};
-
-  --mat-sys-secondary:             #{$gold-on-container};
-  --mat-sys-on-secondary:          #000000;
-  --mat-sys-secondary-container:   #{$bg-raised};
-  --mat-sys-on-secondary-container:#{$text-primary};
+  //    The theme-dependent subset comes from theme-vars() above;
+  //    everything below is shared across schemes.
 
   --mat-sys-tertiary:              #{$success};
   --mat-sys-on-tertiary:           #000000;
-  --mat-sys-tertiary-container:    #0d2b1e;
-  --mat-sys-on-tertiary-container: #{$success};
-
-  --mat-sys-background:            #{$bg-base};
-  --mat-sys-on-background:         #{$text-primary};
-
-  --mat-sys-surface:               #{$bg-surface};
-  --mat-sys-on-surface:            #{$text-primary};
-  --mat-sys-surface-variant:       #{$bg-raised};
-  --mat-sys-on-surface-variant:    #{$text-secondary};
-  --mat-sys-surface-container:     #{$bg-surface};
-  --mat-sys-surface-container-low: #{$bg-base};
-  --mat-sys-surface-container-high:#{$bg-raised};
-  --mat-sys-surface-bright:        #{$bg-overlay};
-  --mat-sys-inverse-surface:       #{$text-primary};
-  --mat-sys-inverse-on-surface:    #{$bg-base};
-  --mat-sys-inverse-primary:       #{$gold-container};
-
-  --mat-sys-outline:               #{$outline-strong};
-  --mat-sys-outline-variant:       #{$outline};
 
   --mat-sys-error:                 #{$error};
   --mat-sys-on-error:              #{$error-on};
-  --mat-sys-error-container:       #{$error-container};
-  --mat-sys-on-error-container:    #{$error};
 
   --mat-sys-scrim:                 rgba(0, 0, 0, 0.60);
   --mat-sys-shadow:                rgba(0, 0, 0, 0.80);
@@ -131,17 +271,7 @@ $shadow-lg:  0 8px 28px rgba(0, 0, 0, 0.75);
   //    Available in all component SCSS files and inline styles.
 
   // Colors
-  --dnd-gold:           #{$gold};
   --dnd-crimson:        #{$crimson};
-  --dnd-bg-base:        #{$bg-base};
-  --dnd-bg-surface:     #{$bg-surface};
-  --dnd-bg-raised:      #{$bg-raised};
-  --dnd-bg-overlay:     #{$bg-overlay};
-  --dnd-text:           #{$text-primary};
-  --dnd-text-muted:     #{$text-secondary};
-  --dnd-text-disabled:  #{$text-disabled};
-  --dnd-outline:        #{$outline};
-  --dnd-outline-strong: #{$outline-strong};
   --dnd-error:          #{$error};
   --dnd-success:        #{$success};
   --dnd-subclass-accent: #{$subclass-accent};
@@ -164,11 +294,6 @@ $shadow-lg:  0 8px 28px rgba(0, 0, 0, 0.75);
   --radius-md: #{$radius-md};
   --radius-lg: #{$radius-lg};
   --radius-xl: #{$radius-xl};
-
-  // Shadows
-  --shadow-sm: #{$shadow-sm};
-  --shadow-md: #{$shadow-md};
-  --shadow-lg: #{$shadow-lg};
 
   // ── Component shape overrides ─────────────────────────────
   //    Material M3 defaults: buttons = pill (9999px), nav items = large (16px).

@@ -35,7 +35,7 @@
               class="block flex-1 min-h-0" />
           }
         } @else if (encounter.map_id) {
-          <app-battle-map [mapIdInput]="encounter.map_id" [embedded]="true" [characterHp]="characterHp()"
+          <app-battle-map [mapIdInput]="encounter.map_id" [embedded]="true" [canControl]="false" [characterHp]="characterHp()"
             [characterPortraits]="characterPortraits()"
             [currentTurnTokenId]="encounter.current_turn_token_id ?? null"
             [myCharacterId]="activeCharacter()?.id ?? null" [myMoveSpeedFt]="activeCharacter()?.speed ?? null"

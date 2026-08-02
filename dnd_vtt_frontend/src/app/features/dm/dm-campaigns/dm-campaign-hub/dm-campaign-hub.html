@@ -6,6 +6,12 @@
     (saved)="onCharacterSaved()"
     (cancelled)="onCharacterCancelled()"
   />
+} @else if (sheetCharacter(); as sc) {
+  <app-character-play-sheet class="flex-1 min-h-0" [character]="sc" (saved)="onCharacterSheetSaved($event)">
+    <button sheetHeaderLeading class="btn-icon" (click)="closeCharacterSheet()" matTooltip="Back to campaign">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+  </app-character-play-sheet>
 } @else if (campaign(); as c) {
   <div class="flex-1 min-h-0 overflow-y-auto p-6 bg-cover bg-center"
        [style.background-image]="c.background_url ? 'linear-gradient(rgba(13,14,22,0.88), rgba(13,14,22,0.88)), url(' + c.background_url + ')' : null">
@@ -33,6 +39,16 @@
         <mat-icon class="text-base">{{ copied() ? 'check' : 'content_copy' }}</mat-icon>
         Join code: <span class="font-mono text-gold">{{ c.join_code }}</span>
       </button>
+      <a class="btn-outline text-sm gap-1.5" [routerLink]="['/home/campaigns/manage', campaignId, 'maps']" matTooltip="Upload and manage battle maps">
+        <mat-icon class="text-base">map</mat-icon>
+        Maps
+      </a>
+      @if (auth.isAdmin()) {
+        <a class="btn-outline text-sm gap-1.5" [routerLink]="['/home/campaigns/manage', campaignId, 'create']" matTooltip="Author monsters, equipment, and spells">
+          <mat-icon class="text-base">auto_stories</mat-icon>
+          Create
+        </a>
+      }
     </div>
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -68,7 +84,7 @@
           @for (session of c.sessions; track session.id) {
             <li>
               <a
-                [routerLink]="['/dm/campaigns', campaignId, 'sessions', session.id]"
+                [routerLink]="['/home/campaigns/manage', campaignId, 'sessions', session.id]"
                 class="flex items-center py-3 px-2 -mx-2 gap-3 rounded cursor-pointer no-underline hover:bg-white/5 transition-colors"
               >
                 <div class="flex-1 min-w-0">
@@ -122,6 +138,7 @@
 
         <app-party-list [members]="c.members" [memberMaxHp]="memberMaxHp()" [showManagement]="true" [clickableRows]="true"
           (rowClick)="openMember($event)"
+          (viewCharacter)="viewMember($event)"
           (toggleEditAccess)="toggleEditAccess($event)"
           (togglePartyVisibility)="togglePartyVisibility($event)"
           (removeMember)="removeMember($event.user_id, $event.username)" />

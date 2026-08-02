@@ -1,7 +1,7 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './core/guards/auth.guard';
-import { adminGuard } from './core/guards/admin.guard';
 import { homeRedirectGuard } from './core/guards/home-redirect.guard';
+import { staleSessionGuard } from './core/guards/stale-session.guard';
 
 export const routes: Routes = [
   { path: '', canActivate: [homeRedirectGuard], children: [] },
@@ -19,55 +19,95 @@ export const routes: Routes = [
     ],
   },
   {
-    path: 'battle-map',
+    path: 'dashboard',
     canActivate: [authGuard],
+    loadComponent: () => import('./features/dashboard/dashboard').then(m => m.DashboardComponent),
+    data: { bgOverlay: 0.6 },
+  },
+  {
+    path: 'settings',
+    canActivate: [authGuard, staleSessionGuard],
+    loadComponent: () => import('./features/settings/settings').then(m => m.SettingsComponent),
+  },
+  {
+    path: 'battle-map',
+    canActivate: [authGuard, staleSessionGuard],
     loadComponent: () => import('./features/battle-map/battle-map').then(m => m.BattleMapComponent),
   },
   {
     path: 'battle-map/:id',
-    canActivate: [authGuard],
+    canActivate: [authGuard, staleSessionGuard],
     loadComponent: () => import('./features/battle-map/battle-map').then(m => m.BattleMapComponent),
   },
   {
-    path: 'dm',
-    canActivate: [authGuard, adminGuard],
-    loadComponent: () => import('./features/dm/dm-shell').then(m => m.DmShellComponent),
+    path: 'home',
+    canActivate: [authGuard, staleSessionGuard],
+    loadComponent: () => import('./features/shell/shell').then(m => m.ShellComponent),
     children: [
+      {
+        path: '',
+        loadComponent: () => import('./features/characters/characters').then(m => m.CharactersComponent),
+      },
+      {
+        path: 'characters/new',
+        loadComponent: () =>
+          import('./features/characters/character-wizard-page/character-wizard-page').then(
+            m => m.CharacterWizardPageComponent,
+          ),
+        data: { bgOverlay: 0.6 },
+      },
+      {
+        path: 'characters/:id/edit',
+        loadComponent: () =>
+          import('./features/characters/character-wizard-page/character-wizard-page').then(
+            m => m.CharacterWizardPageComponent,
+          ),
+        data: { bgOverlay: .9 },
+      },
+      {
+        path: 'characters/:id',
+        loadComponent: () =>
+          import('./features/characters/character-sheet-page/character-sheet-page').then(
+            m => m.CharacterSheetPageComponent,
+          ),
+        data: { bgOverlay: 0.9 },
+      },
       {
         path: 'campaigns',
         loadComponent: () =>
-          import('./features/dm/dm-campaigns/dm-campaigns').then(m => m.DmCampaignsComponent),
+          import('./features/campaigns/campaigns').then(m => m.CampaignsComponent),
       },
       {
-        path: 'campaigns/:campaignId',
+        path: 'campaigns/manage/:campaignId',
         loadComponent: () =>
           import('./features/dm/dm-campaigns/dm-campaign-hub/dm-campaign-hub').then(m => m.DmCampaignHubComponent),
       },
       {
-        path: 'campaigns/:campaignId/sessions/:sessionId',
+        path: 'campaigns/manage/:campaignId/create',
+        loadComponent: () =>
+          import('./features/create-content/create-content').then(m => m.CreateContentComponent),
+      },
+      {
+        path: 'campaigns/manage/:campaignId/maps',
+        loadComponent: () =>
+          import('./features/dm/dm-campaigns/dm-campaign-maps/dm-campaign-maps').then(
+            m => m.DmCampaignMapsComponent,
+          ),
+      },
+      {
+        path: 'campaigns/manage/:campaignId/sessions/:sessionId',
         loadComponent: () =>
           import('./features/dm/dm-campaigns/dm-campaign-session/dm-campaign-session').then(
             m => m.DmCampaignSessionComponent,
           ),
+          data: { bgOverlay: 0.9 },
       },
       {
-        path: 'campaigns/:campaignId/sessions/:sessionId/encounters/:encounterId',
+        path: 'campaigns/manage/:campaignId/sessions/:sessionId/encounters/:encounterId',
         loadComponent: () =>
           import('./features/dm/dm-campaigns/dm-encounter-play/dm-encounter-play').then(
             m => m.DmEncounterPlayComponent,
           ),
-      },
-    ],
-  },
-  {
-    path: 'player',
-    canActivate: [authGuard],
-    loadComponent: () => import('./features/player/player-shell').then(m => m.PlayerShellComponent),
-    children: [
-      {
-        path: 'campaigns',
-        loadComponent: () =>
-          import('./features/player/player-campaigns/player-campaigns').then(m => m.PlayerCampaignsComponent),
       },
       {
         path: 'campaigns/:campaignId',
@@ -75,6 +115,7 @@ export const routes: Routes = [
           import('./features/player/player-campaigns/player-campaign-hub/player-campaign-hub').then(
             m => m.PlayerCampaignHubComponent,
           ),
+          data: { bgOverlay: 0.9 },
       },
       {
         path: 'campaigns/:campaignId/sessions/:sessionId',
@@ -84,11 +125,6 @@ export const routes: Routes = [
           ),
       },
     ],
-  },
-  {
-    path: 'admin/maps',
-    canActivate: [authGuard, adminGuard],
-    loadComponent: () => import('./features/admin/map-manager').then(m => m.MapManagerComponent),
   },
   { path: '**', canActivate: [homeRedirectGuard], children: [] },
 ];

@@ -12,8 +12,8 @@ export class BattleMapService {
   private http = inject(HttpClient);
   private socketService = inject(SocketService);
 
-  async getAllMaps(): Promise<BattleMap[]> {
-    return firstValueFrom(this.http.get<BattleMap[]>(`${API}/maps`));
+  async getMapsForCampaign(campaignId: string): Promise<BattleMap[]> {
+    return firstValueFrom(this.http.get<BattleMap[]>(`${API}/maps?campaignId=${campaignId}`));
   }
 
   async getMap(mapId: string): Promise<BattleMap> {

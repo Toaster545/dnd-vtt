@@ -2,284 +2,87 @@
   <div class="flex justify-center mt-10"><span class="spinner-lg"></span></div>
 } @else if (selected(); as encounter) {
   @if (viewingCharacter(); as char) {
-    <!-- Character token clicked: full detail area swap, same pattern as the Characters play tab -->
-    <div class="flex items-center gap-2 px-4 py-2.5 border-b border-white/10 flex-shrink-0">
-      <button class="btn-ghost text-sm" (click)="closeCharacterView()">
-        <mat-icon class="text-base">arrow_back</mat-icon> {{ encounter.name }}
-      </button>
-      @if (viewingCharacterToken(); as tok) {
-        <input type="color" class="h-7 w-7 rounded cursor-pointer border border-white/10 bg-transparent ml-auto flex-shrink-0"
-          [ngModel]="tok.color" (ngModelChange)="setCharacterTokenColor($event)"
-          name="characterTokenColor" matTooltip="Token color" />
-      }
-    </div>
-    <app-character-play-sheet [character]="char" (saved)="onCharacterSaved($event)" class="block flex-1 min-h-0" />
+    <app-character-play-sheet [character]="char" (saved)="onCharacterSaved($event)" class="block flex-1 min-h-0">
+      <div sheetHeaderLeading class="flex items-center gap-1">
+        <button class="btn-icon" (click)="closeCharacterView()" [matTooltip]="'Back to ' + encounter.name">
+          <mat-icon>arrow_back</mat-icon>
+        </button>
+        @if (viewingCharacterToken(); as tok) {
+          <input type="color" class="h-7 w-7 rounded cursor-pointer border border-white/10 bg-transparent flex-shrink-0"
+            [ngModel]="tok.color" (ngModelChange)="setCharacterTokenColor($event)"
+            name="characterTokenColor" matTooltip="Token color" />
+        }
+      </div>
+    </app-character-play-sheet>
   } @else {
     <div class="flex flex-col h-full overflow-hidden">
-      <div class="flex items-center gap-2 px-4 py-2.5 border-b border-white/10 flex-shrink-0">
-        <div class="flex items-center gap-2 flex-1 min-w-0">
-          <button class="btn-ghost text-sm" (click)="backToSession()">
-            <mat-icon class="text-base">arrow_back</mat-icon> Session
-          </button>
-          <span class="text-parchment font-medium text-sm ml-2 truncate">{{ encounter.name }}</span>
-        </div>
-
-        @if (encounter.status === 'active') {
-          <div class="flex items-center gap-1 flex-shrink-0">
-            <button class="btn-icon" [disabled]="togglingTurn() || !currentTurnToken()"
-                    (click)="previousTurn()" matTooltip="Previous turn">
-              <mat-icon>skip_previous</mat-icon>
-            </button>
-            <span class="text-sm font-brand text-gold whitespace-nowrap px-1">
-              {{ currentTurnToken() ? currentTurnToken()!.label + '’s Turn' : 'Turn Order' }}
-            </span>
-            <button class="btn-icon" [disabled]="togglingTurn()"
-                    (click)="nextTurn()" [matTooltip]="currentTurnToken() ? 'Next turn' : 'Start turn order'">
-              <mat-icon>skip_next</mat-icon>
-            </button>
-          </div>
-        }
-
-        <div class="flex items-center gap-2 flex-1 justify-end">
-          @if (encounter.status === 'active') {
-            <span class="tag text-xs">Code: <span class="font-brand tracking-widest">{{ encounter.join_code }}</span></span>
-            <button class="btn-outline text-xs px-2 py-1" [disabled]="togglingStatus()" (click)="stopEncounter()">Stop Encounter</button>
-          } @else {
-            <button class="btn-primary text-xs px-2 py-1" [disabled]="togglingStatus()" (click)="startEncounter()">Start Encounter</button>
-          }
-        </div>
-      </div>
+      <app-encounter-toolbar
+        [encounter]="encounter"
+        [currentTurnToken]="currentTurnToken()"
+        [togglingStatus]="togglingStatus()"
+        [togglingTurn]="togglingTurn()"
+        (back)="backToSession()"
+        (previousTurn)="previousTurn()"
+        (nextTurn)="nextTurn()"
+        (start)="startEncounter()"
+        (stop)="stopEncounter()"
+      />
 
       <div class="flex flex-1 overflow-hidden">
-        <!-- Roster sidebar (or monster token detail, swapped in place) -->
         <aside [style.width.px]="rosterWidth()" class="border-r border-white/10 overflow-y-auto flex-shrink-0 p-4">
           @if (viewingCustomToken(); as tok) {
-            <button class="btn-ghost text-sm mb-3" (click)="closeCustomTokenView()">
-              <mat-icon class="text-base">arrow_back</mat-icon> Roster
-            </button>
-
-            <div class="flex flex-col gap-3">
-              <div class="field">
-                <label class="field-label">Name</label>
-                <input class="field-input" maxlength="20"
-                  [ngModel]="tok.label" (ngModelChange)="setCustomTokenLabel($event)" name="customTokenLabel" />
-              </div>
-              <div class="flex items-center gap-3">
-                <span class="field-label">Color</span>
-                <input type="color" class="h-8 w-14 rounded cursor-pointer border border-white/10 bg-transparent"
-                  [ngModel]="tok.color" (ngModelChange)="setCustomTokenColor($event)" name="customTokenColor" />
-              </div>
-              <div class="field">
-                <label class="field-label">Size (cells)</label>
-                <select class="field-input"
-                  [ngModel]="tok.size" (ngModelChange)="setCustomTokenSize($event)" name="customTokenSize">
-                  <option [ngValue]="1">Small / Medium (1)</option>
-                  <option [ngValue]="2">Large (2)</option>
-                  <option [ngValue]="3">Huge (3)</option>
-                  <option [ngValue]="4">Gargantuan (4)</option>
-                </select>
-              </div>
-              <button class="btn-outline text-xs px-2 py-1 text-danger" (click)="removeCustomToken()">
-                Remove Token
-              </button>
-            </div>
+            <app-custom-token-editor
+              [token]="tok"
+              (back)="closeCustomTokenView()"
+              (labelChanged)="setCustomTokenLabel($event)"
+              (colorChanged)="setCustomTokenColor($event)"
+              (sizeChanged)="setCustomTokenSize($event)"
+              (remove)="removeCustomToken()"
+            />
           } @else if (viewingMonsterToken(); as sel) {
-            <button class="btn-ghost text-sm mb-3" (click)="closeMonsterTokenView()">
-              <mat-icon class="text-base">arrow_back</mat-icon> Roster
-            </button>
-
-            <div class="flex items-center gap-2 mb-1">
-              <h3 class="font-brand text-lg text-parchment m-0 flex-1">{{ sel.monster.name }}</h3>
-              <input type="color" class="h-7 w-7 rounded cursor-pointer border border-white/10 bg-transparent flex-shrink-0"
-                [ngModel]="sel.token.color" (ngModelChange)="setMonsterTokenColor($event)"
-                name="monsterTokenColor" matTooltip="Token color" />
-            </div>
-            <p class="text-coal text-xs mb-3">
-              {{ sel.monster.size }} {{ sel.monster.type }} · CR {{ sel.monster.challenge_rating }}
-            </p>
-
-            <div class="flex items-center gap-3 mb-3">
-              <div class="text-center">
-                <div class="text-[10px] text-slate uppercase tracking-widest">AC</div>
-                <div class="font-brand text-xl text-gold">{{ sel.monster.armor_class }}</div>
-              </div>
-              <div class="text-center flex-1">
-                <div class="text-[10px] text-slate uppercase tracking-widest">HP</div>
-                <div class="font-brand text-xl text-parchment">
-                  {{ sel.token.hp ?? sel.monster.hit_points }} / {{ sel.token.max_hp ?? sel.monster.hit_points }}
-                </div>
-              </div>
-            </div>
-
-            <div class="flex items-center gap-1.5 mb-4">
-              <button class="btn-icon w-6 h-6 text-sm" [disabled]="(sel.token.hp ?? sel.monster.hit_points) <= 0"
-                (click)="adjustMonsterTokenHp(-hpAdjustAmount())">−</button>
-              <input class="field-input w-14 text-center text-sm py-0.5 px-1" type="number" min="0"
-                [ngModel]="hpAdjustAmount()" (ngModelChange)="setHpAdjustAmount($event)" name="hpAdjust" />
-              <button class="btn-icon w-6 h-6 text-sm" [disabled]="(sel.token.hp ?? sel.monster.hit_points) >= (sel.token.max_hp ?? sel.monster.hit_points)"
-                (click)="adjustMonsterTokenHp(hpAdjustAmount())">+</button>
-              <span class="text-xs text-slate ml-1">HP</span>
-            </div>
-
-            <p class="text-xs text-slate" [class.mb-3]="!savingThrows(sel.monster)">
-              Speed {{ sel.monster.speed.walk ?? 0 }} ft.
-            </p>
-            @if (savingThrows(sel.monster); as saves) {
-              <p class="text-xs text-slate mb-3">Saving Throws {{ saves }}</p>
-            }
-
-            @if (sel.monster.traits?.length) {
-              <h4 class="text-xs font-semibold text-slate uppercase tracking-wider mb-1.5">Traits</h4>
-              <div class="flex flex-col gap-2 mb-3">
-                @for (trait of sel.monster.traits; track trait.name) {
-                  <p class="text-xs m-0"><span class="text-parchment font-medium">{{ trait.name }}.</span> <span class="text-slate">{{ trait.description }}</span></p>
-                }
-              </div>
-            }
-
-            <h4 class="text-xs font-semibold text-slate uppercase tracking-wider mb-1.5">Actions</h4>
-            <div class="flex flex-col gap-2">
-              @for (action of sel.monster.actions; track action.name) {
-                <p class="text-xs m-0"><span class="text-parchment font-medium">{{ action.name }}.</span> <span class="text-slate">{{ action.description }}</span></p>
-              }
-            </div>
+            <app-monster-token-detail
+              [token]="sel.token"
+              [monster]="sel.monster"
+              [hpAdjustAmount]="hpAdjustAmount()"
+              (back)="closeMonsterTokenView()"
+              (colorChanged)="setMonsterTokenColor($event)"
+              (hpAdjustAmountChanged)="setHpAdjustAmount($event)"
+              (adjustHp)="adjustMonsterTokenHp($event)"
+            />
           } @else {
-            <button type="button"
-              class="w-full flex items-center gap-2 px-3 py-2 rounded border text-left text-sm cursor-pointer mb-4"
-              [class]="isArmedCustomToken() ? 'border-gold/50 bg-gold/5' : 'border-white/10 hover:border-white/30'"
-              (click)="toggleArmCustomToken()"
-              matTooltip="Arm, then click the map to drop a blank token you can name and color afterward"
-              style="font-family: inherit;"
-            >
-              <mat-icon class="text-base text-slate">add_circle</mat-icon>
-              <span class="text-parchment font-medium">Add Empty Token</span>
-            </button>
-
-            <h3 class="text-xs font-semibold text-slate uppercase tracking-wider mb-2">Players</h3>
-            @if (presentPlayers().length === 0) {
-              <p class="text-xs text-slate mb-4">No players have joined yet.</p>
-            } @else {
-              <div class="flex flex-col gap-1.5 mb-4">
-                @for (player of presentPlayers(); track player.socketId) {
-                  <div class="flex items-center gap-1.5">
-                    <button type="button"
-                      class="flex-1 min-w-0 flex items-center gap-2 px-3 py-2 rounded border text-left text-sm cursor-pointer"
-                      [class]="isArmedCharacter(player.characterId) ? 'border-gold/50 bg-gold/5' : 'border-white/10 hover:border-white/30'"
-                      (click)="toggleArmPresentPlayer(player)"
-                      style="font-family: inherit;"
-                    >
-                      <span class="w-1.5 h-1.5 rounded-full bg-success flex-shrink-0"></span>
-                      <div class="min-w-0">
-                        <span class="text-parchment font-medium truncate">{{ player.characterName }}</span>
-                        <p class="text-coal text-xs m-0 mt-0.5">{{ player.username }}</p>
-                      </div>
-                    </button>
-                    <input type="color" class="h-7 w-7 rounded cursor-pointer border border-white/10 bg-transparent flex-shrink-0"
-                      [ngModel]="colorFor(player.characterId)" (ngModelChange)="setCharacterColor(player.characterId, $event)"
-                      (click)="$event.stopPropagation()" name="color-player-{{ player.socketId }}"
-                      [matTooltip]="'Token color for ' + player.characterName" />
-                  </div>
-                }
-              </div>
-            }
-
-            <div class="flex items-center justify-between mb-2">
-              <h3 class="text-xs font-semibold text-slate uppercase tracking-wider m-0">Monsters</h3>
-              <button type="button" class="btn-icon w-5 h-5 text-sm" (click)="showMonsterSearch() ? closeMonsterSearch() : openMonsterSearch()"
-                [matTooltip]="showMonsterSearch() ? 'Close' : 'Add a monster'">
-                <mat-icon class="text-base">{{ showMonsterSearch() ? 'close' : 'add' }}</mat-icon>
-              </button>
-            </div>
-
-            @if (showMonsterSearch()) {
-              <div class="mb-3">
-                <input class="field-input text-sm" type="text" placeholder="Search monsters…" autofocus
-                  [ngModel]="monsterSearchQuery()" (ngModelChange)="monsterSearchQuery.set($event)" name="monsterSearch" />
-                <div class="flex flex-col gap-1 mt-1.5 max-h-48 overflow-y-auto">
-                  @for (monster of availableMonstersToAdd(); track monster.index) {
-                    <button type="button"
-                      class="flex items-center justify-between gap-2 px-2.5 py-1.5 rounded border border-white/10 hover:border-white/30 text-left text-sm w-full cursor-pointer"
-                      [disabled]="addingMonster()"
-                      (click)="addMonsterToEncounter(monster)"
-                      style="font-family: inherit;"
-                    >
-                      <span class="text-parchment truncate">{{ monster.name }}</span>
-                      <span class="text-coal text-xs flex-shrink-0">CR {{ monster.challenge_rating }}</span>
-                    </button>
-                  } @empty {
-                    <p class="text-xs text-slate px-1">No matching monsters.</p>
-                  }
-                </div>
-              </div>
-            }
-
-            @if (encounter.monsters.length === 0) {
-              <p class="text-xs text-slate mb-4">No monsters in this encounter.</p>
-            } @else {
-              <div class="flex flex-col gap-1.5 mb-4">
-                @for (index of encounter.monsters; track index) {
-                  @let monster = monsterFor(index);
-                  @if (monster) {
-                    <div class="flex items-center gap-1.5">
-                      <button type="button"
-                        class="flex-1 min-w-0 flex items-center justify-between gap-2 px-3 py-2 rounded border text-left text-sm cursor-pointer"
-                        [class]="isArmedMonster(index) ? 'border-gold/50 bg-gold/5' : 'border-white/10 hover:border-white/30'"
-                        (click)="toggleArmMonster(monster)"
-                        style="font-family: inherit;"
-                      >
-                        <div class="min-w-0">
-                          <span class="text-parchment font-medium truncate">{{ monster.name }}</span>
-                          <p class="text-coal text-xs m-0 mt-0.5">CR {{ monster.challenge_rating }} · AC {{ monster.armor_class }} · HP {{ monster.hit_points }}</p>
-                        </div>
-                      </button>
-                      <input type="color" class="h-7 w-7 rounded cursor-pointer border border-white/10 bg-transparent flex-shrink-0"
-                        [ngModel]="colorForMonster(index)" (ngModelChange)="setMonsterColor(index, $event)"
-                        (click)="$event.stopPropagation()" name="color-monster-{{ index }}"
-                        [matTooltip]="'Token color for ' + monster.name" />
-                    </div>
-                  }
-                }
-              </div>
-            }
-
-            <h3 class="text-xs font-semibold text-slate uppercase tracking-wider mb-2">Characters</h3>
-            @if (encounter.character_ids.length === 0) {
-              <p class="text-xs text-slate">No characters in this encounter.</p>
-            } @else {
-              <div class="flex flex-col gap-1.5">
-                @for (id of encounter.character_ids; track id) {
-                  @let character = characterFor(id);
-                  @if (character) {
-                    <div class="flex items-center gap-1.5">
-                      <button type="button"
-                        class="flex-1 min-w-0 flex items-center justify-between gap-2 px-3 py-2 rounded border text-left text-sm cursor-pointer"
-                        [class]="isArmedCharacter(id) ? 'border-gold/50 bg-gold/5' : 'border-white/10 hover:border-white/30'"
-                        (click)="toggleArmCharacter(character)"
-                        style="font-family: inherit;"
-                      >
-                        <div class="min-w-0">
-                          <span class="text-parchment font-medium truncate">{{ character.name }}</span>
-                          <p class="text-coal text-xs m-0 mt-0.5">Level {{ character.level }} {{ classLabel(character) }} · AC {{ character.armor_class }} · HP {{ character.max_hp }}</p>
-                        </div>
-                      </button>
-                      <input type="color" class="h-7 w-7 rounded cursor-pointer border border-white/10 bg-transparent flex-shrink-0"
-                        [ngModel]="colorFor(id)" (ngModelChange)="setCharacterColor(id, $event)"
-                        (click)="$event.stopPropagation()" name="color-{{ id }}"
-                        [matTooltip]="'Token color for ' + character.name" />
-                    </div>
-                  }
-                }
-              </div>
-            }
+            <app-roster-panel
+              [presentPlayers]="presentPlayers()"
+              [monsters]="rosterMonsters()"
+              [characters]="rosterCharacters()"
+              [classLabel]="classLabel"
+              [colorFor]="colorFor"
+              [colorForMonster]="colorForMonster"
+              [isArmedCharacter]="isArmedCharacter"
+              [isArmedMonster]="isArmedMonster"
+              [isArmedCustomToken]="isArmedCustomToken()"
+              [showMonsterSearch]="showMonsterSearch()"
+              [monsterSearchQuery]="monsterSearchQuery()"
+              [availableMonstersToAdd]="availableMonstersToAdd()"
+              [addingMonster]="addingMonster()"
+              (armCustomToken)="toggleArmCustomToken()"
+              (armPlayer)="toggleArmPresentPlayer($event)"
+              (armMonster)="toggleArmMonster($event)"
+              (armCharacter)="toggleArmCharacter($event)"
+              (characterColorChanged)="setCharacterColor($event.id, $event.color)"
+              (monsterColorChanged)="setMonsterColor($event.index, $event.color)"
+              (openMonsterSearch)="openMonsterSearch()"
+              (closeMonsterSearch)="closeMonsterSearch()"
+              (monsterSearchQueryChanged)="monsterSearchQuery.set($event)"
+              (addMonster)="addMonsterToEncounter($event)"
+            />
           }
         </aside>
 
         <div appResizeHandle (resizeDrag)="onRosterResize($event)"
              class="w-1.5 flex-shrink-0 hover:bg-gold/40 active:bg-gold/60 transition-colors"></div>
 
-        <!-- Map -->
         @if (encounter.map_id) {
-          <app-battle-map [mapIdInput]="encounter.map_id" [embedded]="true" [placingEntity]="armedEntity()"
+          <app-battle-map [mapIdInput]="encounter.map_id" [embedded]="true" [canControl]="isOwner()" [placingEntity]="armedEntity()"
             [characterHp]="characterHp()" [characterPortraits]="characterPortraits()"
             [currentTurnTokenId]="encounter.current_turn_token_id ?? null"
             (tokenClicked)="onTokenClicked($event)" (currentTurnTokenChanged)="currentTurnToken.set($event)"

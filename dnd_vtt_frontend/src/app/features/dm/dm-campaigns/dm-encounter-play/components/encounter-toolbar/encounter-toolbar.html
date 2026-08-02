@@ -1,0 +1,33 @@
+<div class="flex items-center gap-2 px-4 py-2.5 border-b border-white/10 flex-shrink-0">
+  <div class="flex items-center gap-2 flex-1 min-w-0">
+    <button class="btn-ghost text-sm" (click)="back.emit()">
+      <mat-icon class="text-base">arrow_back</mat-icon> Session
+    </button>
+    <span class="text-parchment font-medium text-sm ml-2 truncate">{{ encounter().name }}</span>
+  </div>
+
+  @if (encounter().status === 'active') {
+    <div class="flex items-center gap-1 flex-shrink-0">
+      <button class="btn-icon" [disabled]="togglingTurn() || !currentTurnToken()"
+              (click)="previousTurn.emit()" matTooltip="Previous turn">
+        <mat-icon>skip_previous</mat-icon>
+      </button>
+      <span class="text-sm font-brand text-gold whitespace-nowrap px-1">
+        {{ currentTurnToken() ? currentTurnToken()!.label + '’s Turn' : 'Turn Order' }}
+      </span>
+      <button class="btn-icon" [disabled]="togglingTurn()"
+              (click)="nextTurn.emit()" [matTooltip]="currentTurnToken() ? 'Next turn' : 'Start turn order'">
+        <mat-icon>skip_next</mat-icon>
+      </button>
+    </div>
+  }
+
+  <div class="flex items-center gap-2 flex-1 justify-end">
+    @if (encounter().status === 'active') {
+      <span class="tag text-xs">Code: <span class="font-brand tracking-widest">{{ encounter().join_code }}</span></span>
+      <button class="btn-outline text-xs px-2 py-1" [disabled]="togglingStatus()" (click)="stop.emit()">Stop Encounter</button>
+    } @else {
+      <button class="btn-primary text-xs px-2 py-1" [disabled]="togglingStatus()" (click)="start.emit()">Start Encounter</button>
+    }
+  </div>
+</div>

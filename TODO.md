@@ -15,11 +15,11 @@
 - [ ] Note taking
 - [ ] Integrated music/Sound effects
 - [ ] display account/mode for streaming to a TV or other device
-- [ ] DM secrets (letters, items etc)
+- [ ] DM secrets (letters, items etc). ** We could add a sort of messaging system **
 - [ ] Popups for leveling up and other shi
 - [ ] character icon customization
 - [ ] Effect/ concentration on players in map
-- [ ] players can hide race
+- [x] players can hide race
 - [ ] 
 
 ## Mathieu
@@ -31,20 +31,26 @@
     - [x] add encounters
     - [x] add comments
     - [ ] customize campaign
+        - [x] Add background image
+        - [ ] Change color scheme
     - [ ] 
-- [ ] Encounters
+- [x] Encounters
     - [x] Add Turns
     - [x] Measuring and player movement
     - [x] fog of war
     - [x] Add player icons
+    - [ ] Creating encounters with images
 - [ ] Dashboard
     - [ ] Latest campaign and character
     - [ ] Updates to character (leveling up)
     - [ ] 
 - [ ] Monster Creation
-- [ ] Auto deployement pipeline
-    - [ ] Testing
-    - [ ] pull from main
+    - [ ] Add Monster Icons
+- [x] Auto deployement pipeline
+    - [x] Testing
+    - [x] push to main
+- [ ] UX modifications
+- [ ] Settings and profile page
 
 ## Andre
 

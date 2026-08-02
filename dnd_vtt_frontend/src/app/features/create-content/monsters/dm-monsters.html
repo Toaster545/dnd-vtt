@@ -1,0 +1,37 @@
+@if (showForm()) {
+  <app-monster-form class="flex flex-col flex-1 min-h-0"
+    [monster]="editingMonster()" (saved)="onSaved()" (cancelled)="onCancelled()" />
+} @else {
+  <div class="flex-1 overflow-auto p-6">
+    <div class="flex items-center mb-5">
+      <h2 class="font-brand text-lg text-parchment m-0 flex-1">Monsters</h2>
+      <button class="btn-primary" (click)="openCreate()">
+        <mat-icon>add</mat-icon> New Monster
+      </button>
+    </div>
+
+    @if (loading()) {
+      <div class="flex items-center justify-center py-10">
+        <span class="spinner-lg"></span>
+      </div>
+    } @else if (monsters().length === 0) {
+      <p class="text-slate text-sm">No monsters yet. Create your first one above.</p>
+    } @else {
+      <ul class="divide-y divide-white/8">
+        @for (m of monsters(); track m.index) {
+          <li class="flex items-center p-3 gap-3 cursor-pointer hover:bg-white/5" (click)="openEdit(m)">
+            <div class="flex-1 min-w-0">
+              <p class="text-parchment font-medium truncate m-0">{{ m.name }}</p>
+              <p class="text-slate text-xs m-0 mt-0.5">{{ m.size }} {{ m.type }} · {{ m.alignment }}</p>
+            </div>
+            <div class="flex items-center gap-1.5">
+              <span class="text-xs text-slate border border-white/10 rounded px-2 py-0.5">HP {{ m.hit_points }}</span>
+              <span class="text-xs text-slate border border-white/10 rounded px-2 py-0.5">AC {{ m.armor_class }}</span>
+              <span class="text-xs text-slate border border-white/10 rounded px-2 py-0.5">CR {{ m.challenge_rating }}</span>
+            </div>
+          </li>
+        }
+      </ul>
+    }
+  </div>
+}

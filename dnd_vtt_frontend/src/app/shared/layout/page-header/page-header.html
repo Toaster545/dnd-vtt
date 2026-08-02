@@ -1,0 +1,8 @@
+<header class="app-toolbar">
+  <button class="btn-icon" [routerLink]="backRoute()" matTooltip="Back">
+    <mat-icon>arrow_back</mat-icon>
+  </button>
+  <span class="w-px h-8 bg-white/10"></span>
+  <span class="toolbar-title flex-1">{{ title() }}</span>
+  <ng-content></ng-content>
+</header>

@@ -7,6 +7,11 @@ export interface Campaign {
   background_url?: string | null;
   created_at?: string;
   updated_at?: string;
+  // Only present on the CampaignService.getAll() list (CampaignsService.findAllForUser on the
+  // backend) — true when the current user is this campaign's DM, false when they're just a
+  // joined member. A single user can own some campaigns and be a member of others, so the list
+  // is the union of both, distinguished by this flag.
+  is_owner?: boolean;
 }
 
 export interface CampaignMember {

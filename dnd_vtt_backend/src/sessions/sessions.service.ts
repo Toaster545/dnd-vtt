@@ -104,6 +104,14 @@ export class SessionsService {
   }
 
   async create(dmId: string, dto: CreateSessionDto) {
+    const campaign = await this.db.execute(
+      'SELECT dm_id FROM campaigns WHERE id = ?',
+      [dto.campaign_id],
+    );
+    const campaignRow = campaign.rows[0];
+    if (!campaignRow) throw new NotFoundException('Campaign not found');
+    if (campaignRow.dm_id !== dmId) throw new ForbiddenException();
+
     const id = randomUUID();
     await this.db.execute(
       'INSERT INTO sessions (id, name, description, dm_id, campaign_id) VALUES (?, ?, ?, ?, ?)',
@@ -122,7 +130,9 @@ export class SessionsService {
     return this.findOne(id);
   }
 
-  async remove(id: string) {
+  async remove(id: string, dmId: string) {
+    const session = await this.findOne(id);
+    if (session.dm_id !== dmId) throw new ForbiddenException();
     await this.db.execute('DELETE FROM sessions WHERE id = ?', [id]);
     return { deleted: true };
   }

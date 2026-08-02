@@ -15,6 +15,15 @@ html {
   @include t.apply();
 }
 
+// Color scheme overrides — ColorSchemeService (core/services/color-scheme.service.ts) sets
+// data-theme on <html> at runtime; the 'gold' default is already baked into t.apply() above so
+// no attribute is required for it, but repeating it here is harmless.
+@each $name, $theme in t.$themes {
+  html[data-theme='#{$name}'] {
+    @include t.theme-vars($theme);
+  }
+}
+
 @layer base {
   *, *::before, *::after { box-sizing: border-box; }
   html, body {
@@ -23,6 +32,23 @@ html {
     height: 100%;
     -webkit-font-smoothing: antialiased;
   }
+}
+
+// App-wide default strength for the background darkening overlay below. Overridden per page by
+// BackgroundService.setPageOverlay() — see core/services/background.service.ts for how.
+:root {
+  --app-bg-overlay-alpha: 0.7;
+}
+
+// Rendered once by App (app.ts), sits behind all routed content and darkens whatever the current
+// body background is (a bg-image-* preset or a custom uploaded image) by --app-bg-overlay-alpha.
+.app-bg-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-color: color-mix(in srgb, var(--dnd-bg-base) calc(var(--app-bg-overlay-alpha) * 100%), transparent);
+  transition: background-color 0.15s ease;
 }
 
 @layer components {
@@ -34,7 +60,7 @@ html {
     font-family: inherit;
   }
   .btn-primary {
-    @apply btn bg-gold text-black hover:bg-gold-bright active:bg-gold-dim;
+    @apply btn bg-gold text-on-accent hover:bg-gold-bright active:bg-gold-dim;
   }
   .btn-outline {
     @apply btn border border-white/20 text-parchment hover:border-white/40 hover:bg-white/5;
@@ -56,6 +82,10 @@ html {
   .card {
     @apply bg-surface rounded-md border border-white/10;
   }
+  .card-translucent {
+    @apply rounded-md border border-white/10;
+    background: color-mix(in srgb, var(--dnd-bg-surface) 85%, transparent);
+  }
   .card-body {
     @apply p-5;
   }
@@ -65,13 +95,28 @@ html {
 
   // ── Toolbar ──────────────────────────────────────────────────
   .app-toolbar {
-    @apply flex items-center gap-2 h-14 px-3 bg-surface border-b border-white/10 flex-shrink-0;
+    @apply flex items-center gap-3 h-16 px-4 flex-shrink-0
+           bg-gradient-to-b from-elevated to-surface shadow-sm;
+    border-bottom: 1px solid color-mix(in srgb, var(--dnd-gold) 10%, transparent);
   }
   .toolbar-title {
-    @apply font-brand text-lg text-parchment;
+    @apply font-brand text-lg text-parchment tracking-wide;
   }
   .toolbar-badge {
     @apply text-xs font-bold px-2 py-0.5 rounded bg-gold-container text-gold-bright uppercase tracking-wider flex-shrink-0;
+  }
+
+  // ── Toolbar tabs ────────────────────────────────────────────
+  .tab-pill {
+    @apply flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-sm font-medium
+           text-slate hover:text-parchment hover:bg-white/5 transition-colors
+           cursor-pointer border-0 outline-none;
+    background: transparent;
+    font-family: inherit;
+  }
+  .tab-pill.active {
+    @apply text-gold-bright;
+    background: color-mix(in srgb, var(--dnd-gold) 15%, transparent);
   }
 
   // ── Form fields ───────────────────────────────────────────────
@@ -83,9 +128,13 @@ html {
   }
   .field-input {
     @apply w-full bg-elevated border border-white/10 rounded px-3 py-2 text-parchment text-sm
-           focus:outline-none focus:border-gold/50 focus:ring-1 focus:ring-gold/20 transition-colors;
+           focus:outline-none focus:ring-1 transition-colors;
     font-family: inherit;
-    color-scheme: dark;
+
+    &:focus {
+      border-color: color-mix(in srgb, var(--dnd-gold) 50%, transparent);
+      --tw-ring-color: color-mix(in srgb, var(--dnd-gold) 20%, transparent);
+    }
   }
   .field-input::placeholder {
     @apply text-coal;
@@ -142,16 +191,82 @@ textarea.field-input {
 
 // Material dialog — override panel background
 .mat-mdc-dialog-container .mdc-dialog__surface {
-  background: #252641 !important;
-  border: 1px solid rgba(255,255,255,0.12);
+  background: var(--dnd-bg-overlay) !important;
+  border: 1px solid var(--dnd-outline-strong);
   border-radius: 8px !important;
 }
 
-// Character sheet dialog — tighter padding, dark scroll
-.char-sheet-dialog .mat-mdc-dialog-container {
-  .mdc-dialog__surface { background: #1e2033 !important; }
-  .mat-mdc-dialog-content { color: inherit; padding: 0; }
+// ── App background presets ───────────────────────────────────────
+// Applied as a class on <body> by BackgroundService (core/services/background.service.ts), and
+// reused as-is on the small preview swatches in Settings — so these are plain `.bg-image-*`
+// classes (not `body.bg-image-*`) and `background-attachment: fixed` is applied to <body> only,
+// below, since it would just clip a small preview swatch to an arbitrary viewport region.
+.bg-image-none {
+  background-image: none;
 }
-.char-sheet-dialog .mat-mdc-dialog-content::-webkit-scrollbar { width: 6px; }
-.char-sheet-dialog .mat-mdc-dialog-content::-webkit-scrollbar-track { background: transparent; }
-.char-sheet-dialog .mat-mdc-dialog-content::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 3px; }
+
+.bg-image-parchment {
+  background-image:
+    repeating-linear-gradient(135deg, rgba(237, 233, 223, 0.035) 0px, rgba(237, 233, 223, 0.035) 2px, transparent 2px, transparent 14px),
+    repeating-linear-gradient(45deg, rgba(237, 233, 223, 0.025) 0px, rgba(237, 233, 223, 0.025) 2px, transparent 2px, transparent 14px),
+    radial-gradient(ellipse at top, rgba(201, 162, 39, 0.09), transparent 60%);
+}
+
+.bg-image-stone {
+  background-image:
+    linear-gradient(rgba(0, 0, 0, 0.35) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 0, 0, 0.35) 1px, transparent 1px),
+    radial-gradient(ellipse at center, rgba(78, 77, 73, 0.25), transparent 70%);
+  background-size: 16px 12px, 16px 12px, 100% 100%;
+}
+
+.bg-image-starfield {
+  background-image:
+    radial-gradient(1px 1px at 20px 30px, rgba(237, 233, 223, 0.5), transparent),
+    radial-gradient(1px 1px at 90px 80px, rgba(237, 233, 223, 0.4), transparent),
+    radial-gradient(1.5px 1.5px at 150px 140px, rgba(237, 233, 223, 0.5), transparent),
+    radial-gradient(1px 1px at 200px 60px, rgba(237, 233, 223, 0.35), transparent),
+    radial-gradient(1.5px 1.5px at 260px 200px, rgba(237, 233, 223, 0.45), transparent),
+    radial-gradient(ellipse at top, rgba(37, 38, 65, 0.6), transparent 70%);
+  background-size: 90px 70px, 90px 70px, 90px 70px, 90px 70px, 90px 70px, 100% 100%;
+}
+
+body.bg-image-stone {
+  background-size: 48px 32px, 48px 32px, 100% 100%;
+}
+
+body.bg-image-starfield {
+  background-size: 280px 220px, 280px 220px, 280px 220px, 280px 220px, 280px 220px, 100% 100%;
+}
+
+body[class*='bg-image-']:not(.bg-image-none) {
+  background-attachment: fixed;
+}
+
+// ── Color scheme preview swatches ────────────────────────────────
+// Used only by the scheme picker in Settings — each swatch hardcodes that
+// scheme's own accent/surface colors (mirroring $themes in _tokens.scss) so
+// it previews correctly regardless of which scheme is currently active.
+.scheme-swatch-gold {
+  background: linear-gradient(135deg, #c9a227, #171822);
+}
+.scheme-swatch-crimson {
+  background: linear-gradient(135deg, #c9524a, #221417);
+}
+.scheme-swatch-emerald {
+  background: linear-gradient(135deg, #2f9e6a, #10201a);
+}
+.scheme-swatch-royal-blue {
+  background: linear-gradient(135deg, #4a7fe0, #101a2e);
+}
+.scheme-swatch-silver {
+  background: linear-gradient(135deg, #4a5361, #ffffff);
+}
+
+.bg-image-mist {
+  background-image:
+    radial-gradient(ellipse at 20% 20%, rgba(139, 26, 26, 0.12), transparent 55%),
+    radial-gradient(ellipse at 80% 30%, rgba(201, 162, 39, 0.08), transparent 50%),
+    radial-gradient(ellipse at 50% 90%, rgba(37, 38, 65, 0.5), transparent 60%);
+  background-attachment: fixed;
+}

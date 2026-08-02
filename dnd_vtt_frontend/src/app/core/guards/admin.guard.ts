@@ -10,8 +10,8 @@ export const adminGuard: CanActivateFn = () => {
 
   // Must wait on auth.ready (same as authGuard) rather than reading isAdmin() synchronously —
   // otherwise this can fire before the profile finishes loading from /auth/me and bounce an
-  // actual admin to /player before their role is known.
+  // actual admin to /home before their role is known.
   return from(auth.ready).pipe(
-    map(() => (auth.isAdmin() ? true : router.createUrlTree(['/player']))),
+    map(() => (auth.isAdmin() ? true : router.createUrlTree(['/home']))),
   );
 };
