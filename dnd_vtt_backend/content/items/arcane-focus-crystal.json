@@ -1,0 +1,12 @@
+{
+  "index": "arcane-focus-crystal",
+  "name": "Arcane Focus (Crystal)",
+  "type": "gear",
+  "category": "Arcane Focus",
+  "damage": null,
+  "damage_type": null,
+  "properties": [],
+  "weight": 1,
+  "cost": "10 gp",
+  "description": "A crystal specially constructed to channel the power of arcane spells."
+}

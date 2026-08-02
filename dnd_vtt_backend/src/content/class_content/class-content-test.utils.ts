@@ -17,6 +17,7 @@ export interface Grant {
     tags?: string[];
     ability?: string;
     minimum?: number;
+    value?: number;
   }[];
   options?: {
     name: string;
@@ -26,6 +27,7 @@ export interface Grant {
       tags?: string[];
       ability?: string;
       minimum?: number;
+      value?: number;
     }[];
   }[];
   action?: {
