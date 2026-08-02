@@ -5,6 +5,7 @@ import {
   ClassChoiceSource, RaceChoiceSource, activeEffects, averageHpFormula, baseArmorClass, collectTraitEffects, equippedItems, resolveCharacterFeatPicks,
   unarmoredDefenseBonus,
 } from '../utils/character-effects';
+import { weaponMatchesAnyProficiency } from '../utils/weapon-proficiency';
 
 export interface WeaponAttack {
   itemIndex: string;
@@ -37,19 +38,10 @@ export interface ComputedStats {
   weapon_attacks: WeaponAttack[];
 }
 
-// Weapon proficiency comes from a class's `weapon_proficiencies` list, which mixes broad
-// categories ("Simple Weapons", "Martial Weapons") with specific weapon names in plural form
-// ("Longswords", "Hand Crossbows") — every current class's list stays within these two shapes,
-// so a trailing-"s" strip is enough to recover the singular item name to compare.
+// Weapon proficiency comes from book-facing labels that can name broad categories, restricted
+// categories (such as the Rogue's Finesse-or-Light martial weapons), or specific weapons.
 function classGrantsProficiency(weapon: DndItem, classData: DndClass): boolean {
-  return classData.weapon_proficiencies.some(p =>
-    (p === 'Simple Weapons' && weapon.category.startsWith('Simple')) ||
-    (p === 'Martial Weapons' && weapon.category.startsWith('Martial')) ||
-    (p === 'Martial Weapons with the Light property' &&
-      weapon.category.startsWith('Martial') &&
-      weapon.properties.includes('Light')) ||
-    p.replace(/s$/, '').toLowerCase() === weapon.name.toLowerCase(),
-  );
+  return weaponMatchesAnyProficiency(weapon, classData.weapon_proficiencies);
 }
 
 function isProficientWithWeapon(
