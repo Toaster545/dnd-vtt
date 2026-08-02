@@ -5,6 +5,7 @@ import { DndClass, TraitGrant, TraitOption, DndItem, DndFeat } from '../../../..
 import { Ability, ABILITIES } from '../../../../../core/models/character.model';
 import { resolveProgressiveChoiceLimit } from '../../../../../core/utils/progressive-choice';
 import { collectTraitEffects, reachableGrants } from '../../../../../core/utils/character-effects';
+import { weaponMatchesAnyProficiency } from '../../../../../core/utils/weapon-proficiency';
 
 export interface ClassEntry {
   cls: DndClass;
@@ -631,7 +632,7 @@ export class ClassStepComponent implements OnInit {
     const excluded = this.weaponMasteryPicksElsewhere(grant.key);
     return this.items().filter(it =>
       it.type === 'weapon' && it.mastery &&
-      grant.proficiency.some(p => it.category.startsWith(p)) &&
+      weaponMatchesAnyProficiency(it, grant.proficiency) &&
       !excluded.has(it.name),
     );
   }

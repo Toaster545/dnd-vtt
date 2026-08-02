@@ -10,6 +10,7 @@ export interface Grant {
   chooseByLevel?: Record<string, number>;
   skills?: string[];
   category?: string;
+  proficiency?: string[];
   effects?: {
     type: string;
     condition?: string;
