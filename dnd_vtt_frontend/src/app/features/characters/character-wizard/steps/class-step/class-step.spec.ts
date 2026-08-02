@@ -44,4 +44,39 @@ describe('ClassStepComponent skill choices', () => {
     fixture.componentInstance.toggleDraftSkill(grant, 'Survival');
     expect(fixture.componentInstance.draftSkills()).toEqual([]);
   });
+
+  it('restricts Expertise to listed proficient skills while keeping stale picks removable', async () => {
+    await TestBed.configureTestingModule({ imports: [ClassStepComponent] }).compileComponents();
+    const fixture = TestBed.createComponent(ClassStepComponent);
+    const grant = {
+      type: 'expertise_choice', key: 'scholar', name: 'Scholar', choose: 1,
+      skills: ['Arcana', 'History', 'Investigation', 'Medicine', 'Nature', 'Religion'],
+    } satisfies TraitGrant;
+    const wizard = {
+      index: 'wizard', name: 'Wizard', levels: [{ level: 1, features: [], grants: [grant] }],
+      primary_abilities: ['intelligence'], hit_die: 6,
+      saving_throws: ['intelligence', 'wisdom'], armor_training: [],
+      weapon_proficiencies: [], tool_proficiencies: [],
+      subclasses: [], subclass_level: 3, skill_choices: { count: 2, from: [] },
+      starting_equipment: { fixed: [], groups: [], gold: 0, goldAlternative: 0 },
+    } as unknown as DndClass;
+    fixture.componentRef.setInput('classes', [wizard]);
+    fixture.componentRef.setInput('selectedClasses', [{
+      cls: wizard, level: 1, subclass: '', skills: [], traits: { scholar: ['Athletics'] },
+    }]);
+    fixture.componentRef.setInput('characterLevel', 1);
+    fixture.componentRef.setInput('baseAbilityScores', {
+      strength: 10, dexterity: 10, constitution: 10,
+      intelligence: 10, wisdom: 10, charisma: 10,
+    });
+    fixture.componentRef.setInput('proficientSkills', ['Arcana', 'Athletics', 'Insight']);
+    fixture.detectChanges();
+    fixture.componentInstance.openFromList(wizard);
+
+    expect(fixture.componentInstance.expertiseOptions(grant)).toEqual(['Arcana', 'Athletics']);
+    fixture.componentInstance.toggleExpertise(grant, 'Insight');
+    expect(fixture.componentInstance.draftTraits()['scholar']).toEqual(['Athletics']);
+    fixture.componentInstance.toggleExpertise(grant, 'Athletics');
+    expect(fixture.componentInstance.draftTraits()['scholar']).toEqual([]);
+  });
 });

@@ -33,7 +33,6 @@
     }
   </div>
 }
-
 <!-- MY CLASSES VIEW -->
 @if (viewMode() === 'my-classes') {
   <h2 class="font-brand text-xl text-parchment mb-4">Your Classes</h2>
@@ -439,11 +438,11 @@
                       @if (!collapsed) {
                         <div class="pl-3.5 mt-1.5">
                           @if (grant.description) { <p class="text-xs text-coal mb-2">{{ grant.description }}</p> }
-                          @if (expertiseOptions().length === 0) {
+                          @if (expertiseOptions(grant).length === 0) {
                             <p class="text-xs text-gold">Choose skill proficiencies first, then return here.</p>
                           } @else {
                             <div class="flex flex-wrap gap-1.5">
-                              @for (skill of expertiseOptions(); track skill) {
+                              @for (skill of expertiseOptions(grant); track skill) {
                                 @let picked = traitSelected(grant, skill);
                                 @let full   = !picked && (!needsChoice || expertiseTakenElsewhere(grant, skill));
                                 <button

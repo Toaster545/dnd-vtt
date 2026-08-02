@@ -1,0 +1,16 @@
+{
+  "index": "arcane-focus-quarterstaff",
+  "name": "Arcane Focus (Quarterstaff)",
+  "type": "weapon",
+  "category": "Simple Melee",
+  "damage": "1d6",
+  "damage_type": "bludgeoning",
+  "properties": ["Versatile (1d8)", "Arcane Focus"],
+  "weight": 4,
+  "cost": "5 gp",
+  "description": "A specially constructed staff that functions as both a Quarterstaff and an Arcane Focus.",
+  "mastery": {
+    "property": "Topple",
+    "description": "Hit can knock the target prone (target makes a Constitution save)."
+  }
+}
