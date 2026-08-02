@@ -66,6 +66,33 @@ const paladin = {
   subclasses: [],
 } as unknown as DndClass;
 
+const ranger = {
+  name: 'Ranger',
+  hit_die: 10,
+  saving_throws: ['strength', 'dexterity'],
+  weapon_proficiencies: ['Simple Weapons', 'Martial Weapons'],
+  levels: [],
+  subclasses: [
+    {
+      index: 'gloom-stalker',
+      name: 'Gloom Stalker',
+      levels: [
+        {
+          level: 3,
+          features: ['Dread Ambusher'],
+          grants: [
+            {
+              type: 'feature',
+              name: 'Dread Ambusher',
+              effects: [{ type: 'initiative_ability_bonus', ability: 'wisdom' }],
+            },
+          ],
+        },
+      ],
+    },
+  ],
+} as unknown as DndClass;
+
 const cleric = {
   name: 'Cleric',
   hit_die: 8,
@@ -257,5 +284,32 @@ describe('CharacterStatsService', () => {
     expect(stats.saving_throw_bonuses.strength).toBe(3);
     expect(stats.saving_throw_bonuses.wisdom).toBe(6);
     expect(stats.saving_throw_bonuses.charisma).toBe(9);
+  });
+
+  it('adds a Gloom Stalker ability modifier to Initiative without discarding a penalty', () => {
+    const character: Character = {
+      ...defaultCharacter(),
+      name: 'Gloom Stalker',
+      class: 'Ranger',
+      subclass: 'Gloom Stalker',
+      level: 3,
+      ability_scores: {
+        strength: 10,
+        dexterity: 14,
+        constitution: 10,
+        intelligence: 10,
+        wisdom: 8,
+        charisma: 10,
+      },
+    };
+    const stats = new CharacterStatsService().compute(
+      character,
+      ranger,
+      null,
+      [],
+      [{ data: ranger, choices: {}, level: 3, subclass: 'Gloom Stalker' }],
+    );
+
+    expect(stats.initiative).toBe(1);
   });
 });

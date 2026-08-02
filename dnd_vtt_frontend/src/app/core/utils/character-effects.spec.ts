@@ -1,7 +1,11 @@
 import { describe, expect, it } from 'vitest';
 import { EquipmentEntry } from '../models/character.model';
 import { DndItem, TraitEffect } from '../services/content.service';
-import { evaluateCondition, unarmoredDefenseBonus } from './character-effects';
+import {
+  evaluateCondition,
+  resolveLanguageProficiencies,
+  unarmoredDefenseBonus,
+} from './character-effects';
 
 describe('unarmoredDefenseBonus', () => {
   it('adds the modifier named by an active Unarmored Defense effect', () => {
@@ -38,5 +42,21 @@ describe('no_armor_or_shield equipment condition', () => {
     expect(evaluateCondition('no_armor_or_shield', [], [leather, shield])).toBe(true);
     expect(evaluateCondition('no_armor_or_shield', equipped(leather.index), [leather, shield])).toBe(false);
     expect(evaluateCondition('no_armor_or_shield', equipped(shield.index), [leather, shield])).toBe(false);
+  });
+});
+
+describe('resolveLanguageProficiencies', () => {
+  it('combines race and class languages while keeping Common exactly once', () => {
+    const effects: TraitEffect[] = [
+      { type: 'language_proficiency', tags: ['Sylvan'] },
+      { type: 'language_proficiency', tags: ['Elvish'] },
+    ];
+
+    expect(resolveLanguageProficiencies(['Elvish', 'Dwarvish'], effects)).toEqual([
+      'Common',
+      'Elvish',
+      'Dwarvish',
+      'Sylvan',
+    ]);
   });
 });

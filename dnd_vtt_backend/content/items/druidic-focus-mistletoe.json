@@ -1,0 +1,12 @@
+{
+  "index": "druidic-focus-mistletoe",
+  "name": "Druidic Focus (Sprig of Mistletoe)",
+  "type": "gear",
+  "category": "Druidic Focus",
+  "damage": null,
+  "damage_type": null,
+  "properties": [],
+  "weight": 0,
+  "cost": "1 gp",
+  "description": "A sprig of mistletoe used as a spellcasting focus for primal magic."
+}

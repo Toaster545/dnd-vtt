@@ -2,7 +2,7 @@ import { Component, inject, signal, computed, effect, output, OnInit, OnDestroy,
 import { FormsModule } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { ContentService, DndRace, DndClass, DndBackground, DndItem, DndSpell, DndFeat, TraitEffect, TraitGrant } from '../../../../../core/services/content.service';
-import { ClassChoiceSource, averageHpFormula, collectTraitEffects, reachableGrants, unarmoredDefenseBonus } from '../../../../../core/utils/character-effects';
+import { ClassChoiceSource, averageHpFormula, collectTraitEffects, reachableGrants, resolveLanguageProficiencies, unarmoredDefenseBonus } from '../../../../../core/utils/character-effects';
 import { isStructuredEquipment, resolveStartingEquipment } from '../../../../../core/utils/starting-equipment';
 import { resolveBackgroundSkills } from '../../../../../core/utils/background-skills';
 import { portraitDataUri, randomPortraitSeed } from '../../../../../core/utils/avatar';
@@ -286,10 +286,10 @@ export class CharacterWizardComponent implements OnInit, OnDestroy {
       .flatMap(grant => entry.traits[grant.key] ?? []))
     .reduce((record, skill) => ({ ...record, [skill]: true }), {} as Record<string, boolean>));
 
-  private languages = computed(() => [
-    'Common',
-    ...new Set(this.raceTraits()['languages'] ?? []),
-  ]);
+  private languages = computed(() => resolveLanguageProficiencies(
+    this.raceTraits()['languages'] ?? [],
+    this.selectedEffects('language_proficiency'),
+  ));
 
   // What the class's and background's starting-equipment choice (gear bundle or flat gold)
   // actually resolves to right now — `null` sources (old, not-yet-migrated content) contribute

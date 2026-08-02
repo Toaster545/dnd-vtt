@@ -192,11 +192,19 @@ export class CharacterStatsService {
     const spell_save_dc = spellcastingAbility != null
       ? 8 + prof + mods[spellcastingAbility] : null;
 
+    const initiativeAbilityBonus = allEffects
+      .filter(effect => effect.type === 'initiative_ability_bonus')
+      .reduce((sum, effect) => {
+        if (!effect.ability) return sum;
+        const modifier = mods[effect.ability];
+        return sum + Math.max(effect.minimum ?? modifier, modifier);
+      }, 0);
+
     return {
       proficiency_bonus: prof,
       ability_modifiers: mods,
       suggested_max_hp,
-      initiative: mods.dexterity,
+      initiative: mods.dexterity + initiativeAbilityBonus,
       saving_throw_proficient: saveProfSet,
       saving_throw_bonuses,
       skill_bonuses,
