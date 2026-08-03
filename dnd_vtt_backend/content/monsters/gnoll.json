@@ -1,0 +1,34 @@
+{
+  "index": "gnoll",
+  "name": "Gnoll",
+  "size": "Medium",
+  "type": "fiend (gnoll)",
+  "alignment": "chaotic evil",
+  "armor_class": 15,
+  "armor_class_desc": "hide armor, shield",
+  "hit_points": 22,
+  "hit_dice": "5d8",
+  "speed": { "walk": 30 },
+  "ability_scores": {
+    "strength": 14,
+    "dexterity": 12,
+    "constitution": 13,
+    "intelligence": 6,
+    "wisdom": 10,
+    "charisma": 7
+  },
+  "initiative_bonus": 1,
+  "senses": { "darkvision": 60, "passive_perception": 10 },
+  "languages": ["Gnoll"],
+  "challenge_rating": "1/2",
+  "xp": 100,
+  "traits": [
+    { "name": "Rampage", "description": "When the gnoll reduces a creature to 0 hit points with a melee attack on its turn, the gnoll can make a Bite attack as a bonus action." }
+  ],
+  "actions": [
+    { "name": "Multiattack", "description": "The gnoll makes two attacks, using Bite or Spear in any combination." },
+    { "name": "Bite", "description": "Melee Attack Roll: +4, reach 5 ft. Hit: 4 (1d4 + 2) Piercing damage." },
+    { "name": "Spear", "description": "Melee or Ranged Attack Roll: +4, reach 5 ft. or range 20/60 ft. Hit: 5 (1d6 + 2) Piercing damage." }
+  ],
+  "description": "Gnolls are ravenous, hyena-headed raiders bound to the demon lord Yeenoghu, driven by an insatiable hunger that turns every raid into a slaughter."
+}

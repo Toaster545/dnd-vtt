@@ -23,8 +23,12 @@
   }
 
   <div class="flex items-center gap-2 flex-1 justify-end">
+    @if (encounter().map_id) {
+      <button class="btn-icon" (click)="openPlayerView.emit()" matTooltip="Open player view in a new window">
+        <mat-icon>open_in_new</mat-icon>
+      </button>
+    }
     @if (encounter().status === 'active') {
-      <span class="tag text-xs">Code: <span class="font-brand tracking-widest">{{ encounter().join_code }}</span></span>
       <button class="btn-outline text-xs px-2 py-1" [disabled]="togglingStatus()" (click)="stop.emit()">Stop Encounter</button>
     } @else {
       <button class="btn-primary text-xs px-2 py-1" [disabled]="togglingStatus()" (click)="start.emit()">Start Encounter</button>

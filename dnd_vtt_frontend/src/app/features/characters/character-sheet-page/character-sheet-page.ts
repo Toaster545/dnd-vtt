@@ -24,10 +24,15 @@ export class CharacterSheetPageComponent implements OnInit {
 
   character = signal<Character | null>(null);
 
+  // Set when we arrived here via the wizard's "View Sheet" button (see
+  // CharacterWizardPageComponent.onViewSheet) — routes the back button to the wizard instead of
+  // the characters list in that case.
+  cameFromWizard = this.route.snapshot.queryParamMap.get('from') === 'wizard';
+  private characterId = this.route.snapshot.paramMap.get('id')!;
+
   async ngOnInit() {
-    const id = this.route.snapshot.paramMap.get('id')!;
-    this.recentActivity.markCharacterViewed(id);
-    this.character.set(await this.characterService.getCharacter(id));
+    this.recentActivity.markCharacterViewed(this.characterId);
+    this.character.set(await this.characterService.getCharacter(this.characterId));
   }
 
   onSaved(character: Character) {
@@ -35,6 +40,10 @@ export class CharacterSheetPageComponent implements OnInit {
   }
 
   close() {
+    if (this.cameFromWizard) {
+      void this.router.navigate(['/home/characters', this.characterId, 'edit']);
+      return;
+    }
     void this.router.navigate(['/home']);
   }
 

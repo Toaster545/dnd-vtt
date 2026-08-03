@@ -43,14 +43,6 @@ export class MonsterEntryDto {
 }
 
 export class CreateMonsterDto {
-  // Doubles as the JSON filename — restricted to a safe, unique slug (see ContentService.saveMonster).
-  @IsString()
-  @Matches(/^[a-z0-9]+(-[a-z0-9]+)*$/, {
-    message:
-      'index must be a lowercase kebab-case slug, e.g. "young-red-dragon"',
-  })
-  index: string;
-
   @IsString() @IsNotEmpty() name: string;
   @IsString() @IsNotEmpty() size: string;
   @IsString() @IsNotEmpty() type: string;

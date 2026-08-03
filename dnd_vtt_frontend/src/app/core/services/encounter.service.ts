@@ -48,10 +48,6 @@ export class EncounterService {
     return firstValueFrom(this.http.post<Encounter>(`${API}/encounters/${id}/stop`, {}));
   }
 
-  joinByCode(code: string): Promise<Encounter> {
-    return firstValueFrom(this.http.get<Encounter>(`${API}/encounters/join/${code}`));
-  }
-
   nextTurn(id: string): Promise<Encounter> {
     return firstValueFrom(this.http.post<Encounter>(`${API}/encounters/${id}/turn/next`, {}));
   }

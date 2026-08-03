@@ -165,17 +165,16 @@ export class PlayerCampaignSessionComponent implements OnInit, OnDestroy {
 
   async join(encounter: Encounter) {
     const characterId = this.myCharacterId;
-    if (!characterId || !encounter.join_code) return;
+    if (!characterId) return;
     this.joiningId.set(encounter.id!);
     try {
       const character = await this.characterService.getCharacter(characterId);
-      const joined = await this.encounterService.joinByCode(encounter.join_code);
-      this.activeEncounter.set(joined);
+      this.activeEncounter.set(encounter);
       this.activeCharacter.set(character);
       this.view.set('map');
-      this.saveStoredRejoin({ encounterId: joined.id! });
-      this.announceSelf(joined.id!, character);
-      this.presenceSub = this.encounterService.watchPresence(joined.id!)
+      this.saveStoredRejoin({ encounterId: encounter.id! });
+      this.announceSelf(encounter.id!, character);
+      this.presenceSub = this.encounterService.watchPresence(encounter.id!)
         .subscribe(players => this.presentPlayers.set(players));
       this.turnSub = this.encounterService.watchTurnState()
         .subscribe(state => this.activeEncounter.update(e => e ? {

@@ -1,25 +1,66 @@
 <h2 class="font-brand text-xl text-parchment mb-1">Assign Ability Scores</h2>
-<p class="text-sm text-slate mb-4">Assign each value from the standard array exactly once.</p>
-<div class="flex gap-2 flex-wrap mb-6">
-  @for (v of standardArray; track v) {
-    <span class="text-sm font-mono font-bold px-3 py-1 rounded border"
-      [class]="isValueAssigned(v)
-        ? 'border-gold/25 text-gold/40 line-through'
-        : 'border-white/20 text-parchment bg-elevated'">
-      {{ v }}
-    </span>
+
+<div class="flex gap-2 mb-4">
+  @for (m of methods; track m.value) {
+    <button type="button"
+      class="text-sm font-semibold px-3 py-1.5 rounded border transition-colors"
+      [class]="method() === m.value
+        ? 'border-gold bg-gold/10 text-gold'
+        : 'border-white/20 text-slate hover:text-parchment hover:border-white/40'"
+      (click)="setMethod(m.value)">
+      {{ m.label }}
+    </button>
   }
 </div>
+
+@if (method() === 'standard') {
+  <p class="text-sm text-slate mb-4">Assign each value from the standard array exactly once.</p>
+  <div class="flex gap-2 flex-wrap mb-6">
+    @for (v of standardArray; track v) {
+      <span class="text-sm font-mono font-bold px-3 py-1 rounded border"
+        [class]="isValueAssigned(v)
+          ? 'border-gold/25 text-gold/40 line-through'
+          : 'border-white/20 text-parchment bg-elevated'">
+        {{ v }}
+      </span>
+    }
+  </div>
+} @else if (method() === 'pointbuy') {
+  <p class="text-sm text-slate mb-4">
+    Spend points to raise each score from a base of {{ pointBuyMin }} (max {{ pointBuyMax }}).
+  </p>
+  <p class="text-sm font-semibold mb-6" [class]="pointBuyRemaining() < 0 ? 'text-danger' : 'text-parchment'">
+    Points remaining: {{ pointBuyRemaining() }} / {{ pointBuyBudget }}
+  </p>
+} @else {
+  <p class="text-sm text-slate mb-6">Enter each ability score directly.</p>
+}
+
 <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 max-w-lg">
   @for (ab of abilities; track ab) {
     <div class="flex flex-col gap-1">
       <label class="text-xs font-bold text-slate uppercase tracking-wide">{{ abilityShort[ab] }}</label>
-      <select class="field-input" [ngModel]="assignments()[ab]" (ngModelChange)="assign(ab, $event)" [name]="ab">
-        <option [ngValue]="null">—</option>
-        @for (v of optionsFor(ab); track v) {
-          <option [ngValue]="v">{{ v }}</option>
-        }
-      </select>
+
+      @if (method() === 'standard') {
+        <select class="field-input" [ngModel]="assignments()[ab]" (ngModelChange)="assign(ab, $event)" [name]="ab">
+          <option [ngValue]="null">—</option>
+          @for (v of optionsFor(ab); track v) {
+            <option [ngValue]="v">{{ v }}</option>
+          }
+        </select>
+      } @else if (method() === 'pointbuy') {
+        <div class="flex items-center gap-2">
+          <button type="button" class="field-input px-2 py-1 leading-none disabled:opacity-30"
+            (click)="pointBuyDecrement(ab)" [disabled]="!canPointBuyDecrement(ab)">−</button>
+          <span class="flex-1 text-center font-mono font-bold text-parchment">{{ assignments()[ab] ?? pointBuyMin }}</span>
+          <button type="button" class="field-input px-2 py-1 leading-none disabled:opacity-30"
+            (click)="pointBuyIncrement(ab)" [disabled]="!canPointBuyIncrement(ab)">+</button>
+        </div>
+      } @else {
+        <input type="number" class="field-input" [ngModel]="assignments()[ab]"
+          (ngModelChange)="manualChange(ab, $event)" [name]="ab" min="1" max="30" />
+      }
+
       <div class="flex items-center justify-between text-xs mt-0.5">
         @if (asiFor(ab) > 0) {
           <span class="text-success">+{{ asiFor(ab) }}</span>

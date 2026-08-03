@@ -119,7 +119,7 @@ export class DmCampaignSessionComponent implements OnInit, OnDestroy {
     const [session, encounters, monsters, characters, campaign] = await Promise.all([
       this.sessionService.getById(this.sessionId),
       this.encounterService.getBySession(this.sessionId),
-      this.content.getMonsters(),
+      this.content.getMonsters(this.campaignId),
       this.characterService.getMyCharacters(),
       this.campaignService.getById(this.campaignId),
     ]);
@@ -150,7 +150,7 @@ export class DmCampaignSessionComponent implements OnInit, OnDestroy {
           this.content.getRace(toContentIndex(char.race)).catch(() => null),
           this.content.getBackground(toContentIndex(char.background)).catch(() => null),
           this.content.getFeats(),
-          this.content.getItems(),
+          this.content.getItems(this.campaignId),
         ]);
         const primary = char.classes?.[0];
         const classesForFeats: ClassChoiceSource[] = classData ? [{

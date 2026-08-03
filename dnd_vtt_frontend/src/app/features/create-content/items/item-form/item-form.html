@@ -1,0 +1,95 @@
+<div class="flex flex-col flex-1 min-h-0">
+  <div class="flex items-center gap-3 flex-shrink-0 px-6 py-4 border-b border-white/10 bg-surface sticky top-0 z-10">
+    <h2 class="font-brand text-lg text-parchment m-0 flex-1">{{ isEdit() ? 'Edit Item' : 'New Item' }}</h2>
+    <button class="btn-ghost text-sm" type="button" (click)="cancelled.emit()">Cancel</button>
+    <button class="btn-primary text-sm" type="button" [disabled]="!canSave() || saving()" (click)="save()">
+      @if (saving()) { <span class="spinner-sm"></span> } @else { <mat-icon class="text-base">save</mat-icon> }
+      Save Item
+    </button>
+  </div>
+
+  @if (error()) {
+    <p class="field-error px-6 pt-3 m-0">{{ error() }}</p>
+  }
+
+  <div class="flex-1 overflow-y-auto p-6">
+    <div class="grid grid-cols-1 xl:grid-cols-2 gap-5 items-start">
+
+      <div class="card card-body">
+        <h3 class="text-sm font-semibold text-gold uppercase tracking-wide mb-3">Identity</h3>
+        <div class="grid grid-cols-2 gap-3">
+          <div class="field col-span-2">
+            <label class="field-label">Name</label>
+            <input class="field-input" [ngModel]="name()" (ngModelChange)="name.set($event)" placeholder="e.g. Sunfire Blade" name="name" />
+          </div>
+          <div class="field">
+            <label class="field-label">Type</label>
+            <select class="field-input" [ngModel]="type()" (ngModelChange)="type.set($event)" name="type">
+              @for (t of types; track t) { <option [value]="t">{{ t }}</option> }
+            </select>
+          </div>
+          <div class="field">
+            <label class="field-label">Category</label>
+            <input class="field-input" [ngModel]="category()" (ngModelChange)="category.set($event)" placeholder="e.g. Martial Melee" name="category" />
+          </div>
+          <div class="field">
+            <label class="field-label">Weight (lb)</label>
+            <input class="field-input" type="number" [ngModel]="weight()" (ngModelChange)="weight.set(+$event)" name="weight" />
+          </div>
+          <div class="field">
+            <label class="field-label">Cost</label>
+            <input class="field-input" [ngModel]="cost()" (ngModelChange)="cost.set($event)" placeholder="e.g. 25 gp" name="cost" />
+          </div>
+          <div class="field col-span-2">
+            <label class="field-label">Properties</label>
+            <input class="field-input" [ngModel]="properties()" (ngModelChange)="properties.set($event)" placeholder="Finesse, Light" name="properties" />
+          </div>
+        </div>
+      </div>
+
+      <div class="card card-body">
+        <h3 class="text-sm font-semibold text-gold uppercase tracking-wide mb-3">Combat</h3>
+        <div class="grid grid-cols-2 gap-3">
+          @if (type() === 'weapon') {
+            <div class="field">
+              <label class="field-label">Damage</label>
+              <input class="field-input" [ngModel]="damage()" (ngModelChange)="damage.set($event)" placeholder="e.g. 1d8" name="damage" />
+            </div>
+            <div class="field">
+              <label class="field-label">Damage Type</label>
+              <input class="field-input" [ngModel]="damageType()" (ngModelChange)="damageType.set($event)" placeholder="e.g. slashing" name="damageType" />
+            </div>
+            <div class="field col-span-2">
+              <label class="flex items-center gap-2 text-sm text-parchment">
+                <input type="checkbox" [ngModel]="hasMastery()" (ngModelChange)="hasMastery.set($event)" name="hasMastery" />
+                Has weapon mastery property
+              </label>
+            </div>
+            @if (hasMastery()) {
+              <div class="field">
+                <label class="field-label">Mastery Property</label>
+                <input class="field-input" [ngModel]="masteryProperty()" (ngModelChange)="masteryProperty.set($event)" placeholder="e.g. Vex" name="masteryProperty" />
+              </div>
+              <div class="field">
+                <label class="field-label">Mastery Description</label>
+                <input class="field-input" [ngModel]="masteryDescription()" (ngModelChange)="masteryDescription.set($event)" name="masteryDescription" />
+              </div>
+            }
+          }
+          @if (type() === 'armor') {
+            <div class="field col-span-2">
+              <label class="field-label">Armor Class</label>
+              <input class="field-input" [ngModel]="armorClass()" (ngModelChange)="armorClass.set($event)" placeholder="e.g. 14 + Dex modifier (max 2)" name="armorClass" />
+            </div>
+          }
+        </div>
+      </div>
+
+      <div class="card card-body xl:col-span-2">
+        <h3 class="text-sm font-semibold text-gold uppercase tracking-wide mb-3">Description</h3>
+        <textarea class="field-input min-h-24" [ngModel]="description()" (ngModelChange)="description.set($event)" name="description"></textarea>
+      </div>
+
+    </div>
+  </div>
+</div>

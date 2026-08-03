@@ -26,6 +26,15 @@ export const ALIGNMENTS = [
 
 export const STANDARD_ARRAY = [15, 14, 13, 12, 10, 8];
 
+export type ScoreMethod = 'standard' | 'pointbuy' | 'manual';
+
+export const POINT_BUY_BUDGET = 27;
+export const POINT_BUY_MIN = 8;
+export const POINT_BUY_MAX = 15;
+export const POINT_BUY_COST: Record<number, number> = {
+  8: 0, 9: 1, 10: 2, 11: 3, 12: 4, 13: 5, 14: 7, 15: 9,
+};
+
 export const SKILLS: Record<string, Ability> = {
   'Acrobatics': 'dexterity',    'Animal Handling': 'wisdom',  'Arcana': 'intelligence',
   'Athletics': 'strength',       'Deception': 'charisma',      'History': 'intelligence',

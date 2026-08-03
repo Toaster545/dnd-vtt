@@ -1,0 +1,35 @@
+{
+  "index": "owlbear",
+  "name": "Owlbear",
+  "size": "Large",
+  "type": "monstrosity",
+  "alignment": "unaligned",
+  "armor_class": 13,
+  "armor_class_desc": "natural armor",
+  "hit_points": 59,
+  "hit_dice": "7d10 + 21",
+  "speed": { "walk": 40 },
+  "ability_scores": {
+    "strength": 20,
+    "dexterity": 12,
+    "constitution": 17,
+    "intelligence": 3,
+    "wisdom": 12,
+    "charisma": 7
+  },
+  "initiative_bonus": 1,
+  "skills": { "Perception": 3 },
+  "senses": { "darkvision": 60, "passive_perception": 13 },
+  "languages": [],
+  "challenge_rating": "3",
+  "xp": 700,
+  "traits": [
+    { "name": "Keen Sight and Smell", "description": "The owlbear has advantage on Wisdom (Perception) checks that rely on sight or smell." }
+  ],
+  "actions": [
+    { "name": "Multiattack", "description": "The owlbear makes one Beak attack and one Claws attack." },
+    { "name": "Beak", "description": "Melee Attack Roll: +7, reach 5 ft. Hit: 13 (2d8 + 5) Piercing damage." },
+    { "name": "Claws", "description": "Melee Attack Roll: +7, reach 5 ft. Hit: 15 (2d10 + 5) Slashing damage." }
+  ],
+  "description": "Part titanic owl, part ferocious bear, the owlbear is a territorial predator whose ear-splitting screech is often the last warning its prey ever gets."
+}

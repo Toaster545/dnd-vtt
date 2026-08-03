@@ -1,7 +1,7 @@
 @if (character(); as c) {
   <app-character-play-sheet class="flex-1 min-h-0" [character]="c" (saved)="onSaved($event)">
     <div sheetHeaderLeading class="flex items-center gap-1">
-      <button class="btn-icon" (click)="close()" matTooltip="Back to characters">
+      <button class="btn-icon" (click)="close()" [matTooltip]="cameFromWizard ? 'Back to editor' : 'Back to characters'">
         <mat-icon>arrow_back</mat-icon>
       </button>
       @if (c.campaign_id) {

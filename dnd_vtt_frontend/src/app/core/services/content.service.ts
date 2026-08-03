@@ -377,25 +377,35 @@ export interface DndMonster {
   description?: string;
 }
 
+export type CustomContentKind = 'monsters' | 'items' | 'spells';
+
 @Injectable({ providedIn: 'root' })
 export class ContentService {
   private cache = new Map<string, unknown>();
 
   private async get<T>(path: string): Promise<T> {
     if (this.cache.has(path)) return this.cache.get(path) as T;
-    const res = await fetch(`${API}/content/${path}`);
+    const token = localStorage.getItem('auth_token');
+    const res = await fetch(`${API}/content/${path}`, {
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
+    });
     if (!res.ok) throw new Error(`Failed to load content: ${path}`);
     const data = await res.json() as T;
     this.cache.set(path, data);
     return data;
   }
 
-  // This cache never expires on its own — anything that writes content outside this service
-  // (currently just MonsterService's create/update) has to call this afterward, or callers keep
-  // seeing pre-edit data for the rest of the SPA session.
-  invalidateMonster(index: string) {
-    this.cache.delete('monsters');
-    this.cache.delete(`monsters/${index}`);
+  // This cache never expires on its own — anything that writes custom content outside this
+  // service (MonsterService/ItemService/SpellService create/update/delete) has to call this
+  // afterward, or callers keep seeing stale data for the rest of the SPA session. Cache keys vary
+  // by campaignId (`monsters` vs `monsters?campaignId=X`), so invalidation clears every key for
+  // that content kind rather than tracking each campaignId that's been queried.
+  invalidateContent(kind: CustomContentKind, index?: string) {
+    for (const key of [...this.cache.keys()]) {
+      if (key === kind || key.startsWith(`${kind}?`) || (index && key === `${kind}/${index}`)) {
+        this.cache.delete(key);
+      }
+    }
   }
 
   getClasses()                      { return this.get<DndClass[]>('classes'); }
@@ -404,12 +414,12 @@ export class ContentService {
   getRace(index: string)            { return this.get<DndRace>(`races/${index}`); }
   getBackgrounds()                  { return this.get<DndBackground[]>('backgrounds'); }
   getBackground(index: string)      { return this.get<DndBackground>(`backgrounds/${index}`); }
-  getItems()                        { return this.get<DndItem[]>('items'); }
+  getItems(campaignId?: string)     { return this.get<DndItem[]>(`items${campaignId ? `?campaignId=${campaignId}` : ''}`); }
   getItem(index: string)            { return this.get<DndItem>(`items/${index}`); }
-  getSpells()                       { return this.get<DndSpell[]>('spells'); }
+  getSpells(campaignId?: string)    { return this.get<DndSpell[]>(`spells${campaignId ? `?campaignId=${campaignId}` : ''}`); }
   getSpell(index: string)           { return this.get<DndSpell>(`spells/${index}`); }
   getFeats()                        { return this.get<DndFeat[]>('feats'); }
   getFeat(index: string)            { return this.get<DndFeat>(`feats/${index}`); }
-  getMonsters()                     { return this.get<DndMonster[]>('monsters'); }
+  getMonsters(campaignId?: string)  { return this.get<DndMonster[]>(`monsters${campaignId ? `?campaignId=${campaignId}` : ''}`); }
   getMonster(index: string)         { return this.get<DndMonster>(`monsters/${index}`); }
 }

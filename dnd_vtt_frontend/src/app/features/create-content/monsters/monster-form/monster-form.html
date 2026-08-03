@@ -23,11 +23,6 @@
             <label class="field-label">Name</label>
             <input class="field-input" [ngModel]="name()" (ngModelChange)="onNameChange($event)" placeholder="e.g. Young Red Dragon" name="name" />
           </div>
-          <div class="field col-span-3">
-            <label class="field-label">Index (filename)</label>
-            <input class="field-input" [ngModel]="index()" (ngModelChange)="onIndexChange($event)"
-              [readonly]="isEdit()" [class.opacity-60]="isEdit()" placeholder="young-red-dragon" name="index" />
-          </div>
           <div class="field">
             <label class="field-label">Size</label>
             <select class="field-input" [ngModel]="size()" (ngModelChange)="size.set($event)" name="size">

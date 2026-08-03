@@ -1,4 +1,6 @@
-import { Ability, ABILITIES } from '../../../core/models/character.model';
+import {
+  Ability, ABILITIES, ScoreMethod, POINT_BUY_BUDGET, POINT_BUY_MIN, POINT_BUY_MAX, POINT_BUY_COST,
+} from '../../../core/models/character.model';
 import { DndBackground, DndClass, DndFeat, DndRace, TraitGrant } from '../../../core/services/content.service';
 import { reachableGrants } from '../../../core/utils/character-effects';
 import { resolveProgressiveChoiceLimit } from '../../../core/utils/progressive-choice';
@@ -117,8 +119,16 @@ export function isBackgroundSelectionComplete(
     && (originFeat?.grants ?? []).every(grant => simpleGrantComplete(grant, selection.traits));
 }
 
-export function areAbilityAssignmentsComplete(assignments: Record<Ability, number | null>): boolean {
-  return ABILITIES.every(ability => assignments[ability] !== null);
+export function areAbilityAssignmentsComplete(
+  assignments: Record<Ability, number | null>,
+  method: ScoreMethod = 'standard',
+): boolean {
+  if (!ABILITIES.every(ability => assignments[ability] !== null)) return false;
+  if (method !== 'pointbuy') return true;
+  const scores = assignments as Record<Ability, number>;
+  const inRange = ABILITIES.every(ability => scores[ability] >= POINT_BUY_MIN && scores[ability] <= POINT_BUY_MAX);
+  const spent = ABILITIES.reduce((sum, ability) => sum + (POINT_BUY_COST[scores[ability]] ?? Infinity), 0);
+  return inRange && spent <= POINT_BUY_BUDGET;
 }
 
 export function areStartingEquipmentChoicesComplete(

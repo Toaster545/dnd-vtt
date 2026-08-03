@@ -13,6 +13,10 @@ export function weaponMatchesProficiency(weapon: DndItem, proficiency: string): 
   if (normalized === 'martial' || normalized === 'martial weapons') {
     return isMartial;
   }
+  if (normalized === 'simple melee' || normalized === 'martial melee'
+    || normalized === 'simple ranged' || normalized === 'martial ranged') {
+    return weapon.category.toLowerCase() === normalized;
+  }
   if (normalized === 'martial weapons with the light property') {
     return isMartial && weapon.properties.includes('Light');
   }

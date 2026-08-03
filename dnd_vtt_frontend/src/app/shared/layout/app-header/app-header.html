@@ -12,6 +12,9 @@
     <button class="tab-pill" [class.active]="activeTab() === 'campaigns'" (click)="selectCampaigns.emit()">
       <mat-icon class="text-base">groups</mat-icon> Campaigns
     </button>
+    <button class="tab-pill" [class.active]="activeTab() === 'content-library'" (click)="selectContentLibrary.emit()">
+      <mat-icon class="text-base">auto_stories</mat-icon> Content Library
+    </button>
   </nav>
 
   <div class="flex items-center gap-2 ml-auto">

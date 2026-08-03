@@ -1,0 +1,31 @@
+{
+  "index": "harpy",
+  "name": "Harpy",
+  "size": "Medium",
+  "type": "monstrosity",
+  "alignment": "chaotic evil",
+  "armor_class": 11,
+  "armor_class_desc": "unarmored",
+  "hit_points": 33,
+  "hit_dice": "6d8 + 6",
+  "speed": { "walk": 20, "fly": 40 },
+  "ability_scores": {
+    "strength": 12,
+    "dexterity": 13,
+    "constitution": 13,
+    "intelligence": 7,
+    "wisdom": 10,
+    "charisma": 13
+  },
+  "initiative_bonus": 1,
+  "senses": { "passive_perception": 10 },
+  "languages": ["Common"],
+  "challenge_rating": "1",
+  "xp": 200,
+  "actions": [
+    { "name": "Multiattack", "description": "The harpy makes two Claw attacks." },
+    { "name": "Claw", "description": "Melee Attack Roll: +3, reach 5 ft. Hit: 4 (1d4 + 1) Slashing damage." },
+    { "name": "Luring Song", "description": "The harpy sings a magical melody. Each Humanoid and Beast within 300 feet of the harpy that can hear the song must succeed on a DC 11 Wisdom saving throw or have the Charmed condition until the song ends. The harpy must take a bonus action on its subsequent turns to continue singing. While Charmed, a target has the Incapacitated condition and moves toward the harpy by the safest route, ignoring difficult terrain. A Charmed creature can repeat the save whenever it takes damage or when another creature takes an action to shake it out of its stupor." }
+  ],
+  "description": "Harpies perch on sea cliffs and crags, luring sailors and travelers with an enchanting song before descending to claw apart the entranced and pick over the wreckage."
+}

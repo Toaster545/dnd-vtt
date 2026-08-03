@@ -16,10 +16,11 @@ import { AuthService } from '../../../core/services/auth.service';
 export class AppHeaderComponent {
   auth = inject(AuthService);
 
-  activeTab = input<'characters' | 'campaigns' | null>(null);
+  activeTab = input<'characters' | 'campaigns' | 'content-library' | null>(null);
 
-  selectCharacters = output<void>();
-  selectCampaigns  = output<void>();
-  selectDashboard  = output<void>();
-  selectSettings   = output<void>();
+  selectCharacters     = output<void>();
+  selectCampaigns      = output<void>();
+  selectContentLibrary = output<void>();
+  selectDashboard      = output<void>();
+  selectSettings       = output<void>();
 }

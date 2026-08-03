@@ -42,6 +42,9 @@ export class PlayerCampaignHubComponent implements OnInit {
   editingCharacter = signal<Character | null>(null);
   showWizard       = signal(false);
   sheetCharacter = signal<Character | null>(null);
+  // Set only when the sheet was opened via the wizard's "View Sheet" button (as opposed to
+  // viewMyCharacter) — routes closeCharacterSheet() back into the wizard instead of the hub.
+  sheetFromWizard = signal(false);
 
   async ngOnInit() {
     this.recentActivity.markCampaignViewed(this.campaignId);
@@ -77,7 +80,14 @@ export class PlayerCampaignHubComponent implements OnInit {
     this.showWizard.set(false);
   }
 
+  async onViewCharacterSheet(id: string) {
+    this.showWizard.set(false);
+    this.sheetFromWizard.set(true);
+    this.sheetCharacter.set(await this.characterService.getCharacter(id));
+  }
+
   async viewMyCharacter(member: CampaignMember) {
+    this.sheetFromWizard.set(false);
     this.sheetCharacter.set(await this.characterService.getCharacter(member.character_id));
   }
 
@@ -90,6 +100,15 @@ export class PlayerCampaignHubComponent implements OnInit {
   }
 
   closeCharacterSheet() {
+    if (this.sheetFromWizard()) {
+      // sheetCharacter is already the latest saved copy (kept current by onCharacterSheetSaved),
+      // so reuse it as the wizard's starting point instead of re-fetching.
+      this.editingCharacter.set(this.sheetCharacter());
+      this.sheetFromWizard.set(false);
+      this.sheetCharacter.set(null);
+      this.showWizard.set(true);
+      return;
+    }
     this.sheetCharacter.set(null);
   }
 

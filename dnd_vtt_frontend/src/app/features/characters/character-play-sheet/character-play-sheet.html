@@ -314,22 +314,61 @@
                     </div>
                   </div>
                 }
+
+                <!-- REACTIONS: trackable 'reaction' features, reaction-cast spells, and the universal reference list -->
+                @if (reactionResourceActions().length || reactionSpells().length || universalReactions.length) {
+                  <div>
+                    <h4 class="font-brand text-gold text-xs uppercase tracking-widest m-0 pb-1.5 mb-2 border-b border-gold/25">Reactions</h4>
+                    <div class="flex flex-col gap-1.5">
+                      @for (action of reactionResourceActions(); track action.key) {
+                        @let remaining = action.maxUses - action.usedUses;
+                        <div class="flex items-center justify-between px-3 py-2 rounded border border-white/10 text-sm gap-3">
+                            <div class="min-w-0">
+                              <span class="text-parchment font-medium">{{ action.name }}</span><span class="text-coal text-xs"> · {{ action.source }}</span>
+                              @if (action.description) { <p class="text-xs text-slate mt-1 mb-0">{{ action.description }}</p> }
+                            </div>
+                            <div class="flex items-center gap-2 flex-shrink-0">
+                              <span class="text-sm text-parchment tabular-nums">{{ remaining }} / {{ action.maxUses }}</span>
+                              <button class="btn-icon" [disabled]="action.usedUses === 0 || persisting()" (click)="restoreAction(action)" matTooltip="Restore a use">
+                                <mat-icon class="text-base">add</mat-icon>
+                              </button>
+                              <button class="btn-primary text-sm" [disabled]="remaining === 0 || persisting()" (click)="useAction(action)">Use</button>
+                            </div>
+                        </div>
+                      }
+                      @for (spellRow of reactionSpells(); track spellRow.spell.index) {
+                        <div class="flex items-center justify-between px-3 py-2 rounded border border-white/10 text-sm gap-3">
+                          <div class="min-w-0"><span class="text-parchment font-medium">{{ spellRow.spell.name }}</span><span class="text-coal text-xs"> · {{ spellRow.spell.level === 0 ? 'Cantrip' : 'Level ' + spellRow.spell.level }} ({{ spellSourceNames(spellRow) }}) · {{ spellRow.spell.range }}</span></div>
+                          <span class="text-slate text-xs flex-shrink-0">{{ spellRow.spell.duration }}</span>
+                        </div>
+                      }
+                      @for (f of universalReactions; track f.name) {
+                        <div class="flex items-start gap-2 text-sm">
+                          <span class="tag flex-shrink-0">{{ f.source }}</span>
+                          <div>
+                            <span class="text-parchment font-medium">{{ f.name }}</span>
+                            @if (f.detail) { <span class="text-slate"> — {{ f.detail }}</span> }
+                          </div>
+                        </div>
+                      }
+                    </div>
+                  </div>
+                }
               </div>
 
             </div>
 
-            <!-- OTHER ACTIONS: trackable 'action'/'reaction' features, universal actions, weapon mastery effects -->
+            <!-- ACTIONS: trackable 'action' features, universal actions, weapon mastery effects -->
             <div>
-              <h4 class="font-brand text-gold text-xs uppercase tracking-widest m-0 pb-1.5 mb-2 border-b border-gold/25">Other Actions</h4>
+              <h4 class="font-brand text-gold text-xs uppercase tracking-widest m-0 pb-1.5 mb-2 border-b border-gold/25">Actions</h4>
               <div class="flex flex-col gap-2">
-                @for (action of otherResourceActions(); track action.key) {
+                @for (action of actionResourceActions(); track action.key) {
                   @let remaining = action.maxUses - action.usedUses;
                   <div class="card">
                     <div class="card-body flex items-center justify-between gap-3">
                       <div class="min-w-0">
                         <div class="flex items-center gap-2 flex-wrap">
                           <span class="text-parchment font-medium text-sm">{{ action.name }}</span>
-                          <span class="tag text-[10px] capitalize">{{ action.activation.replace('_', ' ') }}</span>
                           <span class="text-coal text-xs">{{ action.source }}</span>
                         </div>
                         @if (action.description) { <p class="text-xs text-slate mt-1 mb-0">{{ action.description }}</p> }

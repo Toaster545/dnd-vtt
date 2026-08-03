@@ -20,4 +20,5 @@ export class EncounterToolbarComponent {
   readonly nextTurn = output<void>();
   readonly start = output<void>();
   readonly stop = output<void>();
+  readonly openPlayerView = output<void>();
 }

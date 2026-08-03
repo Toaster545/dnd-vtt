@@ -5,10 +5,11 @@
     [character]="editingCharacter()"
     (saved)="onCharacterSaved()"
     (cancelled)="onCharacterCancelled()"
+    (viewSheet)="onViewCharacterSheet($event)"
   />
 } @else if (sheetCharacter(); as sc) {
   <app-character-play-sheet class="flex-1 min-h-0" [character]="sc" (saved)="onCharacterSheetSaved($event)">
-    <button sheetHeaderLeading class="btn-icon" (click)="closeCharacterSheet()" matTooltip="Back to campaign">
+    <button sheetHeaderLeading class="btn-icon" (click)="closeCharacterSheet()" [matTooltip]="sheetFromWizard() ? 'Back to editor' : 'Back to campaign'">
       <mat-icon>arrow_back</mat-icon>
     </button>
   </app-character-play-sheet>

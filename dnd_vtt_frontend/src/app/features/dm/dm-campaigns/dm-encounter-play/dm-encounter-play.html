@@ -26,6 +26,7 @@
         (nextTurn)="nextTurn()"
         (start)="startEncounter()"
         (stop)="stopEncounter()"
+        (openPlayerView)="openPlayerView()"
       />
 
       <div class="flex flex-1 overflow-hidden">
@@ -48,6 +49,14 @@
               (colorChanged)="setMonsterTokenColor($event)"
               (hpAdjustAmountChanged)="setHpAdjustAmount($event)"
               (adjustHp)="adjustMonsterTokenHp($event)"
+            />
+          } @else if (viewingCharacterSummary(); as csel) {
+            <app-character-token-detail
+              [token]="csel.token"
+              [character]="csel.character"
+              (back)="closeCharacterSummary()"
+              (colorChanged)="setCharacterSummaryTokenColor($event)"
+              (openSheet)="openCharacterSheetFromSummary()"
             />
           } @else {
             <app-roster-panel

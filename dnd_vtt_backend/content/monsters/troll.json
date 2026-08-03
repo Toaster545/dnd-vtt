@@ -1,0 +1,36 @@
+{
+  "index": "troll",
+  "name": "Troll",
+  "size": "Large",
+  "type": "giant",
+  "alignment": "chaotic evil",
+  "armor_class": 15,
+  "armor_class_desc": "natural armor",
+  "hit_points": 84,
+  "hit_dice": "8d10 + 40",
+  "speed": { "walk": 30 },
+  "ability_scores": {
+    "strength": 18,
+    "dexterity": 13,
+    "constitution": 20,
+    "intelligence": 7,
+    "wisdom": 9,
+    "charisma": 7
+  },
+  "initiative_bonus": 1,
+  "skills": { "Perception": 2 },
+  "senses": { "darkvision": 60, "passive_perception": 12 },
+  "languages": ["Giant"],
+  "challenge_rating": "5",
+  "xp": 1800,
+  "traits": [
+    { "name": "Keen Smell", "description": "The troll has advantage on Wisdom (Perception) checks that rely on smell." },
+    { "name": "Regeneration", "description": "The troll regains 10 hit points at the start of each of its turns if it has at least 1 hit point. If the troll takes Acid or Fire damage, this trait doesn't function at the start of the troll's next turn. The troll dies only if it starts its turn with 0 hit points and doesn't regenerate." }
+  ],
+  "actions": [
+    { "name": "Multiattack", "description": "The troll makes one Bite attack and two Claw attacks." },
+    { "name": "Bite", "description": "Melee Attack Roll: +7, reach 5 ft. Hit: 9 (1d6 + 6) Piercing damage." },
+    { "name": "Claw", "description": "Melee Attack Roll: +7, reach 5 ft. Hit: 11 (2d6 + 4) Slashing damage." }
+  ],
+  "description": "Trolls are voracious, regenerating brutes that shrug off nearly any wound short of fire or acid, making them a dreaded threat even to well-armed parties."
+}

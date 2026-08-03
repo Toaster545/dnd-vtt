@@ -1,0 +1,34 @@
+{
+  "index": "cult-fanatic",
+  "name": "Cult Fanatic",
+  "size": "Medium",
+  "type": "humanoid (any race)",
+  "alignment": "any alignment",
+  "armor_class": 13,
+  "armor_class_desc": "leather armor",
+  "hit_points": 33,
+  "hit_dice": "6d8 + 6",
+  "speed": { "walk": 30 },
+  "ability_scores": {
+    "strength": 11,
+    "dexterity": 14,
+    "constitution": 12,
+    "intelligence": 10,
+    "wisdom": 13,
+    "charisma": 14
+  },
+  "initiative_bonus": 2,
+  "senses": { "passive_perception": 11 },
+  "languages": ["any one language"],
+  "challenge_rating": "2",
+  "xp": 450,
+  "traits": [
+    { "name": "Dark Devotion", "description": "The fanatic has advantage on saving throws against being Charmed or Frightened." },
+    { "name": "Spellcasting", "description": "The fanatic casts one of the following spells, using Wisdom as the spellcasting ability (spell save DC 11): At will: Light, Thaumaturgy. 1/Day Each: Command, Inflict Wounds, Shield of Faith." }
+  ],
+  "actions": [
+    { "name": "Multiattack", "description": "The fanatic makes two Dagger attacks. It can replace one attack with a use of Spellcasting." },
+    { "name": "Dagger", "description": "Melee or Ranged Attack Roll: +4, reach 5 ft. or range 20/60 ft. Hit: 4 (1d4 + 2) Piercing damage." }
+  ],
+  "description": "Cult fanatics whip their fellow believers into a frenzy, backing up their zealotry with dark blessings and a blade in each hand."
+}

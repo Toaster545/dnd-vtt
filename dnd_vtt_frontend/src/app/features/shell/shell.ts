@@ -10,7 +10,7 @@ import { EncounterStartedEvent } from '../../core/models/encounter.model';
 import { MainLayoutComponent } from '../../shared/layout/main-layout/main-layout';
 import { AppHeaderComponent } from '../../shared/layout/app-header/app-header';
 
-type Tab = 'characters' | 'campaigns';
+type Tab = 'characters' | 'campaigns' | 'content-library';
 
 // Single nav shell for every logged-in user, replacing the old dm-shell/player-shell split — DM
 // vs player was never really a property of the account, just of whether a given campaign's dm_id
@@ -69,7 +69,9 @@ export class ShellComponent implements OnInit, OnDestroy {
   }
 
   private syncActiveTabFromUrl(url: string) {
-    this.activeTab.set(url.startsWith('/home/campaigns') ? 'campaigns' : 'characters');
+    if (url.startsWith('/home/content-library')) this.activeTab.set('content-library');
+    else if (url.startsWith('/home/campaigns')) this.activeTab.set('campaigns');
+    else this.activeTab.set('characters');
   }
 
   selectCharacters() {
@@ -78,6 +80,10 @@ export class ShellComponent implements OnInit, OnDestroy {
 
   goToCampaigns() {
     void this.router.navigate(['/home/campaigns']);
+  }
+
+  goToContentLibrary() {
+    void this.router.navigate(['/home/content-library']);
   }
 
   goToDashboard() {
