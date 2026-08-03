@@ -29,5 +29,8 @@ export class CreateItemDto {
   @IsString() @IsNotEmpty() cost: string;
   @IsString() @IsNotEmpty() description: string;
 
-  @ValidateNested() @Type(() => ItemMasteryDto) @IsOptional() mastery?: ItemMasteryDto;
+  @ValidateNested()
+  @Type(() => ItemMasteryDto)
+  @IsOptional()
+  mastery?: ItemMasteryDto;
 }

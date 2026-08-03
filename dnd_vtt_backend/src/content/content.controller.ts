@@ -197,7 +197,12 @@ export class ContentController {
     @CurrentUser() user: RequestUser,
     @Body() dto: CreateSpellDto,
   ) {
-    return this.content.updateCustom('spells', index, user, withSpellDefaults(dto));
+    return this.content.updateCustom(
+      'spells',
+      index,
+      user,
+      withSpellDefaults(dto),
+    );
   }
   @Delete('spells/:index')
   @UseGuards(JwtGuard)

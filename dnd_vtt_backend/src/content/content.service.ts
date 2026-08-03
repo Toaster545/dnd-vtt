@@ -91,7 +91,11 @@ export class ContentService {
   // characters.service.ts, which just need `await` added.
 
   async getMonsters(campaignId?: string, user?: RequestUser) {
-    return this.getMerged<Record<string, unknown>>('monsters', campaignId, user);
+    return this.getMerged<Record<string, unknown>>(
+      'monsters',
+      campaignId,
+      user,
+    );
   }
   async getMonster(index: string) {
     return this.getMergedOne<Record<string, unknown>>('monsters', index);
@@ -120,9 +124,15 @@ export class ContentService {
     return [...srd, ...(await this.loadCustomAll<T>(kind, dmId))];
   }
 
-  private async getMergedOne<T>(kind: CustomContentKind, index: string): Promise<T> {
+  private async getMergedOne<T>(
+    kind: CustomContentKind,
+    index: string,
+  ): Promise<T> {
     if (index.startsWith(CUSTOM_PREFIX)) {
-      const found = await this.loadCustomOne<T>(kind, index.slice(CUSTOM_PREFIX.length));
+      const found = await this.loadCustomOne<T>(
+        kind,
+        index.slice(CUSTOM_PREFIX.length),
+      );
       if (!found) throw new NotFoundException(`${kind}/${index} not found`);
       return found;
     }
@@ -145,7 +155,10 @@ export class ContentService {
     return row.dm_id as string;
   }
 
-  private async loadCustomAll<T>(kind: CustomContentKind, dmId: string): Promise<T[]> {
+  private async loadCustomAll<T>(
+    kind: CustomContentKind,
+    dmId: string,
+  ): Promise<T[]> {
     const result = await this.db.execute(
       `SELECT data FROM ${CUSTOM_TABLE[kind]} WHERE created_by = ? ORDER BY name ASC`,
       [dmId],
@@ -153,7 +166,10 @@ export class ContentService {
     return result.rows.map((row) => JSON.parse(row.data as string) as T);
   }
 
-  private async loadCustomOne<T>(kind: CustomContentKind, id: string): Promise<T | null> {
+  private async loadCustomOne<T>(
+    kind: CustomContentKind,
+    id: string,
+  ): Promise<T | null> {
     const result = await this.db.execute(
       `SELECT data FROM ${CUSTOM_TABLE[kind]} WHERE id = ?`,
       [id],
@@ -221,11 +237,17 @@ export class ContentService {
     return data;
   }
 
-  async deleteCustom(kind: CustomContentKind, index: string, user: RequestUser) {
+  async deleteCustom(
+    kind: CustomContentKind,
+    index: string,
+    user: RequestUser,
+  ) {
     const id = this.requireCustomId(index);
     const row = await this.findCustomRow(kind, id);
     if (row.created_by !== user.id) throw new ForbiddenException();
-    await this.db.execute(`DELETE FROM ${CUSTOM_TABLE[kind]} WHERE id = ?`, [id]);
+    await this.db.execute(`DELETE FROM ${CUSTOM_TABLE[kind]} WHERE id = ?`, [
+      id,
+    ]);
     return { deleted: true };
   }
 }

@@ -30,14 +30,32 @@ export class SpellMechanicsDto {
   @IsArray() @IsString({ each: true }) @IsOptional() ability_checks?: string[];
   @IsArray() @IsString({ each: true }) @IsOptional() damage_types?: string[];
   @IsArray() @IsString({ each: true }) @IsOptional() conditions?: string[];
-  @IsArray() @IsString({ each: true }) @IsOptional() affects_creature_types?: string[];
-  @IsArray() @IsString({ each: true }) @IsOptional() grants_damage_immunities?: string[];
-  @IsArray() @IsString({ each: true }) @IsOptional() grants_damage_resistances?: string[];
-  @IsArray() @IsString({ each: true }) @IsOptional() grants_damage_vulnerabilities?: string[];
-  @IsArray() @IsString({ each: true }) @IsOptional() grants_condition_immunities?: string[];
+  @IsArray()
+  @IsString({ each: true })
+  @IsOptional()
+  affects_creature_types?: string[];
+  @IsArray()
+  @IsString({ each: true })
+  @IsOptional()
+  grants_damage_immunities?: string[];
+  @IsArray()
+  @IsString({ each: true })
+  @IsOptional()
+  grants_damage_resistances?: string[];
+  @IsArray()
+  @IsString({ each: true })
+  @IsOptional()
+  grants_damage_vulnerabilities?: string[];
+  @IsArray()
+  @IsString({ each: true })
+  @IsOptional()
+  grants_condition_immunities?: string[];
   @IsArray() @IsString({ each: true }) @IsOptional() area_tags?: string[];
   @IsArray() @IsString({ each: true }) @IsOptional() misc_tags?: string[];
-  @ValidateNested() @Type(() => SpellScalingDto) @IsOptional() scaling?: SpellScalingDto;
+  @ValidateNested()
+  @Type(() => SpellScalingDto)
+  @IsOptional()
+  scaling?: SpellScalingDto;
 }
 
 export class SpellSourceDto {
@@ -75,11 +93,17 @@ export class CreateSpellDto {
   @IsArray() @IsString({ each: true }) @IsOptional() feats?: string[];
   @IsArray() @IsString({ each: true }) @IsOptional() other_options?: string[];
 
-  @ValidateNested() @Type(() => SpellMechanicsDto) @IsOptional() mechanics?: SpellMechanicsDto;
+  @ValidateNested()
+  @Type(() => SpellMechanicsDto)
+  @IsOptional()
+  mechanics?: SpellMechanicsDto;
 
   @IsString() @IsNotEmpty() description: string;
   @IsString() @IsOptional() higher_levels?: string;
   @IsString() @IsOptional() cantrip_upgrade?: string;
 
-  @ValidateNested() @Type(() => SpellSourceDto) @IsOptional() source?: SpellSourceDto;
+  @ValidateNested()
+  @Type(() => SpellSourceDto)
+  @IsOptional()
+  source?: SpellSourceDto;
 }

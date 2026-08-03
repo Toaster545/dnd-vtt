@@ -343,10 +343,7 @@ export class CharactersService {
       const spellIndex = this.requiredString(body.spellIndex, 'spellIndex');
       const sourceKey = this.requiredString(body.sourceKey, 'sourceKey');
       const method = this.requiredString(body.method, 'method');
-      const spell = (await this.content.getSpell(spellIndex)) as Record<
-        string,
-        unknown
-      >;
+      const spell = await this.content.getSpell(spellIndex);
       const spellLevel = Number(spell.level ?? 0);
       const concentration = !!spell.concentration;
       const replaceConcentration = body.replaceConcentration === true;
