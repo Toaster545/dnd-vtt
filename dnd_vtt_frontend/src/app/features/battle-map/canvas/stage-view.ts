@@ -28,12 +28,25 @@ function center(a: Point, b: Point): Point {
 export class StageView {
   private pinchLastDist = 0;
   private pinchLastCenter: Point | null = null;
+  private homePosition: Point = { x: 0, y: 0 };
 
   constructor(private stage: Konva.Stage, private canPan: () => boolean) {
     this.stage.draggable(canPan());
     stage.on('wheel', e => this.onWheel(e));
     stage.on('touchmove', e => this.onTouchMove(e));
     stage.on('touchend touchcancel', () => this.onTouchEnd());
+  }
+
+  // The letterbox offset that centers the map image in the container — used both to place the
+  // map on first load and as the target for the "reset view" button, so resetting never yanks
+  // the map back to the top-left corner instead of its centered default.
+  setHome(position: Point) {
+    this.homePosition = position;
+  }
+
+  centerOnHome() {
+    this.stage.position(this.homePosition);
+    this.stage.batchDraw();
   }
 
   setPannable(canPan: boolean) {
@@ -58,7 +71,7 @@ export class StageView {
   }
 
   resetView() {
-    this.stage.position({ x: 0, y: 0 });
+    this.stage.position(this.homePosition);
     this.stage.scale({ x: 1, y: 1 });
     this.stage.rotation(0);
     this.stage.batchDraw();

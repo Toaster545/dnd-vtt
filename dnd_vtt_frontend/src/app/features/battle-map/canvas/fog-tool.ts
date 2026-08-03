@@ -119,7 +119,7 @@ export class FogTool {
       const cols = Math.ceil(img.width / gridSize);
       const rows = Math.ceil(img.height / gridSize);
       const hidden = new Set(fog.hidden_cells);
-      const tint = isAdmin ? 'rgba(215,220,225,0.4)' : 'rgba(125, 126, 128, 1)';
+      const tint = isAdmin ? 'rgba(215,220,225,0.4)' : '#000';
       const width = cols * cellSize;
       const height = rows * cellSize;
 
