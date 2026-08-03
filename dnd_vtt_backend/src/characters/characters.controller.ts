@@ -52,6 +52,42 @@ export class CharactersController {
     return this.characters.update(id, user, body);
   }
 
+  @Post(':id/grant-item')
+  grantItem(
+    @Param('id') id: string,
+    @CurrentUser() user: RequestUser,
+    @Body() body: Record<string, unknown>,
+  ) {
+    return this.characters.grantItem(id, user, body);
+  }
+
+  @Post(':id/revoke-item')
+  revokeItem(
+    @Param('id') id: string,
+    @CurrentUser() user: RequestUser,
+    @Body() body: Record<string, unknown>,
+  ) {
+    return this.characters.revokeItem(id, user, body);
+  }
+
+  @Post(':id/grant-spell')
+  grantSpell(
+    @Param('id') id: string,
+    @CurrentUser() user: RequestUser,
+    @Body() body: Record<string, unknown>,
+  ) {
+    return this.characters.grantSpell(id, user, body);
+  }
+
+  @Post(':id/revoke-spell')
+  revokeSpell(
+    @Param('id') id: string,
+    @CurrentUser() user: RequestUser,
+    @Body() body: Record<string, unknown>,
+  ) {
+    return this.characters.revokeSpell(id, user, body);
+  }
+
   @Post(':id/cast')
   castSpell(
     @Param('id') id: string,

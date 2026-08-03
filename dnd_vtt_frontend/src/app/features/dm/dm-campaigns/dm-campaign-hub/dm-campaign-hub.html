@@ -8,7 +8,7 @@
     (viewSheet)="onViewCharacterSheet($event)"
   />
 } @else if (sheetCharacter(); as sc) {
-  <app-character-play-sheet class="flex-1 min-h-0" [character]="sc" (saved)="onCharacterSheetSaved($event)">
+  <app-character-play-sheet class="flex-1 min-h-0" [character]="sc" [isDm]="true" (saved)="onCharacterSheetSaved($event)">
     <button sheetHeaderLeading class="btn-icon" (click)="closeCharacterSheet()" [matTooltip]="sheetFromWizard() ? 'Back to editor' : 'Back to campaign'">
       <mat-icon>arrow_back</mat-icon>
     </button>

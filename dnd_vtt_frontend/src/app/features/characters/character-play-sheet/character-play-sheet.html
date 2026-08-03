@@ -421,26 +421,35 @@
         <!-- INVENTORY -->
         @case ('inventory') {
           <div class="flex flex-col gap-5 max-w-3xl">
-            <div class="flex flex-wrap gap-2">
-              @for (denom of currencyOrder; track denom) {
-                <div class="bg-elevated rounded-lg border text-center py-2 px-3 min-w-[76px]"
-                  [class.border-white/10]="insufficientFundsDenom() !== denom"
-                  [class.border-danger]="insufficientFundsDenom() === denom">
-                  <div class="text-[10px] text-slate uppercase tracking-wide">{{ denom }}</div>
-                  <div class="font-brand text-lg text-gold">{{ char.currency[denom] }}</div>
-                  <div class="flex items-center justify-center gap-1 mt-1.5">
-                    <button class="btn-icon w-5 h-5 text-xs" [disabled]="!currencyAdjustAmounts()[denom] || persisting()"
-                      (click)="applyCurrencyDelta(denom, -1)" matTooltip="Remove">−</button>
-                    <input class="field-input w-9 text-center text-xs py-0.5 px-1" type="number" min="0"
-                      [ngModel]="currencyAdjustAmounts()[denom]" (ngModelChange)="setCurrencyAdjustAmount(denom, $event)"
-                      [name]="'currencyAdjust-' + denom" />
-                    <button class="btn-icon w-5 h-5 text-xs" [disabled]="!currencyAdjustAmounts()[denom] || persisting()"
-                      (click)="applyCurrencyDelta(denom, 1)" matTooltip="Add">+</button>
+            <div class="flex flex-wrap items-start justify-between gap-2">
+              <div class="flex flex-wrap gap-2">
+                @for (denom of currencyOrder; track denom) {
+                  <div class="bg-elevated rounded-lg border text-center py-2 px-3 min-w-[76px]"
+                    [class.border-white/10]="insufficientFundsDenom() !== denom"
+                    [class.border-danger]="insufficientFundsDenom() === denom">
+                    <div class="text-[10px] text-slate uppercase tracking-wide">{{ denom }}</div>
+                    <div class="font-brand text-lg text-gold">{{ char.currency[denom] }}</div>
+                    <div class="flex items-center justify-center gap-1 mt-1.5">
+                      <button class="btn-icon w-5 h-5 text-xs" [disabled]="!currencyAdjustAmounts()[denom] || persisting()"
+                        (click)="applyCurrencyDelta(denom, -1)" matTooltip="Remove">−</button>
+                      <input class="field-input w-9 text-center text-xs py-0.5 px-1" type="number" min="0"
+                        [ngModel]="currencyAdjustAmounts()[denom]" (ngModelChange)="setCurrencyAdjustAmount(denom, $event)"
+                        [name]="'currencyAdjust-' + denom" />
+                      <button class="btn-icon w-5 h-5 text-xs" [disabled]="!currencyAdjustAmounts()[denom] || persisting()"
+                        (click)="applyCurrencyDelta(denom, 1)" matTooltip="Add">+</button>
+                    </div>
+                    @if (insufficientFundsDenom() === denom) {
+                      <div class="text-[9px] text-danger mt-1">Not enough funds</div>
+                    }
                   </div>
-                  @if (insufficientFundsDenom() === denom) {
-                    <div class="text-[9px] text-danger mt-1">Not enough funds</div>
-                  }
-                </div>
+                }
+              </div>
+
+              @if (isDm()) {
+                <button class="btn-outline text-sm gap-1.5 flex-shrink-0" (click)="openGrantItemDialog()">
+                  <mat-icon class="text-base">redeem</mat-icon>
+                  Give Item
+                </button>
               }
             </div>
 
@@ -461,17 +470,84 @@
                         </p>
                       }
                     </div>
-                    <button
-                      class="text-xs px-2.5 py-1 rounded border transition-all flex-shrink-0"
-                      [class]="row.entry.equipped ? 'border-gold/60 bg-gold/10 text-parchment' : 'border-white/15 text-slate hover:border-white/30'"
-                      [disabled]="persisting()"
-                      (click)="toggleEquipped(row.entry)"
-                    >{{ row.entry.equipped ? 'Equipped' : 'Equip' }}</button>
+                    <div class="flex items-center gap-1.5 flex-shrink-0">
+                      <button
+                        class="text-xs px-2.5 py-1 rounded border transition-all"
+                        [class]="row.entry.equipped ? 'border-gold/60 bg-gold/10 text-parchment' : 'border-white/15 text-slate hover:border-white/30'"
+                        [disabled]="persisting()"
+                        (click)="toggleEquipped(row.entry)"
+                      >{{ row.entry.equipped ? 'Equipped' : 'Equip' }}</button>
+                      @if (isDm()) {
+                        <button class="btn-icon text-danger/70 hover:text-danger" [disabled]="persisting()"
+                          (click)="revokeItem(row.entry)" matTooltip="Remove from inventory">
+                          <mat-icon class="text-lg">delete</mat-icon>
+                        </button>
+                      }
+                    </div>
                   </div>
                 }
               </div>
             } @else {
               <p class="text-sm text-slate">No equipment yet.</p>
+            }
+
+            @if (showGrantItemDialog()) {
+              <div class="fixed inset-0 z-50 bg-black/65 flex items-center justify-center p-4" (click)="closeGrantItemDialog()">
+                <section class="w-full max-w-2xl max-h-[88vh] flex flex-col overflow-hidden bg-elevated border border-gold/35 rounded-xl shadow-2xl" (click)="$event.stopPropagation()">
+                  @if (grantItemCreatingCustom()) {
+                    <app-item-form (saved)="onCustomItemGranted($event)" (cancelled)="grantItemCreatingCustom.set(false)" />
+                  } @else {
+                    <div class="flex items-start justify-between gap-3 p-5 pb-3 flex-shrink-0">
+                      <div>
+                        <h3 class="font-brand text-gold text-xl m-0">Give Item</h3>
+                        <p class="text-xs text-slate mt-1 mb-0">to {{ char.name }}</p>
+                      </div>
+                      <button class="btn-icon" (click)="closeGrantItemDialog()"><mat-icon>close</mat-icon></button>
+                    </div>
+
+                    <div class="flex items-center gap-2 px-5 pb-3 flex-shrink-0">
+                      <input class="field-input flex-1" placeholder="Search items…" autofocus
+                        [ngModel]="grantItemSearch()" (ngModelChange)="grantItemSearch.set($event)" name="grantItemSearch" />
+                      <label class="text-xs text-slate flex-shrink-0">Qty</label>
+                      <input class="field-input w-16 text-center" type="number" min="1"
+                        [ngModel]="grantItemQuantity()" (ngModelChange)="setGrantItemQuantity($event)" name="grantItemQuantity" />
+                    </div>
+
+                    @if (grantItemNotice()) { <p class="text-sm text-success px-5 mb-2 mt-0">{{ grantItemNotice() }}</p> }
+                    @if (grantItemError()) { <p class="text-sm text-red-300 px-5 mb-2 mt-0">{{ grantItemError() }}</p> }
+
+                    <div class="flex-1 overflow-y-auto px-5 pb-2 flex flex-col gap-1.5">
+                      @for (candidate of grantItemResults(); track candidate.index) {
+                        <button
+                          class="flex items-center justify-between gap-3 px-3 py-2 rounded border border-white/10 hover:border-gold/40 text-left transition-colors"
+                          [disabled]="grantItemBusy()"
+                          (click)="grantItem(candidate)"
+                        >
+                          <div class="min-w-0">
+                            <span class="text-sm text-parchment">{{ candidate.name }}</span>
+                            <p class="text-xs text-slate m-0 mt-0.5">
+                              {{ candidate.category }}
+                              @if (candidate.damage) { · {{ candidate.damage }} {{ candidate.damage_type }} }
+                              @if (candidate.armor_class) { · AC {{ candidate.armor_class }} }
+                              · {{ candidate.cost }}
+                            </p>
+                          </div>
+                          <mat-icon class="text-slate flex-shrink-0">add_circle_outline</mat-icon>
+                        </button>
+                      } @empty {
+                        <p class="text-sm text-slate py-4">No items match your search.</p>
+                      }
+                    </div>
+
+                    <div class="p-5 pt-3 border-t border-white/10 flex-shrink-0">
+                      <button class="btn-outline text-sm gap-1.5 w-full justify-center" (click)="grantItemCreatingCustom.set(true)">
+                        <mat-icon class="text-base">add</mat-icon>
+                        Create a new custom item
+                      </button>
+                    </div>
+                  }
+                </section>
+              </div>
             }
           </div>
         }
@@ -480,7 +556,15 @@
         @case ('spells') {
           <div class="flex flex-col gap-5 max-w-6xl">
             @if (!spellResolution()?.sources?.length && !spellRows().length) {
-              <p class="text-sm text-slate">{{ char.name }} isn't a spellcaster.</p>
+              <div class="flex items-center justify-between gap-2">
+                <p class="text-sm text-slate m-0">{{ char.name }} isn't a spellcaster.</p>
+                @if (isDm()) {
+                  <button class="btn-outline text-sm gap-1.5 flex-shrink-0" (click)="openGrantSpellDialog()">
+                    <mat-icon class="text-base">auto_awesome</mat-icon>
+                    Give Spell
+                  </button>
+                }
+              </div>
             } @else {
               <div class="flex flex-col sm:flex-row sm:items-center gap-2">
                 <div class="relative flex-1">
@@ -488,6 +572,12 @@
                   <input class="w-full bg-elevated border border-white/15 rounded-lg pl-10 pr-3 py-2 text-sm text-parchment outline-none focus:border-gold/60" placeholder="Search spells" [ngModel]="spellFilters().search" (ngModelChange)="updateSpellFilter('search', $event)">
                 </div>
                 <button class="btn-secondary flex items-center justify-center gap-2" (click)="spellFiltersOpen.set(true)"><mat-icon class="text-lg">tune</mat-icon> Filters</button>
+                @if (isDm()) {
+                  <button class="btn-outline text-sm gap-1.5 flex-shrink-0" (click)="openGrantSpellDialog()">
+                    <mat-icon class="text-base">auto_awesome</mat-icon>
+                    Give Spell
+                  </button>
+                }
               </div>
 
               @if (spellFiltersOpen()) {
@@ -549,8 +639,8 @@
 
           <ng-template #spellCard let-row>
             <article class="px-3 py-3 rounded-lg border border-white/10 bg-elevated/40 flex flex-col gap-2 min-h-[164px]">
-              <div class="flex items-start justify-between gap-3"><div class="min-w-0"><h5 class="text-sm text-parchment m-0">{{ row.spell.name }}</h5><p class="text-xs text-slate mt-0.5 mb-0">{{ row.spell.level === 0 ? 'Cantrip' : 'Level ' + row.spell.level }} · {{ row.spell.school }}</p></div><button class="btn-primary text-xs flex-shrink-0" [matTooltip]="!castingMethods(row).length ? 'This spell is in your spellbook but is not prepared.' : castingMethods(row).every(method => !method.available) ? 'No eligible slot or free cast remains.' : ''" [disabled]="persisting() || castingMethods(row).every(method => !method.available)" (click)="openCastDialog(row)">Cast</button></div>
-              <div class="flex flex-wrap gap-1">@for (status of categoryLabels(row); track status) { <span class="text-[10px] px-2 py-0.5 rounded-full border" [matTooltip]="status === 'Always Prepared' ? 'Granted by a feature. It is always prepared and cannot be removed.' : ''" [class]="status === 'Always Prepared' ? 'border-gold/45 text-gold bg-gold/5' : 'border-white/15 text-slate'">{{ status }}</span> }@if (row.spell.ritual) { <span class="text-[10px] px-2 py-0.5 rounded-full border border-sky-400/30 text-sky-200">Ritual</span> }@if (row.spell.concentration) { <span class="text-[10px] px-2 py-0.5 rounded-full border border-violet-400/30 text-violet-200">Concentration</span> }</div>
+              <div class="flex items-start justify-between gap-3"><div class="min-w-0"><h5 class="text-sm text-parchment m-0">{{ row.spell.name }}</h5><p class="text-xs text-slate mt-0.5 mb-0">{{ row.spell.level === 0 ? 'Cantrip' : 'Level ' + row.spell.level }} · {{ row.spell.school }}</p></div><div class="flex items-center gap-1 flex-shrink-0">@if (isDm() && isGrantedSpell(row)) { <button class="btn-icon text-danger/70 hover:text-danger" [disabled]="persisting()" (click)="revokeSpell(row)" matTooltip="Remove this spell"><mat-icon class="text-lg">delete</mat-icon></button> }<button class="btn-primary text-xs" [matTooltip]="!castingMethods(row).length ? 'This spell is in your spellbook but is not prepared.' : castingMethods(row).every(method => !method.available) ? 'No eligible slot or free cast remains.' : ''" [disabled]="persisting() || castingMethods(row).every(method => !method.available)" (click)="openCastDialog(row)">Cast</button></div></div>
+              <div class="flex flex-wrap gap-1">@for (status of categoryLabels(row); track status) { <span class="text-[10px] px-2 py-0.5 rounded-full border" [matTooltip]="status === 'Always Prepared' ? 'Granted by a feature. It is always prepared and cannot be removed.' : ''" [class]="status === 'Always Prepared' ? 'border-gold/45 text-gold bg-gold/5' : 'border-white/15 text-slate'">{{ status }}</span> }@if (isGrantedSpell(row)) { <span class="text-[10px] px-2 py-0.5 rounded-full border border-success/30 text-success">Gifted</span> }@if (row.spell.ritual) { <span class="text-[10px] px-2 py-0.5 rounded-full border border-sky-400/30 text-sky-200">Ritual</span> }@if (row.spell.concentration) { <span class="text-[10px] px-2 py-0.5 rounded-full border border-violet-400/30 text-violet-200">Concentration</span> }</div>
               <p class="text-xs text-slate m-0">{{ row.spell.casting_time }} · {{ row.spell.range }} · {{ row.spell.duration }}</p>
               <div class="text-[11px] text-coal flex flex-col gap-0.5">@for (origin of row.origins; track origin.sourceKey + ':' + origin.category) { <span>{{ originLabel(origin) }}</span> }</div>
               <details class="mt-auto text-xs text-slate"><summary class="cursor-pointer text-gold/90">Description</summary><p class="mt-2 mb-0 leading-relaxed">@for (segment of descriptionSegments(row.spell.description); track $index) { <span [class.font-semibold]="segment.bold" [class.text-parchment]="segment.bold">{{ segment.text }}</span> }</p>@if (row.spell.higher_levels) { <p class="mt-2 mb-0"><strong>At Higher Levels.</strong> {{ row.spell.higher_levels }}</p> }</details>
@@ -574,6 +664,48 @@
                   <div class="flex flex-col gap-2">@for (method of castingMethods(row); track method.key) { <button class="w-full rounded-lg border px-3 py-2.5 text-left transition-colors" [class]="method.available ? method.upcast ? 'border-gold/35 hover:border-gold/70 bg-gold/5' : 'border-white/15 hover:border-gold/50 bg-black/10' : 'border-white/5 opacity-45 cursor-not-allowed'" [disabled]="!method.available || persisting()" (click)="requestCast(method)"><span class="flex items-center justify-between gap-3"><span class="flex items-center gap-2"><strong class="text-sm text-parchment">{{ method.label }}</strong>@if (method.upcast) { <span class="text-[10px] px-1.5 py-0.5 rounded bg-gold/15 border border-gold/35 text-gold uppercase tracking-wide">Upcast +{{ method.upcast.levelsAbove }}</span> }</span><span class="text-xs text-slate">{{ method.detail }}</span></span>@if (method.upcast) { <span class="block mt-2 pt-2 border-t border-gold/15 text-xs text-gold/90"><strong>Level {{ method.upcast.slotLevel }}:</strong> {{ method.upcast.summary }}</span> }</button> }@if (!castingMethods(row).length) { <p class="text-sm text-slate">This spell is in the spellbook but isn't prepared, so it can't be cast yet.</p> }</div>
                 }
                 @if (castError()) { <p class="text-sm text-red-300 mt-3 mb-0">{{ castError() }}</p> }
+              </section>
+            </div>
+          }
+
+          @if (showGrantSpellDialog()) {
+            <div class="fixed inset-0 z-50 bg-black/65 flex items-center justify-center p-4" (click)="closeGrantSpellDialog()">
+              <section class="w-full max-w-2xl max-h-[88vh] flex flex-col overflow-hidden bg-elevated border border-gold/35 rounded-xl shadow-2xl" (click)="$event.stopPropagation()">
+                <div class="flex items-start justify-between gap-3 p-5 pb-3 flex-shrink-0">
+                  <div>
+                    <h3 class="font-brand text-gold text-xl m-0">Give Spell</h3>
+                    <p class="text-xs text-slate mt-1 mb-0">to {{ char.name }} · always known, castable at will</p>
+                  </div>
+                  <button class="btn-icon" (click)="closeGrantSpellDialog()"><mat-icon>close</mat-icon></button>
+                </div>
+
+                <div class="flex items-center gap-2 px-5 pb-3 flex-shrink-0">
+                  <input class="field-input flex-1" placeholder="Search spells…" autofocus
+                    [ngModel]="grantSpellSearch()" (ngModelChange)="grantSpellSearch.set($event)" name="grantSpellSearch" />
+                </div>
+
+                @if (grantSpellNotice()) { <p class="text-sm text-success px-5 mb-2 mt-0">{{ grantSpellNotice() }}</p> }
+                @if (grantSpellError()) { <p class="text-sm text-red-300 px-5 mb-2 mt-0">{{ grantSpellError() }}</p> }
+
+                <div class="flex-1 overflow-y-auto px-5 pb-5 flex flex-col gap-1.5">
+                  @for (candidate of grantSpellResults(); track candidate.index) {
+                    <button
+                      class="flex items-center justify-between gap-3 px-3 py-2 rounded border border-white/10 hover:border-gold/40 text-left transition-colors"
+                      [disabled]="grantSpellBusy()"
+                      (click)="grantSpell(candidate)"
+                    >
+                      <div class="min-w-0">
+                        <span class="text-sm text-parchment">{{ candidate.name }}</span>
+                        <p class="text-xs text-slate m-0 mt-0.5">
+                          {{ candidate.level === 0 ? 'Cantrip' : 'Level ' + candidate.level }} · {{ candidate.school }}
+                        </p>
+                      </div>
+                      <mat-icon class="text-slate flex-shrink-0">add_circle_outline</mat-icon>
+                    </button>
+                  } @empty {
+                    <p class="text-sm text-slate py-4">No spells match your search.</p>
+                  }
+                </div>
               </section>
             </div>
           }

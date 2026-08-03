@@ -61,6 +61,16 @@ export interface SpellEntry {
   alwaysPrepared?: boolean;
 }
 
+// A spell the DM handed a character directly (a scroll's contents, a boon, a magic item) rather
+// than one earned through class/race/feat progression — see CharacterService.grantSpell. Kept
+// separate from `spells` (a wizard-computed snapshot the play sheet doesn't read back) so it
+// survives independently; resolveSpellcasting turns each into an always-available, at-will spell.
+export interface GrantedSpellEntry {
+  spellIndex: string;
+  name: string;
+  sourceName: string;
+}
+
 export interface Currency {
   cp: number;
   sp: number;
@@ -126,6 +136,7 @@ export interface Character {
 
   // Spells
   spells: SpellEntry[];
+  granted_spells?: GrantedSpellEntry[]; // DM-granted, independent of class/race/feat progression
   spell_choices?: Record<string, string[]>; // stable resolver requirement key → selected spell indexes
   spell_slots_used: Record<string, number>; // slot level → count used
   spell_slot_uses?: Record<string, Record<string, number>>; // slot-pool key → slot level → count used

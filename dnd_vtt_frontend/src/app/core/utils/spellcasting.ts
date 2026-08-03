@@ -40,6 +40,14 @@ export interface SpellcastingFeatSelection {
   ability?: string;
 }
 
+// A spell handed to the character outside class/race/feat progression (DM grant — see
+// CharacterService.grantSpell). Resolved as an always-available, at-will "known" spell, using
+// the character's primary caster ability (if any) so attack/DC still compute when relevant.
+export interface SpellcastingGrantedSpell {
+  spellIndex: string;
+  sourceName: string;
+}
+
 export interface SpellcastingResolverInput {
   characterLevel: number;
   abilityScores: AbilityScores;
@@ -49,6 +57,7 @@ export interface SpellcastingResolverInput {
   background?: SpellcastingBackgroundSelection | null;
   feats?: SpellcastingFeatSelection[];
   spellChoices?: Record<string, string[]>;
+  grantedSpells?: SpellcastingGrantedSpell[];
 }
 
 export interface SpellValidationError {
@@ -765,6 +774,9 @@ export function resolveSpellcasting(input: SpellcastingResolverInput): Spellcast
   const spellByIndex = new Map(input.spells.map((spell) => [spell.index, spell]));
   const sources = activeClassSources(input);
   const sourceByKey = new Map(sources.map((source) => [source.key, source]));
+  // Used to give DM-granted spells (below) the character's own spell attack/DC when they're
+  // already a caster — a bonus spell should use the same maths as everything else they cast.
+  const primaryCasterSource = sources.find((source) => source.castingAbility) ?? null;
   const grants = activeSpellGrants(input, sources);
   const pending: PendingRequirement[] = [];
   const known: ResolvedSpellOrigin[] = [];
@@ -966,6 +978,48 @@ export function resolveSpellcasting(input: SpellcastingResolverInput): Spellcast
       requirement.unavailableSpellIndices.push(index);
       requirement.unavailableSpellSources[index] = owner.sourceName;
     }
+  }
+
+  // DM-granted spells (see SpellcastingGrantedSpell) — always known, always available, cast at
+  // will using the primary caster's attack/DC if the character has one. Deliberately kept out of
+  // `sources`: unlike a real spell_grant, a narrative grant with no casting ability behind it
+  // (e.g. a non-caster's magic item) is expected, not a content bug, so it must not trip the
+  // missing_casting_ability check just below.
+  for (const grantedSpell of input.grantedSpells ?? []) {
+    const spell = spellByIndex.get(grantedSpell.spellIndex);
+    if (!spell) {
+      validationErrors.push({
+        code: 'unknown_spell',
+        spellIndex: grantedSpell.spellIndex,
+        message: `${grantedSpell.sourceName} references unknown spell "${grantedSpell.spellIndex}".`,
+      });
+      continue;
+    }
+    const key = `granted:dm:${grantedSpell.spellIndex}`;
+    const source: ActiveSource = {
+      key,
+      name: grantedSpell.sourceName,
+      origin: 'grant',
+      level: input.characterLevel,
+      choices: {},
+      list: null,
+      mode: 'granted',
+      progression: 'none',
+      castingAbility: primaryCasterSource?.castingAbility ?? null,
+      spellAttackBonus: primaryCasterSource?.spellAttackBonus ?? null,
+      spellSaveDc: primaryCasterSource?.spellSaveDc ?? null,
+      spellSlots: {},
+      cantripLimit: 0,
+      spellLimit: 0,
+      preparedLimit: 0,
+      maxSpellLevel: spell.level,
+    };
+    addResolved(known, grantedSpell.spellIndex, source, 'known', true, false, undefined, {
+      key: `free:${key}`,
+      maxUses: 0,
+      recovery: null,
+      atWill: true,
+    });
   }
 
   for (const source of sources) {
