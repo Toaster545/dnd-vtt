@@ -5,7 +5,7 @@
 ## General
 - [ ] Rests (short long)
 - [ ] Shop?
-- [ ] Spells
+- [x] Spells
 - [ ] Equipement
 - [ ] Party Inventory
 - [ ] Defenses (resistances n shit)
@@ -20,7 +20,7 @@
 - [ ] character icon customization
 - [ ] Effect/ concentration on players in map
 - [x] players can hide race
-- [ ] 
+- [ ] custom equipment/spells/monsters (Creation Tools or Customization Tools)
 
 ## Mathieu
 
@@ -55,25 +55,38 @@
 ## Andre
 
 - [x] Push `andre_setup` to `main` and ensure everything works.
-- [ ] Build all classes.
-    - [ ] Build a functioning Barbarian class.
-    - [ ] Build a functioning Bard class.
-    - [ ] Build a functioning Cleric class.
-    - [ ] Build a functioning Druid class.
+- [x] Build all classes.
+    - [x] Build a functioning Barbarian class.
+    - [x] Build a functioning Bard class.
+    - [x] Build a functioning Cleric class.
+    - [x] Build a functioning Druid class.
     - [x] Build a functioning Fighter class. (Mat did this one)
-    - [ ] Build a functioning Monk class.
-    - [ ] Build a functioning Paladin class.
-    - [ ] Build a functioning Ranger class.
-    - [ ] Build a functioning Rogue class.
-    - [ ] Build a functioning Sorcerer class.
+    - [x] Build a functioning Monk class.
+    - [x] Build a functioning Paladin class.
+    - [x] Build a functioning Ranger class.
+    - [x] Build a functioning Rogue class.
+    - [x] Build a functioning Sorcerer class.
     - [x] Build a functioning Warlock class.
-    - [ ] Build a functioning Wizard class.
-- [ ] Character Creation:
+    - [x] Build a functioning Wizard class.
+- [x] Character Creation:
     - [x] fix backgrounds (2024 version)
     - [x] Races choices and traits
-    - [ ] add customizability based on class (background, for instance)
-    - [ ] unlock race choices (don't need to complete whole thing to save)
-    - [ ] once spells are made, integrate them into every spellcasting class!
+    - [x] add customizability based on class (background, for instance)
+    - [x] unlock race choices (don't need to complete whole thing to save)
+    - [x] once spells are made, integrate them into every spellcasting class!
+- [ ] Character Sheet:
+    - [ ] attack spells that use Save DC need to be properly listed (Poison Spray currently states Attack +6, but it should be Save DC 13 or something)
+    - [x] general spells
+    - [ ] all actions
+        - [ ] Unarmed strike is missing
+        - [ ] probably more missing
+        - [ ] bonus actions
+        - [ ] special actions
+- [x] Spells
+    - [x] full import spell list
+    - [x] spell resolver (source-independent)
+    - [x] spell casting
+    - [x] spells in character creation
 - [ ] check general todo list
 
 ## Anthony
