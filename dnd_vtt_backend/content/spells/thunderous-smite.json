@@ -41,7 +41,7 @@
       "FMV"
     ]
   },
-  "description": "Rules text is not reproduced here. See Player's Handbook (2024), page 334.",
+  "description": "The triggering melee hit deals an extra 2d6 Thunder damage and can be heard 300 feet away. A creature hit must make a Strength save or be pushed 10 feet away and knocked Prone. **Higher-Level Slots.** Extra damage increases by 1d6 per slot level above 1.",
   "source": {
     "book": "Player's Handbook",
     "edition": 2024,

@@ -65,7 +65,7 @@
       "UBA"
     ]
   },
-  "description": "Rules text is not reproduced here. See Player's Handbook (2024), page 343.",
+  "description": "Make a ranged spell attack against a creature within 60 feet. On a hit, it takes 2d12 Lightning damage. On later turns, you can use a Bonus Action to deal 1d12 Lightning damage automatically, even if the initial attack missed. The spell ends if the target leaves range or gains Total Cover. **Higher-Level Slots.** Initial damage increases by 1d12 per slot level above 1.",
   "source": {
     "book": "Player's Handbook",
     "edition": 2024,

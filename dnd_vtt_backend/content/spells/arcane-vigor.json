@@ -53,7 +53,7 @@
       "HL"
     ]
   },
-  "description": "Rules text is not reproduced here. See Player's Handbook (2024), page 242.",
+  "description": "Spend one or two of your unexpended Hit Point Dice, roll them, and regain Hit Points equal to the total plus your spellcasting ability modifier. The rolled dice are expended. **Higher-Level Slots.** You can roll one additional Hit Point Die for each slot level above 2.",
   "source": {
     "book": "Player's Handbook",
     "edition": 2024,

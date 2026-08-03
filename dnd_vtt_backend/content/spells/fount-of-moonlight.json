@@ -51,7 +51,7 @@
       "SGT"
     ]
   },
-  "description": "Rules text is not reproduced here. See Player's Handbook (2024), page 277.",
+  "description": "Moonlight surrounds you, shedding Bright Light for 20 feet and Dim Light for another 20. You gain Resistance to Radiant damage, and your melee hits deal 2d6 extra Radiant damage. After a visible creature within 60 feet damages you, you can use a Reaction to force a Constitution save; on a failure, it is Blinded until the end of your next turn.",
   "source": {
     "book": "Player's Handbook",
     "edition": 2024,

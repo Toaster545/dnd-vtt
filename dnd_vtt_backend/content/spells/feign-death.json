@@ -71,7 +71,7 @@
     ],
     "misc_tags": []
   },
-  "description": "Rules text is not reproduced here. See Player's Handbook (2024), page 271.",
+  "description": "A willing creature you touch enters a state indistinguishable from death. It is Blinded and Incapacitated, has Speed 0, has Resistance to all damage except Psychic, and is immune to the Poisoned condition for the duration.",
   "source": {
     "book": "Player's Handbook",
     "edition": 2024,

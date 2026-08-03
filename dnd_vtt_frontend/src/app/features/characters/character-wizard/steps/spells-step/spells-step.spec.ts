@@ -8,6 +8,10 @@ const spells = [
   {
     index: 'minor-illusion', name: 'Minor Illusion', level: 0, school: 'Illusion',
     casting_time: 'Action', range: '30 feet', concentration: false, ritual: false,
+    components: ['S', 'M'], material: 'a bit of fleece', duration: '1 minute',
+    description: '**Illusory Effect.** You create a sound or an image of an object within range.',
+    cantrip_upgrade: 'You can create both a sound and an image at higher character levels.',
+    source: { book: "Player's Handbook", edition: 2024, code: 'XPHB', page: 298, srd_5_2_1: true, rules_text: 'SRD 5.2.1' },
   },
   {
     index: 'acid-splash', name: 'Acid Splash', level: 0, school: 'Evocation',
@@ -44,6 +48,33 @@ function resolution(selected: string[], invalid: string[] = []): SpellcastingRes
 }
 
 describe('SpellsStepComponent', () => {
+  it('shows full spell details without selecting the spell', async () => {
+    await TestBed.configureTestingModule({ imports: [SpellsStepComponent] }).compileComponents();
+    const fixture = TestBed.createComponent(SpellsStepComponent);
+    fixture.componentRef.setInput('spells', spells);
+    fixture.componentRef.setInput('resolution', resolution([]));
+    fixture.detectChanges();
+
+    const emitted = vi.fn();
+    fixture.componentInstance.spellToggled.subscribe(emitted);
+    const details = (fixture.nativeElement as HTMLElement)
+      .querySelector<HTMLButtonElement>('button[aria-label="Show details for Minor Illusion"]')!;
+    details.click();
+    fixture.detectChanges();
+
+    const text = (fixture.nativeElement as HTMLElement).textContent?.replace(/\s+/g, ' ');
+    expect(text).toContain('You create a sound or an image of an object within range.');
+    const boldTitle = (fixture.nativeElement as HTMLElement)
+      .querySelector<HTMLElement>('[data-spell-description] .font-semibold');
+    expect(boldTitle?.textContent).toBe('Illusory Effect.');
+    expect((fixture.nativeElement as HTMLElement).querySelector('[data-spell-description]')?.textContent)
+      .not.toContain('**');
+    expect(text).toContain('S, M (a bit of fleece)');
+    expect(text).toContain('Cantrip Upgrade.');
+    expect(text).toContain("Player's Handbook (2024), page 298");
+    expect(emitted).not.toHaveBeenCalled();
+  });
+
   it('enforces the requirement maximum while keeping invalid selections removable', async () => {
     await TestBed.configureTestingModule({ imports: [SpellsStepComponent] }).compileComponents();
     const fixture = TestBed.createComponent(SpellsStepComponent);
@@ -54,6 +85,16 @@ describe('SpellsStepComponent', () => {
     const emitted = vi.fn();
     fixture.componentInstance.spellToggled.subscribe(emitted);
     expect(fixture.componentInstance.canToggle(fixture.componentInstance.groups()[0].requirements[0], 'acid-splash')).toBe(false);
+    const selectedButton = Array.from(
+      (fixture.nativeElement as HTMLElement).querySelectorAll<HTMLButtonElement>('[data-spell-card] button'),
+    )
+      .find(button => button.textContent?.includes('Minor Illusion'))!;
+    const selectedCard = selectedButton.closest<HTMLElement>('[data-spell-card]')!;
+    const selectedMarker = Array.from(selectedCard.querySelectorAll('span'))
+      .find(span => span.textContent?.trim() === 'Selected')!;
+    expect(selectedButton.className).toContain('h-[4.25rem]');
+    expect(selectedMarker.className).toContain('text-[11px]');
+    expect(selectedMarker.className).toContain('bottom-[0.85rem]');
 
     fixture.componentRef.setInput('resolution', resolution(['lost-spell'], ['lost-spell']));
     fixture.detectChanges();
@@ -78,10 +119,11 @@ describe('SpellsStepComponent', () => {
     const spellButton = () => Array.from(
       (fixture.nativeElement as HTMLElement).querySelectorAll<HTMLButtonElement>('button'),
     ).find(button => button.textContent?.includes('Minor Illusion'))!;
+    const spellCard = () => spellButton().closest<HTMLElement>('[data-spell-card]')!;
     expect(spellButton().disabled).toBe(true);
     expect(spellButton().className).toContain('border-white/8');
     expect(spellButton().title).toContain('Forest Gnome Magic');
-    expect(spellButton().textContent).toContain('Already selected');
+    expect(spellCard().textContent).toContain('Already selected');
 
     const duplicate = resolution(['minor-illusion'], ['minor-illusion']);
     duplicate.requirements[0].errors[0] = {
@@ -96,7 +138,7 @@ describe('SpellsStepComponent', () => {
     expect(spellButton().disabled).toBe(false);
     expect(spellButton().className).toContain('border-danger/60');
     expect(spellButton().title).toContain('Duplicate spell');
-    expect(spellButton().textContent).toContain('Remove');
+    expect(spellCard().textContent).toContain('Remove');
   });
 
   it('filters by spell metadata while always grouping visible spells by level', async () => {

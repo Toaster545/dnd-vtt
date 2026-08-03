@@ -40,7 +40,7 @@
       "AAD"
     ]
   },
-  "description": "Rules text is not reproduced here. See Player's Handbook (2024), page 247.",
+  "description": "The triggering hit deals an extra 3d8 Radiant damage and Blinds the target for the duration. At the end of each of its turns, the target makes a Constitution save, ending the spell on a success. **Higher-Level Slots.** Extra damage increases by 1d8 per slot level above 3.",
   "source": {
     "book": "Player's Handbook",
     "edition": 2024,

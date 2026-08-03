@@ -44,7 +44,7 @@
     ],
     "misc_tags": []
   },
-  "description": "Rules text is not reproduced here. See Player's Handbook (2024), page 243.",
+  "description": "Each creature in a 10-foot Emanation from you makes a Strength saving throw. On a failure, it takes 2d6 Necrotic damage and can\u0027t take Reactions until the start of its next turn; on a success, it takes half damage. **Higher-Level Slots.** Damage increases by 1d6 per slot level above 1.",
   "source": {
     "book": "Player's Handbook",
     "edition": 2024,

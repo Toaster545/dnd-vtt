@@ -1,5 +1,5 @@
 import { NgTemplateOutlet } from '@angular/common';
-import { Component, computed, effect, input, output, signal, untracked } from '@angular/core';
+import { Component, HostListener, computed, effect, input, output, signal, untracked } from '@angular/core';
 import type { DndSpell } from '../../../../../core/services/content.service';
 import type {
   ResolvedSpellOrigin,
@@ -20,6 +20,11 @@ interface SpellLevelGroup {
   level: number;
   label: string;
   spells: DndSpell[];
+}
+
+interface DescriptionSegment {
+  text: string;
+  bold: boolean;
 }
 
 type RangeFilter = '' | 'self' | 'touch' | '30' | '60' | '120' | 'long' | 'special';
@@ -60,6 +65,7 @@ export class SpellsStepComponent {
   readonly filtersByScope = signal<Record<string, SpellFilters>>({});
   readonly collapsedGroups = signal<Set<string>>(new Set());
   readonly collapsedRequirements = signal<Set<string>>(new Set());
+  readonly detailSpell = signal<DndSpell | null>(null);
 
   private readonly previousRequirementComplete = new Map<string, boolean>();
   private readonly autoCollapsedRequirements = new Set<string>();
@@ -193,6 +199,37 @@ export class SpellsStepComponent {
   toggle(requirement: SpellSelectionRequirement, index: string): void {
     if (!this.canToggle(requirement, index)) return;
     this.spellToggled.emit({ requirementKey: requirement.key, spellIndex: index });
+  }
+
+  showSpellDetail(spell: DndSpell): void {
+    this.detailSpell.set(spell);
+  }
+
+  closeSpellDetail(): void {
+    this.detailSpell.set(null);
+  }
+
+  @HostListener('document:keydown.escape')
+  closeSpellDetailOnEscape(): void {
+    this.closeSpellDetail();
+  }
+
+  componentsText(spell: DndSpell): string {
+    const components = spell.components?.join(', ') ?? '';
+    return spell.material ? `${components} (${spell.material})` : components;
+  }
+
+  descriptionSegments(description: string): DescriptionSegment[] {
+    const segments: DescriptionSegment[] = [];
+    const boldPattern = /\*\*([\s\S]+?)\*\*/g;
+    let cursor = 0;
+    for (const match of description.matchAll(boldPattern)) {
+      if (match.index > cursor) segments.push({ text: description.slice(cursor, match.index), bold: false });
+      segments.push({ text: match[1], bold: true });
+      cursor = match.index + match[0].length;
+    }
+    if (cursor < description.length) segments.push({ text: description.slice(cursor), bold: false });
+    return segments.length ? segments : [{ text: description, bold: false }];
   }
 
   isGroupCollapsed(key: string): boolean {

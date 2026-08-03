@@ -38,7 +38,7 @@
       "AAD"
     ]
   },
-  "description": "Rules text is not reproduced here. See Player's Handbook (2024), page 245.",
+  "description": "The triggering hit deals an extra 5d10 Force damage. If it leaves the target with 50 Hit Points or fewer, the target makes a Charisma save; on a failure, it is transported to a harmless demiplane and is Incapacitated for the duration, then returns to its former space or the nearest open space.",
   "source": {
     "book": "Player's Handbook",
     "edition": 2024,

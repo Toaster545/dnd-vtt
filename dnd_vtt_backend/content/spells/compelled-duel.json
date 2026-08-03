@@ -40,7 +40,7 @@
       "SGT"
     ]
   },
-  "description": "Rules text is not reproduced here. See Player's Handbook (2024), page 252.",
+  "description": "Choose one creature you can see within range. It makes a Wisdom saving throw. On a failure, it has Disadvantage on attack rolls against creatures other than you and can't willingly move more than 30 feet away from you. The spell ends early if you attack another creature, cast a spell on another enemy, one of your allies damages the target, or you finish your turn more than 30 feet from the target.",
   "source": {
     "book": "Player's Handbook",
     "edition": 2024,

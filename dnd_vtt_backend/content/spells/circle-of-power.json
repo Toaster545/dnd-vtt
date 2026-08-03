@@ -43,7 +43,7 @@
       "ADV"
     ]
   },
-  "description": "Rules text is not reproduced here. See Player's Handbook (2024), page 250.",
+  "description": "A 30-foot Emanation surrounds you. You and allies in it have Advantage on saves against spells and other magical effects. If an affected creature succeeds on a save that would normally deal half damage, it instead takes no damage.",
   "source": {
     "book": "Player's Handbook",
     "edition": 2024,

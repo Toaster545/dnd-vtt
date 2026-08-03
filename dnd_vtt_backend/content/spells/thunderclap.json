@@ -77,7 +77,7 @@
       }
     }
   },
-  "description": "Rules text is not reproduced here. See Player's Handbook (2024), page 333.",
+  "description": "Each creature in a 5-foot Emanation from you makes a Constitution save, taking 1d6 Thunder damage on a failure. The sound is audible from 100 feet away. **Cantrip Upgrade.** Damage becomes 2d6 at level 5, 3d6 at level 11, and 4d6 at level 17.",
   "source": {
     "book": "Player's Handbook",
     "edition": 2024,

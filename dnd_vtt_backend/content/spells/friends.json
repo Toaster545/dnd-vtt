@@ -64,7 +64,7 @@
     ],
     "misc_tags": []
   },
-  "description": "Rules text is not reproduced here. See Player's Handbook (2024), page 277.",
+  "description": "A Humanoid you can see makes a Wisdom save; on a failure, it is Charmed by you. It succeeds automatically if you are fighting it or used this spell on it within 24 hours. The spell ends if the target takes damage or you attack, deal damage, or force a save, and the target then knows you Charmed it.",
   "source": {
     "book": "Player's Handbook",
     "edition": 2024,

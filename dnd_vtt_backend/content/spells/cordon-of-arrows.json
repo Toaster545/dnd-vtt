@@ -41,7 +41,7 @@
     ],
     "misc_tags": []
   },
-  "description": "Rules text is not reproduced here. See Player's Handbook (2024), page 258.",
+  "description": "Plant up to four nonmagical Arrows or Bolts in your space and designate creatures the spell should ignore. When another creature first enters or ends a turn within 30 feet, one piece flies at it; a failed Dexterity save deals 2d4 Piercing damage and destroys that ammunition. The spell ends when none remain. **Higher-Level Slots.** Affect two additional pieces per slot level above 2.",
   "source": {
     "book": "Player's Handbook",
     "edition": 2024,

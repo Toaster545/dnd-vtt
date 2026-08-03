@@ -47,7 +47,7 @@
       "UBA"
     ]
   },
-  "description": "Rules text is not reproduced here. See Player's Handbook (2024), page 280.",
+  "description": "Create a vine on a surface and make a melee spell attack against a creature within 30 feet of it. A hit deals 4d8 Bludgeoning damage and pulls the target up to 30 feet; a Huge or smaller target is also Grappled. The vine holds one creature at a time, can release it freely, and can repeat the attack as a Bonus Action. **Higher-Level Slots.** It can grapple one additional creature per slot level above 4.",
   "source": {
     "book": "Player's Handbook",
     "edition": 2024,

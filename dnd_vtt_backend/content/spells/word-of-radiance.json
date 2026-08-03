@@ -62,7 +62,7 @@
       }
     }
   },
-  "description": "Rules text is not reproduced here. See Player's Handbook (2024), page 343.",
+  "description": "Creatures you choose and can see in a 5-foot Emanation from you make a Constitution save, taking 1d6 Radiant damage on a failure. **Cantrip Upgrade.** Damage becomes 2d6 at level 5, 3d6 at level 11, and 4d6 at level 17.",
   "source": {
     "book": "Player's Handbook",
     "edition": 2024,

@@ -40,7 +40,7 @@
       "UBA"
     ]
   },
-  "description": "Rules text is not reproduced here. See Player's Handbook (2024), page 242.",
+  "description": "Create two linked Large portals: one in a ground space you can see within 500 feet and one within 10 feet of you. Each portal has one open face; anything entering one open face exits the other as though the spaces were adjacent. The portals block sight, and you can use a Bonus Action to change which way their open faces point.",
   "source": {
     "book": "Player's Handbook",
     "edition": 2024,

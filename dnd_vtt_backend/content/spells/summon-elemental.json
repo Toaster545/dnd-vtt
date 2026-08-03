@@ -50,7 +50,7 @@
       "SMN"
     ]
   },
-  "description": "Rules text is not reproduced here. See Player's Handbook (2024), page 325.",
+  "description": "Summon an allied Elemental Spirit in an open space you can see, choosing Air, Earth, Fire, or Water to determine its stat-block features. It shares your Initiative and acts immediately after you, follows verbal commands without requiring your action, and otherwise Dodges and avoids danger. It disappears at 0 Hit Points or when the spell ends. **Higher-Level Slots.** The stat block uses the slot level as the spell level.",
   "source": {
     "book": "Player's Handbook",
     "edition": 2024,

@@ -65,6 +65,9 @@ interface SpellManifest {
 
 const contentRoot = join(process.cwd(), 'content');
 const spellsRoot = join(contentRoot, 'spells');
+const referenceOnlySummaries = JSON.parse(
+  readFileSync(join(process.cwd(), 'scripts', 'reference-only-spell-summaries.json'), 'utf8'),
+) as Record<string, string>;
 const spellFiles = readdirSync(spellsRoot)
   .filter((file) => file.endsWith('.json'))
   .sort();
@@ -228,7 +231,7 @@ describe("Player's Handbook 2024 spell content", () => {
     );
   });
 
-  it('tracks SRD rules-text coverage without reproducing PHB-only prose', () => {
+  it('tracks SRD coverage and supplies summaries for every reference-only spell', () => {
     expect(manifest.srd_5_2_1_rules_text).toBe(339);
     expect(manifest.reference_only).toBe(52);
 
@@ -252,8 +255,26 @@ describe("Player's Handbook 2024 spell content", () => {
         rules_text: 'reference-only',
       },
     });
-    expect(armorOfAgathys?.description).toContain(
-      "See Player's Handbook (2024), page 243.",
+    expect(armorOfAgathys?.description).toContain('5 Temporary Hit Points');
+
+    const compelledDuel = spells.find(
+      (spell) => spell.index === 'compelled-duel',
     );
+    expect(compelledDuel?.source.rules_text).toBe('reference-only');
+    expect(compelledDuel?.description).not.toContain(
+      'Rules text is not reproduced here.',
+    );
+    expect(compelledDuel?.description).toContain('Wisdom saving throw');
+
+    const referenceOnlySpells = spells.filter(
+      (spell) => spell.source.rules_text === 'reference-only',
+    );
+    expect(Object.keys(referenceOnlySummaries).sort()).toEqual(
+      referenceOnlySpells.map((spell) => spell.index).sort(),
+    );
+    for (const spell of referenceOnlySpells) {
+      expect(spell.description).toBe(referenceOnlySummaries[spell.index]);
+      expect(spell.description).not.toContain('Rules text is not reproduced here.');
+    }
   });
 });

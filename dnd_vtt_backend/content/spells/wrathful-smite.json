@@ -42,7 +42,7 @@
       "AAD"
     ]
   },
-  "description": "Rules text is not reproduced here. See Player's Handbook (2024), page 343.",
+  "description": "The triggering hit deals an extra 1d6 Necrotic damage. The target makes a Wisdom save and is Frightened for the duration on a failure, repeating the save at the end of each of its turns. **Higher-Level Slots.** Extra damage increases by 1d6 per slot level above 1.",
   "source": {
     "book": "Player's Handbook",
     "edition": 2024,

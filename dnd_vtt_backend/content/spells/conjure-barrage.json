@@ -44,7 +44,7 @@
       "SGT"
     ]
   },
-  "description": "Rules text is not reproduced here. See Player's Handbook (2024), page 254.",
+  "description": "Spectral copies of the weapon or ammunition used to cast the spell sweep through a 60-foot Cone. Creatures you choose in the Cone make a Dexterity save, taking 5d8 Force damage on a failure or half on a success. **Higher-Level Slots.** Damage increases by 1d8 per slot level above 3.",
   "source": {
     "book": "Player's Handbook",
     "edition": 2024,

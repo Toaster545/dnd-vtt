@@ -59,7 +59,7 @@
     "area_tags": [],
     "misc_tags": []
   },
-  "description": "Rules text is not reproduced here. See Player's Handbook (2024), page 247.",
+  "description": "Until the spell ends, whenever a creature makes an attack roll against you, it subtracts 1d4 from that roll.",
   "source": {
     "book": "Player's Handbook",
     "edition": 2024,

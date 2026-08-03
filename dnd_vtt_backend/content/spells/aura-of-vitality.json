@@ -43,7 +43,7 @@
       "HL"
     ]
   },
-  "description": "Rules text is not reproduced here. See Player's Handbook (2024), page 244.",
+  "description": "A 30-foot Emanation surrounds you. When it appears and at the start of each of your turns for the duration, you can restore 2d6 Hit Points to one creature in the aura.",
   "source": {
     "book": "Player's Handbook",
     "edition": 2024,

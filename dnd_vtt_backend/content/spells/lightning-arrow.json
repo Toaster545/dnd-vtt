@@ -39,7 +39,7 @@
     ],
     "misc_tags": []
   },
-  "description": "Rules text is not reproduced here. See Player's Handbook (2024), page 292.",
+  "description": "The triggering ranged attack becomes lightning instead of applying its normal damage or effects. The target takes 4d8 Lightning damage on a hit or half on a miss; creatures within 10 feet then make a Dexterity save, taking 2d8 Lightning damage on a failure or half on a success. **Higher-Level Slots.** Both damage rolls increase by 1d8 per slot level above 3.",
   "source": {
     "book": "Player's Handbook",
     "edition": 2024,

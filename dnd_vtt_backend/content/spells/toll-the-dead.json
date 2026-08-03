@@ -67,7 +67,7 @@
       "label": ""
     }
   },
-  "description": "Rules text is not reproduced here. See Player's Handbook (2024), page 334.",
+  "description": "One visible creature makes a Wisdom save. On a failure, it takes 1d8 Necrotic damage, or 1d12 if it is missing any Hit Points. **Cantrip Upgrade.** Add one damage die at levels 5, 11, and 17.",
   "source": {
     "book": "Player's Handbook",
     "edition": 2024,

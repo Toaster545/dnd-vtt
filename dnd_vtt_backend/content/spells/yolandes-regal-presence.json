@@ -52,7 +52,7 @@
       "SGT"
     ]
   },
-  "description": "Rules text is not reproduced here. See Player's Handbook (2024), page 343.",
+  "description": "A 10-foot Emanation surrounds you. When it enters a visible creature\u0027s space, or a visible creature enters it or ends a turn there, you can force a Wisdom save once per turn. On a failure, the creature takes 4d6 Psychic damage, falls Prone, and can be pushed up to 10 feet away; on a success, it takes half damage.",
   "source": {
     "book": "Player's Handbook",
     "edition": 2024,

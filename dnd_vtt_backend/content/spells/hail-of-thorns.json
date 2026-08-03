@@ -38,7 +38,7 @@
     ],
     "misc_tags": []
   },
-  "description": "Rules text is not reproduced here. See Player's Handbook (2024), page 283.",
+  "description": "The triggering ranged hit bursts into thorns. The target and every creature within 5 feet make a Dexterity save, taking 1d10 Piercing damage on a failure or half on a success. **Higher-Level Slots.** Damage increases by 1d10 per slot level above 1.",
   "source": {
     "book": "Player's Handbook",
     "edition": 2024,

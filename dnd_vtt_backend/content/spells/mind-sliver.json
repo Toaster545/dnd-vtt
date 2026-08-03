@@ -75,7 +75,7 @@
       }
     }
   },
-  "description": "Rules text is not reproduced here. See Player's Handbook (2024), page 298.",
+  "description": "One visible creature makes an Intelligence save. On a failure, it takes 1d6 Psychic damage and subtracts 1d4 from its next saving throw before the end of your next turn. **Cantrip Upgrade.** Damage becomes 2d6 at level 5, 3d6 at level 11, and 4d6 at level 17.",
   "source": {
     "book": "Player's Handbook",
     "edition": 2024,

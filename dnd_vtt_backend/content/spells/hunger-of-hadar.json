@@ -56,7 +56,7 @@
       "OBS"
     ]
   },
-  "description": "Rules text is not reproduced here. See Player's Handbook (2024), page 286.",
+  "description": "Create a 20-foot-radius Sphere of supernatural Darkness and Difficult Terrain that no light can illuminate. Creatures fully inside are Blinded. A creature starting its turn there takes 2d6 Cold damage; one ending its turn there makes a Dexterity save or takes 2d6 Acid damage. **Higher-Level Slots.** Increase either the Cold or Acid damage by 1d6 per slot level above 3.",
   "source": {
     "book": "Player's Handbook",
     "edition": 2024,

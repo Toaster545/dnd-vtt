@@ -43,7 +43,7 @@
     ],
     "misc_tags": []
   },
-  "description": "Rules text is not reproduced here. See Player's Handbook (2024), page 261.",
+  "description": "Creatures you choose in a 30-foot Emanation make a Constitution save. On a failure, a creature takes 5d6 Thunder damage plus 5d6 Radiant or Necrotic damage, and falls Prone. On a success, it takes half damage without falling Prone.",
   "source": {
     "book": "Player's Handbook",
     "edition": 2024,

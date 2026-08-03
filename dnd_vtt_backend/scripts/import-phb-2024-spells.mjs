@@ -223,6 +223,9 @@ function resolveSrdSpell(phbSpell, srdByName) {
 const phbDocument = loadJson(phbPath);
 const srdSpells = loadJson(srdPath);
 const sourceLookup = loadJson(lookupPath);
+const referenceOnlySummaries = loadJson(
+  resolve('scripts', 'reference-only-spell-summaries.json'),
+);
 const phbSpells = phbDocument.spell ?? [];
 const srdByName = new Map(
   srdSpells.map((spell) => [spell.name.toLowerCase(), spell]),
@@ -246,7 +249,10 @@ for (const phbSpell of phbSpells) {
   const rulesTextAvailable = Boolean(srdMatch);
   const description = rulesTextAvailable
     ? srdMatch.spell.description
-    : `Rules text is not reproduced here. See Player's Handbook (2024), page ${phbSpell.page}.`;
+    : referenceOnlySummaries[index];
+  if (!description) {
+    throw new Error(`Missing reference-only rules summary for ${phbSpell.name} (${index})`);
+  }
 
   const record = {
     index,

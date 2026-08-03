@@ -51,7 +51,7 @@
       "TP"
     ]
   },
-  "description": "Rules text is not reproduced here. See Player's Handbook (2024), page 320.",
+  "description": "Choose up to five creatures you can see within range and make a melee spell attack against each. A hit deals 6d10 Force damage. After the attacks, teleport to an unoccupied space you can see within 5 feet of one target.",
   "source": {
     "book": "Player's Handbook",
     "edition": 2024,

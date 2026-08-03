@@ -257,9 +257,10 @@
                       </div>
                       <div class="grid grid-cols-1 xl:grid-cols-2 gap-1.5">
                         @for (spell of levelGroup.spells; track spell.index) {
+                          <div data-spell-card class="relative min-w-0">
                           <button
                             type="button"
-                            class="flex items-center justify-between gap-3 px-3 py-2.5 rounded border text-left transition-colors"
+                            class="flex h-[4.25rem] items-center justify-between gap-3 overflow-hidden pl-3 pr-20 py-2.5 rounded border text-left transition-colors w-full"
                             [class]="isInvalid(requirement, spell.index)
                               ? 'border-danger/60 bg-danger/5'
                               : isSelected(requirement, spell.index)
@@ -277,7 +278,7 @@
                                 : ''"
                             (click)="toggle(requirement, spell.index)"
                           >
-                            <div class="min-w-0">
+                            <div class="min-w-0 overflow-hidden">
                               <div class="text-sm truncate" [class]="isSelected(requirement, spell.index)
                                 ? 'text-parchment'
                                 : isUnavailable(requirement, spell.index) ? 'text-coal' : 'text-slate'">
@@ -292,14 +293,22 @@
                                 </div>
                               }
                             </div>
-                            @if (isInvalid(requirement, spell.index)) {
-                              <span class="text-[10px] text-danger flex-shrink-0">Remove</span>
-                            } @else if (isSelected(requirement, spell.index)) {
-                              <span class="text-[10px] text-gold flex-shrink-0">Selected</span>
-                            } @else if (isUnavailable(requirement, spell.index)) {
-                              <span class="text-[10px] text-coal flex-shrink-0">Already selected</span>
-                            }
                           </button>
+                          <button
+                            type="button"
+                            class="absolute right-2 top-2 h-8 w-16 px-2 text-[10px] uppercase tracking-wider text-slate hover:text-gold rounded border border-white/15 hover:border-gold/40 bg-elevated/90"
+                            [attr.aria-label]="'Show details for ' + spell.name"
+                            (click)="showSpellDetail(spell)"
+                          >Details</button>
+                          @if (isInvalid(requirement, spell.index)) {
+                            <span class="absolute right-2 bottom-[0.5rem] w-16 text-center text-[10px] leading-none text-danger">Remove</span>
+                          } @else if (isSelected(requirement, spell.index)) {
+                            <span class="absolute right-2 bottom-[0.5rem] w-16 text-center text-[11px] leading-none text-gold">Selected</span>
+                          } @else if (isUnavailable(requirement, spell.index)) {
+                            <span class="absolute right-[0.1rem] bottom-[0.7rem] w-20 text-center text-[9px] leading-none text-coal">Already selected</span>
+                          }
+
+                          </div>
                         }
                       </div>
                     </div>
@@ -321,5 +330,83 @@
     @for (error of globalErrors(); track error.code + ':' + error.message) {
       <p class="text-xs text-danger m-0 mb-1 last:mb-0">{{ error.message }}</p>
     }
+  </div>
+}
+
+@if (detailSpell(); as spell) {
+  <div
+    class="fixed inset-0 z-50 flex items-center justify-center bg-black/65 p-4 backdrop-blur-sm"
+    (click)="closeSpellDetail()"
+  >
+    <section
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="spell-detail-title"
+      class="w-full max-w-2xl max-h-[85vh] overflow-y-auto rounded-xl border border-gold/35 bg-elevated shadow-2xl"
+      (click)="$event.stopPropagation()"
+    >
+      <header class="sticky top-0 z-10 flex items-start justify-between gap-4 border-b border-white/10 bg-elevated/95 px-5 py-4 backdrop-blur-sm">
+        <div>
+          <div class="flex flex-wrap items-center gap-2 mb-1">
+            <span class="rounded-full border border-gold/30 bg-gold/10 px-2 py-0.5 text-[10px] uppercase tracking-wider text-gold">{{ levelLabel(spell.level) }}</span>
+            <span class="rounded-full border border-white/10 px-2 py-0.5 text-[10px] uppercase tracking-wider text-slate">{{ spell.school }}</span>
+            @if (spell.concentration) { <span class="text-[10px] uppercase tracking-wider text-slate">Concentration</span> }
+            @if (spell.ritual) { <span class="text-[10px] uppercase tracking-wider text-slate">Ritual</span> }
+          </div>
+          <h3 id="spell-detail-title" class="font-brand text-xl text-parchment m-0">{{ spell.name }}</h3>
+        </div>
+        <button
+          type="button"
+          class="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded border border-white/10 text-slate hover:border-gold/40 hover:text-gold"
+          aria-label="Close spell details"
+          (click)="closeSpellDetail()"
+        >&#10005;</button>
+      </header>
+
+      <div class="p-5">
+        <div class="grid grid-cols-2 gap-px overflow-hidden rounded-lg border border-white/10 bg-white/10 sm:grid-cols-4 mb-5">
+          <div class="bg-elevated px-3 py-2.5">
+            <div class="text-[9px] uppercase tracking-wider text-coal">Casting time</div>
+            <div class="text-xs text-parchment mt-0.5">{{ spell.casting_time }}</div>
+          </div>
+          <div class="bg-elevated px-3 py-2.5">
+            <div class="text-[9px] uppercase tracking-wider text-coal">Range</div>
+            <div class="text-xs text-parchment mt-0.5">{{ spell.range }}</div>
+          </div>
+          <div class="bg-elevated px-3 py-2.5">
+            <div class="text-[9px] uppercase tracking-wider text-coal">Duration</div>
+            <div class="text-xs text-parchment mt-0.5">{{ spell.duration }}</div>
+          </div>
+          <div class="bg-elevated px-3 py-2.5">
+            <div class="text-[9px] uppercase tracking-wider text-coal">Components</div>
+            <div class="text-xs text-parchment mt-0.5">{{ componentsText(spell) || 'None' }}</div>
+          </div>
+        </div>
+
+        @if (spell.source.rules_text === 'reference-only') {
+          <div class="mb-4 rounded border border-gold/25 bg-gold/5 px-3 py-2 text-[11px] text-slate">
+            Reference-only spell. This panel shows the available summary; consult the referenced book for the exact published wording.
+          </div>
+        }
+
+        <div class="rounded-lg border border-white/10 bg-black/10 p-4">
+          <h4 class="text-[10px] uppercase tracking-widest text-gold mt-0 mb-2">Description</h4>
+          <p data-spell-description class="text-sm text-slate leading-relaxed whitespace-pre-line m-0">@for (segment of descriptionSegments(spell.description); track $index) {<span [class.font-semibold]="segment.bold" [class.text-parchment]="segment.bold">{{ segment.text }}</span>}</p>
+        </div>
+
+        @if (spell.cantrip_upgrade || spell.higher_levels) {
+          <div class="mt-3 rounded-lg border-l-2 border-gold/50 bg-gold/5 px-4 py-3">
+            @if (spell.cantrip_upgrade) {
+              <p class="text-xs text-slate leading-relaxed m-0"><span class="text-parchment font-semibold">Cantrip Upgrade.</span> {{ spell.cantrip_upgrade }}</p>
+            }
+            @if (spell.higher_levels) {
+              <p class="text-xs text-slate leading-relaxed m-0"><span class="text-parchment font-semibold">Using a Higher-Level Spell Slot.</span> {{ spell.higher_levels }}</p>
+            }
+          </div>
+        }
+
+        <p class="text-[10px] text-coal mt-4 mb-0">{{ spell.source.book }} ({{ spell.source.edition }}), page {{ spell.source.page }}</p>
+      </div>
+    </section>
   </div>
 }
