@@ -215,7 +215,12 @@ export class ContentService {
     const data = { ...dto, index };
     await this.db.execute(
       `INSERT INTO ${CUSTOM_TABLE[kind]} (id, created_by, name, data) VALUES (?, ?, ?, ?)`,
-      [id, user.id, String(dto.name ?? ''), JSON.stringify(data)],
+      [
+        id,
+        user.id,
+        typeof dto.name === 'string' ? dto.name : '',
+        JSON.stringify(data),
+      ],
     );
     return data;
   }
@@ -232,7 +237,7 @@ export class ContentService {
     const data = { ...dto, index };
     await this.db.execute(
       `UPDATE ${CUSTOM_TABLE[kind]} SET name = ?, data = ?, updated_at = datetime('now') WHERE id = ?`,
-      [String(dto.name ?? ''), JSON.stringify(data), id],
+      [typeof dto.name === 'string' ? dto.name : '', JSON.stringify(data), id],
     );
     return data;
   }
