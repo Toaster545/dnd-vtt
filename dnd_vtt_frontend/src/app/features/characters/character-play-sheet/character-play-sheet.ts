@@ -12,6 +12,8 @@ import {
   Character, ABILITIES, ABILITY_SHORT, SKILLS, EquipmentEntry, Currency,
 } from '../../../core/models/character.model';
 import { adjustCurrency, CURRENCY_ORDER } from '../../../core/utils/currency';
+import { resolveCharacterFeatPicks } from '../../../core/utils/character-effects';
+import { resolveBackgroundOriginFeat } from '../../../core/utils/background-origin-feat';
 import {
   resolveSpellcasting, ResolvedSpellOrigin, ResolvedSpellSlotPool, ResolvedSpellCategory,
 } from '../../../core/utils/spellcasting';
@@ -151,6 +153,25 @@ export class CharacterPlaySheetComponent {
     const race = this.raceData();
     const background = this.bgData();
     const subrace = race && char.subrace ? race.subraces.find(candidate => candidate.name === char.subrace) ?? null : null;
+    const featSelections = resolveCharacterFeatPicks(
+      this.resolvedClasses().map(rc => ({
+        data: rc.data, choices: rc.choices, level: rc.level, subclass: rc.subclassName,
+      })),
+      this.featsAll(),
+      race ? { data: race, choices: char.race_choices ?? {}, subrace: char.subrace } : null,
+    );
+    const originFeat = resolveBackgroundOriginFeat(background, this.featsAll());
+    if (background && originFeat) {
+      const list = background.feature.match(/\((Cleric|Druid|Wizard)\)/i)?.[1];
+      featSelections.push({
+        feat: originFeat,
+        scope: `background:${background.index}:origin`,
+        choices: {
+          ...(char.background_choices ?? {}),
+          ...(list ? { magic_initiate_list: [list] } : {}),
+        },
+      });
+    }
     return resolveSpellcasting({
       characterLevel: char.level,
       abilityScores: char.ability_scores,
@@ -163,6 +184,7 @@ export class CharacterPlaySheetComponent {
       })),
       race: race ? { race, subrace, choices: char.race_choices ?? {} } : null,
       background: background ? { background, choices: char.background_choices ?? {} } : null,
+      feats: featSelections,
       spellChoices: char.spell_choices ?? {},
     });
   });

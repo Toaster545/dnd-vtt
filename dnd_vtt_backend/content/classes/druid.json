@@ -53,6 +53,36 @@
               "description": "After each Long Rest, choose Arid, Polar, Temperate, or Tropical land. You always have the spells for your Druid level and lower prepared. Arid: level 3 Blur, Burning Hands, Fire Bolt; level 5 Fireball; level 7 Blight; level 9 Wall of Stone. Polar: level 3 Fog Cloud, Hold Person, Ray of Frost; level 5 Sleet Storm; level 7 Ice Storm; level 9 Cone of Cold. Temperate: level 3 Misty Step, Shocking Grasp, Sleep; level 5 Lightning Bolt; level 7 Freedom of Movement; level 9 Tree Stride. Tropical: level 3 Acid Splash, Ray of Sickness, Web; level 5 Stinking Cloud; level 7 Polymorph; level 9 Insect Plague."
             },
             {
+              "type": "choice", "key": "circle_land_type", "name": "Circle Land", "choose": 1,
+              "description": "Choose the land whose Circle spells are always prepared.",
+              "options": [
+                { "name": "Arid", "grants": [
+                  { "type": "spell_grant", "key": "land_arid_3", "name": "Arid Land Spells", "destination": "always_prepared", "spells": ["blur", "burning-hands", "fire-bolt"], "countsAgainstLimit": false, "classLevel": 3 },
+                  { "type": "spell_grant", "key": "land_arid_5", "name": "Arid Land Spells", "destination": "always_prepared", "spells": ["fireball"], "countsAgainstLimit": false, "classLevel": 5 },
+                  { "type": "spell_grant", "key": "land_arid_7", "name": "Arid Land Spells", "destination": "always_prepared", "spells": ["blight"], "countsAgainstLimit": false, "classLevel": 7 },
+                  { "type": "spell_grant", "key": "land_arid_9", "name": "Arid Land Spells", "destination": "always_prepared", "spells": ["wall-of-stone"], "countsAgainstLimit": false, "classLevel": 9 }
+                ] },
+                { "name": "Polar", "grants": [
+                  { "type": "spell_grant", "key": "land_polar_3", "name": "Polar Land Spells", "destination": "always_prepared", "spells": ["fog-cloud", "hold-person", "ray-of-frost"], "countsAgainstLimit": false, "classLevel": 3 },
+                  { "type": "spell_grant", "key": "land_polar_5", "name": "Polar Land Spells", "destination": "always_prepared", "spells": ["sleet-storm"], "countsAgainstLimit": false, "classLevel": 5 },
+                  { "type": "spell_grant", "key": "land_polar_7", "name": "Polar Land Spells", "destination": "always_prepared", "spells": ["ice-storm"], "countsAgainstLimit": false, "classLevel": 7 },
+                  { "type": "spell_grant", "key": "land_polar_9", "name": "Polar Land Spells", "destination": "always_prepared", "spells": ["cone-of-cold"], "countsAgainstLimit": false, "classLevel": 9 }
+                ] },
+                { "name": "Temperate", "grants": [
+                  { "type": "spell_grant", "key": "land_temperate_3", "name": "Temperate Land Spells", "destination": "always_prepared", "spells": ["misty-step", "shocking-grasp", "sleep"], "countsAgainstLimit": false, "classLevel": 3 },
+                  { "type": "spell_grant", "key": "land_temperate_5", "name": "Temperate Land Spells", "destination": "always_prepared", "spells": ["lightning-bolt"], "countsAgainstLimit": false, "classLevel": 5 },
+                  { "type": "spell_grant", "key": "land_temperate_7", "name": "Temperate Land Spells", "destination": "always_prepared", "spells": ["freedom-of-movement"], "countsAgainstLimit": false, "classLevel": 7 },
+                  { "type": "spell_grant", "key": "land_temperate_9", "name": "Temperate Land Spells", "destination": "always_prepared", "spells": ["tree-stride"], "countsAgainstLimit": false, "classLevel": 9 }
+                ] },
+                { "name": "Tropical", "grants": [
+                  { "type": "spell_grant", "key": "land_tropical_3", "name": "Tropical Land Spells", "destination": "always_prepared", "spells": ["acid-splash", "ray-of-sickness", "web"], "countsAgainstLimit": false, "classLevel": 3 },
+                  { "type": "spell_grant", "key": "land_tropical_5", "name": "Tropical Land Spells", "destination": "always_prepared", "spells": ["stinking-cloud"], "countsAgainstLimit": false, "classLevel": 5 },
+                  { "type": "spell_grant", "key": "land_tropical_7", "name": "Tropical Land Spells", "destination": "always_prepared", "spells": ["polymorph"], "countsAgainstLimit": false, "classLevel": 7 },
+                  { "type": "spell_grant", "key": "land_tropical_9", "name": "Tropical Land Spells", "destination": "always_prepared", "spells": ["insect-plague"], "countsAgainstLimit": false, "classLevel": 9 }
+                ] }
+              ]
+            },
+            {
               "type": "feature",
               "name": "Land's Aid",
               "description": "As a Magic action, expend one Wild Shape use and choose a point within 60 feet. Chosen creatures in a 10-foot-radius Sphere make Constitution saves against your spell save DC, taking 2d6 Necrotic damage on a failure or half on a success, and one creature there regains 2d6 Hit Points. Damage and healing rise to 3d6 at Druid level 10 and 4d6 at level 14."
@@ -112,7 +142,11 @@
               "type": "feature",
               "name": "Circle of the Moon Spells",
               "description": "These spells are always prepared, and you can cast them while in Wild Shape: at Druid level 3, Cure Wounds, Moonbeam, and Starry Wisp; level 5, Conjure Animals; level 7, Fount of Moonlight; level 9, Mass Cure Wounds."
-            }
+            },
+            { "type": "spell_grant", "key": "moon_spells_3", "name": "Circle of the Moon Spells", "destination": "always_prepared", "spells": ["cure-wounds", "moonbeam", "starry-wisp"], "countsAgainstLimit": false, "classLevel": 3 },
+            { "type": "spell_grant", "key": "moon_spells_5", "name": "Circle of the Moon Spells", "destination": "always_prepared", "spells": ["conjure-animals"], "countsAgainstLimit": false, "classLevel": 5 },
+            { "type": "spell_grant", "key": "moon_spells_7", "name": "Circle of the Moon Spells", "destination": "always_prepared", "spells": ["fount-of-moonlight"], "countsAgainstLimit": false, "classLevel": 7 },
+            { "type": "spell_grant", "key": "moon_spells_9", "name": "Circle of the Moon Spells", "destination": "always_prepared", "spells": ["mass-cure-wounds"], "countsAgainstLimit": false, "classLevel": 9 }
           ]
         },
         {
@@ -174,6 +208,10 @@
               "name": "Circle of the Sea Spells",
               "description": "These spells are always prepared: at Druid level 3, Fog Cloud, Gust of Wind, Ray of Frost, Shatter, and Thunderwave; level 5, Lightning Bolt and Water Breathing; level 7, Control Water and Ice Storm; level 9, Conjure Elemental and Hold Monster."
             },
+            { "type": "spell_grant", "key": "sea_spells_3", "name": "Circle of the Sea Spells", "destination": "always_prepared", "spells": ["fog-cloud", "gust-of-wind", "ray-of-frost", "shatter", "thunderwave"], "countsAgainstLimit": false, "classLevel": 3 },
+            { "type": "spell_grant", "key": "sea_spells_5", "name": "Circle of the Sea Spells", "destination": "always_prepared", "spells": ["lightning-bolt", "water-breathing"], "countsAgainstLimit": false, "classLevel": 5 },
+            { "type": "spell_grant", "key": "sea_spells_7", "name": "Circle of the Sea Spells", "destination": "always_prepared", "spells": ["control-water", "ice-storm"], "countsAgainstLimit": false, "classLevel": 7 },
+            { "type": "spell_grant", "key": "sea_spells_9", "name": "Circle of the Sea Spells", "destination": "always_prepared", "spells": ["conjure-elemental", "hold-monster"], "countsAgainstLimit": false, "classLevel": 9 },
             {
               "type": "feature",
               "name": "Wrath of the Sea",
@@ -244,7 +282,8 @@
               "type": "feature",
               "name": "Starry Form",
               "description": "As a Bonus Action, expend one Wild Shape use to become luminous for 10 minutes. Each time you enter the form, choose a constellation. Archer makes a 60-foot ranged spell attack on activation and later Bonus Actions for 1d8 plus Wisdom Radiant damage. Chalice lets you or a creature within 30 feet regain 1d8 plus Wisdom Hit Points when one of your slotted spells heals. Dragon treats d20 rolls of 9 or lower as 10 on Intelligence or Wisdom checks and Constitution saves to maintain Concentration."
-            }
+            },
+            { "type": "spell_grant", "key": "star_map_spells", "name": "Star Map", "destination": "always_prepared", "spells": ["guidance", "guiding-bolt"], "countsAgainstLimit": false }
           ]
         },
         {
@@ -313,6 +352,7 @@
           "name": "Druidic",
           "description": "You know the secret Druidic language and always have Speak with Animals prepared. Druidic can leave hidden messages that other Druids notice automatically; others can detect one with a successful DC 15 Intelligence (Investigation) check but need magic to decipher it."
         },
+        { "type": "spell_grant", "key": "druidic_speak_with_animals", "name": "Druidic", "destination": "always_prepared", "spells": ["speak-with-animals"], "countsAgainstLimit": false },
         {
           "type": "choice",
           "key": "primal_order",
@@ -330,7 +370,8 @@
                   "ability": "wisdom",
                   "minimum": 1
                 }
-              ]
+              ],
+              "grants": [{ "type": "spell_grant", "key": "magician_cantrip", "name": "Magician Cantrip", "destination": "known", "choose": 1, "countsAgainstLimit": false, "filter": { "lists": ["Druid"], "exactLevels": [0] } }]
             },
             {
               "name": "Warden",
@@ -389,7 +430,8 @@
           "type": "feature",
           "name": "Wild Companion",
           "description": "As a Magic action, expend a spell slot or one Wild Shape use to cast Find Familiar without Material components. The familiar is Fey and disappears when you finish a Long Rest."
-        }
+        },
+        { "type": "spell_grant", "key": "wild_companion_spell", "name": "Wild Companion", "destination": "known", "spells": ["find-familiar"], "countsAgainstLimit": false }
       ]
     },
     {

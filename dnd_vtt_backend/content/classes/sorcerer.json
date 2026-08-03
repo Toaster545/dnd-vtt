@@ -48,6 +48,10 @@
               "name": "Psionic Spells",
               "description": "You always have Mind Sliver, Arms of Hadar, Dissonant Whispers, Calm Emotions, and Detect Thoughts prepared. At Sorcerer levels 5, 7, and 9, you also always have Hunger of Hadar and Sending; Evard's Black Tentacles and Summon Aberration; and Rary's Telepathic Bond and Telekinesis prepared, respectively. These count as Sorcerer spells and don't count against your prepared-spell limit. Detailed spell selection will use the shared spell system."
             },
+            { "type": "spell_grant", "key": "psionic_spells_3", "name": "Psionic Spells", "destination": "always_prepared", "spells": ["mind-sliver", "arms-of-hadar", "dissonant-whispers", "calm-emotions", "detect-thoughts"], "countsAgainstLimit": false, "classLevel": 3 },
+            { "type": "spell_grant", "key": "psionic_spells_5", "name": "Psionic Spells", "destination": "always_prepared", "spells": ["hunger-of-hadar", "sending"], "countsAgainstLimit": false, "classLevel": 5 },
+            { "type": "spell_grant", "key": "psionic_spells_7", "name": "Psionic Spells", "destination": "always_prepared", "spells": ["evards-black-tentacles", "summon-aberration"], "countsAgainstLimit": false, "classLevel": 7 },
+            { "type": "spell_grant", "key": "psionic_spells_9", "name": "Psionic Spells", "destination": "always_prepared", "spells": ["rarys-telepathic-bond", "telekinesis"], "countsAgainstLimit": false, "classLevel": 9 },
             {
               "type": "feature",
               "name": "Telepathic Speech",
@@ -115,6 +119,10 @@
               "name": "Clockwork Spells",
               "description": "You always have Aid, Alarm, Lesser Restoration, and Protection from Evil and Good prepared. At Sorcerer levels 5, 7, and 9, you also always have Dispel Magic and Protection from Energy; Freedom of Movement and Summon Construct; and Greater Restoration and Wall of Force prepared, respectively. These count as Sorcerer spells and don't count against your prepared-spell limit. Detailed spell selection will use the shared spell system."
             },
+            { "type": "spell_grant", "key": "clockwork_spells_3", "name": "Clockwork Spells", "destination": "always_prepared", "spells": ["aid", "alarm", "lesser-restoration", "protection-from-evil-and-good"], "countsAgainstLimit": false, "classLevel": 3 },
+            { "type": "spell_grant", "key": "clockwork_spells_5", "name": "Clockwork Spells", "destination": "always_prepared", "spells": ["dispel-magic", "protection-from-energy"], "countsAgainstLimit": false, "classLevel": 5 },
+            { "type": "spell_grant", "key": "clockwork_spells_7", "name": "Clockwork Spells", "destination": "always_prepared", "spells": ["freedom-of-movement", "summon-construct"], "countsAgainstLimit": false, "classLevel": 7 },
+            { "type": "spell_grant", "key": "clockwork_spells_9", "name": "Clockwork Spells", "destination": "always_prepared", "spells": ["greater-restoration", "wall-of-force"], "countsAgainstLimit": false, "classLevel": 9 },
             {
               "type": "feature",
               "key": "restore-balance",
@@ -203,7 +211,11 @@
               "type": "feature",
               "name": "Draconic Spells",
               "description": "You always have Alter Self, Chromatic Orb, Command, and Dragon's Breath prepared. At Sorcerer levels 5, 7, and 9, you also always have Fear and Fly; Arcane Eye and Charm Monster; and Legend Lore and Summon Dragon prepared, respectively. These count as Sorcerer spells and don't count against your prepared-spell limit. Detailed spell selection will use the shared spell system."
-            }
+            },
+            { "type": "spell_grant", "key": "draconic_spells_3", "name": "Draconic Spells", "destination": "always_prepared", "spells": ["alter-self", "chromatic-orb", "command", "dragons-breath"], "countsAgainstLimit": false, "classLevel": 3 },
+            { "type": "spell_grant", "key": "draconic_spells_5", "name": "Draconic Spells", "destination": "always_prepared", "spells": ["fear", "fly"], "countsAgainstLimit": false, "classLevel": 5 },
+            { "type": "spell_grant", "key": "draconic_spells_7", "name": "Draconic Spells", "destination": "always_prepared", "spells": ["arcane-eye", "charm-monster"], "countsAgainstLimit": false, "classLevel": 7 },
+            { "type": "spell_grant", "key": "draconic_spells_9", "name": "Draconic Spells", "destination": "always_prepared", "spells": ["legend-lore", "summon-dragon"], "countsAgainstLimit": false, "classLevel": 9 }
           ]
         },
         {

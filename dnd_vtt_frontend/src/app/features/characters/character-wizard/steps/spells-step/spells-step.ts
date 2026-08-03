@@ -243,6 +243,10 @@ export class SpellsStepComponent {
     this.openFilterScope.update(open => open === scope ? null : scope);
   }
 
+  closeFilters(): void {
+    this.openFilterScope.set(null);
+  }
+
   availableLevelsFor(scope: string): number[] {
     const requirement = this.resolution().requirements.find(candidate => candidate.key === scope);
     if (!requirement) return this.availableLevels();

@@ -4,7 +4,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { ContentService, DndRace, DndClass, DndBackground, DndItem, DndSpell, DndFeat, TraitEffect, TraitGrant } from '../../../core/services/content.service';
-import { ClassChoiceSource, averageHpFormula, collectTraitEffects, reachableGrants, resolveLanguageProficiencies, unarmoredDefenseBonus } from '../../../core/utils/character-effects';
+import { ClassChoiceSource, averageHpFormula, collectTraitEffects, reachableGrants, resolveCharacterFeatPicks, resolveLanguageProficiencies, unarmoredDefenseBonus } from '../../../core/utils/character-effects';
 import { isStructuredEquipment, resolveStartingEquipment } from '../../../core/utils/starting-equipment';
 import { resolveBackgroundSkills } from '../../../core/utils/background-skills';
 import { resolveBackgroundOriginFeat } from '../../../core/utils/background-origin-feat';
@@ -258,7 +258,7 @@ export class CharacterWizardComponent implements OnInit, OnDestroy {
   isEditing  = computed(() => this.characterId() !== null);
   isLastStep = computed(() => this.activeStep() === STEPS.length - 1);
   incompleteSteps = computed(() => [
-    !isRaceSelectionComplete(this.raceSelection()) || this.raceHasSkillConflict(),
+    !isRaceSelectionComplete(this.raceSelection(), this.feats()) || this.raceHasSkillConflict(),
     !areClassSelectionsComplete(this.selectedClasses(), this.feats()) || this.classHasSkillConflict(),
     !isBackgroundSelectionComplete(this.backgroundSelection(), this.feats()) || this.backgroundHasSkillConflict(),
     !areAbilityAssignmentsComplete(this.assignments()),
@@ -384,6 +384,29 @@ export class CharacterWizardComponent implements OnInit, OnDestroy {
     return classes.length === 1 ? [{ ...classes[0], level: this.level() }] : classes;
   });
 
+  private spellFeatSelections = computed(() => {
+    const race = this.selectedRace();
+    const selected = resolveCharacterFeatPicks(
+      this.reconciledClasses().map(entry => ({
+        data: entry.cls, choices: entry.traits, level: entry.level, subclass: entry.subclass,
+      })),
+      this.feats(),
+      race ? { data: race, choices: this.raceTraits(), subrace: this.selectedSubrace()?.name } : null,
+    );
+    const background = this.selectedBackground();
+    const originFeat = resolveBackgroundOriginFeat(background, this.feats());
+    if (!background || !originFeat) return selected;
+    const list = background.feature.match(/\((Cleric|Druid|Wizard)\)/i)?.[1];
+    return [...selected, {
+      feat: originFeat,
+      scope: `background:${background.index}:origin`,
+      choices: {
+        ...this.backgroundTraits(),
+        ...(list ? { magic_initiate_list: [list] } : {}),
+      },
+    }];
+  });
+
   spellResolution = computed(() => resolveSpellcasting({
     characterLevel: this.level(),
     abilityScores: this.finalScores(),
@@ -403,6 +426,7 @@ export class CharacterWizardComponent implements OnInit, OnDestroy {
       background: this.selectedBackground()!,
       choices: this.backgroundTraits(),
     } : null,
+    feats: this.spellFeatSelections(),
     spellChoices: this.spellChoices(),
   }));
 

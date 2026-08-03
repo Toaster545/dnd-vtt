@@ -14,5 +14,19 @@
       "charisma"
     ],
     "amount": 1
-  }
+  },
+  "grants": [{
+    "type": "choice",
+    "key": "spell_sniper_list",
+    "name": "Spell Sniper Spell List",
+    "choose": 1,
+    "options": [
+      { "name": "Bard", "grants": [{ "type": "spell_grant", "key": "spell_sniper_bard", "name": "Spell Sniper Cantrip", "destination": "known", "choose": 1, "countsAgainstLimit": false, "sourceKey": "spell-sniper", "sourceName": "Spell Sniper", "ability": { "choiceKey": "__feat_ability__" }, "filter": { "lists": ["Bard"], "exactLevels": [0], "spellAttack": true } }] },
+      { "name": "Cleric", "grants": [{ "type": "spell_grant", "key": "spell_sniper_cleric", "name": "Spell Sniper Cantrip", "destination": "known", "choose": 1, "countsAgainstLimit": false, "sourceKey": "spell-sniper", "sourceName": "Spell Sniper", "ability": { "choiceKey": "__feat_ability__" }, "filter": { "lists": ["Cleric"], "exactLevels": [0], "spellAttack": true } }] },
+      { "name": "Druid", "grants": [{ "type": "spell_grant", "key": "spell_sniper_druid", "name": "Spell Sniper Cantrip", "destination": "known", "choose": 1, "countsAgainstLimit": false, "sourceKey": "spell-sniper", "sourceName": "Spell Sniper", "ability": { "choiceKey": "__feat_ability__" }, "filter": { "lists": ["Druid"], "exactLevels": [0], "spellAttack": true } }] },
+      { "name": "Sorcerer", "grants": [{ "type": "spell_grant", "key": "spell_sniper_sorcerer", "name": "Spell Sniper Cantrip", "destination": "known", "choose": 1, "countsAgainstLimit": false, "sourceKey": "spell-sniper", "sourceName": "Spell Sniper", "ability": { "choiceKey": "__feat_ability__" }, "filter": { "lists": ["Sorcerer"], "exactLevels": [0], "spellAttack": true } }] },
+      { "name": "Warlock", "grants": [{ "type": "spell_grant", "key": "spell_sniper_warlock", "name": "Spell Sniper Cantrip", "destination": "known", "choose": 1, "countsAgainstLimit": false, "sourceKey": "spell-sniper", "sourceName": "Spell Sniper", "ability": { "choiceKey": "__feat_ability__" }, "filter": { "lists": ["Warlock"], "exactLevels": [0], "spellAttack": true } }] },
+      { "name": "Wizard", "grants": [{ "type": "spell_grant", "key": "spell_sniper_wizard", "name": "Spell Sniper Cantrip", "destination": "known", "choose": 1, "countsAgainstLimit": false, "sourceKey": "spell-sniper", "sourceName": "Spell Sniper", "ability": { "choiceKey": "__feat_ability__" }, "filter": { "lists": ["Wizard"], "exactLevels": [0], "spellAttack": true } }] }
+    ]
+  }]
 }

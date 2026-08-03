@@ -3,6 +3,7 @@ import type {
   ClassLevel,
   DndBackground,
   DndClass,
+  DndFeat,
   DndRace,
   DndSpell,
   SpellcastingAbility,
@@ -32,6 +33,13 @@ export interface SpellcastingBackgroundSelection {
   choices?: Record<string, string[]>;
 }
 
+export interface SpellcastingFeatSelection {
+  feat: DndFeat;
+  scope: string;
+  choices?: Record<string, string[]>;
+  ability?: string;
+}
+
 export interface SpellcastingResolverInput {
   characterLevel: number;
   abilityScores: AbilityScores;
@@ -39,6 +47,7 @@ export interface SpellcastingResolverInput {
   classes: SpellcastingClassSelection[];
   race?: SpellcastingRaceSelection | null;
   background?: SpellcastingBackgroundSelection | null;
+  feats?: SpellcastingFeatSelection[];
   spellChoices?: Record<string, string[]>;
 }
 
@@ -59,7 +68,7 @@ export interface ResolvedSpellcastingSource {
   key: string;
   name: string;
   subclassName?: string;
-  origin: 'class' | 'subclass' | 'race' | 'background' | 'grant';
+  origin: 'class' | 'subclass' | 'race' | 'background' | 'feat' | 'grant';
   list: string | null;
   mode: SpellcastingDefinition['mode'] | 'granted';
   progression: SpellcastingDefinition['progression'] | 'none';
@@ -142,6 +151,7 @@ interface GrantContext {
   subclassName?: string;
   choices: Record<string, string[]>;
   inheritedSourceKey?: string;
+  sourceLevel?: number;
 }
 
 interface PendingRequirement {
@@ -353,8 +363,9 @@ function activeSpellGrants(input: SpellcastingResolverInput, sources: ActiveSour
         scope: `class:${selection.cls.index}:level:${level.level}`,
         origin: 'class',
         sourceName: selection.cls.name,
-        choices,
-        inheritedSourceKey: classSource?.key,
+      choices,
+      sourceLevel: selection.level,
+      inheritedSourceKey: classSource?.key,
       }));
     }
     const subclass = selection.cls.subclasses.find((candidate) => candidate.name === selection.subclass);
@@ -366,11 +377,26 @@ function activeSpellGrants(input: SpellcastingResolverInput, sources: ActiveSour
         sourceName: subclass!.name,
         subclassName: subclass!.name,
         choices,
+        sourceLevel: selection.level,
         inheritedSourceKey: subclassSource?.key,
       }));
     }
   }
-  return contexts.filter((context) => !context.grant.characterLevel || input.characterLevel >= context.grant.characterLevel);
+  for (const selection of input.feats ?? []) {
+    const choices = {
+      ...(selection.choices ?? {}),
+      ...(selection.ability ? { __feat_ability__: [selection.ability] } : {}),
+    };
+    contexts.push(...optionSpellGrants(selection.feat.grants ?? [], choices, {
+      scope: `feat:${selection.scope}:${selection.feat.index}`,
+      origin: 'feat',
+      sourceName: selection.feat.name,
+      choices,
+    }));
+  }
+  return contexts.filter((context) =>
+    (!context.grant.characterLevel || input.characterLevel >= context.grant.characterLevel)
+    && (!context.grant.classLevel || (context.sourceLevel ?? 0) >= context.grant.classLevel));
 }
 
 function spellOnList(spell: DndSpell, list: string): boolean {
@@ -383,6 +409,13 @@ function eligibleForGrant(spell: DndSpell, grant: GrantContext['grant'], source:
   if (grant.filter?.schools?.length && !grant.filter.schools.some((school) => normalize(school) === normalize(spell.school))) return false;
   if (grant.filter?.minLevel !== undefined && spell.level < grant.filter.minLevel) return false;
   if (grant.filter?.maxLevel !== undefined && spell.level > grant.filter.maxLevel) return false;
+  if (grant.filter?.exactLevels?.length && !grant.filter.exactLevels.includes(spell.level)) return false;
+  if (grant.filter?.ritual !== undefined && spell.ritual !== grant.filter.ritual) return false;
+  if (grant.filter?.spellAttack && !spell.mechanics?.spell_attacks?.length) return false;
+  if (grant.filter?.castingTimes?.length) {
+    const castingTime = normalize(spell.casting_time).replace(/^1\s+/, '');
+    if (!grant.filter.castingTimes.some((time) => castingTime === normalize(time).replace(/^1\s+/, ''))) return false;
+  }
   return true;
 }
 
@@ -578,6 +611,7 @@ export function resolveSpellcasting(input: SpellcastingResolverInput): Spellcast
   const validationErrors: SpellValidationError[] = [];
   const fixedCount = new Map<string, number>();
   const acquisitionOwners = new Map<string, SpellAcquisitionOwner>();
+  const dependentGrants: { context: GrantContext; source: ActiveSource }[] = [];
 
   for (const context of grants) {
     const grant = context.grant;
@@ -604,6 +638,10 @@ export function resolveSpellcasting(input: SpellcastingResolverInput): Spellcast
       }
     }
     if ((grant.choose ?? 0) > 0) {
+      if (grant.fromDestination) {
+        dependentGrants.push({ context, source });
+        continue;
+      }
       if (grant.countsAgainstLimit) {
         const key = `${source.key}:${destination}`;
         fixedCount.set(key, (fixedCount.get(key) ?? 0) + grant.choose!);
@@ -666,6 +704,38 @@ export function resolveSpellcasting(input: SpellcastingResolverInput): Spellcast
     const target = item.destination === 'known' ? known : item.destination === 'spellbook' ? spellbook : item.destination === 'prepared' ? prepared : alwaysPrepared;
     for (const index of requirement.validSelectedSpellIndices) {
       addResolved(target, index, item.source, item.destination, item.granted, item.countsAgainstLimit, item.subclassName);
+    }
+  }
+
+  for (const { context, source } of dependentGrants) {
+    const grant = context.grant;
+    const acquired = grant.fromDestination === 'known' ? known
+      : grant.fromDestination === 'spellbook' ? spellbook
+        : prepared;
+    const acquiredIndexes = new Set(acquired
+      .filter(entry => entry.sourceKey === source.key)
+      .map(entry => entry.spellIndex));
+    const item: PendingRequirement = {
+      key: `${context.scope}:grant:${grant.key}`,
+      source,
+      name: grant.name,
+      subclassName: context.subclassName,
+      kind: 'bonus',
+      destination: grant.destination,
+      required: grant.choose!,
+      eligible: input.spells.filter(spell => acquiredIndexes.has(spell.index) && eligibleForGrant(spell, grant, source)),
+      countsAgainstLimit: grant.countsAgainstLimit ?? false,
+      granted: true,
+      usesGlobalUniqueness: false,
+    };
+    const requirement = validateRequirement(item, choices, spellByIndex, acquisitionOwners);
+    requirements.push(requirement);
+    validationErrors.push(...requirement.errors);
+    const target = grant.destination === 'known' ? known
+      : grant.destination === 'spellbook' ? spellbook
+        : alwaysPrepared;
+    for (const index of requirement.validSelectedSpellIndices) {
+      addResolved(target, index, source, grant.destination, true, grant.countsAgainstLimit ?? false, context.subclassName);
     }
   }
 

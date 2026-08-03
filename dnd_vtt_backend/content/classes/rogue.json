@@ -62,6 +62,7 @@
               "name": "Spellcasting",
               "description": "Cast prepared Wizard spells using Intelligence and an Arcane Focus. You know Mage Hand and two other Wizard cantrips, and you prepare three level 1 Wizard spells. The cantrip, prepared-spell, and spell-slot progressions are represented at every Rogue level; complete spell selection is deferred to the shared spell-system pass."
             },
+            { "type": "spell_grant", "key": "arcane_trickster_mage_hand", "name": "Arcane Trickster Spellcasting", "destination": "known", "spells": ["mage-hand"], "countsAgainstLimit": true },
             {
               "type": "feature",
               "name": "Mage Hand Legerdemain",

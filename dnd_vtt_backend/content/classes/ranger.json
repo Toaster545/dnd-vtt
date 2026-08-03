@@ -130,6 +130,11 @@
               "name": "Fey Wanderer Spells",
               "description": "Always prepare Charm Person at Ranger level 3, Misty Step at level 5, Summon Fey at level 9, Dimension Door at level 13, and Mislead at level 17. These are Ranger spells for you and don't count against your prepared-spell limit."
             },
+            { "type": "spell_grant", "key": "fey_wanderer_spell_3", "name": "Fey Wanderer Spells", "destination": "always_prepared", "spells": ["charm-person"], "countsAgainstLimit": false, "classLevel": 3 },
+            { "type": "spell_grant", "key": "fey_wanderer_spell_5", "name": "Fey Wanderer Spells", "destination": "always_prepared", "spells": ["misty-step"], "countsAgainstLimit": false, "classLevel": 5 },
+            { "type": "spell_grant", "key": "fey_wanderer_spell_9", "name": "Fey Wanderer Spells", "destination": "always_prepared", "spells": ["summon-fey"], "countsAgainstLimit": false, "classLevel": 9 },
+            { "type": "spell_grant", "key": "fey_wanderer_spell_13", "name": "Fey Wanderer Spells", "destination": "always_prepared", "spells": ["dimension-door"], "countsAgainstLimit": false, "classLevel": 13 },
+            { "type": "spell_grant", "key": "fey_wanderer_spell_17", "name": "Fey Wanderer Spells", "destination": "always_prepared", "spells": ["mislead"], "countsAgainstLimit": false, "classLevel": 17 },
             {
               "type": "choice",
               "key": "feywild_gift",
@@ -282,6 +287,11 @@
               "name": "Gloom Stalker Spells",
               "description": "Always prepare Disguise Self at Ranger level 3, Rope Trick at level 5, Fear at level 9, Greater Invisibility at level 13, and Seeming at level 17. These are Ranger spells for you and don't count against your prepared-spell limit."
             },
+            { "type": "spell_grant", "key": "gloom_stalker_spell_3", "name": "Gloom Stalker Spells", "destination": "always_prepared", "spells": ["disguise-self"], "countsAgainstLimit": false, "classLevel": 3 },
+            { "type": "spell_grant", "key": "gloom_stalker_spell_5", "name": "Gloom Stalker Spells", "destination": "always_prepared", "spells": ["rope-trick"], "countsAgainstLimit": false, "classLevel": 5 },
+            { "type": "spell_grant", "key": "gloom_stalker_spell_9", "name": "Gloom Stalker Spells", "destination": "always_prepared", "spells": ["fear"], "countsAgainstLimit": false, "classLevel": 9 },
+            { "type": "spell_grant", "key": "gloom_stalker_spell_13", "name": "Gloom Stalker Spells", "destination": "always_prepared", "spells": ["greater-invisibility"], "countsAgainstLimit": false, "classLevel": 13 },
+            { "type": "spell_grant", "key": "gloom_stalker_spell_17", "name": "Gloom Stalker Spells", "destination": "always_prepared", "spells": ["seeming"], "countsAgainstLimit": false, "classLevel": 17 },
             {
               "type": "feature",
               "name": "Umbral Sight",
@@ -419,6 +429,7 @@
             }
           }
         },
+        { "type": "spell_grant", "key": "favored_enemy_hunters_mark", "name": "Favored Enemy", "destination": "always_prepared", "spells": ["hunters-mark"], "countsAgainstLimit": false },
         {
           "type": "weapon_mastery",
           "key": "weapon_mastery",

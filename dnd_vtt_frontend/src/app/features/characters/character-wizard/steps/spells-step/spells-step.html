@@ -1,3 +1,12 @@
+@if (openFilterScope()) {
+  <button
+    type="button"
+    class="fixed inset-0 z-10 cursor-default border-0 bg-transparent p-0"
+    aria-label="Close spell filters"
+    (click)="closeFilters()"
+  ></button>
+}
+
 <div class="flex flex-wrap items-start justify-between gap-4 mb-4">
   <div>
     <h2 class="font-brand text-xl text-parchment mb-1">Spellcasting</h2>

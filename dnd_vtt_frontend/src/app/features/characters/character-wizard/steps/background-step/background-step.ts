@@ -56,7 +56,12 @@ export class BackgroundStepComponent implements OnInit {
 
   private openDetail(bg: DndBackground) {
     const existing = this.selected()?.background.index === bg.index ? this.selected() : null;
-    this.draftTraits.set(existing?.traits ? { ...existing.traits } : {});
+    const traits = existing?.traits ? { ...existing.traits } : {};
+    const magicInitiateList = this.backgroundMagicInitiateList(bg);
+    if (magicInitiateList) {
+      traits['magic_initiate_list'] = [magicInitiateList];
+    }
+    this.draftTraits.set(traits);
     this.editingSkills.set(false);
     this.originFeatCollapsed.set(false);
     this.skillEditSnapshot = undefined;
@@ -203,7 +208,16 @@ export class BackgroundStepComponent implements OnInit {
   }
 
   originFeatChoiceGrants(bg: DndBackground): ChoiceGrant[] {
-    return (this.originFeat(bg)?.grants ?? []).filter((grant): grant is ChoiceGrant => grant.type === 'choice');
+    const fixedList = this.backgroundMagicInitiateList(bg);
+    return (this.originFeat(bg)?.grants ?? [])
+      .filter((grant): grant is ChoiceGrant => grant.type === 'choice')
+      .map((grant) => grant.key === 'magic_initiate_list' && fixedList
+        ? { ...grant, options: grant.options.filter((option) => option.name === fixedList) }
+        : grant);
+  }
+
+  private backgroundMagicInitiateList(bg: DndBackground): string | null {
+    return bg.feature.match(/Magic Initiate\s*\((Cleric|Druid|Wizard)\)/i)?.[1] ?? null;
   }
 
   originFeatSkillGrants(bg: DndBackground): SkillGrant[] {

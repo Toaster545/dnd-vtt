@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { AbilityScores } from '../models/character.model';
-import type { DndClass, DndRace, DndSpell, SpellcastingDefinition, TraitGrant } from '../services/content.service';
+import type { DndClass, DndFeat, DndRace, DndSpell, SpellcastingDefinition, TraitGrant } from '../services/content.service';
 import { resolveSpellcasting } from './spellcasting';
 
 const scores: AbilityScores = {
@@ -252,6 +252,124 @@ describe('resolveSpellcasting', () => {
     expect(savant.eligibleSpellIndices).not.toContain('cure-wounds');
     expect(result.spellbook).toHaveLength(3);
     expect(result.isComplete).toBe(true);
+  });
+
+  it('resolves nested feat spell sources with their own list and casting ability', () => {
+    const feat = {
+      index: 'magic-initiate', name: 'Magic Initiate', category: 'origin', description: '',
+      grants: [{
+        type: 'choice', key: 'magic_initiate_list', name: 'Spell List', choose: 1,
+        options: [{ name: 'Wizard', grants: [
+          {
+            type: 'spell_grant', key: 'initiate_cantrips', name: 'Magic Initiate Cantrips',
+            destination: 'known', choose: 2, countsAgainstLimit: false,
+            ability: { choiceKey: 'magic_initiate_ability' }, filter: { lists: ['Wizard'], exactLevels: [0] },
+          },
+          {
+            type: 'spell_grant', key: 'initiate_spell', name: 'Magic Initiate Spell',
+            destination: 'always_prepared', choose: 1, countsAgainstLimit: false,
+            ability: { choiceKey: 'magic_initiate_ability' }, filter: { lists: ['Wizard'], exactLevels: [1] },
+          },
+        ] }],
+      }],
+    } as DndFeat;
+    const initial = resolveSpellcasting({
+      characterLevel: 1, abilityScores: scores, spells, classes: [],
+      feats: [{
+        feat, scope: 'background:sage',
+        choices: { magic_initiate_list: ['Wizard'], magic_initiate_ability: ['Charisma'] },
+      }],
+    });
+    expect(initial.requirements.map(requirement => [requirement.name, requirement.required])).toEqual([
+      ['Magic Initiate Cantrips', 2], ['Magic Initiate Spell', 1],
+    ]);
+    expect(initial.sources[0]).toMatchObject({ origin: 'feat', castingAbility: 'charisma' });
+
+    const choices = Object.fromEntries(initial.requirements.map(requirement => [
+      requirement.key,
+      requirement.name.endsWith('Cantrips') ? ['minor-illusion', 'acid-splash'] : ['magic-missile'],
+    ]));
+    const complete = resolveSpellcasting({
+      characterLevel: 1, abilityScores: scores, spells, classes: [],
+      feats: [{
+        feat, scope: 'background:sage',
+        choices: { magic_initiate_list: ['Wizard'], magic_initiate_ability: ['Charisma'] },
+      }],
+      spellChoices: choices,
+    });
+    expect(complete.known.map(entry => entry.spellIndex)).toEqual(['minor-illusion', 'acid-splash']);
+    expect(complete.alwaysPrepared.map(entry => entry.spellIndex)).toEqual(['magic-missile']);
+    expect(complete.isComplete).toBe(true);
+  });
+
+  it('gates subclass spells by class level rather than total character level', () => {
+    const paladin = classContent('paladin', 'Paladin', {
+      key: 'class:paladin', list: 'Paladin', ability: 'charisma', mode: 'prepared', progression: 'half',
+    }, 3, { prepared_spells: 0, spell_slots: { '1': 3 } });
+    paladin.subclasses = [{
+      index: 'devotion', name: 'Oath of Devotion', levels: [{ level: 3, features: [], grants: [{
+        type: 'spell_grant', key: 'devotion_5', name: 'Oath Spells', destination: 'always_prepared',
+        spells: ['aid'], countsAgainstLimit: false, classLevel: 5,
+      }] }],
+    }];
+
+    const result = resolveSpellcasting({
+      characterLevel: 10,
+      abilityScores: scores,
+      spells: [...spells, spell('aid', 'Aid', 2, 'Abjuration', ['Cleric', 'Paladin'])],
+      classes: [{ cls: paladin, level: 3, subclass: 'Oath of Devotion' }],
+    });
+    expect(result.alwaysPrepared).toEqual([]);
+  });
+
+  it('limits dependent feature choices to spells already acquired in the spellbook', () => {
+    const mastery: TraitGrant = {
+      type: 'spell_grant', key: 'spell_mastery_1', name: 'Spell Mastery',
+      destination: 'always_prepared', choose: 1, countsAgainstLimit: false,
+      fromDestination: 'spellbook', filter: { exactLevels: [1] },
+    };
+    const wizard = classContent('wizard', 'Wizard', wizardDefinition, 18, {
+      spells_known: 2, prepared_spells: 0, spell_slots: { '1': 4, '2': 3, '3': 3 },
+    }, [mastery]);
+    const baseChoices = { 'class:wizard:spellbook': ['magic-missile', 'detect-magic'] };
+    const first = resolveSpellcasting({
+      characterLevel: 18, abilityScores: scores, spells,
+      classes: [{ cls: wizard, level: 18 }], spellChoices: baseChoices,
+    });
+    const requirement = first.requirements.find(candidate => candidate.name === 'Spell Mastery')!;
+    expect(requirement.eligibleSpellIndices).toEqual(['magic-missile', 'detect-magic']);
+
+    const complete = resolveSpellcasting({
+      characterLevel: 18, abilityScores: scores, spells,
+      classes: [{ cls: wizard, level: 18 }],
+      spellChoices: { ...baseChoices, [requirement.key]: ['detect-magic'] },
+    });
+    expect(complete.alwaysPrepared).toContainEqual(expect.objectContaining({
+      spellIndex: 'detect-magic', sourceName: 'Wizard',
+    }));
+  });
+
+  it('matches Action grants exactly without admitting Bonus Action spells', () => {
+    const mastery: TraitGrant = {
+      type: 'spell_grant', key: 'spell_mastery_1', name: 'Spell Mastery',
+      destination: 'always_prepared', choose: 1, countsAgainstLimit: false,
+      fromDestination: 'spellbook', filter: { exactLevels: [1], castingTimes: ['action'] },
+    };
+    const wizard = classContent('wizard', 'Wizard', wizardDefinition, 18, {
+      spells_known: 2, prepared_spells: 0, spell_slots: { '1': 4 },
+    }, [mastery]);
+    const timedSpells = [
+      { ...spell('action-spell', 'Action Spell', 1, 'Evocation', ['Wizard']), casting_time: '1 action' },
+      { ...spell('bonus-spell', 'Bonus Spell', 1, 'Evocation', ['Wizard']), casting_time: '1 bonus action' },
+    ] as DndSpell[];
+    const result = resolveSpellcasting({
+      characterLevel: 18, abilityScores: scores, spells: timedSpells,
+      classes: [{ cls: wizard, level: 18 }],
+      spellChoices: { 'class:wizard:spellbook': ['action-spell', 'bonus-spell'] },
+    });
+
+    expect(result.requirements.find(candidate => candidate.name === 'Spell Mastery')?.eligibleSpellIndices)
+      .toEqual(['action-spell']);
   });
 
   it('keeps always-prepared spells outside the limit and rejects preparing them twice', () => {

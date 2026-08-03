@@ -34,9 +34,17 @@ export interface RaceChoiceSource {
 
 export interface FeatPick {
   feat: DndFeat;
+  scope: string;
+  choices: Record<string, string[]>;
   // The companion `${grantKey}:feat_ability` pick, when the feat's abilityIncrease offers more
   // than one eligible ability (e.g. Resilient) — otherwise undefined.
   ability?: string;
+}
+
+function featChoices(feat: DndFeat, parentKey: string, choices: Record<string, string[]>): Record<string, string[]> {
+  return Object.fromEntries((feat.grants ?? [])
+    .filter(grant => 'key' in grant)
+    .map(grant => [grant.key, choices[`${parentKey}:feat:${grant.key}`] ?? []]));
 }
 
 // Every feat the character has actually taken, across every class/subclass's `ability_choice`
@@ -59,11 +67,21 @@ export function resolveCharacterFeatPicks(
       if (grant.type === 'ability_choice') {
         const featIndex = choices[`${grant.key}:feat`]?.[0];
         const feat = featIndex ? byIndex(featIndex) : undefined;
-        if (feat) out.push({ feat, ability: choices[`${grant.key}:feat_ability`]?.[0] });
+        if (feat) out.push({
+          feat,
+          scope: `class:${data.index}:${grant.key}`,
+          choices: featChoices(feat, grant.key, choices),
+          ability: choices[`${grant.key}:feat_ability`]?.[0],
+        });
       } else if (grant.type === 'feat_pick') {
         for (const featIndex of choices[grant.key] ?? []) {
           const feat = byIndex(featIndex);
-          if (feat) out.push({ feat, ability: choices[`${grant.key}:feat_ability`]?.[0] });
+          if (feat) out.push({
+            feat,
+            scope: `class:${data.index}:${grant.key}`,
+            choices: featChoices(feat, grant.key, choices),
+            ability: choices[`${grant.key}:feat_ability`]?.[0],
+          });
         }
       }
     }
@@ -73,7 +91,12 @@ export function resolveCharacterFeatPicks(
       if (grant.type !== 'feat_pick') continue;
       for (const featIndex of race.choices[grant.key] ?? []) {
         const feat = byIndex(featIndex);
-        if (feat) out.push({ feat, ability: race.choices[`${grant.key}:feat_ability`]?.[0] });
+        if (feat) out.push({
+          feat,
+          scope: `race:${race.data.index}:${grant.key}`,
+          choices: featChoices(feat, grant.key, race.choices),
+          ability: race.choices[`${grant.key}:feat_ability`]?.[0],
+        });
       }
     }
   }

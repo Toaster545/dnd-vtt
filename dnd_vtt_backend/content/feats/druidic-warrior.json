@@ -13,5 +13,8 @@
     {
       "type": "special"
     }
+  ],
+  "grants": [
+    { "type": "spell_grant", "key": "druidic_warrior_cantrips", "name": "Druidic Warrior Cantrips", "destination": "known", "choose": 2, "countsAgainstLimit": false, "sourceKey": "druidic-warrior", "sourceName": "Druidic Warrior", "ability": "wisdom", "filter": { "lists": ["Druid"], "exactLevels": [0] } }
   ]
 }

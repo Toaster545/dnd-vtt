@@ -92,8 +92,12 @@ export type TraitGrant =
       spells?: string[]; choose?: number; countsAgainstLimit?: boolean;
       sourceKey?: string; sourceName?: string; list?: string;
       ability?: SpellcastingAbility;
-      characterLevel?: number;
-      filter?: { lists?: string[]; schools?: string[]; minLevel?: number; maxLevel?: number };
+      characterLevel?: number; classLevel?: number;
+      fromDestination?: 'known' | 'spellbook' | 'prepared';
+      filter?: {
+        lists?: string[]; schools?: string[]; minLevel?: number; maxLevel?: number;
+        exactLevels?: number[]; ritual?: boolean; spellAttack?: boolean; castingTimes?: string[];
+      };
     };
 
 export type SpellcastingAbility =

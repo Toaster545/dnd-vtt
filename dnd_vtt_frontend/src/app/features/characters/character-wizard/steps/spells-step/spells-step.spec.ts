@@ -125,6 +125,14 @@ describe('SpellsStepComponent', () => {
     filterButton.click();
     fixture.detectChanges();
     expect((fixture.nativeElement as HTMLElement).querySelectorAll('select')).toHaveLength(6);
+    (fixture.nativeElement as HTMLElement)
+      .querySelector<HTMLButtonElement>('button[aria-label="Close spell filters"]')!
+      .click();
+    fixture.detectChanges();
+    expect(fixture.componentInstance.openFilterScope()).toBeNull();
+    expect((fixture.nativeElement as HTMLElement).querySelectorAll('select')).toHaveLength(0);
+    filterButton.click();
+    fixture.detectChanges();
     expect(fixture.componentInstance.visibleSpellGroups(requirement).map(group => group.label)).toEqual([
       'Cantrips', 'Level 1 Spells',
     ]);

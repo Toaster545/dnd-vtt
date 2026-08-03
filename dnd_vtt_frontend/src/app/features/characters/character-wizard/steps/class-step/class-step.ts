@@ -436,6 +436,32 @@ export class ClassStepComponent implements OnInit {
     return index ? this.feats().find(f => f.index === index) ?? null : null;
   }
 
+  featChoiceGrants(feat: DndFeat | null): Extract<TraitGrant, { type: 'choice' }>[] {
+    return (feat?.grants ?? []).filter((grant): grant is Extract<TraitGrant, { type: 'choice' }> => grant.type === 'choice');
+  }
+
+  featChoiceKey(parent: { key: string }, grant: { key: string }): string {
+    return `${parent.key}:feat:${grant.key}`;
+  }
+
+  featChoiceSelected(parent: { key: string }, grant: { key: string }, option: string): boolean {
+    return this.draftTraits()[this.featChoiceKey(parent, grant)]?.includes(option) ?? false;
+  }
+
+  toggleFeatChoice(
+    parent: { key: string }, grant: Extract<TraitGrant, { type: 'choice' }>, option: string, unlocked = true,
+  ): void {
+    if (!unlocked) return;
+    const key = this.featChoiceKey(parent, grant);
+    this.draftTraits.update(traits => {
+      const current = traits[key] ?? [];
+      if (current.includes(option)) return { ...traits, [key]: current.filter(value => value !== option) };
+      if (current.length >= grant.choose) return grant.choose === 1 ? { ...traits, [key]: [option] } : traits;
+      return { ...traits, [key]: [...current, option] };
+    });
+    this.syncDraft();
+  }
+
   selectedFeatAbility(grant: { key: string }): Ability | null {
     return (this.draftTraits()[this.featAbilityKey(grant)]?.[0] as Ability) ?? null;
   }
@@ -485,6 +511,11 @@ export class ClassStepComponent implements OnInit {
       pool = pool.filter(f => !excluded.has(f.index));
     }
     return pool;
+  }
+
+  pickedFeatsForGrant(grant: { key: string }): DndFeat[] {
+    const selected = new Set(this.draftTraits()[grant.key] ?? []);
+    return this.feats().filter(feat => selected.has(feat.index));
   }
 
   private armorTraining(): string[] {

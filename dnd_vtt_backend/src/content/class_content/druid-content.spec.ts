@@ -132,13 +132,17 @@ describe('Druid class content', () => {
     ).toHaveLength(1);
   });
 
-  it('keeps rest- and activation-time subclass decisions out of saved choices', () => {
+  it('keeps rest- and activation-time decisions out while retaining permanent spell choices', () => {
     const subclassChoices = druid.subclasses.flatMap((subclass) =>
       subclass.levels.flatMap((level) =>
         (level.grants ?? []).filter((grant) => grant.type === 'choice'),
       ),
     );
-    expect(subclassChoices).toEqual([]);
+    expect(subclassChoices).toHaveLength(1);
+    expect(subclassChoices[0]).toMatchObject({
+      key: 'circle_land_type',
+      choose: 1,
+    });
 
     const land = druid.subclasses.find((subclass) => subclass.index === 'land');
     expect(land?.levels[0].grants?.[0]).toMatchObject({

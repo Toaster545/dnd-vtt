@@ -13,5 +13,9 @@
       "charisma"
     ],
     "amount": 1
-  }
+  },
+  "grants": [
+    { "type": "spell_grant", "key": "fey_touched_misty_step", "name": "Fey-Touched", "destination": "always_prepared", "spells": ["misty-step"], "countsAgainstLimit": false, "sourceKey": "fey-touched", "sourceName": "Fey-Touched", "ability": { "choiceKey": "__feat_ability__" } },
+    { "type": "spell_grant", "key": "fey_touched_spell", "name": "Fey-Touched Spell", "destination": "always_prepared", "choose": 1, "countsAgainstLimit": false, "sourceKey": "fey-touched", "sourceName": "Fey-Touched", "ability": { "choiceKey": "__feat_ability__" }, "filter": { "schools": ["Divination", "Enchantment"], "exactLevels": [1] } }
+  ]
 }

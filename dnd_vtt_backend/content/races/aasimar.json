@@ -29,6 +29,17 @@
       "description": "You know the Light cantrip and use Charisma as its spellcasting ability."
     },
     {
+      "type": "spell_grant",
+      "key": "light_bearer",
+      "name": "Light Bearer",
+      "destination": "known",
+      "spells": ["light"],
+      "countsAgainstLimit": false,
+      "sourceKey": "aasimar",
+      "sourceName": "Aasimar",
+      "ability": "charisma"
+    },
+    {
       "type": "feature",
       "name": "Celestial Revelation",
       "description": "At level 3, use a Bonus Action once per Long Rest to transform for 1 minute, choosing each time: Heavenly Wings grants a Fly Speed equal to your Speed; Inner Radiance sheds bright light for 10 feet and dim light for 10 more and deals Radiant damage equal to your Proficiency Bonus to creatures within 10 feet at the end of your turns; Necrotic Shroud forces creatures of your choice within 10 feet to make a Charisma save (DC 8 + your Charisma modifier + Proficiency Bonus) or become Frightened until the end of your next turn. Once on each of your turns during the transformation, one target you damage with an attack or spell takes extra damage equal to your Proficiency Bonus—Radiant for Heavenly Wings or Inner Radiance, Necrotic for Necrotic Shroud."

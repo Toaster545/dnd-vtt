@@ -327,7 +327,8 @@
                 "activation": "action",
                 "uses": { "max": 1, "per": "long_rest" }
               }
-            }
+            },
+            { "type": "spell_grant", "key": "telekinetic_master_spell", "name": "Telekinetic Master", "destination": "always_prepared", "spells": ["telekinesis"], "countsAgainstLimit": false, "sourceKey": "psi-warrior", "sourceName": "Psi Warrior", "ability": "intelligence" }
           ]
         }
       ]

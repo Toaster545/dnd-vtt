@@ -13,5 +13,9 @@
       "charisma"
     ],
     "amount": 1
-  }
+  },
+  "grants": [
+    { "type": "spell_grant", "key": "shadow_touched_invisibility", "name": "Shadow-Touched", "destination": "always_prepared", "spells": ["invisibility"], "countsAgainstLimit": false, "sourceKey": "shadow-touched", "sourceName": "Shadow-Touched", "ability": { "choiceKey": "__feat_ability__" } },
+    { "type": "spell_grant", "key": "shadow_touched_spell", "name": "Shadow-Touched Spell", "destination": "always_prepared", "choose": 1, "countsAgainstLimit": false, "sourceKey": "shadow-touched", "sourceName": "Shadow-Touched", "ability": { "choiceKey": "__feat_ability__" }, "filter": { "schools": ["Illusion", "Necromancy"], "exactLevels": [1] } }
+  ]
 }

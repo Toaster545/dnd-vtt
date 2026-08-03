@@ -76,6 +76,26 @@ const manifest = JSON.parse(
   readFileSync(join(contentRoot, 'manifests', 'phb-2024-spells.json'), 'utf8'),
 ) as SpellManifest;
 
+interface AutomaticSpellGrant {
+  type: 'spell_grant';
+  key: string;
+  spells?: string[];
+}
+
+function automaticSpellGrants(value: unknown): AutomaticSpellGrant[] {
+  if (Array.isArray(value)) return value.flatMap(automaticSpellGrants);
+  if (!value || typeof value !== 'object') return [];
+  const record = value as Record<string, unknown>;
+  return [
+    ...(record['type'] === 'spell_grant' ? [record as unknown as AutomaticSpellGrant] : []),
+    ...Object.values(record).flatMap(automaticSpellGrants),
+  ];
+}
+
+function contentFile(folder: string, index: string): Record<string, unknown> {
+  return JSON.parse(readFileSync(join(contentRoot, folder, `${index}.json`), 'utf8')) as Record<string, unknown>;
+}
+
 describe("Player's Handbook 2024 spell content", () => {
   it('contains the exact 391-spell PHB catalog and manifest', () => {
     expect(spells).toHaveLength(391);
@@ -86,6 +106,46 @@ describe("Player's Handbook 2024 spell content", () => {
     );
     expect(new Set(spells.map((spell) => spell.index)).size).toBe(391);
     expect(new Set(spells.map((spell) => spell.name)).size).toBe(391);
+  });
+
+  it('encodes every PHB species and feat that automatically grants spells', () => {
+    for (const species of ['gnome', 'elf', 'tiefling', 'aasimar']) {
+      expect(automaticSpellGrants(contentFile('races', species)).length).toBeGreaterThan(0);
+    }
+    for (const feat of [
+      'magic-initiate', 'fey-touched', 'shadow-touched', 'blessed-warrior', 'druidic-warrior',
+      'ritual-caster', 'spell-sniper', 'telekinetic', 'telepathic',
+    ]) {
+      expect(automaticSpellGrants(contentFile('feats', feat)).length).toBeGreaterThan(0);
+    }
+  });
+
+  it('encodes automatic class spells and every spell-bearing PHB subclass', () => {
+    const classes = [
+      'barbarian', 'bard', 'cleric', 'druid', 'fighter', 'monk',
+      'paladin', 'ranger', 'rogue', 'sorcerer', 'warlock', 'wizard',
+    ];
+    for (const classIndex of classes) {
+      expect(automaticSpellGrants(contentFile('classes', classIndex)).length).toBeGreaterThan(0);
+    }
+
+    const fighter = contentFile('classes', 'fighter') as { subclasses: { index: string; spellcasting?: unknown }[] };
+    const rogue = contentFile('classes', 'rogue') as { subclasses: { index: string; spellcasting?: unknown }[] };
+    expect(fighter.subclasses.find(subclass => subclass.index === 'eldritch-knight')?.spellcasting).toBeDefined();
+    expect(rogue.subclasses.find(subclass => subclass.index === 'arcane-trickster')?.spellcasting).toBeDefined();
+  });
+
+  it('keeps every fixed automatic spell reference linked to the PHB catalog', () => {
+    const spellIndexes = new Set(spells.map(spell => spell.index));
+    const folders = ['races', 'classes', 'feats'];
+    const missing = folders.flatMap(folder => readdirSync(join(contentRoot, folder))
+      .filter(file => file.endsWith('.json'))
+      .flatMap(file => automaticSpellGrants(JSON.parse(
+        readFileSync(join(contentRoot, folder, file), 'utf8'),
+      )).flatMap(grant => (grant.spells ?? [])
+        .filter(index => !spellIndexes.has(index))
+        .map(index => `${folder}/${file}:${grant.key}:${index}`))));
+    expect(missing).toEqual([]);
   });
 
   it('matches the PHB level distribution', () => {
