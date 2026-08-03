@@ -10,6 +10,7 @@ import { weaponMatchesAnyProficiency } from '../utils/weapon-proficiency';
 export interface WeaponAttack {
   itemIndex: string;
   name: string;
+  distance: string;
   attack_bonus: number;
   damage_dice: string;
   damage_bonus: number;
@@ -61,6 +62,22 @@ function isProficientWithWeapon(
 function weaponAbilityMod(weapon: DndItem, mods: Record<Ability, number>): number {
   if (weapon.properties.includes('Finesse')) return Math.max(mods.strength, mods.dexterity);
   return weapon.category.includes('Ranged') ? mods.dexterity : mods.strength;
+}
+
+function weaponDistance(weapon: DndItem): string {
+  const isMelee = weapon.category.includes('Melee');
+  const rangeProperty = weapon.properties.find(property => /(?:Ammunition|Thrown).*?\d+\s*\/\s*\d+/i.test(property));
+  const range = rangeProperty?.match(/(\d+)\s*\/\s*(\d+)/);
+  const distance = range ? `${range[1]}/${range[2]} ft.` : '';
+
+  if (!isMelee) return distance;
+
+  const reach = weapon.properties.some(property => property.toLowerCase() === 'reach')
+    ? '10 ft. reach'
+    : '5 ft. reach';
+  return rangeProperty?.toLowerCase().startsWith('thrown') && distance
+    ? `${reach} · ${distance} thrown`
+    : reach;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -170,6 +187,7 @@ export class CharacterStatsService {
         return {
           itemIndex: weapon.index,
           name: weapon.name,
+          distance: weaponDistance(weapon),
           attack_bonus: abilityMod + (proficient ? prof : 0) + rangedAttackBonus,
           damage_dice: weapon.damage ?? '',
           damage_bonus: abilityMod + meleeDamageBonus + thrownDamageBonus,

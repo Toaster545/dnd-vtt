@@ -1,7 +1,10 @@
 import { describe, expect, it } from 'vitest';
 import type { AbilityScores } from '../models/character.model';
 import type { DndClass, DndFeat, DndRace, DndSpell, SpellcastingDefinition, TraitGrant } from '../services/content.service';
-import { describeSpellUpcast, resolveSpellcasting } from './spellcasting';
+import {
+  describeSpellUpcast, isSpellAttack, resolveSpellAttackDamage,
+  resolveSpellAttackNote, resolveSpellcasting,
+} from './spellcasting';
 
 const scores: AbilityScores = {
   strength: 10,
@@ -514,5 +517,38 @@ describe('describeSpellUpcast', () => {
 
     expect(describeSpellUpcast(fireball, 5)?.summary).toBe('Adds 2d6 damage.');
     expect(describeSpellUpcast(detectMagic, 2)).toBeNull();
+  });
+});
+
+describe('spell action summaries', () => {
+  it('shows Eldritch Blast attack damage, Agonizing Blast modifier, and beam scaling', () => {
+    const eldritchBlast = {
+      index: 'eldritch-blast',
+      description: 'Make a ranged spell attack. On a hit, the target takes 1d10 Force damage.',
+      mechanics: { spell_attacks: ['ranged'], damage_types: ['force'] },
+    } as DndSpell;
+
+    expect(isSpellAttack(eldritchBlast)).toBe(true);
+    expect(resolveSpellAttackDamage(eldritchBlast, 3, 4)).toBe('1d10+4');
+    expect(resolveSpellAttackNote(eldritchBlast, 3)).toBe('1 beam');
+    expect(resolveSpellAttackNote(eldritchBlast, 11)).toBe('3 beams · separate attack for each');
+  });
+
+  it('uses cantrip scaling and excludes non-attack spells', () => {
+    const fireBolt = {
+      index: 'fire-bolt',
+      description: 'On a hit, the target takes 1d10 Fire damage.',
+      mechanics: {
+        spell_attacks: ['ranged'], damage_types: ['fire'],
+        scaling: { label: 'Fire damage', values: { '1': '1d10', '5': '2d10', '11': '3d10', '17': '4d10' } },
+      },
+    } as unknown as DndSpell;
+    const minorIllusion = {
+      index: 'minor-illusion', description: 'Create a sound or image.',
+      mechanics: { spell_attacks: [], damage_types: [] },
+    } as unknown as DndSpell;
+
+    expect(resolveSpellAttackDamage(fireBolt, 5)).toBe('2d10');
+    expect(isSpellAttack(minorIllusion)).toBe(false);
   });
 });

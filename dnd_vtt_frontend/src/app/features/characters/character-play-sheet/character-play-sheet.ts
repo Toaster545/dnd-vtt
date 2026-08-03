@@ -13,14 +13,15 @@ import { CharacterStatsService } from '../../../core/services/character-stats.se
 import { CharacterActionsService, CharacterAction } from '../../../core/services/character-actions.service';
 import {
   Character, ABILITIES, ABILITY_SHORT, SKILLS, EquipmentEntry, Currency,
-  proficiencyBonus,
+  abilityModifier, proficiencyBonus,
 } from '../../../core/models/character.model';
 import { adjustCurrency, CURRENCY_ORDER } from '../../../core/utils/currency';
 import { resolveCharacterFeatPicks } from '../../../core/utils/character-effects';
 import { resolveBackgroundOriginFeat } from '../../../core/utils/background-origin-feat';
 import {
-  describeSpellUpcast, resolveSpellcasting, ResolvedSpellOrigin, ResolvedSpellSlotPool,
-  ResolvedSpellCategory, SpellUpcastEffect,
+  describeSpellUpcast, isSpellAttack, resolveSpellAttackDamage,
+  resolveSpellcasting, ResolvedSpellOrigin, ResolvedSpellSlotPool, ResolvedSpellCategory,
+  SpellUpcastEffect,
 } from '../../../core/utils/spellcasting';
 
 function toIndex(name: string): string {
@@ -56,6 +57,11 @@ interface CastingMethod {
   command: SpellCastCommand;
   available: boolean;
   upcast?: SpellUpcastEffect;
+}
+
+interface DisplaySpellAttack {
+  spell: DndSpell;
+  origin: ResolvedSpellOrigin;
 }
 
 interface SpellFilters {
@@ -260,6 +266,34 @@ export class CharacterPlaySheetComponent {
   });
 
   castableSpells = computed(() => this.spellRows().filter(row => row.origins.some(origin => origin.category !== 'spellbook')));
+  spellAttacks = computed<DisplaySpellAttack[]>(() => {
+    const attacks: DisplaySpellAttack[] = [];
+    for (const row of this.castableSpells()) {
+      if (!isSpellAttack(row.spell) || this.castingTimeKind(row.spell) === 'bonus_action') continue;
+      const seen = new Set<string>();
+      for (const origin of row.origins.filter(candidate => candidate.category !== 'spellbook')) {
+        if (seen.has(origin.sourceKey)) continue;
+        seen.add(origin.sourceKey);
+        attacks.push({ spell: row.spell, origin });
+      }
+    }
+    return attacks.sort((a, b) => a.spell.name.localeCompare(b.spell.name) || a.origin.sourceName.localeCompare(b.origin.sourceName));
+  });
+  bonusActionSpells = computed(() => this.castableSpells()
+    .filter(row => this.castingTimeKind(row.spell) === 'bonus_action'));
+  bonusActionFeatures = computed<DisplayFeature[]>(() => {
+    const out: DisplayFeature[] = [];
+    const hasPactBlade = this.resolvedClasses().some(rc =>
+      rc.data.index === 'warlock'
+      && Object.values(rc.choices).some(selected => selected.includes('Pact of the Blade')));
+    if (hasPactBlade) {
+      out.push(
+        { source: 'Warlock', name: 'Pact of the Blade: Conjure', detail: 'Conjure a Simple or Martial melee weapon in your hand and bond with it.' },
+        { source: 'Warlock', name: 'Pact of the Blade: Bond', detail: 'Touch a magic weapon and form your pact bond with it.' },
+      );
+    }
+    return out;
+  });
 
   spellSchools = computed(() => [...new Set(this.spellRows().map(row => row.spell.school))].sort());
   spellSources = computed(() => [...new Set(this.spellRows().flatMap(row => row.origins.map(origin => origin.sourceName)))].sort());
@@ -458,6 +492,26 @@ export class CharacterPlaySheetComponent {
     }[category];
   }
 
+  spellDamageFormula(spell: DndSpell, origin: ResolvedSpellOrigin): string | null {
+    const char = this.localChar();
+    const abilityDamage = /(?:plus|add) your spellcasting ability modifier/i.test(spell.description)
+      || spell.index === 'eldritch-blast' && this.hasClassChoice('Warlock', 'Agonizing Blast');
+    let modifier = 0;
+    if (abilityDamage && char && origin.castingAbility) {
+      modifier = abilityModifier(char.ability_scores[origin.castingAbility]);
+    }
+    return resolveSpellAttackDamage(spell, char?.level ?? 1, modifier);
+  }
+
+  spellDamageType(spell: DndSpell): string {
+    return spell.mechanics.damage_types.join('/');
+  }
+
+  private hasClassChoice(className: string, choice: string): boolean {
+    return this.resolvedClasses().some(rc =>
+      rc.name === className && Object.values(rc.choices).some(selected => selected.includes(choice)));
+  }
+
   hpPercent(char: Character): number {
     return !char.max_hp ? 0 : Math.round((char.current_hp / char.max_hp) * 100);
   }
@@ -569,6 +623,12 @@ export class CharacterPlaySheetComponent {
 
   categoryLabels(row: DisplaySpell): string[] {
     return [...new Set(row.origins.map(origin => this.spellCategoryLabel(origin.category)))];
+  }
+
+  spellSourceNames(row: DisplaySpell): string {
+    return [...new Set(row.origins
+      .filter(origin => origin.category !== 'spellbook')
+      .map(origin => origin.sourceName))].join(', ');
   }
 
   descriptionSegments(description: string): DescriptionSegment[] {

@@ -212,9 +212,9 @@
 
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-5 items-start">
 
-              <!-- ATTACKS: weapons + castable spells, with to-hit / dice / damage modifier -->
+              <!-- ATTACKS: weapons + spells that actually make spell attack rolls -->
               @if (stats(); as s) {
-                @if (s.weapon_attacks.length || castableSpells().length) {
+                @if (s.weapon_attacks.length || spellAttacks().length) {
                   <div>
                     <h4 class="font-brand text-gold text-xs uppercase tracking-widest m-0 pb-1.5 mb-2 border-b border-gold/25">Attacks</h4>
                     <div class="flex flex-col gap-1.5">
@@ -223,22 +223,22 @@
                           <div class="min-w-0">
                             <span class="text-parchment font-medium">{{ w.name }}</span>
                             @if (w.mastery) { <span class="text-coal text-xs"> · {{ w.mastery.property }}</span> }
+                            @if (w.distance) { <span class="text-coal text-xs"> · {{ w.distance }}</span> }
                           </div>
-                          <div class="flex items-center gap-3 flex-shrink-0 text-xs">
+                          <div class="flex flex-col items-end flex-shrink-0 text-xs leading-tight">
                             <span class="text-slate">Attack <span class="font-brand text-gold text-sm">{{ fmt(w.attack_bonus) }}</span></span>
                             <span class="text-slate">{{ w.damage_dice }}{{ fmt(w.damage_bonus) }} <span class="text-coal">{{ w.damage_type }}</span></span>
                           </div>
                         </div>
                       }
-                      @for (cs of castableSpells(); track cs.origin.sourceKey + ':' + cs.spell.index) {
+                      @for (attack of spellAttacks(); track attack.origin.sourceKey + ':' + attack.spell.index) {
                         <div class="flex items-center justify-between px-3 py-2 rounded border border-white/10 text-sm gap-3">
                           <div class="min-w-0">
-                            <span class="text-parchment font-medium">{{ cs.spell.name }}</span>
-                            <span class="text-coal text-xs"> · {{ cs.spell.level === 0 ? 'Cantrip' : 'Level ' + cs.spell.level }}</span>
+                            <span class="text-parchment font-medium">{{ attack.spell.name }}</span><span class="text-coal text-xs"> · {{ attack.spell.level === 0 ? 'Cantrip' : 'Level ' + attack.spell.level }} ({{ attack.origin.sourceName }}) · {{ attack.spell.range }}</span>
                           </div>
-                          <div class="flex items-center gap-3 flex-shrink-0 text-xs">
-                            @if (cs.origin.spellAttackBonus !== null) { <span class="text-slate">Attack <span class="font-brand text-gold text-sm">{{ fmt(cs.origin.spellAttackBonus) }}</span></span> }
-                            @if (cs.origin.spellSaveDc !== null) { <span class="text-slate">Save DC <span class="font-brand text-gold text-sm">{{ cs.origin.spellSaveDc }}</span></span> }
+                          <div class="flex flex-col items-end flex-shrink-0 text-xs leading-tight">
+                            @if (attack.origin.spellAttackBonus !== null) { <span class="text-slate">Attack <span class="font-brand text-gold text-sm">{{ fmt(attack.origin.spellAttackBonus) }}</span></span> }
+                            @if (spellDamageFormula(attack.spell, attack.origin); as damage) { <span class="text-slate">{{ damage }} @if (spellDamageType(attack.spell)) { <span class="text-coal">{{ spellDamageType(attack.spell) }}</span> }</span> }
                           </div>
                         </div>
                       }
@@ -249,19 +249,15 @@
 
               <!-- BONUS + SPECIAL ACTIONS share the second column — both are usually short lists -->
               <div class="flex flex-col gap-5">
-                @if (bonusActions().length) {
+                @if (bonusActions().length || bonusActionSpells().length || bonusActionFeatures().length) {
                   <div>
                     <h4 class="font-brand text-gold text-xs uppercase tracking-widest m-0 pb-1.5 mb-2 border-b border-gold/25">Bonus Actions</h4>
-                    <div class="flex flex-col gap-2">
+                    <div class="flex flex-col gap-1.5">
                       @for (action of bonusActions(); track action.key) {
                         @let remaining = action.maxUses - action.usedUses;
-                        <div class="card">
-                          <div class="card-body flex items-center justify-between gap-3">
+                        <div class="flex items-center justify-between px-3 py-2 rounded border border-white/10 text-sm gap-3">
                             <div class="min-w-0">
-                              <div class="flex items-center gap-2 flex-wrap">
-                                <span class="text-parchment font-medium text-sm">{{ action.name }}</span>
-                                <span class="text-coal text-xs">{{ action.source }}</span>
-                              </div>
+                              <span class="text-parchment font-medium">{{ action.name }}</span><span class="text-coal text-xs"> · {{ action.source }}</span>
                               @if (action.description) { <p class="text-xs text-slate mt-1 mb-0">{{ action.description }}</p> }
                             </div>
                             <div class="flex items-center gap-2 flex-shrink-0">
@@ -271,7 +267,18 @@
                               </button>
                               <button class="btn-primary text-sm" [disabled]="remaining === 0 || persisting()" (click)="useAction(action)">Use</button>
                             </div>
-                          </div>
+                        </div>
+                      }
+                      @for (spellRow of bonusActionSpells(); track spellRow.spell.index) {
+                        <div class="flex items-center justify-between px-3 py-2 rounded border border-white/10 text-sm gap-3">
+                          <div class="min-w-0"><span class="text-parchment font-medium">{{ spellRow.spell.name }}</span><span class="text-coal text-xs"> · {{ spellRow.spell.level === 0 ? 'Cantrip' : 'Level ' + spellRow.spell.level }} ({{ spellSourceNames(spellRow) }}) · {{ spellRow.spell.range }}</span></div>
+                          <span class="text-slate text-xs flex-shrink-0">{{ spellRow.spell.duration }}</span>
+                        </div>
+                      }
+                      @for (feature of bonusActionFeatures(); track feature.name) {
+                        <div class="flex items-center justify-between px-3 py-2 rounded border border-white/10 text-sm gap-3">
+                          <div class="min-w-0"><span class="text-parchment font-medium">{{ feature.name }}</span><span class="text-coal text-xs"> · {{ feature.source }}</span></div>
+                          @if (feature.detail) { <span class="text-xs text-slate text-right">{{ feature.detail }}</span> }
                         </div>
                       }
                     </div>

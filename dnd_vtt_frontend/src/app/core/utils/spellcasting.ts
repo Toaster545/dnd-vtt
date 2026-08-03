@@ -197,6 +197,42 @@ export function describeSpellUpcast(spell: DndSpell, slotLevel: number): SpellUp
   };
 }
 
+export function isSpellAttack(spell: DndSpell): boolean {
+  return !!spell.mechanics?.spell_attacks?.length;
+}
+
+export function resolveSpellAttackDamage(
+  spell: DndSpell,
+  characterLevel: number,
+  abilityDamageModifier = 0,
+): string | null {
+  let formula = '';
+  const scaling = spell.mechanics?.scaling?.values;
+  if (scaling) {
+    const threshold = Object.keys(scaling)
+      .map(Number)
+      .filter(level => level <= characterLevel)
+      .sort((a, b) => b - a)[0];
+    formula = scaling[String(threshold)] ?? '';
+  }
+  if (!formula) {
+    formula = spell.description.match(/\b(\d+d\d+(?:\s*[+-]\s*\d+)?)\s+(?:\w+\s+)?damage\b/i)?.[1]
+      ?? spell.description.match(/\b\d+d\d+(?:\s*[+-]\s*\d+)?\b/i)?.[0]
+      ?? '';
+  }
+  if (!formula) return null;
+  if (abilityDamageModifier) formula += abilityDamageModifier > 0
+    ? `+${abilityDamageModifier}`
+    : String(abilityDamageModifier);
+  return formula.replace(/\s+/g, '');
+}
+
+export function resolveSpellAttackNote(spell: DndSpell, characterLevel: number): string {
+  if (spell.index !== 'eldritch-blast') return '';
+  const beams = characterLevel >= 17 ? 4 : characterLevel >= 11 ? 3 : characterLevel >= 5 ? 2 : 1;
+  return beams === 1 ? '1 beam' : `${beams} beams · separate attack for each`;
+}
+
 export interface ResolvedSpellSlotPool {
   key: string;
   name: string;

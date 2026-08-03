@@ -262,6 +262,47 @@ describe('CharacterStatsService', () => {
     expect(stats.weapon_attacks.map(attack => attack.attack_bonus)).toEqual([2, 0]);
   });
 
+  it('labels melee reach and ranged or thrown weapon distances', () => {
+    const weapons: DndItem[] = [
+      {
+        index: 'sickle', name: 'Sickle', type: 'weapon', category: 'Simple Melee',
+        damage: '1d4', damage_type: 'Slashing', properties: ['Light'],
+        weight: 2, cost: '1 GP', description: '',
+      },
+      {
+        index: 'whip', name: 'Whip', type: 'weapon', category: 'Martial Melee',
+        damage: '1d4', damage_type: 'Slashing', properties: ['Finesse', 'Reach'],
+        weight: 3, cost: '2 GP', description: '',
+      },
+      {
+        index: 'longbow', name: 'Longbow', type: 'weapon', category: 'Martial Ranged',
+        damage: '1d8', damage_type: 'Piercing', properties: ['Ammunition (range 150/600)'],
+        weight: 2, cost: '50 GP', description: '',
+      },
+      {
+        index: 'dagger', name: 'Dagger', type: 'weapon', category: 'Simple Melee',
+        damage: '1d4', damage_type: 'Piercing', properties: ['Finesse', 'Thrown (range 20/60)'],
+        weight: 1, cost: '2 GP', description: '',
+      },
+    ];
+    const character: Character = {
+      ...defaultCharacter(),
+      name: 'Range Tester',
+      equipment: weapons.map(weapon => ({
+        itemIndex: weapon.index, name: weapon.name, quantity: 1, equipped: true,
+      })),
+    };
+
+    const stats = new CharacterStatsService().compute(character, monk, null, [], [], weapons);
+
+    expect(stats.weapon_attacks.map(attack => attack.distance)).toEqual([
+      '5 ft. reach',
+      '10 ft. reach',
+      '150/600 ft.',
+      '5 ft. reach · 20/60 ft. thrown',
+    ]);
+  });
+
   it('adds an ability-based Aura of Protection bonus to every saving throw', () => {
     const character: Character = {
       ...defaultCharacter(),
