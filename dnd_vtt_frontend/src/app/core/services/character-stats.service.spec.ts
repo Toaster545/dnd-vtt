@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { Character, defaultCharacter } from '../models/character.model';
-import { DndClass, DndItem } from './content.service';
+import { DndBackground, DndClass, DndFeat, DndItem } from './content.service';
 import { CharacterStatsService } from './character-stats.service';
 
 const bard = {
@@ -128,6 +128,41 @@ const cleric = {
 } as unknown as DndClass;
 
 describe('CharacterStatsService', () => {
+  it('adds proficiency to initiative when Alert is granted by the background', () => {
+    const alert: DndFeat = {
+      index: 'alert',
+      name: 'Alert',
+      description: 'Add your Proficiency Bonus to Initiative.',
+      category: 'origin',
+      effects: [{ type: 'initiative_proficiency_bonus' }],
+    };
+    const criminal = {
+      index: 'criminal',
+      name: 'Criminal',
+      feature: 'Origin Feat: Alert',
+    } as DndBackground;
+    const character: Character = {
+      ...defaultCharacter(),
+      name: 'Alert Criminal',
+      background: 'Criminal',
+      level: 5,
+      ability_scores: {
+        strength: 10,
+        dexterity: 14,
+        constitution: 10,
+        intelligence: 10,
+        wisdom: 10,
+        charisma: 10,
+      },
+    };
+
+    const stats = new CharacterStatsService().compute(
+      character, bard, null, [alert], [], [], criminal,
+    );
+
+    expect(stats.initiative).toBe(5);
+  });
+
   it('adds half proficiency to untrained skills without changing proficient skills', () => {
     const character: Character = {
       ...defaultCharacter(),

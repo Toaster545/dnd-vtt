@@ -1,11 +1,12 @@
 import { Injectable } from '@angular/core';
 import { Character, Ability, ABILITIES, SKILLS, abilityModifier, proficiencyBonus } from '../models/character.model';
-import { DndClass, DndFeat, DndItem, DndRace } from './content.service';
+import { DndBackground, DndClass, DndFeat, DndItem, DndRace } from './content.service';
 import {
-  ClassChoiceSource, RaceChoiceSource, activeEffects, averageHpFormula, baseArmorClass, collectTraitEffects, equippedItems, resolveCharacterFeatPicks,
+  ClassChoiceSource, RaceChoiceSource, activeEffects, averageHpFormula, baseArmorClass, collectFeatEffects, collectTraitEffects, equippedItems, resolveCharacterFeatPicks,
   unarmoredDefenseBonus,
 } from '../utils/character-effects';
 import { weaponMatchesAnyProficiency } from '../utils/weapon-proficiency';
+import { resolveBackgroundOriginFeat } from '../utils/background-origin-feat';
 
 export interface WeaponAttack {
   itemIndex: string;
@@ -85,6 +86,7 @@ export class CharacterStatsService {
   compute(
     char: Character, classData: DndClass | null, raceData: DndRace | null,
     feats: DndFeat[] = [], classesForFeats: ClassChoiceSource[] = [], items: DndItem[] = [],
+    backgroundData: DndBackground | null = null,
   ): ComputedStats {
     const prof = proficiencyBonus(char.level);
     const scores = char.ability_scores;
@@ -98,7 +100,10 @@ export class CharacterStatsService {
       choices: char.race_choices ?? {},
       subrace: char.subrace,
     } : null;
-    const allEffects = collectTraitEffects(classesForFeats, feats, raceForFeats);
+    const allEffects = [
+      ...collectTraitEffects(classesForFeats, feats, raceForFeats),
+      ...collectFeatEffects(resolveBackgroundOriginFeat(backgroundData, feats), char.background_choices ?? {}),
+    ];
 
     const hit_die = classData?.hit_die ?? 8;
     const hpBonusPerLevel = allEffects
@@ -209,12 +214,15 @@ export class CharacterStatsService {
         const modifier = mods[effect.ability];
         return sum + Math.max(effect.minimum ?? modifier, modifier);
       }, 0);
+    const initiativeProficiencyBonus = allEffects.some(effect => effect.type === 'initiative_proficiency_bonus')
+      ? prof
+      : 0;
 
     return {
       proficiency_bonus: prof,
       ability_modifiers: mods,
       suggested_max_hp,
-      initiative: mods.dexterity + initiativeAbilityBonus,
+      initiative: mods.dexterity + initiativeAbilityBonus + initiativeProficiencyBonus,
       saving_throw_proficient: saveProfSet,
       saving_throw_bonuses,
       skill_bonuses,

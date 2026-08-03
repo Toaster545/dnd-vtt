@@ -4,7 +4,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { ContentService, DndRace, DndClass, DndBackground, DndItem, DndSpell, DndFeat, TraitEffect, TraitGrant } from '../../../core/services/content.service';
-import { ClassChoiceSource, averageHpFormula, collectTraitEffects, reachableGrants, resolveCharacterFeatPicks, resolveLanguageProficiencies, unarmoredDefenseBonus } from '../../../core/utils/character-effects';
+import { ClassChoiceSource, averageHpFormula, collectFeatEffects, collectTraitEffects, reachableGrants, resolveCharacterFeatPicks, resolveLanguageProficiencies, unarmoredDefenseBonus } from '../../../core/utils/character-effects';
 import { isStructuredEquipment, resolveStartingEquipment } from '../../../core/utils/starting-equipment';
 import { resolveBackgroundSkills } from '../../../core/utils/background-skills';
 import { resolveBackgroundOriginFeat } from '../../../core/utils/background-origin-feat';
@@ -224,14 +224,7 @@ export class CharacterWizardComponent implements OnInit, OnDestroy {
   private selectedEffects(type: string, includeConditional = false): TraitEffect[] {
     const race = this.selectedRace();
     const backgroundFeat = resolveBackgroundOriginFeat(this.selectedBackground(), this.feats());
-    const backgroundFeatEffects = [
-      ...(backgroundFeat?.effects ?? []),
-      ...(backgroundFeat?.grants ?? [])
-        .filter((grant): grant is Extract<TraitGrant, { type: 'choice' }> => grant.type === 'choice')
-        .flatMap(grant => grant.options
-          .filter(option => this.backgroundTraits()[grant.key]?.includes(option.name))
-          .flatMap(option => option.effects ?? [])),
-    ];
+    const backgroundFeatEffects = collectFeatEffects(backgroundFeat, this.backgroundTraits());
     return [...collectTraitEffects(
       this.selectedClasses().map(e => ({ data: e.cls, choices: e.traits, level: e.level, subclass: e.subclass })),
       this.feats(),
@@ -523,7 +516,7 @@ export class CharacterWizardComponent implements OnInit, OnDestroy {
 
   previewStats = computed(() => this.statsService.compute(
     this.draftCharacter(), this.primaryClass(), this.selectedRace(),
-    this.feats(), this.classesForFeats(), this.items(),
+    this.feats(), this.classesForFeats(), this.items(), this.selectedBackground(),
   ));
 
   private initialized = false;

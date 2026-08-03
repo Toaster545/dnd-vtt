@@ -145,9 +145,10 @@ export class DmCampaignSessionComponent implements OnInit, OnDestroy {
     const entries = await Promise.all(members.map(async (member) => {
       try {
         const char = await this.characterService.getCharacter(member.character_id);
-        const [classData, raceData, feats, items] = await Promise.all([
+        const [classData, raceData, backgroundData, feats, items] = await Promise.all([
           this.content.getClass(toContentIndex(char.class)).catch(() => null),
           this.content.getRace(toContentIndex(char.race)).catch(() => null),
+          this.content.getBackground(toContentIndex(char.background)).catch(() => null),
           this.content.getFeats(),
           this.content.getItems(),
         ]);
@@ -158,7 +159,9 @@ export class DmCampaignSessionComponent implements OnInit, OnDestroy {
           level: primary?.level ?? char.level,
           subclass: primary?.subclass ?? char.subclass,
         }] : [];
-        const stats = this.statsService.compute(char, classData, raceData, feats, classesForFeats, items);
+        const stats = this.statsService.compute(
+          char, classData, raceData, feats, classesForFeats, items, backgroundData,
+        );
         return [member.character_id, stats.suggested_max_hp] as const;
       } catch {
         return null;

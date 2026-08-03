@@ -47,6 +47,27 @@ function featChoices(feat: DndFeat, parentKey: string, choices: Record<string, s
     .map(grant => [grant.key, choices[`${parentKey}:feat:${grant.key}`] ?? []]));
 }
 
+// A feat can carry effects directly (Alert, Tough, Fighting Styles) or through one of its own
+// selected options. Keeping both shapes here lets class-, race-, and background-granted feats
+// use the same mechanical path.
+export function collectFeatEffects(
+  feat: DndFeat | null | undefined, choices: Record<string, string[]> = {},
+): TraitEffect[] {
+  if (!feat) return [];
+  const effects = [...(feat.effects ?? [])];
+  for (const grant of feat.grants ?? []) {
+    if (grant.type === 'feature') {
+      effects.push(...(grant.effects ?? []));
+    } else if (grant.type === 'choice') {
+      const picked = choices[grant.key] ?? [];
+      for (const option of grant.options) {
+        if (picked.includes(option.name)) effects.push(...(option.effects ?? []));
+      }
+    }
+  }
+  return effects;
+}
+
 // Every feat the character has actually taken, across every class/subclass's `ability_choice`
 // (taken instead of an ASI) and `feat_pick` grants — the single source of truth other
 // resolvers (effects, save proficiency, repeatable-feat gating) build on.
@@ -137,8 +158,8 @@ export function collectTraitEffects(
     collectGrantEffects(reachableGrants(data, subclass, level), choices);
   }
   if (race) collectGrantEffects(activeRaceGrants(race), race.choices);
-  for (const { feat } of resolveCharacterFeatPicks(classes, feats, race)) {
-    out.push(...(feat.effects ?? []));
+  for (const { feat, choices } of resolveCharacterFeatPicks(classes, feats, race)) {
+    out.push(...collectFeatEffects(feat, choices));
   }
   return out;
 }

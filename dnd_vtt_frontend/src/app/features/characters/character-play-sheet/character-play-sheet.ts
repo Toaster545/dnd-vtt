@@ -133,7 +133,7 @@ export class CharacterPlaySheetComponent {
     if (!char) return null;
     const classesForFeats = this.resolvedClasses().map(rc => ({ data: rc.data, choices: rc.choices, level: rc.level, subclass: rc.subclassName }));
     return this.statsService.compute(
-      char, this.primaryClass(), this.raceData(), this.featsAll(), classesForFeats, this.itemsAll(),
+      char, this.primaryClass(), this.raceData(), this.featsAll(), classesForFeats, this.itemsAll(), this.bgData(),
     );
   });
 
@@ -454,7 +454,7 @@ export class CharacterPlaySheetComponent {
   private computeArmorClass(char: Character): number {
     const classesForFeats = this.resolvedClasses().map(rc => ({ data: rc.data, choices: rc.choices, level: rc.level, subclass: rc.subclassName }));
     return this.statsService.compute(
-      char, this.primaryClass(), this.raceData(), this.featsAll(), classesForFeats, this.itemsAll(),
+      char, this.primaryClass(), this.raceData(), this.featsAll(), classesForFeats, this.itemsAll(), this.bgData(),
     ).computed_ac;
   }
 
