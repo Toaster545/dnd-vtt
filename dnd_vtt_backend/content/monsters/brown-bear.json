@@ -1,0 +1,35 @@
+{
+  "index": "brown-bear",
+  "name": "Brown Bear",
+  "size": "Large",
+  "type": "beast",
+  "alignment": "unaligned",
+  "armor_class": 11,
+  "armor_class_desc": "natural armor",
+  "hit_points": 42,
+  "hit_dice": "5d10 + 15",
+  "speed": { "walk": 40, "climb": 30 },
+  "ability_scores": {
+    "strength": 19,
+    "dexterity": 10,
+    "constitution": 16,
+    "intelligence": 2,
+    "wisdom": 13,
+    "charisma": 7
+  },
+  "initiative_bonus": 0,
+  "skills": { "Perception": 3 },
+  "senses": { "passive_perception": 13 },
+  "languages": [],
+  "challenge_rating": "1",
+  "xp": 200,
+  "traits": [
+    { "name": "Keen Smell", "description": "The bear has advantage on Wisdom (Perception) checks that rely on smell." }
+  ],
+  "actions": [
+    { "name": "Multiattack", "description": "The bear makes two attacks, using Bite or Claw in any combination." },
+    { "name": "Bite", "description": "Melee Attack Roll: +6, reach 5 ft. Hit: 9 (1d8 + 5) Piercing damage." },
+    { "name": "Claw", "description": "Melee Attack Roll: +6, reach 5 ft. Hit: 11 (2d6 + 4) Slashing damage." }
+  ],
+  "description": "Brown bears are massive, territorial omnivores whose bulk and claws make them a serious threat to any traveler who wanders too close to a den."
+}

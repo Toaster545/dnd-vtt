@@ -1,0 +1,31 @@
+{
+  "index": "giant-scorpion",
+  "name": "Giant Scorpion",
+  "size": "Large",
+  "type": "beast",
+  "alignment": "unaligned",
+  "armor_class": 15,
+  "armor_class_desc": "natural armor",
+  "hit_points": 52,
+  "hit_dice": "7d10 + 14",
+  "speed": { "walk": 40 },
+  "ability_scores": {
+    "strength": 15,
+    "dexterity": 13,
+    "constitution": 15,
+    "intelligence": 1,
+    "wisdom": 9,
+    "charisma": 3
+  },
+  "initiative_bonus": 1,
+  "senses": { "blindsight": 60, "passive_perception": 9 },
+  "languages": [],
+  "challenge_rating": "3",
+  "xp": 700,
+  "actions": [
+    { "name": "Multiattack", "description": "The scorpion makes two Claw attacks and one Sting attack." },
+    { "name": "Claw", "description": "Melee Attack Roll: +4, reach 5 ft. Hit: 6 (1d8 + 2) Bludgeoning damage, and the target has the Grappled condition (escape DC 13) from one of two claws." },
+    { "name": "Sting", "description": "Melee Attack Roll: +4, reach 5 ft., one creature Grappled by the scorpion. Hit: 7 (1d10 + 2) Piercing damage plus 11 (2d10) Poison damage. If this damage reduces the target to 0 hit points, the target is instead stable but Poisoned for 1 hour and Unconscious while Poisoned this way." }
+  ],
+  "description": "Giant scorpions burrow beneath desert sand or cavern floors, erupting to seize prey with grasping claws before delivering a venomous, often lethal, sting."
+}

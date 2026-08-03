@@ -1,0 +1,33 @@
+{
+  "index": "rust-monster",
+  "name": "Rust Monster",
+  "size": "Medium",
+  "type": "monstrosity",
+  "alignment": "unaligned",
+  "armor_class": 11,
+  "armor_class_desc": "natural armor",
+  "hit_points": 27,
+  "hit_dice": "5d8 + 5",
+  "speed": { "walk": 40 },
+  "ability_scores": {
+    "strength": 13,
+    "dexterity": 12,
+    "constitution": 13,
+    "intelligence": 2,
+    "wisdom": 13,
+    "charisma": 6
+  },
+  "initiative_bonus": 1,
+  "senses": { "darkvision": 60, "passive_perception": 11 },
+  "languages": [],
+  "challenge_rating": "1/2",
+  "xp": 100,
+  "traits": [
+    { "name": "Iron Scent", "description": "The rust monster can pinpoint, by scent, the location of ferrous metal within 30 feet of it." }
+  ],
+  "actions": [
+    { "name": "Bite", "description": "Melee Attack Roll: +3, reach 5 ft. Hit: 5 (1d8 + 1) Piercing damage." },
+    { "name": "Antennae", "description": "Melee Attack Roll: +3, reach 5 ft., one nonmagical metal object worn or carried by a creature, or a nonmagical metal weapon used to hit the rust monster. On a hit, the item corrodes: a weapon takes a cumulative -1 penalty to damage rolls (destroyed at -5), and a suit of armor takes a cumulative -1 penalty to the AC it grants (destroyed once the penalty reaches -10)." }
+  ],
+  "description": "Rust monsters home in on the scent of iron and steel, corroding armor and weapons to feed on the oxidizing metal that flakes away."
+}

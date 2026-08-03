@@ -1,0 +1,29 @@
+{
+  "index": "stirge",
+  "name": "Stirge",
+  "size": "Tiny",
+  "type": "beast",
+  "alignment": "unaligned",
+  "armor_class": 14,
+  "armor_class_desc": "natural armor",
+  "hit_points": 2,
+  "hit_dice": "1d4",
+  "speed": { "walk": 10, "fly": 40 },
+  "ability_scores": {
+    "strength": 4,
+    "dexterity": 16,
+    "constitution": 11,
+    "intelligence": 2,
+    "wisdom": 8,
+    "charisma": 6
+  },
+  "initiative_bonus": 3,
+  "senses": { "darkvision": 60, "passive_perception": 9 },
+  "languages": [],
+  "challenge_rating": "1/8",
+  "xp": 25,
+  "actions": [
+    { "name": "Blood Drain", "description": "Melee Attack Roll: +5, reach 5 ft. Hit: 5 (1d4 + 3) Piercing damage, and the stirge attaches to the target. While attached, the stirge doesn't attack; instead, at the start of each of its turns it deals 5 (1d4 + 3) Necrotic damage to the target and regains hit points equal to the damage dealt. A creature, including the target, can take an action to detach the stirge, which then has to land on the ground or fly away." }
+  ],
+  "description": "Stirges are winged, bloodsucking parasites that drift on the wind until they catch the scent of a warm-blooded creature, then dive to latch on and gorge."
+}

@@ -33,10 +33,21 @@
   />
 </div>
 
-<h3 class="font-brand text-lg text-parchment mb-1 mt-2">Other Equipment</h3>
-<p class="text-sm text-slate mb-4">Add anything else to your character's inventory.</p>
-<div class="flex flex-col gap-1.5 max-w-2xl">
-  @for (item of items(); track item.index) {
+<div class="flex flex-wrap items-end justify-between gap-4 mb-1 mt-2 max-w-2xl">
+  <div>
+    <h3 class="font-brand text-lg text-parchment mb-1">Other Equipment</h3>
+    <p class="text-sm text-slate m-0">Add anything else to your character's inventory.</p>
+  </div>
+  <input
+    class="field-input max-w-52 py-1.5 text-sm"
+    type="search"
+    placeholder="Search items"
+    [value]="search()"
+    (input)="setSearch($event)"
+  />
+</div>
+<div class="flex flex-col gap-1.5 max-w-2xl mt-4">
+  @for (item of visibleItems(); track item.index) {
     <button
       class="flex items-center justify-between px-4 py-3 rounded-md border transition-all cursor-pointer text-left w-full"
       [class]="selectedItemIndices().has(item.index)
@@ -58,6 +69,8 @@
         <span>{{ item.cost }}</span>
       </div>
     </button>
+  } @empty {
+    <p class="text-xs text-slate">No items match the current search.</p>
   }
 </div>
 @if (selectedItemIndices().size) {

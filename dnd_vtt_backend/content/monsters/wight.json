@@ -1,0 +1,38 @@
+{
+  "index": "wight",
+  "name": "Wight",
+  "size": "Medium",
+  "type": "undead",
+  "alignment": "neutral evil",
+  "armor_class": 14,
+  "armor_class_desc": "studded leather armor",
+  "hit_points": 45,
+  "hit_dice": "6d8 + 18",
+  "speed": { "walk": 30 },
+  "ability_scores": {
+    "strength": 15,
+    "dexterity": 14,
+    "constitution": 16,
+    "intelligence": 10,
+    "wisdom": 13,
+    "charisma": 15
+  },
+  "initiative_bonus": 2,
+  "damage_resistances": ["necrotic"],
+  "damage_immunities": ["poison"],
+  "condition_immunities": ["exhaustion", "poisoned"],
+  "senses": { "darkvision": 60, "passive_perception": 11 },
+  "languages": ["the languages it knew in life"],
+  "challenge_rating": "3",
+  "xp": 700,
+  "traits": [
+    { "name": "Sunlight Sensitivity", "description": "While in sunlight, the wight has disadvantage on ability checks and attack rolls that rely on sight." }
+  ],
+  "actions": [
+    { "name": "Multiattack", "description": "The wight makes two attacks, only one of which can be with Life Drain." },
+    { "name": "Longsword", "description": "Melee Attack Roll: +4, reach 5 ft. Hit: 6 (1d8 + 2) Slashing damage." },
+    { "name": "Life Drain", "description": "Melee Attack Roll: +4, reach 5 ft. Hit: 6 (1d6 + 3) Necrotic damage. The target's hit point maximum decreases by an amount equal to the damage taken, and the wight regains hit points equal to that amount. The target dies if this reduces its hit point maximum to 0. The reduction lasts until the target finishes a Long Rest." },
+    { "name": "Longbow", "description": "Ranged Attack Roll: +3, range 150/600 ft. Hit: 5 (1d8 + 1) Piercing damage." }
+  ],
+  "description": "Wights are cold, calculating undead that retain the cunning of the mortal they once were, draining the life from victims to sustain their own withered existence."
+}

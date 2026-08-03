@@ -1,0 +1,32 @@
+{
+  "index": "hill-giant",
+  "name": "Hill Giant",
+  "size": "Huge",
+  "type": "giant",
+  "alignment": "chaotic evil",
+  "armor_class": 13,
+  "armor_class_desc": "natural armor",
+  "hit_points": 105,
+  "hit_dice": "9d12 + 45",
+  "speed": { "walk": 40 },
+  "ability_scores": {
+    "strength": 21,
+    "dexterity": 8,
+    "constitution": 19,
+    "intelligence": 5,
+    "wisdom": 9,
+    "charisma": 6
+  },
+  "initiative_bonus": -1,
+  "skills": { "Perception": 2 },
+  "senses": { "passive_perception": 12 },
+  "languages": ["Giant"],
+  "challenge_rating": "5",
+  "xp": 1800,
+  "actions": [
+    { "name": "Multiattack", "description": "The giant makes two Greatclub attacks." },
+    { "name": "Greatclub", "description": "Melee Attack Roll: +8, reach 10 ft. Hit: 18 (3d8 + 5) Bludgeoning damage." },
+    { "name": "Rock", "description": "Ranged Attack Roll: +8, range 60/240 ft. Hit: 17 (3d8 + 5) Bludgeoning damage." }
+  ],
+  "description": "Hill giants are dim, gluttonous brutes who raid farms and travelers alike, driven by an appetite that far outpaces their patience or cunning."
+}

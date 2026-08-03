@@ -1,4 +1,4 @@
-import { Component, input, output } from '@angular/core';
+import { Component, computed, input, output, signal } from '@angular/core';
 import { DndBackground, DndClass, DndItem } from '../../../../../core/services/content.service';
 import { Currency } from '../../../../../core/models/character.model';
 import { isStructuredEquipment } from '../../../../../core/utils/starting-equipment';
@@ -21,6 +21,19 @@ export class EquipmentStepComponent {
   readonly itemToggled              = output<string>();
   readonly classChoicesChanged      = output<Record<string, string[]>>();
   readonly backgroundChoicesChanged = output<Record<string, string[]>>();
+
+  readonly search = signal('');
+
+  readonly visibleItems = computed(() => {
+    const query = this.search().trim().toLowerCase();
+    if (!query) return this.items();
+    return this.items().filter(item =>
+      item.name.toLowerCase().includes(query) || item.category.toLowerCase().includes(query));
+  });
+
+  setSearch(event: Event): void {
+    this.search.set((event.target as HTMLInputElement).value);
+  }
 
   // Older content not yet converted to the structured "(a) gear or (b) gold" shape (still a
   // bare array of description strings) — the picker just doesn't render for that source until

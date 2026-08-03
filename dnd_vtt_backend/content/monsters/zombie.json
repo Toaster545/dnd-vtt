@@ -1,0 +1,34 @@
+{
+  "index": "zombie",
+  "name": "Zombie",
+  "size": "Medium",
+  "type": "undead",
+  "alignment": "neutral evil",
+  "armor_class": 8,
+  "armor_class_desc": "unarmored",
+  "hit_points": 22,
+  "hit_dice": "3d8 + 9",
+  "speed": { "walk": 20 },
+  "ability_scores": {
+    "strength": 13,
+    "dexterity": 6,
+    "constitution": 16,
+    "intelligence": 3,
+    "wisdom": 6,
+    "charisma": 5
+  },
+  "initiative_bonus": -2,
+  "damage_immunities": ["poison"],
+  "condition_immunities": ["poisoned"],
+  "senses": { "darkvision": 60, "passive_perception": 8 },
+  "languages": ["understands the languages it knew in life but can't speak"],
+  "challenge_rating": "1/4",
+  "xp": 50,
+  "traits": [
+    { "name": "Undead Fortitude", "description": "If damage reduces the zombie to 0 hit points, it must make a Constitution saving throw with a DC of 5 plus the damage taken, unless the damage is Radiant or from a critical hit. On a success, the zombie drops to 1 hit point instead." }
+  ],
+  "actions": [
+    { "name": "Slam", "description": "Melee Attack Roll: +3, reach 5 ft. Hit: 4 (1d6 + 1) Bludgeoning damage." }
+  ],
+  "description": "A zombie shambles forward with grim, unthinking persistence, held together by dark magic and driven only by the last command it was given."
+}

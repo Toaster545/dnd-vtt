@@ -1,0 +1,32 @@
+{
+  "index": "giant-rat",
+  "name": "Giant Rat",
+  "size": "Small",
+  "type": "beast",
+  "alignment": "unaligned",
+  "armor_class": 12,
+  "armor_class_desc": "natural armor",
+  "hit_points": 7,
+  "hit_dice": "2d6",
+  "speed": { "walk": 30 },
+  "ability_scores": {
+    "strength": 7,
+    "dexterity": 15,
+    "constitution": 11,
+    "intelligence": 2,
+    "wisdom": 10,
+    "charisma": 4
+  },
+  "initiative_bonus": 2,
+  "senses": { "darkvision": 60, "passive_perception": 10 },
+  "languages": [],
+  "challenge_rating": "1/8",
+  "xp": 25,
+  "traits": [
+    { "name": "Pack Tactics", "description": "The rat has advantage on an attack roll against a creature if at least one of the rat's allies is within 5 feet of the creature and the ally doesn't have the Incapacitated condition." }
+  ],
+  "actions": [
+    { "name": "Bite", "description": "Melee Attack Roll: +4, reach 5 ft. Hit: 4 (1d4 + 2) Piercing damage." }
+  ],
+  "description": "Giant rats swarm through sewers, middens, and dungeon refuse piles, breeding quickly wherever filth and easy prey are abundant."
+}
