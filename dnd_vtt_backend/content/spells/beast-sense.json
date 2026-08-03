@@ -1,0 +1,56 @@
+{
+  "index": "beast-sense",
+  "name": "Beast Sense",
+  "level": 2,
+  "school": "Divination",
+  "casting_time": "1 action",
+  "range": "Touch",
+  "components": [
+    "S"
+  ],
+  "duration": "Concentration, up to 1 hour",
+  "ritual": true,
+  "concentration": true,
+  "classes": [
+    "Druid",
+    "Ranger"
+  ],
+  "subclasses": [
+    {
+      "class": "Barbarian",
+      "subclass": "Path of the Wild Heart"
+    },
+    {
+      "class": "Bard",
+      "subclass": "College of Lore"
+    }
+  ],
+  "species": [],
+  "backgrounds": [],
+  "feats": [],
+  "other_options": [],
+  "mechanics": {
+    "saving_throws": [],
+    "ability_checks": [],
+    "damage_types": [],
+    "conditions": [],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [
+      "ST"
+    ],
+    "misc_tags": []
+  },
+  "description": "Rules text is not reproduced here. See Player's Handbook (2024), page 245.",
+  "source": {
+    "book": "Player's Handbook",
+    "edition": 2024,
+    "code": "XPHB",
+    "page": 245,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

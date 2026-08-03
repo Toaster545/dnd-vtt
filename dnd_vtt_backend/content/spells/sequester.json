@@ -1,0 +1,56 @@
+{
+  "index": "sequester",
+  "name": "Sequester",
+  "level": 7,
+  "school": "Transmutation",
+  "casting_time": "1 action",
+  "range": "Touch",
+  "components": [
+    "V",
+    "S",
+    "M"
+  ],
+  "material": "gem dust worth 5,000+ GP, which the spell consumes",
+  "material_cost_cp": 500000,
+  "material_consumed": true,
+  "duration": "Until dispelled",
+  "ritual": false,
+  "concentration": false,
+  "classes": [
+    "Wizard"
+  ],
+  "subclasses": [],
+  "species": [],
+  "backgrounds": [],
+  "feats": [],
+  "other_options": [],
+  "mechanics": {
+    "saving_throws": [],
+    "ability_checks": [],
+    "damage_types": [],
+    "conditions": [
+      "invisible",
+      "unconscious"
+    ],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [
+      "ST"
+    ],
+    "misc_tags": [
+      "OBJ"
+    ]
+  },
+  "description": "With a touch, you magically sequester an object or a willing creature. For the duration, the target has the Invisible condition and can't be targeted by Divination spells, detected by magic, or viewed remotely with magic. \n\nIf the target is a creature, it enters a state of suspended animation; it has the Unconscious condition, doesn't age, and doesn't need food, water, or air. \n\nYou can set a condition for the spell to end early. The condition can be anything you choose, but it must occur or be visible within 1 mile of the target. Examples include “after 1,000 years” or “when the tarrasque awakens.” This spell also ends if the target takes any damage.",
+  "source": {
+    "book": "Player's Handbook",
+    "edition": 2024,
+    "code": "XPHB",
+    "page": 315,
+    "srd_5_2_1": true,
+    "rules_text": "SRD 5.2.1"
+  }
+}

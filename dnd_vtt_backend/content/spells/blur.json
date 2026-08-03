@@ -1,0 +1,67 @@
+{
+  "index": "blur",
+  "name": "Blur",
+  "level": 2,
+  "school": "Illusion",
+  "casting_time": "1 action",
+  "range": "Self",
+  "components": [
+    "V"
+  ],
+  "duration": "Concentration, up to 1 minute",
+  "ritual": false,
+  "concentration": true,
+  "classes": [
+    "Sorcerer",
+    "Wizard"
+  ],
+  "subclasses": [
+    {
+      "class": "Bard",
+      "subclass": "College of Lore"
+    },
+    {
+      "class": "Druid",
+      "subclass": "Circle of the Land",
+      "variant": "Arid Land"
+    },
+    {
+      "class": "Fighter",
+      "subclass": "Eldritch Knight"
+    },
+    {
+      "class": "Rogue",
+      "subclass": "Arcane Trickster"
+    },
+    {
+      "class": "Wizard",
+      "subclass": "Illusionist"
+    }
+  ],
+  "species": [],
+  "backgrounds": [],
+  "feats": [],
+  "other_options": [],
+  "mechanics": {
+    "saving_throws": [],
+    "ability_checks": [],
+    "damage_types": [],
+    "conditions": [],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [],
+    "misc_tags": []
+  },
+  "description": "Your body becomes blurred. For the duration, any creature has Disadvantage on attack rolls against you. An attacker is immune to this effect if it perceives you with Blindsight or Truesight.",
+  "source": {
+    "book": "Player's Handbook",
+    "edition": 2024,
+    "code": "XPHB",
+    "page": 248,
+    "srd_5_2_1": true,
+    "rules_text": "SRD 5.2.1"
+  }
+}

@@ -1,0 +1,61 @@
+{
+  "index": "hunters-mark",
+  "name": "Hunter's Mark",
+  "level": 1,
+  "school": "Divination",
+  "casting_time": "1 bonus action",
+  "range": "90 feet",
+  "components": [
+    "V"
+  ],
+  "duration": "Concentration, up to 1 hour",
+  "ritual": false,
+  "concentration": true,
+  "classes": [
+    "Ranger"
+  ],
+  "subclasses": [
+    {
+      "class": "Paladin",
+      "subclass": "Oath of Vengeance"
+    }
+  ],
+  "species": [],
+  "backgrounds": [],
+  "feats": [
+    "Fey-Touched"
+  ],
+  "other_options": [],
+  "mechanics": {
+    "saving_throws": [],
+    "ability_checks": [],
+    "damage_types": [
+      "force"
+    ],
+    "conditions": [],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [
+      "ST"
+    ],
+    "misc_tags": [
+      "AAD",
+      "ADV",
+      "SGT",
+      "UBA"
+    ]
+  },
+  "description": "You magically mark one creature you can see within range as your quarry. Until the spell ends, you deal an extra 1d6 Force damage to the target whenever you hit it with an attack roll. You also have Advantage on any Wisdom (Perception or Survival) check you make to find it. \n\nIf the target drops to 0 Hit Points before this spell ends, you can use a Bonus Action to mark a new creature you can see within range.",
+  "higher_levels": "Your Concentration can last longer with a spell slot of level 3-4 (up to 8 hours) or 5+ (up to 24 hours).",
+  "source": {
+    "book": "Player's Handbook",
+    "edition": 2024,
+    "code": "XPHB",
+    "page": 287,
+    "srd_5_2_1": true,
+    "rules_text": "SRD 5.2.1"
+  }
+}

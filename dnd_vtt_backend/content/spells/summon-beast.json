@@ -1,0 +1,61 @@
+{
+  "index": "summon-beast",
+  "name": "Summon Beast",
+  "level": 2,
+  "school": "Conjuration",
+  "casting_time": "1 action",
+  "range": "90 feet",
+  "components": [
+    "V",
+    "S",
+    "M"
+  ],
+  "material": "a feather, tuft of fur, and fish tail inside a gilded acorn worth 200+ GP",
+  "material_cost_cp": 20000,
+  "duration": "Concentration, up to 1 hour",
+  "ritual": false,
+  "concentration": true,
+  "classes": [
+    "Druid",
+    "Ranger"
+  ],
+  "subclasses": [
+    {
+      "class": "Bard",
+      "subclass": "College of Lore"
+    },
+    {
+      "class": "Wizard",
+      "subclass": "Illusionist"
+    }
+  ],
+  "species": [],
+  "backgrounds": [],
+  "feats": [],
+  "other_options": [],
+  "mechanics": {
+    "saving_throws": [],
+    "ability_checks": [],
+    "damage_types": [],
+    "conditions": [],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [],
+    "misc_tags": [
+      "SGT",
+      "SMN"
+    ]
+  },
+  "description": "Rules text is not reproduced here. See Player's Handbook (2024), page 322.",
+  "source": {
+    "book": "Player's Handbook",
+    "edition": 2024,
+    "code": "XPHB",
+    "page": 322,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

@@ -1,0 +1,70 @@
+{
+  "index": "magic-weapon",
+  "name": "Magic Weapon",
+  "level": 2,
+  "school": "Transmutation",
+  "casting_time": "1 bonus action",
+  "range": "Touch",
+  "components": [
+    "V",
+    "S"
+  ],
+  "duration": "1 hour",
+  "ritual": false,
+  "concentration": false,
+  "classes": [
+    "Paladin",
+    "Ranger",
+    "Sorcerer",
+    "Wizard"
+  ],
+  "subclasses": [
+    {
+      "class": "Bard",
+      "subclass": "College of Lore"
+    },
+    {
+      "class": "Cleric",
+      "subclass": "War Domain"
+    },
+    {
+      "class": "Fighter",
+      "subclass": "Eldritch Knight"
+    },
+    {
+      "class": "Paladin",
+      "subclass": "Oath of Glory"
+    },
+    {
+      "class": "Rogue",
+      "subclass": "Arcane Trickster"
+    }
+  ],
+  "species": [],
+  "backgrounds": [],
+  "feats": [],
+  "other_options": [],
+  "mechanics": {
+    "saving_throws": [],
+    "ability_checks": [],
+    "damage_types": [],
+    "conditions": [],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [],
+    "misc_tags": []
+  },
+  "description": "You touch a nonmagical weapon. Until the spell ends, that weapon becomes a magic weapon with a +1 bonus to attack rolls and damage rolls. The spell ends early if you cast it again.",
+  "higher_levels": "The bonus increases to +2 with a level 3–5 spell slot. The bonus increases to +3 with a level 6+ spell slot.",
+  "source": {
+    "book": "Player's Handbook",
+    "edition": 2024,
+    "code": "XPHB",
+    "page": 295,
+    "srd_5_2_1": true,
+    "rules_text": "SRD 5.2.1"
+  }
+}

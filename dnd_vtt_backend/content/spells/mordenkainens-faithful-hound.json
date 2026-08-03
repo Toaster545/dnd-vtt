@@ -1,0 +1,63 @@
+{
+  "index": "mordenkainens-faithful-hound",
+  "name": "Mordenkainen's Faithful Hound",
+  "level": 4,
+  "school": "Conjuration",
+  "casting_time": "1 action",
+  "range": "30 feet",
+  "components": [
+    "V",
+    "S",
+    "M"
+  ],
+  "material": "a silver whistle",
+  "duration": "8 hours",
+  "ritual": false,
+  "concentration": false,
+  "classes": [
+    "Wizard"
+  ],
+  "subclasses": [
+    {
+      "class": "Fighter",
+      "subclass": "Eldritch Knight"
+    },
+    {
+      "class": "Rogue",
+      "subclass": "Arcane Trickster"
+    }
+  ],
+  "species": [],
+  "backgrounds": [],
+  "feats": [],
+  "other_options": [],
+  "mechanics": {
+    "saving_throws": [
+      "dexterity"
+    ],
+    "ability_checks": [],
+    "damage_types": [
+      "force"
+    ],
+    "conditions": [],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [],
+    "misc_tags": [
+      "SGT"
+    ]
+  },
+  "description": "You conjure a phantom watchdog in an unoccupied space that you can see within range. The hound remains for the duration or until the two of you are more than 300 feet apart from each other. \n\nNo one but you can see the hound, and it is intangible and invulnerable. When a Small or larger creature comes within 30 feet of it without first speaking the password that you specify when you cast this spell, the hound starts barking loudly. The hound has Truesight with a range of 30 feet. \n\nAt the start of each of your turns, the hound attempts to bite one enemy within 5 feet of it. That enemy must succeed on a Dexterity saving throw or take 4d8 Force damage.\n\nOn your later turns, you can take a Magic action to move the hound up to 30 feet.",
+  "source": {
+    "book": "Player's Handbook",
+    "edition": 2024,
+    "code": "XPHB",
+    "page": 300,
+    "srd_5_2_1": true,
+    "srd_name": "Faithful Hound",
+    "rules_text": "SRD 5.2.1"
+  }
+}

@@ -257,9 +257,45 @@ export interface DndSpell {
   casting_time: string;
   range: string;
   components: string[];
+  material?: string;
+  material_cost_cp?: number;
+  material_consumed?: boolean;
   duration: string;
+  ritual: boolean;
+  concentration: boolean;
   classes: string[];
+  subclasses: { class: string; subclass: string; variant?: string }[];
+  species: string[];
+  backgrounds: string[];
+  feats: string[];
+  other_options: string[];
+  mechanics: {
+    spell_attacks?: string[];
+    saving_throws: string[];
+    ability_checks: string[];
+    damage_types: string[];
+    conditions: string[];
+    affects_creature_types: string[];
+    grants_damage_immunities: string[];
+    grants_damage_resistances: string[];
+    grants_damage_vulnerabilities: string[];
+    grants_condition_immunities: string[];
+    area_tags: string[];
+    misc_tags: string[];
+    scaling?: { label: string; values: Record<string, string> };
+  };
   description: string;
+  higher_levels?: string;
+  cantrip_upgrade?: string;
+  source: {
+    book: string;
+    edition: number;
+    code: string;
+    page: number;
+    srd_5_2_1: boolean;
+    srd_name?: string;
+    rules_text: 'SRD 5.2.1' | 'reference-only';
+  };
 }
 
 export interface DndMonster {

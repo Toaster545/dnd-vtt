@@ -1,0 +1,68 @@
+{
+  "index": "phantasmal-killer",
+  "name": "Phantasmal Killer",
+  "level": 4,
+  "school": "Illusion",
+  "casting_time": "1 action",
+  "range": "120 feet",
+  "components": [
+    "V",
+    "S"
+  ],
+  "duration": "Concentration, up to 1 minute",
+  "ritual": false,
+  "concentration": true,
+  "classes": [
+    "Bard",
+    "Wizard"
+  ],
+  "subclasses": [
+    {
+      "class": "Fighter",
+      "subclass": "Eldritch Knight"
+    },
+    {
+      "class": "Rogue",
+      "subclass": "Arcane Trickster"
+    },
+    {
+      "class": "Wizard",
+      "subclass": "Illusionist"
+    }
+  ],
+  "species": [],
+  "backgrounds": [],
+  "feats": [],
+  "other_options": [],
+  "mechanics": {
+    "saving_throws": [
+      "wisdom"
+    ],
+    "ability_checks": [],
+    "damage_types": [
+      "psychic"
+    ],
+    "conditions": [],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [
+      "ST"
+    ],
+    "misc_tags": [
+      "SGT"
+    ]
+  },
+  "description": "You tap into the nightmares of a creature you can see within range and create an illusion of its deepest fears, visible only to that creature. The target makes a Wisdom saving throw. On a failed save, the target takes 4d10 Psychic damage and has Disadvantage on ability checks and attack rolls for the duration. On a successful save, the target takes half as much damage, and the spell ends. \n\nFor the duration, the target makes a Wisdom saving throw at the end of each of its turns. On a failed save, it takes the Psychic damage again. On a successful save, the spell ends.",
+  "higher_levels": "The damage increases by 1d10 for each spell slot level above 4.",
+  "source": {
+    "book": "Player's Handbook",
+    "edition": 2024,
+    "code": "XPHB",
+    "page": 304,
+    "srd_5_2_1": true,
+    "rules_text": "SRD 5.2.1"
+  }
+}

@@ -1,0 +1,66 @@
+{
+  "index": "bless",
+  "name": "Bless",
+  "level": 1,
+  "school": "Enchantment",
+  "casting_time": "1 action",
+  "range": "30 feet",
+  "components": [
+    "V",
+    "S",
+    "M"
+  ],
+  "material": "a Holy Symbol worth 5+ GP",
+  "material_cost_cp": 500,
+  "duration": "Concentration, up to 1 minute",
+  "ritual": false,
+  "concentration": true,
+  "classes": [
+    "Cleric",
+    "Paladin"
+  ],
+  "subclasses": [
+    {
+      "class": "Bard",
+      "subclass": "College of Lore"
+    },
+    {
+      "class": "Cleric",
+      "subclass": "Life Domain"
+    }
+  ],
+  "species": [],
+  "backgrounds": [],
+  "feats": [
+    "Fey-Touched",
+    "Magic Initiate"
+  ],
+  "other_options": [],
+  "mechanics": {
+    "saving_throws": [],
+    "ability_checks": [],
+    "damage_types": [],
+    "conditions": [],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [
+      "MT"
+    ],
+    "misc_tags": [
+      "SCT"
+    ]
+  },
+  "description": "You bless up to three creatures within range. Whenever a target makes an attack roll or a saving throw before the spell ends, the target adds 1d4 to the attack roll or save.",
+  "higher_levels": "You can target one additional creature for each spell slot level above 1.",
+  "source": {
+    "book": "Player's Handbook",
+    "edition": 2024,
+    "code": "XPHB",
+    "page": 247,
+    "srd_5_2_1": true,
+    "rules_text": "SRD 5.2.1"
+  }
+}

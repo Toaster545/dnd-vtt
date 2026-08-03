@@ -1,0 +1,81 @@
+{
+  "index": "fear",
+  "name": "Fear",
+  "level": 3,
+  "school": "Illusion",
+  "casting_time": "1 action",
+  "range": "30 feet (Cone)",
+  "components": [
+    "V",
+    "S",
+    "M"
+  ],
+  "material": "a white feather",
+  "duration": "Concentration, up to 1 minute",
+  "ritual": false,
+  "concentration": true,
+  "classes": [
+    "Bard",
+    "Sorcerer",
+    "Warlock",
+    "Wizard"
+  ],
+  "subclasses": [
+    {
+      "class": "Bard",
+      "subclass": "College of Lore"
+    },
+    {
+      "class": "Fighter",
+      "subclass": "Eldritch Knight"
+    },
+    {
+      "class": "Ranger",
+      "subclass": "Gloom Stalker"
+    },
+    {
+      "class": "Rogue",
+      "subclass": "Arcane Trickster"
+    },
+    {
+      "class": "Sorcerer",
+      "subclass": "Draconic Sorcery"
+    },
+    {
+      "class": "Wizard",
+      "subclass": "Illusionist"
+    }
+  ],
+  "species": [],
+  "backgrounds": [],
+  "feats": [],
+  "other_options": [],
+  "mechanics": {
+    "saving_throws": [
+      "wisdom"
+    ],
+    "ability_checks": [],
+    "damage_types": [],
+    "conditions": [
+      "frightened"
+    ],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [
+      "N"
+    ],
+    "misc_tags": []
+  },
+  "description": "Each creature in a 30-foot Cone must succeed on a Wisdom saving throw or drop whatever it is holding and have the Frightened condition for the duration. \n\nA Frightened creature takes the Dash action and moves away from you by the safest route on each of its turns unless there is nowhere to move. If the creature ends its turn in a space where it doesn't have line of sight to you, the creature makes a Wisdom saving throw. On a successful save, the spell ends on that creature.",
+  "source": {
+    "book": "Player's Handbook",
+    "edition": 2024,
+    "code": "XPHB",
+    "page": 271,
+    "srd_5_2_1": true,
+    "rules_text": "SRD 5.2.1"
+  }
+}

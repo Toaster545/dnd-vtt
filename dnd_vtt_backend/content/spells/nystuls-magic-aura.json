@@ -1,0 +1,71 @@
+{
+  "index": "nystuls-magic-aura",
+  "name": "Nystul's Magic Aura",
+  "level": 2,
+  "school": "Illusion",
+  "casting_time": "1 action",
+  "range": "Touch",
+  "components": [
+    "V",
+    "S",
+    "M"
+  ],
+  "material": "a small square of silk",
+  "duration": "24 hours",
+  "ritual": false,
+  "concentration": false,
+  "classes": [
+    "Wizard"
+  ],
+  "subclasses": [
+    {
+      "class": "Bard",
+      "subclass": "College of Lore"
+    },
+    {
+      "class": "Fighter",
+      "subclass": "Eldritch Knight"
+    },
+    {
+      "class": "Rogue",
+      "subclass": "Arcane Trickster"
+    },
+    {
+      "class": "Wizard",
+      "subclass": "Illusionist"
+    }
+  ],
+  "species": [],
+  "backgrounds": [],
+  "feats": [],
+  "other_options": [],
+  "mechanics": {
+    "saving_throws": [],
+    "ability_checks": [],
+    "damage_types": [],
+    "conditions": [],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [
+      "ST"
+    ],
+    "misc_tags": [
+      "OBJ",
+      "PIR",
+      "PRM"
+    ]
+  },
+  "description": "With a touch, you place an illusion on a willing creature or an object that isn't being worn or carried. A creature gains the Mask effect below, and an object gains the False Aura effect below. The effect lasts for the duration. If you cast the spell on the same target every day for 30 days, the illusion lasts until dispelled. \n\n**Mask (Creature).** Choose a creature type other than the target's actual type. Spells and other magical effects treat the target as if it were a creature of the chosen type. \n\n**False Aura (Object).** You change the way the target appears to spells and magical effects that detect magical auras, such as Detect Magic. You can make a nonmagical object appear magical, make a magic item appear nonmagical, or change the object's aura so that it appears to belong to a school of magic you choose.",
+  "source": {
+    "book": "Player's Handbook",
+    "edition": 2024,
+    "code": "XPHB",
+    "page": 302,
+    "srd_5_2_1": true,
+    "srd_name": "Arcanist's Magic Aura",
+    "rules_text": "SRD 5.2.1"
+  }
+}

@@ -1,0 +1,54 @@
+{
+  "index": "mirage-arcane",
+  "name": "Mirage Arcane",
+  "level": 7,
+  "school": "Illusion",
+  "casting_time": "10 minutes",
+  "range": "Sight",
+  "components": [
+    "V",
+    "S"
+  ],
+  "duration": "10 days",
+  "ritual": false,
+  "concentration": false,
+  "classes": [
+    "Bard",
+    "Druid",
+    "Wizard"
+  ],
+  "subclasses": [
+    {
+      "class": "Wizard",
+      "subclass": "Illusionist"
+    }
+  ],
+  "species": [],
+  "backgrounds": [],
+  "feats": [],
+  "other_options": [],
+  "mechanics": {
+    "saving_throws": [],
+    "ability_checks": [],
+    "damage_types": [],
+    "conditions": [],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [],
+    "misc_tags": [
+      "DFT"
+    ]
+  },
+  "description": "You make terrain in an area up to 1 mile square look, sound, smell, and even feel like some other sort of terrain. Open fields or a road could be made to resemble a swamp, hill, crevasse, or some other rough or impassable terrain. A pond can be made to seem like a grassy meadow, a precipice like a gentle slope, or a rock-strewn gully like a wide and smooth road. \n\nSimilarly, you can alter the appearance of structures or add them where none are present. The spell doesn't disguise, conceal, or add creatures. \n\nThe illusion includes audible, visual, tactile, and olfactory elements, so it can turn clear ground into Difficult Terrain (or vice versa) or otherwise impede movement through the area. Any piece of the illusory terrain (such as a rock or stick) that is removed from the spell's area disappears immediately. \n\nCreatures with Truesight can see through the illusion to the terrain's true form; however, all other elements of the illusion remain, so while the creature is aware of the illusion's presence, the creature can still physically interact with the illusion.",
+  "source": {
+    "book": "Player's Handbook",
+    "edition": 2024,
+    "code": "XPHB",
+    "page": 299,
+    "srd_5_2_1": true,
+    "rules_text": "SRD 5.2.1"
+  }
+}

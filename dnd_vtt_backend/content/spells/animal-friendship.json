@@ -1,0 +1,69 @@
+{
+  "index": "animal-friendship",
+  "name": "Animal Friendship",
+  "level": 1,
+  "school": "Enchantment",
+  "casting_time": "1 action",
+  "range": "30 feet",
+  "components": [
+    "V",
+    "S",
+    "M"
+  ],
+  "material": "a morsel of food",
+  "duration": "24 hours",
+  "ritual": false,
+  "concentration": false,
+  "classes": [
+    "Bard",
+    "Druid",
+    "Ranger"
+  ],
+  "subclasses": [
+    {
+      "class": "Bard",
+      "subclass": "College of Lore"
+    }
+  ],
+  "species": [],
+  "backgrounds": [],
+  "feats": [
+    "Fey-Touched",
+    "Magic Initiate"
+  ],
+  "other_options": [],
+  "mechanics": {
+    "saving_throws": [
+      "wisdom"
+    ],
+    "ability_checks": [],
+    "damage_types": [],
+    "conditions": [
+      "charmed"
+    ],
+    "affects_creature_types": [
+      "beast"
+    ],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [
+      "ST"
+    ],
+    "misc_tags": [
+      "SCT",
+      "SGT"
+    ]
+  },
+  "description": "Target a Beast that you can see within range. The target must succeed on a Wisdom saving throw or have the Charmed condition for the duration. If you or one of your allies deals damage to the target, the spells ends.",
+  "higher_levels": "You can target one additional Beast for each spell slot level above 1.",
+  "source": {
+    "book": "Player's Handbook",
+    "edition": 2024,
+    "code": "XPHB",
+    "page": 239,
+    "srd_5_2_1": true,
+    "rules_text": "SRD 5.2.1"
+  }
+}

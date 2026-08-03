@@ -1,0 +1,58 @@
+{
+  "index": "tree-stride",
+  "name": "Tree Stride",
+  "level": 5,
+  "school": "Conjuration",
+  "casting_time": "1 action",
+  "range": "Self",
+  "components": [
+    "V",
+    "S"
+  ],
+  "duration": "Concentration, up to 1 minute",
+  "ritual": false,
+  "concentration": true,
+  "classes": [
+    "Druid",
+    "Ranger"
+  ],
+  "subclasses": [
+    {
+      "class": "Druid",
+      "subclass": "Circle of the Land",
+      "variant": "Temperate Land"
+    },
+    {
+      "class": "Paladin",
+      "subclass": "Oath of the Ancients"
+    }
+  ],
+  "species": [],
+  "backgrounds": [],
+  "feats": [],
+  "other_options": [],
+  "mechanics": {
+    "saving_throws": [],
+    "ability_checks": [],
+    "damage_types": [],
+    "conditions": [],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [],
+    "misc_tags": [
+      "TP"
+    ]
+  },
+  "description": "You gain the ability to enter a tree and move from inside it to inside another tree of the same kind within 500 feet. Both trees must be living and at least the same size as you. You must use 5 feet of movement to enter a tree. You instantly know the location of all other trees of the same kind within 500 feet and, as part of the move used to enter the tree, can either pass into one of those trees or step out of the tree you're in. You appear in a spot of your choice within 5 feet of the destination tree, using another 5 feet of movement. If you have no movement left, you appear within 5 feet of the tree you entered. \n\nYou can use this transportation ability only once on each of your turns. You must end each turn outside a tree.",
+  "source": {
+    "book": "Player's Handbook",
+    "edition": 2024,
+    "code": "XPHB",
+    "page": 335,
+    "srd_5_2_1": true,
+    "rules_text": "SRD 5.2.1"
+  }
+}

@@ -1,0 +1,64 @@
+{
+  "index": "dissonant-whispers",
+  "name": "Dissonant Whispers",
+  "level": 1,
+  "school": "Enchantment",
+  "casting_time": "1 action",
+  "range": "60 feet",
+  "components": [
+    "V"
+  ],
+  "duration": "Instantaneous",
+  "ritual": false,
+  "concentration": false,
+  "classes": [
+    "Bard"
+  ],
+  "subclasses": [
+    {
+      "class": "Sorcerer",
+      "subclass": "Aberrant Sorcery"
+    },
+    {
+      "class": "Warlock",
+      "subclass": "Great Old One Patron"
+    }
+  ],
+  "species": [],
+  "backgrounds": [],
+  "feats": [
+    "Fey-Touched"
+  ],
+  "other_options": [],
+  "mechanics": {
+    "saving_throws": [
+      "wisdom"
+    ],
+    "ability_checks": [],
+    "damage_types": [
+      "psychic"
+    ],
+    "conditions": [],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [
+      "ST"
+    ],
+    "misc_tags": [
+      "SGT"
+    ]
+  },
+  "description": "One creature of your choice that you can see within range hears a discordant melody in its mind. The target makes a Wisdom saving throw. On a failed save, it takes 3d6 Psychic damage and must immediately use its Reaction, if available, to move as far away from you as it can, using the safest route. On a successful save, the target takes half as much damage only.",
+  "higher_levels": "The damage increases by 1d6 for each spell slot level above 1.",
+  "source": {
+    "book": "Player's Handbook",
+    "edition": 2024,
+    "code": "XPHB",
+    "page": 264,
+    "srd_5_2_1": true,
+    "rules_text": "SRD 5.2.1"
+  }
+}

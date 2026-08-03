@@ -1,0 +1,80 @@
+{
+  "index": "scorching-ray",
+  "name": "Scorching Ray",
+  "level": 2,
+  "school": "Evocation",
+  "casting_time": "1 action",
+  "range": "120 feet",
+  "components": [
+    "V",
+    "S"
+  ],
+  "duration": "Instantaneous",
+  "ritual": false,
+  "concentration": false,
+  "classes": [
+    "Sorcerer",
+    "Wizard"
+  ],
+  "subclasses": [
+    {
+      "class": "Bard",
+      "subclass": "College of Lore"
+    },
+    {
+      "class": "Cleric",
+      "subclass": "Light Domain"
+    },
+    {
+      "class": "Fighter",
+      "subclass": "Eldritch Knight"
+    },
+    {
+      "class": "Rogue",
+      "subclass": "Arcane Trickster"
+    },
+    {
+      "class": "Warlock",
+      "subclass": "Fiend Patron"
+    },
+    {
+      "class": "Wizard",
+      "subclass": "Evoker"
+    }
+  ],
+  "species": [],
+  "backgrounds": [],
+  "feats": [],
+  "other_options": [],
+  "mechanics": {
+    "spell_attacks": [
+      "ranged"
+    ],
+    "saving_throws": [],
+    "ability_checks": [],
+    "damage_types": [
+      "fire"
+    ],
+    "conditions": [],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [
+      "MT",
+      "ST"
+    ],
+    "misc_tags": []
+  },
+  "description": "You hurl three fiery rays. You can hurl them at one target within range or at several. Make a ranged spell attack for each ray. On a hit, the target takes 2d6 Fire damage.",
+  "higher_levels": "You create one additional ray for each spell slot level above 2.",
+  "source": {
+    "book": "Player's Handbook",
+    "edition": 2024,
+    "code": "XPHB",
+    "page": 313,
+    "srd_5_2_1": true,
+    "rules_text": "SRD 5.2.1"
+  }
+}

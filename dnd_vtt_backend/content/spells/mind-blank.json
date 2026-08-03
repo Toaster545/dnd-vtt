@@ -1,0 +1,57 @@
+{
+  "index": "mind-blank",
+  "name": "Mind Blank",
+  "level": 8,
+  "school": "Abjuration",
+  "casting_time": "1 action",
+  "range": "Touch",
+  "components": [
+    "V",
+    "S"
+  ],
+  "duration": "24 hours",
+  "ritual": false,
+  "concentration": false,
+  "classes": [
+    "Bard",
+    "Wizard"
+  ],
+  "subclasses": [
+    {
+      "class": "Wizard",
+      "subclass": "Abjurer"
+    }
+  ],
+  "species": [],
+  "backgrounds": [],
+  "feats": [],
+  "other_options": [],
+  "mechanics": {
+    "saving_throws": [],
+    "ability_checks": [],
+    "damage_types": [],
+    "conditions": [],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [
+      "psychic"
+    ],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [
+      "charmed"
+    ],
+    "area_tags": [
+      "ST"
+    ],
+    "misc_tags": []
+  },
+  "description": "Until the spell ends, one willing creature you touch has Immunity to Psychic damage and the Charmed condition. The target is also unaffected by anything that would sense its emotions or alignment, read its thoughts, or magically detect its location, and no spell—not even Wish—can gather information about the target, observe it remotely, or control its mind.",
+  "source": {
+    "book": "Player's Handbook",
+    "edition": 2024,
+    "code": "XPHB",
+    "page": 298,
+    "srd_5_2_1": true,
+    "rules_text": "SRD 5.2.1"
+  }
+}

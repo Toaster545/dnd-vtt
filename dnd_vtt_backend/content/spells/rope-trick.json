@@ -1,0 +1,64 @@
+{
+  "index": "rope-trick",
+  "name": "Rope Trick",
+  "level": 2,
+  "school": "Transmutation",
+  "casting_time": "1 action",
+  "range": "Touch",
+  "components": [
+    "V",
+    "S",
+    "M"
+  ],
+  "material": "a segment of rope",
+  "duration": "1 hour",
+  "ritual": false,
+  "concentration": false,
+  "classes": [
+    "Wizard"
+  ],
+  "subclasses": [
+    {
+      "class": "Bard",
+      "subclass": "College of Lore"
+    },
+    {
+      "class": "Fighter",
+      "subclass": "Eldritch Knight"
+    },
+    {
+      "class": "Ranger",
+      "subclass": "Gloom Stalker"
+    },
+    {
+      "class": "Rogue",
+      "subclass": "Arcane Trickster"
+    }
+  ],
+  "species": [],
+  "backgrounds": [],
+  "feats": [],
+  "other_options": [],
+  "mechanics": {
+    "saving_throws": [],
+    "ability_checks": [],
+    "damage_types": [],
+    "conditions": [],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [],
+    "misc_tags": []
+  },
+  "description": "You touch a rope. One end of it hovers upward until the rope hangs perpendicular to the ground or the rope reaches a ceiling. At the rope's upper end, an Invisible 3-foot-by-5-foot portal opens to an extradimensional space that lasts until the spell ends. That space can be reached by climbing the rope, which can be pulled into or dropped out of it. \n\nThe space can hold up to eight Medium or smaller creatures. Attacks, spells, and other effects can't pass into or out of the space, but creatures inside it can see through the portal. Anything inside the space drops out when the spell ends.",
+  "source": {
+    "book": "Player's Handbook",
+    "edition": 2024,
+    "code": "XPHB",
+    "page": 312,
+    "srd_5_2_1": true,
+    "rules_text": "SRD 5.2.1"
+  }
+}

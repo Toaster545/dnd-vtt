@@ -1,0 +1,50 @@
+{
+  "index": "hail-of-thorns",
+  "name": "Hail of Thorns",
+  "level": 1,
+  "school": "Conjuration",
+  "casting_time": "1 bonus action, which you take immediately after hitting a creature with a Ranged weapon",
+  "range": "Self",
+  "components": [
+    "V"
+  ],
+  "duration": "Instantaneous",
+  "ritual": false,
+  "concentration": false,
+  "classes": [
+    "Ranger"
+  ],
+  "subclasses": [],
+  "species": [],
+  "backgrounds": [],
+  "feats": [],
+  "other_options": [],
+  "mechanics": {
+    "saving_throws": [
+      "dexterity"
+    ],
+    "ability_checks": [],
+    "damage_types": [
+      "piercing"
+    ],
+    "conditions": [],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [
+      "S"
+    ],
+    "misc_tags": []
+  },
+  "description": "Rules text is not reproduced here. See Player's Handbook (2024), page 283.",
+  "source": {
+    "book": "Player's Handbook",
+    "edition": 2024,
+    "code": "XPHB",
+    "page": 283,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

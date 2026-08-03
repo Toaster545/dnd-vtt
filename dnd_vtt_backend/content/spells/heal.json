@@ -1,0 +1,52 @@
+{
+  "index": "heal",
+  "name": "Heal",
+  "level": 6,
+  "school": "Abjuration",
+  "casting_time": "1 action",
+  "range": "60 feet",
+  "components": [
+    "V",
+    "S"
+  ],
+  "duration": "Instantaneous",
+  "ritual": false,
+  "concentration": false,
+  "classes": [
+    "Cleric",
+    "Druid"
+  ],
+  "subclasses": [],
+  "species": [],
+  "backgrounds": [],
+  "feats": [],
+  "other_options": [],
+  "mechanics": {
+    "saving_throws": [],
+    "ability_checks": [],
+    "damage_types": [],
+    "conditions": [],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [
+      "ST"
+    ],
+    "misc_tags": [
+      "HL",
+      "SGT"
+    ]
+  },
+  "description": "Choose a creature that you can see within range. Positive energy washes through the target, restoring 70 Hit Points. This spell also ends the Blinded, Deafened, and Poisoned conditions on the target.",
+  "higher_levels": "The healing increases by 10 for each spell slot level above 6.",
+  "source": {
+    "book": "Player's Handbook",
+    "edition": 2024,
+    "code": "XPHB",
+    "page": 284,
+    "srd_5_2_1": true,
+    "rules_text": "SRD 5.2.1"
+  }
+}

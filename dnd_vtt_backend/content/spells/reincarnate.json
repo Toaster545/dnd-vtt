@@ -1,0 +1,54 @@
+{
+  "index": "reincarnate",
+  "name": "Reincarnate",
+  "level": 5,
+  "school": "Necromancy",
+  "casting_time": "1 hour",
+  "range": "Touch",
+  "components": [
+    "V",
+    "S",
+    "M"
+  ],
+  "material": "rare oils worth 1,000+ GP, which the spell consumes",
+  "material_cost_cp": 100000,
+  "material_consumed": true,
+  "duration": "Instantaneous",
+  "ritual": false,
+  "concentration": false,
+  "classes": [
+    "Druid"
+  ],
+  "subclasses": [],
+  "species": [],
+  "backgrounds": [],
+  "feats": [],
+  "other_options": [],
+  "mechanics": {
+    "saving_throws": [],
+    "ability_checks": [],
+    "damage_types": [],
+    "conditions": [],
+    "affects_creature_types": [
+      "humanoid"
+    ],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [],
+    "misc_tags": [
+      "HL",
+      "RO"
+    ]
+  },
+  "description": "You touch a dead Humanoid or a piece of one. If the creature has been dead no longer than 10 days, the spell forms a new body for it and calls the soul to enter that body. Roll 1d10 and consult the table below to determine the body’s species, or the DM chooses another playable species. \n\n| 1d10 | Species    |\n| ---- | ---------- |\n| 1    | Aasimar    |\n| 2    | Dragonborn |\n| 3    | Dwarf      |\n| 4    | Elf        |\n| 5    | Gnome      |\n| 6    | Goliath    |\n| 7    | Halfling   |\n| 8    | Human      |\n| 9    | Orc        |\n| 10   | Tiefling   |\n\n  The reincarnated creature makes any choices that a species’ description offers, and the creature recalls its former life. It retains the capabilities it had in its original form, except it loses the traits of its previous species and gains the traits of its new one.",
+  "source": {
+    "book": "Player's Handbook",
+    "edition": 2024,
+    "code": "XPHB",
+    "page": 311,
+    "srd_5_2_1": true,
+    "rules_text": "SRD 5.2.1"
+  }
+}

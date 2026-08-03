@@ -1,0 +1,68 @@
+{
+  "index": "greater-restoration",
+  "name": "Greater Restoration",
+  "level": 5,
+  "school": "Abjuration",
+  "casting_time": "1 action",
+  "range": "Touch",
+  "components": [
+    "V",
+    "S",
+    "M"
+  ],
+  "material": "diamond dust worth 100+ GP, which the spell consumes",
+  "material_cost_cp": 10000,
+  "material_consumed": true,
+  "duration": "Instantaneous",
+  "ritual": false,
+  "concentration": false,
+  "classes": [
+    "Bard",
+    "Cleric",
+    "Druid",
+    "Paladin",
+    "Ranger"
+  ],
+  "subclasses": [
+    {
+      "class": "Cleric",
+      "subclass": "Life Domain"
+    },
+    {
+      "class": "Sorcerer",
+      "subclass": "Clockwork Sorcery"
+    },
+    {
+      "class": "Warlock",
+      "subclass": "Celestial Patron"
+    }
+  ],
+  "species": [],
+  "backgrounds": [],
+  "feats": [],
+  "other_options": [],
+  "mechanics": {
+    "saving_throws": [],
+    "ability_checks": [],
+    "damage_types": [],
+    "conditions": [],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [
+      "ST"
+    ],
+    "misc_tags": []
+  },
+  "description": "You touch a creature and magically remove one of the following effects from it: \n\n- 1 Exhaustion level \n\n- The Charmed or Petrified condition \n\n- A curse, including the target's Attunement to a cursed magic item \n\n- Any reduction to one of the target's ability scores \n\n- Any reduction to the target's Hit Point maximum.",
+  "source": {
+    "book": "Player's Handbook",
+    "edition": 2024,
+    "code": "XPHB",
+    "page": 281,
+    "srd_5_2_1": true,
+    "rules_text": "SRD 5.2.1"
+  }
+}

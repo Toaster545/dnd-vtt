@@ -1,0 +1,69 @@
+{
+  "index": "speak-with-animals",
+  "name": "Speak with Animals",
+  "level": 1,
+  "school": "Divination",
+  "casting_time": "1 action",
+  "range": "Self",
+  "components": [
+    "V",
+    "S"
+  ],
+  "duration": "10 minutes",
+  "ritual": true,
+  "concentration": false,
+  "classes": [
+    "Bard",
+    "Druid",
+    "Ranger",
+    "Warlock"
+  ],
+  "subclasses": [
+    {
+      "class": "Barbarian",
+      "subclass": "Path of the Wild Heart"
+    },
+    {
+      "class": "Bard",
+      "subclass": "College of Lore"
+    },
+    {
+      "class": "Paladin",
+      "subclass": "Oath of the Ancients"
+    }
+  ],
+  "species": [],
+  "backgrounds": [],
+  "feats": [
+    "Fey-Touched",
+    "Magic Initiate",
+    "Ritual Caster"
+  ],
+  "other_options": [
+    "Pact of the Tome"
+  ],
+  "mechanics": {
+    "saving_throws": [],
+    "ability_checks": [],
+    "damage_types": [],
+    "conditions": [],
+    "affects_creature_types": [
+      "beast"
+    ],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [],
+    "misc_tags": []
+  },
+  "description": "For the duration, you can comprehend and verbally communicate with Beasts, and you can use any of the Influence action's skill options with them. \n\nMost Beasts have little to say about topics that don't pertain to survival or companionship, but at minimum, a Beast can give you information about nearby locations and monsters, including whatever it has perceived within the past day.",
+  "source": {
+    "book": "Player's Handbook",
+    "edition": 2024,
+    "code": "XPHB",
+    "page": 318,
+    "srd_5_2_1": true,
+    "rules_text": "SRD 5.2.1"
+  }
+}

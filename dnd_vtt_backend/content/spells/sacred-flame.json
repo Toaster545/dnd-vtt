@@ -1,0 +1,78 @@
+{
+  "index": "sacred-flame",
+  "name": "Sacred Flame",
+  "level": 0,
+  "school": "Evocation",
+  "casting_time": "1 action",
+  "range": "60 feet",
+  "components": [
+    "V",
+    "S"
+  ],
+  "duration": "Instantaneous",
+  "ritual": false,
+  "concentration": false,
+  "classes": [
+    "Cleric"
+  ],
+  "subclasses": [
+    {
+      "class": "Bard",
+      "subclass": "College of Lore"
+    },
+    {
+      "class": "Warlock",
+      "subclass": "Celestial Patron"
+    }
+  ],
+  "species": [],
+  "backgrounds": [],
+  "feats": [
+    "Blessed Warrior",
+    "Magic Initiate"
+  ],
+  "other_options": [
+    "Pact of the Tome"
+  ],
+  "mechanics": {
+    "saving_throws": [
+      "dexterity"
+    ],
+    "ability_checks": [],
+    "damage_types": [
+      "radiant"
+    ],
+    "conditions": [],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [
+      "ST"
+    ],
+    "misc_tags": [
+      "SCL",
+      "SGT"
+    ],
+    "scaling": {
+      "label": "Radiant damage",
+      "values": {
+        "1": "1d8",
+        "5": "2d8",
+        "11": "3d8",
+        "17": "4d8"
+      }
+    }
+  },
+  "description": "Flame-like radiance descends on a creature that you can see within range. The target must succeed on a Dexterity saving throw or take 1d8 Radiant damage. The target gains no benefit from Half Cover or Three-Quarters Cover for this save.",
+  "cantrip_upgrade": "The damage increases by 1d8 when you reach levels 5 (2d8), 11 (3d8), and 17 (4d8).",
+  "source": {
+    "book": "Player's Handbook",
+    "edition": 2024,
+    "code": "XPHB",
+    "page": 313,
+    "srd_5_2_1": true,
+    "rules_text": "SRD 5.2.1"
+  }
+}

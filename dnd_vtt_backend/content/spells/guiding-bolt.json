@@ -1,0 +1,78 @@
+{
+  "index": "guiding-bolt",
+  "name": "Guiding Bolt",
+  "level": 1,
+  "school": "Evocation",
+  "casting_time": "1 action",
+  "range": "120 feet",
+  "components": [
+    "V",
+    "S"
+  ],
+  "duration": "1 round",
+  "ritual": false,
+  "concentration": false,
+  "classes": [
+    "Cleric"
+  ],
+  "subclasses": [
+    {
+      "class": "Bard",
+      "subclass": "College of Lore"
+    },
+    {
+      "class": "Cleric",
+      "subclass": "War Domain"
+    },
+    {
+      "class": "Druid",
+      "subclass": "Circle of the Stars"
+    },
+    {
+      "class": "Paladin",
+      "subclass": "Oath of Glory"
+    },
+    {
+      "class": "Warlock",
+      "subclass": "Celestial Patron"
+    }
+  ],
+  "species": [],
+  "backgrounds": [],
+  "feats": [
+    "Magic Initiate"
+  ],
+  "other_options": [],
+  "mechanics": {
+    "spell_attacks": [
+      "ranged"
+    ],
+    "saving_throws": [],
+    "ability_checks": [],
+    "damage_types": [
+      "radiant"
+    ],
+    "conditions": [],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [
+      "ST"
+    ],
+    "misc_tags": [
+      "ADV"
+    ]
+  },
+  "description": "You hurl a bolt of light toward a creature within range. Make a ranged spell attack against the target. On a hit, it takes 4d6 Radiant damage, and the next attack roll made against it before the end of your next turn has Advantage.",
+  "higher_levels": "The damage increases by 1d6 for each spell slot level above 1.",
+  "source": {
+    "book": "Player's Handbook",
+    "edition": 2024,
+    "code": "XPHB",
+    "page": 282,
+    "srd_5_2_1": true,
+    "rules_text": "SRD 5.2.1"
+  }
+}

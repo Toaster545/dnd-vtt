@@ -1,0 +1,78 @@
+{
+  "index": "fire-shield",
+  "name": "Fire Shield",
+  "level": 4,
+  "school": "Evocation",
+  "casting_time": "1 action",
+  "range": "Self",
+  "components": [
+    "V",
+    "S",
+    "M"
+  ],
+  "material": "a bit of phosphorus or a firefly",
+  "duration": "10 minutes",
+  "ritual": false,
+  "concentration": false,
+  "classes": [
+    "Druid",
+    "Sorcerer",
+    "Wizard"
+  ],
+  "subclasses": [
+    {
+      "class": "Cleric",
+      "subclass": "War Domain"
+    },
+    {
+      "class": "Fighter",
+      "subclass": "Eldritch Knight"
+    },
+    {
+      "class": "Rogue",
+      "subclass": "Arcane Trickster"
+    },
+    {
+      "class": "Warlock",
+      "subclass": "Fiend Patron"
+    },
+    {
+      "class": "Wizard",
+      "subclass": "Evoker"
+    }
+  ],
+  "species": [],
+  "backgrounds": [],
+  "feats": [],
+  "other_options": [],
+  "mechanics": {
+    "saving_throws": [],
+    "ability_checks": [],
+    "damage_types": [
+      "cold",
+      "fire"
+    ],
+    "conditions": [],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [
+      "cold",
+      "fire"
+    ],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [],
+    "misc_tags": [
+      "LGT"
+    ]
+  },
+  "description": "Wispy flames wreathe your body for the duration, shedding Bright Light in a 10-foot radius and Dim Light for an additional 10 feet. The flames provide you with a warm shield or a chill shield, as you choose. The warm shield grants you Resistance to Cold damage, and the chill shield grants you Resistance to Fire damage. \n\nIn addition, whenever a creature within 5 feet of you hits you with a melee attack roll, the shield erupts with flame. The attacker takes 2d8 Fire damage from a warm shield or 2d8 Cold damage from a chill shield.",
+  "source": {
+    "book": "Player's Handbook",
+    "edition": 2024,
+    "code": "XPHB",
+    "page": 274,
+    "srd_5_2_1": true,
+    "rules_text": "SRD 5.2.1"
+  }
+}

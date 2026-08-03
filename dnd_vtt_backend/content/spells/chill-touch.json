@@ -1,0 +1,86 @@
+{
+  "index": "chill-touch",
+  "name": "Chill Touch",
+  "level": 0,
+  "school": "Necromancy",
+  "casting_time": "1 action",
+  "range": "Touch",
+  "components": [
+    "V",
+    "S"
+  ],
+  "duration": "Instantaneous",
+  "ritual": false,
+  "concentration": false,
+  "classes": [
+    "Sorcerer",
+    "Warlock",
+    "Wizard"
+  ],
+  "subclasses": [
+    {
+      "class": "Bard",
+      "subclass": "College of Lore"
+    },
+    {
+      "class": "Fighter",
+      "subclass": "Eldritch Knight"
+    },
+    {
+      "class": "Rogue",
+      "subclass": "Arcane Trickster"
+    }
+  ],
+  "species": [
+    "Elf",
+    "Tiefling"
+  ],
+  "backgrounds": [],
+  "feats": [
+    "Magic Initiate"
+  ],
+  "other_options": [
+    "Pact of the Tome"
+  ],
+  "mechanics": {
+    "spell_attacks": [
+      "melee"
+    ],
+    "saving_throws": [],
+    "ability_checks": [],
+    "damage_types": [
+      "necrotic"
+    ],
+    "conditions": [],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [
+      "ST"
+    ],
+    "misc_tags": [
+      "SCL"
+    ],
+    "scaling": {
+      "label": "Necrotic damage",
+      "values": {
+        "1": "1d10",
+        "5": "2d10",
+        "11": "3d10",
+        "17": "4d10"
+      }
+    }
+  },
+  "description": "Channeling the chill of the grave, make a melee spell attack against a target within reach. On a hit, the target takes 1d10 Necrotic damage, and it can't regain Hit Points until the end of your next turn.",
+  "cantrip_upgrade": "The damage increases by 1d10 when you reach levels 5 (2d10), 11 (3d10), and 17 (4d10).",
+  "source": {
+    "book": "Player's Handbook",
+    "edition": 2024,
+    "code": "XPHB",
+    "page": 249,
+    "srd_5_2_1": true,
+    "rules_text": "SRD 5.2.1"
+  }
+}

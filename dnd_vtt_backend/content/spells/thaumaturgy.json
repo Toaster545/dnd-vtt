@@ -1,0 +1,58 @@
+{
+  "index": "thaumaturgy",
+  "name": "Thaumaturgy",
+  "level": 0,
+  "school": "Transmutation",
+  "casting_time": "1 action",
+  "range": "30 feet",
+  "components": [
+    "V"
+  ],
+  "duration": "1 minute",
+  "ritual": false,
+  "concentration": false,
+  "classes": [
+    "Cleric"
+  ],
+  "subclasses": [
+    {
+      "class": "Bard",
+      "subclass": "College of Lore"
+    }
+  ],
+  "species": [
+    "Tiefling"
+  ],
+  "backgrounds": [],
+  "feats": [
+    "Blessed Warrior",
+    "Magic Initiate"
+  ],
+  "other_options": [
+    "Pact of the Tome"
+  ],
+  "mechanics": {
+    "saving_throws": [],
+    "ability_checks": [],
+    "damage_types": [],
+    "conditions": [],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [],
+    "misc_tags": [
+      "ADV"
+    ]
+  },
+  "description": "You manifest a minor wonder within range. You create one of the effects below within range. If you cast this spell multiple times, you can have up to three of its 1-minute effects active at a time. \n\n**Altered Eyes**. You alter the appearance of your eyes for 1 minute. \n\n**Booming Voice**. Your voice booms up to three times as loud as normal for 1 minute. For the duration, you have Advantage on Charisma (Intimidation) checks. \n\n**Fire Play**. You cause flames to flicker, brighten, dim, or change color for 1 minute. \n\n**Invisible Hand**. You instantaneously cause an unlocked door or window to fly open or slam shut. \n\n**Phantom Sound**. You create an instantaneous sound that originates from a point of your choice within range, such as a rumble of thunder, the cry of a raven, or ominous whispers. \n\n**Tremors**. You cause harmless tremors in the ground for 1 minute.",
+  "source": {
+    "book": "Player's Handbook",
+    "edition": 2024,
+    "code": "XPHB",
+    "page": 333,
+    "srd_5_2_1": true,
+    "rules_text": "SRD 5.2.1"
+  }
+}

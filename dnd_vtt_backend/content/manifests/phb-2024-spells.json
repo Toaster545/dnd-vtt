@@ -1,0 +1,1964 @@
+{
+  "source": "Player's Handbook (2024)",
+  "source_code": "XPHB",
+  "total": 391,
+  "srd_5_2_1_rules_text": 339,
+  "reference_only": 52,
+  "spells": [
+    {
+      "index": "acid-splash",
+      "name": "Acid Splash",
+      "level": 0
+    },
+    {
+      "index": "aid",
+      "name": "Aid",
+      "level": 2
+    },
+    {
+      "index": "alarm",
+      "name": "Alarm",
+      "level": 1
+    },
+    {
+      "index": "alter-self",
+      "name": "Alter Self",
+      "level": 2
+    },
+    {
+      "index": "animal-friendship",
+      "name": "Animal Friendship",
+      "level": 1
+    },
+    {
+      "index": "animal-messenger",
+      "name": "Animal Messenger",
+      "level": 2
+    },
+    {
+      "index": "animal-shapes",
+      "name": "Animal Shapes",
+      "level": 8
+    },
+    {
+      "index": "animate-dead",
+      "name": "Animate Dead",
+      "level": 3
+    },
+    {
+      "index": "animate-objects",
+      "name": "Animate Objects",
+      "level": 5
+    },
+    {
+      "index": "antilife-shell",
+      "name": "Antilife Shell",
+      "level": 5
+    },
+    {
+      "index": "antimagic-field",
+      "name": "Antimagic Field",
+      "level": 8
+    },
+    {
+      "index": "antipathy-sympathy",
+      "name": "Antipathy/Sympathy",
+      "level": 8
+    },
+    {
+      "index": "arcane-eye",
+      "name": "Arcane Eye",
+      "level": 4
+    },
+    {
+      "index": "arcane-gate",
+      "name": "Arcane Gate",
+      "level": 6
+    },
+    {
+      "index": "arcane-lock",
+      "name": "Arcane Lock",
+      "level": 2
+    },
+    {
+      "index": "arcane-vigor",
+      "name": "Arcane Vigor",
+      "level": 2
+    },
+    {
+      "index": "armor-of-agathys",
+      "name": "Armor of Agathys",
+      "level": 1
+    },
+    {
+      "index": "arms-of-hadar",
+      "name": "Arms of Hadar",
+      "level": 1
+    },
+    {
+      "index": "astral-projection",
+      "name": "Astral Projection",
+      "level": 9
+    },
+    {
+      "index": "augury",
+      "name": "Augury",
+      "level": 2
+    },
+    {
+      "index": "aura-of-life",
+      "name": "Aura of Life",
+      "level": 4
+    },
+    {
+      "index": "aura-of-purity",
+      "name": "Aura of Purity",
+      "level": 4
+    },
+    {
+      "index": "aura-of-vitality",
+      "name": "Aura of Vitality",
+      "level": 3
+    },
+    {
+      "index": "awaken",
+      "name": "Awaken",
+      "level": 5
+    },
+    {
+      "index": "bane",
+      "name": "Bane",
+      "level": 1
+    },
+    {
+      "index": "banishing-smite",
+      "name": "Banishing Smite",
+      "level": 5
+    },
+    {
+      "index": "banishment",
+      "name": "Banishment",
+      "level": 4
+    },
+    {
+      "index": "barkskin",
+      "name": "Barkskin",
+      "level": 2
+    },
+    {
+      "index": "beacon-of-hope",
+      "name": "Beacon of Hope",
+      "level": 3
+    },
+    {
+      "index": "beast-sense",
+      "name": "Beast Sense",
+      "level": 2
+    },
+    {
+      "index": "befuddlement",
+      "name": "Befuddlement",
+      "level": 8
+    },
+    {
+      "index": "bestow-curse",
+      "name": "Bestow Curse",
+      "level": 3
+    },
+    {
+      "index": "bigbys-hand",
+      "name": "Bigby's Hand",
+      "level": 5
+    },
+    {
+      "index": "blade-barrier",
+      "name": "Blade Barrier",
+      "level": 6
+    },
+    {
+      "index": "blade-ward",
+      "name": "Blade Ward",
+      "level": 0
+    },
+    {
+      "index": "bless",
+      "name": "Bless",
+      "level": 1
+    },
+    {
+      "index": "blight",
+      "name": "Blight",
+      "level": 4
+    },
+    {
+      "index": "blinding-smite",
+      "name": "Blinding Smite",
+      "level": 3
+    },
+    {
+      "index": "blindness-deafness",
+      "name": "Blindness/Deafness",
+      "level": 2
+    },
+    {
+      "index": "blink",
+      "name": "Blink",
+      "level": 3
+    },
+    {
+      "index": "blur",
+      "name": "Blur",
+      "level": 2
+    },
+    {
+      "index": "burning-hands",
+      "name": "Burning Hands",
+      "level": 1
+    },
+    {
+      "index": "call-lightning",
+      "name": "Call Lightning",
+      "level": 3
+    },
+    {
+      "index": "calm-emotions",
+      "name": "Calm Emotions",
+      "level": 2
+    },
+    {
+      "index": "chain-lightning",
+      "name": "Chain Lightning",
+      "level": 6
+    },
+    {
+      "index": "charm-monster",
+      "name": "Charm Monster",
+      "level": 4
+    },
+    {
+      "index": "charm-person",
+      "name": "Charm Person",
+      "level": 1
+    },
+    {
+      "index": "chill-touch",
+      "name": "Chill Touch",
+      "level": 0
+    },
+    {
+      "index": "chromatic-orb",
+      "name": "Chromatic Orb",
+      "level": 1
+    },
+    {
+      "index": "circle-of-death",
+      "name": "Circle of Death",
+      "level": 6
+    },
+    {
+      "index": "circle-of-power",
+      "name": "Circle of Power",
+      "level": 5
+    },
+    {
+      "index": "clairvoyance",
+      "name": "Clairvoyance",
+      "level": 3
+    },
+    {
+      "index": "clone",
+      "name": "Clone",
+      "level": 8
+    },
+    {
+      "index": "cloud-of-daggers",
+      "name": "Cloud of Daggers",
+      "level": 2
+    },
+    {
+      "index": "cloudkill",
+      "name": "Cloudkill",
+      "level": 5
+    },
+    {
+      "index": "color-spray",
+      "name": "Color Spray",
+      "level": 1
+    },
+    {
+      "index": "command",
+      "name": "Command",
+      "level": 1
+    },
+    {
+      "index": "commune",
+      "name": "Commune",
+      "level": 5
+    },
+    {
+      "index": "commune-with-nature",
+      "name": "Commune with Nature",
+      "level": 5
+    },
+    {
+      "index": "compelled-duel",
+      "name": "Compelled Duel",
+      "level": 1
+    },
+    {
+      "index": "comprehend-languages",
+      "name": "Comprehend Languages",
+      "level": 1
+    },
+    {
+      "index": "compulsion",
+      "name": "Compulsion",
+      "level": 4
+    },
+    {
+      "index": "cone-of-cold",
+      "name": "Cone of Cold",
+      "level": 5
+    },
+    {
+      "index": "confusion",
+      "name": "Confusion",
+      "level": 4
+    },
+    {
+      "index": "conjure-animals",
+      "name": "Conjure Animals",
+      "level": 3
+    },
+    {
+      "index": "conjure-barrage",
+      "name": "Conjure Barrage",
+      "level": 3
+    },
+    {
+      "index": "conjure-celestial",
+      "name": "Conjure Celestial",
+      "level": 7
+    },
+    {
+      "index": "conjure-elemental",
+      "name": "Conjure Elemental",
+      "level": 5
+    },
+    {
+      "index": "conjure-fey",
+      "name": "Conjure Fey",
+      "level": 6
+    },
+    {
+      "index": "conjure-minor-elementals",
+      "name": "Conjure Minor Elementals",
+      "level": 4
+    },
+    {
+      "index": "conjure-volley",
+      "name": "Conjure Volley",
+      "level": 5
+    },
+    {
+      "index": "conjure-woodland-beings",
+      "name": "Conjure Woodland Beings",
+      "level": 4
+    },
+    {
+      "index": "contact-other-plane",
+      "name": "Contact Other Plane",
+      "level": 5
+    },
+    {
+      "index": "contagion",
+      "name": "Contagion",
+      "level": 5
+    },
+    {
+      "index": "contingency",
+      "name": "Contingency",
+      "level": 6
+    },
+    {
+      "index": "continual-flame",
+      "name": "Continual Flame",
+      "level": 2
+    },
+    {
+      "index": "control-water",
+      "name": "Control Water",
+      "level": 4
+    },
+    {
+      "index": "control-weather",
+      "name": "Control Weather",
+      "level": 8
+    },
+    {
+      "index": "cordon-of-arrows",
+      "name": "Cordon of Arrows",
+      "level": 2
+    },
+    {
+      "index": "counterspell",
+      "name": "Counterspell",
+      "level": 3
+    },
+    {
+      "index": "create-food-and-water",
+      "name": "Create Food and Water",
+      "level": 3
+    },
+    {
+      "index": "create-or-destroy-water",
+      "name": "Create or Destroy Water",
+      "level": 1
+    },
+    {
+      "index": "create-undead",
+      "name": "Create Undead",
+      "level": 6
+    },
+    {
+      "index": "creation",
+      "name": "Creation",
+      "level": 5
+    },
+    {
+      "index": "crown-of-madness",
+      "name": "Crown of Madness",
+      "level": 2
+    },
+    {
+      "index": "crusaders-mantle",
+      "name": "Crusader's Mantle",
+      "level": 3
+    },
+    {
+      "index": "cure-wounds",
+      "name": "Cure Wounds",
+      "level": 1
+    },
+    {
+      "index": "dancing-lights",
+      "name": "Dancing Lights",
+      "level": 0
+    },
+    {
+      "index": "darkness",
+      "name": "Darkness",
+      "level": 2
+    },
+    {
+      "index": "darkvision",
+      "name": "Darkvision",
+      "level": 2
+    },
+    {
+      "index": "daylight",
+      "name": "Daylight",
+      "level": 3
+    },
+    {
+      "index": "death-ward",
+      "name": "Death Ward",
+      "level": 4
+    },
+    {
+      "index": "delayed-blast-fireball",
+      "name": "Delayed Blast Fireball",
+      "level": 7
+    },
+    {
+      "index": "demiplane",
+      "name": "Demiplane",
+      "level": 8
+    },
+    {
+      "index": "destructive-wave",
+      "name": "Destructive Wave",
+      "level": 5
+    },
+    {
+      "index": "detect-evil-and-good",
+      "name": "Detect Evil and Good",
+      "level": 1
+    },
+    {
+      "index": "detect-magic",
+      "name": "Detect Magic",
+      "level": 1
+    },
+    {
+      "index": "detect-poison-and-disease",
+      "name": "Detect Poison and Disease",
+      "level": 1
+    },
+    {
+      "index": "detect-thoughts",
+      "name": "Detect Thoughts",
+      "level": 2
+    },
+    {
+      "index": "dimension-door",
+      "name": "Dimension Door",
+      "level": 4
+    },
+    {
+      "index": "disguise-self",
+      "name": "Disguise Self",
+      "level": 1
+    },
+    {
+      "index": "disintegrate",
+      "name": "Disintegrate",
+      "level": 6
+    },
+    {
+      "index": "dispel-evil-and-good",
+      "name": "Dispel Evil and Good",
+      "level": 5
+    },
+    {
+      "index": "dispel-magic",
+      "name": "Dispel Magic",
+      "level": 3
+    },
+    {
+      "index": "dissonant-whispers",
+      "name": "Dissonant Whispers",
+      "level": 1
+    },
+    {
+      "index": "divination",
+      "name": "Divination",
+      "level": 4
+    },
+    {
+      "index": "divine-favor",
+      "name": "Divine Favor",
+      "level": 1
+    },
+    {
+      "index": "divine-smite",
+      "name": "Divine Smite",
+      "level": 1
+    },
+    {
+      "index": "divine-word",
+      "name": "Divine Word",
+      "level": 7
+    },
+    {
+      "index": "dominate-beast",
+      "name": "Dominate Beast",
+      "level": 4
+    },
+    {
+      "index": "dominate-monster",
+      "name": "Dominate Monster",
+      "level": 8
+    },
+    {
+      "index": "dominate-person",
+      "name": "Dominate Person",
+      "level": 5
+    },
+    {
+      "index": "dragons-breath",
+      "name": "Dragon's Breath",
+      "level": 2
+    },
+    {
+      "index": "drawmijs-instant-summons",
+      "name": "Drawmij's Instant Summons",
+      "level": 6
+    },
+    {
+      "index": "dream",
+      "name": "Dream",
+      "level": 5
+    },
+    {
+      "index": "druidcraft",
+      "name": "Druidcraft",
+      "level": 0
+    },
+    {
+      "index": "earthquake",
+      "name": "Earthquake",
+      "level": 8
+    },
+    {
+      "index": "eldritch-blast",
+      "name": "Eldritch Blast",
+      "level": 0
+    },
+    {
+      "index": "elemental-weapon",
+      "name": "Elemental Weapon",
+      "level": 3
+    },
+    {
+      "index": "elementalism",
+      "name": "Elementalism",
+      "level": 0
+    },
+    {
+      "index": "enhance-ability",
+      "name": "Enhance Ability",
+      "level": 2
+    },
+    {
+      "index": "enlarge-reduce",
+      "name": "Enlarge/Reduce",
+      "level": 2
+    },
+    {
+      "index": "ensnaring-strike",
+      "name": "Ensnaring Strike",
+      "level": 1
+    },
+    {
+      "index": "entangle",
+      "name": "Entangle",
+      "level": 1
+    },
+    {
+      "index": "enthrall",
+      "name": "Enthrall",
+      "level": 2
+    },
+    {
+      "index": "etherealness",
+      "name": "Etherealness",
+      "level": 7
+    },
+    {
+      "index": "evards-black-tentacles",
+      "name": "Evard's Black Tentacles",
+      "level": 4
+    },
+    {
+      "index": "expeditious-retreat",
+      "name": "Expeditious Retreat",
+      "level": 1
+    },
+    {
+      "index": "eyebite",
+      "name": "Eyebite",
+      "level": 6
+    },
+    {
+      "index": "fabricate",
+      "name": "Fabricate",
+      "level": 4
+    },
+    {
+      "index": "faerie-fire",
+      "name": "Faerie Fire",
+      "level": 1
+    },
+    {
+      "index": "false-life",
+      "name": "False Life",
+      "level": 1
+    },
+    {
+      "index": "fear",
+      "name": "Fear",
+      "level": 3
+    },
+    {
+      "index": "feather-fall",
+      "name": "Feather Fall",
+      "level": 1
+    },
+    {
+      "index": "feign-death",
+      "name": "Feign Death",
+      "level": 3
+    },
+    {
+      "index": "find-familiar",
+      "name": "Find Familiar",
+      "level": 1
+    },
+    {
+      "index": "find-steed",
+      "name": "Find Steed",
+      "level": 2
+    },
+    {
+      "index": "find-the-path",
+      "name": "Find the Path",
+      "level": 6
+    },
+    {
+      "index": "find-traps",
+      "name": "Find Traps",
+      "level": 2
+    },
+    {
+      "index": "finger-of-death",
+      "name": "Finger of Death",
+      "level": 7
+    },
+    {
+      "index": "fire-bolt",
+      "name": "Fire Bolt",
+      "level": 0
+    },
+    {
+      "index": "fire-shield",
+      "name": "Fire Shield",
+      "level": 4
+    },
+    {
+      "index": "fire-storm",
+      "name": "Fire Storm",
+      "level": 7
+    },
+    {
+      "index": "fireball",
+      "name": "Fireball",
+      "level": 3
+    },
+    {
+      "index": "flame-blade",
+      "name": "Flame Blade",
+      "level": 2
+    },
+    {
+      "index": "flame-strike",
+      "name": "Flame Strike",
+      "level": 5
+    },
+    {
+      "index": "flaming-sphere",
+      "name": "Flaming Sphere",
+      "level": 2
+    },
+    {
+      "index": "flesh-to-stone",
+      "name": "Flesh to Stone",
+      "level": 6
+    },
+    {
+      "index": "fly",
+      "name": "Fly",
+      "level": 3
+    },
+    {
+      "index": "fog-cloud",
+      "name": "Fog Cloud",
+      "level": 1
+    },
+    {
+      "index": "forbiddance",
+      "name": "Forbiddance",
+      "level": 6
+    },
+    {
+      "index": "forcecage",
+      "name": "Forcecage",
+      "level": 7
+    },
+    {
+      "index": "foresight",
+      "name": "Foresight",
+      "level": 9
+    },
+    {
+      "index": "fount-of-moonlight",
+      "name": "Fount of Moonlight",
+      "level": 4
+    },
+    {
+      "index": "freedom-of-movement",
+      "name": "Freedom of Movement",
+      "level": 4
+    },
+    {
+      "index": "friends",
+      "name": "Friends",
+      "level": 0
+    },
+    {
+      "index": "gaseous-form",
+      "name": "Gaseous Form",
+      "level": 3
+    },
+    {
+      "index": "gate",
+      "name": "Gate",
+      "level": 9
+    },
+    {
+      "index": "geas",
+      "name": "Geas",
+      "level": 5
+    },
+    {
+      "index": "gentle-repose",
+      "name": "Gentle Repose",
+      "level": 2
+    },
+    {
+      "index": "giant-insect",
+      "name": "Giant Insect",
+      "level": 4
+    },
+    {
+      "index": "glibness",
+      "name": "Glibness",
+      "level": 8
+    },
+    {
+      "index": "globe-of-invulnerability",
+      "name": "Globe of Invulnerability",
+      "level": 6
+    },
+    {
+      "index": "glyph-of-warding",
+      "name": "Glyph of Warding",
+      "level": 3
+    },
+    {
+      "index": "goodberry",
+      "name": "Goodberry",
+      "level": 1
+    },
+    {
+      "index": "grasping-vine",
+      "name": "Grasping Vine",
+      "level": 4
+    },
+    {
+      "index": "grease",
+      "name": "Grease",
+      "level": 1
+    },
+    {
+      "index": "greater-invisibility",
+      "name": "Greater Invisibility",
+      "level": 4
+    },
+    {
+      "index": "greater-restoration",
+      "name": "Greater Restoration",
+      "level": 5
+    },
+    {
+      "index": "guardian-of-faith",
+      "name": "Guardian of Faith",
+      "level": 4
+    },
+    {
+      "index": "guards-and-wards",
+      "name": "Guards and Wards",
+      "level": 6
+    },
+    {
+      "index": "guidance",
+      "name": "Guidance",
+      "level": 0
+    },
+    {
+      "index": "guiding-bolt",
+      "name": "Guiding Bolt",
+      "level": 1
+    },
+    {
+      "index": "gust-of-wind",
+      "name": "Gust of Wind",
+      "level": 2
+    },
+    {
+      "index": "hail-of-thorns",
+      "name": "Hail of Thorns",
+      "level": 1
+    },
+    {
+      "index": "hallow",
+      "name": "Hallow",
+      "level": 5
+    },
+    {
+      "index": "hallucinatory-terrain",
+      "name": "Hallucinatory Terrain",
+      "level": 4
+    },
+    {
+      "index": "harm",
+      "name": "Harm",
+      "level": 6
+    },
+    {
+      "index": "haste",
+      "name": "Haste",
+      "level": 3
+    },
+    {
+      "index": "heal",
+      "name": "Heal",
+      "level": 6
+    },
+    {
+      "index": "healing-word",
+      "name": "Healing Word",
+      "level": 1
+    },
+    {
+      "index": "heat-metal",
+      "name": "Heat Metal",
+      "level": 2
+    },
+    {
+      "index": "hellish-rebuke",
+      "name": "Hellish Rebuke",
+      "level": 1
+    },
+    {
+      "index": "heroes-feast",
+      "name": "Heroes' Feast",
+      "level": 6
+    },
+    {
+      "index": "heroism",
+      "name": "Heroism",
+      "level": 1
+    },
+    {
+      "index": "hex",
+      "name": "Hex",
+      "level": 1
+    },
+    {
+      "index": "hold-monster",
+      "name": "Hold Monster",
+      "level": 5
+    },
+    {
+      "index": "hold-person",
+      "name": "Hold Person",
+      "level": 2
+    },
+    {
+      "index": "holy-aura",
+      "name": "Holy Aura",
+      "level": 8
+    },
+    {
+      "index": "hunger-of-hadar",
+      "name": "Hunger of Hadar",
+      "level": 3
+    },
+    {
+      "index": "hunters-mark",
+      "name": "Hunter's Mark",
+      "level": 1
+    },
+    {
+      "index": "hypnotic-pattern",
+      "name": "Hypnotic Pattern",
+      "level": 3
+    },
+    {
+      "index": "ice-knife",
+      "name": "Ice Knife",
+      "level": 1
+    },
+    {
+      "index": "ice-storm",
+      "name": "Ice Storm",
+      "level": 4
+    },
+    {
+      "index": "identify",
+      "name": "Identify",
+      "level": 1
+    },
+    {
+      "index": "illusory-script",
+      "name": "Illusory Script",
+      "level": 1
+    },
+    {
+      "index": "imprisonment",
+      "name": "Imprisonment",
+      "level": 9
+    },
+    {
+      "index": "incendiary-cloud",
+      "name": "Incendiary Cloud",
+      "level": 8
+    },
+    {
+      "index": "inflict-wounds",
+      "name": "Inflict Wounds",
+      "level": 1
+    },
+    {
+      "index": "insect-plague",
+      "name": "Insect Plague",
+      "level": 5
+    },
+    {
+      "index": "invisibility",
+      "name": "Invisibility",
+      "level": 2
+    },
+    {
+      "index": "jallarzis-storm-of-radiance",
+      "name": "Jallarzi's Storm of Radiance",
+      "level": 5
+    },
+    {
+      "index": "jump",
+      "name": "Jump",
+      "level": 1
+    },
+    {
+      "index": "knock",
+      "name": "Knock",
+      "level": 2
+    },
+    {
+      "index": "legend-lore",
+      "name": "Legend Lore",
+      "level": 5
+    },
+    {
+      "index": "leomunds-secret-chest",
+      "name": "Leomund's Secret Chest",
+      "level": 4
+    },
+    {
+      "index": "leomunds-tiny-hut",
+      "name": "Leomund's Tiny Hut",
+      "level": 3
+    },
+    {
+      "index": "lesser-restoration",
+      "name": "Lesser Restoration",
+      "level": 2
+    },
+    {
+      "index": "levitate",
+      "name": "Levitate",
+      "level": 2
+    },
+    {
+      "index": "light",
+      "name": "Light",
+      "level": 0
+    },
+    {
+      "index": "lightning-arrow",
+      "name": "Lightning Arrow",
+      "level": 3
+    },
+    {
+      "index": "lightning-bolt",
+      "name": "Lightning Bolt",
+      "level": 3
+    },
+    {
+      "index": "locate-animals-or-plants",
+      "name": "Locate Animals or Plants",
+      "level": 2
+    },
+    {
+      "index": "locate-creature",
+      "name": "Locate Creature",
+      "level": 4
+    },
+    {
+      "index": "locate-object",
+      "name": "Locate Object",
+      "level": 2
+    },
+    {
+      "index": "longstrider",
+      "name": "Longstrider",
+      "level": 1
+    },
+    {
+      "index": "mage-armor",
+      "name": "Mage Armor",
+      "level": 1
+    },
+    {
+      "index": "mage-hand",
+      "name": "Mage Hand",
+      "level": 0
+    },
+    {
+      "index": "magic-circle",
+      "name": "Magic Circle",
+      "level": 3
+    },
+    {
+      "index": "magic-jar",
+      "name": "Magic Jar",
+      "level": 6
+    },
+    {
+      "index": "magic-missile",
+      "name": "Magic Missile",
+      "level": 1
+    },
+    {
+      "index": "magic-mouth",
+      "name": "Magic Mouth",
+      "level": 2
+    },
+    {
+      "index": "magic-weapon",
+      "name": "Magic Weapon",
+      "level": 2
+    },
+    {
+      "index": "major-image",
+      "name": "Major Image",
+      "level": 3
+    },
+    {
+      "index": "mass-cure-wounds",
+      "name": "Mass Cure Wounds",
+      "level": 5
+    },
+    {
+      "index": "mass-heal",
+      "name": "Mass Heal",
+      "level": 9
+    },
+    {
+      "index": "mass-healing-word",
+      "name": "Mass Healing Word",
+      "level": 3
+    },
+    {
+      "index": "mass-suggestion",
+      "name": "Mass Suggestion",
+      "level": 6
+    },
+    {
+      "index": "maze",
+      "name": "Maze",
+      "level": 8
+    },
+    {
+      "index": "meld-into-stone",
+      "name": "Meld into Stone",
+      "level": 3
+    },
+    {
+      "index": "melfs-acid-arrow",
+      "name": "Melf's Acid Arrow",
+      "level": 2
+    },
+    {
+      "index": "mending",
+      "name": "Mending",
+      "level": 0
+    },
+    {
+      "index": "message",
+      "name": "Message",
+      "level": 0
+    },
+    {
+      "index": "meteor-swarm",
+      "name": "Meteor Swarm",
+      "level": 9
+    },
+    {
+      "index": "mind-blank",
+      "name": "Mind Blank",
+      "level": 8
+    },
+    {
+      "index": "mind-sliver",
+      "name": "Mind Sliver",
+      "level": 0
+    },
+    {
+      "index": "mind-spike",
+      "name": "Mind Spike",
+      "level": 2
+    },
+    {
+      "index": "minor-illusion",
+      "name": "Minor Illusion",
+      "level": 0
+    },
+    {
+      "index": "mirage-arcane",
+      "name": "Mirage Arcane",
+      "level": 7
+    },
+    {
+      "index": "mirror-image",
+      "name": "Mirror Image",
+      "level": 2
+    },
+    {
+      "index": "mislead",
+      "name": "Mislead",
+      "level": 5
+    },
+    {
+      "index": "misty-step",
+      "name": "Misty Step",
+      "level": 2
+    },
+    {
+      "index": "modify-memory",
+      "name": "Modify Memory",
+      "level": 5
+    },
+    {
+      "index": "moonbeam",
+      "name": "Moonbeam",
+      "level": 2
+    },
+    {
+      "index": "mordenkainens-faithful-hound",
+      "name": "Mordenkainen's Faithful Hound",
+      "level": 4
+    },
+    {
+      "index": "mordenkainens-magnificent-mansion",
+      "name": "Mordenkainen's Magnificent Mansion",
+      "level": 7
+    },
+    {
+      "index": "mordenkainens-private-sanctum",
+      "name": "Mordenkainen's Private Sanctum",
+      "level": 4
+    },
+    {
+      "index": "mordenkainens-sword",
+      "name": "Mordenkainen's Sword",
+      "level": 7
+    },
+    {
+      "index": "move-earth",
+      "name": "Move Earth",
+      "level": 6
+    },
+    {
+      "index": "nondetection",
+      "name": "Nondetection",
+      "level": 3
+    },
+    {
+      "index": "nystuls-magic-aura",
+      "name": "Nystul's Magic Aura",
+      "level": 2
+    },
+    {
+      "index": "otilukes-freezing-sphere",
+      "name": "Otiluke's Freezing Sphere",
+      "level": 6
+    },
+    {
+      "index": "otilukes-resilient-sphere",
+      "name": "Otiluke's Resilient Sphere",
+      "level": 4
+    },
+    {
+      "index": "ottos-irresistible-dance",
+      "name": "Otto's Irresistible Dance",
+      "level": 6
+    },
+    {
+      "index": "pass-without-trace",
+      "name": "Pass without Trace",
+      "level": 2
+    },
+    {
+      "index": "passwall",
+      "name": "Passwall",
+      "level": 5
+    },
+    {
+      "index": "phantasmal-force",
+      "name": "Phantasmal Force",
+      "level": 2
+    },
+    {
+      "index": "phantasmal-killer",
+      "name": "Phantasmal Killer",
+      "level": 4
+    },
+    {
+      "index": "phantom-steed",
+      "name": "Phantom Steed",
+      "level": 3
+    },
+    {
+      "index": "planar-ally",
+      "name": "Planar Ally",
+      "level": 6
+    },
+    {
+      "index": "planar-binding",
+      "name": "Planar Binding",
+      "level": 5
+    },
+    {
+      "index": "plane-shift",
+      "name": "Plane Shift",
+      "level": 7
+    },
+    {
+      "index": "plant-growth",
+      "name": "Plant Growth",
+      "level": 3
+    },
+    {
+      "index": "poison-spray",
+      "name": "Poison Spray",
+      "level": 0
+    },
+    {
+      "index": "polymorph",
+      "name": "Polymorph",
+      "level": 4
+    },
+    {
+      "index": "power-word-fortify",
+      "name": "Power Word Fortify",
+      "level": 7
+    },
+    {
+      "index": "power-word-heal",
+      "name": "Power Word Heal",
+      "level": 9
+    },
+    {
+      "index": "power-word-kill",
+      "name": "Power Word Kill",
+      "level": 9
+    },
+    {
+      "index": "power-word-stun",
+      "name": "Power Word Stun",
+      "level": 8
+    },
+    {
+      "index": "prayer-of-healing",
+      "name": "Prayer of Healing",
+      "level": 2
+    },
+    {
+      "index": "prestidigitation",
+      "name": "Prestidigitation",
+      "level": 0
+    },
+    {
+      "index": "prismatic-spray",
+      "name": "Prismatic Spray",
+      "level": 7
+    },
+    {
+      "index": "prismatic-wall",
+      "name": "Prismatic Wall",
+      "level": 9
+    },
+    {
+      "index": "produce-flame",
+      "name": "Produce Flame",
+      "level": 0
+    },
+    {
+      "index": "programmed-illusion",
+      "name": "Programmed Illusion",
+      "level": 6
+    },
+    {
+      "index": "project-image",
+      "name": "Project Image",
+      "level": 7
+    },
+    {
+      "index": "protection-from-energy",
+      "name": "Protection from Energy",
+      "level": 3
+    },
+    {
+      "index": "protection-from-evil-and-good",
+      "name": "Protection from Evil and Good",
+      "level": 1
+    },
+    {
+      "index": "protection-from-poison",
+      "name": "Protection from Poison",
+      "level": 2
+    },
+    {
+      "index": "purify-food-and-drink",
+      "name": "Purify Food and Drink",
+      "level": 1
+    },
+    {
+      "index": "raise-dead",
+      "name": "Raise Dead",
+      "level": 5
+    },
+    {
+      "index": "rarys-telepathic-bond",
+      "name": "Rary's Telepathic Bond",
+      "level": 5
+    },
+    {
+      "index": "ray-of-enfeeblement",
+      "name": "Ray of Enfeeblement",
+      "level": 2
+    },
+    {
+      "index": "ray-of-frost",
+      "name": "Ray of Frost",
+      "level": 0
+    },
+    {
+      "index": "ray-of-sickness",
+      "name": "Ray of Sickness",
+      "level": 1
+    },
+    {
+      "index": "regenerate",
+      "name": "Regenerate",
+      "level": 7
+    },
+    {
+      "index": "reincarnate",
+      "name": "Reincarnate",
+      "level": 5
+    },
+    {
+      "index": "remove-curse",
+      "name": "Remove Curse",
+      "level": 3
+    },
+    {
+      "index": "resistance",
+      "name": "Resistance",
+      "level": 0
+    },
+    {
+      "index": "resurrection",
+      "name": "Resurrection",
+      "level": 7
+    },
+    {
+      "index": "reverse-gravity",
+      "name": "Reverse Gravity",
+      "level": 7
+    },
+    {
+      "index": "revivify",
+      "name": "Revivify",
+      "level": 3
+    },
+    {
+      "index": "rope-trick",
+      "name": "Rope Trick",
+      "level": 2
+    },
+    {
+      "index": "sacred-flame",
+      "name": "Sacred Flame",
+      "level": 0
+    },
+    {
+      "index": "sanctuary",
+      "name": "Sanctuary",
+      "level": 1
+    },
+    {
+      "index": "scorching-ray",
+      "name": "Scorching Ray",
+      "level": 2
+    },
+    {
+      "index": "scrying",
+      "name": "Scrying",
+      "level": 5
+    },
+    {
+      "index": "searing-smite",
+      "name": "Searing Smite",
+      "level": 1
+    },
+    {
+      "index": "see-invisibility",
+      "name": "See Invisibility",
+      "level": 2
+    },
+    {
+      "index": "seeming",
+      "name": "Seeming",
+      "level": 5
+    },
+    {
+      "index": "sending",
+      "name": "Sending",
+      "level": 3
+    },
+    {
+      "index": "sequester",
+      "name": "Sequester",
+      "level": 7
+    },
+    {
+      "index": "shapechange",
+      "name": "Shapechange",
+      "level": 9
+    },
+    {
+      "index": "shatter",
+      "name": "Shatter",
+      "level": 2
+    },
+    {
+      "index": "shield",
+      "name": "Shield",
+      "level": 1
+    },
+    {
+      "index": "shield-of-faith",
+      "name": "Shield of Faith",
+      "level": 1
+    },
+    {
+      "index": "shillelagh",
+      "name": "Shillelagh",
+      "level": 0
+    },
+    {
+      "index": "shining-smite",
+      "name": "Shining Smite",
+      "level": 2
+    },
+    {
+      "index": "shocking-grasp",
+      "name": "Shocking Grasp",
+      "level": 0
+    },
+    {
+      "index": "silence",
+      "name": "Silence",
+      "level": 2
+    },
+    {
+      "index": "silent-image",
+      "name": "Silent Image",
+      "level": 1
+    },
+    {
+      "index": "simulacrum",
+      "name": "Simulacrum",
+      "level": 7
+    },
+    {
+      "index": "sleep",
+      "name": "Sleep",
+      "level": 1
+    },
+    {
+      "index": "sleet-storm",
+      "name": "Sleet Storm",
+      "level": 3
+    },
+    {
+      "index": "slow",
+      "name": "Slow",
+      "level": 3
+    },
+    {
+      "index": "sorcerous-burst",
+      "name": "Sorcerous Burst",
+      "level": 0
+    },
+    {
+      "index": "spare-the-dying",
+      "name": "Spare the Dying",
+      "level": 0
+    },
+    {
+      "index": "speak-with-animals",
+      "name": "Speak with Animals",
+      "level": 1
+    },
+    {
+      "index": "speak-with-dead",
+      "name": "Speak with Dead",
+      "level": 3
+    },
+    {
+      "index": "speak-with-plants",
+      "name": "Speak with Plants",
+      "level": 3
+    },
+    {
+      "index": "spider-climb",
+      "name": "Spider Climb",
+      "level": 2
+    },
+    {
+      "index": "spike-growth",
+      "name": "Spike Growth",
+      "level": 2
+    },
+    {
+      "index": "spirit-guardians",
+      "name": "Spirit Guardians",
+      "level": 3
+    },
+    {
+      "index": "spiritual-weapon",
+      "name": "Spiritual Weapon",
+      "level": 2
+    },
+    {
+      "index": "staggering-smite",
+      "name": "Staggering Smite",
+      "level": 4
+    },
+    {
+      "index": "starry-wisp",
+      "name": "Starry Wisp",
+      "level": 0
+    },
+    {
+      "index": "steel-wind-strike",
+      "name": "Steel Wind Strike",
+      "level": 5
+    },
+    {
+      "index": "stinking-cloud",
+      "name": "Stinking Cloud",
+      "level": 3
+    },
+    {
+      "index": "stone-shape",
+      "name": "Stone Shape",
+      "level": 4
+    },
+    {
+      "index": "stoneskin",
+      "name": "Stoneskin",
+      "level": 4
+    },
+    {
+      "index": "storm-of-vengeance",
+      "name": "Storm of Vengeance",
+      "level": 9
+    },
+    {
+      "index": "suggestion",
+      "name": "Suggestion",
+      "level": 2
+    },
+    {
+      "index": "summon-aberration",
+      "name": "Summon Aberration",
+      "level": 4
+    },
+    {
+      "index": "summon-beast",
+      "name": "Summon Beast",
+      "level": 2
+    },
+    {
+      "index": "summon-celestial",
+      "name": "Summon Celestial",
+      "level": 5
+    },
+    {
+      "index": "summon-construct",
+      "name": "Summon Construct",
+      "level": 4
+    },
+    {
+      "index": "summon-dragon",
+      "name": "Summon Dragon",
+      "level": 5
+    },
+    {
+      "index": "summon-elemental",
+      "name": "Summon Elemental",
+      "level": 4
+    },
+    {
+      "index": "summon-fey",
+      "name": "Summon Fey",
+      "level": 3
+    },
+    {
+      "index": "summon-fiend",
+      "name": "Summon Fiend",
+      "level": 6
+    },
+    {
+      "index": "summon-undead",
+      "name": "Summon Undead",
+      "level": 3
+    },
+    {
+      "index": "sunbeam",
+      "name": "Sunbeam",
+      "level": 6
+    },
+    {
+      "index": "sunburst",
+      "name": "Sunburst",
+      "level": 8
+    },
+    {
+      "index": "swift-quiver",
+      "name": "Swift Quiver",
+      "level": 5
+    },
+    {
+      "index": "symbol",
+      "name": "Symbol",
+      "level": 7
+    },
+    {
+      "index": "synaptic-static",
+      "name": "Synaptic Static",
+      "level": 5
+    },
+    {
+      "index": "tashas-bubbling-cauldron",
+      "name": "Tasha's Bubbling Cauldron",
+      "level": 6
+    },
+    {
+      "index": "tashas-hideous-laughter",
+      "name": "Tasha's Hideous Laughter",
+      "level": 1
+    },
+    {
+      "index": "telekinesis",
+      "name": "Telekinesis",
+      "level": 5
+    },
+    {
+      "index": "telepathy",
+      "name": "Telepathy",
+      "level": 8
+    },
+    {
+      "index": "teleport",
+      "name": "Teleport",
+      "level": 7
+    },
+    {
+      "index": "teleportation-circle",
+      "name": "Teleportation Circle",
+      "level": 5
+    },
+    {
+      "index": "tensers-floating-disk",
+      "name": "Tenser's Floating Disk",
+      "level": 1
+    },
+    {
+      "index": "thaumaturgy",
+      "name": "Thaumaturgy",
+      "level": 0
+    },
+    {
+      "index": "thorn-whip",
+      "name": "Thorn Whip",
+      "level": 0
+    },
+    {
+      "index": "thunderclap",
+      "name": "Thunderclap",
+      "level": 0
+    },
+    {
+      "index": "thunderous-smite",
+      "name": "Thunderous Smite",
+      "level": 1
+    },
+    {
+      "index": "thunderwave",
+      "name": "Thunderwave",
+      "level": 1
+    },
+    {
+      "index": "time-stop",
+      "name": "Time Stop",
+      "level": 9
+    },
+    {
+      "index": "toll-the-dead",
+      "name": "Toll the Dead",
+      "level": 0
+    },
+    {
+      "index": "tongues",
+      "name": "Tongues",
+      "level": 3
+    },
+    {
+      "index": "transport-via-plants",
+      "name": "Transport via Plants",
+      "level": 6
+    },
+    {
+      "index": "tree-stride",
+      "name": "Tree Stride",
+      "level": 5
+    },
+    {
+      "index": "true-polymorph",
+      "name": "True Polymorph",
+      "level": 9
+    },
+    {
+      "index": "true-resurrection",
+      "name": "True Resurrection",
+      "level": 9
+    },
+    {
+      "index": "true-seeing",
+      "name": "True Seeing",
+      "level": 6
+    },
+    {
+      "index": "true-strike",
+      "name": "True Strike",
+      "level": 0
+    },
+    {
+      "index": "tsunami",
+      "name": "Tsunami",
+      "level": 8
+    },
+    {
+      "index": "unseen-servant",
+      "name": "Unseen Servant",
+      "level": 1
+    },
+    {
+      "index": "vampiric-touch",
+      "name": "Vampiric Touch",
+      "level": 3
+    },
+    {
+      "index": "vicious-mockery",
+      "name": "Vicious Mockery",
+      "level": 0
+    },
+    {
+      "index": "vitriolic-sphere",
+      "name": "Vitriolic Sphere",
+      "level": 4
+    },
+    {
+      "index": "wall-of-fire",
+      "name": "Wall of Fire",
+      "level": 4
+    },
+    {
+      "index": "wall-of-force",
+      "name": "Wall of Force",
+      "level": 5
+    },
+    {
+      "index": "wall-of-ice",
+      "name": "Wall of Ice",
+      "level": 6
+    },
+    {
+      "index": "wall-of-stone",
+      "name": "Wall of Stone",
+      "level": 5
+    },
+    {
+      "index": "wall-of-thorns",
+      "name": "Wall of Thorns",
+      "level": 6
+    },
+    {
+      "index": "warding-bond",
+      "name": "Warding Bond",
+      "level": 2
+    },
+    {
+      "index": "water-breathing",
+      "name": "Water Breathing",
+      "level": 3
+    },
+    {
+      "index": "water-walk",
+      "name": "Water Walk",
+      "level": 3
+    },
+    {
+      "index": "web",
+      "name": "Web",
+      "level": 2
+    },
+    {
+      "index": "weird",
+      "name": "Weird",
+      "level": 9
+    },
+    {
+      "index": "wind-walk",
+      "name": "Wind Walk",
+      "level": 6
+    },
+    {
+      "index": "wind-wall",
+      "name": "Wind Wall",
+      "level": 3
+    },
+    {
+      "index": "wish",
+      "name": "Wish",
+      "level": 9
+    },
+    {
+      "index": "witch-bolt",
+      "name": "Witch Bolt",
+      "level": 1
+    },
+    {
+      "index": "word-of-radiance",
+      "name": "Word of Radiance",
+      "level": 0
+    },
+    {
+      "index": "word-of-recall",
+      "name": "Word of Recall",
+      "level": 6
+    },
+    {
+      "index": "wrathful-smite",
+      "name": "Wrathful Smite",
+      "level": 1
+    },
+    {
+      "index": "yolandes-regal-presence",
+      "name": "Yolande's Regal Presence",
+      "level": 5
+    },
+    {
+      "index": "zone-of-truth",
+      "name": "Zone of Truth",
+      "level": 2
+    }
+  ]
+}

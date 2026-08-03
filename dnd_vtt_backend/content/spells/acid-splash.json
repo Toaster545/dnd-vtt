@@ -1,0 +1,92 @@
+{
+  "index": "acid-splash",
+  "name": "Acid Splash",
+  "level": 0,
+  "school": "Evocation",
+  "casting_time": "1 action",
+  "range": "60 feet",
+  "components": [
+    "V",
+    "S"
+  ],
+  "duration": "Instantaneous",
+  "ritual": false,
+  "concentration": false,
+  "classes": [
+    "Sorcerer",
+    "Wizard"
+  ],
+  "subclasses": [
+    {
+      "class": "Bard",
+      "subclass": "College of Lore"
+    },
+    {
+      "class": "Druid",
+      "subclass": "Circle of the Land",
+      "variant": "Tropical Land"
+    },
+    {
+      "class": "Fighter",
+      "subclass": "Eldritch Knight"
+    },
+    {
+      "class": "Rogue",
+      "subclass": "Arcane Trickster"
+    },
+    {
+      "class": "Wizard",
+      "subclass": "Evoker"
+    }
+  ],
+  "species": [
+    "Elf"
+  ],
+  "backgrounds": [],
+  "feats": [
+    "Magic Initiate"
+  ],
+  "other_options": [
+    "Pact of the Tome"
+  ],
+  "mechanics": {
+    "saving_throws": [
+      "dexterity"
+    ],
+    "ability_checks": [],
+    "damage_types": [
+      "acid"
+    ],
+    "conditions": [],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [
+      "MT"
+    ],
+    "misc_tags": [
+      "SCL"
+    ],
+    "scaling": {
+      "label": "Acid damage",
+      "values": {
+        "1": "1d6",
+        "5": "2d6",
+        "11": "3d6",
+        "17": "4d6"
+      }
+    }
+  },
+  "description": "You create an acidic bubble at a point within range, where it explodes in a 5-foot-radius Sphere. Each creature in that Sphere must succeed on a Dexterity saving throw or take 1d6 Acid damage.",
+  "cantrip_upgrade": "The damage increases by 1d6 when you reach levels 5 (2d6), 11 (3d6), and 17 (4d6).",
+  "source": {
+    "book": "Player's Handbook",
+    "edition": 2024,
+    "code": "XPHB",
+    "page": 239,
+    "srd_5_2_1": true,
+    "rules_text": "SRD 5.2.1"
+  }
+}

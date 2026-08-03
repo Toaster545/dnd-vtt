@@ -1,0 +1,70 @@
+{
+  "index": "mage-hand",
+  "name": "Mage Hand",
+  "level": 0,
+  "school": "Conjuration",
+  "casting_time": "1 action",
+  "range": "30 feet",
+  "components": [
+    "V",
+    "S"
+  ],
+  "duration": "1 minute",
+  "ritual": false,
+  "concentration": false,
+  "classes": [
+    "Bard",
+    "Sorcerer",
+    "Warlock",
+    "Wizard"
+  ],
+  "subclasses": [
+    {
+      "class": "Bard",
+      "subclass": "College of Lore"
+    },
+    {
+      "class": "Fighter",
+      "subclass": "Eldritch Knight"
+    },
+    {
+      "class": "Rogue",
+      "subclass": "Arcane Trickster"
+    }
+  ],
+  "species": [
+    "Elf"
+  ],
+  "backgrounds": [],
+  "feats": [
+    "Magic Initiate",
+    "Telekinetic"
+  ],
+  "other_options": [
+    "Pact of the Tome"
+  ],
+  "mechanics": {
+    "saving_throws": [],
+    "ability_checks": [],
+    "damage_types": [],
+    "conditions": [],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [],
+    "misc_tags": [
+      "OBJ"
+    ]
+  },
+  "description": "A spectral, floating hand appears at a point you choose within range. The hand lasts for the duration. The hand vanishes if it is ever more than 30 feet away from you or if you cast this spell again. When you cast the spell, you can use the hand to manipulate an object, open an unlocked door or container, stow or retrieve an item from an open container, or pour the contents out of a vial. \n\nAs a Magic action on your later turns, you can control the hand thus again. As part of that action, you can move the hand up to 30 feet.\n\nThe hand can't attack, activate magic items, or carry more than 10 pounds.",
+  "source": {
+    "book": "Player's Handbook",
+    "edition": 2024,
+    "code": "XPHB",
+    "page": 293,
+    "srd_5_2_1": true,
+    "rules_text": "SRD 5.2.1"
+  }
+}

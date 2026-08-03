@@ -1,0 +1,45 @@
+{
+  "index": "glibness",
+  "name": "Glibness",
+  "level": 8,
+  "school": "Enchantment",
+  "casting_time": "1 action",
+  "range": "Self",
+  "components": [
+    "V"
+  ],
+  "duration": "1 hour",
+  "ritual": false,
+  "concentration": false,
+  "classes": [
+    "Bard",
+    "Warlock"
+  ],
+  "subclasses": [],
+  "species": [],
+  "backgrounds": [],
+  "feats": [],
+  "other_options": [],
+  "mechanics": {
+    "saving_throws": [],
+    "ability_checks": [],
+    "damage_types": [],
+    "conditions": [],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [],
+    "misc_tags": []
+  },
+  "description": "Until the spell ends, when you make a Charisma check, you can replace the number you roll with a 15. Additionally, no matter what you say, magic that would determine if you are telling the truth indicates that you are being truthful.",
+  "source": {
+    "book": "Player's Handbook",
+    "edition": 2024,
+    "code": "XPHB",
+    "page": 279,
+    "srd_5_2_1": true,
+    "rules_text": "SRD 5.2.1"
+  }
+}

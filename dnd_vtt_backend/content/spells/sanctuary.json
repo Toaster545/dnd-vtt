@@ -1,0 +1,58 @@
+{
+  "index": "sanctuary",
+  "name": "Sanctuary",
+  "level": 1,
+  "school": "Abjuration",
+  "casting_time": "1 bonus action",
+  "range": "30 feet",
+  "components": [
+    "V",
+    "S",
+    "M"
+  ],
+  "material": "a shard of glass from a mirror",
+  "duration": "1 minute",
+  "ritual": false,
+  "concentration": false,
+  "classes": [
+    "Cleric"
+  ],
+  "subclasses": [
+    {
+      "class": "Bard",
+      "subclass": "College of Lore"
+    }
+  ],
+  "species": [],
+  "backgrounds": [],
+  "feats": [
+    "Magic Initiate"
+  ],
+  "other_options": [],
+  "mechanics": {
+    "saving_throws": [
+      "wisdom"
+    ],
+    "ability_checks": [],
+    "damage_types": [],
+    "conditions": [],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [
+      "ST"
+    ],
+    "misc_tags": []
+  },
+  "description": "You ward a creature within range. Until the spell ends, any creature who targets the warded creature with an attack roll or a damaging spell must succeed on a Wisdom saving throw or either choose a new target or lose the attack or spell. This spell doesn't protect the warded creature from areas of effect. \n\nThe spell ends if the warded creature makes an attack roll, casts a spell, or deals damage.",
+  "source": {
+    "book": "Player's Handbook",
+    "edition": 2024,
+    "code": "XPHB",
+    "page": 313,
+    "srd_5_2_1": true,
+    "rules_text": "SRD 5.2.1"
+  }
+}

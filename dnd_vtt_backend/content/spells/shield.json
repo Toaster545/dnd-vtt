@@ -1,0 +1,67 @@
+{
+  "index": "shield",
+  "name": "Shield",
+  "level": 1,
+  "school": "Abjuration",
+  "casting_time": "1 reaction, which you take when you are hit by an attack roll or targeted by the Magic Missile spell",
+  "range": "Self",
+  "components": [
+    "V",
+    "S"
+  ],
+  "duration": "1 round",
+  "ritual": false,
+  "concentration": false,
+  "classes": [
+    "Sorcerer",
+    "Wizard"
+  ],
+  "subclasses": [
+    {
+      "class": "Bard",
+      "subclass": "College of Lore"
+    },
+    {
+      "class": "Fighter",
+      "subclass": "Eldritch Knight"
+    },
+    {
+      "class": "Rogue",
+      "subclass": "Arcane Trickster"
+    },
+    {
+      "class": "Wizard",
+      "subclass": "Abjurer"
+    }
+  ],
+  "species": [],
+  "backgrounds": [],
+  "feats": [
+    "Magic Initiate"
+  ],
+  "other_options": [],
+  "mechanics": {
+    "saving_throws": [],
+    "ability_checks": [],
+    "damage_types": [],
+    "conditions": [],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [],
+    "misc_tags": [
+      "MAC"
+    ]
+  },
+  "description": "An imperceptible barrier of magical force protects you. Until the start of your next turn, you have a +5 bonus to AC, including against the triggering attack, and you take no damage from Magic Missile.",
+  "source": {
+    "book": "Player's Handbook",
+    "edition": 2024,
+    "code": "XPHB",
+    "page": 316,
+    "srd_5_2_1": true,
+    "rules_text": "SRD 5.2.1"
+  }
+}

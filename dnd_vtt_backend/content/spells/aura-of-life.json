@@ -1,0 +1,56 @@
+{
+  "index": "aura-of-life",
+  "name": "Aura of Life",
+  "level": 4,
+  "school": "Abjuration",
+  "casting_time": "1 action",
+  "range": "30 feet (Emanation)",
+  "components": [
+    "V"
+  ],
+  "duration": "Concentration, up to 10 minutes",
+  "ritual": false,
+  "concentration": true,
+  "classes": [
+    "Cleric",
+    "Paladin"
+  ],
+  "subclasses": [
+    {
+      "class": "Cleric",
+      "subclass": "Life Domain"
+    }
+  ],
+  "species": [],
+  "backgrounds": [],
+  "feats": [],
+  "other_options": [],
+  "mechanics": {
+    "saving_throws": [],
+    "ability_checks": [],
+    "damage_types": [],
+    "conditions": [],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [
+      "necrotic"
+    ],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [
+      "S"
+    ],
+    "misc_tags": [
+      "HL"
+    ]
+  },
+  "description": "An aura radiates from you in a 30-foot Emanation for the duration. While in the aura, you and your allies have Resistance to Necrotic damage, and your Hit Point maximums can't be reduced. If an ally with 0 Hit Points starts its turn in the aura, that ally regains 1 Hit Point.",
+  "source": {
+    "book": "Player's Handbook",
+    "edition": 2024,
+    "code": "XPHB",
+    "page": 244,
+    "srd_5_2_1": true,
+    "rules_text": "SRD 5.2.1"
+  }
+}

@@ -1,0 +1,57 @@
+{
+  "index": "water-walk",
+  "name": "Water Walk",
+  "level": 3,
+  "school": "Transmutation",
+  "casting_time": "1 action",
+  "range": "30 feet",
+  "components": [
+    "V",
+    "S",
+    "M"
+  ],
+  "material": "a piece of cork",
+  "duration": "1 hour",
+  "ritual": true,
+  "concentration": false,
+  "classes": [
+    "Cleric",
+    "Druid",
+    "Ranger",
+    "Sorcerer"
+  ],
+  "subclasses": [
+    {
+      "class": "Bard",
+      "subclass": "College of Lore"
+    }
+  ],
+  "species": [],
+  "backgrounds": [],
+  "feats": [],
+  "other_options": [],
+  "mechanics": {
+    "saving_throws": [],
+    "ability_checks": [],
+    "damage_types": [],
+    "conditions": [],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [
+      "MT"
+    ],
+    "misc_tags": []
+  },
+  "description": "This spell grants the ability to move across any liquid surface—such as water, acid, mud, snow, quicksand, or lava—as if it were harmless solid ground (creatures crossing molten lava can still take damage from the heat). Up to ten willing creatures of your choice within range gain this ability for the duration. \n\nAn affected target must take a Bonus Action to pass from the liquid's surface into the liquid itself and vice versa, but if the target falls into the liquid, the target passes through the surface into the liquid below.",
+  "source": {
+    "book": "Player's Handbook",
+    "edition": 2024,
+    "code": "XPHB",
+    "page": 340,
+    "srd_5_2_1": true,
+    "rules_text": "SRD 5.2.1"
+  }
+}

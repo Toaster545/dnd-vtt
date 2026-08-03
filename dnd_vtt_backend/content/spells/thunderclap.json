@@ -1,0 +1,89 @@
+{
+  "index": "thunderclap",
+  "name": "Thunderclap",
+  "level": 0,
+  "school": "Evocation",
+  "casting_time": "1 action",
+  "range": "5 feet (Emanation)",
+  "components": [
+    "S"
+  ],
+  "duration": "Instantaneous",
+  "ritual": false,
+  "concentration": false,
+  "classes": [
+    "Bard",
+    "Druid",
+    "Sorcerer",
+    "Warlock",
+    "Wizard"
+  ],
+  "subclasses": [
+    {
+      "class": "Bard",
+      "subclass": "College of Lore"
+    },
+    {
+      "class": "Fighter",
+      "subclass": "Eldritch Knight"
+    },
+    {
+      "class": "Rogue",
+      "subclass": "Arcane Trickster"
+    },
+    {
+      "class": "Wizard",
+      "subclass": "Evoker"
+    }
+  ],
+  "species": [
+    "Elf"
+  ],
+  "backgrounds": [],
+  "feats": [
+    "Druidic Warrior",
+    "Magic Initiate"
+  ],
+  "other_options": [
+    "Pact of the Tome"
+  ],
+  "mechanics": {
+    "saving_throws": [
+      "constitution"
+    ],
+    "ability_checks": [],
+    "damage_types": [
+      "thunder"
+    ],
+    "conditions": [],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [
+      "S"
+    ],
+    "misc_tags": [
+      "SCL"
+    ],
+    "scaling": {
+      "label": "Thunder damage",
+      "values": {
+        "1": "1d6",
+        "5": "2d6",
+        "11": "3d6",
+        "17": "4d6"
+      }
+    }
+  },
+  "description": "Rules text is not reproduced here. See Player's Handbook (2024), page 333.",
+  "source": {
+    "book": "Player's Handbook",
+    "edition": 2024,
+    "code": "XPHB",
+    "page": 333,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

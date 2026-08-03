@@ -1,0 +1,69 @@
+{
+  "index": "tongues",
+  "name": "Tongues",
+  "level": 3,
+  "school": "Divination",
+  "casting_time": "1 action",
+  "range": "Touch",
+  "components": [
+    "V",
+    "M"
+  ],
+  "material": "a miniature ziggurat",
+  "duration": "1 hour",
+  "ritual": false,
+  "concentration": false,
+  "classes": [
+    "Bard",
+    "Cleric",
+    "Sorcerer",
+    "Warlock",
+    "Wizard"
+  ],
+  "subclasses": [
+    {
+      "class": "Bard",
+      "subclass": "College of Lore"
+    },
+    {
+      "class": "Fighter",
+      "subclass": "Eldritch Knight"
+    },
+    {
+      "class": "Rogue",
+      "subclass": "Arcane Trickster"
+    },
+    {
+      "class": "Wizard",
+      "subclass": "Diviner"
+    }
+  ],
+  "species": [],
+  "backgrounds": [],
+  "feats": [],
+  "other_options": [],
+  "mechanics": {
+    "saving_throws": [],
+    "ability_checks": [],
+    "damage_types": [],
+    "conditions": [],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [
+      "ST"
+    ],
+    "misc_tags": []
+  },
+  "description": "This spell grants the creature you touch the ability to understand any spoken or signed language that it hears or sees. Moreover, when the target communicates by speaking or signing, any creature that knows at least one language can understand it if that creature can hear the speech or see the signing.",
+  "source": {
+    "book": "Player's Handbook",
+    "edition": 2024,
+    "code": "XPHB",
+    "page": 334,
+    "srd_5_2_1": true,
+    "rules_text": "SRD 5.2.1"
+  }
+}

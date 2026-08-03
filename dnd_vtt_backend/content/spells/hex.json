@@ -1,0 +1,63 @@
+{
+  "index": "hex",
+  "name": "Hex",
+  "level": 1,
+  "school": "Enchantment",
+  "casting_time": "1 bonus action",
+  "range": "90 feet",
+  "components": [
+    "V",
+    "S",
+    "M"
+  ],
+  "material": "the petrified eye of a newt",
+  "duration": "Concentration, up to 1 hour",
+  "ritual": false,
+  "concentration": true,
+  "classes": [
+    "Warlock"
+  ],
+  "subclasses": [
+    {
+      "class": "Warlock",
+      "subclass": "Great Old One Patron"
+    }
+  ],
+  "species": [],
+  "backgrounds": [],
+  "feats": [
+    "Fey-Touched"
+  ],
+  "other_options": [],
+  "mechanics": {
+    "saving_throws": [],
+    "ability_checks": [],
+    "damage_types": [
+      "necrotic"
+    ],
+    "conditions": [],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [
+      "ST"
+    ],
+    "misc_tags": [
+      "AAD",
+      "SGT",
+      "UBA"
+    ]
+  },
+  "description": "You place a curse on a creature that you can see within range. Until the spell ends, you deal an extra 1d6 Necrotic damage to the target whenever you hit it with an attack roll. Also, choose one ability when you cast the spell. The target has Disadvantage on ability checks made with the chosen ability. \n\nIf the target drops to 0 Hit Points before this spell ends, you can use a Bonus Action on a later turn to curse a new creature.",
+  "higher_levels": "Your Concentration can last longer with a spell slot of level 2 (up to 4 hours), 3-4 (up to 8 hours), or 5+ (up to 24 hours).",
+  "source": {
+    "book": "Player's Handbook",
+    "edition": 2024,
+    "code": "XPHB",
+    "page": 285,
+    "srd_5_2_1": true,
+    "rules_text": "SRD 5.2.1"
+  }
+}

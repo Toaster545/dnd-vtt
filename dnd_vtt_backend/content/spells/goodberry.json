@@ -1,0 +1,57 @@
+{
+  "index": "goodberry",
+  "name": "Goodberry",
+  "level": 1,
+  "school": "Conjuration",
+  "casting_time": "1 action",
+  "range": "Touch",
+  "components": [
+    "V",
+    "S",
+    "M"
+  ],
+  "material": "a sprig of mistletoe",
+  "duration": "24 hours",
+  "ritual": false,
+  "concentration": false,
+  "classes": [
+    "Druid",
+    "Ranger"
+  ],
+  "subclasses": [
+    {
+      "class": "Bard",
+      "subclass": "College of Lore"
+    }
+  ],
+  "species": [],
+  "backgrounds": [],
+  "feats": [
+    "Magic Initiate"
+  ],
+  "other_options": [],
+  "mechanics": {
+    "saving_throws": [],
+    "ability_checks": [],
+    "damage_types": [],
+    "conditions": [],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [],
+    "misc_tags": [
+      "HL"
+    ]
+  },
+  "description": "Ten berries appear in your hand and are infused with magic for the duration. A creature can take a Bonus Action to eat one berry. Eating a berry restores 1 Hit Point, and the berry provides enough nourishment to sustain a creature for one day. \n\nUneaten berries disappear when the spell ends.",
+  "source": {
+    "book": "Player's Handbook",
+    "edition": 2024,
+    "code": "XPHB",
+    "page": 280,
+    "srd_5_2_1": true,
+    "rules_text": "SRD 5.2.1"
+  }
+}

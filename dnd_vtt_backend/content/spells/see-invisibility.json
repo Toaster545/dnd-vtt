@@ -1,0 +1,70 @@
+{
+  "index": "see-invisibility",
+  "name": "See Invisibility",
+  "level": 2,
+  "school": "Divination",
+  "casting_time": "1 action",
+  "range": "Self",
+  "components": [
+    "V",
+    "S",
+    "M"
+  ],
+  "material": "a pinch of talc",
+  "duration": "1 hour",
+  "ritual": false,
+  "concentration": false,
+  "classes": [
+    "Bard",
+    "Sorcerer",
+    "Wizard"
+  ],
+  "subclasses": [
+    {
+      "class": "Bard",
+      "subclass": "College of Lore"
+    },
+    {
+      "class": "Cleric",
+      "subclass": "Light Domain"
+    },
+    {
+      "class": "Fighter",
+      "subclass": "Eldritch Knight"
+    },
+    {
+      "class": "Rogue",
+      "subclass": "Arcane Trickster"
+    },
+    {
+      "class": "Wizard",
+      "subclass": "Diviner"
+    }
+  ],
+  "species": [],
+  "backgrounds": [],
+  "feats": [],
+  "other_options": [],
+  "mechanics": {
+    "saving_throws": [],
+    "ability_checks": [],
+    "damage_types": [],
+    "conditions": [],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [],
+    "misc_tags": []
+  },
+  "description": "For the duration, you see creatures and objects that have the Invisible condition as if they were visible, and you can see into the Ethereal Plane. Creatures and objects there appear ghostly.",
+  "source": {
+    "book": "Player's Handbook",
+    "edition": 2024,
+    "code": "XPHB",
+    "page": 314,
+    "srd_5_2_1": true,
+    "rules_text": "SRD 5.2.1"
+  }
+}

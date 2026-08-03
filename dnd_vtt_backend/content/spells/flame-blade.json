@@ -1,0 +1,64 @@
+{
+  "index": "flame-blade",
+  "name": "Flame Blade",
+  "level": 2,
+  "school": "Evocation",
+  "casting_time": "1 bonus action",
+  "range": "Self",
+  "components": [
+    "V",
+    "S",
+    "M"
+  ],
+  "material": "a sumac leaf",
+  "duration": "Concentration, up to 10 minutes",
+  "ritual": false,
+  "concentration": true,
+  "classes": [
+    "Druid",
+    "Sorcerer"
+  ],
+  "subclasses": [
+    {
+      "class": "Bard",
+      "subclass": "College of Lore"
+    }
+  ],
+  "species": [],
+  "backgrounds": [],
+  "feats": [],
+  "other_options": [],
+  "mechanics": {
+    "spell_attacks": [
+      "melee"
+    ],
+    "saving_throws": [],
+    "ability_checks": [],
+    "damage_types": [
+      "fire"
+    ],
+    "conditions": [],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [
+      "ST"
+    ],
+    "misc_tags": [
+      "LGT",
+      "UBA"
+    ]
+  },
+  "description": "You evoke a fiery blade in your free hand. The blade is similar in size and shape to a scimitar, and it lasts for the duration. If you let go of the blade, it disappears, but you can evoke it again as a Bonus Action. \n\nAs a Magic action, you can make a melee spell attack with the fiery blade. On a hit, the target takes Fire damage equal to 3d6 plus your spellcasting ability modifier. \n\nThe flaming blade sheds Bright Light in a 10-foot radius and Dim Light for an additional 10 feet.",
+  "higher_levels": "The damage increases by 1d6 for each spell slot level above 2.",
+  "source": {
+    "book": "Player's Handbook",
+    "edition": 2024,
+    "code": "XPHB",
+    "page": 275,
+    "srd_5_2_1": true,
+    "rules_text": "SRD 5.2.1"
+  }
+}

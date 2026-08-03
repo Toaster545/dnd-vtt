@@ -1,0 +1,77 @@
+{
+  "index": "darkness",
+  "name": "Darkness",
+  "level": 2,
+  "school": "Evocation",
+  "casting_time": "1 action",
+  "range": "60 feet",
+  "components": [
+    "V",
+    "M"
+  ],
+  "material": "bat fur and a piece of coal",
+  "duration": "Concentration, up to 10 minutes",
+  "ritual": false,
+  "concentration": true,
+  "classes": [
+    "Sorcerer",
+    "Warlock",
+    "Wizard"
+  ],
+  "subclasses": [
+    {
+      "class": "Bard",
+      "subclass": "College of Lore"
+    },
+    {
+      "class": "Fighter",
+      "subclass": "Eldritch Knight"
+    },
+    {
+      "class": "Monk",
+      "subclass": "Warrior of Shadow"
+    },
+    {
+      "class": "Rogue",
+      "subclass": "Arcane Trickster"
+    },
+    {
+      "class": "Wizard",
+      "subclass": "Evoker"
+    }
+  ],
+  "species": [
+    "Elf",
+    "Tiefling"
+  ],
+  "backgrounds": [],
+  "feats": [],
+  "other_options": [],
+  "mechanics": {
+    "saving_throws": [],
+    "ability_checks": [],
+    "damage_types": [],
+    "conditions": [],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [
+      "S"
+    ],
+    "misc_tags": [
+      "OBJ",
+      "OBS"
+    ]
+  },
+  "description": "For the duration, magical Darkness spreads from a point within range and fills a 15-foot-radius Sphere. Darkvision can't see through it, and nonmagical light can't illuminate it. \n\nAlternatively, you cast the spell on an object that isn't being worn or carried, causing the Darkness to fill a 15-foot Emanation originating from that object. Covering that object with something opaque, such as a bowl or helm, blocks the Darkness.\n\nIf any of this spell's area overlaps with an area of Bright Light or Dim Light created by a spell of level 2 or lower, that other spell is dispelled.",
+  "source": {
+    "book": "Player's Handbook",
+    "edition": 2024,
+    "code": "XPHB",
+    "page": 260,
+    "srd_5_2_1": true,
+    "rules_text": "SRD 5.2.1"
+  }
+}

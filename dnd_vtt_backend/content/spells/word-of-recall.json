@@ -1,0 +1,47 @@
+{
+  "index": "word-of-recall",
+  "name": "Word of Recall",
+  "level": 6,
+  "school": "Conjuration",
+  "casting_time": "1 action",
+  "range": "5 feet",
+  "components": [
+    "V"
+  ],
+  "duration": "Instantaneous",
+  "ritual": false,
+  "concentration": false,
+  "classes": [
+    "Cleric"
+  ],
+  "subclasses": [],
+  "species": [],
+  "backgrounds": [],
+  "feats": [],
+  "other_options": [],
+  "mechanics": {
+    "saving_throws": [],
+    "ability_checks": [],
+    "damage_types": [],
+    "conditions": [],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [],
+    "misc_tags": [
+      "PS",
+      "TP"
+    ]
+  },
+  "description": "You and up to five willing creatures within 5 feet of you instantly teleport to a previously designated sanctuary. You and any creatures that teleport with you appear in the nearest unoccupied space to the spot you designated when you prepared your sanctuary (see below). If you cast this spell without first preparing a sanctuary, the spell has no effect. \n\nYou must designate a location, such as a temple, as a sanctuary by casting this spell there.",
+  "source": {
+    "book": "Player's Handbook",
+    "edition": 2024,
+    "code": "XPHB",
+    "page": 343,
+    "srd_5_2_1": true,
+    "rules_text": "SRD 5.2.1"
+  }
+}

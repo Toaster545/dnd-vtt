@@ -1,0 +1,55 @@
+{
+  "index": "power-word-stun",
+  "name": "Power Word Stun",
+  "level": 8,
+  "school": "Enchantment",
+  "casting_time": "1 action",
+  "range": "60 feet",
+  "components": [
+    "V"
+  ],
+  "duration": "Instantaneous",
+  "ritual": false,
+  "concentration": false,
+  "classes": [
+    "Bard",
+    "Sorcerer",
+    "Warlock",
+    "Wizard"
+  ],
+  "subclasses": [],
+  "species": [],
+  "backgrounds": [],
+  "feats": [],
+  "other_options": [],
+  "mechanics": {
+    "saving_throws": [
+      "constitution"
+    ],
+    "ability_checks": [],
+    "damage_types": [],
+    "conditions": [
+      "stunned"
+    ],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [
+      "ST"
+    ],
+    "misc_tags": [
+      "SGT"
+    ]
+  },
+  "description": "You overwhelm the mind of one creature you can see within range. If the target has 150 Hit Points or fewer, it has the Stunned condition. Otherwise, its Speed is 0 until the start of your next turn. \n\nThe Stunned target makes a Constitution saving throw at the end of each of its turns, ending the condition on itself on a success.",
+  "source": {
+    "book": "Player's Handbook",
+    "edition": 2024,
+    "code": "XPHB",
+    "page": 306,
+    "srd_5_2_1": true,
+    "rules_text": "SRD 5.2.1"
+  }
+}

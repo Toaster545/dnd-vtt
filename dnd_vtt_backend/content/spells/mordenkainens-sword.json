@@ -1,0 +1,65 @@
+{
+  "index": "mordenkainens-sword",
+  "name": "Mordenkainen's Sword",
+  "level": 7,
+  "school": "Evocation",
+  "casting_time": "1 action",
+  "range": "90 feet",
+  "components": [
+    "V",
+    "S",
+    "M"
+  ],
+  "material": "a miniature sword worth 250+ GP",
+  "material_cost_cp": 25000,
+  "duration": "Concentration, up to 1 minute",
+  "ritual": false,
+  "concentration": true,
+  "classes": [
+    "Bard",
+    "Wizard"
+  ],
+  "subclasses": [
+    {
+      "class": "Wizard",
+      "subclass": "Evoker"
+    }
+  ],
+  "species": [],
+  "backgrounds": [],
+  "feats": [],
+  "other_options": [],
+  "mechanics": {
+    "spell_attacks": [
+      "melee"
+    ],
+    "saving_throws": [],
+    "ability_checks": [],
+    "damage_types": [
+      "force"
+    ],
+    "conditions": [],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [
+      "ST"
+    ],
+    "misc_tags": [
+      "SGT",
+      "UBA"
+    ]
+  },
+  "description": "You create a spectral sword that hovers within range. It lasts for the duration. \n\nWhen the sword appears, you make a melee spell attack against a target within 5 feet of the sword. On a hit, the target takes Force damage equal to 4d12 plus your spellcasting ability modifier.\n\nOn your later turns, you can take a Bonus Action to move the sword up to 30 feet to a spot you can see and repeat the attack against the same target or a different one.",
+  "source": {
+    "book": "Player's Handbook",
+    "edition": 2024,
+    "code": "XPHB",
+    "page": 302,
+    "srd_5_2_1": true,
+    "srd_name": "Arcane Sword",
+    "rules_text": "SRD 5.2.1"
+  }
+}

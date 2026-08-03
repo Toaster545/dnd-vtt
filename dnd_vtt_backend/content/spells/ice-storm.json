@@ -1,0 +1,85 @@
+{
+  "index": "ice-storm",
+  "name": "Ice Storm",
+  "level": 4,
+  "school": "Evocation",
+  "casting_time": "1 action",
+  "range": "300 feet",
+  "components": [
+    "V",
+    "S",
+    "M"
+  ],
+  "material": "a mitten",
+  "duration": "Instantaneous",
+  "ritual": false,
+  "concentration": false,
+  "classes": [
+    "Druid",
+    "Sorcerer",
+    "Wizard"
+  ],
+  "subclasses": [
+    {
+      "class": "Druid",
+      "subclass": "Circle of the Land",
+      "variant": "Polar Land"
+    },
+    {
+      "class": "Druid",
+      "subclass": "Circle of the Sea"
+    },
+    {
+      "class": "Fighter",
+      "subclass": "Eldritch Knight"
+    },
+    {
+      "class": "Paladin",
+      "subclass": "Oath of the Ancients"
+    },
+    {
+      "class": "Rogue",
+      "subclass": "Arcane Trickster"
+    },
+    {
+      "class": "Wizard",
+      "subclass": "Evoker"
+    }
+  ],
+  "species": [],
+  "backgrounds": [],
+  "feats": [],
+  "other_options": [],
+  "mechanics": {
+    "saving_throws": [
+      "dexterity"
+    ],
+    "ability_checks": [],
+    "damage_types": [
+      "bludgeoning",
+      "cold"
+    ],
+    "conditions": [],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [
+      "Y"
+    ],
+    "misc_tags": [
+      "DFT"
+    ]
+  },
+  "description": "Hail falls in a 20-foot-radius, 40-foot-high Cylinder centered on a point within range. Each creature in the Cylinder makes a Dexterity saving throw. A creature takes 2d10 Bludgeoning damage and 4d6 Cold damage on a failed save or half as much damage on a successful one. \n\nHailstones turn ground in the Cylinder into Difficult Terrain until the end of your next turn.",
+  "higher_levels": "The Bludgeoning damage increases by 1d10 for each spell slot level above 4.",
+  "source": {
+    "book": "Player's Handbook",
+    "edition": 2024,
+    "code": "XPHB",
+    "page": 287,
+    "srd_5_2_1": true,
+    "rules_text": "SRD 5.2.1"
+  }
+}

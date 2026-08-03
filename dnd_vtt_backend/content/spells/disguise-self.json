@@ -1,0 +1,81 @@
+{
+  "index": "disguise-self",
+  "name": "Disguise Self",
+  "level": 1,
+  "school": "Illusion",
+  "casting_time": "1 action",
+  "range": "Self",
+  "components": [
+    "V",
+    "S"
+  ],
+  "duration": "1 hour",
+  "ritual": false,
+  "concentration": false,
+  "classes": [
+    "Bard",
+    "Sorcerer",
+    "Wizard"
+  ],
+  "subclasses": [
+    {
+      "class": "Bard",
+      "subclass": "College of Lore"
+    },
+    {
+      "class": "Cleric",
+      "subclass": "Trickery Domain"
+    },
+    {
+      "class": "Fighter",
+      "subclass": "Eldritch Knight"
+    },
+    {
+      "class": "Ranger",
+      "subclass": "Gloom Stalker"
+    },
+    {
+      "class": "Rogue",
+      "subclass": "Arcane Trickster"
+    },
+    {
+      "class": "Wizard",
+      "subclass": "Illusionist"
+    }
+  ],
+  "species": [],
+  "backgrounds": [],
+  "feats": [
+    "Magic Initiate",
+    "Shadow-Touched"
+  ],
+  "other_options": [
+    "Mask of Many Faces"
+  ],
+  "mechanics": {
+    "saving_throws": [],
+    "ability_checks": [
+      "intelligence"
+    ],
+    "damage_types": [],
+    "conditions": [],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [],
+    "misc_tags": [
+      "SGT"
+    ]
+  },
+  "description": "You make yourself—including your clothing, armor, weapons, and other belongings on your person—look different until the spell ends. You can seem 1 foot shorter or taller and can appear heavier or lighter. You must adopt a form that has the same basic arrangement of limbs as you have. Otherwise, the extent of the illusion is up to you. \n\nThe changes wrought by this spell fail to hold up to physical inspection. For example, if you use this spell to add a hat to your outfit, objects pass through the hat, and anyone who touches it would feel nothing. \n\nTo discern that you are disguised, a creature must take the Study action to inspect your appearance and succeed on an Intelligence (Investigation) check against your spell save DC.",
+  "source": {
+    "book": "Player's Handbook",
+    "edition": 2024,
+    "code": "XPHB",
+    "page": 262,
+    "srd_5_2_1": true,
+    "rules_text": "SRD 5.2.1"
+  }
+}

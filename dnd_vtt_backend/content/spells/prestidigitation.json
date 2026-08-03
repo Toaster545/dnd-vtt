@@ -1,0 +1,69 @@
+{
+  "index": "prestidigitation",
+  "name": "Prestidigitation",
+  "level": 0,
+  "school": "Transmutation",
+  "casting_time": "1 action",
+  "range": "10 feet",
+  "components": [
+    "V",
+    "S"
+  ],
+  "duration": "1 hour",
+  "ritual": false,
+  "concentration": false,
+  "classes": [
+    "Bard",
+    "Sorcerer",
+    "Warlock",
+    "Wizard"
+  ],
+  "subclasses": [
+    {
+      "class": "Bard",
+      "subclass": "College of Lore"
+    },
+    {
+      "class": "Fighter",
+      "subclass": "Eldritch Knight"
+    },
+    {
+      "class": "Rogue",
+      "subclass": "Arcane Trickster"
+    }
+  ],
+  "species": [
+    "Elf"
+  ],
+  "backgrounds": [],
+  "feats": [
+    "Magic Initiate"
+  ],
+  "other_options": [
+    "Pact of the Tome"
+  ],
+  "mechanics": {
+    "saving_throws": [],
+    "ability_checks": [],
+    "damage_types": [],
+    "conditions": [],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [],
+    "misc_tags": [
+      "OBJ"
+    ]
+  },
+  "description": "You create a magical effect within range. Choose the effect from the options below. If you cast this spell multiple times, you can have up to three of its non-instantaneous effects active at a time. \n\n**Sensory Effect**. You create an instantaneous, harmless sensory effect, such as a shower of sparks, a puff of wind, faint musical notes, or an odd odor. \n\n**Fire Play**. You instantaneously light or snuff out a candle, a torch, or a small campfire. \n\n**Clean or Soil**. You instantaneously clean or soil an object no larger than 1 cubic foot. \n\n**Minor Sensation**. You chill, warm, or flavor up to 1 cubic foot of nonliving material for 1 hour. \n\n**Magic Mark**. You make a color, a small mark, or a symbol appear on an object or a surface for 1 hour. \n\n**Minor Creation**. You create a nonmagical trinket or an illusory image that can fit in your hand. It lasts until the end of your next turn. A trinket can deal no damage and has no monetary worth.",
+  "source": {
+    "book": "Player's Handbook",
+    "edition": 2024,
+    "code": "XPHB",
+    "page": 307,
+    "srd_5_2_1": true,
+    "rules_text": "SRD 5.2.1"
+  }
+}

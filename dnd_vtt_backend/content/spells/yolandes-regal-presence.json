@@ -1,0 +1,64 @@
+{
+  "index": "yolandes-regal-presence",
+  "name": "Yolande's Regal Presence",
+  "level": 5,
+  "school": "Enchantment",
+  "casting_time": "1 action",
+  "range": "10 feet (Emanation)",
+  "components": [
+    "V",
+    "S",
+    "M"
+  ],
+  "material": "a miniature tiara",
+  "duration": "Concentration, up to 1 minute",
+  "ritual": false,
+  "concentration": true,
+  "classes": [
+    "Bard",
+    "Wizard"
+  ],
+  "subclasses": [
+    {
+      "class": "Paladin",
+      "subclass": "Oath of Glory"
+    }
+  ],
+  "species": [],
+  "backgrounds": [],
+  "feats": [],
+  "other_options": [],
+  "mechanics": {
+    "saving_throws": [
+      "wisdom"
+    ],
+    "ability_checks": [],
+    "damage_types": [
+      "psychic"
+    ],
+    "conditions": [
+      "prone"
+    ],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [
+      "S"
+    ],
+    "misc_tags": [
+      "FMV",
+      "SGT"
+    ]
+  },
+  "description": "Rules text is not reproduced here. See Player's Handbook (2024), page 343.",
+  "source": {
+    "book": "Player's Handbook",
+    "edition": 2024,
+    "code": "XPHB",
+    "page": 343,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

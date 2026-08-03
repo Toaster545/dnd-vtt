@@ -1,0 +1,69 @@
+{
+  "index": "revivify",
+  "name": "Revivify",
+  "level": 3,
+  "school": "Necromancy",
+  "casting_time": "1 action",
+  "range": "Touch",
+  "components": [
+    "V",
+    "S",
+    "M"
+  ],
+  "material": "a diamond worth 300+ GP, which the spell consumes",
+  "material_cost_cp": 30000,
+  "material_consumed": true,
+  "duration": "Instantaneous",
+  "ritual": false,
+  "concentration": false,
+  "classes": [
+    "Cleric",
+    "Druid",
+    "Paladin",
+    "Ranger"
+  ],
+  "subclasses": [
+    {
+      "class": "Bard",
+      "subclass": "College of Lore"
+    },
+    {
+      "class": "Cleric",
+      "subclass": "Life Domain"
+    },
+    {
+      "class": "Warlock",
+      "subclass": "Celestial Patron"
+    }
+  ],
+  "species": [],
+  "backgrounds": [],
+  "feats": [],
+  "other_options": [],
+  "mechanics": {
+    "saving_throws": [],
+    "ability_checks": [],
+    "damage_types": [],
+    "conditions": [],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [
+      "ST"
+    ],
+    "misc_tags": [
+      "HL"
+    ]
+  },
+  "description": "You touch a creature that has died within the last minute. That creature revives with 1 Hit Point. This spell can't revive a creature that has died of old age, nor does it restore any missing body parts.",
+  "source": {
+    "book": "Player's Handbook",
+    "edition": 2024,
+    "code": "XPHB",
+    "page": 312,
+    "srd_5_2_1": true,
+    "rules_text": "SRD 5.2.1"
+  }
+}

@@ -1,0 +1,53 @@
+{
+  "index": "cordon-of-arrows",
+  "name": "Cordon of Arrows",
+  "level": 2,
+  "school": "Transmutation",
+  "casting_time": "1 action",
+  "range": "Touch",
+  "components": [
+    "V",
+    "S",
+    "M"
+  ],
+  "material": "four or more arrows or bolts",
+  "duration": "8 hours",
+  "ritual": false,
+  "concentration": false,
+  "classes": [
+    "Ranger"
+  ],
+  "subclasses": [],
+  "species": [],
+  "backgrounds": [],
+  "feats": [],
+  "other_options": [],
+  "mechanics": {
+    "saving_throws": [
+      "dexterity"
+    ],
+    "ability_checks": [],
+    "damage_types": [
+      "piercing"
+    ],
+    "conditions": [],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [
+      "S"
+    ],
+    "misc_tags": []
+  },
+  "description": "Rules text is not reproduced here. See Player's Handbook (2024), page 258.",
+  "source": {
+    "book": "Player's Handbook",
+    "edition": 2024,
+    "code": "XPHB",
+    "page": 258,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

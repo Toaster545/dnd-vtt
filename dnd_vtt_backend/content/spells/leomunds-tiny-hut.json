@@ -1,0 +1,70 @@
+{
+  "index": "leomunds-tiny-hut",
+  "name": "Leomund's Tiny Hut",
+  "level": 3,
+  "school": "Evocation",
+  "casting_time": "1 minute",
+  "range": "10 feet (Emanation)",
+  "components": [
+    "V",
+    "S",
+    "M"
+  ],
+  "material": "a crystal bead",
+  "duration": "8 hours",
+  "ritual": true,
+  "concentration": false,
+  "classes": [
+    "Bard",
+    "Wizard"
+  ],
+  "subclasses": [
+    {
+      "class": "Bard",
+      "subclass": "College of Lore"
+    },
+    {
+      "class": "Fighter",
+      "subclass": "Eldritch Knight"
+    },
+    {
+      "class": "Rogue",
+      "subclass": "Arcane Trickster"
+    },
+    {
+      "class": "Wizard",
+      "subclass": "Evoker"
+    }
+  ],
+  "species": [],
+  "backgrounds": [],
+  "feats": [],
+  "other_options": [],
+  "mechanics": {
+    "saving_throws": [],
+    "ability_checks": [],
+    "damage_types": [],
+    "conditions": [],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [
+      "S"
+    ],
+    "misc_tags": [
+      "LGT"
+    ]
+  },
+  "description": "A 10-foot Emanation springs into existence around you and remains stationary for the duration. The spell fails when you cast it if the Emanation isn't big enough to fully encapsulate all creatures in its area. \n\nCreatures and objects within the Emanation when you cast the spell can move through it freely. All other creatures and objects are barred from passing through it. Spells of level 3 or lower can't be cast through it, and the effects of such spells can't extend into it. The atmosphere inside the Emanation is comfortable and dry, regardless of the weather outside. Until the spell ends, you can command the interior to have Dim Light or Darkness (no action required). The Emanation is opaque from the outside and of any color you choose, but it's transparent from the inside. \n\nThe spell ends early if you leave the Emanation or if you cast it again.",
+  "source": {
+    "book": "Player's Handbook",
+    "edition": 2024,
+    "code": "XPHB",
+    "page": 291,
+    "srd_5_2_1": true,
+    "srd_name": "Tiny Hut",
+    "rules_text": "SRD 5.2.1"
+  }
+}

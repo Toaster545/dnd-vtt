@@ -1,0 +1,59 @@
+{
+  "index": "protection-from-poison",
+  "name": "Protection from Poison",
+  "level": 2,
+  "school": "Abjuration",
+  "casting_time": "1 action",
+  "range": "Touch",
+  "components": [
+    "V",
+    "S"
+  ],
+  "duration": "1 hour",
+  "ritual": false,
+  "concentration": false,
+  "classes": [
+    "Cleric",
+    "Druid",
+    "Paladin",
+    "Ranger"
+  ],
+  "subclasses": [
+    {
+      "class": "Bard",
+      "subclass": "College of Lore"
+    }
+  ],
+  "species": [],
+  "backgrounds": [],
+  "feats": [],
+  "other_options": [],
+  "mechanics": {
+    "saving_throws": [],
+    "ability_checks": [],
+    "damage_types": [],
+    "conditions": [],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [
+      "poison"
+    ],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [
+      "ST"
+    ],
+    "misc_tags": [
+      "ADV"
+    ]
+  },
+  "description": "You touch a creature and end the Poisoned condition on it. For the duration, the target has Advantage on saving throws to avoid or end the Poisoned condition, and it has Resistance to Poison damage.",
+  "source": {
+    "book": "Player's Handbook",
+    "edition": 2024,
+    "code": "XPHB",
+    "page": 310,
+    "srd_5_2_1": true,
+    "rules_text": "SRD 5.2.1"
+  }
+}

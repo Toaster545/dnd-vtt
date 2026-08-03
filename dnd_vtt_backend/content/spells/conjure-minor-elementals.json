@@ -1,0 +1,66 @@
+{
+  "index": "conjure-minor-elementals",
+  "name": "Conjure Minor Elementals",
+  "level": 4,
+  "school": "Conjuration",
+  "casting_time": "1 action",
+  "range": "15 feet (Emanation)",
+  "components": [
+    "V",
+    "S"
+  ],
+  "duration": "Concentration, up to 10 minutes",
+  "ritual": false,
+  "concentration": true,
+  "classes": [
+    "Druid",
+    "Wizard"
+  ],
+  "subclasses": [
+    {
+      "class": "Fighter",
+      "subclass": "Eldritch Knight"
+    },
+    {
+      "class": "Rogue",
+      "subclass": "Arcane Trickster"
+    }
+  ],
+  "species": [],
+  "backgrounds": [],
+  "feats": [],
+  "other_options": [],
+  "mechanics": {
+    "saving_throws": [],
+    "ability_checks": [],
+    "damage_types": [
+      "acid",
+      "cold",
+      "fire",
+      "lightning"
+    ],
+    "conditions": [],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [
+      "S"
+    ],
+    "misc_tags": [
+      "AAD",
+      "DFT"
+    ]
+  },
+  "description": "You conjure spirits from the Elemental Planes that flit around you in a 15-foot Emanation for the duration. Until the spell ends, any attack you make deals an extra 2d8 damage when you hit a creature in the Emanation. This damage is Acid, Cold, Fire, or Lightning (your choice when you make the attack). In addition, the ground in the Emanation is Difficult Terrain for your enemies.",
+  "higher_levels": "The damage increases by 2d8 for each spell slot level above 4.",
+  "source": {
+    "book": "Player's Handbook",
+    "edition": 2024,
+    "code": "XPHB",
+    "page": 255,
+    "srd_5_2_1": true,
+    "rules_text": "SRD 5.2.1"
+  }
+}

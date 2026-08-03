@@ -1,0 +1,55 @@
+{
+  "index": "synaptic-static",
+  "name": "Synaptic Static",
+  "level": 5,
+  "school": "Enchantment",
+  "casting_time": "1 action",
+  "range": "120 feet",
+  "components": [
+    "V",
+    "S"
+  ],
+  "duration": "Instantaneous",
+  "ritual": false,
+  "concentration": false,
+  "classes": [
+    "Bard",
+    "Sorcerer",
+    "Warlock",
+    "Wizard"
+  ],
+  "subclasses": [],
+  "species": [],
+  "backgrounds": [],
+  "feats": [],
+  "other_options": [],
+  "mechanics": {
+    "saving_throws": [
+      "constitution",
+      "intelligence"
+    ],
+    "ability_checks": [],
+    "damage_types": [
+      "psychic"
+    ],
+    "conditions": [],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [
+      "S"
+    ],
+    "misc_tags": []
+  },
+  "description": "Rules text is not reproduced here. See Player's Handbook (2024), page 330.",
+  "source": {
+    "book": "Player's Handbook",
+    "edition": 2024,
+    "code": "XPHB",
+    "page": 330,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

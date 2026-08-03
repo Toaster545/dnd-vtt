@@ -1,0 +1,73 @@
+{
+  "index": "sorcerous-burst",
+  "name": "Sorcerous Burst",
+  "level": 0,
+  "school": "Evocation",
+  "casting_time": "1 action",
+  "range": "120 feet",
+  "components": [
+    "V",
+    "S"
+  ],
+  "duration": "Instantaneous",
+  "ritual": false,
+  "concentration": false,
+  "classes": [
+    "Sorcerer"
+  ],
+  "subclasses": [],
+  "species": [],
+  "backgrounds": [],
+  "feats": [],
+  "other_options": [
+    "Pact of the Tome"
+  ],
+  "mechanics": {
+    "spell_attacks": [
+      "ranged"
+    ],
+    "saving_throws": [],
+    "ability_checks": [],
+    "damage_types": [
+      "acid",
+      "cold",
+      "fire",
+      "lightning",
+      "poison",
+      "psychic",
+      "thunder"
+    ],
+    "conditions": [],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [
+      "ST"
+    ],
+    "misc_tags": [
+      "OBJ",
+      "SCL"
+    ],
+    "scaling": {
+      "label": "damage",
+      "values": {
+        "1": "1d8",
+        "5": "2d8",
+        "11": "3d8",
+        "17": "4d8"
+      }
+    }
+  },
+  "description": "You cast sorcerous energy at one creature or object within range. Make a ranged attack roll against the target. On a hit, the target takes 1d8 damage of a type you choose: Acid, Cold, Fire, Lightning, Poison, Psychic, or Thunder. \n\nIf you roll an 8 on a d8 for this spell, you can roll another d8, and add it to the damage. When you cast this spell, the maximum number of these d8s you can add to the spell's damage equals your spellcasting ability modifier.",
+  "cantrip_upgrade": "This damage increases by 1d8 when you reach level 5 (2d8), 11 (3d8), and 17 (4d8).",
+  "source": {
+    "book": "Player's Handbook",
+    "edition": 2024,
+    "code": "XPHB",
+    "page": 318,
+    "srd_5_2_1": true,
+    "rules_text": "SRD 5.2.1"
+  }
+}

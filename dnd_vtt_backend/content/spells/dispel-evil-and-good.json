@@ -1,0 +1,60 @@
+{
+  "index": "dispel-evil-and-good",
+  "name": "Dispel Evil and Good",
+  "level": 5,
+  "school": "Abjuration",
+  "casting_time": "1 action",
+  "range": "Self",
+  "components": [
+    "V",
+    "S",
+    "M"
+  ],
+  "material": "powdered silver and iron",
+  "duration": "Concentration, up to 1 minute",
+  "ritual": false,
+  "concentration": true,
+  "classes": [
+    "Cleric",
+    "Paladin"
+  ],
+  "subclasses": [],
+  "species": [],
+  "backgrounds": [],
+  "feats": [],
+  "other_options": [],
+  "mechanics": {
+    "saving_throws": [
+      "charisma"
+    ],
+    "ability_checks": [],
+    "damage_types": [],
+    "conditions": [],
+    "affects_creature_types": [
+      "celestial",
+      "elemental",
+      "fey",
+      "fiend",
+      "undead"
+    ],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [
+      "ST"
+    ],
+    "misc_tags": [
+      "SGT"
+    ]
+  },
+  "description": "For the duration, Celestials, Elementals, Fey, Fiends, and Undead have Disadvantage on attack rolls against you. You can end the spell early by using either of the following special functions. \n\n**Break Enchantment.** As a Magic action, you touch a creature that is possessed by or has the Charmed or Frightened condition from one or more creatures of the types above. The target is no longer possessed, Charmed, or Frightened by such creatures. \n\n**Dismissal.** As a Magic action, you target one creature you can see within 5 feet of you that has one of the creature types above. The target must succeed on a Charisma saving throw or be sent back to its home plane if it isn't there already. If they aren't on their home plane, Undead are sent to the Shadowfell, and Fey are sent to the Feywild.",
+  "source": {
+    "book": "Player's Handbook",
+    "edition": 2024,
+    "code": "XPHB",
+    "page": 263,
+    "srd_5_2_1": true,
+    "rules_text": "SRD 5.2.1"
+  }
+}

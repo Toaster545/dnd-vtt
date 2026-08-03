@@ -1,0 +1,73 @@
+{
+  "index": "illusory-script",
+  "name": "Illusory Script",
+  "level": 1,
+  "school": "Illusion",
+  "casting_time": "1 minute",
+  "range": "Touch",
+  "components": [
+    "S",
+    "M"
+  ],
+  "material": "ink worth 10+ GP, which the spell consumes",
+  "material_cost_cp": 1000,
+  "material_consumed": true,
+  "duration": "10 days",
+  "ritual": true,
+  "concentration": false,
+  "classes": [
+    "Bard",
+    "Warlock",
+    "Wizard"
+  ],
+  "subclasses": [
+    {
+      "class": "Bard",
+      "subclass": "College of Lore"
+    },
+    {
+      "class": "Fighter",
+      "subclass": "Eldritch Knight"
+    },
+    {
+      "class": "Rogue",
+      "subclass": "Arcane Trickster"
+    },
+    {
+      "class": "Wizard",
+      "subclass": "Illusionist"
+    }
+  ],
+  "species": [],
+  "backgrounds": [],
+  "feats": [
+    "Magic Initiate",
+    "Ritual Caster",
+    "Shadow-Touched"
+  ],
+  "other_options": [
+    "Pact of the Tome"
+  ],
+  "mechanics": {
+    "saving_throws": [],
+    "ability_checks": [],
+    "damage_types": [],
+    "conditions": [],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [],
+    "misc_tags": []
+  },
+  "description": "You write on parchment, paper, or another suitable material and imbue it with an illusion that lasts for the duration. To you and any creatures you designate when you cast the spell, the writing appears normal, seems to be written in your hand, and conveys whatever meaning you intended when you wrote the text. To all others, the writing appears as if it were written in an unknown or magical script that is unintelligible. Alternatively, the illusion can alter the meaning, handwriting, and language of the text, though the language must be one you know. If the spell is dispelled, the original script and the illusion both disappear. \n\nA creature that has Truesight can read the hidden message.",
+  "source": {
+    "book": "Player's Handbook",
+    "edition": 2024,
+    "code": "XPHB",
+    "page": 288,
+    "srd_5_2_1": true,
+    "rules_text": "SRD 5.2.1"
+  }
+}

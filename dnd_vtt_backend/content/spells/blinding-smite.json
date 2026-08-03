@@ -1,0 +1,52 @@
+{
+  "index": "blinding-smite",
+  "name": "Blinding Smite",
+  "level": 3,
+  "school": "Evocation",
+  "casting_time": "1 bonus action, which you take immediately after hitting a creature with a Melee weapon or an Unarmed Strike",
+  "range": "Self",
+  "components": [
+    "V"
+  ],
+  "duration": "1 minute",
+  "ritual": false,
+  "concentration": false,
+  "classes": [
+    "Paladin"
+  ],
+  "subclasses": [],
+  "species": [],
+  "backgrounds": [],
+  "feats": [],
+  "other_options": [],
+  "mechanics": {
+    "saving_throws": [
+      "constitution"
+    ],
+    "ability_checks": [],
+    "damage_types": [
+      "radiant"
+    ],
+    "conditions": [
+      "blinded"
+    ],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [],
+    "misc_tags": [
+      "AAD"
+    ]
+  },
+  "description": "Rules text is not reproduced here. See Player's Handbook (2024), page 247.",
+  "source": {
+    "book": "Player's Handbook",
+    "edition": 2024,
+    "code": "XPHB",
+    "page": 247,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

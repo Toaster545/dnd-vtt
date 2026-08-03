@@ -1,0 +1,60 @@
+{
+  "index": "rarys-telepathic-bond",
+  "name": "Rary's Telepathic Bond",
+  "level": 5,
+  "school": "Divination",
+  "casting_time": "1 action",
+  "range": "30 feet",
+  "components": [
+    "V",
+    "S",
+    "M"
+  ],
+  "material": "two eggs",
+  "duration": "1 hour",
+  "ritual": true,
+  "concentration": false,
+  "classes": [
+    "Bard",
+    "Wizard"
+  ],
+  "subclasses": [
+    {
+      "class": "Sorcerer",
+      "subclass": "Aberrant Sorcery"
+    },
+    {
+      "class": "Wizard",
+      "subclass": "Diviner"
+    }
+  ],
+  "species": [],
+  "backgrounds": [],
+  "feats": [],
+  "other_options": [],
+  "mechanics": {
+    "saving_throws": [],
+    "ability_checks": [],
+    "damage_types": [],
+    "conditions": [],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [
+      "MT"
+    ],
+    "misc_tags": []
+  },
+  "description": "You forge a telepathic link among up to eight willing creatures of your choice within range, psychically linking each creature to all the others for the duration. Creatures that can’t communicate in any languages aren’t affected by this spell.\n\nUntil the spell ends, the targets can communicate telepathically through the bond whether or not they share a language. The communication is possible over any distance, though it cannot extend to other planes of existence.",
+  "source": {
+    "book": "Player's Handbook",
+    "edition": 2024,
+    "code": "XPHB",
+    "page": 311,
+    "srd_5_2_1": true,
+    "srd_name": "Telepathic Bond",
+    "rules_text": "SRD 5.2.1"
+  }
+}

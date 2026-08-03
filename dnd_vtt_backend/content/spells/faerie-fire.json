@@ -1,0 +1,69 @@
+{
+  "index": "faerie-fire",
+  "name": "Faerie Fire",
+  "level": 1,
+  "school": "Evocation",
+  "casting_time": "1 action",
+  "range": "60 feet",
+  "components": [
+    "V"
+  ],
+  "duration": "Concentration, up to 1 minute",
+  "ritual": false,
+  "concentration": true,
+  "classes": [
+    "Bard",
+    "Druid"
+  ],
+  "subclasses": [
+    {
+      "class": "Bard",
+      "subclass": "College of Lore"
+    },
+    {
+      "class": "Cleric",
+      "subclass": "Light Domain"
+    },
+    {
+      "class": "Warlock",
+      "subclass": "Archfey Patron"
+    }
+  ],
+  "species": [
+    "Elf"
+  ],
+  "backgrounds": [],
+  "feats": [
+    "Magic Initiate"
+  ],
+  "other_options": [],
+  "mechanics": {
+    "saving_throws": [
+      "dexterity"
+    ],
+    "ability_checks": [],
+    "damage_types": [],
+    "conditions": [],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [
+      "C"
+    ],
+    "misc_tags": [
+      "ADV",
+      "LGT"
+    ]
+  },
+  "description": "Objects in a 20-foot Cube within range are outlined in blue, green, or violet light (your choice). Each creature in the Cube is also outlined if it fails a Dexterity saving throw. For the duration, objects and affected creatures shed Dim Light in a 10-foot radius and can't benefit from the Invisible condition. \n\nAttack rolls against an affected creature or object have Advantage if the attacker can see it.",
+  "source": {
+    "book": "Player's Handbook",
+    "edition": 2024,
+    "code": "XPHB",
+    "page": 271,
+    "srd_5_2_1": true,
+    "rules_text": "SRD 5.2.1"
+  }
+}

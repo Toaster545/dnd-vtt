@@ -1,0 +1,51 @@
+{
+  "index": "tashas-bubbling-cauldron",
+  "name": "Tasha's Bubbling Cauldron",
+  "level": 6,
+  "school": "Conjuration",
+  "casting_time": "1 action",
+  "range": "5 feet",
+  "components": [
+    "V",
+    "S",
+    "M"
+  ],
+  "material": "a gilded ladle worth 500 + GP",
+  "duration": "10 minutes",
+  "ritual": false,
+  "concentration": false,
+  "classes": [
+    "Warlock",
+    "Wizard"
+  ],
+  "subclasses": [],
+  "species": [],
+  "backgrounds": [],
+  "feats": [],
+  "other_options": [],
+  "mechanics": {
+    "saving_throws": [],
+    "ability_checks": [],
+    "damage_types": [],
+    "conditions": [],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [],
+    "misc_tags": [
+      "HL",
+      "UBA"
+    ]
+  },
+  "description": "Rules text is not reproduced here. See Player's Handbook (2024), page 330.",
+  "source": {
+    "book": "Player's Handbook",
+    "edition": 2024,
+    "code": "XPHB",
+    "page": 330,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

@@ -1,0 +1,59 @@
+{
+  "index": "foresight",
+  "name": "Foresight",
+  "level": 9,
+  "school": "Divination",
+  "casting_time": "1 minute",
+  "range": "Touch",
+  "components": [
+    "V",
+    "S",
+    "M"
+  ],
+  "material": "a hummingbird feather",
+  "duration": "8 hours",
+  "ritual": false,
+  "concentration": false,
+  "classes": [
+    "Bard",
+    "Druid",
+    "Warlock",
+    "Wizard"
+  ],
+  "subclasses": [
+    {
+      "class": "Wizard",
+      "subclass": "Diviner"
+    }
+  ],
+  "species": [],
+  "backgrounds": [],
+  "feats": [],
+  "other_options": [],
+  "mechanics": {
+    "saving_throws": [],
+    "ability_checks": [],
+    "damage_types": [],
+    "conditions": [],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [
+      "ST"
+    ],
+    "misc_tags": [
+      "ADV"
+    ]
+  },
+  "description": "You touch a willing creature and bestow a limited ability to see into the immediate future. For the duration, the target has Advantage on D20 Tests, and other creatures have Disadvantage on attack rolls against it. The spell ends early if you cast it again.",
+  "source": {
+    "book": "Player's Handbook",
+    "edition": 2024,
+    "code": "XPHB",
+    "page": 276,
+    "srd_5_2_1": true,
+    "rules_text": "SRD 5.2.1"
+  }
+}

@@ -1,0 +1,70 @@
+{
+  "index": "prismatic-spray",
+  "name": "Prismatic Spray",
+  "level": 7,
+  "school": "Evocation",
+  "casting_time": "1 action",
+  "range": "60 feet (Cone)",
+  "components": [
+    "V",
+    "S"
+  ],
+  "duration": "Instantaneous",
+  "ritual": false,
+  "concentration": false,
+  "classes": [
+    "Bard",
+    "Sorcerer",
+    "Wizard"
+  ],
+  "subclasses": [
+    {
+      "class": "Wizard",
+      "subclass": "Evoker"
+    }
+  ],
+  "species": [],
+  "backgrounds": [],
+  "feats": [],
+  "other_options": [],
+  "mechanics": {
+    "saving_throws": [
+      "constitution",
+      "dexterity",
+      "wisdom"
+    ],
+    "ability_checks": [],
+    "damage_types": [
+      "acid",
+      "cold",
+      "fire",
+      "lightning",
+      "poison"
+    ],
+    "conditions": [
+      "blinded",
+      "petrified",
+      "restrained"
+    ],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [
+      "N"
+    ],
+    "misc_tags": [
+      "PRM"
+    ]
+  },
+  "description": "Eight rays of light flash from you in a 60-foot Cone. Each creature in the Cone makes a Dexterity saving throw. For each target, roll 1d8 to determine which color ray affects it, consulting the Prismatic Rays table.\n\n1d8 Ray \n\n1     Red. Failed Save: 12d6 Fire damage. Successful Save: Half as much damage. \n\n2     Orange. Failed Save: 12d6 Acid damage. Successful Save: Half as much damage. \n\n3 Yellow. Failed Save: 12d6 Lightning damage. Successful Save: Half as much damage. \n\n4    Green. Failed Save: 12d6 Poison damage. Successful Save: Half as much damage. \n\n5    Blue. Failed Save: 12d6 Cold damage. Successful Save: Half as much damage. \n\n6    Indigo. Failed Save: The target has the Restrained condition and makes a Constitution saving throw at the end of each of its turns. If it successfully saves three times, the condition ends. If it fails three times, it has the Petrified condition until it is freed by an effect like the Greater Restoration spell. The successes and failures needn't be consecutive; keep track of both until the target collects three of a kind. \n\n7    Violet. Failed Save: The target has the Blinded condition and makes a Wisdom saving throw at the start of your next turn. On a Successful Save, the condition ends. On a Failed Save, the condition ends, and the creature teleports to another plane of existence (DM's choice). \n\n8    Special. The target is struck by two rays. Roll twice, rerolling any 8.",
+  "source": {
+    "book": "Player's Handbook",
+    "edition": 2024,
+    "code": "XPHB",
+    "page": 307,
+    "srd_5_2_1": true,
+    "rules_text": "SRD 5.2.1"
+  }
+}

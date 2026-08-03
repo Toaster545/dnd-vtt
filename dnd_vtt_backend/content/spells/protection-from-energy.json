@@ -1,0 +1,90 @@
+{
+  "index": "protection-from-energy",
+  "name": "Protection from Energy",
+  "level": 3,
+  "school": "Abjuration",
+  "casting_time": "1 action",
+  "range": "Touch",
+  "components": [
+    "V",
+    "S"
+  ],
+  "duration": "Concentration, up to 1 hour",
+  "ritual": false,
+  "concentration": true,
+  "classes": [
+    "Cleric",
+    "Druid",
+    "Ranger",
+    "Sorcerer",
+    "Wizard"
+  ],
+  "subclasses": [
+    {
+      "class": "Bard",
+      "subclass": "College of Lore"
+    },
+    {
+      "class": "Fighter",
+      "subclass": "Eldritch Knight"
+    },
+    {
+      "class": "Paladin",
+      "subclass": "Oath of Glory"
+    },
+    {
+      "class": "Paladin",
+      "subclass": "Oath of the Ancients"
+    },
+    {
+      "class": "Paladin",
+      "subclass": "Oath of Vengeance"
+    },
+    {
+      "class": "Rogue",
+      "subclass": "Arcane Trickster"
+    },
+    {
+      "class": "Sorcerer",
+      "subclass": "Clockwork Sorcery"
+    },
+    {
+      "class": "Wizard",
+      "subclass": "Abjurer"
+    }
+  ],
+  "species": [],
+  "backgrounds": [],
+  "feats": [],
+  "other_options": [],
+  "mechanics": {
+    "saving_throws": [],
+    "ability_checks": [],
+    "damage_types": [],
+    "conditions": [],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [
+      "acid",
+      "cold",
+      "fire",
+      "lightning",
+      "thunder"
+    ],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [
+      "ST"
+    ],
+    "misc_tags": []
+  },
+  "description": "For the duration, the willing creature you touch has Resistance to one damage type of your choice: Acid, Cold, Fire, Lightning, or Thunder.",
+  "source": {
+    "book": "Player's Handbook",
+    "edition": 2024,
+    "code": "XPHB",
+    "page": 309,
+    "srd_5_2_1": true,
+    "rules_text": "SRD 5.2.1"
+  }
+}

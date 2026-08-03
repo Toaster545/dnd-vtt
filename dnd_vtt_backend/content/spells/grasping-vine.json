@@ -1,0 +1,59 @@
+{
+  "index": "grasping-vine",
+  "name": "Grasping Vine",
+  "level": 4,
+  "school": "Conjuration",
+  "casting_time": "1 bonus action",
+  "range": "60 feet",
+  "components": [
+    "V",
+    "S"
+  ],
+  "duration": "Concentration, up to 1 minute",
+  "ritual": false,
+  "concentration": true,
+  "classes": [
+    "Druid",
+    "Ranger"
+  ],
+  "subclasses": [],
+  "species": [],
+  "backgrounds": [],
+  "feats": [],
+  "other_options": [],
+  "mechanics": {
+    "spell_attacks": [
+      "melee"
+    ],
+    "saving_throws": [],
+    "ability_checks": [],
+    "damage_types": [
+      "bludgeoning"
+    ],
+    "conditions": [
+      "grappled"
+    ],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [
+      "ST"
+    ],
+    "misc_tags": [
+      "FMV",
+      "SGT",
+      "UBA"
+    ]
+  },
+  "description": "Rules text is not reproduced here. See Player's Handbook (2024), page 280.",
+  "source": {
+    "book": "Player's Handbook",
+    "edition": 2024,
+    "code": "XPHB",
+    "page": 280,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

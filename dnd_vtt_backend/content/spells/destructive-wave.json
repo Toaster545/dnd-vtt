@@ -1,0 +1,55 @@
+{
+  "index": "destructive-wave",
+  "name": "Destructive Wave",
+  "level": 5,
+  "school": "Evocation",
+  "casting_time": "1 action",
+  "range": "30 feet (Emanation)",
+  "components": [
+    "V"
+  ],
+  "duration": "Instantaneous",
+  "ritual": false,
+  "concentration": false,
+  "classes": [
+    "Paladin"
+  ],
+  "subclasses": [],
+  "species": [],
+  "backgrounds": [],
+  "feats": [],
+  "other_options": [],
+  "mechanics": {
+    "saving_throws": [
+      "constitution"
+    ],
+    "ability_checks": [],
+    "damage_types": [
+      "necrotic",
+      "radiant",
+      "thunder"
+    ],
+    "conditions": [
+      "prone"
+    ],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [
+      "MT",
+      "S"
+    ],
+    "misc_tags": []
+  },
+  "description": "Rules text is not reproduced here. See Player's Handbook (2024), page 261.",
+  "source": {
+    "book": "Player's Handbook",
+    "edition": 2024,
+    "code": "XPHB",
+    "page": 261,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

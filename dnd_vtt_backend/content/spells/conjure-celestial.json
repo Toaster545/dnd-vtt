@@ -1,0 +1,55 @@
+{
+  "index": "conjure-celestial",
+  "name": "Conjure Celestial",
+  "level": 7,
+  "school": "Conjuration",
+  "casting_time": "1 action",
+  "range": "90 feet",
+  "components": [
+    "V",
+    "S"
+  ],
+  "duration": "Concentration, up to 10 minutes",
+  "ritual": false,
+  "concentration": true,
+  "classes": [
+    "Cleric"
+  ],
+  "subclasses": [],
+  "species": [],
+  "backgrounds": [],
+  "feats": [],
+  "other_options": [],
+  "mechanics": {
+    "saving_throws": [
+      "dexterity"
+    ],
+    "ability_checks": [],
+    "damage_types": [
+      "radiant"
+    ],
+    "conditions": [],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [
+      "Y"
+    ],
+    "misc_tags": [
+      "HL",
+      "SGT"
+    ]
+  },
+  "description": "You conjure a spirit from the Upper Planes, which manifests as a pillar of light in a 10-foot-radius, 40-foot-high Cylinder centered on a point within range. For each creature you can see in the Cylinder, choose which of these lights shines on it: \n\n**Healing Light.** The target regains Hit Points equal to 4d12 plus your spellcasting ability modifier.\n\n**Searing Light.** The target makes a Dexterity saving throw, taking 6d12 Radiant damage on a failed save or half as much damage on a successful one. \n\nUntil the spell ends, Bright Light fills the Cylinder, and when you move on your turn, you can also move the Cylinder up to 30 feet.\n\nWhenever the Cylinder moves into the space of a creature you can see and whenever a creature you can see enters the Cylinder or ends its turn there, you can bathe it in one of the lights. A creature can be affected by this spell only once per turn.",
+  "higher_levels": "The healing and damage increase by 1d12 for each spell slot level above 7.",
+  "source": {
+    "book": "Player's Handbook",
+    "edition": 2024,
+    "code": "XPHB",
+    "page": 254,
+    "srd_5_2_1": true,
+    "rules_text": "SRD 5.2.1"
+  }
+}

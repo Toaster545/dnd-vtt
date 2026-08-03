@@ -1,0 +1,63 @@
+{
+  "index": "dominate-beast",
+  "name": "Dominate Beast",
+  "level": 4,
+  "school": "Enchantment",
+  "casting_time": "1 action",
+  "range": "60 feet",
+  "components": [
+    "V",
+    "S"
+  ],
+  "duration": "Concentration, up to 1 minute",
+  "ritual": false,
+  "concentration": true,
+  "classes": [
+    "Druid",
+    "Ranger",
+    "Sorcerer"
+  ],
+  "subclasses": [
+    {
+      "class": "Warlock",
+      "subclass": "Archfey Patron"
+    }
+  ],
+  "species": [],
+  "backgrounds": [],
+  "feats": [],
+  "other_options": [],
+  "mechanics": {
+    "saving_throws": [
+      "wisdom"
+    ],
+    "ability_checks": [],
+    "damage_types": [],
+    "conditions": [
+      "charmed"
+    ],
+    "affects_creature_types": [
+      "beast"
+    ],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [
+      "ST"
+    ],
+    "misc_tags": [
+      "SGT"
+    ]
+  },
+  "description": "One Beast you can see within range must succeed on a Wisdom saving throw or have the Charmed condition for the duration. The target has Advantage on the save if you or your allies are fighting it. Whenever the target takes damage, it repeats the save, ending the spell on itself on a success. \n\nYou have a telepathic link with the Charmed target while the two of you are on the same plane of existence. On your turn, you can use this link to issue commands to the target (no action required), such as \"Attack that creature,\" \"Move over there,\" or \"Fetch that object.\" The target does its best to obey on its turn. If it completes an order and doesn't receive further direction from you, it acts and moves as it likes, focusing on protecting itself. \n\nYou can command the target to take a Reaction but must take your own Reaction to do so.",
+  "higher_levels": "Your Concentration can last longer with a spell slot of level 5 (up to 10 minutes), 6 (up to 1 hour), or 7+ (up to 8 hours).",
+  "source": {
+    "book": "Player's Handbook",
+    "edition": 2024,
+    "code": "XPHB",
+    "page": 265,
+    "srd_5_2_1": true,
+    "rules_text": "SRD 5.2.1"
+  }
+}

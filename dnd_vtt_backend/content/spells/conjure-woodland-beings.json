@@ -1,0 +1,54 @@
+{
+  "index": "conjure-woodland-beings",
+  "name": "Conjure Woodland Beings",
+  "level": 4,
+  "school": "Conjuration",
+  "casting_time": "1 action",
+  "range": "10 feet (Emanation)",
+  "components": [
+    "V",
+    "S"
+  ],
+  "duration": "Concentration, up to 10 minutes",
+  "ritual": false,
+  "concentration": true,
+  "classes": [
+    "Druid",
+    "Ranger"
+  ],
+  "subclasses": [],
+  "species": [],
+  "backgrounds": [],
+  "feats": [],
+  "other_options": [],
+  "mechanics": {
+    "saving_throws": [
+      "wisdom"
+    ],
+    "ability_checks": [],
+    "damage_types": [
+      "force"
+    ],
+    "conditions": [],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [],
+    "misc_tags": [
+      "SGT",
+      "UBA"
+    ]
+  },
+  "description": "You conjure nature spirits that flit around you in a 10-foot Emanation for the duration. Whenever the Emanation enters the space of a creature you can see and whenever a creature you can see enters the Emanation or ends its turn there, you can force that creature to make a Wisdom saving throw. The creature takes 5d8 Force damage on a failed save or half as much damage on a successful one. A creature makes this save only once per turn. In addition, you can take the Disengage action as a Bonus Action for the spell's duration.",
+  "higher_levels": "The damage increases by 1d8 for each spell slot level above 5.",
+  "source": {
+    "book": "Player's Handbook",
+    "edition": 2024,
+    "code": "XPHB",
+    "page": 255,
+    "srd_5_2_1": true,
+    "rules_text": "SRD 5.2.1"
+  }
+}

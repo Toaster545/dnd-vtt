@@ -1,0 +1,51 @@
+{
+  "index": "searing-smite",
+  "name": "Searing Smite",
+  "level": 1,
+  "school": "Evocation",
+  "casting_time": "1 bonus action, which you take immediately after hitting a target with a Melee weapon or an Unarmed Strike",
+  "range": "Self",
+  "components": [
+    "V"
+  ],
+  "duration": "1 minute",
+  "ritual": false,
+  "concentration": false,
+  "classes": [
+    "Paladin"
+  ],
+  "subclasses": [],
+  "species": [],
+  "backgrounds": [],
+  "feats": [],
+  "other_options": [],
+  "mechanics": {
+    "saving_throws": [
+      "constitution"
+    ],
+    "ability_checks": [],
+    "damage_types": [
+      "fire"
+    ],
+    "conditions": [],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [],
+    "misc_tags": [
+      "AAD"
+    ]
+  },
+  "description": "As you hit the target, it takes an extra 1d6 Fire damage from the attack. At the start of each of its turns until the spell ends, the target takes 1d6 Fire damage and then makes a Constitution saving throw. On a failed save, the spell continues. On a successful save, the spell ends.",
+  "higher_levels": "All the damage increases by 1d6 for each spell slot level above 1.",
+  "source": {
+    "book": "Player's Handbook",
+    "edition": 2024,
+    "code": "XPHB",
+    "page": 314,
+    "srd_5_2_1": true,
+    "rules_text": "SRD 5.2.1"
+  }
+}
