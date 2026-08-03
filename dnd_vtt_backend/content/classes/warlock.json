@@ -34,6 +34,7 @@
     "goldAlternative": 100
   },
   "spellcasting_ability": "charisma",
+  "spellcasting": { "key": "class:warlock", "list": "Warlock", "ability": "charisma", "mode": "known", "progression": "pact" },
   "subclass_level": 3,
   "subclasses": [
     {

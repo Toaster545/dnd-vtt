@@ -3,15 +3,18 @@ import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import {
-  ContentService, DndClass, DndRace, DndBackground, DndItem, DndSpell, DndFeat, Subclass, TraitGrant, SpellSlots,
+  ContentService, DndClass, DndRace, DndBackground, DndItem, DndSpell, DndFeat, Subclass, TraitGrant,
 } from '../../../core/services/content.service';
 import { CharacterService } from '../../../core/services/character.service';
 import { CharacterStatsService } from '../../../core/services/character-stats.service';
 import { CharacterActionsService, CharacterAction } from '../../../core/services/character-actions.service';
 import {
-  Character, ABILITIES, ABILITY_SHORT, SKILLS, EquipmentEntry, SpellEntry, Currency,
+  Character, ABILITIES, ABILITY_SHORT, SKILLS, EquipmentEntry, Currency,
 } from '../../../core/models/character.model';
 import { adjustCurrency, CURRENCY_ORDER } from '../../../core/utils/currency';
+import {
+  resolveSpellcasting, ResolvedSpellOrigin, ResolvedSpellSlotPool, ResolvedSpellCategory,
+} from '../../../core/utils/spellcasting';
 
 function toIndex(name: string): string {
   return name.toLowerCase().replace(/\s+/g, '-');
@@ -30,6 +33,11 @@ interface DisplayFeature {
   source: string;
   name: string;
   detail?: string;
+}
+
+interface DisplaySpell {
+  spell: DndSpell;
+  origin: ResolvedSpellOrigin;
 }
 
 type Tab = 'stats' | 'actions' | 'inventory' | 'spells';
@@ -130,10 +138,6 @@ export class CharacterPlaySheetComponent {
       .map(it => ({ source: 'Weapon Mastery', name: `${it.name} — ${it.mastery!.property}`, detail: it.mastery!.description }));
   });
 
-  // Cantrips are always castable; leveled spells only once prepared — same rule the Spells tab's
-  // prepare toggle exists to enforce.
-  castableSpells = computed(() => this.knownSpells().filter(({ spell, entry }) => spell.level === 0 || entry.prepared));
-
   inventoryItems = computed(() => {
     const char = this.localChar();
     if (!char) return [];
@@ -141,35 +145,53 @@ export class CharacterPlaySheetComponent {
     return char.equipment.map(e => ({ entry: e, item: items.find(it => it.index === e.itemIndex) ?? null }));
   });
 
-  spellcastingClass = computed(() => this.resolvedClasses().find(rc => !!rc.data.spellcasting_ability) ?? null);
-
-  currentPactMagic = computed(() => {
-    const rc = this.spellcastingClass();
-    if (!rc) return null;
-    return rc.data.levels.find(l => l.level === rc.level)?.pact_magic ?? null;
-  });
-
-  currentSpellSlots = computed<SpellSlots>(() => {
-    const rc = this.spellcastingClass();
-    if (!rc) return {};
-    const level = rc.data.levels.find(l => l.level === rc.level);
-    if (level?.spell_slots) return level.spell_slots;
-    return level?.pact_magic
-      ? { [String(level.pact_magic.slot_level)]: level.pact_magic.slots } as SpellSlots
-      : {};
-  });
-
-  spellSlotLevels = computed(() => Object.entries(this.currentSpellSlots()).filter(([, n]) => (n ?? 0) > 0));
-
-  knownSpells = computed(() => {
+  spellResolution = computed(() => {
     const char = this.localChar();
-    if (!char) return [];
-    const all = this.spellsAll();
-    return char.spells
-      .map(entry => ({ entry, spell: all.find(sp => sp.index === entry.spellIndex) ?? null }))
-      .filter((x): x is { entry: SpellEntry; spell: DndSpell } => !!x.spell)
-      .sort((a, b) => a.spell.level - b.spell.level || a.spell.name.localeCompare(b.spell.name));
+    if (!char) return null;
+    const race = this.raceData();
+    const background = this.bgData();
+    const subrace = race && char.subrace ? race.subraces.find(candidate => candidate.name === char.subrace) ?? null : null;
+    return resolveSpellcasting({
+      characterLevel: char.level,
+      abilityScores: char.ability_scores,
+      spells: this.spellsAll(),
+      classes: this.resolvedClasses().map(rc => ({
+        cls: rc.data,
+        level: rc.level,
+        subclass: rc.subclassName,
+        choices: rc.choices,
+      })),
+      race: race ? { race, subrace, choices: char.race_choices ?? {} } : null,
+      background: background ? { background, choices: char.background_choices ?? {} } : null,
+      spellChoices: char.spell_choices ?? {},
+    });
   });
+
+  spellRows = computed<DisplaySpell[]>(() => {
+    const resolution = this.spellResolution();
+    if (!resolution) return [];
+    const spellByIndex = new Map(this.spellsAll().map(spell => [spell.index, spell]));
+    const rows = new Map<string, DisplaySpell>();
+    const priority = { known: 0, spellbook: 1, prepared: 2, always_prepared: 3 } as const;
+    for (const origin of [
+      ...resolution.known,
+      ...resolution.spellbook,
+      ...resolution.prepared,
+      ...resolution.alwaysPrepared,
+    ]) {
+      const spell = spellByIndex.get(origin.spellIndex);
+      if (!spell) continue;
+      const key = `${origin.sourceKey}:${origin.spellIndex}`;
+      const current = rows.get(key);
+      if (!current || priority[origin.category] > priority[current.origin.category]) rows.set(key, { spell, origin });
+    }
+    return [...rows.values()].sort((a, b) =>
+      a.origin.sourceName.localeCompare(b.origin.sourceName)
+      || a.spell.level - b.spell.level
+      || a.spell.name.localeCompare(b.spell.name));
+  });
+
+  castableSpells = computed(() => this.spellRows().filter(row => row.origin.category !== 'spellbook'));
 
   resolvedFeatures = computed<DisplayFeature[]>(() => {
     const char = this.localChar();
@@ -249,7 +271,7 @@ export class CharacterPlaySheetComponent {
 
   // Distinguishes "a different character was picked" (reload content, reset to Stats tab)
   // from "the same character came back down after a save round-trip" (just refresh the local
-  // copy in place) — interactive actions (Use, Rest, equip/prepare toggles) save and emit the
+  // copy in place) — interactive actions (Use, Rest, equip/slot toggles) save and emit the
   // updated character back through the parent, which re-feeds it into this same input.
   private loadedId: string | null | undefined = undefined;
 
@@ -331,6 +353,19 @@ export class CharacterPlaySheetComponent {
     return this.statsService.fmt(n);
   }
 
+  slotLevels(pool: ResolvedSpellSlotPool): [string, number][] {
+    return Object.entries(pool.slots).filter(([, count]) => count > 0);
+  }
+
+  spellCategoryLabel(category: ResolvedSpellCategory): string {
+    return {
+      known: 'Known',
+      spellbook: 'Spellbook',
+      prepared: 'Prepared',
+      always_prepared: 'Always Prepared',
+    }[category];
+  }
+
   hpPercent(char: Character): number {
     return !char.max_hp ? 0 : Math.round((char.current_hp / char.max_hp) * 100);
   }
@@ -370,11 +405,19 @@ export class CharacterPlaySheetComponent {
   rest(type: 'short_rest' | 'long_rest') {
     const char = this.localChar();
     if (!char) return;
-    const restoresSlots = type === 'long_rest' || (type === 'short_rest' && !!this.currentPactMagic());
+    const slotUses: NonNullable<Character['spell_slot_uses']> = type === 'long_rest'
+      ? {}
+      : { ...(char.spell_slot_uses ?? {}) };
+    if (type === 'short_rest') {
+      for (const pool of this.spellResolution()?.slotPools.filter(candidate => candidate.type === 'pact') ?? []) {
+        slotUses[pool.key] = {};
+      }
+    }
     this.persist({
       ...char,
       resource_uses: this.actionsService.rest(char.resource_uses ?? {}, this.actions(), type),
-      spell_slots_used: restoresSlots ? {} : char.spell_slots_used,
+      spell_slots_used: type === 'long_rest' ? {} : char.spell_slots_used,
+      spell_slot_uses: slotUses,
     });
   }
 
@@ -406,30 +449,41 @@ export class CharacterPlaySheetComponent {
     this.persist({ ...char, currency: next });
   }
 
-  // Spells
-  togglePrepared(entry: SpellEntry) {
+  slotUses(poolKey: string, level: string): number {
     const char = this.localChar();
-    if (!char) return;
-    const spells = char.spells.map(s => s.spellIndex === entry.spellIndex ? { ...s, prepared: !s.prepared } : s);
-    this.persist({ ...char, spells });
+    if (!char) return 0;
+    return char.spell_slot_uses?.[poolKey]?.[level]
+      ?? (poolKey === 'spellcasting' ? char.spell_slots_used?.[level] : 0)
+      ?? 0;
   }
 
-  useSlot(level: string) {
+  useSlot(poolKey: string, level: string, max: number) {
     const char = this.localChar();
     if (!char) return;
-    const used = char.spell_slots_used ?? {};
-    const current = used[level] ?? 0;
-    const max = this.currentSpellSlots()[level as keyof SpellSlots] ?? 0;
+    const current = this.slotUses(poolKey, level);
     if (current >= max) return;
-    this.persist({ ...char, spell_slots_used: { ...used, [level]: current + 1 } });
+    const poolUses = { ...(char.spell_slot_uses?.[poolKey] ?? {}), [level]: current + 1 };
+    this.persist({
+      ...char,
+      spell_slot_uses: { ...(char.spell_slot_uses ?? {}), [poolKey]: poolUses },
+      spell_slots_used: poolKey === 'spellcasting'
+        ? { ...(char.spell_slots_used ?? {}), [level]: current + 1 }
+        : char.spell_slots_used,
+    });
   }
 
-  restoreSlot(level: string) {
+  restoreSlot(poolKey: string, level: string) {
     const char = this.localChar();
     if (!char) return;
-    const used = char.spell_slots_used ?? {};
-    const current = used[level] ?? 0;
+    const current = this.slotUses(poolKey, level);
     if (current <= 0) return;
-    this.persist({ ...char, spell_slots_used: { ...used, [level]: current - 1 } });
+    const poolUses = { ...(char.spell_slot_uses?.[poolKey] ?? {}), [level]: current - 1 };
+    this.persist({
+      ...char,
+      spell_slot_uses: { ...(char.spell_slot_uses ?? {}), [poolKey]: poolUses },
+      spell_slots_used: poolKey === 'spellcasting'
+        ? { ...(char.spell_slots_used ?? {}), [level]: current - 1 }
+        : char.spell_slots_used,
+    });
   }
 }

@@ -26,7 +26,31 @@
       "options": [
         {
           "name": "Forest Gnome",
-          "description": "You know Minor Illusion and always have Speak with Animals prepared. Cast Speak with Animals without a spell slot a number of times equal to your Proficiency Bonus per Long Rest, or use spell slots."
+          "description": "You know Minor Illusion and always have Speak with Animals prepared. Cast Speak with Animals without a spell slot a number of times equal to your Proficiency Bonus per Long Rest, or use spell slots.",
+          "grants": [
+            {
+              "type": "spell_grant",
+              "key": "forest_gnome_minor_illusion",
+              "name": "Forest Gnome Magic",
+              "destination": "known",
+              "spells": ["minor-illusion"],
+              "countsAgainstLimit": false,
+              "sourceKey": "forest-gnome",
+              "sourceName": "Forest Gnome",
+              "ability": { "choiceKey": "gnomish_spellcasting_ability" }
+            },
+            {
+              "type": "spell_grant",
+              "key": "forest_gnome_speak_with_animals",
+              "name": "Forest Gnome Magic",
+              "destination": "always_prepared",
+              "spells": ["speak-with-animals"],
+              "countsAgainstLimit": false,
+              "sourceKey": "forest-gnome",
+              "sourceName": "Forest Gnome",
+              "ability": { "choiceKey": "gnomish_spellcasting_ability" }
+            }
+          ]
         },
         {
           "name": "Rock Gnome",

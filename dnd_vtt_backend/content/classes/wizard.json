@@ -33,6 +33,7 @@
     "goldAlternative": 55
   },
   "spellcasting_ability": "intelligence",
+  "spellcasting": { "key": "class:wizard", "list": "Wizard", "ability": "intelligence", "mode": "spellbook", "progression": "full" },
   "subclass_level": 3,
   "subclasses": [
     {
@@ -174,6 +175,16 @@
               "type": "feature",
               "name": "Evocation Savant",
               "description": "Add two Evocation spells of level 2 or lower to your spellbook for free. Whenever a Wizard level first gives you access to a new spell-slot level, add one Wizard spell from the Evocation school of an eligible level to your spellbook for free. Detailed spell selection will use the shared spell system."
+            },
+            {
+              "type": "spell_grant",
+              "key": "evocation_savant_3",
+              "name": "Evocation Savant",
+              "description": "Choose two level 1 or 2 Wizard Evocation spells to add to your spellbook without counting against its normal spell total.",
+              "destination": "spellbook",
+              "choose": 2,
+              "countsAgainstLimit": false,
+              "filter": { "lists": ["Wizard"], "schools": ["Evocation"], "minLevel": 1, "maxLevel": 2 }
             },
             {
               "type": "feature",

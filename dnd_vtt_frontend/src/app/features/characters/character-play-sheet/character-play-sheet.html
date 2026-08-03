@@ -230,15 +230,15 @@
                           </div>
                         </div>
                       }
-                      @for (cs of castableSpells(); track cs.entry.spellIndex) {
+                      @for (cs of castableSpells(); track cs.origin.sourceKey + ':' + cs.spell.index) {
                         <div class="flex items-center justify-between px-3 py-2 rounded border border-white/10 text-sm gap-3">
                           <div class="min-w-0">
                             <span class="text-parchment font-medium">{{ cs.spell.name }}</span>
                             <span class="text-coal text-xs"> · {{ cs.spell.level === 0 ? 'Cantrip' : 'Level ' + cs.spell.level }}</span>
                           </div>
                           <div class="flex items-center gap-3 flex-shrink-0 text-xs">
-                            @if (s.spell_attack_bonus !== null) { <span class="text-slate">Attack <span class="font-brand text-gold text-sm">{{ fmt(s.spell_attack_bonus) }}</span></span> }
-                            @if (s.spell_save_dc !== null) { <span class="text-slate">Save DC <span class="font-brand text-gold text-sm">{{ s.spell_save_dc }}</span></span> }
+                            @if (cs.origin.spellAttackBonus !== null) { <span class="text-slate">Attack <span class="font-brand text-gold text-sm">{{ fmt(cs.origin.spellAttackBonus) }}</span></span> }
+                            @if (cs.origin.spellSaveDc !== null) { <span class="text-slate">Save DC <span class="font-brand text-gold text-sm">{{ cs.origin.spellSaveDc }}</span></span> }
                           </div>
                         </div>
                       }
@@ -422,23 +422,40 @@
         <!-- SPELLS -->
         @case ('spells') {
           <div class="flex flex-col gap-5 max-w-3xl">
-            @if (!spellcastingClass()) {
+            @if (!spellResolution()?.sources?.length && !spellRows().length) {
               <p class="text-sm text-slate">{{ char.name }} isn't a spellcaster.</p>
             } @else {
-              @if (spellSlotLevels().length) {
+              @if (spellResolution(); as spellcasting) {
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  @for (source of spellcasting.sources; track source.key) {
+                    <div class="bg-elevated rounded-lg border border-white/10 px-3 py-2">
+                      <div class="text-sm text-parchment">{{ source.name }}</div>
+                      @if (source.castingAbility) {
+                        <div class="text-xs text-slate mt-1">
+                          {{ abilityShort[source.castingAbility] }}
+                          @if (source.spellAttackBonus !== null) { · Attack {{ fmt(source.spellAttackBonus) }} }
+                          @if (source.spellSaveDc !== null) { · Save DC {{ source.spellSaveDc }} }
+                        </div>
+                      }
+                    </div>
+                  }
+                </div>
+              }
+
+              @for (pool of spellResolution()?.slotPools ?? []; track pool.key) {
                 <div>
                   <h4 class="font-brand text-gold text-xs uppercase tracking-widest m-0 pb-1.5 mb-2 border-b border-gold/25">
-                    {{ currentPactMagic() ? 'Pact Magic Slots (Short Rest)' : 'Spell Slots' }}
+                    {{ pool.name }}{{ pool.type === 'pact' ? ' (Short Rest)' : '' }}
                   </h4>
                   <div class="flex flex-wrap gap-2">
-                    @for (slot of spellSlotLevels(); track slot[0]) {
-                      @let used = char.spell_slots_used?.[slot[0]] ?? 0;
+                    @for (slot of slotLevels(pool); track slot[0]) {
+                      @let used = slotUses(pool.key, slot[0]);
                       <div class="bg-elevated rounded-lg border border-white/10 px-3 py-2 text-center min-w-[80px]">
                         <div class="text-[10px] text-slate">Level {{ slot[0] }}</div>
-                        <div class="font-brand text-gold text-xl">{{ slot[1]! - used }} / {{ slot[1] }}</div>
+                        <div class="font-brand text-gold text-xl">{{ slot[1] - used }} / {{ slot[1] }}</div>
                         <div class="flex items-center justify-center gap-1 mt-1">
-                          <button class="btn-icon w-5 h-5 text-xs" [disabled]="used === 0 || persisting()" (click)="restoreSlot(slot[0])">−</button>
-                          <button class="btn-icon w-5 h-5 text-xs" [disabled]="used >= slot[1]! || persisting()" (click)="useSlot(slot[0])">+</button>
+                          <button class="btn-icon w-5 h-5 text-xs" [disabled]="used === 0 || persisting()" (click)="restoreSlot(pool.key, slot[0])">−</button>
+                          <button class="btn-icon w-5 h-5 text-xs" [disabled]="used >= slot[1] || persisting()" (click)="useSlot(pool.key, slot[0], slot[1])">+</button>
                         </div>
                       </div>
                     }
@@ -446,24 +463,33 @@
                 </div>
               }
 
-              @if (knownSpells().length) {
+              @if (spellResolution()?.validationErrors?.length) {
+                <div class="rounded border border-danger/40 bg-danger/10 px-3 py-2 text-xs text-red-200">
+                  Spell choices need repair in character creation.
+                  <ul class="mt-1 mb-0 pl-4 list-disc">
+                    @for (error of spellResolution()?.validationErrors ?? []; track error.requirementKey + ':' + error.spellIndex + ':' + error.message) {
+                      <li>{{ error.message }}</li>
+                    }
+                  </ul>
+                </div>
+              }
+
+              @if (spellRows().length) {
                 <div>
                   <h4 class="font-brand text-gold text-xs uppercase tracking-widest m-0 pb-1.5 mb-2 border-b border-gold/25">Spells</h4>
                   <div class="flex flex-col gap-1.5">
-                    @for (row of knownSpells(); track row.entry.spellIndex) {
+                    @for (row of spellRows(); track row.origin.sourceKey + ':' + row.spell.index) {
                       <div class="px-3 py-2 rounded border border-white/10">
                         <div class="flex items-center justify-between gap-2">
                           <div class="flex items-center gap-2 min-w-0">
                             <span class="text-sm text-parchment truncate">{{ row.spell.name }}</span>
                             <span class="text-xs text-coal flex-shrink-0">{{ row.spell.level === 0 ? 'Cantrip' : 'Lv ' + row.spell.level }} · {{ row.spell.school }}</span>
                           </div>
-                          <button
-                            class="text-xs px-2.5 py-1 rounded border transition-all flex-shrink-0"
-                            [class]="row.entry.prepared ? 'border-gold/60 bg-gold/10 text-parchment' : 'border-white/15 text-slate hover:border-white/30'"
-                            [disabled]="persisting()"
-                            (click)="togglePrepared(row.entry)"
-                          >{{ row.entry.prepared ? 'Prepared' : 'Prepare' }}</button>
+                          <span class="text-xs px-2.5 py-1 rounded border border-gold/30 bg-gold/5 text-slate flex-shrink-0">
+                            {{ spellCategoryLabel(row.origin.category) }}
+                          </span>
                         </div>
+                        <p class="text-xs text-coal mt-1 mb-0">{{ row.origin.sourceName }}</p>
                         <p class="text-xs text-slate mt-1 mb-0">{{ row.spell.casting_time }} · {{ row.spell.range }} · {{ row.spell.duration }}</p>
                         <p class="text-xs text-slate mt-1 mb-0">{{ row.spell.description }}</p>
                       </div>
@@ -471,7 +497,7 @@
                   </div>
                 </div>
               } @else {
-                <p class="text-sm text-slate">No spells known yet.</p>
+                <p class="text-sm text-slate">No spells selected yet.</p>
               }
             }
           </div>

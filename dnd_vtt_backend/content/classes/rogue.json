@@ -48,6 +48,7 @@
       "index": "arcane-trickster",
       "name": "Arcane Trickster",
       "description": "Enhance stealth, misdirection, and legerdemain with carefully chosen Wizard magic.",
+      "spellcasting": { "key": "subclass:rogue:arcane-trickster", "name": "Arcane Trickster", "list": "Wizard", "ability": "intelligence", "mode": "prepared", "progression": "third" },
       "levels": [
         {
           "level": 3,

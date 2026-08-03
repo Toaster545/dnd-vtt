@@ -9,12 +9,13 @@ import type { RequestUser } from '../common/current-user.decorator';
 
 // Fields a player may change on their own campaign copy without the DM granting full edit
 // access — everything the character play sheet's in-encounter controls touch (HP, resource/spell
-// slot uses from actions and rests, equip toggle, spell-prepared toggle). Anything else in the
+// slot uses from actions and rests, and equipment toggles). Anything else in the
 // data blob (abilities, class, background, etc.) is left untouched even if present in the body.
 const PLAYER_EDITABLE_FIELDS = [
   'current_hp',
   'resource_uses',
   'spell_slots_used',
+  'spell_slot_uses',
   'equipment',
   'spells',
   // Not itself an independent player choice — the frontend recomputes this from whatever's

@@ -33,6 +33,7 @@
     "goldAlternative": 150
   },
   "spellcasting_ability": "charisma",
+  "spellcasting": { "key": "class:paladin", "list": "Paladin", "ability": "charisma", "mode": "prepared", "progression": "half" },
   "subclass_level": 3,
   "subclasses": [
     {
@@ -48,6 +49,14 @@
               "type": "feature",
               "name": "Oath of Devotion Spells",
               "description": "These spells are always prepared and don't count against your prepared-spell limit: at Paladin level 3, Protection from Evil and Good and Shield of Faith; level 5, Aid and Zone of Truth; level 9, Beacon of Hope and Dispel Magic; level 13, Freedom of Movement and Guardian of Faith; level 17, Commune and Flame Strike."
+            },
+            {
+              "type": "spell_grant",
+              "key": "oath_of_devotion_spells_3",
+              "name": "Oath of Devotion Spells",
+              "destination": "always_prepared",
+              "spells": ["protection-from-evil-and-good", "shield-of-faith"],
+              "countsAgainstLimit": false
             },
             {
               "type": "feature",

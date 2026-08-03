@@ -46,6 +46,10 @@ export interface SpellEntry {
   spellIndex: string;
   name: string;
   prepared: boolean;
+  sourceKey?: string;
+  sourceName?: string;
+  category?: 'known' | 'spellbook' | 'prepared' | 'always_prepared';
+  alwaysPrepared?: boolean;
 }
 
 export interface Currency {
@@ -113,7 +117,9 @@ export interface Character {
 
   // Spells
   spells: SpellEntry[];
+  spell_choices?: Record<string, string[]>; // stable resolver requirement key → selected spell indexes
   spell_slots_used: Record<string, number>; // slot level → count used
+  spell_slot_uses?: Record<string, Record<string, number>>; // slot-pool key → slot level → count used
 
   // Limited-use class/race/item features (Second Wind, Action Surge, etc.) — keyed by the
   // content grant's stable `key`, not its display name. Rest recovery clears entries by

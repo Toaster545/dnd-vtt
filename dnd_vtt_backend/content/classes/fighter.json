@@ -205,6 +205,7 @@
       "index": "eldritch-knight",
       "name": "Eldritch Knight",
       "description": "Combine martial mastery with arcane spells from the wizard spell list.",
+      "spellcasting": { "key": "subclass:fighter:eldritch-knight", "name": "Eldritch Knight", "list": "Wizard", "ability": "intelligence", "mode": "prepared", "progression": "third" },
       "levels": [
         {
           "level": 3, "features": ["Spellcasting", "War Bond"], "cantrips_known": 2, "prepared_spells": 3, "spell_slots": { "1": 2 },

@@ -35,6 +35,7 @@
     "goldAlternative": 50
   },
   "spellcasting_ability": "wisdom",
+  "spellcasting": { "key": "class:druid", "list": "Druid", "ability": "wisdom", "mode": "prepared", "progression": "full" },
   "subclass_level": 3,
   "subclasses": [
     {

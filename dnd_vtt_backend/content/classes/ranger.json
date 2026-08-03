@@ -37,6 +37,7 @@
     "goldAlternative": 150
   },
   "spellcasting_ability": "wisdom",
+  "spellcasting": { "key": "class:ranger", "list": "Ranger", "ability": "wisdom", "mode": "prepared", "progression": "half" },
   "subclass_level": 3,
   "subclasses": [
     {

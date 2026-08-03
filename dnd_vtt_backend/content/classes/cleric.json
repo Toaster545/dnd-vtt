@@ -25,6 +25,7 @@
     "goldAlternative": 110
   },
   "spellcasting_ability": "wisdom",
+  "spellcasting": { "key": "class:cleric", "list": "Cleric", "ability": "wisdom", "mode": "prepared", "progression": "full" },
   "subclass_level": 3,
   "subclasses": [
     {

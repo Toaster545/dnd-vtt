@@ -31,6 +31,7 @@
     "goldAlternative": 50
   },
   "spellcasting_ability": "charisma",
+  "spellcasting": { "key": "class:sorcerer", "list": "Sorcerer", "ability": "charisma", "mode": "prepared", "progression": "full" },
   "subclass_level": 3,
   "subclasses": [
     {

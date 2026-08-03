@@ -43,6 +43,7 @@
     "goldAlternative": 90
   },
   "spellcasting_ability": "charisma",
+  "spellcasting": { "key": "class:bard", "list": "Bard", "ability": "charisma", "mode": "prepared", "progression": "full" },
   "subclass_level": 3,
   "subclasses": [
     {

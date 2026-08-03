@@ -113,8 +113,7 @@
       @if (activeStep() === 5) {
         <app-spells-step
           [spells]="spells()"
-          [selectedClass]="primaryClass()"
-          [selectedSpellIndices]="selectedSpellIndices()"
+          [resolution]="spellResolution()"
           (spellToggled)="toggleSpell($event)"
         />
       }

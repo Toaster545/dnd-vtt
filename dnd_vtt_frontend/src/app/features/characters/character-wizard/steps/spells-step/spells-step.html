@@ -1,48 +1,316 @@
-<h2 class="font-brand text-xl text-parchment mb-1">Known Spells</h2>
-@if (selectedClass()?.spellcasting_ability) {
-  <p class="text-sm text-slate mb-4">
-    Showing spells available to {{ selectedClass()!.name }}. Select spells to add to your spellbook.
-  </p>
-} @else {
-  <p class="text-sm text-slate mb-4">
-    @if (selectedClass()) {
-      {{ selectedClass()!.name }} is not a spellcasting class. You can still add spells if needed.
-    } @else {
-      Select a class first to filter spells, or browse all spells below.
-    }
-  </p>
-}
-@if (visibleSpells().length === 0) {
-  <p class="text-slate text-sm">No spells available for this class.</p>
-} @else {
-  <div class="flex flex-col gap-1.5 max-w-2xl">
-    @for (spell of visibleSpells(); track spell.index) {
+<div class="flex flex-wrap items-start justify-between gap-4 mb-4">
+  <div>
+    <h2 class="font-brand text-xl text-parchment mb-1">Spellcasting</h2>
+    <p class="text-sm text-slate m-0">
+      Choose spells separately for each source. Invalid selections stay visible until you repair them.
+    </p>
+  </div>
+  @if (groups().length) {
+    <div class="relative flex items-center gap-2 ml-auto">
+      <input
+        class="field-input max-w-52 py-1.5 text-sm"
+        type="search"
+        placeholder="Search spells"
+        [value]="search()"
+        (input)="setSearch($event)"
+      />
       <button
-        class="flex items-center justify-between px-4 py-3 rounded-md border transition-all cursor-pointer text-left w-full"
-        [class]="selectedSpellIndices().has(spell.index)
-          ? 'border-gold/60 bg-gold/5'
-          : 'border-white/10 hover:border-white/25'"
-        (click)="spellToggled.emit(spell.index)"
-        style="background: transparent; font-family: inherit;"
-      >
-        <div class="flex items-center gap-3">
-          <span class="font-medium text-sm" [class]="selectedSpellIndices().has(spell.index) ? 'text-parchment' : 'text-slate'">{{ spell.name }}</span>
-          @if (selectedSpellIndices().has(spell.index)) {
-            <span class="text-gold text-xs">✓</span>
-          }
+        type="button"
+        class="px-3 py-1.5 rounded border border-white/15 text-sm text-slate hover:border-gold/40 hover:text-parchment"
+        [class.border-gold]="activeFilterCount(globalFilterKey) > 0"
+        [class.text-gold]="activeFilterCount(globalFilterKey) > 0"
+        [attr.aria-expanded]="openFilterScope() === globalFilterKey"
+        (click)="toggleFilters(globalFilterKey)"
+      >Filters @if (activeFilterCount(globalFilterKey)) { ({{ activeFilterCount(globalFilterKey) }}) }</button>
+
+      @if (openFilterScope() === globalFilterKey) {
+        <div class="absolute right-0 top-full z-20 mt-2 w-[min(32rem,calc(100vw-2rem))] rounded-lg border border-gold/30 bg-elevated shadow-xl p-4">
+          <ng-container [ngTemplateOutlet]="spellFilters" [ngTemplateOutletContext]="{ $implicit: globalFilterKey }" />
         </div>
-        <div class="flex items-center gap-3 flex-shrink-0 ml-4 text-xs text-coal">
-          <span>{{ spell.level === 0 ? 'Cantrip' : spell.level + (spell.level === 1 ? 'st' : spell.level === 2 ? 'nd' : spell.level === 3 ? 'rd' : 'th') + ' lvl' }}</span>
-          <span>{{ spell.school }}</span>
-          <span>{{ spell.casting_time }}</span>
-          <span>{{ spell.range }}</span>
-        </div>
-      </button>
+      }
+    </div>
+  }
+</div>
+
+<ng-template #spellFilters let-scope>
+  @let filters = filterState(scope);
+  <div class="flex items-center justify-between gap-3 mb-3">
+    <h3 class="font-brand text-sm text-gold m-0">Filter spells</h3>
+    <button type="button" class="text-xs text-slate hover:text-parchment" (click)="resetFilters(scope)">Clear filters</button>
+  </div>
+  <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+    <label class="text-xs text-slate">
+      Spell level
+      <select class="field-input mt-1 py-1.5 text-sm" (change)="setLevelFilter(scope, $event)">
+        <option value="" [selected]="filters.level === null">Any level</option>
+        @for (level of availableLevelsFor(scope); track level) {
+          <option [value]="level" [selected]="filters.level === level">{{ levelLabel(level) }}</option>
+        }
+      </select>
+    </label>
+    <label class="text-xs text-slate">
+      School
+      <select class="field-input mt-1 py-1.5 text-sm" (change)="setSchoolFilter(scope, $event)">
+        <option value="" [selected]="!filters.school">Any school</option>
+        @for (school of availableSchoolsFor(scope); track school) {
+          <option [value]="school" [selected]="filters.school === school">{{ school }}</option>
+        }
+      </select>
+    </label>
+    <label class="text-xs text-slate">
+      Range
+      <select class="field-input mt-1 py-1.5 text-sm" (change)="setRangeFilter(scope, $event)">
+        <option value="" [selected]="!filters.range">Any range</option>
+        <option value="self" [selected]="filters.range === 'self'">Self</option>
+        <option value="touch" [selected]="filters.range === 'touch'">Touch</option>
+        <option value="30" [selected]="filters.range === '30'">Up to 30 feet</option>
+        <option value="60" [selected]="filters.range === '60'">Up to 60 feet</option>
+        <option value="120" [selected]="filters.range === '120'">Up to 120 feet</option>
+        <option value="long" [selected]="filters.range === 'long'">Over 120 feet</option>
+        <option value="special" [selected]="filters.range === 'special'">Sight or special</option>
+      </select>
+    </label>
+    <label class="text-xs text-slate">
+      Casting time
+      <select class="field-input mt-1 py-1.5 text-sm" (change)="setCastingTimeFilter(scope, $event)">
+        <option value="" [selected]="!filters.castingTime">Any casting time</option>
+        <option value="action" [selected]="filters.castingTime === 'action'">Action</option>
+        <option value="bonus_action" [selected]="filters.castingTime === 'bonus_action'">Bonus Action</option>
+        <option value="reaction" [selected]="filters.castingTime === 'reaction'">Reaction</option>
+        <option value="longer" [selected]="filters.castingTime === 'longer'">Longer casting time</option>
+      </select>
+    </label>
+    <label class="text-xs text-slate">
+      Concentration
+      <select class="field-input mt-1 py-1.5 text-sm" (change)="setConcentrationFilter(scope, $event)">
+        <option value="" [selected]="!filters.concentration">Either</option>
+        <option value="yes" [selected]="filters.concentration === 'yes'">Required</option>
+        <option value="no" [selected]="filters.concentration === 'no'">Not required</option>
+      </select>
+    </label>
+    <label class="text-xs text-slate">
+      Ritual
+      <select class="field-input mt-1 py-1.5 text-sm" (change)="setRitualFilter(scope, $event)">
+        <option value="" [selected]="!filters.ritual">Either</option>
+        <option value="yes" [selected]="filters.ritual === 'yes'">Ritual</option>
+        <option value="no" [selected]="filters.ritual === 'no'">Not a ritual</option>
+      </select>
+    </label>
+  </div>
+</ng-template>
+
+@if (!groups().length) {
+  <div class="rounded-lg border border-white/10 bg-elevated/40 p-4">
+    <p class="text-sm text-slate m-0">This character has no spell choices or granted spells.</p>
+  </div>
+} @else {
+  <div class="flex flex-col gap-5">
+    @for (group of groups(); track group.key) {
+      <section class="rounded-lg border border-white/10 bg-elevated/30 p-4">
+        <button
+          type="button"
+          class="flex items-start justify-between gap-3 w-full text-left"
+          [attr.aria-expanded]="!isGroupCollapsed(group.key)"
+          (click)="toggleGroup(group.key)"
+        >
+          <div>
+            <h3 class="font-brand text-gold text-base m-0">
+              {{ group.name }}@if (groupHasOutstanding(group)) { <span class="text-gold ml-0.5">*</span> }
+            </h3>
+            <p class="text-[10px] uppercase tracking-wider text-coal mt-0.5 mb-0">{{ group.source?.origin ?? 'spell' }} source</p>
+            @if (group.source?.castingAbility) {
+              <p class="text-xs text-slate mt-1 mb-0 capitalize">
+                {{ group.source!.castingAbility }} · Attack
+                {{ group.source!.spellAttackBonus! >= 0 ? '+' : '' }}{{ group.source!.spellAttackBonus }} ·
+                Save DC {{ group.source!.spellSaveDc }}
+              </p>
+            }
+          </div>
+          <div class="flex items-center gap-2">
+            @if (group.source?.maxSpellLevel) {
+              <span class="text-[11px] text-slate border border-white/10 rounded px-2 py-1">
+                Up to level {{ group.source!.maxSpellLevel }}
+              </span>
+            }
+            <span class="text-coal text-xs">{{ isGroupCollapsed(group.key) ? '▸' : '▾' }}</span>
+          </div>
+        </button>
+
+        @if (!isGroupCollapsed(group.key)) {
+          <div class="mt-4 pt-4 border-t border-white/10">
+            @if (group.granted.length) {
+              @let grantedKey = group.key + ':granted';
+              <div class="mb-4">
+                <button
+                  type="button"
+                  class="flex items-center justify-between gap-3 w-full text-left mb-2"
+                  [attr.aria-expanded]="!isRequirementCollapsed(grantedKey)"
+                  (click)="toggleRequirement(grantedKey)"
+                >
+                  <h4 class="text-xs uppercase tracking-wider text-slate m-0">Granted / Always Prepared</h4>
+                  <span class="text-coal text-xs">{{ isRequirementCollapsed(grantedKey) ? '▸' : '▾' }}</span>
+                </button>
+                @if (!isRequirementCollapsed(grantedKey)) {
+                  <div class="flex flex-wrap gap-2">
+                    @for (origin of group.granted; track origin.category + ':' + origin.spellIndex) {
+                      @let spell = grantedSpell(origin);
+                      @if (spell) {
+                        <div class="rounded border border-gold/35 bg-gold/5 px-3 py-2">
+                          <div class="text-sm text-parchment">
+                            {{ spell.name }}
+                            @if (origin.subclassName) {
+                              <span class="text-parchment font-normal text-xs">—</span>&nbsp;
+                              <span class="text-subclass font-semibold text-xs">{{ origin.subclassName }}</span>
+                            }
+                          </div>
+                          <div class="text-[11px] text-slate">
+                            {{ levelLabel(spell.level) }} · {{ spell.school }}
+                            @if (origin.category === 'always_prepared') { · Always prepared }
+                          </div>
+                        </div>
+                      }
+                    }
+                  </div>
+                }
+              </div>
+            }
+
+            @for (requirement of group.requirements; track requirement.key) {
+              <div class="mt-4 first:mt-0 pt-3 first:pt-0 border-t first:border-t-0 border-white/10">
+                <div class="relative flex items-center gap-2 mb-2">
+                  <button
+                    type="button"
+                    class="flex items-center justify-between gap-3 flex-1 min-w-0 text-left"
+                    [attr.aria-expanded]="!isRequirementCollapsed(requirement.key)"
+                    (click)="toggleRequirement(requirement.key)"
+                  >
+                    <div>
+                      <h4 class="text-sm text-parchment m-0">
+                        {{ requirement.name }}@if (requirement.remaining > 0) { <span class="text-gold ml-0.5">*</span> }
+                        @if (requirement.subclassName) {
+                          &nbsp;<span class="text-parchment font-normal text-xs">—</span>&nbsp;
+                          <span class="text-subclass font-semibold text-xs">{{ requirement.subclassName }}</span>
+                        }
+                      </h4>
+                      <p class="text-xs text-slate mt-0.5 mb-0">
+                        {{ requirement.validSelectedSpellIndices.length }} / {{ requirement.required }} selected
+                        @if (!requirement.countsAgainstLimit) { · Does not count against the normal limit }
+                      </p>
+                    </div>
+                    <div class="flex items-center gap-2">
+                      @if (requirement.remaining > 0) {
+                        <span class="text-xs text-gold">{{ requirement.remaining }} remaining</span>
+                      } @else if (!requirement.errors.length) {
+                        <span class="text-xs text-success">Complete</span>
+                      }
+                      <span class="text-coal text-xs">{{ isRequirementCollapsed(requirement.key) ? '▸' : '▾' }}</span>
+                    </div>
+                  </button>
+                  <button
+                    type="button"
+                    class="px-2.5 py-1 rounded border border-white/15 text-xs text-slate hover:border-gold/40 hover:text-parchment flex-shrink-0"
+                    [class.border-gold]="activeFilterCount(requirement.key) > 0"
+                    [class.text-gold]="activeFilterCount(requirement.key) > 0"
+                    [attr.aria-expanded]="openFilterScope() === requirement.key"
+                    (click)="toggleFilters(requirement.key)"
+                  >Filters @if (activeFilterCount(requirement.key)) { ({{ activeFilterCount(requirement.key) }}) }</button>
+
+                  @if (openFilterScope() === requirement.key) {
+                    <div class="absolute right-0 top-full z-20 mt-2 w-[min(32rem,calc(100vw-2rem))] rounded-lg border border-gold/30 bg-elevated shadow-xl p-4">
+                      <ng-container [ngTemplateOutlet]="spellFilters" [ngTemplateOutletContext]="{ $implicit: requirement.key }" />
+                    </div>
+                  }
+                </div>
+
+                @if (!isRequirementCollapsed(requirement.key)) {
+                  @if (requirement.errors.length) {
+                    <div class="rounded border border-danger/40 bg-danger/5 px-3 py-2 mb-2">
+                      @for (error of requirement.errors; track error.code + ':' + (error.spellIndex ?? 'requirement')) {
+                        <div class="flex items-center justify-between gap-2 mb-1 last:mb-0">
+                          <p class="text-xs text-danger m-0">{{ error.message }}</p>
+                          @if (error.spellIndex && isSelected(requirement, error.spellIndex)) {
+                            <button
+                              type="button"
+                              class="text-[10px] text-danger border border-danger/40 rounded px-2 py-0.5 flex-shrink-0"
+                              (click)="toggle(requirement, error.spellIndex)"
+                            >Remove</button>
+                          }
+                        </div>
+                      }
+                    </div>
+                  }
+
+                  @for (levelGroup of visibleSpellGroups(requirement); track levelGroup.level) {
+                    <div class="mt-3 first:mt-0">
+                      <div class="flex items-center gap-2 mb-2">
+                        <span class="text-[10px] uppercase tracking-widest text-coal flex-shrink-0">{{ levelGroup.label }}</span>
+                        <div class="h-px bg-white/10 flex-1"></div>
+                      </div>
+                      <div class="grid grid-cols-1 xl:grid-cols-2 gap-1.5">
+                        @for (spell of levelGroup.spells; track spell.index) {
+                          <button
+                            type="button"
+                            class="flex items-center justify-between gap-3 px-3 py-2.5 rounded border text-left transition-colors"
+                            [class]="isInvalid(requirement, spell.index)
+                              ? 'border-danger/60 bg-danger/5'
+                              : isSelected(requirement, spell.index)
+                                ? 'border-gold/60 bg-gold/5'
+                                : isUnavailable(requirement, spell.index)
+                                  ? 'border-white/8 text-coal cursor-not-allowed'
+                                  : 'border-white/10 hover:border-white/25'"
+                            [disabled]="!canToggle(requirement, spell.index)"
+                            [title]="isInvalid(requirement, spell.index)
+                              ? isDuplicateConflict(requirement, spell.index)
+                                ? 'Duplicate spell — remove it here or from its other source'
+                                : 'Invalid spell selection — remove it to repair this section'
+                              : isUnavailable(requirement, spell.index)
+                                ? 'Already selected from ' + unavailableSource(requirement, spell.index)
+                                : ''"
+                            (click)="toggle(requirement, spell.index)"
+                          >
+                            <div class="min-w-0">
+                              <div class="text-sm truncate" [class]="isSelected(requirement, spell.index)
+                                ? 'text-parchment'
+                                : isUnavailable(requirement, spell.index) ? 'text-coal' : 'text-slate'">
+                                {{ spell.name }}
+                              </div>
+                              <div class="text-[11px] text-coal">{{ spell.school }} · {{ spell.casting_time }} · {{ spell.range }}</div>
+                              @if (spell.concentration || spell.ritual) {
+                                <div class="text-[10px] text-slate mt-0.5">
+                                  @if (spell.concentration) { Concentration }
+                                  @if (spell.concentration && spell.ritual) { · }
+                                  @if (spell.ritual) { Ritual }
+                                </div>
+                              }
+                            </div>
+                            @if (isInvalid(requirement, spell.index)) {
+                              <span class="text-[10px] text-danger flex-shrink-0">Remove</span>
+                            } @else if (isSelected(requirement, spell.index)) {
+                              <span class="text-[10px] text-gold flex-shrink-0">Selected</span>
+                            } @else if (isUnavailable(requirement, spell.index)) {
+                              <span class="text-[10px] text-coal flex-shrink-0">Already selected</span>
+                            }
+                          </button>
+                        }
+                      </div>
+                    </div>
+                  } @empty {
+                    <p class="text-xs text-slate">No spells match the current search and filters.</p>
+                  }
+                }
+              </div>
+            }
+          </div>
+        }
+      </section>
     }
   </div>
-  @if (selectedSpellIndices().size) {
-    <p class="text-sm text-slate mt-4">
-      <span class="text-gold font-medium">{{ selectedSpellIndices().size }}</span> spell(s) selected
-    </p>
-  }
+}
+
+@if (globalErrors().length) {
+  <div class="rounded border border-danger/40 bg-danger/5 px-3 py-2 mt-4">
+    @for (error of globalErrors(); track error.code + ':' + error.message) {
+      <p class="text-xs text-danger m-0 mb-1 last:mb-0">{{ error.message }}</p>
+    }
+  </div>
 }

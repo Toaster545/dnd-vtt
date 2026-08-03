@@ -146,12 +146,20 @@ describe('CharactersService', () => {
       const updated = await service.update(created.id as string, owner, {
         name: 'Renamed',
         current_hp: 5,
+        spell_slot_uses: {
+          spellcasting: { '1': 1 },
+          'pact:class:warlock': { '2': 2 },
+        },
         notes: 'player tried to overwrite notes',
       });
 
       const blob = updated as unknown as Record<string, unknown>;
       // Whitelisted field (current_hp) goes through...
       expect(blob.current_hp).toBe(5);
+      expect(blob.spell_slot_uses).toEqual({
+        spellcasting: { '1': 1 },
+        'pact:class:warlock': { '2': 2 },
+      });
       // ...but name/notes are outside PLAYER_EDITABLE_FIELDS and are left untouched.
       expect(updated.name).toBe('Aria');
       expect(blob.notes).toBe('secret DM notes');
