@@ -359,4 +359,130 @@ describe('CharactersService', () => {
       }),
     ).rejects.toThrow(ConflictException);
   });
+
+  describe('grantItem', () => {
+    async function makeCampaignCopy() {
+      const created = await service.create(ownerId, { name: 'Aria' });
+      const campaignId = randomUUID();
+      const dmId = await insertProfile(db);
+      await db.execute(
+        `INSERT INTO campaigns (id, dm_id, name, join_code) VALUES (?, ?, 'Test Campaign', ?)`,
+        [campaignId, dmId, randomUUID().slice(0, 6).toUpperCase()],
+      );
+      await db.execute('UPDATE characters SET campaign_id = ? WHERE id = ?', [
+        campaignId,
+        created.id,
+      ]);
+      return {
+        created,
+        dm: { id: dmId, role: 'player' } as RequestUser,
+      };
+    }
+
+    it('lets the campaign DM grant an item onto the equipment list', async () => {
+      const { created, dm } = await makeCampaignCopy();
+      const updated = (await service.grantItem(created.id as string, dm, {
+        itemIndex: 'spear',
+        quantity: 2,
+      })) as unknown as { equipment: Record<string, unknown>[] };
+      expect(updated.equipment).toEqual([
+        { itemIndex: 'spear', name: 'Spear', quantity: 2, equipped: false },
+      ]);
+    });
+
+    it('stacks quantity onto an existing entry instead of duplicating it', async () => {
+      const { created, dm } = await makeCampaignCopy();
+      await service.grantItem(created.id as string, dm, {
+        itemIndex: 'spear',
+        quantity: 1,
+      });
+      const updated = (await service.grantItem(created.id as string, dm, {
+        itemIndex: 'spear',
+        quantity: 3,
+      })) as unknown as { equipment: Record<string, unknown>[] };
+      expect(updated.equipment).toEqual([
+        { itemIndex: 'spear', name: 'Spear', quantity: 4, equipped: false },
+      ]);
+    });
+
+    it('rejects a caller who does not DM the character campaign', async () => {
+      const { created } = await makeCampaignCopy();
+      await expect(
+        service.grantItem(created.id as string, owner, { itemIndex: 'spear' }),
+      ).rejects.toThrow(ForbiddenException);
+    });
+
+    it('rejects granting an item to a template character with no campaign', async () => {
+      const created = await service.create(ownerId, { name: 'Aria' });
+      await expect(
+        service.grantItem(created.id as string, owner, { itemIndex: 'spear' }),
+      ).rejects.toThrow(ForbiddenException);
+    });
+  });
+
+  describe('revokeItem', () => {
+    async function makeCampaignCopyWithItem(quantity: number) {
+      const created = await service.create(ownerId, { name: 'Aria' });
+      const campaignId = randomUUID();
+      const dmId = await insertProfile(db);
+      await db.execute(
+        `INSERT INTO campaigns (id, dm_id, name, join_code) VALUES (?, ?, 'Test Campaign', ?)`,
+        [campaignId, dmId, randomUUID().slice(0, 6).toUpperCase()],
+      );
+      await db.execute('UPDATE characters SET campaign_id = ? WHERE id = ?', [
+        campaignId,
+        created.id,
+      ]);
+      const dm = { id: dmId, role: 'player' } as RequestUser;
+      await service.grantItem(created.id as string, dm, {
+        itemIndex: 'spear',
+        quantity,
+      });
+      return { created, dm };
+    }
+
+    it('removes the whole stack when no quantity is given', async () => {
+      const { created, dm } = await makeCampaignCopyWithItem(3);
+      const updated = (await service.revokeItem(created.id as string, dm, {
+        itemIndex: 'spear',
+      })) as unknown as { equipment: Record<string, unknown>[] };
+      expect(updated.equipment).toEqual([]);
+    });
+
+    it('decrements the stack when a smaller quantity is given', async () => {
+      const { created, dm } = await makeCampaignCopyWithItem(3);
+      const updated = (await service.revokeItem(created.id as string, dm, {
+        itemIndex: 'spear',
+        quantity: 1,
+      })) as unknown as { equipment: Record<string, unknown>[] };
+      expect(updated.equipment).toEqual([
+        { itemIndex: 'spear', name: 'Spear', quantity: 2, equipped: false },
+      ]);
+    });
+
+    it('clamps an over-large quantity to removing the whole stack', async () => {
+      const { created, dm } = await makeCampaignCopyWithItem(3);
+      const updated = (await service.revokeItem(created.id as string, dm, {
+        itemIndex: 'spear',
+        quantity: 99,
+      })) as unknown as { equipment: Record<string, unknown>[] };
+      expect(updated.equipment).toEqual([]);
+    });
+
+    it('rejects removing an item the character does not have', async () => {
+      const { created, dm } = await makeCampaignCopyWithItem(1);
+      await expect(
+        service.revokeItem(created.id as string, dm, {
+          itemIndex: 'longsword',
+        }),
+      ).rejects.toThrow(NotFoundException);
+    });
+
+    it('rejects a caller who does not DM the character campaign', async () => {
+      const { created } = await makeCampaignCopyWithItem(1);
+      await expect(
+        service.revokeItem(created.id as string, owner, { itemIndex: 'spear' }),
+      ).rejects.toThrow(ForbiddenException);
+    });
+  });
 });

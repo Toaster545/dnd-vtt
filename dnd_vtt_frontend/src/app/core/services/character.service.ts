@@ -85,4 +85,35 @@ export class CharacterService {
       this.http.patch<Character>(`${API}/characters/${id}/concentration`, {})
     );
   }
+
+  // DM-only: grants (or stacks more of) an item from the SRD/custom item catalog onto a party
+  // member's campaign copy. The backend rejects this unless the caller DMs that character's campaign.
+  async grantItem(id: string, itemIndex: string, quantity: number): Promise<Character> {
+    return firstValueFrom(
+      this.http.post<Character>(`${API}/characters/${id}/grant-item`, { itemIndex, quantity })
+    );
+  }
+
+  // Omit `quantity` to remove the whole stack; the backend clamps anything >= what's on hand
+  // to a full removal too.
+  async revokeItem(id: string, itemIndex: string, quantity?: number): Promise<Character> {
+    return firstValueFrom(
+      this.http.post<Character>(`${API}/characters/${id}/revoke-item`, { itemIndex, quantity })
+    );
+  }
+
+  // DM-only counterpart to grantItem for spells: adds a spell to `granted_spells`, independent
+  // of the character's class/race/feat spellcasting progression. `sourceName` labels it in the
+  // Spells tab (defaults to "DM Gift" on the backend when omitted).
+  async grantSpell(id: string, spellIndex: string, sourceName?: string): Promise<Character> {
+    return firstValueFrom(
+      this.http.post<Character>(`${API}/characters/${id}/grant-spell`, { spellIndex, sourceName })
+    );
+  }
+
+  async revokeSpell(id: string, spellIndex: string): Promise<Character> {
+    return firstValueFrom(
+      this.http.post<Character>(`${API}/characters/${id}/revoke-spell`, { spellIndex })
+    );
+  }
 }

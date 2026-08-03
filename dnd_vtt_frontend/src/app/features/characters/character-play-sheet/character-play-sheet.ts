@@ -6,6 +6,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import {
   ContentService, DndClass, DndRace, DndBackground, DndItem, DndSpell, DndFeat, Subclass, TraitGrant,
 } from '../../../core/services/content.service';
+import { ItemFormComponent } from '../../create-content/items/item-form/item-form';
 import {
   CharacterService, SpellCastCommand,
 } from '../../../core/services/character.service';
@@ -19,10 +20,11 @@ import { adjustCurrency, CURRENCY_ORDER } from '../../../core/utils/currency';
 import { resolveCharacterFeatPicks } from '../../../core/utils/character-effects';
 import { resolveBackgroundOriginFeat } from '../../../core/utils/background-origin-feat';
 import {
-  describeSpellUpcast, isSpellAttack, resolveSpellAttackDamage,
+  describeSpellUpcast, isSpellAttack, isSavingThrowSpell, resolveSpellAttackDamage,
   resolveSpellcasting, ResolvedSpellOrigin, ResolvedSpellSlotPool, ResolvedSpellCategory,
   SpellUpcastEffect,
 } from '../../../core/utils/spellcasting';
+import { ConfirmService } from '../../../shared/confirm.service';
 
 function toIndex(name: string): string {
   return name.toLowerCase().replace(/\s+/g, '-');
@@ -59,7 +61,9 @@ interface CastingMethod {
   upcast?: SpellUpcastEffect;
 }
 
-interface DisplaySpellAttack {
+// Shared shape for a castable spell paired with the source it's cast from — used both for
+// spells that make an attack roll and spells that force a saving throw.
+interface DisplaySpellRoll {
   spell: DndSpell;
   origin: ResolvedSpellOrigin;
 }
@@ -81,7 +85,7 @@ type Tab = 'stats' | 'actions' | 'inventory' | 'spells';
 
 @Component({
   selector: 'app-character-play-sheet',
-  imports: [FormsModule, MatIconModule, MatTooltipModule, NgTemplateOutlet],
+  imports: [FormsModule, MatIconModule, MatTooltipModule, NgTemplateOutlet, ItemFormComponent],
   templateUrl: './character-play-sheet.html',
   styleUrl: './character-play-sheet.scss',
 })
@@ -90,8 +94,13 @@ export class CharacterPlaySheetComponent {
   private characterService = inject(CharacterService);
   private statsService    = inject(CharacterStatsService);
   private actionsService  = inject(CharacterActionsService);
+  private confirm         = inject(ConfirmService);
 
   readonly character = input.required<Character>();
+  // Set by DM-facing hosts (dm-campaign-hub, dm-campaign-session, dm-encounter-play) when the
+  // sheet is opened for a party member rather than the viewer's own character — gates the
+  // "Give Item" control, which calls a DM-only backend endpoint.
+  readonly isDm       = input(false);
   readonly saved      = output<Character>();
 
   readonly abilities     = ABILITIES;
@@ -112,6 +121,20 @@ export class CharacterPlaySheetComponent {
     search: '', level: '', school: '', source: '', castingTime: '', ritual: false,
     concentration: false, prepared: '',
   });
+
+  showGrantItemDialog    = signal(false);
+  grantItemSearch        = signal('');
+  grantItemQuantity      = signal(1);
+  grantItemCreatingCustom = signal(false);
+  grantItemBusy          = signal(false);
+  grantItemError         = signal('');
+  grantItemNotice        = signal('');
+
+  showGrantSpellDialog = signal(false);
+  grantSpellSearch     = signal('');
+  grantSpellBusy       = signal(false);
+  grantSpellError      = signal('');
+  grantSpellNotice     = signal('');
 
   hpAdjustAmount  = signal<number>(0);
   currencyOrder   = CURRENCY_ORDER;
@@ -197,6 +220,23 @@ export class CharacterPlaySheetComponent {
     return char.equipment.map(e => ({ entry: e, item: items.find(it => it.index === e.itemIndex) ?? null }));
   });
 
+  grantItemResults = computed(() => {
+    const query = this.grantItemSearch().trim().toLowerCase();
+    const items = this.itemsAll();
+    if (!query) return items;
+    return items.filter(item => item.name.toLowerCase().includes(query));
+  });
+
+  // Excludes anything the character already has, whether from class/race/feat progression or an
+  // earlier grant — spellRows() already folds granted spells in alongside every other origin.
+  grantSpellResults = computed(() => {
+    const query = this.grantSpellSearch().trim().toLowerCase();
+    const known = new Set(this.spellRows().map(row => row.spell.index));
+    const spells = this.spellsAll().filter(spell => !known.has(spell.index));
+    if (!query) return spells;
+    return spells.filter(spell => spell.name.toLowerCase().includes(query));
+  });
+
   spellResolution = computed(() => {
     const char = this.localChar();
     if (!char) return null;
@@ -236,6 +276,7 @@ export class CharacterPlaySheetComponent {
       background: background ? { background, choices: char.background_choices ?? {} } : null,
       feats: featSelections,
       spellChoices: char.spell_choices ?? {},
+      grantedSpells: (char.granted_spells ?? []).map(g => ({ spellIndex: g.spellIndex, sourceName: g.sourceName })),
     });
   });
 
@@ -271,19 +312,24 @@ export class CharacterPlaySheetComponent {
   });
 
   castableSpells = computed(() => this.spellRows().filter(row => row.origins.some(origin => origin.category !== 'spellbook')));
-  spellAttacks = computed<DisplaySpellAttack[]>(() => {
-    const attacks: DisplaySpellAttack[] = [];
+  private spellRollsMatching(predicate: (spell: DndSpell) => boolean): DisplaySpellRoll[] {
+    const rolls: DisplaySpellRoll[] = [];
     for (const row of this.castableSpells()) {
-      if (!isSpellAttack(row.spell) || this.castingTimeKind(row.spell) === 'bonus_action') continue;
+      if (!predicate(row.spell) || this.castingTimeKind(row.spell) === 'bonus_action') continue;
       const seen = new Set<string>();
       for (const origin of row.origins.filter(candidate => candidate.category !== 'spellbook')) {
         if (seen.has(origin.sourceKey)) continue;
         seen.add(origin.sourceKey);
-        attacks.push({ spell: row.spell, origin });
+        rolls.push({ spell: row.spell, origin });
       }
     }
-    return attacks.sort((a, b) => a.spell.name.localeCompare(b.spell.name) || a.origin.sourceName.localeCompare(b.origin.sourceName));
-  });
+    return rolls.sort((a, b) => a.spell.name.localeCompare(b.spell.name) || a.origin.sourceName.localeCompare(b.origin.sourceName));
+  }
+  // Spells that make a spell attack roll against the target.
+  spellAttacks = computed<DisplaySpellRoll[]>(() => this.spellRollsMatching(isSpellAttack));
+  // Spells that force the target to make a saving throw, rather than the caster rolling an attack.
+  spellSaves = computed<DisplaySpellRoll[]>(() =>
+    this.spellRollsMatching(spell => isSavingThrowSpell(spell) && !isSpellAttack(spell)));
   bonusActionSpells = computed(() => this.castableSpells()
     .filter(row => this.castingTimeKind(row.spell) === 'bonus_action'));
   reactionSpells = computed(() => this.castableSpells()
@@ -515,6 +561,12 @@ export class CharacterPlaySheetComponent {
     return spell.mechanics.damage_types.join('/');
   }
 
+  spellSaveAbilities(spell: DndSpell): string {
+    return spell.mechanics.saving_throws
+      .map(ability => this.abilityShort[ability as keyof typeof this.abilityShort] ?? ability)
+      .join('/');
+  }
+
   private hasClassChoice(className: string, choice: string): boolean {
     return this.resolvedClasses().some(rc =>
       rc.name === className && Object.values(rc.choices).some(selected => selected.includes(choice)));
@@ -580,6 +632,123 @@ export class CharacterPlaySheetComponent {
     if (!char) return;
     const equipment = char.equipment.map(e => e.itemIndex === entry.itemIndex ? { ...e, equipped: !e.equipped } : e);
     this.persist({ ...char, equipment });
+  }
+
+  // DM-only counterpart to grantItem — takes the whole stack back (see
+  // CharacterService.revokeItem / CharactersService.revokeItem for the partial-quantity form,
+  // unused here since "remove this from their inventory" is the sheet's only entry point).
+  async revokeItem(entry: EquipmentEntry) {
+    const char = this.localChar();
+    if (!char?.id || this.persisting()) return;
+    if (!await this.confirm.confirm(`Remove ${entry.name} from ${char.name}'s inventory?`, 'Remove Item')) return;
+    this.persisting.set(true);
+    try {
+      const result = await this.characterService.revokeItem(char.id, entry.itemIndex);
+      this.localChar.set(result);
+      this.saved.emit(result);
+    } finally {
+      this.persisting.set(false);
+    }
+  }
+
+  openGrantItemDialog() {
+    this.grantItemSearch.set('');
+    this.grantItemQuantity.set(1);
+    this.grantItemCreatingCustom.set(false);
+    this.grantItemError.set('');
+    this.grantItemNotice.set('');
+    this.showGrantItemDialog.set(true);
+  }
+
+  closeGrantItemDialog() {
+    this.showGrantItemDialog.set(false);
+    this.grantItemCreatingCustom.set(false);
+  }
+
+  setGrantItemQuantity(value: string) {
+    this.grantItemQuantity.set(Math.max(1, Math.floor(+value || 1)));
+  }
+
+  async grantItem(item: DndItem) {
+    const char = this.localChar();
+    if (!char?.id || this.grantItemBusy()) return;
+    this.grantItemBusy.set(true);
+    this.grantItemError.set('');
+    this.grantItemNotice.set('');
+    try {
+      const quantity = this.grantItemQuantity();
+      const result = await this.characterService.grantItem(char.id, item.index, quantity);
+      this.localChar.set(result);
+      this.saved.emit(result);
+      this.grantItemNotice.set(`Gave ${char.name} ${quantity > 1 ? quantity + '× ' : ''}${item.name}.`);
+    } catch (error: unknown) {
+      const candidate = error as { error?: { message?: string | string[] } };
+      const message = candidate.error?.message;
+      this.grantItemError.set(Array.isArray(message) ? message.join(' ') : message ?? 'Could not grant that item.');
+    } finally {
+      this.grantItemBusy.set(false);
+    }
+  }
+
+  // The item form always creates a brand-new custom item (see ItemFormComponent) — fold it into
+  // this sheet's already-loaded catalog so it shows up in the search list without a reload, then
+  // hand it straight to the same grant flow as a catalog pick.
+  onCustomItemGranted(item: DndItem) {
+    this.itemsAll.update(items => [...items, item]);
+    this.grantItemCreatingCustom.set(false);
+    void this.grantItem(item);
+  }
+
+  openGrantSpellDialog() {
+    this.grantSpellSearch.set('');
+    this.grantSpellError.set('');
+    this.grantSpellNotice.set('');
+    this.showGrantSpellDialog.set(true);
+  }
+
+  closeGrantSpellDialog() {
+    this.showGrantSpellDialog.set(false);
+  }
+
+  async grantSpell(spell: DndSpell) {
+    const char = this.localChar();
+    if (!char?.id || this.grantSpellBusy()) return;
+    this.grantSpellBusy.set(true);
+    this.grantSpellError.set('');
+    this.grantSpellNotice.set('');
+    try {
+      const result = await this.characterService.grantSpell(char.id, spell.index);
+      this.localChar.set(result);
+      this.saved.emit(result);
+      this.grantSpellNotice.set(`Gave ${char.name} ${spell.name}.`);
+    } catch (error: unknown) {
+      const candidate = error as { error?: { message?: string | string[] } };
+      const message = candidate.error?.message;
+      this.grantSpellError.set(Array.isArray(message) ? message.join(' ') : message ?? 'Could not grant that spell.');
+    } finally {
+      this.grantSpellBusy.set(false);
+    }
+  }
+
+  // A row is DM-granted (rather than earned through class/race/feat progression) when every
+  // origin backing it comes from the synthetic `granted:dm:` source resolveSpellcasting creates
+  // for each entry in `granted_spells` — see spellcasting.ts.
+  isGrantedSpell(row: DisplaySpell): boolean {
+    return row.origins.every(origin => origin.sourceKey.startsWith('granted:dm:'));
+  }
+
+  async revokeSpell(row: DisplaySpell) {
+    const char = this.localChar();
+    if (!char?.id || this.persisting()) return;
+    if (!await this.confirm.confirm(`Remove ${row.spell.name} from ${char.name}'s spells?`, 'Remove Spell')) return;
+    this.persisting.set(true);
+    try {
+      const result = await this.characterService.revokeSpell(char.id, row.spell.index);
+      this.localChar.set(result);
+      this.saved.emit(result);
+    } finally {
+      this.persisting.set(false);
+    }
   }
 
   setCurrencyAdjustAmount(denom: keyof Currency, value: string) {

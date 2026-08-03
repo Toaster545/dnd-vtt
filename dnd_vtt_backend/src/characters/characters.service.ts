@@ -473,6 +473,201 @@ export class CharactersService {
     });
   }
 
+  // DM-only: appends (or stacks onto an existing stack of) an item from the SRD/custom item
+  // catalog onto a party member's campaign-copy equipment. Only the campaign's DM may call this
+  // — a character's own player already has equipment in PLAYER_EDITABLE_FIELDS and goes through
+  // the normal PUT, so this exists purely for the "DM hands a player an item" direction.
+  async grantItem(
+    id: string,
+    user: RequestUser,
+    body: Record<string, unknown>,
+  ) {
+    return this.withCharacterLock(id, async () => {
+      const character = (await this.findOneReadable(id, user)) as Record<
+        string,
+        unknown
+      >;
+      if (
+        !character.campaign_id ||
+        !(await this.isCampaignOwner(character.campaign_id as string, user.id))
+      ) {
+        throw new ForbiddenException('Only the campaign DM can grant items.');
+      }
+      const itemIndex = this.requiredString(body.itemIndex, 'itemIndex');
+      const quantity = Number(body.quantity ?? 1);
+      if (!Number.isInteger(quantity) || quantity < 1) {
+        throw new BadRequestException('quantity must be a positive integer.');
+      }
+      const item = await this.content.getItem(itemIndex);
+
+      const data = this.characterData(character);
+      const equipment = Array.isArray(data.equipment)
+        ? [...(data.equipment as Record<string, unknown>[])]
+        : [];
+      const existingIndex = equipment.findIndex(
+        (entry) => entry.itemIndex === itemIndex,
+      );
+      if (existingIndex >= 0) {
+        const existing = equipment[existingIndex];
+        equipment[existingIndex] = {
+          ...existing,
+          quantity: Number(existing.quantity ?? 0) + quantity,
+        };
+      } else {
+        equipment.push({
+          itemIndex,
+          name: item.name,
+          quantity,
+          equipped: false,
+        });
+      }
+      data.equipment = equipment;
+      await this.writeCharacterData(id, data);
+      return this.findOneReadable(id, user);
+    });
+  }
+
+  // DM-only counterpart to grantItem — removes an item (or, with `quantity`, part of a stack)
+  // from a party member's campaign-copy equipment. `quantity` omitted (or >= what's on hand)
+  // removes the whole stack; anything less just decrements it.
+  async revokeItem(
+    id: string,
+    user: RequestUser,
+    body: Record<string, unknown>,
+  ) {
+    return this.withCharacterLock(id, async () => {
+      const character = (await this.findOneReadable(id, user)) as Record<
+        string,
+        unknown
+      >;
+      if (
+        !character.campaign_id ||
+        !(await this.isCampaignOwner(character.campaign_id as string, user.id))
+      ) {
+        throw new ForbiddenException('Only the campaign DM can remove items.');
+      }
+      const itemIndex = this.requiredString(body.itemIndex, 'itemIndex');
+      let requestedQuantity: number | undefined;
+      if (body.quantity !== undefined) {
+        requestedQuantity = Number(body.quantity);
+        if (!Number.isInteger(requestedQuantity) || requestedQuantity < 1) {
+          throw new BadRequestException('quantity must be a positive integer.');
+        }
+      }
+
+      const data = this.characterData(character);
+      const equipment = Array.isArray(data.equipment)
+        ? [...(data.equipment as Record<string, unknown>[])]
+        : [];
+      const index = equipment.findIndex(
+        (entry) => entry.itemIndex === itemIndex,
+      );
+      if (index < 0) {
+        throw new NotFoundException(
+          'That item is not in this character’s inventory.',
+        );
+      }
+      const existing = equipment[index];
+      const currentQuantity = Number(existing.quantity ?? 1);
+      const removeQuantity = requestedQuantity ?? currentQuantity;
+      if (removeQuantity >= currentQuantity) {
+        equipment.splice(index, 1);
+      } else {
+        equipment[index] = {
+          ...existing,
+          quantity: currentQuantity - removeQuantity,
+        };
+      }
+      data.equipment = equipment;
+      await this.writeCharacterData(id, data);
+      return this.findOneReadable(id, user);
+    });
+  }
+
+  // DM-only: adds a spell the character didn't earn through class/race/feat progression (a
+  // scroll's contents, a boon, an innate grant from a magic item) into `data.granted_spells`.
+  // Unlike grantItem's `equipment`, this is a dedicated array rather than piggybacking on
+  // `data.spells` — that field is a wizard-computed snapshot of grant-derived spells the play
+  // sheet never actually reads back (see resolveSpellcasting), so it wouldn't show up in play.
+  // resolveSpellcasting (frontend) turns each entry into an always-available, at-will "known"
+  // spell using the character's primary caster ability when they have one.
+  async grantSpell(
+    id: string,
+    user: RequestUser,
+    body: Record<string, unknown>,
+  ) {
+    return this.withCharacterLock(id, async () => {
+      const character = (await this.findOneReadable(id, user)) as Record<
+        string,
+        unknown
+      >;
+      if (
+        !character.campaign_id ||
+        !(await this.isCampaignOwner(character.campaign_id as string, user.id))
+      ) {
+        throw new ForbiddenException('Only the campaign DM can grant spells.');
+      }
+      const spellIndex = this.requiredString(body.spellIndex, 'spellIndex');
+      const sourceName =
+        typeof body.sourceName === 'string' && body.sourceName.trim()
+          ? body.sourceName.trim()
+          : 'DM Gift';
+      const spell = await this.content.getSpell(spellIndex);
+
+      const data = this.characterData(character);
+      const grantedSpells = Array.isArray(data.granted_spells)
+        ? [...(data.granted_spells as Record<string, unknown>[])]
+        : [];
+      if (grantedSpells.some((entry) => entry.spellIndex === spellIndex)) {
+        throw new ConflictException(
+          `${String(spell.name)} has already been granted to this character.`,
+        );
+      }
+      grantedSpells.push({ spellIndex, name: spell.name, sourceName });
+      data.granted_spells = grantedSpells;
+      await this.writeCharacterData(id, data);
+      return this.findOneReadable(id, user);
+    });
+  }
+
+  // DM-only counterpart to grantSpell.
+  async revokeSpell(
+    id: string,
+    user: RequestUser,
+    body: Record<string, unknown>,
+  ) {
+    return this.withCharacterLock(id, async () => {
+      const character = (await this.findOneReadable(id, user)) as Record<
+        string,
+        unknown
+      >;
+      if (
+        !character.campaign_id ||
+        !(await this.isCampaignOwner(character.campaign_id as string, user.id))
+      ) {
+        throw new ForbiddenException('Only the campaign DM can remove spells.');
+      }
+      const spellIndex = this.requiredString(body.spellIndex, 'spellIndex');
+
+      const data = this.characterData(character);
+      const grantedSpells = Array.isArray(data.granted_spells)
+        ? [...(data.granted_spells as Record<string, unknown>[])]
+        : [];
+      const index = grantedSpells.findIndex(
+        (entry) => entry.spellIndex === spellIndex,
+      );
+      if (index < 0) {
+        throw new NotFoundException(
+          'That spell was not granted to this character.',
+        );
+      }
+      grantedSpells.splice(index, 1);
+      data.granted_spells = grantedSpells;
+      await this.writeCharacterData(id, data);
+      return this.findOneReadable(id, user);
+    });
+  }
+
   async restoreSpellcasting(
     id: string,
     user: RequestUser,
