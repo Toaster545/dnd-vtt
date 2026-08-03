@@ -1,0 +1,36 @@
+{
+  "index": "nothic",
+  "name": "Nothic",
+  "size": "Medium",
+  "type": "aberration",
+  "alignment": "neutral evil",
+  "armor_class": 15,
+  "armor_class_desc": "natural armor",
+  "hit_points": 45,
+  "hit_dice": "6d8 + 18",
+  "speed": { "walk": 30 },
+  "ability_scores": {
+    "strength": 16,
+    "dexterity": 8,
+    "constitution": 16,
+    "intelligence": 13,
+    "wisdom": 10,
+    "charisma": 8
+  },
+  "initiative_bonus": -1,
+  "skills": { "Arcana": 3, "Perception": 2, "Stealth": 1 },
+  "senses": { "darkvision": 120, "passive_perception": 12 },
+  "languages": ["Common", "Undercommon"],
+  "challenge_rating": "2",
+  "xp": 450,
+  "traits": [
+    { "name": "Keen Sight", "description": "The nothic has advantage on Wisdom (Perception) checks that rely on sight." }
+  ],
+  "actions": [
+    { "name": "Bite", "description": "Melee Attack Roll: +5, reach 5 ft. Hit: 8 (2d4 + 3) Piercing damage." },
+    { "name": "Claw", "description": "Melee Attack Roll: +5, reach 5 ft. Hit: 6 (1d6 + 3) Slashing damage." },
+    { "name": "Rotting Gaze", "description": "The nothic targets one creature it can see within 30 feet of it. The target must succeed on a DC 13 Constitution saving throw or take 10 (3d6) Necrotic damage. On a successful save, the target takes half as much damage." },
+    { "name": "Weird Insight", "description": "The nothic magically peers into the mind of one creature it can see within 30 feet of it and reads its surface thoughts, learning the target's greatest desire, greatest fear, or most recent thought, the nothic's choice." }
+  ],
+  "description": "Once wizards who delved too deep into forbidden lore, nothics are twisted, one-eyed husks that skulk through ruins, laying bare the minds of intruders before withering them with a rotting gaze."
+}
