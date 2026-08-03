@@ -201,6 +201,10 @@ export function isSpellAttack(spell: DndSpell): boolean {
   return !!spell.mechanics?.spell_attacks?.length;
 }
 
+export function isSavingThrowSpell(spell: DndSpell): boolean {
+  return !!spell.mechanics?.saving_throws?.length;
+}
+
 export function resolveSpellAttackDamage(
   spell: DndSpell,
   characterLevel: number,

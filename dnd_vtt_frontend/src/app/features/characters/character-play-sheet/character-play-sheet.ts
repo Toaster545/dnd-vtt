@@ -19,7 +19,7 @@ import { adjustCurrency, CURRENCY_ORDER } from '../../../core/utils/currency';
 import { resolveCharacterFeatPicks } from '../../../core/utils/character-effects';
 import { resolveBackgroundOriginFeat } from '../../../core/utils/background-origin-feat';
 import {
-  describeSpellUpcast, isSpellAttack, resolveSpellAttackDamage,
+  describeSpellUpcast, isSpellAttack, isSavingThrowSpell, resolveSpellAttackDamage,
   resolveSpellcasting, ResolvedSpellOrigin, ResolvedSpellSlotPool, ResolvedSpellCategory,
   SpellUpcastEffect,
 } from '../../../core/utils/spellcasting';
@@ -59,7 +59,9 @@ interface CastingMethod {
   upcast?: SpellUpcastEffect;
 }
 
-interface DisplaySpellAttack {
+// Shared shape for a castable spell paired with the source it's cast from — used both for
+// spells that make an attack roll and spells that force a saving throw.
+interface DisplaySpellRoll {
   spell: DndSpell;
   origin: ResolvedSpellOrigin;
 }
@@ -271,19 +273,24 @@ export class CharacterPlaySheetComponent {
   });
 
   castableSpells = computed(() => this.spellRows().filter(row => row.origins.some(origin => origin.category !== 'spellbook')));
-  spellAttacks = computed<DisplaySpellAttack[]>(() => {
-    const attacks: DisplaySpellAttack[] = [];
+  private spellRollsMatching(predicate: (spell: DndSpell) => boolean): DisplaySpellRoll[] {
+    const rolls: DisplaySpellRoll[] = [];
     for (const row of this.castableSpells()) {
-      if (!isSpellAttack(row.spell) || this.castingTimeKind(row.spell) === 'bonus_action') continue;
+      if (!predicate(row.spell) || this.castingTimeKind(row.spell) === 'bonus_action') continue;
       const seen = new Set<string>();
       for (const origin of row.origins.filter(candidate => candidate.category !== 'spellbook')) {
         if (seen.has(origin.sourceKey)) continue;
         seen.add(origin.sourceKey);
-        attacks.push({ spell: row.spell, origin });
+        rolls.push({ spell: row.spell, origin });
       }
     }
-    return attacks.sort((a, b) => a.spell.name.localeCompare(b.spell.name) || a.origin.sourceName.localeCompare(b.origin.sourceName));
-  });
+    return rolls.sort((a, b) => a.spell.name.localeCompare(b.spell.name) || a.origin.sourceName.localeCompare(b.origin.sourceName));
+  }
+  // Spells that make a spell attack roll against the target.
+  spellAttacks = computed<DisplaySpellRoll[]>(() => this.spellRollsMatching(isSpellAttack));
+  // Spells that force the target to make a saving throw, rather than the caster rolling an attack.
+  spellSaves = computed<DisplaySpellRoll[]>(() =>
+    this.spellRollsMatching(spell => isSavingThrowSpell(spell) && !isSpellAttack(spell)));
   bonusActionSpells = computed(() => this.castableSpells()
     .filter(row => this.castingTimeKind(row.spell) === 'bonus_action'));
   reactionSpells = computed(() => this.castableSpells()
@@ -513,6 +520,12 @@ export class CharacterPlaySheetComponent {
 
   spellDamageType(spell: DndSpell): string {
     return spell.mechanics.damage_types.join('/');
+  }
+
+  spellSaveAbilities(spell: DndSpell): string {
+    return spell.mechanics.saving_throws
+      .map(ability => this.abilityShort[ability as keyof typeof this.abilityShort] ?? ability)
+      .join('/');
   }
 
   private hasClassChoice(className: string, choice: string): boolean {
