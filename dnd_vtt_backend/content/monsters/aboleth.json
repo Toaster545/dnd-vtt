@@ -1,0 +1,44 @@
+{
+  "index": "aboleth",
+  "name": "Aboleth",
+  "size": "Large",
+  "type": "aberration",
+  "alignment": "lawful evil",
+  "armor_class": 17,
+  "armor_class_desc": "natural armor",
+  "hit_points": 135,
+  "hit_dice": "18d10 + 36",
+  "speed": { "walk": 10, "swim": 40 },
+  "ability_scores": {
+    "strength": 21,
+    "dexterity": 9,
+    "constitution": 15,
+    "intelligence": 18,
+    "wisdom": 15,
+    "charisma": 18
+  },
+  "initiative_bonus": -1,
+  "saving_throws": { "Constitution": 6, "Intelligence": 8, "Wisdom": 6 },
+  "skills": { "History": 8, "Perception": 6 },
+  "senses": { "darkvision": 120, "passive_perception": 16 },
+  "languages": ["Deep Speech", "telepathy 120 ft."],
+  "challenge_rating": "10",
+  "xp": 5900,
+  "traits": [
+    { "name": "Amphibious", "description": "The aboleth can breathe air and water." },
+    { "name": "Mucous Cloud", "description": "While the aboleth is underwater, it is surrounded by transformative mucus. A creature that touches the aboleth or that hits it with a melee attack while within 5 feet of it must make a DC 14 Constitution saving throw. On a failure, the creature is diseased for 1d4 hours. While diseased in this way, the creature can breathe only underwater." },
+    { "name": "Probing Telepathy", "description": "If a creature communicates telepathically with the aboleth, the aboleth learns the creature's greatest desires if the aboleth can see the creature." }
+  ],
+  "actions": [
+    { "name": "Multiattack", "description": "The aboleth makes three Tentacle attacks." },
+    { "name": "Tentacle", "description": "Melee Attack Roll: +9, reach 10 ft. Hit: 12 (2d6 + 5) Bludgeoning damage. If the target is a creature, it must succeed on a DC 14 Constitution saving throw or be diseased. The disease has no effect for 1 minute and can be cured by any magic that removes disease. After 1 minute, the diseased creature's skin starts to turn into slimy scales, and the creature can't regain Hit Points unless it is underwater. Every 10 minutes that elapse, the creature's Hit Point maximum decreases by 3 (1d6). This reduction lasts until the disease is cured, and the creature dies if the disease reduces its Hit Point maximum to 0. A creature transformed this way gains the ability to breathe underwater." },
+    { "name": "Tail", "description": "Melee Attack Roll: +9, reach 10 ft. Hit: 15 (3d6 + 5) Bludgeoning damage." },
+    { "name": "Enslave (3/Day)", "description": "The aboleth targets one creature it can see within 30 feet of it. The target must succeed on a DC 14 Wisdom saving throw or be magically Charmed by the aboleth until the aboleth dies or is on a different plane of existence from the target. The Charmed target is under the aboleth's control and can't take Reactions, and the aboleth and the target can communicate telepathically with each other over any distance. Whenever the Charmed target takes damage, the target can repeat the saving throw, ending the effect on itself on a success." }
+  ],
+  "legendary_actions": [
+    { "name": "Detect", "description": "The aboleth makes a Wisdom (Perception) check." },
+    { "name": "Tail Swipe", "description": "The aboleth makes one Tail attack." },
+    { "name": "Psychic Drain (Costs 2 Actions)", "description": "One creature Charmed by the aboleth takes 10 (3d6) Psychic damage, and the aboleth regains a number of Hit Points equal to the damage the creature takes." }
+  ],
+  "description": "Ancient and alien, aboleths are telepathic masters of long-drowned empires who enslave lesser minds and warp their descendants into servile, fish-like thralls across countless generations."
+}
