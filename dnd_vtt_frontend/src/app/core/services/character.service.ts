@@ -4,6 +4,31 @@ import { firstValueFrom } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { Character } from '../models/character.model';
 
+export interface SpellCastCommand {
+  spellIndex: string;
+  sourceKey: string;
+  method: 'cantrip' | 'slot' | 'pact' | 'free';
+  poolKey?: string;
+  slotLevel?: number;
+  freeCastKey?: string;
+  maxUses?: number;
+  recovery?: 'short_rest' | 'long_rest' | null;
+  atWill?: boolean;
+  replaceConcentration?: boolean;
+}
+
+export interface SpellCastResponse {
+  character: Character;
+  cast: {
+    spellIndex: string;
+    spellName: string;
+    castLevel: number;
+    method: SpellCastCommand['method'];
+    resourceLabel: string;
+    concentration: boolean;
+  };
+}
+
 const API = environment.apiUrl;
 
 @Injectable({ providedIn: 'root' })
@@ -41,5 +66,23 @@ export class CharacterService {
 
   async deleteCharacter(id: string): Promise<void> {
     await firstValueFrom(this.http.delete(`${API}/characters/${id}`));
+  }
+
+  async castSpell(id: string, command: SpellCastCommand): Promise<SpellCastResponse> {
+    return firstValueFrom(
+      this.http.post<SpellCastResponse>(`${API}/characters/${id}/cast`, command)
+    );
+  }
+
+  async restoreSpellcasting(id: string, type: 'short_rest' | 'long_rest'): Promise<Character> {
+    return firstValueFrom(
+      this.http.post<Character>(`${API}/characters/${id}/spell-rest`, { type })
+    );
+  }
+
+  async endConcentration(id: string): Promise<Character> {
+    return firstValueFrom(
+      this.http.patch<Character>(`${API}/characters/${id}/concentration`, {})
+    );
   }
 }

@@ -109,6 +109,92 @@ export interface ResolvedSpellOrigin {
   spellSaveDc: number | null;
   granted: boolean;
   countsAgainstLimit: boolean;
+  freeCast?: ResolvedFreeCast;
+}
+
+export interface ResolvedFreeCast {
+  key: string;
+  maxUses: number;
+  recovery: 'short_rest' | 'long_rest' | null;
+  atWill: boolean;
+  slotLevel?: number;
+}
+
+export interface SpellUpcastEffect {
+  slotLevel: number;
+  levelsAbove: number;
+  summary: string;
+  rule: string;
+}
+
+const NUMBER_WORDS: Record<string, number> = {
+  one: 1, two: 2, three: 3, four: 4, five: 5, six: 6,
+};
+
+function pluralize(noun: string, count: number): string {
+  if (/^(?:foot|feet)$/i.test(noun)) return count === 1 ? 'foot' : 'feet';
+  if (count === 1 || /(?:s|Undead)$/i.test(noun)) return noun;
+  if (/[^aeiou]y$/i.test(noun)) return `${noun.slice(0, -1)}ies`;
+  return `${noun}s`;
+}
+
+/** Returns null at the spell's base level or when its rules define no upcast benefit. */
+export function describeSpellUpcast(spell: DndSpell, slotLevel: number): SpellUpcastEffect | null {
+  const rule = spell.higher_levels?.trim();
+  const levelsAbove = slotLevel - spell.level;
+  if (!rule || levelsAbove <= 0) return null;
+
+  if (spell.index === 'scorching-ray') {
+    return {
+      slotLevel,
+      levelsAbove,
+      summary: `Creates ${3 + levelsAbove} rays total (+${levelsAbove}).`,
+      rule,
+    };
+  }
+
+  const dice = rule.match(/\b(damage|healing)(?:[^.]{0,100}?)increases? by (\d+)d(\d+)/i);
+  if (dice) {
+    return {
+      slotLevel,
+      levelsAbove,
+      summary: `Adds ${Number(dice[2]) * levelsAbove}d${dice[3]} ${dice[1].toLowerCase()}.`,
+      rule,
+    };
+  }
+
+  const additional = rule.match(/\b(one|two|three|four|five|six|\d+) additional ([\w'-]+(?: [\w'-]+){0,2}?) for each spell slot level/i);
+  if (additional) {
+    const perLevel = NUMBER_WORDS[additional[1].toLowerCase()] ?? Number(additional[1]);
+    const total = perLevel * levelsAbove;
+    const noun = additional[2].trim();
+    return {
+      slotLevel,
+      levelsAbove,
+      summary: `Adds ${total} additional ${pluralize(noun, total)}.`,
+      rule,
+    };
+  }
+
+  const measurement = rule.match(/\b(duration|radius|size|Cube)(?:[^.]{0,100}?)increases? by (\d+) (feet|foot|hours?|days?|gallons?)/i);
+  if (measurement) {
+    const total = Number(measurement[2]) * levelsAbove;
+    return {
+      slotLevel,
+      levelsAbove,
+      summary: `Adds ${total} ${pluralize(measurement[3].toLowerCase(), total)} to the ${measurement[1].toLowerCase()}.`,
+      rule,
+    };
+  }
+
+  return {
+    slotLevel,
+    levelsAbove,
+    summary: levelsAbove === 1
+      ? 'Applies the spell’s higher-level benefit once.'
+      : `Applies the spell’s higher-level benefit across ${levelsAbove} additional slot levels.`,
+    rule,
+  };
 }
 
 export interface ResolvedSpellSlotPool {
@@ -166,6 +252,8 @@ interface PendingRequirement {
   countsAgainstLimit: boolean;
   granted: boolean;
   usesGlobalUniqueness: boolean;
+  freeCast?: Extract<TraitGrant, { type: 'spell_grant' }>['freeCast'];
+  freeCastKeyBase?: string;
 }
 
 interface SpellAcquisitionOwner {
@@ -555,6 +643,7 @@ function addResolved(
   granted: boolean,
   countsAgainstLimit: boolean,
   subclassName?: string,
+  freeCast?: ResolvedFreeCast,
 ): void {
   if (target.some((entry) => entry.spellIndex === index && entry.sourceKey === source.key && entry.category === category)) return;
   target.push({
@@ -568,7 +657,41 @@ function addResolved(
     spellSaveDc: source.spellSaveDc,
     granted,
     countsAgainstLimit,
+    freeCast,
   });
+}
+
+function resolveFreeCast(
+  definition: Extract<TraitGrant, { type: 'spell_grant' }>['freeCast'],
+  keyBase: string,
+  spellIndex: string,
+  source: ActiveSource,
+  characterLevel: number,
+): ResolvedFreeCast | undefined {
+  if (!definition) return undefined;
+  const atWill = definition.atWill === true;
+  let maxUses = typeof definition.uses === 'number' ? definition.uses : 1;
+  if (definition.uses === 'proficiency_bonus') maxUses = proficiencyBonus(characterLevel);
+  if (definition.uses === 'spellcasting_ability_modifier') {
+    maxUses = source.spellAttackBonus === null
+      ? 1
+      : source.spellAttackBonus - proficiencyBonus(characterLevel);
+  }
+  if (definition.usesByClassLevel) {
+    for (const [level, uses] of Object.entries(definition.usesByClassLevel)
+      .map(([level, uses]) => [Number(level), uses] as const)
+      .sort((a, b) => a[0] - b[0])) {
+      if (source.level >= level) maxUses = uses;
+    }
+  }
+  maxUses = Math.max(definition.minimum ?? 1, maxUses);
+  return {
+    key: `free:${keyBase}:${spellIndex}`,
+    maxUses,
+    recovery: atWill ? null : definition.recovery ?? 'long_rest',
+    atWill,
+    slotLevel: definition.slotLevel,
+  };
 }
 
 function slotPools(sources: ActiveSource[]): ResolvedSpellSlotPool[] {
@@ -630,7 +753,16 @@ export function resolveSpellcasting(input: SpellcastingResolverInput): Spellcast
         validationErrors.push({ code: 'unknown_spell', spellIndex: index, message: `${grant.name} references unknown spell "${index}".` });
         continue;
       }
-      addResolved(target, index, source, destination, true, grant.countsAgainstLimit ?? false, context.subclassName);
+      addResolved(
+        target,
+        index,
+        source,
+        destination,
+        true,
+        grant.countsAgainstLimit ?? false,
+        context.subclassName,
+        resolveFreeCast(grant.freeCast, `${context.scope}:${grant.key}`, index, source, input.characterLevel),
+      );
       acquisitionOwners.set(index, { sourceName: grant.name });
       if (grant.countsAgainstLimit) {
         const key = `${source.key}:${destination}`;
@@ -658,6 +790,8 @@ export function resolveSpellcasting(input: SpellcastingResolverInput): Spellcast
         countsAgainstLimit: grant.countsAgainstLimit ?? false,
         granted: true,
         usesGlobalUniqueness: true,
+        freeCast: grant.freeCast,
+        freeCastKeyBase: `${context.scope}:${grant.key}`,
       });
     }
   }
@@ -703,7 +837,16 @@ export function resolveSpellcasting(input: SpellcastingResolverInput): Spellcast
     validationErrors.push(...requirement.errors);
     const target = item.destination === 'known' ? known : item.destination === 'spellbook' ? spellbook : item.destination === 'prepared' ? prepared : alwaysPrepared;
     for (const index of requirement.validSelectedSpellIndices) {
-      addResolved(target, index, item.source, item.destination, item.granted, item.countsAgainstLimit, item.subclassName);
+      addResolved(
+        target,
+        index,
+        item.source,
+        item.destination,
+        item.granted,
+        item.countsAgainstLimit,
+        item.subclassName,
+        resolveFreeCast(item.freeCast, item.freeCastKeyBase ?? item.key, index, item.source, input.characterLevel),
+      );
     }
   }
 
@@ -727,6 +870,8 @@ export function resolveSpellcasting(input: SpellcastingResolverInput): Spellcast
       countsAgainstLimit: grant.countsAgainstLimit ?? false,
       granted: true,
       usesGlobalUniqueness: false,
+      freeCast: grant.freeCast,
+      freeCastKeyBase: `${context.scope}:${grant.key}`,
     };
     const requirement = validateRequirement(item, choices, spellByIndex, acquisitionOwners);
     requirements.push(requirement);
@@ -735,7 +880,16 @@ export function resolveSpellcasting(input: SpellcastingResolverInput): Spellcast
       : grant.destination === 'spellbook' ? spellbook
         : alwaysPrepared;
     for (const index of requirement.validSelectedSpellIndices) {
-      addResolved(target, index, source, grant.destination, true, grant.countsAgainstLimit ?? false, context.subclassName);
+      addResolved(
+        target,
+        index,
+        source,
+        grant.destination,
+        true,
+        grant.countsAgainstLimit ?? false,
+        context.subclassName,
+        resolveFreeCast(grant.freeCast, `${context.scope}:${grant.key}`, index, source, input.characterLevel),
+      );
     }
   }
 

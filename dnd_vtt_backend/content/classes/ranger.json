@@ -429,7 +429,7 @@
             }
           }
         },
-        { "type": "spell_grant", "key": "favored_enemy_hunters_mark", "name": "Favored Enemy", "destination": "always_prepared", "spells": ["hunters-mark"], "countsAgainstLimit": false },
+        { "type": "spell_grant", "key": "favored_enemy_hunters_mark", "name": "Favored Enemy", "destination": "always_prepared", "spells": ["hunters-mark"], "countsAgainstLimit": false, "freeCast": { "uses": 2, "usesByClassLevel": { "5": 3, "9": 4, "13": 5, "17": 6 }, "recovery": "long_rest" } },
         {
           "type": "weapon_mastery",
           "key": "weapon_mastery",

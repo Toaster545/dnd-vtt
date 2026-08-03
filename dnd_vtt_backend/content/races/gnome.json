@@ -37,7 +37,8 @@
               "countsAgainstLimit": false,
               "sourceKey": "forest-gnome",
               "sourceName": "Forest Gnome",
-              "ability": { "choiceKey": "gnomish_spellcasting_ability" }
+              "ability": { "choiceKey": "gnomish_spellcasting_ability" },
+              "freeCast": { "uses": "proficiency_bonus", "recovery": "long_rest" }
             },
             {
               "type": "spell_grant",

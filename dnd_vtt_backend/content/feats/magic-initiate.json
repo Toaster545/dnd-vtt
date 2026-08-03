@@ -14,21 +14,21 @@
           "name": "Cleric",
           "grants": [
             { "type": "spell_grant", "key": "magic_initiate_cleric_cantrips", "name": "Magic Initiate (Cleric) Cantrips", "destination": "known", "choose": 2, "countsAgainstLimit": false, "sourceKey": "magic-initiate-cleric", "sourceName": "Magic Initiate (Cleric)", "ability": { "choiceKey": "magic_initiate_ability" }, "filter": { "lists": ["Cleric"], "exactLevels": [0] } },
-            { "type": "spell_grant", "key": "magic_initiate_cleric_spell", "name": "Magic Initiate (Cleric) Spell", "destination": "always_prepared", "choose": 1, "countsAgainstLimit": false, "sourceKey": "magic-initiate-cleric", "sourceName": "Magic Initiate (Cleric)", "ability": { "choiceKey": "magic_initiate_ability" }, "filter": { "lists": ["Cleric"], "exactLevels": [1] } }
+            { "type": "spell_grant", "key": "magic_initiate_cleric_spell", "name": "Magic Initiate (Cleric) Spell", "destination": "always_prepared", "choose": 1, "countsAgainstLimit": false, "sourceKey": "magic-initiate-cleric", "sourceName": "Magic Initiate (Cleric)", "ability": { "choiceKey": "magic_initiate_ability" }, "filter": { "lists": ["Cleric"], "exactLevels": [1] }, "freeCast": { "uses": 1, "recovery": "long_rest" } }
           ]
         },
         {
           "name": "Druid",
           "grants": [
             { "type": "spell_grant", "key": "magic_initiate_druid_cantrips", "name": "Magic Initiate (Druid) Cantrips", "destination": "known", "choose": 2, "countsAgainstLimit": false, "sourceKey": "magic-initiate-druid", "sourceName": "Magic Initiate (Druid)", "ability": { "choiceKey": "magic_initiate_ability" }, "filter": { "lists": ["Druid"], "exactLevels": [0] } },
-            { "type": "spell_grant", "key": "magic_initiate_druid_spell", "name": "Magic Initiate (Druid) Spell", "destination": "always_prepared", "choose": 1, "countsAgainstLimit": false, "sourceKey": "magic-initiate-druid", "sourceName": "Magic Initiate (Druid)", "ability": { "choiceKey": "magic_initiate_ability" }, "filter": { "lists": ["Druid"], "exactLevels": [1] } }
+            { "type": "spell_grant", "key": "magic_initiate_druid_spell", "name": "Magic Initiate (Druid) Spell", "destination": "always_prepared", "choose": 1, "countsAgainstLimit": false, "sourceKey": "magic-initiate-druid", "sourceName": "Magic Initiate (Druid)", "ability": { "choiceKey": "magic_initiate_ability" }, "filter": { "lists": ["Druid"], "exactLevels": [1] }, "freeCast": { "uses": 1, "recovery": "long_rest" } }
           ]
         },
         {
           "name": "Wizard",
           "grants": [
             { "type": "spell_grant", "key": "magic_initiate_wizard_cantrips", "name": "Magic Initiate (Wizard) Cantrips", "destination": "known", "choose": 2, "countsAgainstLimit": false, "sourceKey": "magic-initiate-wizard", "sourceName": "Magic Initiate (Wizard)", "ability": { "choiceKey": "magic_initiate_ability" }, "filter": { "lists": ["Wizard"], "exactLevels": [0] } },
-            { "type": "spell_grant", "key": "magic_initiate_wizard_spell", "name": "Magic Initiate (Wizard) Spell", "destination": "always_prepared", "choose": 1, "countsAgainstLimit": false, "sourceKey": "magic-initiate-wizard", "sourceName": "Magic Initiate (Wizard)", "ability": { "choiceKey": "magic_initiate_ability" }, "filter": { "lists": ["Wizard"], "exactLevels": [1] } }
+            { "type": "spell_grant", "key": "magic_initiate_wizard_spell", "name": "Magic Initiate (Wizard) Spell", "destination": "always_prepared", "choose": 1, "countsAgainstLimit": false, "sourceKey": "magic-initiate-wizard", "sourceName": "Magic Initiate (Wizard)", "ability": { "choiceKey": "magic_initiate_ability" }, "filter": { "lists": ["Wizard"], "exactLevels": [1] }, "freeCast": { "uses": 1, "recovery": "long_rest" } }
           ]
         }
       ]

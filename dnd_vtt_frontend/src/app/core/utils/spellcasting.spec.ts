@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import type { AbilityScores } from '../models/character.model';
 import type { DndClass, DndFeat, DndRace, DndSpell, SpellcastingDefinition, TraitGrant } from '../services/content.service';
-import { resolveSpellcasting } from './spellcasting';
+import { describeSpellUpcast, resolveSpellcasting } from './spellcasting';
 
 const scores: AbilityScores = {
   strength: 10,
@@ -450,5 +450,69 @@ describe('resolveSpellcasting', () => {
       spellIndex: 'fireball',
     }));
     expect(result.isComplete).toBe(false);
+  });
+
+  it('exposes data-driven free casts on each granted spell origin', () => {
+    const race = {
+      index: 'gnome',
+      name: 'Gnome',
+      grants: [{
+        type: 'spell_grant',
+        key: 'forest_magic',
+        name: 'Forest Gnome Magic',
+        destination: 'always_prepared',
+        spells: ['speak-with-animals'],
+        countsAgainstLimit: false,
+        sourceKey: 'forest-gnome',
+        sourceName: 'Forest Gnome',
+        ability: 'wisdom',
+        freeCast: { uses: 'proficiency_bonus', recovery: 'long_rest' },
+      }],
+      traits: [], subraces: [], languages: [],
+    } as unknown as DndRace;
+    const result = resolveSpellcasting({
+      characterLevel: 5,
+      abilityScores: scores,
+      spells,
+      classes: [],
+      race: { race },
+    });
+
+    expect(result.alwaysPrepared[0]).toMatchObject({
+      spellIndex: 'speak-with-animals',
+      freeCast: {
+        maxUses: 3,
+        recovery: 'long_rest',
+        atWill: false,
+      },
+    });
+    expect(result.alwaysPrepared[0].freeCast?.key).toContain('forest_magic');
+  });
+});
+
+describe('describeSpellUpcast', () => {
+  it('calculates Scorching Ray totals for each higher slot', () => {
+    const scorchingRay = {
+      index: 'scorching-ray', level: 2,
+      higher_levels: 'You create one additional ray for each spell slot level above 2.',
+    } as DndSpell;
+
+    expect(describeSpellUpcast(scorchingRay, 3)).toMatchObject({
+      levelsAbove: 1,
+      summary: 'Creates 4 rays total (+1).',
+    });
+    expect(describeSpellUpcast(scorchingRay, 5)?.summary)
+      .toBe('Creates 6 rays total (+3).');
+  });
+
+  it('summarizes dice scaling and rejects slots with no upcast benefit', () => {
+    const fireball = {
+      index: 'fireball', level: 3,
+      higher_levels: 'The damage increases by 1d6 for each spell slot level above 3.',
+    } as DndSpell;
+    const detectMagic = { index: 'detect-magic', level: 1 } as DndSpell;
+
+    expect(describeSpellUpcast(fireball, 5)?.summary).toBe('Adds 2d6 damage.');
+    expect(describeSpellUpcast(detectMagic, 2)).toBeNull();
   });
 });

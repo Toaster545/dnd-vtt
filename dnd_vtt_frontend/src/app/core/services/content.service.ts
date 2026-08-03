@@ -94,6 +94,14 @@ export type TraitGrant =
       ability?: SpellcastingAbility;
       characterLevel?: number; classLevel?: number;
       fromDestination?: 'known' | 'spellbook' | 'prepared';
+      freeCast?: {
+        uses?: number | 'proficiency_bonus' | 'spellcasting_ability_modifier';
+        usesByClassLevel?: Record<string, number>;
+        minimum?: number;
+        recovery?: 'short_rest' | 'long_rest';
+        atWill?: boolean;
+        slotLevel?: number;
+      };
       filter?: {
         lists?: string[]; schools?: string[]; minLevel?: number; maxLevel?: number;
         exactLevels?: number[]; ritual?: boolean; spellAttack?: boolean; castingTimes?: string[];

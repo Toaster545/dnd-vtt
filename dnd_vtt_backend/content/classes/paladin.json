@@ -424,7 +424,7 @@
             "uses": { "max": 1, "per": "long_rest" }
           }
         },
-        { "type": "spell_grant", "key": "paladins_smite_spell", "name": "Paladin's Smite", "destination": "always_prepared", "spells": ["divine-smite"], "countsAgainstLimit": false }
+        { "type": "spell_grant", "key": "paladins_smite_spell", "name": "Paladin's Smite", "destination": "always_prepared", "spells": ["divine-smite"], "countsAgainstLimit": false, "freeCast": { "uses": 1, "recovery": "long_rest" } }
       ]
     },
     {
@@ -498,7 +498,7 @@
             "uses": { "max": 1, "per": "long_rest" }
           }
         },
-        { "type": "spell_grant", "key": "faithful_steed_spell", "name": "Faithful Steed", "destination": "always_prepared", "spells": ["find-steed"], "countsAgainstLimit": false }
+        { "type": "spell_grant", "key": "faithful_steed_spell", "name": "Faithful Steed", "destination": "always_prepared", "spells": ["find-steed"], "countsAgainstLimit": false, "freeCast": { "uses": 1, "recovery": "long_rest" } }
       ]
     },
     {

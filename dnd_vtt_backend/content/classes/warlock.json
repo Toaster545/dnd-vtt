@@ -345,13 +345,13 @@
             {
               "name": "Armor of Shadows",
               "description": "Cast Mage Armor on yourself without spending a spell slot.",
-              "grants": [{ "type": "spell_grant", "key": "armor_of_shadows_spell", "name": "Armor of Shadows", "destination": "known", "spells": ["mage-armor"], "countsAgainstLimit": false }]
+              "grants": [{ "type": "spell_grant", "key": "armor_of_shadows_spell", "name": "Armor of Shadows", "destination": "known", "spells": ["mage-armor"], "countsAgainstLimit": false, "freeCast": { "atWill": true } }]
             },
             {
               "name": "Ascendant Step",
               "description": "Cast Levitate on yourself without spending a spell slot.",
               "prerequisite": { "level": 5 },
-              "grants": [{ "type": "spell_grant", "key": "ascendant_step_spell", "name": "Ascendant Step", "destination": "known", "spells": ["levitate"], "countsAgainstLimit": false, "classLevel": 5 }]
+              "grants": [{ "type": "spell_grant", "key": "ascendant_step_spell", "name": "Ascendant Step", "destination": "known", "spells": ["levitate"], "countsAgainstLimit": false, "classLevel": 5, "freeCast": { "atWill": true } }]
             },
             {
               "name": "Devil's Sight",
@@ -384,7 +384,7 @@
               "name": "Fiendish Vigor",
               "description": "Cast False Life on yourself without a slot and take the maximum roll for its temporary hit points.",
               "prerequisite": { "level": 2 },
-              "grants": [{ "type": "spell_grant", "key": "fiendish_vigor_spell", "name": "Fiendish Vigor", "destination": "known", "spells": ["false-life"], "countsAgainstLimit": false, "classLevel": 2 }]
+              "grants": [{ "type": "spell_grant", "key": "fiendish_vigor_spell", "name": "Fiendish Vigor", "destination": "known", "spells": ["false-life"], "countsAgainstLimit": false, "classLevel": 2, "freeCast": { "atWill": true } }]
             },
             {
               "name": "Gaze of Two Minds",
@@ -395,7 +395,7 @@
               "name": "Gift of the Depths",
               "description": "Breathe underwater, gain a Swim Speed equal to your Speed, and cast Water Breathing once per long rest.",
               "prerequisite": { "level": 5 },
-              "grants": [{ "type": "spell_grant", "key": "gift_of_the_depths_spell", "name": "Gift of the Depths", "destination": "known", "spells": ["water-breathing"], "countsAgainstLimit": false, "classLevel": 5 }]
+              "grants": [{ "type": "spell_grant", "key": "gift_of_the_depths_spell", "name": "Gift of the Depths", "destination": "known", "spells": ["water-breathing"], "countsAgainstLimit": false, "classLevel": 5, "freeCast": { "uses": 1, "recovery": "long_rest" } }]
             },
             {
               "name": "Gift of the Protectors",
@@ -427,31 +427,31 @@
               "name": "Mask of Many Faces",
               "description": "Cast Disguise Self without spending a spell slot.",
               "prerequisite": { "level": 2 },
-              "grants": [{ "type": "spell_grant", "key": "mask_of_many_faces_spell", "name": "Mask of Many Faces", "destination": "known", "spells": ["disguise-self"], "countsAgainstLimit": false, "classLevel": 2 }]
+              "grants": [{ "type": "spell_grant", "key": "mask_of_many_faces_spell", "name": "Mask of Many Faces", "destination": "known", "spells": ["disguise-self"], "countsAgainstLimit": false, "classLevel": 2, "freeCast": { "atWill": true } }]
             },
             {
               "name": "Master of Myriad Forms",
               "description": "Cast Alter Self without spending a spell slot.",
               "prerequisite": { "level": 5 },
-              "grants": [{ "type": "spell_grant", "key": "master_of_myriad_forms_spell", "name": "Master of Myriad Forms", "destination": "known", "spells": ["alter-self"], "countsAgainstLimit": false, "classLevel": 5 }]
+              "grants": [{ "type": "spell_grant", "key": "master_of_myriad_forms_spell", "name": "Master of Myriad Forms", "destination": "known", "spells": ["alter-self"], "countsAgainstLimit": false, "classLevel": 5, "freeCast": { "atWill": true } }]
             },
             {
               "name": "Misty Visions",
               "description": "Cast Silent Image without spending a spell slot.",
               "prerequisite": { "level": 2 },
-              "grants": [{ "type": "spell_grant", "key": "misty_visions_spell", "name": "Misty Visions", "destination": "known", "spells": ["silent-image"], "countsAgainstLimit": false, "classLevel": 2 }]
+              "grants": [{ "type": "spell_grant", "key": "misty_visions_spell", "name": "Misty Visions", "destination": "known", "spells": ["silent-image"], "countsAgainstLimit": false, "classLevel": 2, "freeCast": { "atWill": true } }]
             },
             {
               "name": "One with Shadows",
               "description": "While in Dim Light or Darkness, cast Invisibility on yourself without a slot.",
               "prerequisite": { "level": 5 },
-              "grants": [{ "type": "spell_grant", "key": "one_with_shadows_spell", "name": "One with Shadows", "destination": "known", "spells": ["invisibility"], "countsAgainstLimit": false, "classLevel": 5 }]
+              "grants": [{ "type": "spell_grant", "key": "one_with_shadows_spell", "name": "One with Shadows", "destination": "known", "spells": ["invisibility"], "countsAgainstLimit": false, "classLevel": 5, "freeCast": { "atWill": true } }]
             },
             {
               "name": "Otherworldly Leap",
               "description": "Cast Jump on yourself without spending a spell slot.",
               "prerequisite": { "level": 2 },
-              "grants": [{ "type": "spell_grant", "key": "otherworldly_leap_spell", "name": "Otherworldly Leap", "destination": "known", "spells": ["jump"], "countsAgainstLimit": false, "classLevel": 2 }]
+              "grants": [{ "type": "spell_grant", "key": "otherworldly_leap_spell", "name": "Otherworldly Leap", "destination": "known", "spells": ["jump"], "countsAgainstLimit": false, "classLevel": 2, "freeCast": { "atWill": true } }]
             },
             {
               "name": "Pact of the Blade",
@@ -460,7 +460,7 @@
             {
               "name": "Pact of the Chain",
               "description": "Learn Find Familiar and cast it as a Magic action without a slot, gaining additional special familiar forms.",
-              "grants": [{ "type": "spell_grant", "key": "pact_of_the_chain_spell", "name": "Pact of the Chain", "destination": "known", "spells": ["find-familiar"], "countsAgainstLimit": false }]
+              "grants": [{ "type": "spell_grant", "key": "pact_of_the_chain_spell", "name": "Pact of the Chain", "destination": "known", "spells": ["find-familiar"], "countsAgainstLimit": false, "freeCast": { "atWill": true } }]
             },
             {
               "name": "Pact of the Tome",
@@ -487,13 +487,13 @@
               "name": "Visions of Distant Realms",
               "description": "Cast Arcane Eye without spending a spell slot.",
               "prerequisite": { "level": 9 },
-              "grants": [{ "type": "spell_grant", "key": "visions_of_distant_realms_spell", "name": "Visions of Distant Realms", "destination": "known", "spells": ["arcane-eye"], "countsAgainstLimit": false, "classLevel": 9 }]
+              "grants": [{ "type": "spell_grant", "key": "visions_of_distant_realms_spell", "name": "Visions of Distant Realms", "destination": "known", "spells": ["arcane-eye"], "countsAgainstLimit": false, "classLevel": 9, "freeCast": { "atWill": true } }]
             },
             {
               "name": "Whispers of the Grave",
               "description": "Cast Speak with Dead without spending a spell slot.",
               "prerequisite": { "level": 7 },
-              "grants": [{ "type": "spell_grant", "key": "whispers_of_the_grave_spell", "name": "Whispers of the Grave", "destination": "known", "spells": ["speak-with-dead"], "countsAgainstLimit": false, "classLevel": 7 }]
+              "grants": [{ "type": "spell_grant", "key": "whispers_of_the_grave_spell", "name": "Whispers of the Grave", "destination": "known", "spells": ["speak-with-dead"], "countsAgainstLimit": false, "classLevel": 7, "freeCast": { "atWill": true } }]
             },
             {
               "name": "Witch Sight",
@@ -637,7 +637,7 @@
             "uses": { "max": 1, "per": "long_rest" }
           }
         },
-        { "type": "spell_grant", "key": "contact_patron_spell", "name": "Contact Patron", "destination": "known", "spells": ["contact-other-plane"], "countsAgainstLimit": false }
+        { "type": "spell_grant", "key": "contact_patron_spell", "name": "Contact Patron", "destination": "known", "spells": ["contact-other-plane"], "countsAgainstLimit": false, "freeCast": { "uses": 1, "recovery": "long_rest" } }
       ]
     },
     {
@@ -665,7 +665,7 @@
       "pact_magic": { "slots": 3, "slot_level": 5 },
       "class_specific": { "invocations_known": 7 },
       "grants": [
-        { "type": "spell_grant", "key": "mystic_arcanum_6", "name": "Mystic Arcanum (Level 6 Spell)", "description": "Choose one level 6 Warlock spell. Cast it once without a spell slot, regaining the use on a long rest.", "destination": "known", "choose": 1, "countsAgainstLimit": false, "filter": { "lists": ["Warlock"], "exactLevels": [6] } }
+        { "type": "spell_grant", "key": "mystic_arcanum_6", "name": "Mystic Arcanum (Level 6 Spell)", "description": "Choose one level 6 Warlock spell. Cast it once without a spell slot, regaining the use on a long rest.", "destination": "known", "choose": 1, "countsAgainstLimit": false, "filter": { "lists": ["Warlock"], "exactLevels": [6] }, "freeCast": { "uses": 1, "recovery": "long_rest", "slotLevel": 6 } }
       ]
     },
     {
@@ -696,7 +696,7 @@
       "pact_magic": { "slots": 3, "slot_level": 5 },
       "class_specific": { "invocations_known": 8 },
       "grants": [
-        { "type": "spell_grant", "key": "mystic_arcanum_7", "name": "Mystic Arcanum (Level 7 Spell)", "description": "Choose one level 7 Warlock spell. Cast it once without a spell slot, regaining the use on a long rest.", "destination": "known", "choose": 1, "countsAgainstLimit": false, "filter": { "lists": ["Warlock"], "exactLevels": [7] } }
+        { "type": "spell_grant", "key": "mystic_arcanum_7", "name": "Mystic Arcanum (Level 7 Spell)", "description": "Choose one level 7 Warlock spell. Cast it once without a spell slot, regaining the use on a long rest.", "destination": "known", "choose": 1, "countsAgainstLimit": false, "filter": { "lists": ["Warlock"], "exactLevels": [7] }, "freeCast": { "uses": 1, "recovery": "long_rest", "slotLevel": 7 } }
       ]
     },
     {
@@ -724,7 +724,7 @@
       "pact_magic": { "slots": 3, "slot_level": 5 },
       "class_specific": { "invocations_known": 9 },
       "grants": [
-        { "type": "spell_grant", "key": "mystic_arcanum_8", "name": "Mystic Arcanum (Level 8 Spell)", "description": "Choose one level 8 Warlock spell. Cast it once without a spell slot, regaining the use on a long rest.", "destination": "known", "choose": 1, "countsAgainstLimit": false, "filter": { "lists": ["Warlock"], "exactLevels": [8] } }
+        { "type": "spell_grant", "key": "mystic_arcanum_8", "name": "Mystic Arcanum (Level 8 Spell)", "description": "Choose one level 8 Warlock spell. Cast it once without a spell slot, regaining the use on a long rest.", "destination": "known", "choose": 1, "countsAgainstLimit": false, "filter": { "lists": ["Warlock"], "exactLevels": [8] }, "freeCast": { "uses": 1, "recovery": "long_rest", "slotLevel": 8 } }
       ]
     },
     {
@@ -755,7 +755,7 @@
       "pact_magic": { "slots": 4, "slot_level": 5 },
       "class_specific": { "invocations_known": 9 },
       "grants": [
-        { "type": "spell_grant", "key": "mystic_arcanum_9", "name": "Mystic Arcanum (Level 9 Spell)", "description": "Choose one level 9 Warlock spell. Cast it once without a spell slot, regaining the use on a long rest.", "destination": "known", "choose": 1, "countsAgainstLimit": false, "filter": { "lists": ["Warlock"], "exactLevels": [9] } }
+        { "type": "spell_grant", "key": "mystic_arcanum_9", "name": "Mystic Arcanum (Level 9 Spell)", "description": "Choose one level 9 Warlock spell. Cast it once without a spell slot, regaining the use on a long rest.", "destination": "known", "choose": 1, "countsAgainstLimit": false, "filter": { "lists": ["Warlock"], "exactLevels": [9] }, "freeCast": { "uses": 1, "recovery": "long_rest", "slotLevel": 9 } }
       ]
     },
     {
