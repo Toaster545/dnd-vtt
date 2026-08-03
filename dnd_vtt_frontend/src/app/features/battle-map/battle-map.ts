@@ -237,8 +237,15 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
     this.stage = undefined;
 
     try {
-      const map = await this.mapService.getMap(id);
+      // Fetched together so the fog state is already correct for the first paint in buildStage()'s
+      // reflow() — fetching fog only after the map/image are ready would briefly render the map
+      // fully unfogged (spoiling hidden areas) until the fog data caught up.
+      const [map, fog] = await Promise.all([
+        this.mapService.getMap(id),
+        this.mapService.getFog(id),
+      ]);
       this.map.set(map);
+      this.fog.set(fog);
       this.initStage();
     } catch (e) {
       this.error.set(getErrorMessage(e));
@@ -326,6 +333,7 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
     this.resizeObserver.observe(container);
 
     this.reflow();
+    this.stageView.centerOnHome();
     this.loading.set(false);
   }
 
@@ -343,6 +351,10 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
     this.stage.height(container.clientHeight);
     this.konvaImg!.width(w);
     this.konvaImg!.height(h);
+
+    // Letterboxed when the image's aspect ratio doesn't match the container's — center the map
+    // in the leftover space rather than pinning it to the top-left corner.
+    this.stageView?.setHome({ x: (container.clientWidth - w) / 2, y: (container.clientHeight - h) / 2 });
 
     drawGrid(this.gridLayer!, w, h, this.cellSize);
     this.renderFog();
