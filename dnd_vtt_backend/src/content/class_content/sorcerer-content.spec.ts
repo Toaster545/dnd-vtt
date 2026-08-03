@@ -82,7 +82,7 @@ describe('Sorcerer class content', () => {
       (grant) => grant.key === 'sorcery-points',
     );
     expect(font?.action).toMatchObject({
-      activation: 'free',
+      activation: 'bonus_action',
       uses: {
         max: 2,
         maxByLevel: { '10': 10, '20': 20 },

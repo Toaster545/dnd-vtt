@@ -54,8 +54,10 @@
             { "type": "spell_grant", "key": "psionic_spells_9", "name": "Psionic Spells", "destination": "always_prepared", "spells": ["rarys-telepathic-bond", "telekinesis"], "countsAgainstLimit": false, "classLevel": 9 },
             {
               "type": "feature",
+              "key": "telepathic-speech",
               "name": "Telepathic Speech",
-              "description": "As a Bonus Action, choose one creature you can see within 30 feet. For a number of minutes equal to your Sorcerer level, you and that creature can speak telepathically while within a number of miles equal to your Charisma modifier (minimum 1), provided you share a language. The link ends early if you are Incapacitated, die, or create another link."
+              "description": "As a Bonus Action, choose one creature you can see within 30 feet. For a number of minutes equal to your Sorcerer level, you and that creature can speak telepathically while within a number of miles equal to your Charisma modifier (minimum 1), provided you share a language. The link ends early if you are Incapacitated, die, or create another link.",
+              "action": { "activation": "bonus_action" }
             }
           ]
         },
@@ -82,8 +84,10 @@
           "grants": [
             {
               "type": "feature",
+              "key": "revelation-in-flesh",
               "name": "Revelation in Flesh",
-              "description": "As a Bonus Action, spend 1 or more Sorcery Points to transform for 10 minutes. For each point spent, choose a different benefit: see Invisible creatures within 60 feet; gain a Fly Speed equal to your Speed and hover; gain a Swim Speed equal to twice your Speed and breathe underwater; or squeeze through spaces as narrow as 1 inch and spend 5 feet of movement to escape nonmagical restraints or a creature grappling you."
+              "description": "As a Bonus Action, spend 1 or more Sorcery Points to transform for 10 minutes. For each point spent, choose a different benefit: see Invisible creatures within 60 feet; gain a Fly Speed equal to your Speed and hover; gain a Swim Speed equal to twice your Speed and breathe underwater; or squeeze through spaces as narrow as 1 inch and spend 5 feet of movement to escape nonmagical restraints or a creature grappling you.",
+              "action": { "activation": "bonus_action" }
             }
           ]
         },
@@ -446,7 +450,7 @@
           "name": "Font of Magic",
           "description": "You have a pool of Sorcery Points equal to your Sorcerer level, regained on a Long Rest. As a Bonus Action, convert an unexpended spell slot into points equal to its level, or create a level 1-5 spell slot by spending 2, 3, 5, 6, or 7 points, respectively. Creating a slot of levels 2-5 requires Sorcerer levels 3, 5, 7, or 9, respectively, and created slots vanish on a Long Rest.",
           "action": {
-            "activation": "free",
+            "activation": "bonus_action",
             "uses": {
               "max": 2,
               "maxByLevel": {

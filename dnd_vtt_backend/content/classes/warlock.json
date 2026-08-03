@@ -117,8 +117,10 @@
             { "type": "spell_grant", "key": "celestial_spells_9", "name": "Celestial Spells", "destination": "always_prepared", "spells": ["greater-restoration", "summon-celestial"], "countsAgainstLimit": false, "classLevel": 9 },
             {
               "type": "feature",
+              "key": "healing-light",
               "name": "Healing Light",
-              "description": "Gain a pool of d6s equal to 1 plus your Warlock level. As a bonus action, spend dice up to your Charisma modifier to heal a creature you can see within 60 feet; regain all dice on a long rest."
+              "description": "Gain a pool of d6s equal to 1 plus your Warlock level. As a bonus action, spend dice up to your Charisma modifier to heal a creature you can see within 60 feet; regain all dice on a long rest.",
+              "action": { "activation": "bonus_action" }
             }
           ]
         },

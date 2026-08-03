@@ -624,6 +624,19 @@ export class CharacterWizardComponent implements OnInit, OnDestroy {
         })
         .filter((e): e is ClassEntry => e !== null);
       this.selectedClasses.set(classEntries);
+      // Restore free-form "Other Equipment" picks — anything in the saved equipment array that
+      // isn't accounted for by the class/background structured choices just restored above.
+      // Without this, reopening a saved character starts selectedItemIndices empty, and the next
+      // autosave (triggered by any unrelated field edit) silently drops those items from equipment.
+      const structuredIndices = new Set([
+        ...this.resolvedClassEquipment().items,
+        ...this.resolvedBackgroundEquipment().items,
+      ].map(r => r.itemIndex));
+      this.selectedItemIndices.set(new Set(
+        (existing.equipment ?? [])
+          .map(e => e.itemIndex)
+          .filter(index => !structuredIndices.has(index)),
+      ));
       // Restore ability scores — reverse out both the Background's ability increase and any
       // class-level Ability Score Improvements (both computeds read signals already restored
       // above) to recover the raw values the player originally assigned.

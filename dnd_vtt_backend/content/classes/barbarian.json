@@ -187,8 +187,10 @@
           "grants": [
             {
               "type": "feature",
+              "key": "travel-along-the-tree",
               "name": "Travel Along the Tree",
-              "description": "When you activate Rage, and as a Bonus Action while raging, teleport up to 60 feet to a space you can see. Once per Rage, extend this to 150 feet and bring up to six willing creatures within 10 feet; each appears within 10 feet of your destination."
+              "description": "When you activate Rage, and as a Bonus Action while raging, teleport up to 60 feet to a space you can see. Once per Rage, extend this to 150 feet and bring up to six willing creatures within 10 feet; each appears within 10 feet of your destination.",
+              "action": { "activation": "bonus_action" }
             }
           ]
         }
