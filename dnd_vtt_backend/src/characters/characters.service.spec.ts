@@ -10,6 +10,12 @@ import { createTestDb } from '../common/test-db.util';
 import type { RequestUser } from '../common/current-user.decorator';
 import { ContentService } from '../content/content.service';
 
+interface SpellcastingCharacterState {
+  spell_slot_uses?: Record<string, Record<string, number>>;
+  spell_free_cast_uses?: Record<string, unknown>;
+  active_concentration?: { spellIndex?: string } | null;
+}
+
 async function insertProfile(
   db: DatabaseService,
   role: 'admin' | 'player' = 'player',
@@ -212,10 +218,13 @@ describe('CharactersService', () => {
       };
 
       await service.castSpell(created.id as string, owner, command);
-      const second = await service.castSpell(created.id as string, owner, command);
-      expect(
-        (second.character as Record<string, any>).spell_slot_uses.spellcasting['3'],
-      ).toBe(2);
+      const second = await service.castSpell(
+        created.id as string,
+        owner,
+        command,
+      );
+      const secondState = second.character as SpellcastingCharacterState;
+      expect(secondState.spell_slot_uses?.spellcasting?.['3']).toBe(2);
       await expect(
         service.castSpell(created.id as string, owner, command),
       ).rejects.toThrow(ConflictException);
@@ -223,15 +232,24 @@ describe('CharactersService', () => {
 
     it('rejects benefitless normal upcasting', async () => {
       const created = await service.create(ownerId, {
-        name: 'Merla', race: 'Human', class: 'Wizard', level: 3,
+        name: 'Merla',
+        race: 'Human',
+        class: 'Wizard',
+        level: 3,
         classes: [{ name: 'Wizard', level: 3, choices: {} }],
-        spell_slots_used: {}, spell_slot_uses: {},
+        spell_slots_used: {},
+        spell_slot_uses: {},
       });
 
-      await expect(service.castSpell(created.id as string, owner, {
-        spellIndex: 'detect-magic', sourceKey: 'class:wizard', method: 'slot',
-        poolKey: 'spellcasting', slotLevel: 2,
-      })).rejects.toThrow('has no higher-level benefit');
+      await expect(
+        service.castSpell(created.id as string, owner, {
+          spellIndex: 'detect-magic',
+          sourceKey: 'class:wizard',
+          method: 'slot',
+          poolKey: 'spellcasting',
+          slotLevel: 2,
+        }),
+      ).rejects.toThrow('has no higher-level benefit');
     });
 
     it('tracks concentration and requires explicit replacement', async () => {
@@ -245,12 +263,18 @@ describe('CharactersService', () => {
         spell_slot_uses: {},
       });
       await service.castSpell(created.id as string, owner, {
-        spellIndex: 'detect-magic', sourceKey: 'wizard-spellcasting', method: 'slot',
-        poolKey: 'spellcasting', slotLevel: 1,
+        spellIndex: 'detect-magic',
+        sourceKey: 'wizard-spellcasting',
+        method: 'slot',
+        poolKey: 'spellcasting',
+        slotLevel: 1,
       });
       const replacement = {
-        spellIndex: 'invisibility', sourceKey: 'wizard-spellcasting', method: 'slot',
-        poolKey: 'spellcasting', slotLevel: 2,
+        spellIndex: 'invisibility',
+        sourceKey: 'wizard-spellcasting',
+        method: 'slot',
+        poolKey: 'spellcasting',
+        slotLevel: 2,
       };
       await expect(
         service.castSpell(created.id as string, owner, replacement),
@@ -259,40 +283,53 @@ describe('CharactersService', () => {
         ...replacement,
         replaceConcentration: true,
       });
-      expect((result.character as Record<string, any>).active_concentration.spellIndex)
-        .toBe('invisibility');
+      const resultState = result.character as SpellcastingCharacterState;
+      expect(resultState.active_concentration?.spellIndex).toBe('invisibility');
     });
 
     it('restores Pact slots on a Short Rest and all spell resources on a Long Rest', async () => {
       const created = await service.create(ownerId, {
-        name: 'Vell', race: 'Tiefling', class: 'Warlock', level: 3,
+        name: 'Vell',
+        race: 'Tiefling',
+        class: 'Warlock',
+        level: 3,
         classes: [{ name: 'Warlock', level: 3, choices: {} }],
-        spell_slots_used: {}, spell_slot_uses: {},
+        spell_slots_used: {},
+        spell_slot_uses: {},
       });
       await service.castSpell(created.id as string, owner, {
-        spellIndex: 'invisibility', sourceKey: 'warlock-spellcasting', method: 'pact',
-        poolKey: 'pact:class:warlock', slotLevel: 2,
+        spellIndex: 'invisibility',
+        sourceKey: 'warlock-spellcasting',
+        method: 'pact',
+        poolKey: 'pact:class:warlock',
+        slotLevel: 2,
       });
       const shortRested = await service.restoreSpellcasting(
         created.id as string,
         owner,
         { type: 'short_rest' },
       );
-      expect((shortRested as Record<string, any>).spell_slot_uses['pact:class:warlock'])
-        .toBeUndefined();
+      const shortRestState = shortRested as SpellcastingCharacterState;
+      expect(
+        shortRestState.spell_slot_uses?.['pact:class:warlock'],
+      ).toBeUndefined();
       const longRested = await service.restoreSpellcasting(
         created.id as string,
         owner,
         { type: 'long_rest' },
       );
-      expect((longRested as Record<string, any>).spell_slot_uses).toEqual({});
-      expect((longRested as Record<string, any>).spell_free_cast_uses).toEqual({});
+      const longRestState = longRested as SpellcastingCharacterState;
+      expect(longRestState.spell_slot_uses).toEqual({});
+      expect(longRestState.spell_free_cast_uses).toEqual({});
     });
   });
 
   it('rejects preparation changes while the character is in an active encounter', async () => {
     const created = await service.create(ownerId, {
-      name: 'Merla', race: 'Human', class: 'Wizard', level: 3,
+      name: 'Merla',
+      race: 'Human',
+      class: 'Wizard',
+      level: 3,
       spell_choices: { 'class:wizard:prepared': ['magic-missile'] },
     });
     const dmId = await insertProfile(db);

@@ -66,7 +66,10 @@ interface SpellManifest {
 const contentRoot = join(process.cwd(), 'content');
 const spellsRoot = join(contentRoot, 'spells');
 const referenceOnlySummaries = JSON.parse(
-  readFileSync(join(process.cwd(), 'scripts', 'reference-only-spell-summaries.json'), 'utf8'),
+  readFileSync(
+    join(process.cwd(), 'scripts', 'reference-only-spell-summaries.json'),
+    'utf8',
+  ),
 ) as Record<string, string>;
 const spellFiles = readdirSync(spellsRoot)
   .filter((file) => file.endsWith('.json'))
@@ -90,13 +93,17 @@ function automaticSpellGrants(value: unknown): AutomaticSpellGrant[] {
   if (!value || typeof value !== 'object') return [];
   const record = value as Record<string, unknown>;
   return [
-    ...(record['type'] === 'spell_grant' ? [record as unknown as AutomaticSpellGrant] : []),
+    ...(record['type'] === 'spell_grant'
+      ? [record as unknown as AutomaticSpellGrant]
+      : []),
     ...Object.values(record).flatMap(automaticSpellGrants),
   ];
 }
 
 function contentFile(folder: string, index: string): Record<string, unknown> {
-  return JSON.parse(readFileSync(join(contentRoot, folder, `${index}.json`), 'utf8')) as Record<string, unknown>;
+  return JSON.parse(
+    readFileSync(join(contentRoot, folder, `${index}.json`), 'utf8'),
+  ) as Record<string, unknown>;
 }
 
 describe("Player's Handbook 2024 spell content", () => {
@@ -113,41 +120,81 @@ describe("Player's Handbook 2024 spell content", () => {
 
   it('encodes every PHB species and feat that automatically grants spells', () => {
     for (const species of ['gnome', 'elf', 'tiefling', 'aasimar']) {
-      expect(automaticSpellGrants(contentFile('races', species)).length).toBeGreaterThan(0);
+      expect(
+        automaticSpellGrants(contentFile('races', species)).length,
+      ).toBeGreaterThan(0);
     }
     for (const feat of [
-      'magic-initiate', 'fey-touched', 'shadow-touched', 'blessed-warrior', 'druidic-warrior',
-      'ritual-caster', 'spell-sniper', 'telekinetic', 'telepathic',
+      'magic-initiate',
+      'fey-touched',
+      'shadow-touched',
+      'blessed-warrior',
+      'druidic-warrior',
+      'ritual-caster',
+      'spell-sniper',
+      'telekinetic',
+      'telepathic',
     ]) {
-      expect(automaticSpellGrants(contentFile('feats', feat)).length).toBeGreaterThan(0);
+      expect(
+        automaticSpellGrants(contentFile('feats', feat)).length,
+      ).toBeGreaterThan(0);
     }
   });
 
   it('encodes automatic class spells and every spell-bearing PHB subclass', () => {
     const classes = [
-      'barbarian', 'bard', 'cleric', 'druid', 'fighter', 'monk',
-      'paladin', 'ranger', 'rogue', 'sorcerer', 'warlock', 'wizard',
+      'barbarian',
+      'bard',
+      'cleric',
+      'druid',
+      'fighter',
+      'monk',
+      'paladin',
+      'ranger',
+      'rogue',
+      'sorcerer',
+      'warlock',
+      'wizard',
     ];
     for (const classIndex of classes) {
-      expect(automaticSpellGrants(contentFile('classes', classIndex)).length).toBeGreaterThan(0);
+      expect(
+        automaticSpellGrants(contentFile('classes', classIndex)).length,
+      ).toBeGreaterThan(0);
     }
 
-    const fighter = contentFile('classes', 'fighter') as { subclasses: { index: string; spellcasting?: unknown }[] };
-    const rogue = contentFile('classes', 'rogue') as { subclasses: { index: string; spellcasting?: unknown }[] };
-    expect(fighter.subclasses.find(subclass => subclass.index === 'eldritch-knight')?.spellcasting).toBeDefined();
-    expect(rogue.subclasses.find(subclass => subclass.index === 'arcane-trickster')?.spellcasting).toBeDefined();
+    const fighter = contentFile('classes', 'fighter') as {
+      subclasses: { index: string; spellcasting?: unknown }[];
+    };
+    const rogue = contentFile('classes', 'rogue') as {
+      subclasses: { index: string; spellcasting?: unknown }[];
+    };
+    expect(
+      fighter.subclasses.find(
+        (subclass) => subclass.index === 'eldritch-knight',
+      )?.spellcasting,
+    ).toBeDefined();
+    expect(
+      rogue.subclasses.find((subclass) => subclass.index === 'arcane-trickster')
+        ?.spellcasting,
+    ).toBeDefined();
   });
 
   it('keeps every fixed automatic spell reference linked to the PHB catalog', () => {
-    const spellIndexes = new Set(spells.map(spell => spell.index));
+    const spellIndexes = new Set(spells.map((spell) => spell.index));
     const folders = ['races', 'classes', 'feats'];
-    const missing = folders.flatMap(folder => readdirSync(join(contentRoot, folder))
-      .filter(file => file.endsWith('.json'))
-      .flatMap(file => automaticSpellGrants(JSON.parse(
-        readFileSync(join(contentRoot, folder, file), 'utf8'),
-      )).flatMap(grant => (grant.spells ?? [])
-        .filter(index => !spellIndexes.has(index))
-        .map(index => `${folder}/${file}:${grant.key}:${index}`))));
+    const missing = folders.flatMap((folder) =>
+      readdirSync(join(contentRoot, folder))
+        .filter((file) => file.endsWith('.json'))
+        .flatMap((file) =>
+          automaticSpellGrants(
+            JSON.parse(readFileSync(join(contentRoot, folder, file), 'utf8')),
+          ).flatMap((grant) =>
+            (grant.spells ?? [])
+              .filter((index) => !spellIndexes.has(index))
+              .map((index) => `${folder}/${file}:${grant.key}:${index}`),
+          ),
+        ),
+    );
     expect(missing).toEqual([]);
   });
 
@@ -274,7 +321,9 @@ describe("Player's Handbook 2024 spell content", () => {
     );
     for (const spell of referenceOnlySpells) {
       expect(spell.description).toBe(referenceOnlySummaries[spell.index]);
-      expect(spell.description).not.toContain('Rules text is not reproduced here.');
+      expect(spell.description).not.toContain(
+        'Rules text is not reproduced here.',
+      );
     }
   });
 });

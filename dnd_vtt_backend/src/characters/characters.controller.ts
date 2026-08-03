@@ -71,10 +71,7 @@ export class CharactersController {
   }
 
   @Patch(':id/concentration')
-  endConcentration(
-    @Param('id') id: string,
-    @CurrentUser() user: RequestUser,
-  ) {
+  endConcentration(@Param('id') id: string, @CurrentUser() user: RequestUser) {
     return this.characters.endConcentration(id, user);
   }
 
