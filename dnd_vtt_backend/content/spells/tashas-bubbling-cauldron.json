@@ -1,0 +1,51 @@
+{
+  "index": "tashas-bubbling-cauldron",
+  "name": "Tasha's Bubbling Cauldron",
+  "level": 6,
+  "school": "Conjuration",
+  "casting_time": "1 action",
+  "range": "5 feet",
+  "components": [
+    "V",
+    "S",
+    "M"
+  ],
+  "material": "a gilded ladle worth 500 + GP",
+  "duration": "10 minutes",
+  "ritual": false,
+  "concentration": false,
+  "classes": [
+    "Warlock",
+    "Wizard"
+  ],
+  "subclasses": [],
+  "species": [],
+  "backgrounds": [],
+  "feats": [],
+  "other_options": [],
+  "mechanics": {
+    "saving_throws": [],
+    "ability_checks": [],
+    "damage_types": [],
+    "conditions": [],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [],
+    "misc_tags": [
+      "HL",
+      "UBA"
+    ]
+  },
+  "description": "Conjure an immovable cauldron that produces a Common or Uncommon potion you choose. You or an ally can withdraw one copy as a Bonus Action, up to your spellcasting ability modifier (minimum one); the spell ends after the last is removed. The vials vanish when consumed, and unused potions vanish when you cast this spell again.",
+  "source": {
+    "book": "Player's Handbook",
+    "edition": 2024,
+    "code": "XPHB",
+    "page": 330,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

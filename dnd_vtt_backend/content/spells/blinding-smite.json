@@ -1,0 +1,52 @@
+{
+  "index": "blinding-smite",
+  "name": "Blinding Smite",
+  "level": 3,
+  "school": "Evocation",
+  "casting_time": "1 bonus action, which you take immediately after hitting a creature with a Melee weapon or an Unarmed Strike",
+  "range": "Self",
+  "components": [
+    "V"
+  ],
+  "duration": "1 minute",
+  "ritual": false,
+  "concentration": false,
+  "classes": [
+    "Paladin"
+  ],
+  "subclasses": [],
+  "species": [],
+  "backgrounds": [],
+  "feats": [],
+  "other_options": [],
+  "mechanics": {
+    "saving_throws": [
+      "constitution"
+    ],
+    "ability_checks": [],
+    "damage_types": [
+      "radiant"
+    ],
+    "conditions": [
+      "blinded"
+    ],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [],
+    "misc_tags": [
+      "AAD"
+    ]
+  },
+  "description": "The triggering hit deals an extra 3d8 Radiant damage and Blinds the target for the duration. At the end of each of its turns, the target makes a Constitution save, ending the spell on a success. **Higher-Level Slots.** Extra damage increases by 1d8 per slot level above 3.",
+  "source": {
+    "book": "Player's Handbook",
+    "edition": 2024,
+    "code": "XPHB",
+    "page": 247,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

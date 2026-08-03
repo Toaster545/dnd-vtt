@@ -1,0 +1,66 @@
+{
+  "index": "cone-of-cold",
+  "name": "Cone of Cold",
+  "level": 5,
+  "school": "Evocation",
+  "casting_time": "1 action",
+  "range": "60 feet (Cone)",
+  "components": [
+    "V",
+    "S",
+    "M"
+  ],
+  "material": "a small crystal or glass cone",
+  "duration": "Instantaneous",
+  "ritual": false,
+  "concentration": false,
+  "classes": [
+    "Druid",
+    "Sorcerer",
+    "Wizard"
+  ],
+  "subclasses": [
+    {
+      "class": "Druid",
+      "subclass": "Circle of the Land",
+      "variant": "Polar Land"
+    },
+    {
+      "class": "Wizard",
+      "subclass": "Evoker"
+    }
+  ],
+  "species": [],
+  "backgrounds": [],
+  "feats": [],
+  "other_options": [],
+  "mechanics": {
+    "saving_throws": [
+      "constitution"
+    ],
+    "ability_checks": [],
+    "damage_types": [
+      "cold"
+    ],
+    "conditions": [],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [
+      "N"
+    ],
+    "misc_tags": []
+  },
+  "description": "You unleash a blast of cold air. Each creature in a 60-foot Cone originating from you makes a Constitution saving throw, taking 8d8 Cold damage on a failed save or half as much damage on a successful one. A creature killed by this spell becomes a frozen statue until it thaws.",
+  "higher_levels": "The damage increases by 1d8 for each spell slot level above 5.",
+  "source": {
+    "book": "Player's Handbook",
+    "edition": 2024,
+    "code": "XPHB",
+    "page": 253,
+    "srd_5_2_1": true,
+    "rules_text": "SRD 5.2.1"
+  }
+}

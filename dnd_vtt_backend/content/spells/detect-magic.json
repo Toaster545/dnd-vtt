@@ -1,0 +1,77 @@
+{
+  "index": "detect-magic",
+  "name": "Detect Magic",
+  "level": 1,
+  "school": "Divination",
+  "casting_time": "1 action",
+  "range": "30 feet (Sphere)",
+  "components": [
+    "V",
+    "S"
+  ],
+  "duration": "Concentration, up to 10 minutes",
+  "ritual": true,
+  "concentration": true,
+  "classes": [
+    "Bard",
+    "Cleric",
+    "Druid",
+    "Paladin",
+    "Ranger",
+    "Sorcerer",
+    "Warlock",
+    "Wizard"
+  ],
+  "subclasses": [
+    {
+      "class": "Bard",
+      "subclass": "College of Lore"
+    },
+    {
+      "class": "Fighter",
+      "subclass": "Eldritch Knight"
+    },
+    {
+      "class": "Rogue",
+      "subclass": "Arcane Trickster"
+    },
+    {
+      "class": "Wizard",
+      "subclass": "Diviner"
+    }
+  ],
+  "species": [
+    "Elf"
+  ],
+  "backgrounds": [],
+  "feats": [
+    "Fey-Touched",
+    "Magic Initiate",
+    "Ritual Caster"
+  ],
+  "other_options": [
+    "Pact of the Tome"
+  ],
+  "mechanics": {
+    "saving_throws": [],
+    "ability_checks": [],
+    "damage_types": [],
+    "conditions": [],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [],
+    "misc_tags": []
+  },
+  "description": "For the duration, you sense the presence of magical effects within 30 feet of yourself. If you sense such effects, you can take the Magic action to see a faint aura around any visible creature or object in the area that bears the magic, and if an effect was created by a spell, you learn the spell's school of magic.\n\nThe spell is blocked by 1 foot of stone, dirt, or wood; 1 inch of metal; or a thin sheet of lead.",
+  "source": {
+    "book": "Player's Handbook",
+    "edition": 2024,
+    "code": "XPHB",
+    "page": 262,
+    "srd_5_2_1": true,
+    "rules_text": "SRD 5.2.1"
+  }
+}

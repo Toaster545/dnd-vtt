@@ -4,11 +4,12 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { ContentService, DndRace, DndClass, DndBackground, DndItem, DndSpell, DndFeat, TraitEffect, TraitGrant } from '../../../core/services/content.service';
-import { ClassChoiceSource, averageHpFormula, collectTraitEffects, reachableGrants, resolveLanguageProficiencies, unarmoredDefenseBonus } from '../../../core/utils/character-effects';
+import { ClassChoiceSource, averageHpFormula, collectFeatEffects, collectTraitEffects, reachableGrants, resolveCharacterFeatPicks, resolveLanguageProficiencies, unarmoredDefenseBonus } from '../../../core/utils/character-effects';
 import { isStructuredEquipment, resolveStartingEquipment } from '../../../core/utils/starting-equipment';
 import { resolveBackgroundSkills } from '../../../core/utils/background-skills';
 import { resolveBackgroundOriginFeat } from '../../../core/utils/background-origin-feat';
 import { portraitDataUri, randomPortraitSeed } from '../../../core/utils/avatar';
+import { resolveSpellcasting, type SpellSelectionRequirement } from '../../../core/utils/spellcasting';
 import { CharacterService } from '../../../core/services/character.service';
 import { CharacterStatsService } from '../../../core/services/character-stats.service';
 import { Character, Ability, ABILITIES, defaultCharacter, abilityModifier } from '../../../core/models/character.model';
@@ -71,8 +72,8 @@ export class CharacterWizardComponent implements OnInit, OnDestroy {
   feats       = signal<DndFeat[]>([]);
   loading     = signal(true);
 
-  selectedItemIndices  = signal<Set<string>>(new Set());
-  selectedSpellIndices = signal<Set<string>>(new Set());
+  selectedItemIndices = signal<Set<string>>(new Set());
+  spellChoices        = signal<Record<string, string[]>>({});
   classEquipChoices      = signal<Record<string, string[]>>({});
   backgroundEquipChoices = signal<Record<string, string[]>>({});
 
@@ -223,14 +224,7 @@ export class CharacterWizardComponent implements OnInit, OnDestroy {
   private selectedEffects(type: string, includeConditional = false): TraitEffect[] {
     const race = this.selectedRace();
     const backgroundFeat = resolveBackgroundOriginFeat(this.selectedBackground(), this.feats());
-    const backgroundFeatEffects = [
-      ...(backgroundFeat?.effects ?? []),
-      ...(backgroundFeat?.grants ?? [])
-        .filter((grant): grant is Extract<TraitGrant, { type: 'choice' }> => grant.type === 'choice')
-        .flatMap(grant => grant.options
-          .filter(option => this.backgroundTraits()[grant.key]?.includes(option.name))
-          .flatMap(option => option.effects ?? [])),
-    ];
+    const backgroundFeatEffects = collectFeatEffects(backgroundFeat, this.backgroundTraits());
     return [...collectTraitEffects(
       this.selectedClasses().map(e => ({ data: e.cls, choices: e.traits, level: e.level, subclass: e.subclass })),
       this.feats(),
@@ -257,7 +251,7 @@ export class CharacterWizardComponent implements OnInit, OnDestroy {
   isEditing  = computed(() => this.characterId() !== null);
   isLastStep = computed(() => this.activeStep() === STEPS.length - 1);
   incompleteSteps = computed(() => [
-    !isRaceSelectionComplete(this.raceSelection()) || this.raceHasSkillConflict(),
+    !isRaceSelectionComplete(this.raceSelection(), this.feats()) || this.raceHasSkillConflict(),
     !areClassSelectionsComplete(this.selectedClasses(), this.feats()) || this.classHasSkillConflict(),
     !isBackgroundSelectionComplete(this.backgroundSelection(), this.feats()) || this.backgroundHasSkillConflict(),
     !areAbilityAssignmentsComplete(this.assignments()),
@@ -267,7 +261,7 @@ export class CharacterWizardComponent implements OnInit, OnDestroy {
       this.classEquipChoices(),
       this.backgroundEquipChoices(),
     ),
-    false, // Spells are optional with the current free-form spell picker.
+    !this.spellResolution().isComplete,
     false, // Alignment has a valid default and Details has no unfilled choice.
   ]);
 
@@ -383,6 +377,52 @@ export class CharacterWizardComponent implements OnInit, OnDestroy {
     return classes.length === 1 ? [{ ...classes[0], level: this.level() }] : classes;
   });
 
+  private spellFeatSelections = computed(() => {
+    const race = this.selectedRace();
+    const selected = resolveCharacterFeatPicks(
+      this.reconciledClasses().map(entry => ({
+        data: entry.cls, choices: entry.traits, level: entry.level, subclass: entry.subclass,
+      })),
+      this.feats(),
+      race ? { data: race, choices: this.raceTraits(), subrace: this.selectedSubrace()?.name } : null,
+    );
+    const background = this.selectedBackground();
+    const originFeat = resolveBackgroundOriginFeat(background, this.feats());
+    if (!background || !originFeat) return selected;
+    const list = background.feature.match(/\((Cleric|Druid|Wizard)\)/i)?.[1];
+    return [...selected, {
+      feat: originFeat,
+      scope: `background:${background.index}:origin`,
+      choices: {
+        ...this.backgroundTraits(),
+        ...(list ? { magic_initiate_list: [list] } : {}),
+      },
+    }];
+  });
+
+  spellResolution = computed(() => resolveSpellcasting({
+    characterLevel: this.level(),
+    abilityScores: this.finalScores(),
+    spells: this.spells(),
+    classes: this.reconciledClasses().map(entry => ({
+      cls: entry.cls,
+      level: entry.level,
+      subclass: entry.subclass,
+      choices: entry.traits,
+    })),
+    race: this.selectedRace() ? {
+      race: this.selectedRace()!,
+      subrace: this.selectedSubrace(),
+      choices: this.raceTraits(),
+    } : null,
+    background: this.selectedBackground() ? {
+      background: this.selectedBackground()!,
+      choices: this.backgroundTraits(),
+    } : null,
+    feats: this.spellFeatSelections(),
+    spellChoices: this.spellChoices(),
+  }));
+
   // The character record as it stands right now, built straight from the wizard's live signals
   // — used both to persist (save(), below) and to drive the live preview pane, so the preview
   // is never more than a re-render behind what's actually on screen (no debounce, no round trip
@@ -412,10 +452,28 @@ export class CharacterWizardComponent implements OnInit, OnDestroy {
       }));
     const equipment = [...structuredEquipment, ...freeEquipment];
 
-    const priorPrepared = new Map((existing?.spells ?? []).map(s => [s.spellIndex, s.prepared]));
-    const spells = this.spells()
-      .filter(sp => this.selectedSpellIndices().has(sp.index))
-      .map(sp => ({ spellIndex: sp.index, name: sp.name, prepared: priorPrepared.get(sp.index) ?? false }));
+    const catalog = new Map(this.spells().map(spell => [spell.index, spell]));
+    const resolved = this.spellResolution();
+    const spellEntries = new Map<string, Character['spells'][number]>();
+    for (const origin of [...resolved.known, ...resolved.spellbook, ...resolved.prepared, ...resolved.alwaysPrepared]) {
+      const spell = catalog.get(origin.spellIndex);
+      if (!spell) continue;
+      const current = spellEntries.get(spell.index);
+      const prepared = origin.category === 'prepared' || origin.category === 'always_prepared';
+      const category = origin.category === 'always_prepared'
+        ? 'always_prepared'
+        : prepared ? 'prepared' : origin.category;
+      spellEntries.set(spell.index, {
+        spellIndex: spell.index,
+        name: spell.name,
+        prepared: (current?.prepared ?? false) || prepared,
+        sourceKey: current?.sourceKey ?? origin.sourceKey,
+        sourceName: current?.sourceName ?? origin.sourceName,
+        category: current?.category === 'always_prepared' ? current.category : category,
+        alwaysPrepared: (current?.alwaysPrepared ?? false) || origin.category === 'always_prepared',
+      });
+    }
+    const spells = [...spellEntries.values()];
     const hp = this.maxHP();
 
     return {
@@ -448,6 +506,7 @@ export class CharacterWizardComponent implements OnInit, OnDestroy {
       equipment,
       currency: existing?.currency ?? this.startingCurrency(),
       spells,
+      spell_choices: this.spellChoices(),
     } as Character;
   });
 
@@ -457,7 +516,7 @@ export class CharacterWizardComponent implements OnInit, OnDestroy {
 
   previewStats = computed(() => this.statsService.compute(
     this.draftCharacter(), this.primaryClass(), this.selectedRace(),
-    this.feats(), this.classesForFeats(), this.items(),
+    this.feats(), this.classesForFeats(), this.items(), this.selectedBackground(),
   ));
 
   private initialized = false;
@@ -495,7 +554,7 @@ export class CharacterWizardComponent implements OnInit, OnDestroy {
       this.characterName(); this.portraitSeed(); this.level(); this.alignment();
       this.selectedRace(); this.selectedSubrace(); this.raceTraits(); this.selectedClasses();
       this.selectedBackground(); this.backgroundTraits();
-      this.assignments(); this.selectedItemIndices(); this.selectedSpellIndices();
+      this.assignments(); this.selectedItemIndices(); this.spellChoices();
       this.classEquipChoices(); this.backgroundEquipChoices();
       this.currentHp();
 
@@ -570,6 +629,7 @@ export class CharacterWizardComponent implements OnInit, OnDestroy {
           ...acc, [ab]: scores[ab] ? scores[ab] - bonus[ab] : null,
         }), {} as Record<Ability, number | null>));
       }
+      this.spellChoices.set(existing.spell_choices ?? this.migrateLegacySpells(existing.spells ?? []));
     }
 
     setTimeout(() => { this.initialized = true; }, 0);
@@ -621,8 +681,58 @@ export class CharacterWizardComponent implements OnInit, OnDestroy {
     this.selectedItemIndices.update(s => { const n = new Set(s); if (n.has(index)) n.delete(index); else n.add(index); return n; });
   }
 
-  toggleSpell(index: string) {
-    this.selectedSpellIndices.update(s => { const n = new Set(s); if (n.has(index)) n.delete(index); else n.add(index); return n; });
+  toggleSpell(event: { requirementKey: string; spellIndex: string }) {
+    this.spellChoices.update(current => {
+      const selected = current[event.requirementKey] ?? [];
+      const next = selected.includes(event.spellIndex)
+        ? selected.filter(index => index !== event.spellIndex)
+        : [...selected, event.spellIndex];
+      return { ...current, [event.requirementKey]: next };
+    });
+  }
+
+  private migrateLegacySpells(entries: Character['spells']): Record<string, string[]> {
+    if (!entries.length) return {};
+    const choices: Record<string, string[]> = {};
+    const fixed = this.spellResolution();
+    const fixedIndexes = new Set([...fixed.known, ...fixed.spellbook, ...fixed.alwaysPrepared]
+      .filter(origin => origin.granted)
+      .map(origin => origin.spellIndex));
+    const catalog = new Map(this.spells().map(spell => [spell.index, spell]));
+    const add = (requirement: SpellSelectionRequirement, index: string) => {
+      const selected = choices[requirement.key] ?? [];
+      if (!selected.includes(index)) choices[requirement.key] = [...selected, index];
+    };
+
+    const acquisition = fixed.requirements.filter(requirement => requirement.kind !== 'prepared');
+    for (const entry of entries) {
+      if (fixedIndexes.has(entry.spellIndex)) continue;
+      const spell = catalog.get(entry.spellIndex);
+      const candidate = acquisition.find(requirement =>
+        requirement.eligibleSpellIndices.includes(entry.spellIndex)
+        && (spell?.level === 0 ? requirement.kind === 'cantrips' : requirement.kind !== 'cantrips'));
+      if (candidate) add(candidate, entry.spellIndex);
+      else {
+        const key = 'legacy:unassigned';
+        choices[key] = [...(choices[key] ?? []), entry.spellIndex];
+      }
+    }
+
+    const withAcquisitions = resolveSpellcasting({
+      characterLevel: this.level(),
+      abilityScores: this.finalScores(),
+      spells: this.spells(),
+      classes: this.reconciledClasses().map(entry => ({ cls: entry.cls, level: entry.level, subclass: entry.subclass, choices: entry.traits })),
+      race: this.selectedRace() ? { race: this.selectedRace()!, subrace: this.selectedSubrace(), choices: this.raceTraits() } : null,
+      background: this.selectedBackground() ? { background: this.selectedBackground()!, choices: this.backgroundTraits() } : null,
+      spellChoices: choices,
+    });
+    for (const entry of entries.filter(spell => spell.prepared)) {
+      const requirement = withAcquisitions.requirements.find(candidate =>
+        candidate.kind === 'prepared' && candidate.eligibleSpellIndices.includes(entry.spellIndex));
+      if (requirement) add(requirement, entry.spellIndex);
+    }
+    return choices;
   }
 
   async save() {

@@ -2,5 +2,6 @@
   "index": "alert",
   "name": "Alert",
   "description": "Add your Proficiency Bonus to Initiative. Immediately after rolling Initiative, you may swap your result with one willing ally in the same combat, provided neither of you is Incapacitated.",
-  "category": "origin"
+  "category": "origin",
+  "effects": [{ "type": "initiative_proficiency_bonus" }]
 }

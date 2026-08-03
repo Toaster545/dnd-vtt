@@ -21,16 +21,31 @@
       "options": [
         {
           "name": "Drow",
-          "description": "Level 1: Darkvision increases to 120 feet and you know Dancing Lights. Level 3: Faerie Fire. Level 5: Darkness."
+          "description": "Level 1: Darkvision increases to 120 feet and you know Dancing Lights. Level 3: Faerie Fire. Level 5: Darkness.",
+          "grants": [
+            { "type": "spell_grant", "key": "drow_cantrip", "name": "Drow Lineage", "destination": "known", "spells": ["dancing-lights"], "countsAgainstLimit": false, "sourceKey": "drow", "sourceName": "Drow", "ability": { "choiceKey": "elven_spellcasting_ability" } },
+            { "type": "spell_grant", "key": "drow_faerie_fire", "name": "Drow Lineage", "destination": "always_prepared", "spells": ["faerie-fire"], "countsAgainstLimit": false, "sourceKey": "drow", "sourceName": "Drow", "ability": { "choiceKey": "elven_spellcasting_ability" }, "characterLevel": 3, "freeCast": { "uses": 1, "recovery": "long_rest" } },
+            { "type": "spell_grant", "key": "drow_darkness", "name": "Drow Lineage", "destination": "always_prepared", "spells": ["darkness"], "countsAgainstLimit": false, "sourceKey": "drow", "sourceName": "Drow", "ability": { "choiceKey": "elven_spellcasting_ability" }, "characterLevel": 5, "freeCast": { "uses": 1, "recovery": "long_rest" } }
+          ]
         },
         {
           "name": "High Elf",
-          "description": "Level 1: Prestidigitation, replaceable with another Wizard cantrip after a Long Rest. Level 3: Detect Magic. Level 5: Misty Step."
+          "description": "Level 1: Prestidigitation, replaceable with another Wizard cantrip after a Long Rest. Level 3: Detect Magic. Level 5: Misty Step.",
+          "grants": [
+            { "type": "spell_grant", "key": "high_elf_cantrip", "name": "High Elf Lineage", "destination": "known", "choose": 1, "countsAgainstLimit": false, "sourceKey": "high-elf", "sourceName": "High Elf", "ability": { "choiceKey": "elven_spellcasting_ability" }, "filter": { "lists": ["Wizard"], "exactLevels": [0] } },
+            { "type": "spell_grant", "key": "high_elf_detect_magic", "name": "High Elf Lineage", "destination": "always_prepared", "spells": ["detect-magic"], "countsAgainstLimit": false, "sourceKey": "high-elf", "sourceName": "High Elf", "ability": { "choiceKey": "elven_spellcasting_ability" }, "characterLevel": 3, "freeCast": { "uses": 1, "recovery": "long_rest" } },
+            { "type": "spell_grant", "key": "high_elf_misty_step", "name": "High Elf Lineage", "destination": "always_prepared", "spells": ["misty-step"], "countsAgainstLimit": false, "sourceKey": "high-elf", "sourceName": "High Elf", "ability": { "choiceKey": "elven_spellcasting_ability" }, "characterLevel": 5, "freeCast": { "uses": 1, "recovery": "long_rest" } }
+          ]
         },
         {
           "name": "Wood Elf",
           "description": "Level 1: Speed 35 feet and Druidcraft. Level 3: Longstrider. Level 5: Pass without Trace.",
-          "effect": { "type": "speed_bonus", "value": 5 }
+          "effect": { "type": "speed_bonus", "value": 5 },
+          "grants": [
+            { "type": "spell_grant", "key": "wood_elf_cantrip", "name": "Wood Elf Lineage", "destination": "known", "spells": ["druidcraft"], "countsAgainstLimit": false, "sourceKey": "wood-elf", "sourceName": "Wood Elf", "ability": { "choiceKey": "elven_spellcasting_ability" } },
+            { "type": "spell_grant", "key": "wood_elf_longstrider", "name": "Wood Elf Lineage", "destination": "always_prepared", "spells": ["longstrider"], "countsAgainstLimit": false, "sourceKey": "wood-elf", "sourceName": "Wood Elf", "ability": { "choiceKey": "elven_spellcasting_ability" }, "characterLevel": 3, "freeCast": { "uses": 1, "recovery": "long_rest" } },
+            { "type": "spell_grant", "key": "wood_elf_pass_without_trace", "name": "Wood Elf Lineage", "destination": "always_prepared", "spells": ["pass-without-trace"], "countsAgainstLimit": false, "sourceKey": "wood-elf", "sourceName": "Wood Elf", "ability": { "choiceKey": "elven_spellcasting_ability" }, "characterLevel": 5, "freeCast": { "uses": 1, "recovery": "long_rest" } }
+          ]
         }
       ]
     },

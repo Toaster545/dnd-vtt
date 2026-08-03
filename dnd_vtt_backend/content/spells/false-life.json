@@ -1,0 +1,71 @@
+{
+  "index": "false-life",
+  "name": "False Life",
+  "level": 1,
+  "school": "Necromancy",
+  "casting_time": "1 action",
+  "range": "Self",
+  "components": [
+    "V",
+    "S",
+    "M"
+  ],
+  "material": "a drop of alcohol",
+  "duration": "Instantaneous",
+  "ritual": false,
+  "concentration": false,
+  "classes": [
+    "Sorcerer",
+    "Wizard"
+  ],
+  "subclasses": [
+    {
+      "class": "Bard",
+      "subclass": "College of Lore"
+    },
+    {
+      "class": "Fighter",
+      "subclass": "Eldritch Knight"
+    },
+    {
+      "class": "Rogue",
+      "subclass": "Arcane Trickster"
+    }
+  ],
+  "species": [
+    "Tiefling"
+  ],
+  "backgrounds": [],
+  "feats": [
+    "Magic Initiate",
+    "Shadow-Touched"
+  ],
+  "other_options": [
+    "Fiendish Vigor"
+  ],
+  "mechanics": {
+    "saving_throws": [],
+    "ability_checks": [],
+    "damage_types": [],
+    "conditions": [],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [],
+    "misc_tags": [
+      "THP"
+    ]
+  },
+  "description": "You gain 2d4 + 4 Temporary Hit Points.",
+  "higher_levels": "You gain 5 additional Temporary Hit Points for each spell slot level above 1.",
+  "source": {
+    "book": "Player's Handbook",
+    "edition": 2024,
+    "code": "XPHB",
+    "page": 271,
+    "srd_5_2_1": true,
+    "rules_text": "SRD 5.2.1"
+  }
+}

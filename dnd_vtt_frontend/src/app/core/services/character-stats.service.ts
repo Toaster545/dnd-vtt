@@ -1,15 +1,17 @@
 import { Injectable } from '@angular/core';
 import { Character, Ability, ABILITIES, SKILLS, abilityModifier, proficiencyBonus } from '../models/character.model';
-import { DndClass, DndFeat, DndItem, DndRace } from './content.service';
+import { DndBackground, DndClass, DndFeat, DndItem, DndRace } from './content.service';
 import {
-  ClassChoiceSource, RaceChoiceSource, activeEffects, averageHpFormula, baseArmorClass, collectTraitEffects, equippedItems, resolveCharacterFeatPicks,
+  ClassChoiceSource, RaceChoiceSource, activeEffects, averageHpFormula, baseArmorClass, collectFeatEffects, collectTraitEffects, equippedItems, resolveCharacterFeatPicks,
   unarmoredDefenseBonus,
 } from '../utils/character-effects';
 import { weaponMatchesAnyProficiency } from '../utils/weapon-proficiency';
+import { resolveBackgroundOriginFeat } from '../utils/background-origin-feat';
 
 export interface WeaponAttack {
   itemIndex: string;
   name: string;
+  distance: string;
   attack_bonus: number;
   damage_dice: string;
   damage_bonus: number;
@@ -63,11 +65,28 @@ function weaponAbilityMod(weapon: DndItem, mods: Record<Ability, number>): numbe
   return weapon.category.includes('Ranged') ? mods.dexterity : mods.strength;
 }
 
+function weaponDistance(weapon: DndItem): string {
+  const isMelee = weapon.category.includes('Melee');
+  const rangeProperty = weapon.properties.find(property => /(?:Ammunition|Thrown).*?\d+\s*\/\s*\d+/i.test(property));
+  const range = rangeProperty?.match(/(\d+)\s*\/\s*(\d+)/);
+  const distance = range ? `${range[1]}/${range[2]} ft.` : '';
+
+  if (!isMelee) return distance;
+
+  const reach = weapon.properties.some(property => property.toLowerCase() === 'reach')
+    ? '10 ft. reach'
+    : '5 ft. reach';
+  return rangeProperty?.toLowerCase().startsWith('thrown') && distance
+    ? `${reach} · ${distance} thrown`
+    : reach;
+}
+
 @Injectable({ providedIn: 'root' })
 export class CharacterStatsService {
   compute(
     char: Character, classData: DndClass | null, raceData: DndRace | null,
     feats: DndFeat[] = [], classesForFeats: ClassChoiceSource[] = [], items: DndItem[] = [],
+    backgroundData: DndBackground | null = null,
   ): ComputedStats {
     const prof = proficiencyBonus(char.level);
     const scores = char.ability_scores;
@@ -81,7 +100,10 @@ export class CharacterStatsService {
       choices: char.race_choices ?? {},
       subrace: char.subrace,
     } : null;
-    const allEffects = collectTraitEffects(classesForFeats, feats, raceForFeats);
+    const allEffects = [
+      ...collectTraitEffects(classesForFeats, feats, raceForFeats),
+      ...collectFeatEffects(resolveBackgroundOriginFeat(backgroundData, feats), char.background_choices ?? {}),
+    ];
 
     const hit_die = classData?.hit_die ?? 8;
     const hpBonusPerLevel = allEffects
@@ -170,6 +192,7 @@ export class CharacterStatsService {
         return {
           itemIndex: weapon.index,
           name: weapon.name,
+          distance: weaponDistance(weapon),
           attack_bonus: abilityMod + (proficient ? prof : 0) + rangedAttackBonus,
           damage_dice: weapon.damage ?? '',
           damage_bonus: abilityMod + meleeDamageBonus + thrownDamageBonus,
@@ -191,12 +214,15 @@ export class CharacterStatsService {
         const modifier = mods[effect.ability];
         return sum + Math.max(effect.minimum ?? modifier, modifier);
       }, 0);
+    const initiativeProficiencyBonus = allEffects.some(effect => effect.type === 'initiative_proficiency_bonus')
+      ? prof
+      : 0;
 
     return {
       proficiency_bonus: prof,
       ability_modifiers: mods,
       suggested_max_hp,
-      initiative: mods.dexterity + initiativeAbilityBonus,
+      initiative: mods.dexterity + initiativeAbilityBonus + initiativeProficiencyBonus,
       saving_throw_proficient: saveProfSet,
       saving_throw_bonuses,
       skill_bonuses,

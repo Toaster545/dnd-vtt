@@ -1,0 +1,50 @@
+{
+  "index": "banishing-smite",
+  "name": "Banishing Smite",
+  "level": 5,
+  "school": "Conjuration",
+  "casting_time": "1 bonus action, which you take immediately after hitting a creature with a Melee weapon or an Unarmed Strike",
+  "range": "Self",
+  "components": [
+    "V"
+  ],
+  "duration": "Concentration, up to 1 minute",
+  "ritual": false,
+  "concentration": true,
+  "classes": [
+    "Paladin"
+  ],
+  "subclasses": [],
+  "species": [],
+  "backgrounds": [],
+  "feats": [],
+  "other_options": [],
+  "mechanics": {
+    "saving_throws": [],
+    "ability_checks": [],
+    "damage_types": [
+      "force"
+    ],
+    "conditions": [
+      "incapacitated"
+    ],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [],
+    "misc_tags": [
+      "AAD"
+    ]
+  },
+  "description": "The triggering hit deals an extra 5d10 Force damage. If it leaves the target with 50 Hit Points or fewer, the target makes a Charisma save; on a failure, it is transported to a harmless demiplane and is Incapacitated for the duration, then returns to its former space or the nearest open space.",
+  "source": {
+    "book": "Player's Handbook",
+    "edition": 2024,
+    "code": "XPHB",
+    "page": 245,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

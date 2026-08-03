@@ -1,0 +1,66 @@
+{
+  "index": "legend-lore",
+  "name": "Legend Lore",
+  "level": 5,
+  "school": "Divination",
+  "casting_time": "10 minutes",
+  "range": "Self",
+  "components": [
+    "V",
+    "S",
+    "M"
+  ],
+  "material": "incense worth 250+ GP, which the spell consumes, and four ivory strips worth 50+ GP each",
+  "material_cost_cp": 25000,
+  "material_consumed": true,
+  "duration": "Instantaneous",
+  "ritual": false,
+  "concentration": false,
+  "classes": [
+    "Bard",
+    "Cleric",
+    "Wizard"
+  ],
+  "subclasses": [
+    {
+      "class": "Paladin",
+      "subclass": "Oath of Glory"
+    },
+    {
+      "class": "Sorcerer",
+      "subclass": "Draconic Sorcery"
+    },
+    {
+      "class": "Wizard",
+      "subclass": "Diviner"
+    }
+  ],
+  "species": [],
+  "backgrounds": [],
+  "feats": [],
+  "other_options": [],
+  "mechanics": {
+    "saving_throws": [],
+    "ability_checks": [],
+    "damage_types": [],
+    "conditions": [],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [],
+    "misc_tags": [
+      "OBJ"
+    ]
+  },
+  "description": "Name or describe a famous person, place, or object. The spell brings to your mind a brief summary of the significant lore about that famous thing, as described by the DM. \n\nThe lore might consist of important details, amusing revelations, or even secret lore that has never been widely known. The more information you already know about the thing, the more precise and detailed the information you receive is. That information is accurate but might be couched in figurative language or poetry, as determined by the DM. \n\nIf the famous thing you chose isn't actually famous, you hear sad musical notes played on a trombone, and the spell fails.",
+  "source": {
+    "book": "Player's Handbook",
+    "edition": 2024,
+    "code": "XPHB",
+    "page": 290,
+    "srd_5_2_1": true,
+    "rules_text": "SRD 5.2.1"
+  }
+}

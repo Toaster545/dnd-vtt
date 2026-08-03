@@ -1,0 +1,49 @@
+{
+  "index": "control-weather",
+  "name": "Control Weather",
+  "level": 8,
+  "school": "Transmutation",
+  "casting_time": "10 minutes",
+  "range": "5 miles (Sphere)",
+  "components": [
+    "V",
+    "S",
+    "M"
+  ],
+  "material": "burning incense",
+  "duration": "Concentration, up to 8 hours",
+  "ritual": false,
+  "concentration": true,
+  "classes": [
+    "Cleric",
+    "Druid",
+    "Wizard"
+  ],
+  "subclasses": [],
+  "species": [],
+  "backgrounds": [],
+  "feats": [],
+  "other_options": [],
+  "mechanics": {
+    "saving_throws": [],
+    "ability_checks": [],
+    "damage_types": [],
+    "conditions": [],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [],
+    "misc_tags": []
+  },
+  "description": "You take control of the weather within 5 miles of you for the duration. You must be outdoors to cast this spell, and it ends early if you go indoors. When you cast the spell, you change the current weather conditions, which are determined by the DM. You can change precipitation, temperature, and wind. It takes 1d4 × 10 minutes for the new conditions to take effect. Once they do so, you can change the conditions again. When the spell ends, the weather gradually returns to normal. When you change the weather conditions, find a current condition on the following tables and change its stage by one, up or down. When changing the wind, you can change its direction. \n\n**Precipitation** \n\nStage Condition \n\n1 Clear \n\n2 Light clouds \n\n3 Overcast or ground fog \n\n4 Rain, hail, or snow \n\n5 Torrential rain, driving hail, or blizzard \n\n**Temperature** \n\nStage Condition \n\n1 Heat wave \n\n2 Hot \n\n3 Warm \n\n4 Cool \n\n5 Cold \n\n6 Freezing \n\n**Wind** \n\nStage Condition \n\n1 Calm \n\n2 Moderate wind \n\n3 Strong wind \n\n4 Gale \n\n5 Storm.",
+  "source": {
+    "book": "Player's Handbook",
+    "edition": 2024,
+    "code": "XPHB",
+    "page": 257,
+    "srd_5_2_1": true,
+    "rules_text": "SRD 5.2.1"
+  }
+}

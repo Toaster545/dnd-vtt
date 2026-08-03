@@ -1,0 +1,89 @@
+{
+  "index": "thunderclap",
+  "name": "Thunderclap",
+  "level": 0,
+  "school": "Evocation",
+  "casting_time": "1 action",
+  "range": "5 feet (Emanation)",
+  "components": [
+    "S"
+  ],
+  "duration": "Instantaneous",
+  "ritual": false,
+  "concentration": false,
+  "classes": [
+    "Bard",
+    "Druid",
+    "Sorcerer",
+    "Warlock",
+    "Wizard"
+  ],
+  "subclasses": [
+    {
+      "class": "Bard",
+      "subclass": "College of Lore"
+    },
+    {
+      "class": "Fighter",
+      "subclass": "Eldritch Knight"
+    },
+    {
+      "class": "Rogue",
+      "subclass": "Arcane Trickster"
+    },
+    {
+      "class": "Wizard",
+      "subclass": "Evoker"
+    }
+  ],
+  "species": [
+    "Elf"
+  ],
+  "backgrounds": [],
+  "feats": [
+    "Druidic Warrior",
+    "Magic Initiate"
+  ],
+  "other_options": [
+    "Pact of the Tome"
+  ],
+  "mechanics": {
+    "saving_throws": [
+      "constitution"
+    ],
+    "ability_checks": [],
+    "damage_types": [
+      "thunder"
+    ],
+    "conditions": [],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [
+      "S"
+    ],
+    "misc_tags": [
+      "SCL"
+    ],
+    "scaling": {
+      "label": "Thunder damage",
+      "values": {
+        "1": "1d6",
+        "5": "2d6",
+        "11": "3d6",
+        "17": "4d6"
+      }
+    }
+  },
+  "description": "Each creature in a 5-foot Emanation from you makes a Constitution save, taking 1d6 Thunder damage on a failure. The sound is audible from 100 feet away. **Cantrip Upgrade.** Damage becomes 2d6 at level 5, 3d6 at level 11, and 4d6 at level 17.",
+  "source": {
+    "book": "Player's Handbook",
+    "edition": 2024,
+    "code": "XPHB",
+    "page": 333,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

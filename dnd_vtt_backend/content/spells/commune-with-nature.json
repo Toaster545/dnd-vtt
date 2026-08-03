@@ -1,0 +1,55 @@
+{
+  "index": "commune-with-nature",
+  "name": "Commune with Nature",
+  "level": 5,
+  "school": "Divination",
+  "casting_time": "1 minute",
+  "range": "Self",
+  "components": [
+    "V",
+    "S"
+  ],
+  "duration": "1 minute",
+  "ritual": true,
+  "concentration": false,
+  "classes": [
+    "Druid",
+    "Ranger"
+  ],
+  "subclasses": [
+    {
+      "class": "Barbarian",
+      "subclass": "Path of the Wild Heart"
+    },
+    {
+      "class": "Paladin",
+      "subclass": "Oath of the Ancients"
+    }
+  ],
+  "species": [],
+  "backgrounds": [],
+  "feats": [],
+  "other_options": [],
+  "mechanics": {
+    "saving_throws": [],
+    "ability_checks": [],
+    "damage_types": [],
+    "conditions": [],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [],
+    "misc_tags": []
+  },
+  "description": "You commune with nature spirits and gain knowledge of the surrounding area. In the outdoors, the spell gives you knowledge of the area within 3 miles of you. In caves and other natural underground settings, the radius is limited to 300 feet. The spell doesn't function where nature has been replaced by construction, such as in castles and settlements. \n\nChoose three of the following facts; you learn those facts as they pertain to the spell's area: \n\n- Locations of settlements \n\n- Locations of portals to other planes of existence \n\n- Location of one Challenge Rating 10+ creature (DM's choice) that is a Celestial, an Elemental, a Fey, a Fiend, or an Undead \n\n- The most prevalent kind of plant, mineral, or Beast (you choose which to learn) \n\n- Locations of bodies of water \n\nFor example, you could determine the location of a powerful monster in the area, the locations of bodies of water, and the locations of any towns.",
+  "source": {
+    "book": "Player's Handbook",
+    "edition": 2024,
+    "code": "XPHB",
+    "page": 252,
+    "srd_5_2_1": true,
+    "rules_text": "SRD 5.2.1"
+  }
+}

@@ -1,0 +1,79 @@
+{
+  "index": "ray-of-sickness",
+  "name": "Ray of Sickness",
+  "level": 1,
+  "school": "Necromancy",
+  "casting_time": "1 action",
+  "range": "60 feet",
+  "components": [
+    "V",
+    "S"
+  ],
+  "duration": "Instantaneous",
+  "ritual": false,
+  "concentration": false,
+  "classes": [
+    "Sorcerer",
+    "Wizard"
+  ],
+  "subclasses": [
+    {
+      "class": "Bard",
+      "subclass": "College of Lore"
+    },
+    {
+      "class": "Druid",
+      "subclass": "Circle of the Land",
+      "variant": "Tropical Land"
+    },
+    {
+      "class": "Fighter",
+      "subclass": "Eldritch Knight"
+    },
+    {
+      "class": "Rogue",
+      "subclass": "Arcane Trickster"
+    }
+  ],
+  "species": [
+    "Tiefling"
+  ],
+  "backgrounds": [],
+  "feats": [
+    "Magic Initiate",
+    "Shadow-Touched"
+  ],
+  "other_options": [],
+  "mechanics": {
+    "spell_attacks": [
+      "ranged"
+    ],
+    "saving_throws": [],
+    "ability_checks": [],
+    "damage_types": [
+      "poison"
+    ],
+    "conditions": [
+      "poisoned"
+    ],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [
+      "ST"
+    ],
+    "misc_tags": []
+  },
+  "description": "You shoot a greenish ray at a creature within range. Make a ranged spell attack against the target. On a hit, the target takes 2d8 Poison damage and has the Poisoned condition until the end of your next turn.",
+  "higher_levels": "The damage increases by 1d8 for each spell slot level above 1.",
+  "source": {
+    "book": "Player's Handbook",
+    "edition": 2024,
+    "code": "XPHB",
+    "page": 311,
+    "srd_5_2_1": true,
+    "rules_text": "SRD 5.2.1"
+  }
+}

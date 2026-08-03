@@ -10,7 +10,7 @@ export interface SpellSlots {
 // A choice's mechanical effect (AC bonus, proficiency, etc.), computed generically
 // instead of matched by display name.
 export interface TraitEffect {
-  type: string; // e.g. 'ac_bonus' | 'initiative_ability_bonus' | 'language_proficiency' | 'saving_throw_ability_bonus' | 'melee_damage_bonus' | 'special'
+  type: string; // e.g. 'ac_bonus' | 'initiative_ability_bonus' | 'initiative_proficiency_bonus' | 'language_proficiency' | 'saving_throw_ability_bonus' | 'melee_damage_bonus' | 'special'
   value?: number;
   values?: number[];
   tags?: string[];
@@ -36,6 +36,7 @@ export interface TraitOption {
   // even if the prerequisite is later lost, so the player can remove it.
   prerequisite?: { level?: number; selections?: string[] };
   effects?: TraitEffect[];
+  grants?: TraitGrant[];
 }
 
 // Absent entirely = passive feature (not shown in the Actions tab).
@@ -82,7 +83,43 @@ export type TraitGrant =
   // e.g. a class's Fighting Style feature. No ASI alternative. `excludeKey` points at another
   // feat_pick/ability_choice grant whose picks should be excluded (e.g. Fighter's Additional
   // Fighting Style must differ from the one picked at level 1).
-  | { type: 'feat_pick'; key: string; name: string; choose: number; description?: string; category: 'origin' | 'general' | 'fighting_style' | 'epic'; feats?: string[]; excludeKey?: string };
+  | { type: 'feat_pick'; key: string; name: string; choose: number; description?: string; category: 'origin' | 'general' | 'fighting_style' | 'epic'; feats?: string[]; excludeKey?: string }
+  // Fixed or selectable spells granted by a species, class, subclass, feat, or another option.
+  // Class/subclass grants inherit that class's spellcasting source unless `sourceKey` is set.
+  | {
+      type: 'spell_grant'; key: string; name: string; description?: string;
+      destination: 'known' | 'spellbook' | 'always_prepared';
+      spells?: string[]; choose?: number; countsAgainstLimit?: boolean;
+      sourceKey?: string; sourceName?: string; list?: string;
+      ability?: SpellcastingAbility;
+      characterLevel?: number; classLevel?: number;
+      fromDestination?: 'known' | 'spellbook' | 'prepared';
+      freeCast?: {
+        uses?: number | 'proficiency_bonus' | 'spellcasting_ability_modifier';
+        usesByClassLevel?: Record<string, number>;
+        minimum?: number;
+        recovery?: 'short_rest' | 'long_rest';
+        atWill?: boolean;
+        slotLevel?: number;
+      };
+      filter?: {
+        lists?: string[]; schools?: string[]; minLevel?: number; maxLevel?: number;
+        exactLevels?: number[]; ritual?: boolean; spellAttack?: boolean; castingTimes?: string[];
+      };
+    };
+
+export type SpellcastingAbility =
+  | 'strength' | 'dexterity' | 'constitution' | 'intelligence' | 'wisdom' | 'charisma'
+  | { choiceKey: string };
+
+export interface SpellcastingDefinition {
+  key: string;
+  name?: string;
+  list: string;
+  ability: SpellcastingAbility;
+  mode: 'prepared' | 'known' | 'spellbook';
+  progression: 'full' | 'half' | 'third' | 'pact';
+}
 
 export interface DndFeat {
   index: string;
@@ -136,13 +173,16 @@ export interface Subclass {
   index: string;
   name: string;
   description?: string;
+  spellcasting?: SpellcastingDefinition;
   // Same shape as ClassLevel; `features` is the legacy flat fallback for subclasses not yet restructured.
   levels: {
     level: number;
     features: string[];
     grants?: TraitGrant[];
     spell_slots?: SpellSlots;
+    pact_magic?: { slots: number; slot_level: number };
     cantrips_known?: number;
+    spells_known?: number;
     prepared_spells?: number;
   }[];
 }
@@ -159,7 +199,8 @@ export interface DndClass {
   tool_proficiencies: string[];
   skill_choices: { count: number; from: string[] };
   starting_equipment: StartingEquipment;
-  spellcasting_ability?: string;
+  spellcasting_ability?: string | null;
+  spellcasting?: SpellcastingDefinition;
   subclass_level: number;
   subclasses: Subclass[];
   levels: ClassLevel[];
@@ -257,9 +298,45 @@ export interface DndSpell {
   casting_time: string;
   range: string;
   components: string[];
+  material?: string;
+  material_cost_cp?: number;
+  material_consumed?: boolean;
   duration: string;
+  ritual: boolean;
+  concentration: boolean;
   classes: string[];
+  subclasses: { class: string; subclass: string; variant?: string }[];
+  species: string[];
+  backgrounds: string[];
+  feats: string[];
+  other_options: string[];
+  mechanics: {
+    spell_attacks?: string[];
+    saving_throws: string[];
+    ability_checks: string[];
+    damage_types: string[];
+    conditions: string[];
+    affects_creature_types: string[];
+    grants_damage_immunities: string[];
+    grants_damage_resistances: string[];
+    grants_damage_vulnerabilities: string[];
+    grants_condition_immunities: string[];
+    area_tags: string[];
+    misc_tags: string[];
+    scaling?: { label: string; values: Record<string, string> };
+  };
   description: string;
+  higher_levels?: string;
+  cantrip_upgrade?: string;
+  source: {
+    book: string;
+    edition: number;
+    code: string;
+    page: number;
+    srd_5_2_1: boolean;
+    srd_name?: string;
+    rules_text: 'SRD 5.2.1' | 'reference-only';
+  };
 }
 
 export interface DndMonster {

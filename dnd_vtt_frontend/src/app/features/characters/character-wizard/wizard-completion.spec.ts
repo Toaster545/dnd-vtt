@@ -65,6 +65,29 @@ describe('character wizard completion indicators', () => {
     }], [])).toBe(true);
   });
 
+  it('treats completed weapon masteries as weapon choices rather than feat picks', () => {
+    const paladin = {
+      index: 'paladin',
+      subclass_level: 3,
+      subclasses: [{ index: 'vengeance', name: 'Oath of Vengeance', levels: [] }],
+      levels: [{
+        level: 1,
+        grants: [{
+          type: 'weapon_mastery', key: 'weapon_mastery', name: 'Weapon Mastery',
+          choose: 2, proficiency: ['Simple', 'Martial'],
+        }],
+      }],
+    } as unknown as DndClass;
+
+    expect(areClassSelectionsComplete([{
+      cls: paladin,
+      level: 3,
+      subclass: 'Oath of Vengeance',
+      skills: [],
+      traits: { weapon_mastery: ['longsword', 'javelin'] },
+    }], [])).toBe(true);
+  });
+
   it('checks every background grant and all six ability assignments', () => {
     const background = {
       grants: [
@@ -114,6 +137,33 @@ describe('character wizard completion indicators', () => {
       background,
       traits: { 'origin_feat:skilled_skills': ['Arcana', 'History', 'Survival'] },
     }, feats)).toBe(true);
+  });
+
+  it('keeps a picked feat source incomplete until its internal spell choices are configured', () => {
+    const race = {
+      index: 'human', subraces: [], grants: [{
+        type: 'feat_pick', key: 'versatile', name: 'Versatile', choose: 1, category: 'origin',
+      }],
+    } as unknown as DndRace;
+    const feat = {
+      index: 'magic-initiate', name: 'Magic Initiate', category: 'origin', description: '',
+      grants: [
+        { type: 'choice', key: 'magic_initiate_list', name: 'List', choose: 1, options: [] },
+        { type: 'choice', key: 'magic_initiate_ability', name: 'Ability', choose: 1, options: [] },
+      ],
+    } satisfies DndFeat;
+    const base = { languages: ['Elvish', 'Dwarvish'], versatile: ['magic-initiate'] };
+
+    expect(isRaceSelectionComplete({ race, subrace: null, traits: base }, [feat])).toBe(false);
+    expect(isRaceSelectionComplete({
+      race,
+      subrace: null,
+      traits: {
+        ...base,
+        'versatile:feat:magic_initiate_list': ['Wizard'],
+        'versatile:feat:magic_initiate_ability': ['Intelligence'],
+      },
+    }, [feat])).toBe(true);
   });
 
   it('marks structured equipment incomplete until its package choice is resolved', () => {

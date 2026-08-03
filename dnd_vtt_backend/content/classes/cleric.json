@@ -25,6 +25,7 @@
     "goldAlternative": 110
   },
   "spellcasting_ability": "wisdom",
+  "spellcasting": { "key": "class:cleric", "list": "Cleric", "ability": "wisdom", "mode": "prepared", "progression": "full" },
   "subclass_level": 3,
   "subclasses": [
     {
@@ -45,6 +46,10 @@
               "name": "Life Domain Spells",
               "description": "These spells are always prepared and don't count against your prepared-spell limit: at Cleric level 3, Aid, Bless, Cure Wounds, and Lesser Restoration; level 5, Mass Healing Word and Revivify; level 7, Aura of Life and Death Ward; level 9, Greater Restoration and Mass Cure Wounds."
             },
+            { "type": "spell_grant", "key": "life_spells_3", "name": "Life Domain Spells", "destination": "always_prepared", "spells": ["aid", "bless", "cure-wounds", "lesser-restoration"], "countsAgainstLimit": false, "classLevel": 3 },
+            { "type": "spell_grant", "key": "life_spells_5", "name": "Life Domain Spells", "destination": "always_prepared", "spells": ["mass-healing-word", "revivify"], "countsAgainstLimit": false, "classLevel": 5 },
+            { "type": "spell_grant", "key": "life_spells_7", "name": "Life Domain Spells", "destination": "always_prepared", "spells": ["aura-of-life", "death-ward"], "countsAgainstLimit": false, "classLevel": 7 },
+            { "type": "spell_grant", "key": "life_spells_9", "name": "Life Domain Spells", "destination": "always_prepared", "spells": ["greater-restoration", "mass-cure-wounds"], "countsAgainstLimit": false, "classLevel": 9 },
             {
               "type": "feature",
               "name": "Disciple of Life",
@@ -99,6 +104,10 @@
               "name": "Light Domain Spells",
               "description": "These spells are always prepared and don't count against your prepared-spell limit: at Cleric level 3, Burning Hands, Faerie Fire, Scorching Ray, and See Invisibility; level 5, Daylight and Fireball; level 7, Arcane Eye and Wall of Fire; level 9, Flame Strike and Scrying."
             },
+            { "type": "spell_grant", "key": "light_spells_3", "name": "Light Domain Spells", "destination": "always_prepared", "spells": ["burning-hands", "faerie-fire", "scorching-ray", "see-invisibility"], "countsAgainstLimit": false, "classLevel": 3 },
+            { "type": "spell_grant", "key": "light_spells_5", "name": "Light Domain Spells", "destination": "always_prepared", "spells": ["daylight", "fireball"], "countsAgainstLimit": false, "classLevel": 5 },
+            { "type": "spell_grant", "key": "light_spells_7", "name": "Light Domain Spells", "destination": "always_prepared", "spells": ["arcane-eye", "wall-of-fire"], "countsAgainstLimit": false, "classLevel": 7 },
+            { "type": "spell_grant", "key": "light_spells_9", "name": "Light Domain Spells", "destination": "always_prepared", "spells": ["flame-strike", "scrying"], "countsAgainstLimit": false, "classLevel": 9 },
             {
               "type": "feature",
               "name": "Radiance of the Dawn",
@@ -174,6 +183,10 @@
               "name": "Trickery Domain Spells",
               "description": "These spells are always prepared and don't count against your prepared-spell limit: at Cleric level 3, Charm Person, Disguise Self, Invisibility, and Pass without Trace; level 5, Hypnotic Pattern and Nondetection; level 7, Confusion and Dimension Door; level 9, Dominate Person and Modify Memory."
             },
+            { "type": "spell_grant", "key": "trickery_spells_3", "name": "Trickery Domain Spells", "destination": "always_prepared", "spells": ["charm-person", "disguise-self", "invisibility", "pass-without-trace"], "countsAgainstLimit": false, "classLevel": 3 },
+            { "type": "spell_grant", "key": "trickery_spells_5", "name": "Trickery Domain Spells", "destination": "always_prepared", "spells": ["hypnotic-pattern", "nondetection"], "countsAgainstLimit": false, "classLevel": 5 },
+            { "type": "spell_grant", "key": "trickery_spells_7", "name": "Trickery Domain Spells", "destination": "always_prepared", "spells": ["confusion", "dimension-door"], "countsAgainstLimit": false, "classLevel": 7 },
+            { "type": "spell_grant", "key": "trickery_spells_9", "name": "Trickery Domain Spells", "destination": "always_prepared", "spells": ["dominate-person", "modify-memory"], "countsAgainstLimit": false, "classLevel": 9 },
             {
               "type": "feature",
               "name": "Blessing of the Trickster",
@@ -224,6 +237,10 @@
               "name": "War Domain Spells",
               "description": "These spells are always prepared and don't count against your prepared-spell limit: at Cleric level 3, Guiding Bolt, Magic Weapon, Shield of Faith, and Spiritual Weapon; level 5, Crusader's Mantle and Spirit Guardians; level 7, Fire Shield and Freedom of Movement; level 9, Hold Monster and Steel Wind Strike."
             },
+            { "type": "spell_grant", "key": "war_spells_3", "name": "War Domain Spells", "destination": "always_prepared", "spells": ["guiding-bolt", "magic-weapon", "shield-of-faith", "spiritual-weapon"], "countsAgainstLimit": false, "classLevel": 3 },
+            { "type": "spell_grant", "key": "war_spells_5", "name": "War Domain Spells", "destination": "always_prepared", "spells": ["crusaders-mantle", "spirit-guardians"], "countsAgainstLimit": false, "classLevel": 5 },
+            { "type": "spell_grant", "key": "war_spells_7", "name": "War Domain Spells", "destination": "always_prepared", "spells": ["fire-shield", "freedom-of-movement"], "countsAgainstLimit": false, "classLevel": 7 },
+            { "type": "spell_grant", "key": "war_spells_9", "name": "War Domain Spells", "destination": "always_prepared", "spells": ["hold-monster", "steel-wind-strike"], "countsAgainstLimit": false, "classLevel": 9 },
             {
               "type": "feature",
               "name": "Guided Strike",
@@ -317,7 +334,8 @@
                   "ability": "wisdom",
                   "minimum": 1
                 }
-              ]
+              ],
+              "grants": [{ "type": "spell_grant", "key": "thaumaturge_cantrip", "name": "Thaumaturge Cantrip", "destination": "known", "choose": 1, "countsAgainstLimit": false, "filter": { "lists": ["Cleric"], "exactLevels": [0] } }]
             }
           ]
         },

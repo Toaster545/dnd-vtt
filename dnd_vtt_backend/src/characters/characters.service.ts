@@ -1,4 +1,6 @@
 import {
+  BadRequestException,
+  ConflictException,
   Injectable,
   NotFoundException,
   ForbiddenException,
@@ -6,15 +8,120 @@ import {
 import { randomUUID } from 'crypto';
 import { DatabaseService } from '../common/database.service';
 import type { RequestUser } from '../common/current-user.decorator';
+import { ContentService } from '../content/content.service';
+
+type FreeCastState = {
+  used: number;
+  max: number;
+  recovery: 'short_rest' | 'long_rest';
+  spellIndex: string;
+};
+
+type SpellSlotMap = Record<string, number>;
+
+type SpellcastingDefinition = {
+  key: string;
+  name?: string;
+  progression: 'full' | 'half' | 'third' | 'pact';
+};
+
+type SpellcastingLevel = {
+  level: number;
+  spell_slots?: SpellSlotMap;
+  pact_magic?: { slots: number; slot_level: number };
+};
+
+type SpellcastingSubclass = {
+  name: string;
+  spellcasting?: SpellcastingDefinition;
+  levels?: SpellcastingLevel[];
+};
+
+type SpellcastingClass = {
+  spellcasting?: SpellcastingDefinition;
+  levels?: SpellcastingLevel[];
+  subclasses?: SpellcastingSubclass[];
+};
+
+type SpellcastingSource = {
+  definition: SpellcastingDefinition;
+  levels: SpellcastingLevel[];
+};
+
+const MULTICLASS_SLOTS: Record<number, Record<string, number>> = {
+  1: { '1': 2 },
+  2: { '1': 3 },
+  3: { '1': 4, '2': 2 },
+  4: { '1': 4, '2': 3 },
+  5: { '1': 4, '2': 3, '3': 2 },
+  6: { '1': 4, '2': 3, '3': 3 },
+  7: { '1': 4, '2': 3, '3': 3, '4': 1 },
+  8: { '1': 4, '2': 3, '3': 3, '4': 2 },
+  9: { '1': 4, '2': 3, '3': 3, '4': 3, '5': 1 },
+  10: { '1': 4, '2': 3, '3': 3, '4': 3, '5': 2 },
+  11: { '1': 4, '2': 3, '3': 3, '4': 3, '5': 2, '6': 1 },
+  12: { '1': 4, '2': 3, '3': 3, '4': 3, '5': 2, '6': 1 },
+  13: { '1': 4, '2': 3, '3': 3, '4': 3, '5': 2, '6': 1, '7': 1 },
+  14: { '1': 4, '2': 3, '3': 3, '4': 3, '5': 2, '6': 1, '7': 1 },
+  15: { '1': 4, '2': 3, '3': 3, '4': 3, '5': 2, '6': 1, '7': 1, '8': 1 },
+  16: { '1': 4, '2': 3, '3': 3, '4': 3, '5': 2, '6': 1, '7': 1, '8': 1 },
+  17: {
+    '1': 4,
+    '2': 3,
+    '3': 3,
+    '4': 3,
+    '5': 2,
+    '6': 1,
+    '7': 1,
+    '8': 1,
+    '9': 1,
+  },
+  18: {
+    '1': 4,
+    '2': 3,
+    '3': 3,
+    '4': 3,
+    '5': 3,
+    '6': 1,
+    '7': 1,
+    '8': 1,
+    '9': 1,
+  },
+  19: {
+    '1': 4,
+    '2': 3,
+    '3': 3,
+    '4': 3,
+    '5': 3,
+    '6': 2,
+    '7': 1,
+    '8': 1,
+    '9': 1,
+  },
+  20: {
+    '1': 4,
+    '2': 3,
+    '3': 3,
+    '4': 3,
+    '5': 3,
+    '6': 2,
+    '7': 2,
+    '8': 1,
+    '9': 1,
+  },
+};
 
 // Fields a player may change on their own campaign copy without the DM granting full edit
 // access — everything the character play sheet's in-encounter controls touch (HP, resource/spell
-// slot uses from actions and rests, equip toggle, spell-prepared toggle). Anything else in the
+// slot uses from actions and rests, and equipment toggles). Anything else in the
 // data blob (abilities, class, background, etc.) is left untouched even if present in the body.
 const PLAYER_EDITABLE_FIELDS = [
   'current_hp',
   'resource_uses',
   'spell_slots_used',
+  'spell_slot_uses',
+  'spell_free_cast_uses',
+  'active_concentration',
   'equipment',
   'spells',
   // Not itself an independent player choice — the frontend recomputes this from whatever's
@@ -40,7 +147,12 @@ const CHARACTER_COLUMN_KEYS = new Set([
 
 @Injectable()
 export class CharactersService {
-  constructor(private db: DatabaseService) {}
+  private readonly characterLocks = new Map<string, Promise<void>>();
+
+  constructor(
+    private db: DatabaseService,
+    private content: ContentService,
+  ) {}
 
   // Template characters only — campaign copies (campaign_id set) are DM-editable clones fetched
   // through the campaigns endpoints instead, so they don't clutter the list a player picks from
@@ -143,7 +255,23 @@ export class CharactersService {
   }
 
   async update(id: string, user: RequestUser, body: Record<string, unknown>) {
-    const existing = await this.findOneReadable(id, user);
+    const existing = (await this.findOneReadable(id, user)) as Record<
+      string,
+      unknown
+    >;
+    if (
+      existing.campaign_id &&
+      (this.changed(existing.spell_choices, body.spell_choices) ||
+        this.changed(existing.spells, body.spells)) &&
+      (await this.isCharacterInActiveEncounter(
+        id,
+        existing.campaign_id as string,
+      ))
+    ) {
+      throw new ConflictException(
+        'Spell preparation cannot be changed during an active encounter.',
+      );
+    }
     // A campaign copy is normally DM-only to edit (point 5 of the campaigns spec) — the player
     // still owns the row for read purposes, but can't rewrite the DM's live copy wholesale. Two
     // carve-outs: the DM can grant full edit access per-member (campaign_members.edit_unlocked),
@@ -174,6 +302,399 @@ export class CharactersService {
       ],
     );
     return this.findOneReadable(id, user);
+  }
+
+  private changed(current: unknown, next: unknown): boolean {
+    return (
+      next !== undefined &&
+      JSON.stringify(current ?? null) !== JSON.stringify(next)
+    );
+  }
+
+  private async isCharacterInActiveEncounter(
+    characterId: string,
+    campaignId: string,
+  ): Promise<boolean> {
+    const result = await this.db.execute(
+      `SELECT e.id
+       FROM encounters e
+       JOIN sessions s ON s.id = e.session_id
+       WHERE e.status = 'active' AND s.campaign_id = ?
+         AND EXISTS (
+           SELECT 1 FROM json_each(e.character_ids) roster
+           WHERE roster.value = ?
+         )
+       LIMIT 1`,
+      [campaignId, characterId],
+    );
+    return result.rows.length > 0;
+  }
+
+  async castSpell(
+    id: string,
+    user: RequestUser,
+    body: Record<string, unknown>,
+  ) {
+    return this.withCharacterLock(id, async () => {
+      const character = (await this.findOneReadable(id, user)) as Record<
+        string,
+        unknown
+      >;
+      const spellIndex = this.requiredString(body.spellIndex, 'spellIndex');
+      const sourceKey = this.requiredString(body.sourceKey, 'sourceKey');
+      const method = this.requiredString(body.method, 'method');
+      const spell = this.content.getSpell(spellIndex) as Record<
+        string,
+        unknown
+      >;
+      const spellLevel = Number(spell.level ?? 0);
+      const concentration = !!spell.concentration;
+      const replaceConcentration = body.replaceConcentration === true;
+      const currentConcentration = character.active_concentration as
+        Record<string, unknown> | null | undefined;
+
+      if (
+        concentration &&
+        currentConcentration?.spellIndex &&
+        currentConcentration.spellIndex !== spellIndex &&
+        !replaceConcentration
+      ) {
+        throw new ConflictException(
+          `Casting ${String(spell.name)} would end concentration on ${String(currentConcentration.name)}. Confirm replacement to continue.`,
+        );
+      }
+
+      const data = this.characterData(character);
+      let resourceLabel = 'No slot';
+      let castLevel = spellLevel;
+
+      if (method === 'cantrip') {
+        if (spellLevel !== 0)
+          throw new BadRequestException(
+            'Only cantrips can use the cantrip casting method.',
+          );
+      } else if (method === 'slot' || method === 'pact') {
+        if (spellLevel === 0)
+          throw new BadRequestException('Cantrips do not expend spell slots.');
+        const poolKey = this.requiredString(body.poolKey, 'poolKey');
+        const slotLevel = Number(body.slotLevel);
+        if (!Number.isInteger(slotLevel) || slotLevel < spellLevel)
+          throw new BadRequestException(
+            'The selected slot cannot cast this spell.',
+          );
+        const pools = this.resolveSlotPools(character);
+        const pool = pools.find((candidate) => candidate.key === poolKey);
+        if (!pool || pool.type !== method)
+          throw new BadRequestException(
+            'That spell-slot pool is not available.',
+          );
+        if (
+          pool.type === 'slot' &&
+          slotLevel > spellLevel &&
+          (typeof spell.higher_levels !== 'string' ||
+            !spell.higher_levels.trim())
+        ) {
+          throw new BadRequestException(
+            `${String(spell.name)} has no higher-level benefit and must use a level ${spellLevel} slot.`,
+          );
+        }
+        const maximum = pool.slots[String(slotLevel)] ?? 0;
+        const uses = this.recordOfRecords(data.spell_slot_uses);
+        const poolUses = { ...(uses[poolKey] ?? {}) };
+        const used = Number(poolUses[String(slotLevel)] ?? 0);
+        if (maximum <= 0 || used >= maximum)
+          throw new ConflictException('No selected spell slot remains.');
+        poolUses[String(slotLevel)] = used + 1;
+        uses[poolKey] = poolUses;
+        data.spell_slot_uses = uses;
+        if (pool.type === 'slot') {
+          data.spell_slots_used = {
+            ...this.numberRecord(data.spell_slots_used),
+            [String(slotLevel)]: used + 1,
+          };
+        }
+        castLevel = slotLevel;
+        resourceLabel = `${pool.name}, level ${slotLevel}`;
+      } else if (method === 'free') {
+        const freeCastKey = this.requiredString(
+          body.freeCastKey,
+          'freeCastKey',
+        );
+        const maxUses = Number(body.maxUses);
+        const recovery = body.recovery;
+        const atWill = body.atWill === true;
+        if (
+          !atWill &&
+          (!Number.isInteger(maxUses) || maxUses < 1 || maxUses > 20)
+        )
+          throw new BadRequestException('Invalid free-cast allowance.');
+        if (!atWill && recovery !== 'short_rest' && recovery !== 'long_rest')
+          throw new BadRequestException('Invalid free-cast recovery rule.');
+        const allUses = this.freeCastRecord(data.spell_free_cast_uses);
+        const existing = allUses[freeCastKey];
+        const used = existing?.used ?? 0;
+        if (!atWill && used >= maxUses)
+          throw new ConflictException(
+            'No free casting remains for this spell.',
+          );
+        if (!atWill) {
+          allUses[freeCastKey] = {
+            used: used + 1,
+            max: maxUses,
+            recovery: recovery as 'short_rest' | 'long_rest',
+            spellIndex,
+          };
+          data.spell_free_cast_uses = allUses;
+        }
+        castLevel = Number(body.slotLevel) || spellLevel;
+        resourceLabel = atWill ? 'At will' : 'Free cast';
+      } else {
+        throw new BadRequestException('Unknown spell casting method.');
+      }
+
+      data.active_concentration = concentration
+        ? {
+            spellIndex,
+            name: spell.name,
+            sourceKey,
+            startedAt: new Date().toISOString(),
+          }
+        : (currentConcentration ?? null);
+
+      await this.writeCharacterData(id, data);
+      return {
+        character: await this.findOneReadable(id, user),
+        cast: {
+          spellIndex,
+          spellName: spell.name,
+          castLevel,
+          method,
+          resourceLabel,
+          concentration,
+        },
+      };
+    });
+  }
+
+  async restoreSpellcasting(
+    id: string,
+    user: RequestUser,
+    body: Record<string, unknown>,
+  ) {
+    const type = body.type;
+    if (type !== 'short_rest' && type !== 'long_rest')
+      throw new BadRequestException(
+        'Rest type must be short_rest or long_rest.',
+      );
+    return this.withCharacterLock(id, async () => {
+      const character = (await this.findOneReadable(id, user)) as Record<
+        string,
+        unknown
+      >;
+      const data = this.characterData(character);
+      const slotUses = this.recordOfRecords(data.spell_slot_uses);
+      if (type === 'long_rest') {
+        data.spell_slot_uses = {};
+        data.spell_slots_used = {};
+        data.spell_free_cast_uses = {};
+        data.active_concentration = null;
+      } else {
+        for (const pool of this.resolveSlotPools(character)) {
+          if (pool.type === 'pact') delete slotUses[pool.key];
+        }
+        data.spell_slot_uses = slotUses;
+        const freeCasts = this.freeCastRecord(data.spell_free_cast_uses);
+        for (const [key, state] of Object.entries(freeCasts)) {
+          if (state.recovery === 'short_rest') delete freeCasts[key];
+        }
+        data.spell_free_cast_uses = freeCasts;
+      }
+      await this.writeCharacterData(id, data);
+      return this.findOneReadable(id, user);
+    });
+  }
+
+  async endConcentration(id: string, user: RequestUser) {
+    return this.withCharacterLock(id, async () => {
+      const character = (await this.findOneReadable(id, user)) as Record<
+        string,
+        unknown
+      >;
+      const data = this.characterData(character);
+      data.active_concentration = null;
+      await this.writeCharacterData(id, data);
+      return this.findOneReadable(id, user);
+    });
+  }
+
+  private async withCharacterLock<T>(
+    id: string,
+    work: () => Promise<T>,
+  ): Promise<T> {
+    const previous = this.characterLocks.get(id) ?? Promise.resolve();
+    let release!: () => void;
+    const current = new Promise<void>((resolve) => (release = resolve));
+    this.characterLocks.set(
+      id,
+      previous.then(() => current),
+    );
+    await previous;
+    try {
+      return await work();
+    } finally {
+      release();
+      // Keep the resolved tail as the next caller's predecessor. The map is bounded by the
+      // number of characters touched by this process and avoids a deletion race between waiters.
+    }
+  }
+
+  private characterData(
+    character: Record<string, unknown>,
+  ): Record<string, unknown> {
+    const data: Record<string, unknown> = {};
+    for (const [key, value] of Object.entries(character)) {
+      if (!CHARACTER_COLUMN_KEYS.has(key)) data[key] = value;
+    }
+    return data;
+  }
+
+  private async writeCharacterData(id: string, data: Record<string, unknown>) {
+    await this.db.execute(
+      'UPDATE characters SET data=?, updated_at=? WHERE id=?',
+      [JSON.stringify(data), new Date().toISOString(), id],
+    );
+  }
+
+  private requiredString(value: unknown, field: string): string {
+    if (typeof value !== 'string' || !value.trim())
+      throw new BadRequestException(`${field} is required.`);
+    return value;
+  }
+
+  private numberRecord(value: unknown): Record<string, number> {
+    return value && typeof value === 'object' && !Array.isArray(value)
+      ? { ...(value as Record<string, number>) }
+      : {};
+  }
+
+  private recordOfRecords(
+    value: unknown,
+  ): Record<string, Record<string, number>> {
+    return value && typeof value === 'object' && !Array.isArray(value)
+      ? { ...(value as Record<string, Record<string, number>>) }
+      : {};
+  }
+
+  private freeCastRecord(value: unknown): Record<string, FreeCastState> {
+    return value && typeof value === 'object' && !Array.isArray(value)
+      ? { ...(value as Record<string, FreeCastState>) }
+      : {};
+  }
+
+  private resolveSlotPools(character: Record<string, unknown>): {
+    key: string;
+    name: string;
+    type: 'slot' | 'pact';
+    slots: Record<string, number>;
+  }[] {
+    const entries =
+      Array.isArray(character.classes) && character.classes.length
+        ? (character.classes as Record<string, unknown>[])
+        : [
+            {
+              name: character.class,
+              level: character.level,
+              subclass: character.subclass,
+            },
+          ];
+    const normal: {
+      level: number;
+      progression: string;
+      slots: Record<string, number>;
+    }[] = [];
+    const pools: {
+      key: string;
+      name: string;
+      type: 'slot' | 'pact';
+      slots: Record<string, number>;
+    }[] = [];
+    for (const entry of entries) {
+      const name = typeof entry.name === 'string' ? entry.name : '';
+      if (!name) continue;
+      const cls = this.content.getClass(
+        name.toLowerCase().replace(/\s+/g, '-'),
+      ) as SpellcastingClass;
+      const level = Number(entry.level ?? 0);
+      const sources: SpellcastingSource[] = [];
+      if (cls.spellcasting) {
+        sources.push({
+          definition: cls.spellcasting,
+          levels: cls.levels ?? [],
+        });
+      }
+      const subclass = (cls.subclasses ?? []).find(
+        (candidate) =>
+          candidate.name === entry.subclass && !!candidate.spellcasting,
+      );
+      if (subclass?.spellcasting) {
+        sources.push({
+          definition: subclass.spellcasting,
+          levels: subclass.levels ?? [],
+        });
+      }
+      for (const source of sources) {
+        const levelData = source.levels.find(
+          (candidate) => Number(candidate.level) === level,
+        );
+        if (!levelData) continue;
+        const spellSlots = levelData.spell_slots;
+        if (source.definition.progression === 'pact' && levelData.pact_magic) {
+          pools.push({
+            key: `pact:${source.definition.key}`,
+            name: `${source.definition.name ?? name} Pact Magic`,
+            type: 'pact',
+            slots: {
+              [String(levelData.pact_magic.slot_level)]: Number(
+                levelData.pact_magic.slots,
+              ),
+            },
+          });
+        } else if (spellSlots && Object.keys(spellSlots).length) {
+          normal.push({
+            level,
+            progression: source.definition.progression,
+            slots: spellSlots,
+          });
+        }
+      }
+    }
+    if (normal.length === 1) {
+      pools.unshift({
+        key: 'spellcasting',
+        name: 'Spell Slots',
+        type: 'slot',
+        slots: normal[0].slots,
+      });
+    } else if (normal.length > 1) {
+      const casterLevel = Math.min(
+        20,
+        normal.reduce((sum, source) => {
+          if (source.progression === 'full') return sum + source.level;
+          if (source.progression === 'half')
+            return sum + Math.ceil(source.level / 2);
+          if (source.progression === 'third')
+            return sum + Math.floor(source.level / 3);
+          return sum;
+        }, 0),
+      );
+      pools.unshift({
+        key: 'spellcasting',
+        name: 'Spell Slots',
+        type: 'slot',
+        slots: MULTICLASS_SLOTS[casterLevel] ?? {},
+      });
+    }
+    return pools;
   }
 
   private async hasEditAccess(

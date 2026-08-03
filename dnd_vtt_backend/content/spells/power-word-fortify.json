@@ -1,0 +1,50 @@
+{
+  "index": "power-word-fortify",
+  "name": "Power Word Fortify",
+  "level": 7,
+  "school": "Enchantment",
+  "casting_time": "1 action",
+  "range": "60 feet",
+  "components": [
+    "V"
+  ],
+  "duration": "Instantaneous",
+  "ritual": false,
+  "concentration": false,
+  "classes": [
+    "Bard",
+    "Cleric"
+  ],
+  "subclasses": [],
+  "species": [],
+  "backgrounds": [],
+  "feats": [],
+  "other_options": [],
+  "mechanics": {
+    "saving_throws": [],
+    "ability_checks": [],
+    "damage_types": [],
+    "conditions": [],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [
+      "MT"
+    ],
+    "misc_tags": [
+      "SGT",
+      "THP"
+    ]
+  },
+  "description": "Distribute 120 Temporary Hit Points among up to six creatures you can see within range.",
+  "source": {
+    "book": "Player's Handbook",
+    "edition": 2024,
+    "code": "XPHB",
+    "page": 306,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

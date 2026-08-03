@@ -1,0 +1,57 @@
+{
+  "index": "locate-animals-or-plants",
+  "name": "Locate Animals or Plants",
+  "level": 2,
+  "school": "Divination",
+  "casting_time": "1 action",
+  "range": "Self",
+  "components": [
+    "V",
+    "S",
+    "M"
+  ],
+  "material": "fur from a bloodhound",
+  "duration": "Instantaneous",
+  "ritual": true,
+  "concentration": false,
+  "classes": [
+    "Bard",
+    "Druid",
+    "Ranger"
+  ],
+  "subclasses": [
+    {
+      "class": "Bard",
+      "subclass": "College of Lore"
+    }
+  ],
+  "species": [],
+  "backgrounds": [],
+  "feats": [],
+  "other_options": [],
+  "mechanics": {
+    "saving_throws": [],
+    "ability_checks": [],
+    "damage_types": [],
+    "conditions": [],
+    "affects_creature_types": [
+      "beast",
+      "plant"
+    ],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [],
+    "misc_tags": []
+  },
+  "description": "Describe or name a specific kind of Beast, Plant creature, or nonmagical plant. You learn the direction and distance to the closest creature or plant of that kind within 5 miles, if any are present.",
+  "source": {
+    "book": "Player's Handbook",
+    "edition": 2024,
+    "code": "XPHB",
+    "page": 292,
+    "srd_5_2_1": true,
+    "rules_text": "SRD 5.2.1"
+  }
+}

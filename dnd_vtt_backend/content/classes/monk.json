@@ -172,7 +172,9 @@
               "type": "feature",
               "name": "Shadow Arts",
               "description": "You gain Darkvision to 60 feet, or extend existing Darkvision by 60 feet, and know Minor Illusion, using Wisdom as your spellcasting ability. You can expend 1 Focus Point to cast Darkness without components. You can see through that spell's darkness and, at the start of each of your turns, move its area to a point within 60 feet."
-            }
+            },
+            { "type": "spell_grant", "key": "shadow_arts_minor_illusion", "name": "Shadow Arts", "destination": "known", "spells": ["minor-illusion"], "countsAgainstLimit": false, "sourceKey": "warrior-of-shadow", "sourceName": "Warrior of Shadow", "ability": "wisdom" },
+            { "type": "spell_grant", "key": "shadow_arts_darkness", "name": "Shadow Arts", "destination": "always_prepared", "spells": ["darkness"], "countsAgainstLimit": false, "sourceKey": "warrior-of-shadow", "sourceName": "Warrior of Shadow", "ability": "wisdom" }
           ]
         },
         {
@@ -228,7 +230,8 @@
               "type": "feature",
               "name": "Manipulate Elements",
               "description": "You know the Elementalism cantrip and use Wisdom as your spellcasting ability for it."
-            }
+            },
+            { "type": "spell_grant", "key": "manipulate_elements_cantrip", "name": "Manipulate Elements", "destination": "known", "spells": ["elementalism"], "countsAgainstLimit": false, "sourceKey": "warrior-of-elements", "sourceName": "Warrior of the Elements", "ability": "wisdom" }
           ]
         },
         {

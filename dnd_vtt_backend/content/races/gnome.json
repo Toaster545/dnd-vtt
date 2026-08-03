@@ -26,11 +26,47 @@
       "options": [
         {
           "name": "Forest Gnome",
-          "description": "You know Minor Illusion and always have Speak with Animals prepared. Cast Speak with Animals without a spell slot a number of times equal to your Proficiency Bonus per Long Rest, or use spell slots."
+          "description": "You know Minor Illusion and always have Speak with Animals prepared. Cast Speak with Animals without a spell slot a number of times equal to your Proficiency Bonus per Long Rest, or use spell slots.",
+          "grants": [
+            {
+              "type": "spell_grant",
+              "key": "forest_gnome_minor_illusion",
+              "name": "Forest Gnome Magic",
+              "destination": "known",
+              "spells": ["minor-illusion"],
+              "countsAgainstLimit": false,
+              "sourceKey": "forest-gnome",
+              "sourceName": "Forest Gnome",
+              "ability": { "choiceKey": "gnomish_spellcasting_ability" },
+              "freeCast": { "uses": "proficiency_bonus", "recovery": "long_rest" }
+            },
+            {
+              "type": "spell_grant",
+              "key": "forest_gnome_speak_with_animals",
+              "name": "Forest Gnome Magic",
+              "destination": "always_prepared",
+              "spells": ["speak-with-animals"],
+              "countsAgainstLimit": false,
+              "sourceKey": "forest-gnome",
+              "sourceName": "Forest Gnome",
+              "ability": { "choiceKey": "gnomish_spellcasting_ability" }
+            }
+          ]
         },
         {
           "name": "Rock Gnome",
-          "description": "You know Mending and Prestidigitation. A 10-minute Prestidigitation casting can create a Tiny clockwork device that reproduces one effect of the spell; up to three can exist, each lasting 8 hours."
+          "description": "You know Mending and Prestidigitation. A 10-minute Prestidigitation casting can create a Tiny clockwork device that reproduces one effect of the spell; up to three can exist, each lasting 8 hours.",
+          "grants": [{
+            "type": "spell_grant",
+            "key": "rock_gnome_cantrips",
+            "name": "Rock Gnome Magic",
+            "destination": "known",
+            "spells": ["mending", "prestidigitation"],
+            "countsAgainstLimit": false,
+            "sourceKey": "rock-gnome",
+            "sourceName": "Rock Gnome",
+            "ability": { "choiceKey": "gnomish_spellcasting_ability" }
+          }]
         }
       ]
     },

@@ -1,0 +1,55 @@
+{
+  "index": "destructive-wave",
+  "name": "Destructive Wave",
+  "level": 5,
+  "school": "Evocation",
+  "casting_time": "1 action",
+  "range": "30 feet (Emanation)",
+  "components": [
+    "V"
+  ],
+  "duration": "Instantaneous",
+  "ritual": false,
+  "concentration": false,
+  "classes": [
+    "Paladin"
+  ],
+  "subclasses": [],
+  "species": [],
+  "backgrounds": [],
+  "feats": [],
+  "other_options": [],
+  "mechanics": {
+    "saving_throws": [
+      "constitution"
+    ],
+    "ability_checks": [],
+    "damage_types": [
+      "necrotic",
+      "radiant",
+      "thunder"
+    ],
+    "conditions": [
+      "prone"
+    ],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [
+      "MT",
+      "S"
+    ],
+    "misc_tags": []
+  },
+  "description": "Creatures you choose in a 30-foot Emanation make a Constitution save. On a failure, a creature takes 5d6 Thunder damage plus 5d6 Radiant or Necrotic damage, and falls Prone. On a success, it takes half damage without falling Prone.",
+  "source": {
+    "book": "Player's Handbook",
+    "edition": 2024,
+    "code": "XPHB",
+    "page": 261,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

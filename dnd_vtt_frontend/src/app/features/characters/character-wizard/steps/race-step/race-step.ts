@@ -173,6 +173,34 @@ export class RaceStepComponent implements OnInit {
       .sort((a, b) => a.name.localeCompare(b.name));
   }
 
+  pickedFeats(grant: Extract<TraitGrant, { type: 'feat_pick' }>): DndFeat[] {
+    const selected = new Set(this.draftTraits()[grant.key] ?? []);
+    return this.feats().filter(feat => selected.has(feat.index));
+  }
+
+  featChoiceGrants(feat: DndFeat): Extract<TraitGrant, { type: 'choice' }>[] {
+    return (feat.grants ?? []).filter((choice): choice is Extract<TraitGrant, { type: 'choice' }> => choice.type === 'choice');
+  }
+
+  featChoiceKey(parent: { key: string }, grant: { key: string }): string {
+    return `${parent.key}:feat:${grant.key}`;
+  }
+
+  featChoiceSelected(parent: { key: string }, grant: { key: string }, option: string): boolean {
+    return this.draftTraits()[this.featChoiceKey(parent, grant)]?.includes(option) ?? false;
+  }
+
+  toggleFeatChoice(parent: { key: string }, grant: Extract<TraitGrant, { type: 'choice' }>, option: string): void {
+    const key = this.featChoiceKey(parent, grant);
+    this.draftTraits.update(traits => {
+      const current = traits[key] ?? [];
+      if (current.includes(option)) return { ...traits, [key]: current.filter(value => value !== option) };
+      if (current.length >= grant.choose) return grant.choose === 1 ? { ...traits, [key]: [option] } : traits;
+      return { ...traits, [key]: [...current, option] };
+    });
+    this.syncDraft();
+  }
+
   selectedSize(race: DndRace): string {
     return this.draftTraits()[SIZE_KEY]?.[0] ?? (race.size_options?.length === 1 ? race.size_options[0] : '');
   }

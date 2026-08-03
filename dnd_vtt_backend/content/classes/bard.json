@@ -43,6 +43,7 @@
     "goldAlternative": 90
   },
   "spellcasting_ability": "charisma",
+  "spellcasting": { "key": "class:bard", "list": "Bard", "ability": "charisma", "mode": "prepared", "progression": "full" },
   "subclass_level": 3,
   "subclasses": [
     {
@@ -116,6 +117,7 @@
                 "uses": { "max": 1, "per": "long_rest" }
               }
             },
+            { "type": "spell_grant", "key": "beguiling_magic_spells", "name": "Beguiling Magic", "destination": "always_prepared", "spells": ["charm-person", "mirror-image"], "countsAgainstLimit": false },
             {
               "type": "feature",
               "name": "Mantle of Inspiration",
@@ -136,7 +138,8 @@
                 "activation": "bonus_action",
                 "uses": { "max": 1, "per": "long_rest" }
               }
-            }
+            },
+            { "type": "spell_grant", "key": "mantle_of_majesty_command", "name": "Mantle of Majesty", "destination": "always_prepared", "spells": ["command"], "countsAgainstLimit": false }
           ]
         },
         {
@@ -188,7 +191,8 @@
               "type": "feature",
               "name": "Magical Discoveries",
               "description": "Choose two cantrips or spells you can cast from the Cleric, Druid, or Wizard spell lists. They are always prepared as Bard spells and can be replaced with eligible spells whenever you gain a Bard level. Spell selection will be handled by the shared spell system."
-            }
+            },
+            { "type": "spell_grant", "key": "magical_discoveries", "name": "Magical Discoveries", "destination": "always_prepared", "choose": 2, "countsAgainstLimit": false, "filter": { "lists": ["Cleric", "Druid", "Wizard"], "maxLevel": 3 } }
           ]
         },
         {
@@ -663,7 +667,8 @@
           "type": "feature",
           "name": "Words of Creation",
           "description": "Power Word Heal and Power Word Kill are always prepared. When you cast either, you can target a second creature within 10 feet of the first target."
-        }
+        },
+        { "type": "spell_grant", "key": "words_of_creation_spells", "name": "Words of Creation", "destination": "always_prepared", "spells": ["power-word-heal", "power-word-kill"], "countsAgainstLimit": false }
       ]
     }
   ]

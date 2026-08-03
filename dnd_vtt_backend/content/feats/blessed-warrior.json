@@ -13,5 +13,8 @@
     {
       "type": "special"
     }
+  ],
+  "grants": [
+    { "type": "spell_grant", "key": "blessed_warrior_cantrips", "name": "Blessed Warrior Cantrips", "destination": "known", "choose": 2, "countsAgainstLimit": false, "sourceKey": "blessed-warrior", "sourceName": "Blessed Warrior", "ability": "charisma", "filter": { "lists": ["Cleric"], "exactLevels": [0] } }
   ]
 }

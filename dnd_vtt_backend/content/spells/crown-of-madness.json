@@ -1,0 +1,71 @@
+{
+  "index": "crown-of-madness",
+  "name": "Crown of Madness",
+  "level": 2,
+  "school": "Enchantment",
+  "casting_time": "1 action",
+  "range": "120 feet",
+  "components": [
+    "V",
+    "S"
+  ],
+  "duration": "Concentration, up to 1 minute",
+  "ritual": false,
+  "concentration": true,
+  "classes": [
+    "Bard",
+    "Sorcerer",
+    "Warlock",
+    "Wizard"
+  ],
+  "subclasses": [
+    {
+      "class": "Bard",
+      "subclass": "College of Lore"
+    },
+    {
+      "class": "Fighter",
+      "subclass": "Eldritch Knight"
+    },
+    {
+      "class": "Rogue",
+      "subclass": "Arcane Trickster"
+    }
+  ],
+  "species": [],
+  "backgrounds": [],
+  "feats": [],
+  "other_options": [],
+  "mechanics": {
+    "saving_throws": [
+      "wisdom"
+    ],
+    "ability_checks": [],
+    "damage_types": [],
+    "conditions": [
+      "charmed"
+    ],
+    "affects_creature_types": [
+      "humanoid"
+    ],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [
+      "ST"
+    ],
+    "misc_tags": [
+      "SGT"
+    ]
+  },
+  "description": "A Humanoid that fails a Wisdom save is Charmed and bears a spectral crown. Before moving on each turn, it must use its action to make a melee attack against a creature you choose if one is in reach; otherwise it acts normally. It repeats the save at each turn\u0027s end. On later turns, you must use a Magic action to maintain the spell.",
+  "source": {
+    "book": "Player's Handbook",
+    "edition": 2024,
+    "code": "XPHB",
+    "page": 259,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

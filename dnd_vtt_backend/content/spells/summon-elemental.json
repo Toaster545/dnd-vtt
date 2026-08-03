@@ -1,0 +1,62 @@
+{
+  "index": "summon-elemental",
+  "name": "Summon Elemental",
+  "level": 4,
+  "school": "Conjuration",
+  "casting_time": "1 action",
+  "range": "90 feet",
+  "components": [
+    "V",
+    "S",
+    "M"
+  ],
+  "material": "air, a pebble, ash, and water inside a gold-inlaid vial worth 400+ GP",
+  "material_cost_cp": 40000,
+  "duration": "Concentration, up to 1 hour",
+  "ritual": false,
+  "concentration": true,
+  "classes": [
+    "Druid",
+    "Ranger",
+    "Wizard"
+  ],
+  "subclasses": [
+    {
+      "class": "Fighter",
+      "subclass": "Eldritch Knight"
+    },
+    {
+      "class": "Rogue",
+      "subclass": "Arcane Trickster"
+    }
+  ],
+  "species": [],
+  "backgrounds": [],
+  "feats": [],
+  "other_options": [],
+  "mechanics": {
+    "saving_throws": [],
+    "ability_checks": [],
+    "damage_types": [],
+    "conditions": [],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [],
+    "misc_tags": [
+      "SGT",
+      "SMN"
+    ]
+  },
+  "description": "Summon an allied Elemental Spirit in an open space you can see, choosing Air, Earth, Fire, or Water to determine its stat-block features. It shares your Initiative and acts immediately after you, follows verbal commands without requiring your action, and otherwise Dodges and avoids danger. It disappears at 0 Hit Points or when the spell ends. **Higher-Level Slots.** The stat block uses the slot level as the spell level.",
+  "source": {
+    "book": "Player's Handbook",
+    "edition": 2024,
+    "code": "XPHB",
+    "page": 325,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

@@ -18,5 +18,19 @@
       "charisma"
     ],
     "amount": 1
-  }
+  },
+  "grants": [{
+    "type": "choice",
+    "key": "ritual_caster_list",
+    "name": "Ritual Caster Spell List",
+    "choose": 1,
+    "options": [
+      { "name": "Bard", "grants": [{ "type": "spell_grant", "key": "ritual_caster_bard", "name": "Ritual Caster (Bard)", "destination": "spellbook", "choose": 2, "countsAgainstLimit": false, "sourceKey": "ritual-caster-bard", "sourceName": "Ritual Caster (Bard)", "ability": { "choiceKey": "__feat_ability__" }, "filter": { "lists": ["Bard"], "exactLevels": [1], "ritual": true } }] },
+      { "name": "Cleric", "grants": [{ "type": "spell_grant", "key": "ritual_caster_cleric", "name": "Ritual Caster (Cleric)", "destination": "spellbook", "choose": 2, "countsAgainstLimit": false, "sourceKey": "ritual-caster-cleric", "sourceName": "Ritual Caster (Cleric)", "ability": { "choiceKey": "__feat_ability__" }, "filter": { "lists": ["Cleric"], "exactLevels": [1], "ritual": true } }] },
+      { "name": "Druid", "grants": [{ "type": "spell_grant", "key": "ritual_caster_druid", "name": "Ritual Caster (Druid)", "destination": "spellbook", "choose": 2, "countsAgainstLimit": false, "sourceKey": "ritual-caster-druid", "sourceName": "Ritual Caster (Druid)", "ability": { "choiceKey": "__feat_ability__" }, "filter": { "lists": ["Druid"], "exactLevels": [1], "ritual": true } }] },
+      { "name": "Sorcerer", "grants": [{ "type": "spell_grant", "key": "ritual_caster_sorcerer", "name": "Ritual Caster (Sorcerer)", "destination": "spellbook", "choose": 2, "countsAgainstLimit": false, "sourceKey": "ritual-caster-sorcerer", "sourceName": "Ritual Caster (Sorcerer)", "ability": { "choiceKey": "__feat_ability__" }, "filter": { "lists": ["Sorcerer"], "exactLevels": [1], "ritual": true } }] },
+      { "name": "Warlock", "grants": [{ "type": "spell_grant", "key": "ritual_caster_warlock", "name": "Ritual Caster (Warlock)", "destination": "spellbook", "choose": 2, "countsAgainstLimit": false, "sourceKey": "ritual-caster-warlock", "sourceName": "Ritual Caster (Warlock)", "ability": { "choiceKey": "__feat_ability__" }, "filter": { "lists": ["Warlock"], "exactLevels": [1], "ritual": true } }] },
+      { "name": "Wizard", "grants": [{ "type": "spell_grant", "key": "ritual_caster_wizard", "name": "Ritual Caster (Wizard)", "destination": "spellbook", "choose": 2, "countsAgainstLimit": false, "sourceKey": "ritual-caster-wizard", "sourceName": "Ritual Caster (Wizard)", "ability": { "choiceKey": "__feat_ability__" }, "filter": { "lists": ["Wizard"], "exactLevels": [1], "ritual": true } }] }
+    ]
+  }]
 }

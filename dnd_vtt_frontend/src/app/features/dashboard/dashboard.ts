@@ -90,7 +90,9 @@ export class DashboardComponent implements OnInit {
   private async findLevelUpAlerts(copies: CampaignCopy[]): Promise<LevelUpAlert[]> {
     if (!copies.length) return [];
 
-    const [feats, items] = await Promise.all([this.content.getFeats(), this.content.getItems()]);
+    const [feats, items, backgrounds] = await Promise.all([
+      this.content.getFeats(), this.content.getItems(), this.content.getBackgrounds(),
+    ]);
     const classCache = new Map<string, Awaited<ReturnType<ContentService['getClass']>> | null>();
     const raceCache  = new Map<string, Awaited<ReturnType<ContentService['getRace']>> | null>();
 
@@ -116,7 +118,11 @@ export class DashboardComponent implements OnInit {
         level: primary?.level ?? char.level,
         subclass: primary?.subclass ?? char.subclass,
       }] : [];
-      const stats = this.statsService.compute(char, classData, raceData, feats, classesForFeats, items);
+      const backgroundData = backgrounds.find(background =>
+        background.index === toContentIndex(char.background) || background.name === char.background) ?? null;
+      const stats = this.statsService.compute(
+        char, classData, raceData, feats, classesForFeats, items, backgroundData,
+      );
       if (stats.suggested_max_hp !== char.max_hp) alerts.push({ character: char });
     }
     return alerts;

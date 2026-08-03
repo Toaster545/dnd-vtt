@@ -1,0 +1,76 @@
+{
+  "index": "friends",
+  "name": "Friends",
+  "level": 0,
+  "school": "Enchantment",
+  "casting_time": "1 action",
+  "range": "10 feet",
+  "components": [
+    "S",
+    "M"
+  ],
+  "material": "some makeup",
+  "duration": "Concentration, up to 1 minute",
+  "ritual": false,
+  "concentration": true,
+  "classes": [
+    "Bard",
+    "Sorcerer",
+    "Warlock",
+    "Wizard"
+  ],
+  "subclasses": [
+    {
+      "class": "Bard",
+      "subclass": "College of Lore"
+    },
+    {
+      "class": "Fighter",
+      "subclass": "Eldritch Knight"
+    },
+    {
+      "class": "Rogue",
+      "subclass": "Arcane Trickster"
+    }
+  ],
+  "species": [
+    "Elf"
+  ],
+  "backgrounds": [],
+  "feats": [
+    "Magic Initiate"
+  ],
+  "other_options": [
+    "Pact of the Tome"
+  ],
+  "mechanics": {
+    "saving_throws": [
+      "wisdom"
+    ],
+    "ability_checks": [],
+    "damage_types": [],
+    "conditions": [
+      "charmed"
+    ],
+    "affects_creature_types": [
+      "humanoid"
+    ],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [
+      "ST"
+    ],
+    "misc_tags": []
+  },
+  "description": "A Humanoid you can see makes a Wisdom save; on a failure, it is Charmed by you. It succeeds automatically if you are fighting it or used this spell on it within 24 hours. The spell ends if the target takes damage or you attack, deal damage, or force a save, and the target then knows you Charmed it.",
+  "source": {
+    "book": "Player's Handbook",
+    "edition": 2024,
+    "code": "XPHB",
+    "page": 277,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

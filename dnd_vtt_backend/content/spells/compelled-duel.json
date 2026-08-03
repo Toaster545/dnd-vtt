@@ -1,0 +1,52 @@
+{
+  "index": "compelled-duel",
+  "name": "Compelled Duel",
+  "level": 1,
+  "school": "Enchantment",
+  "casting_time": "1 bonus action",
+  "range": "30 feet",
+  "components": [
+    "V"
+  ],
+  "duration": "Concentration, up to 1 minute",
+  "ritual": false,
+  "concentration": true,
+  "classes": [
+    "Paladin"
+  ],
+  "subclasses": [],
+  "species": [],
+  "backgrounds": [],
+  "feats": [
+    "Fey-Touched"
+  ],
+  "other_options": [],
+  "mechanics": {
+    "saving_throws": [
+      "wisdom"
+    ],
+    "ability_checks": [],
+    "damage_types": [],
+    "conditions": [],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [
+      "ST"
+    ],
+    "misc_tags": [
+      "SGT"
+    ]
+  },
+  "description": "Choose one creature you can see within range. It makes a Wisdom saving throw. On a failure, it has Disadvantage on attack rolls against creatures other than you and can't willingly move more than 30 feet away from you. The spell ends early if you attack another creature, cast a spell on another enemy, one of your allies damages the target, or you finish your turn more than 30 feet from the target.",
+  "source": {
+    "book": "Player's Handbook",
+    "edition": 2024,
+    "code": "XPHB",
+    "page": 252,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

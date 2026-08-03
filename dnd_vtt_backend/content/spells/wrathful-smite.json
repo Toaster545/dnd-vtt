@@ -1,0 +1,54 @@
+{
+  "index": "wrathful-smite",
+  "name": "Wrathful Smite",
+  "level": 1,
+  "school": "Necromancy",
+  "casting_time": "1 bonus action, which you take immediately after hitting a creature with a Melee weapon or an Unarmed Strike",
+  "range": "Self",
+  "components": [
+    "V"
+  ],
+  "duration": "1 minute",
+  "ritual": false,
+  "concentration": false,
+  "classes": [
+    "Paladin"
+  ],
+  "subclasses": [],
+  "species": [],
+  "backgrounds": [],
+  "feats": [
+    "Shadow-Touched"
+  ],
+  "other_options": [],
+  "mechanics": {
+    "saving_throws": [
+      "wisdom"
+    ],
+    "ability_checks": [],
+    "damage_types": [
+      "necrotic"
+    ],
+    "conditions": [
+      "frightened"
+    ],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [],
+    "misc_tags": [
+      "AAD"
+    ]
+  },
+  "description": "The triggering hit deals an extra 1d6 Necrotic damage. The target makes a Wisdom save and is Frightened for the duration on a failure, repeating the save at the end of each of its turns. **Higher-Level Slots.** Extra damage increases by 1d6 per slot level above 1.",
+  "source": {
+    "book": "Player's Handbook",
+    "edition": 2024,
+    "code": "XPHB",
+    "page": 343,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

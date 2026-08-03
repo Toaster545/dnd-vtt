@@ -1,0 +1,69 @@
+{
+  "index": "slow",
+  "name": "Slow",
+  "level": 3,
+  "school": "Transmutation",
+  "casting_time": "1 action",
+  "range": "120 feet",
+  "components": [
+    "V",
+    "S",
+    "M"
+  ],
+  "material": "a drop of molasses",
+  "duration": "Concentration, up to 1 minute",
+  "ritual": false,
+  "concentration": true,
+  "classes": [
+    "Bard",
+    "Sorcerer",
+    "Wizard"
+  ],
+  "subclasses": [
+    {
+      "class": "Bard",
+      "subclass": "College of Lore"
+    },
+    {
+      "class": "Fighter",
+      "subclass": "Eldritch Knight"
+    },
+    {
+      "class": "Rogue",
+      "subclass": "Arcane Trickster"
+    }
+  ],
+  "species": [],
+  "backgrounds": [],
+  "feats": [],
+  "other_options": [],
+  "mechanics": {
+    "saving_throws": [
+      "wisdom"
+    ],
+    "ability_checks": [],
+    "damage_types": [],
+    "conditions": [],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [
+      "C",
+      "MT"
+    ],
+    "misc_tags": [
+      "MAC"
+    ]
+  },
+  "description": "You alter time around up to six creatures of your choice in a 40- foot Cube within range. Each target must succeed on a Wisdom saving throw or be affected by this spell for the duration. \n\nAn affected target's Speed is halved, it takes a −2 penalty to AC and Dexterity saving throws, and it can't take Reactions. On its turns, it can take either an action or a Bonus Action, not both, and it can make only one attack if it takes the Attack action. If it casts a spell with a Somatic component, there is a 25 percent chance the spell fails as a result of the target making the spell's gestures too slowly. \n\nAn affected target repeats the save at the end of each of its turns, ending the spell on itself on a success.",
+  "source": {
+    "book": "Player's Handbook",
+    "edition": 2024,
+    "code": "XPHB",
+    "page": 318,
+    "srd_5_2_1": true,
+    "rules_text": "SRD 5.2.1"
+  }
+}

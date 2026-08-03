@@ -1,17 +1,28 @@
 import { Component, inject, input, output, signal, computed, effect } from '@angular/core';
+import { NgTemplateOutlet } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import {
-  ContentService, DndClass, DndRace, DndBackground, DndItem, DndSpell, DndFeat, Subclass, TraitGrant, SpellSlots,
+  ContentService, DndClass, DndRace, DndBackground, DndItem, DndSpell, DndFeat, Subclass, TraitGrant,
 } from '../../../core/services/content.service';
-import { CharacterService } from '../../../core/services/character.service';
+import {
+  CharacterService, SpellCastCommand,
+} from '../../../core/services/character.service';
 import { CharacterStatsService } from '../../../core/services/character-stats.service';
 import { CharacterActionsService, CharacterAction } from '../../../core/services/character-actions.service';
 import {
-  Character, ABILITIES, ABILITY_SHORT, SKILLS, EquipmentEntry, SpellEntry, Currency,
+  Character, ABILITIES, ABILITY_SHORT, SKILLS, EquipmentEntry, Currency,
+  abilityModifier, proficiencyBonus,
 } from '../../../core/models/character.model';
 import { adjustCurrency, CURRENCY_ORDER } from '../../../core/utils/currency';
+import { resolveCharacterFeatPicks } from '../../../core/utils/character-effects';
+import { resolveBackgroundOriginFeat } from '../../../core/utils/background-origin-feat';
+import {
+  describeSpellUpcast, isSpellAttack, resolveSpellAttackDamage,
+  resolveSpellcasting, ResolvedSpellOrigin, ResolvedSpellSlotPool, ResolvedSpellCategory,
+  SpellUpcastEffect,
+} from '../../../core/utils/spellcasting';
 
 function toIndex(name: string): string {
   return name.toLowerCase().replace(/\s+/g, '-');
@@ -32,11 +43,45 @@ interface DisplayFeature {
   detail?: string;
 }
 
+interface DisplaySpell {
+  spell: DndSpell;
+  origins: ResolvedSpellOrigin[];
+  origin: ResolvedSpellOrigin;
+  category: ResolvedSpellCategory;
+}
+
+interface CastingMethod {
+  key: string;
+  label: string;
+  detail: string;
+  command: SpellCastCommand;
+  available: boolean;
+  upcast?: SpellUpcastEffect;
+}
+
+interface DisplaySpellAttack {
+  spell: DndSpell;
+  origin: ResolvedSpellOrigin;
+}
+
+interface SpellFilters {
+  search: string;
+  level: string;
+  school: string;
+  source: string;
+  castingTime: string;
+  ritual: boolean;
+  concentration: boolean;
+  prepared: string;
+}
+
+interface DescriptionSegment { text: string; bold: boolean }
+
 type Tab = 'stats' | 'actions' | 'inventory' | 'spells';
 
 @Component({
   selector: 'app-character-play-sheet',
-  imports: [FormsModule, MatIconModule, MatTooltipModule],
+  imports: [FormsModule, MatIconModule, MatTooltipModule, NgTemplateOutlet],
   templateUrl: './character-play-sheet.html',
   styleUrl: './character-play-sheet.scss',
 })
@@ -57,6 +102,16 @@ export class CharacterPlaySheetComponent {
   activeTab   = signal<Tab>('stats');
   loading     = signal(true);
   persisting  = signal(false);
+  spellFiltersOpen = signal(false);
+  castDialogSpell = signal<DisplaySpell | null>(null);
+  pendingCastMethod = signal<CastingMethod | null>(null);
+  castError = signal('');
+  castNotice = signal('');
+  replacingConcentration = signal(false);
+  readonly spellFilters = signal<SpellFilters>({
+    search: '', level: '', school: '', source: '', castingTime: '', ritual: false,
+    concentration: false, prepared: '',
+  });
 
   hpAdjustAmount  = signal<number>(0);
   currencyOrder   = CURRENCY_ORDER;
@@ -78,7 +133,7 @@ export class CharacterPlaySheetComponent {
     if (!char) return null;
     const classesForFeats = this.resolvedClasses().map(rc => ({ data: rc.data, choices: rc.choices, level: rc.level, subclass: rc.subclassName }));
     return this.statsService.compute(
-      char, this.primaryClass(), this.raceData(), this.featsAll(), classesForFeats, this.itemsAll(),
+      char, this.primaryClass(), this.raceData(), this.featsAll(), classesForFeats, this.itemsAll(), this.bgData(),
     );
   });
 
@@ -130,10 +185,6 @@ export class CharacterPlaySheetComponent {
       .map(it => ({ source: 'Weapon Mastery', name: `${it.name} — ${it.mastery!.property}`, detail: it.mastery!.description }));
   });
 
-  // Cantrips are always castable; leveled spells only once prepared — same rule the Spells tab's
-  // prepare toggle exists to enforce.
-  castableSpells = computed(() => this.knownSpells().filter(({ spell, entry }) => spell.level === 0 || entry.prepared));
-
   inventoryItems = computed(() => {
     const char = this.localChar();
     if (!char) return [];
@@ -141,35 +192,128 @@ export class CharacterPlaySheetComponent {
     return char.equipment.map(e => ({ entry: e, item: items.find(it => it.index === e.itemIndex) ?? null }));
   });
 
-  spellcastingClass = computed(() => this.resolvedClasses().find(rc => !!rc.data.spellcasting_ability) ?? null);
-
-  currentPactMagic = computed(() => {
-    const rc = this.spellcastingClass();
-    if (!rc) return null;
-    return rc.data.levels.find(l => l.level === rc.level)?.pact_magic ?? null;
-  });
-
-  currentSpellSlots = computed<SpellSlots>(() => {
-    const rc = this.spellcastingClass();
-    if (!rc) return {};
-    const level = rc.data.levels.find(l => l.level === rc.level);
-    if (level?.spell_slots) return level.spell_slots;
-    return level?.pact_magic
-      ? { [String(level.pact_magic.slot_level)]: level.pact_magic.slots } as SpellSlots
-      : {};
-  });
-
-  spellSlotLevels = computed(() => Object.entries(this.currentSpellSlots()).filter(([, n]) => (n ?? 0) > 0));
-
-  knownSpells = computed(() => {
+  spellResolution = computed(() => {
     const char = this.localChar();
-    if (!char) return [];
-    const all = this.spellsAll();
-    return char.spells
-      .map(entry => ({ entry, spell: all.find(sp => sp.index === entry.spellIndex) ?? null }))
-      .filter((x): x is { entry: SpellEntry; spell: DndSpell } => !!x.spell)
-      .sort((a, b) => a.spell.level - b.spell.level || a.spell.name.localeCompare(b.spell.name));
+    if (!char) return null;
+    const race = this.raceData();
+    const background = this.bgData();
+    const subrace = race && char.subrace ? race.subraces.find(candidate => candidate.name === char.subrace) ?? null : null;
+    const featSelections = resolveCharacterFeatPicks(
+      this.resolvedClasses().map(rc => ({
+        data: rc.data, choices: rc.choices, level: rc.level, subclass: rc.subclassName,
+      })),
+      this.featsAll(),
+      race ? { data: race, choices: char.race_choices ?? {}, subrace: char.subrace } : null,
+    );
+    const originFeat = resolveBackgroundOriginFeat(background, this.featsAll());
+    if (background && originFeat) {
+      const list = background.feature.match(/\((Cleric|Druid|Wizard)\)/i)?.[1];
+      featSelections.push({
+        feat: originFeat,
+        scope: `background:${background.index}:origin`,
+        choices: {
+          ...(char.background_choices ?? {}),
+          ...(list ? { magic_initiate_list: [list] } : {}),
+        },
+      });
+    }
+    return resolveSpellcasting({
+      characterLevel: char.level,
+      abilityScores: char.ability_scores,
+      spells: this.spellsAll(),
+      classes: this.resolvedClasses().map(rc => ({
+        cls: rc.data,
+        level: rc.level,
+        subclass: rc.subclassName,
+        choices: rc.choices,
+      })),
+      race: race ? { race, subrace, choices: char.race_choices ?? {} } : null,
+      background: background ? { background, choices: char.background_choices ?? {} } : null,
+      feats: featSelections,
+      spellChoices: char.spell_choices ?? {},
+    });
   });
+
+  spellRows = computed<DisplaySpell[]>(() => {
+    const resolution = this.spellResolution();
+    if (!resolution) return [];
+    const spellByIndex = new Map(this.spellsAll().map(spell => [spell.index, spell]));
+    const rows = new Map<string, DisplaySpell>();
+    const priority = { known: 0, spellbook: 1, prepared: 2, always_prepared: 3 } as const;
+    for (const origin of [
+      ...resolution.known,
+      ...resolution.spellbook,
+      ...resolution.prepared,
+      ...resolution.alwaysPrepared,
+    ]) {
+      const spell = spellByIndex.get(origin.spellIndex);
+      if (!spell) continue;
+      const key = origin.spellIndex;
+      const current = rows.get(key);
+      if (!current) {
+        rows.set(key, { spell, origins: [origin], origin, category: origin.category });
+      } else {
+        current.origins.push(origin);
+        if (priority[origin.category] > priority[current.category]) {
+          current.category = origin.category;
+          current.origin = origin;
+        }
+      }
+    }
+    return [...rows.values()].sort((a, b) =>
+      a.spell.level - b.spell.level
+      || a.spell.name.localeCompare(b.spell.name));
+  });
+
+  castableSpells = computed(() => this.spellRows().filter(row => row.origins.some(origin => origin.category !== 'spellbook')));
+  spellAttacks = computed<DisplaySpellAttack[]>(() => {
+    const attacks: DisplaySpellAttack[] = [];
+    for (const row of this.castableSpells()) {
+      if (!isSpellAttack(row.spell) || this.castingTimeKind(row.spell) === 'bonus_action') continue;
+      const seen = new Set<string>();
+      for (const origin of row.origins.filter(candidate => candidate.category !== 'spellbook')) {
+        if (seen.has(origin.sourceKey)) continue;
+        seen.add(origin.sourceKey);
+        attacks.push({ spell: row.spell, origin });
+      }
+    }
+    return attacks.sort((a, b) => a.spell.name.localeCompare(b.spell.name) || a.origin.sourceName.localeCompare(b.origin.sourceName));
+  });
+  bonusActionSpells = computed(() => this.castableSpells()
+    .filter(row => this.castingTimeKind(row.spell) === 'bonus_action'));
+  bonusActionFeatures = computed<DisplayFeature[]>(() => {
+    const out: DisplayFeature[] = [];
+    const hasPactBlade = this.resolvedClasses().some(rc =>
+      rc.data.index === 'warlock'
+      && Object.values(rc.choices).some(selected => selected.includes('Pact of the Blade')));
+    if (hasPactBlade) {
+      out.push(
+        { source: 'Warlock', name: 'Pact of the Blade: Conjure', detail: 'Conjure a Simple or Martial melee weapon in your hand and bond with it.' },
+        { source: 'Warlock', name: 'Pact of the Blade: Bond', detail: 'Touch a magic weapon and form your pact bond with it.' },
+      );
+    }
+    return out;
+  });
+
+  spellSchools = computed(() => [...new Set(this.spellRows().map(row => row.spell.school))].sort());
+  spellSources = computed(() => [...new Set(this.spellRows().flatMap(row => row.origins.map(origin => origin.sourceName)))].sort());
+  filteredSpellRows = computed(() => {
+    const filters = this.spellFilters();
+    const search = filters.search.trim().toLowerCase();
+    return this.spellRows().filter(row => {
+      if (search && !`${row.spell.name} ${row.spell.description}`.toLowerCase().includes(search)) return false;
+      if (filters.level && String(row.spell.level) !== filters.level) return false;
+      if (filters.school && row.spell.school !== filters.school) return false;
+      if (filters.source && !row.origins.some(origin => origin.sourceName === filters.source)) return false;
+      if (filters.castingTime && this.castingTimeKind(row.spell) !== filters.castingTime) return false;
+      if (filters.ritual && !row.spell.ritual) return false;
+      if (filters.concentration && !row.spell.concentration) return false;
+      if (filters.prepared && !row.origins.some(origin => origin.category === filters.prepared)) return false;
+      return true;
+    });
+  });
+  cantripRows = computed(() => this.filteredSpellRows().filter(row => row.spell.level === 0));
+  leveledSpellRows = computed(() => this.filteredSpellRows().filter(row => row.spell.level > 0));
 
   resolvedFeatures = computed<DisplayFeature[]>(() => {
     const char = this.localChar();
@@ -249,7 +393,7 @@ export class CharacterPlaySheetComponent {
 
   // Distinguishes "a different character was picked" (reload content, reset to Stats tab)
   // from "the same character came back down after a save round-trip" (just refresh the local
-  // copy in place) — interactive actions (Use, Rest, equip/prepare toggles) save and emit the
+  // copy in place) — interactive actions (Use, Rest, equip/slot toggles) save and emit the
   // updated character back through the parent, which re-feeds it into this same input.
   private loadedId: string | null | undefined = undefined;
 
@@ -310,7 +454,7 @@ export class CharacterPlaySheetComponent {
   private computeArmorClass(char: Character): number {
     const classesForFeats = this.resolvedClasses().map(rc => ({ data: rc.data, choices: rc.choices, level: rc.level, subclass: rc.subclassName }));
     return this.statsService.compute(
-      char, this.primaryClass(), this.raceData(), this.featsAll(), classesForFeats, this.itemsAll(),
+      char, this.primaryClass(), this.raceData(), this.featsAll(), classesForFeats, this.itemsAll(), this.bgData(),
     ).computed_ac;
   }
 
@@ -329,6 +473,43 @@ export class CharacterPlaySheetComponent {
 
   fmt(n: number): string {
     return this.statsService.fmt(n);
+  }
+
+  slotLevels(pool: ResolvedSpellSlotPool): [string, number][] {
+    return Object.entries(pool.slots).filter(([, count]) => count > 0);
+  }
+
+  slotPips(count: number): number[] {
+    return Array.from({ length: count }, (_, index) => index);
+  }
+
+  spellCategoryLabel(category: ResolvedSpellCategory): string {
+    return {
+      known: 'Known',
+      spellbook: 'Spellbook',
+      prepared: 'Prepared',
+      always_prepared: 'Always Prepared',
+    }[category];
+  }
+
+  spellDamageFormula(spell: DndSpell, origin: ResolvedSpellOrigin): string | null {
+    const char = this.localChar();
+    const abilityDamage = /(?:plus|add) your spellcasting ability modifier/i.test(spell.description)
+      || spell.index === 'eldritch-blast' && this.hasClassChoice('Warlock', 'Agonizing Blast');
+    let modifier = 0;
+    if (abilityDamage && char && origin.castingAbility) {
+      modifier = abilityModifier(char.ability_scores[origin.castingAbility]);
+    }
+    return resolveSpellAttackDamage(spell, char?.level ?? 1, modifier);
+  }
+
+  spellDamageType(spell: DndSpell): string {
+    return spell.mechanics.damage_types.join('/');
+  }
+
+  private hasClassChoice(className: string, choice: string): boolean {
+    return this.resolvedClasses().some(rc =>
+      rc.name === className && Object.values(rc.choices).some(selected => selected.includes(choice)));
   }
 
   hpPercent(char: Character): number {
@@ -367,15 +548,22 @@ export class CharacterPlaySheetComponent {
     this.persist({ ...char, resource_uses: this.actionsService.restore(char.resource_uses ?? {}, action) });
   }
 
-  rest(type: 'short_rest' | 'long_rest') {
+  async rest(type: 'short_rest' | 'long_rest') {
     const char = this.localChar();
-    if (!char) return;
-    const restoresSlots = type === 'long_rest' || (type === 'short_rest' && !!this.currentPactMagic());
-    this.persist({
-      ...char,
-      resource_uses: this.actionsService.rest(char.resource_uses ?? {}, this.actions(), type),
-      spell_slots_used: restoresSlots ? {} : char.spell_slots_used,
-    });
+    if (!char?.id || this.persisting()) return;
+    this.persisting.set(true);
+    try {
+      const withResources = await this.characterService.saveCharacter({
+        ...char,
+        resource_uses: this.actionsService.rest(char.resource_uses ?? {}, this.actions(), type),
+      });
+      const result = await this.characterService.restoreSpellcasting(char.id, type);
+      this.localChar.set({ ...result, resource_uses: withResources.resource_uses });
+      this.saved.emit(this.localChar()!);
+      this.castNotice.set(type === 'long_rest' ? 'Long Rest complete.' : 'Short Rest complete. Pact Magic and short-rest free casts restored.');
+    } finally {
+      this.persisting.set(false);
+    }
   }
 
   // Inventory
@@ -406,30 +594,253 @@ export class CharacterPlaySheetComponent {
     this.persist({ ...char, currency: next });
   }
 
-  // Spells
-  togglePrepared(entry: SpellEntry) {
+  slotUses(poolKey: string, level: string): number {
     const char = this.localChar();
-    if (!char) return;
-    const spells = char.spells.map(s => s.spellIndex === entry.spellIndex ? { ...s, prepared: !s.prepared } : s);
-    this.persist({ ...char, spells });
+    if (!char) return 0;
+    return char.spell_slot_uses?.[poolKey]?.[level]
+      ?? (poolKey === 'spellcasting' ? char.spell_slots_used?.[level] : 0)
+      ?? 0;
   }
 
-  useSlot(level: string) {
-    const char = this.localChar();
-    if (!char) return;
-    const used = char.spell_slots_used ?? {};
-    const current = used[level] ?? 0;
-    const max = this.currentSpellSlots()[level as keyof SpellSlots] ?? 0;
-    if (current >= max) return;
-    this.persist({ ...char, spell_slots_used: { ...used, [level]: current + 1 } });
+  castingTimeKind(spell: DndSpell): string {
+    const value = spell.casting_time.toLowerCase();
+    if (value.includes('bonus')) return 'bonus_action';
+    if (value.includes('reaction')) return 'reaction';
+    if (value.includes('action')) return 'action';
+    return 'other';
   }
 
-  restoreSlot(level: string) {
+  updateSpellFilter<K extends keyof SpellFilters>(key: K, value: SpellFilters[K]) {
+    this.spellFilters.update(filters => ({ ...filters, [key]: value }));
+  }
+
+  clearSpellFilters() {
+    this.spellFilters.set({
+      search: '', level: '', school: '', source: '', castingTime: '', ritual: false,
+      concentration: false, prepared: '',
+    });
+  }
+
+  categoryLabels(row: DisplaySpell): string[] {
+    return [...new Set(row.origins.map(origin => this.spellCategoryLabel(origin.category)))];
+  }
+
+  spellSourceNames(row: DisplaySpell): string {
+    return [...new Set(row.origins
+      .filter(origin => origin.category !== 'spellbook')
+      .map(origin => origin.sourceName))].join(', ');
+  }
+
+  descriptionSegments(description: string): DescriptionSegment[] {
+    const segments: DescriptionSegment[] = [];
+    const boldPattern = /\*\*(.+?)\*\*/gs;
+    let cursor = 0;
+    for (const match of description.matchAll(boldPattern)) {
+      if (match.index > cursor) segments.push({ text: description.slice(cursor, match.index), bold: false });
+      segments.push({ text: match[1], bold: true });
+      cursor = match.index + match[0].length;
+    }
+    if (cursor < description.length) segments.push({ text: description.slice(cursor), bold: false });
+    return segments.length ? segments : [{ text: description, bold: false }];
+  }
+
+  originLabel(origin: ResolvedSpellOrigin): string {
+    const ability = origin.castingAbility ? ` · ${this.abilityShort[origin.castingAbility]}` : '';
+    const attack = origin.spellAttackBonus === null ? '' : ` · Attack ${this.fmt(origin.spellAttackBonus)}`;
+    const save = origin.spellSaveDc === null ? '' : ` · DC ${origin.spellSaveDc}`;
+    return `${origin.sourceName}${ability}${attack}${save}`;
+  }
+
+  freeCastRemaining(origin: ResolvedSpellOrigin): number {
+    if (!origin.freeCast) return 0;
+    if (origin.freeCast.atWill) return Number.POSITIVE_INFINITY;
+    const used = this.localChar()?.spell_free_cast_uses?.[origin.freeCast.key]?.used ?? 0;
+    return Math.max(0, origin.freeCast.maxUses - used);
+  }
+
+  castingMethods(row: DisplaySpell): CastingMethod[] {
+    const methods: CastingMethod[] = [];
+    const castableOrigins = row.origins.filter(origin => origin.category !== 'spellbook');
+    for (const origin of castableOrigins) {
+      if (row.spell.level === 0) {
+        methods.push({
+          key: `cantrip:${origin.sourceKey}`,
+          label: `Cast · ${origin.sourceName}`,
+          detail: 'No spell slot',
+          available: true,
+          command: { spellIndex: row.spell.index, sourceKey: origin.sourceKey, method: 'cantrip' },
+        });
+      }
+      if (origin.freeCast) {
+        const remaining = this.freeCastRemaining(origin);
+        methods.push({
+          key: origin.freeCast.key,
+          label: origin.freeCast.atWill ? `At will · ${origin.sourceName}` : `Free cast · ${origin.sourceName}`,
+          detail: origin.freeCast.atWill
+            ? 'No spell slot'
+            : `${remaining}/${origin.freeCast.maxUses} · ${origin.freeCast.recovery === 'short_rest' ? 'Short Rest' : 'Long Rest'}`,
+          available: origin.freeCast.atWill || remaining > 0,
+          command: {
+            spellIndex: row.spell.index,
+            sourceKey: origin.sourceKey,
+            method: 'free',
+            freeCastKey: origin.freeCast.key,
+            maxUses: origin.freeCast.maxUses,
+            recovery: origin.freeCast.recovery,
+            atWill: origin.freeCast.atWill,
+            slotLevel: origin.freeCast.slotLevel ?? row.spell.level,
+          },
+        });
+      }
+    }
+    if (row.spell.level > 0 && castableOrigins.length) {
+      for (const pool of this.spellResolution()?.slotPools ?? []) {
+        for (const [level, maximum] of this.slotLevels(pool)) {
+          const numericLevel = Number(level);
+          if (numericLevel < row.spell.level) continue;
+          const upcast = describeSpellUpcast(row.spell, numericLevel);
+          // Pact Magic sometimes has no lower-level slot to offer. Keep that required casting
+          // method, but offer normal higher-level slots only when the spell actually benefits.
+          if (numericLevel > row.spell.level && pool.type !== 'pact' && !upcast) continue;
+          const remaining = Math.max(0, maximum - this.slotUses(pool.key, level));
+          for (const origin of castableOrigins) {
+            methods.push({
+              key: `${pool.key}:${level}:${origin.sourceKey}`,
+              label: `${pool.type === 'pact' ? 'Pact Magic' : 'Level ' + level} · ${origin.sourceName}`,
+              detail: `${remaining}/${maximum} remaining${pool.type === 'pact' ? ` · level ${level} Pact slot` : ''}`,
+              available: remaining > 0,
+              upcast: upcast ?? undefined,
+              command: {
+                spellIndex: row.spell.index,
+                sourceKey: origin.sourceKey,
+                method: pool.type === 'pact' ? 'pact' : 'slot',
+                poolKey: pool.key,
+                slotLevel: numericLevel,
+              },
+            });
+          }
+        }
+      }
+    }
+    const unique = new Map(methods.map(method => [method.key, method]));
+    return [...unique.values()];
+  }
+
+  openCastDialog(row: DisplaySpell) {
+    this.castError.set('');
+    this.pendingCastMethod.set(null);
+    this.replacingConcentration.set(false);
+    this.castDialogSpell.set(row);
+  }
+
+  closeCastDialog() {
+    this.castDialogSpell.set(null);
+    this.pendingCastMethod.set(null);
+    this.replacingConcentration.set(false);
+    this.castError.set('');
+  }
+
+  requestCast(method: CastingMethod) {
+    if (!method.available || this.persisting()) return;
+    const row = this.castDialogSpell();
+    const active = this.localChar()?.active_concentration;
+    if (row?.spell.concentration && active && active.spellIndex !== row.spell.index) {
+      this.pendingCastMethod.set(method);
+      this.replacingConcentration.set(true);
+      return;
+    }
+    void this.performCast(method, false);
+  }
+
+  confirmConcentrationReplacement() {
+    const method = this.pendingCastMethod();
+    if (method) void this.performCast(method, true);
+  }
+
+  private async performCast(method: CastingMethod, replaceConcentration: boolean) {
     const char = this.localChar();
-    if (!char) return;
-    const used = char.spell_slots_used ?? {};
-    const current = used[level] ?? 0;
-    if (current <= 0) return;
-    this.persist({ ...char, spell_slots_used: { ...used, [level]: current - 1 } });
+    const row = this.castDialogSpell();
+    if (!char?.id || !row) return;
+    this.persisting.set(true);
+    this.castError.set('');
+    try {
+      const result = await this.characterService.castSpell(char.id, {
+        ...method.command,
+        replaceConcentration,
+      });
+      this.localChar.set(result.character);
+      this.saved.emit(result.character);
+      const roll = this.rollSpellEffect(row, result.cast.castLevel, method.command.sourceKey);
+      this.castNotice.set(`${result.cast.spellName} cast using ${result.cast.resourceLabel}.${roll ? ` ${roll}` : ''}`);
+      this.closeCastDialog();
+    } catch (error: unknown) {
+      const candidate = error as { error?: { message?: string | string[] } };
+      const message = candidate.error?.message;
+      this.castError.set(Array.isArray(message) ? message.join(' ') : message ?? 'The spell could not be cast.');
+    } finally {
+      this.persisting.set(false);
+    }
+  }
+
+  async endConcentration() {
+    const char = this.localChar();
+    if (!char?.id || this.persisting()) return;
+    this.persisting.set(true);
+    try {
+      const result = await this.characterService.endConcentration(char.id);
+      this.localChar.set(result);
+      this.saved.emit(result);
+      this.castNotice.set('Concentration ended.');
+    } finally {
+      this.persisting.set(false);
+    }
+  }
+
+  private rollSpellEffect(row: DisplaySpell, castLevel: number, sourceKey: string): string {
+    const spell = row.spell;
+    const origin = row.origins.find(candidate => candidate.sourceKey === sourceKey) ?? row.origin;
+    const results: string[] = [];
+    if (spell.mechanics.spell_attacks?.length && origin.spellAttackBonus !== null) {
+      const d20 = Math.floor(Math.random() * 20) + 1;
+      results.push(`Attack ${d20 + origin.spellAttackBonus} (${d20}${this.fmt(origin.spellAttackBonus)})`);
+    }
+    if (spell.mechanics.saving_throws.length && origin.spellSaveDc !== null) {
+      results.push(`${spell.mechanics.saving_throws.join('/')} save DC ${origin.spellSaveDc}`);
+    }
+    let formula = '';
+    if (spell.mechanics.scaling) {
+      const threshold = Object.keys(spell.mechanics.scaling.values)
+        .map(Number)
+        .filter(level => level <= (spell.level === 0 ? (this.localChar()?.level ?? 1) : castLevel))
+        .sort((a, b) => b - a)[0];
+      formula = spell.mechanics.scaling.values[String(threshold)] ?? '';
+    }
+    if (!formula) formula = spell.description.match(/\b\d+d\d+(?:\s*[+-]\s*\d+)?\b/i)?.[0] ?? '';
+    if (!formula) return results.join(' · ');
+    if (castLevel > spell.level && spell.higher_levels) {
+      const perLevel = spell.higher_levels.match(/(?:by|an extra)\s+(\d+d\d+)\s+(?:for each|per)/i)?.[1];
+      if (perLevel) formula = `${formula} + ${castLevel - spell.level}${perLevel.replace(/^1/, '')}`;
+    }
+    const parts = [...formula.matchAll(/(\d+)d(\d+)(?:\s*([+-])\s*(\d+))?/gi)];
+    if (!parts.length) return '';
+    let total = 0;
+    for (const part of parts) {
+      const count = Number(part[1]);
+      const sides = Number(part[2]);
+      for (let i = 0; i < count; i++) total += Math.floor(Math.random() * sides) + 1;
+      if (part[3]) total += (part[3] === '-' ? -1 : 1) * Number(part[4]);
+    }
+    if (/spellcasting ability modifier/i.test(spell.description) && origin.spellAttackBonus !== null) {
+      const modifier = origin.spellAttackBonus - proficiencyBonus(this.localChar()?.level ?? 1);
+      total += modifier;
+      formula += ` ${this.fmt(modifier)}`;
+    }
+    const kind = spell.mechanics.damage_types.length
+      ? `${spell.mechanics.damage_types.join('/')} damage`
+      : /regains? (?:a number of )?hit points|healing/i.test(spell.description)
+        ? 'healing'
+        : 'effect';
+    results.push(`${total} ${kind} (${formula})`);
+    return results.join(' · ');
   }
 }

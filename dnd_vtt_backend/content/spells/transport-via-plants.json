@@ -1,0 +1,47 @@
+{
+  "index": "transport-via-plants",
+  "name": "Transport via Plants",
+  "level": 6,
+  "school": "Conjuration",
+  "casting_time": "1 action",
+  "range": "10 feet",
+  "components": [
+    "V",
+    "S"
+  ],
+  "duration": "10 minutes",
+  "ritual": false,
+  "concentration": false,
+  "classes": [
+    "Druid"
+  ],
+  "subclasses": [],
+  "species": [],
+  "backgrounds": [],
+  "feats": [],
+  "other_options": [],
+  "mechanics": {
+    "saving_throws": [],
+    "ability_checks": [],
+    "damage_types": [],
+    "conditions": [],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [],
+    "misc_tags": [
+      "TP"
+    ]
+  },
+  "description": "This spell creates a magical link between a Large or larger inanimate plant within range and another plant, at any distance, on the same plane of existence. You must have seen or touched the destination plant at least once before. For the duration, any creature can step into the target plant and exit from the destination plant by using 5 feet of movement.",
+  "source": {
+    "book": "Player's Handbook",
+    "edition": 2024,
+    "code": "XPHB",
+    "page": 334,
+    "srd_5_2_1": true,
+    "rules_text": "SRD 5.2.1"
+  }
+}

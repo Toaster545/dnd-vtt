@@ -389,6 +389,24 @@
                         </button>
                       }
                     </div>
+                    @for (feat of pickedFeats(grant); track feat.index) {
+                      @for (featChoice of featChoiceGrants(feat); track featChoice.key) {
+                        <div class="mt-3">
+                          <p class="text-xs text-slate mb-1.5">{{ feat.name }} &mdash; {{ featChoice.name }} &mdash; choose {{ featChoice.choose }}</p>
+                          <div class="flex flex-wrap gap-1.5">
+                            @for (option of featChoice.options; track option.name) {
+                              @let picked = featChoiceSelected(grant, featChoice, option.name);
+                              <button
+                                class="px-2 py-1 rounded text-xs border transition-all"
+                                [class]="picked ? 'border-gold/60 bg-gold/10 text-parchment' : 'border-white/15 text-slate hover:border-white/30'"
+                                (click)="toggleFeatChoice(grant, featChoice, option.name)"
+                                style="font-family: inherit;"
+                              >{{ option.name }}</button>
+                            }
+                          </div>
+                        </div>
+                      }
+                    }
                   </div>
                 }
               </div>

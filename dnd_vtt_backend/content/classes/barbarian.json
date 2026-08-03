@@ -92,6 +92,7 @@
               "name": "Animal Speaker",
               "description": "You can cast Beast Sense and Speak with Animals as Rituals, using Wisdom as your spellcasting ability for them."
             },
+            { "type": "spell_grant", "key": "animal_speaker_spells", "name": "Animal Speaker", "destination": "known", "spells": ["beast-sense", "speak-with-animals"], "countsAgainstLimit": false, "sourceKey": "wild-heart", "sourceName": "Path of the Wild Heart", "ability": "wisdom" },
             {
               "type": "feature",
               "name": "Rage of the Wilds",
@@ -125,7 +126,8 @@
               "type": "feature",
               "name": "Nature Speaker",
               "description": "You can cast Commune with Nature as a Ritual, using Wisdom as your spellcasting ability for it."
-            }
+            },
+            { "type": "spell_grant", "key": "nature_speaker_spell", "name": "Nature Speaker", "destination": "known", "spells": ["commune-with-nature"], "countsAgainstLimit": false, "sourceKey": "wild-heart", "sourceName": "Path of the Wild Heart", "ability": "wisdom" }
           ]
         },
         {

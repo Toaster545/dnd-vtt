@@ -1,0 +1,68 @@
+{
+  "index": "hunger-of-hadar",
+  "name": "Hunger of Hadar",
+  "level": 3,
+  "school": "Conjuration",
+  "casting_time": "1 action",
+  "range": "150 feet",
+  "components": [
+    "V",
+    "S",
+    "M"
+  ],
+  "material": "a pickled tentacle",
+  "duration": "Concentration, up to 1 minute",
+  "ritual": false,
+  "concentration": true,
+  "classes": [
+    "Warlock"
+  ],
+  "subclasses": [
+    {
+      "class": "Sorcerer",
+      "subclass": "Aberrant Sorcery"
+    },
+    {
+      "class": "Warlock",
+      "subclass": "Great Old One Patron"
+    }
+  ],
+  "species": [],
+  "backgrounds": [],
+  "feats": [],
+  "other_options": [],
+  "mechanics": {
+    "saving_throws": [
+      "dexterity"
+    ],
+    "ability_checks": [],
+    "damage_types": [
+      "acid",
+      "cold"
+    ],
+    "conditions": [
+      "blinded"
+    ],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [
+      "S"
+    ],
+    "misc_tags": [
+      "DFT",
+      "OBS"
+    ]
+  },
+  "description": "Create a 20-foot-radius Sphere of supernatural Darkness and Difficult Terrain that no light can illuminate. Creatures fully inside are Blinded. A creature starting its turn there takes 2d6 Cold damage; one ending its turn there makes a Dexterity save or takes 2d6 Acid damage. **Higher-Level Slots.** Increase either the Cold or Acid damage by 1d6 per slot level above 3.",
+  "source": {
+    "book": "Player's Handbook",
+    "edition": 2024,
+    "code": "XPHB",
+    "page": 286,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

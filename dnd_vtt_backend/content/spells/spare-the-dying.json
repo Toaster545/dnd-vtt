@@ -1,0 +1,62 @@
+{
+  "index": "spare-the-dying",
+  "name": "Spare the Dying",
+  "level": 0,
+  "school": "Necromancy",
+  "casting_time": "1 action",
+  "range": "15 feet",
+  "components": [
+    "V",
+    "S"
+  ],
+  "duration": "Instantaneous",
+  "ritual": false,
+  "concentration": false,
+  "classes": [
+    "Cleric",
+    "Druid"
+  ],
+  "subclasses": [
+    {
+      "class": "Bard",
+      "subclass": "College of Lore"
+    }
+  ],
+  "species": [],
+  "backgrounds": [],
+  "feats": [
+    "Blessed Warrior",
+    "Druidic Warrior",
+    "Magic Initiate"
+  ],
+  "other_options": [
+    "Pact of the Tome"
+  ],
+  "mechanics": {
+    "saving_throws": [],
+    "ability_checks": [],
+    "damage_types": [],
+    "conditions": [],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [
+      "ST"
+    ],
+    "misc_tags": [
+      "SCL"
+    ]
+  },
+  "description": "Choose a creature within range that has 0 Hit Points and isn't dead. The creature becomes Stable.",
+  "cantrip_upgrade": "The range doubles when you reach levels 5 (30 feet), 11 (60 feet), and 17 (120 feet).",
+  "source": {
+    "book": "Player's Handbook",
+    "edition": 2024,
+    "code": "XPHB",
+    "page": 318,
+    "srd_5_2_1": true,
+    "rules_text": "SRD 5.2.1"
+  }
+}

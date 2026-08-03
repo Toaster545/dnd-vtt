@@ -1,0 +1,64 @@
+{
+  "index": "yolandes-regal-presence",
+  "name": "Yolande's Regal Presence",
+  "level": 5,
+  "school": "Enchantment",
+  "casting_time": "1 action",
+  "range": "10 feet (Emanation)",
+  "components": [
+    "V",
+    "S",
+    "M"
+  ],
+  "material": "a miniature tiara",
+  "duration": "Concentration, up to 1 minute",
+  "ritual": false,
+  "concentration": true,
+  "classes": [
+    "Bard",
+    "Wizard"
+  ],
+  "subclasses": [
+    {
+      "class": "Paladin",
+      "subclass": "Oath of Glory"
+    }
+  ],
+  "species": [],
+  "backgrounds": [],
+  "feats": [],
+  "other_options": [],
+  "mechanics": {
+    "saving_throws": [
+      "wisdom"
+    ],
+    "ability_checks": [],
+    "damage_types": [
+      "psychic"
+    ],
+    "conditions": [
+      "prone"
+    ],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [
+      "S"
+    ],
+    "misc_tags": [
+      "FMV",
+      "SGT"
+    ]
+  },
+  "description": "A 10-foot Emanation surrounds you. When it enters a visible creature\u0027s space, or a visible creature enters it or ends a turn there, you can force a Wisdom save once per turn. On a failure, the creature takes 4d6 Psychic damage, falls Prone, and can be pushed up to 10 feet away; on a success, it takes half damage.",
+  "source": {
+    "book": "Player's Handbook",
+    "edition": 2024,
+    "code": "XPHB",
+    "page": 343,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

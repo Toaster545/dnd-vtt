@@ -1,0 +1,74 @@
+{
+  "index": "word-of-radiance",
+  "name": "Word of Radiance",
+  "level": 0,
+  "school": "Evocation",
+  "casting_time": "1 action",
+  "range": "5 feet (Emanation)",
+  "components": [
+    "V",
+    "M"
+  ],
+  "material": "a sunburst token",
+  "duration": "Instantaneous",
+  "ritual": false,
+  "concentration": false,
+  "classes": [
+    "Cleric"
+  ],
+  "subclasses": [
+    {
+      "class": "Bard",
+      "subclass": "College of Lore"
+    }
+  ],
+  "species": [],
+  "backgrounds": [],
+  "feats": [
+    "Blessed Warrior",
+    "Magic Initiate"
+  ],
+  "other_options": [
+    "Pact of the Tome"
+  ],
+  "mechanics": {
+    "saving_throws": [
+      "constitution"
+    ],
+    "ability_checks": [],
+    "damage_types": [
+      "radiant"
+    ],
+    "conditions": [],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [
+      "MT"
+    ],
+    "misc_tags": [
+      "SCL",
+      "SGT"
+    ],
+    "scaling": {
+      "label": "Radiant damage",
+      "values": {
+        "1": "1d6",
+        "5": "2d6",
+        "11": "3d6",
+        "17": "4d6"
+      }
+    }
+  },
+  "description": "Creatures you choose and can see in a 5-foot Emanation from you make a Constitution save, taking 1d6 Radiant damage on a failure. **Cantrip Upgrade.** Damage becomes 2d6 at level 5, 3d6 at level 11, and 4d6 at level 17.",
+  "source": {
+    "book": "Player's Handbook",
+    "edition": 2024,
+    "code": "XPHB",
+    "page": 343,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

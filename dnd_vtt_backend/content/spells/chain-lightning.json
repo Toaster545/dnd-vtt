@@ -1,0 +1,65 @@
+{
+  "index": "chain-lightning",
+  "name": "Chain Lightning",
+  "level": 6,
+  "school": "Evocation",
+  "casting_time": "1 action",
+  "range": "150 feet",
+  "components": [
+    "V",
+    "S",
+    "M"
+  ],
+  "material": "three silver pins",
+  "duration": "Instantaneous",
+  "ritual": false,
+  "concentration": false,
+  "classes": [
+    "Sorcerer",
+    "Wizard"
+  ],
+  "subclasses": [
+    {
+      "class": "Wizard",
+      "subclass": "Evoker"
+    }
+  ],
+  "species": [],
+  "backgrounds": [],
+  "feats": [],
+  "other_options": [],
+  "mechanics": {
+    "saving_throws": [
+      "dexterity"
+    ],
+    "ability_checks": [],
+    "damage_types": [
+      "lightning"
+    ],
+    "conditions": [],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [
+      "MT",
+      "ST"
+    ],
+    "misc_tags": [
+      "OBJ",
+      "SCT",
+      "SGT"
+    ]
+  },
+  "description": "You launch a lightning bolt toward a target you can see within range. Three bolts then leap from that target to as many as three other targets of your choice, each of which must be within 30 feet of the first target. A target can be a creature or an object and can be targeted by only one of the bolts. Each target makes a Dexterity saving throw, taking 10d8 Lightning damage on a failed save or half as much damage on a successful one.",
+  "higher_levels": "One additional bolt leaps from the first target to another target for each spell slot level above 6.",
+  "source": {
+    "book": "Player's Handbook",
+    "edition": 2024,
+    "code": "XPHB",
+    "page": 249,
+    "srd_5_2_1": true,
+    "rules_text": "SRD 5.2.1"
+  }
+}

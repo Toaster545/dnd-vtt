@@ -1,0 +1,59 @@
+{
+  "index": "grasping-vine",
+  "name": "Grasping Vine",
+  "level": 4,
+  "school": "Conjuration",
+  "casting_time": "1 bonus action",
+  "range": "60 feet",
+  "components": [
+    "V",
+    "S"
+  ],
+  "duration": "Concentration, up to 1 minute",
+  "ritual": false,
+  "concentration": true,
+  "classes": [
+    "Druid",
+    "Ranger"
+  ],
+  "subclasses": [],
+  "species": [],
+  "backgrounds": [],
+  "feats": [],
+  "other_options": [],
+  "mechanics": {
+    "spell_attacks": [
+      "melee"
+    ],
+    "saving_throws": [],
+    "ability_checks": [],
+    "damage_types": [
+      "bludgeoning"
+    ],
+    "conditions": [
+      "grappled"
+    ],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [
+      "ST"
+    ],
+    "misc_tags": [
+      "FMV",
+      "SGT",
+      "UBA"
+    ]
+  },
+  "description": "Create a vine on a surface and make a melee spell attack against a creature within 30 feet of it. A hit deals 4d8 Bludgeoning damage and pulls the target up to 30 feet; a Huge or smaller target is also Grappled. The vine holds one creature at a time, can release it freely, and can repeat the attack as a Bonus Action. **Higher-Level Slots.** It can grapple one additional creature per slot level above 4.",
+  "source": {
+    "book": "Player's Handbook",
+    "edition": 2024,
+    "code": "XPHB",
+    "page": 280,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

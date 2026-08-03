@@ -1,0 +1,50 @@
+{
+  "index": "swift-quiver",
+  "name": "Swift Quiver",
+  "level": 5,
+  "school": "Transmutation",
+  "casting_time": "1 bonus action",
+  "range": "Self",
+  "components": [
+    "V",
+    "S",
+    "M"
+  ],
+  "material": "a Quiver worth 1+ GP",
+  "material_cost_cp": 100,
+  "duration": "Concentration, up to 1 minute",
+  "ritual": false,
+  "concentration": true,
+  "classes": [
+    "Ranger"
+  ],
+  "subclasses": [],
+  "species": [],
+  "backgrounds": [],
+  "feats": [],
+  "other_options": [],
+  "mechanics": {
+    "saving_throws": [],
+    "ability_checks": [],
+    "damage_types": [],
+    "conditions": [],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [],
+    "misc_tags": [
+      "UBA"
+    ]
+  },
+  "description": "When you cast the spell and as a Bonus Action on later turns, make two attacks with a weapon that fires Arrows or Bolts. The spell creates the required ammunition, which deals normal nonmagical ammunition damage and vanishes after each attack.",
+  "source": {
+    "book": "Player's Handbook",
+    "edition": 2024,
+    "code": "XPHB",
+    "page": 329,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

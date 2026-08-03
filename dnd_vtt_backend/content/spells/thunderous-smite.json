@@ -1,0 +1,53 @@
+{
+  "index": "thunderous-smite",
+  "name": "Thunderous Smite",
+  "level": 1,
+  "school": "Evocation",
+  "casting_time": "1 bonus action, which you take immediately after hitting a target with a Melee weapon or an Unarmed Strike",
+  "range": "Self",
+  "components": [
+    "V"
+  ],
+  "duration": "Instantaneous",
+  "ritual": false,
+  "concentration": false,
+  "classes": [
+    "Paladin"
+  ],
+  "subclasses": [],
+  "species": [],
+  "backgrounds": [],
+  "feats": [],
+  "other_options": [],
+  "mechanics": {
+    "saving_throws": [
+      "strength"
+    ],
+    "ability_checks": [],
+    "damage_types": [
+      "thunder"
+    ],
+    "conditions": [
+      "prone"
+    ],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [],
+    "misc_tags": [
+      "AAD",
+      "FMV"
+    ]
+  },
+  "description": "The triggering melee hit deals an extra 2d6 Thunder damage and can be heard 300 feet away. A creature hit must make a Strength save or be pushed 10 feet away and knocked Prone. **Higher-Level Slots.** Extra damage increases by 1d6 per slot level above 1.",
+  "source": {
+    "book": "Player's Handbook",
+    "edition": 2024,
+    "code": "XPHB",
+    "page": 334,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

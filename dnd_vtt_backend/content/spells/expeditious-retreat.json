@@ -1,0 +1,64 @@
+{
+  "index": "expeditious-retreat",
+  "name": "Expeditious Retreat",
+  "level": 1,
+  "school": "Transmutation",
+  "casting_time": "1 bonus action",
+  "range": "Self",
+  "components": [
+    "V",
+    "S"
+  ],
+  "duration": "Concentration, up to 10 minutes",
+  "ritual": false,
+  "concentration": true,
+  "classes": [
+    "Sorcerer",
+    "Warlock",
+    "Wizard"
+  ],
+  "subclasses": [
+    {
+      "class": "Bard",
+      "subclass": "College of Lore"
+    },
+    {
+      "class": "Fighter",
+      "subclass": "Eldritch Knight"
+    },
+    {
+      "class": "Rogue",
+      "subclass": "Arcane Trickster"
+    }
+  ],
+  "species": [],
+  "backgrounds": [],
+  "feats": [
+    "Magic Initiate"
+  ],
+  "other_options": [],
+  "mechanics": {
+    "saving_throws": [],
+    "ability_checks": [],
+    "damage_types": [],
+    "conditions": [],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [],
+    "misc_tags": [
+      "UBA"
+    ]
+  },
+  "description": "You take the Dash action, and until the spell ends, you can take that action again as a Bonus Action.",
+  "source": {
+    "book": "Player's Handbook",
+    "edition": 2024,
+    "code": "XPHB",
+    "page": 270,
+    "srd_5_2_1": true,
+    "rules_text": "SRD 5.2.1"
+  }
+}

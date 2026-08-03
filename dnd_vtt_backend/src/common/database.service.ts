@@ -30,6 +30,10 @@ export class DatabaseService implements OnModuleInit {
     );
   }
 
+  close() {
+    this.db?.close();
+  }
+
   parseJson<T>(value: string | null, fallback: T): T {
     if (!value) return fallback;
     try {

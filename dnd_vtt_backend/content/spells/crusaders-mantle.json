@@ -1,0 +1,55 @@
+{
+  "index": "crusaders-mantle",
+  "name": "Crusader's Mantle",
+  "level": 3,
+  "school": "Evocation",
+  "casting_time": "1 action",
+  "range": "30 feet (Emanation)",
+  "components": [
+    "V"
+  ],
+  "duration": "Concentration, up to 1 minute",
+  "ritual": false,
+  "concentration": true,
+  "classes": [
+    "Paladin"
+  ],
+  "subclasses": [
+    {
+      "class": "Cleric",
+      "subclass": "War Domain"
+    }
+  ],
+  "species": [],
+  "backgrounds": [],
+  "feats": [],
+  "other_options": [],
+  "mechanics": {
+    "saving_throws": [],
+    "ability_checks": [],
+    "damage_types": [
+      "radiant"
+    ],
+    "conditions": [],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [
+      "S"
+    ],
+    "misc_tags": [
+      "AAD"
+    ]
+  },
+  "description": "A 30-foot Emanation surrounds you. You and allies in it deal an extra 1d4 Radiant damage whenever you hit with a weapon or Unarmed Strike.",
+  "source": {
+    "book": "Player's Handbook",
+    "edition": 2024,
+    "code": "XPHB",
+    "page": 259,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

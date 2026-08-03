@@ -1,0 +1,57 @@
+{
+  "index": "antimagic-field",
+  "name": "Antimagic Field",
+  "level": 8,
+  "school": "Abjuration",
+  "casting_time": "1 action",
+  "range": "10 feet (Emanation)",
+  "components": [
+    "V",
+    "S",
+    "M"
+  ],
+  "material": "iron filings",
+  "duration": "Concentration, up to 1 hour",
+  "ritual": false,
+  "concentration": true,
+  "classes": [
+    "Cleric",
+    "Wizard"
+  ],
+  "subclasses": [
+    {
+      "class": "Wizard",
+      "subclass": "Abjurer"
+    }
+  ],
+  "species": [],
+  "backgrounds": [],
+  "feats": [],
+  "other_options": [],
+  "mechanics": {
+    "saving_throws": [],
+    "ability_checks": [],
+    "damage_types": [],
+    "conditions": [],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [
+      "S"
+    ],
+    "misc_tags": [
+      "OBJ"
+    ]
+  },
+  "description": "An aura of antimagic surrounds you in 10-foot Emanation. No one can cast spells, take Magic actions, or create other magical effects inside the aura, and those things can't target or otherwise affect anything inside it. \n\nMagical properties of magic items don't work inside the aura or on anything inside it. Areas of effect created by spells or other magic can't extend into the aura, and no one can teleport into or out of it or use planar travel there. Portals close temporarily while in the aura. \n\nOngoing spells, except those cast by an Artifact or a deity, are suppressed in the area. While an effect is suppressed, it doesn't function, but the time it spends suppressed counts against its duration. \n\nDispel Magic has no effect on the aura, and the auras created by different Antimagic Field spells don't nullify each other.",
+  "source": {
+    "book": "Player's Handbook",
+    "edition": 2024,
+    "code": "XPHB",
+    "page": 241,
+    "srd_5_2_1": true,
+    "rules_text": "SRD 5.2.1"
+  }
+}

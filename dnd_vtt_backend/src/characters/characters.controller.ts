@@ -4,6 +4,7 @@ import {
   Delete,
   Get,
   Param,
+  Patch,
   Post,
   Put,
   UseGuards,
@@ -49,6 +50,29 @@ export class CharactersController {
     @Body() body: Record<string, unknown>,
   ) {
     return this.characters.update(id, user, body);
+  }
+
+  @Post(':id/cast')
+  castSpell(
+    @Param('id') id: string,
+    @CurrentUser() user: RequestUser,
+    @Body() body: Record<string, unknown>,
+  ) {
+    return this.characters.castSpell(id, user, body);
+  }
+
+  @Post(':id/spell-rest')
+  restoreSpellcasting(
+    @Param('id') id: string,
+    @CurrentUser() user: RequestUser,
+    @Body() body: Record<string, unknown>,
+  ) {
+    return this.characters.restoreSpellcasting(id, user, body);
+  }
+
+  @Patch(':id/concentration')
+  endConcentration(@Param('id') id: string, @CurrentUser() user: RequestUser) {
+    return this.characters.endConcentration(id, user);
   }
 
   @Delete(':id')

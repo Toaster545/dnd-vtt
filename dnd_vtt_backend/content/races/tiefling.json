@@ -22,15 +22,30 @@
       "options": [
         {
           "name": "Abyssal",
-          "description": "Level 1: Poison resistance and Poison Spray. Level 3: Ray of Sickness. Level 5: Hold Person."
+          "description": "Level 1: Poison resistance and Poison Spray. Level 3: Ray of Sickness. Level 5: Hold Person.",
+          "grants": [
+            { "type": "spell_grant", "key": "abyssal_cantrip", "name": "Abyssal Legacy", "destination": "known", "spells": ["poison-spray"], "countsAgainstLimit": false, "sourceKey": "abyssal", "sourceName": "Abyssal Tiefling", "ability": { "choiceKey": "fiendish_spellcasting_ability" } },
+            { "type": "spell_grant", "key": "abyssal_ray_of_sickness", "name": "Abyssal Legacy", "destination": "always_prepared", "spells": ["ray-of-sickness"], "countsAgainstLimit": false, "sourceKey": "abyssal", "sourceName": "Abyssal Tiefling", "ability": { "choiceKey": "fiendish_spellcasting_ability" }, "characterLevel": 3, "freeCast": { "uses": 1, "recovery": "long_rest" } },
+            { "type": "spell_grant", "key": "abyssal_hold_person", "name": "Abyssal Legacy", "destination": "always_prepared", "spells": ["hold-person"], "countsAgainstLimit": false, "sourceKey": "abyssal", "sourceName": "Abyssal Tiefling", "ability": { "choiceKey": "fiendish_spellcasting_ability" }, "characterLevel": 5, "freeCast": { "uses": 1, "recovery": "long_rest" } }
+          ]
         },
         {
           "name": "Chthonic",
-          "description": "Level 1: Necrotic resistance and Chill Touch. Level 3: False Life. Level 5: Ray of Enfeeblement."
+          "description": "Level 1: Necrotic resistance and Chill Touch. Level 3: False Life. Level 5: Ray of Enfeeblement.",
+          "grants": [
+            { "type": "spell_grant", "key": "chthonic_cantrip", "name": "Chthonic Legacy", "destination": "known", "spells": ["chill-touch"], "countsAgainstLimit": false, "sourceKey": "chthonic", "sourceName": "Chthonic Tiefling", "ability": { "choiceKey": "fiendish_spellcasting_ability" } },
+            { "type": "spell_grant", "key": "chthonic_false_life", "name": "Chthonic Legacy", "destination": "always_prepared", "spells": ["false-life"], "countsAgainstLimit": false, "sourceKey": "chthonic", "sourceName": "Chthonic Tiefling", "ability": { "choiceKey": "fiendish_spellcasting_ability" }, "characterLevel": 3, "freeCast": { "uses": 1, "recovery": "long_rest" } },
+            { "type": "spell_grant", "key": "chthonic_ray_of_enfeeblement", "name": "Chthonic Legacy", "destination": "always_prepared", "spells": ["ray-of-enfeeblement"], "countsAgainstLimit": false, "sourceKey": "chthonic", "sourceName": "Chthonic Tiefling", "ability": { "choiceKey": "fiendish_spellcasting_ability" }, "characterLevel": 5, "freeCast": { "uses": 1, "recovery": "long_rest" } }
+          ]
         },
         {
           "name": "Infernal",
-          "description": "Level 1: Fire resistance and Fire Bolt. Level 3: Hellish Rebuke. Level 5: Darkness."
+          "description": "Level 1: Fire resistance and Fire Bolt. Level 3: Hellish Rebuke. Level 5: Darkness.",
+          "grants": [
+            { "type": "spell_grant", "key": "infernal_cantrip", "name": "Infernal Legacy", "destination": "known", "spells": ["fire-bolt"], "countsAgainstLimit": false, "sourceKey": "infernal", "sourceName": "Infernal Tiefling", "ability": { "choiceKey": "fiendish_spellcasting_ability" } },
+            { "type": "spell_grant", "key": "infernal_hellish_rebuke", "name": "Infernal Legacy", "destination": "always_prepared", "spells": ["hellish-rebuke"], "countsAgainstLimit": false, "sourceKey": "infernal", "sourceName": "Infernal Tiefling", "ability": { "choiceKey": "fiendish_spellcasting_ability" }, "characterLevel": 3, "freeCast": { "uses": 1, "recovery": "long_rest" } },
+            { "type": "spell_grant", "key": "infernal_darkness", "name": "Infernal Legacy", "destination": "always_prepared", "spells": ["darkness"], "countsAgainstLimit": false, "sourceKey": "infernal", "sourceName": "Infernal Tiefling", "ability": { "choiceKey": "fiendish_spellcasting_ability" }, "characterLevel": 5, "freeCast": { "uses": 1, "recovery": "long_rest" } }
+          ]
         }
       ]
     },
@@ -50,6 +65,17 @@
       "type": "feature",
       "name": "Otherworldly Presence",
       "description": "You know the Thaumaturgy cantrip. It uses the spellcasting ability selected for Fiendish Legacy."
+    },
+    {
+      "type": "spell_grant",
+      "key": "otherworldly_presence_thaumaturgy",
+      "name": "Otherworldly Presence",
+      "destination": "known",
+      "spells": ["thaumaturgy"],
+      "countsAgainstLimit": false,
+      "sourceKey": "tiefling-presence",
+      "sourceName": "Tiefling",
+      "ability": { "choiceKey": "fiendish_spellcasting_ability" }
     }
   ],
   "languages": [],

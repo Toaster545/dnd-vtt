@@ -34,9 +34,38 @@ export interface RaceChoiceSource {
 
 export interface FeatPick {
   feat: DndFeat;
+  scope: string;
+  choices: Record<string, string[]>;
   // The companion `${grantKey}:feat_ability` pick, when the feat's abilityIncrease offers more
   // than one eligible ability (e.g. Resilient) — otherwise undefined.
   ability?: string;
+}
+
+function featChoices(feat: DndFeat, parentKey: string, choices: Record<string, string[]>): Record<string, string[]> {
+  return Object.fromEntries((feat.grants ?? [])
+    .filter(grant => 'key' in grant)
+    .map(grant => [grant.key, choices[`${parentKey}:feat:${grant.key}`] ?? []]));
+}
+
+// A feat can carry effects directly (Alert, Tough, Fighting Styles) or through one of its own
+// selected options. Keeping both shapes here lets class-, race-, and background-granted feats
+// use the same mechanical path.
+export function collectFeatEffects(
+  feat: DndFeat | null | undefined, choices: Record<string, string[]> = {},
+): TraitEffect[] {
+  if (!feat) return [];
+  const effects = [...(feat.effects ?? [])];
+  for (const grant of feat.grants ?? []) {
+    if (grant.type === 'feature') {
+      effects.push(...(grant.effects ?? []));
+    } else if (grant.type === 'choice') {
+      const picked = choices[grant.key] ?? [];
+      for (const option of grant.options) {
+        if (picked.includes(option.name)) effects.push(...(option.effects ?? []));
+      }
+    }
+  }
+  return effects;
 }
 
 // Every feat the character has actually taken, across every class/subclass's `ability_choice`
@@ -59,11 +88,21 @@ export function resolveCharacterFeatPicks(
       if (grant.type === 'ability_choice') {
         const featIndex = choices[`${grant.key}:feat`]?.[0];
         const feat = featIndex ? byIndex(featIndex) : undefined;
-        if (feat) out.push({ feat, ability: choices[`${grant.key}:feat_ability`]?.[0] });
+        if (feat) out.push({
+          feat,
+          scope: `class:${data.index}:${grant.key}`,
+          choices: featChoices(feat, grant.key, choices),
+          ability: choices[`${grant.key}:feat_ability`]?.[0],
+        });
       } else if (grant.type === 'feat_pick') {
         for (const featIndex of choices[grant.key] ?? []) {
           const feat = byIndex(featIndex);
-          if (feat) out.push({ feat, ability: choices[`${grant.key}:feat_ability`]?.[0] });
+          if (feat) out.push({
+            feat,
+            scope: `class:${data.index}:${grant.key}`,
+            choices: featChoices(feat, grant.key, choices),
+            ability: choices[`${grant.key}:feat_ability`]?.[0],
+          });
         }
       }
     }
@@ -73,7 +112,12 @@ export function resolveCharacterFeatPicks(
       if (grant.type !== 'feat_pick') continue;
       for (const featIndex of race.choices[grant.key] ?? []) {
         const feat = byIndex(featIndex);
-        if (feat) out.push({ feat, ability: race.choices[`${grant.key}:feat_ability`]?.[0] });
+        if (feat) out.push({
+          feat,
+          scope: `race:${race.data.index}:${grant.key}`,
+          choices: featChoices(feat, grant.key, race.choices),
+          ability: race.choices[`${grant.key}:feat_ability`]?.[0],
+        });
       }
     }
   }
@@ -114,8 +158,8 @@ export function collectTraitEffects(
     collectGrantEffects(reachableGrants(data, subclass, level), choices);
   }
   if (race) collectGrantEffects(activeRaceGrants(race), race.choices);
-  for (const { feat } of resolveCharacterFeatPicks(classes, feats, race)) {
-    out.push(...(feat.effects ?? []));
+  for (const { feat, choices } of resolveCharacterFeatPicks(classes, feats, race)) {
+    out.push(...collectFeatEffects(feat, choices));
   }
   return out;
 }

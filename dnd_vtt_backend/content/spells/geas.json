@@ -1,0 +1,65 @@
+{
+  "index": "geas",
+  "name": "Geas",
+  "level": 5,
+  "school": "Enchantment",
+  "casting_time": "1 minute",
+  "range": "60 feet",
+  "components": [
+    "V"
+  ],
+  "duration": "30 days",
+  "ritual": false,
+  "concentration": false,
+  "classes": [
+    "Bard",
+    "Cleric",
+    "Druid",
+    "Paladin",
+    "Wizard"
+  ],
+  "subclasses": [
+    {
+      "class": "Warlock",
+      "subclass": "Fiend Patron"
+    }
+  ],
+  "species": [],
+  "backgrounds": [],
+  "feats": [],
+  "other_options": [],
+  "mechanics": {
+    "saving_throws": [
+      "wisdom"
+    ],
+    "ability_checks": [],
+    "damage_types": [
+      "psychic"
+    ],
+    "conditions": [
+      "charmed"
+    ],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [
+      "ST"
+    ],
+    "misc_tags": [
+      "PRM",
+      "SGT"
+    ]
+  },
+  "description": "You give a verbal command to a creature that you can see within range, ordering it to carry out some service or refrain from an action or a course of activity as you decide. The target must succeed on a Wisdom saving throw or have the Charmed condition for the duration. The target automatically succeeds if it can't understand your command. \n\nWhile Charmed, the creature takes 5d10 Psychic damage if it acts in a manner directly counter to your command. It takes this damage no more than once each day. \n\nYou can issue any command you choose, short of an activity that would result in certain death. Should you issue a suicidal command, the spell ends. \n\nA *Remove Curse, Greater Restoration,* or *Wish* spell ends this spell.",
+  "higher_levels": "If you use a level 7 or 8 spell slot, the duration is 365 days. If you use a level 9 spell slot, the spell lasts until it is ended by one of the spells mentioned above.",
+  "source": {
+    "book": "Player's Handbook",
+    "edition": 2024,
+    "code": "XPHB",
+    "page": 278,
+    "srd_5_2_1": true,
+    "rules_text": "SRD 5.2.1"
+  }
+}

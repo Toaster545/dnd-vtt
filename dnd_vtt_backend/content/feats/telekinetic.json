@@ -13,5 +13,8 @@
       "charisma"
     ],
     "amount": 1
-  }
+  },
+  "grants": [
+    { "type": "spell_grant", "key": "telekinetic_mage_hand", "name": "Telekinetic", "destination": "known", "spells": ["mage-hand"], "countsAgainstLimit": false, "sourceKey": "telekinetic", "sourceName": "Telekinetic", "ability": { "choiceKey": "__feat_ability__" } }
+  ]
 }

@@ -1,0 +1,51 @@
+{
+  "index": "armor-of-agathys",
+  "name": "Armor of Agathys",
+  "level": 1,
+  "school": "Abjuration",
+  "casting_time": "1 bonus action",
+  "range": "Self",
+  "components": [
+    "V",
+    "S",
+    "M"
+  ],
+  "material": "a shard of blue glass",
+  "duration": "1 hour",
+  "ritual": false,
+  "concentration": false,
+  "classes": [
+    "Warlock"
+  ],
+  "subclasses": [],
+  "species": [],
+  "backgrounds": [],
+  "feats": [],
+  "other_options": [],
+  "mechanics": {
+    "saving_throws": [],
+    "ability_checks": [],
+    "damage_types": [
+      "cold"
+    ],
+    "conditions": [],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [],
+    "misc_tags": [
+      "THP"
+    ]
+  },
+  "description": "Gain 5 Temporary Hit Points. While any of those Temporary Hit Points remain, a creature that hits you with a melee attack takes 5 Cold damage. The spell ends when you have no Temporary Hit Points. **Higher-Level Slots.** Both values increase by 5 for each slot level above 1.",
+  "source": {
+    "book": "Player's Handbook",
+    "edition": 2024,
+    "code": "XPHB",
+    "page": 243,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

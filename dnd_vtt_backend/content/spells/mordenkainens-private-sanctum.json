@@ -1,0 +1,67 @@
+{
+  "index": "mordenkainens-private-sanctum",
+  "name": "Mordenkainen's Private Sanctum",
+  "level": 4,
+  "school": "Abjuration",
+  "casting_time": "10 minutes",
+  "range": "120 feet",
+  "components": [
+    "V",
+    "S",
+    "M"
+  ],
+  "material": "a thin sheet of lead",
+  "duration": "24 hours",
+  "ritual": false,
+  "concentration": false,
+  "classes": [
+    "Wizard"
+  ],
+  "subclasses": [
+    {
+      "class": "Fighter",
+      "subclass": "Eldritch Knight"
+    },
+    {
+      "class": "Rogue",
+      "subclass": "Arcane Trickster"
+    },
+    {
+      "class": "Wizard",
+      "subclass": "Abjurer"
+    }
+  ],
+  "species": [],
+  "backgrounds": [],
+  "feats": [],
+  "other_options": [],
+  "mechanics": {
+    "saving_throws": [],
+    "ability_checks": [],
+    "damage_types": [],
+    "conditions": [],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [
+      "C"
+    ],
+    "misc_tags": [
+      "PIR",
+      "PRM"
+    ]
+  },
+  "description": "You make an area within range magically secure. The area is a Cube that can be as small as 5 feet to as large as 100 feet on each side. The spell lasts for the duration. \n\nWhen you cast the spell, you decide what sort of security the spell provides, choosing any of the following properties: \n\n- Sound can't pass through the barrier at the edge of the warded area. \n\n- The barrier of the warded area appears dark and foggy, preventing vision (including Dark vision) through it. \n\n- Sensors created by Divination spells can't appear inside the protected area or pass through the barrier at its perimeter. \n\n- Creatures in the area can't be targeted by Divination spells. \n\n- Nothing can teleport into or out of the warded area. \n\n- Planar travel is blocked within the warded area. Casting this spell on the same spot every day for 365 days makes the spell last until dispelled.",
+  "higher_levels": "You can increase the size of the Cube by 100 feet for each spell slot level above 4.",
+  "source": {
+    "book": "Player's Handbook",
+    "edition": 2024,
+    "code": "XPHB",
+    "page": 301,
+    "srd_5_2_1": true,
+    "srd_name": "Private Sanctum",
+    "rules_text": "SRD 5.2.1"
+  }
+}

@@ -1,0 +1,81 @@
+{
+  "index": "light",
+  "name": "Light",
+  "level": 0,
+  "school": "Evocation",
+  "casting_time": "1 action",
+  "range": "Touch",
+  "components": [
+    "V",
+    "M"
+  ],
+  "material": "a firefly or phosphorescent moss",
+  "duration": "1 hour",
+  "ritual": false,
+  "concentration": false,
+  "classes": [
+    "Bard",
+    "Cleric",
+    "Sorcerer",
+    "Wizard"
+  ],
+  "subclasses": [
+    {
+      "class": "Bard",
+      "subclass": "College of Lore"
+    },
+    {
+      "class": "Fighter",
+      "subclass": "Eldritch Knight"
+    },
+    {
+      "class": "Rogue",
+      "subclass": "Arcane Trickster"
+    },
+    {
+      "class": "Warlock",
+      "subclass": "Celestial Patron"
+    },
+    {
+      "class": "Wizard",
+      "subclass": "Evoker"
+    }
+  ],
+  "species": [
+    "Aasimar",
+    "Elf"
+  ],
+  "backgrounds": [],
+  "feats": [
+    "Blessed Warrior",
+    "Magic Initiate"
+  ],
+  "other_options": [
+    "Pact of the Tome"
+  ],
+  "mechanics": {
+    "saving_throws": [],
+    "ability_checks": [],
+    "damage_types": [],
+    "conditions": [],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [],
+    "misc_tags": [
+      "LGT",
+      "OBJ"
+    ]
+  },
+  "description": "You touch one Large or smaller object that isn't being worn or carried by someone else. Until the spell ends, the object sheds Bright Light in a 20-foot radius and Dim Light for an additional 20 feet. The light can be colored as you like. \n\nCovering the object with something opaque blocks the light. The spell ends if you cast it again.",
+  "source": {
+    "book": "Player's Handbook",
+    "edition": 2024,
+    "code": "XPHB",
+    "page": 292,
+    "srd_5_2_1": true,
+    "rules_text": "SRD 5.2.1"
+  }
+}

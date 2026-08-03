@@ -33,6 +33,7 @@
     "goldAlternative": 55
   },
   "spellcasting_ability": "intelligence",
+  "spellcasting": { "key": "class:wizard", "list": "Wizard", "ability": "intelligence", "mode": "spellbook", "progression": "full" },
   "subclass_level": 3,
   "subclasses": [
     {
@@ -49,6 +50,14 @@
               "name": "Abjuration Savant",
               "description": "Add two Abjuration spells of level 2 or lower to your spellbook for free. Whenever a Wizard level first gives you access to a new spell-slot level, add one Wizard spell from the Abjuration school of an eligible level to your spellbook for free. Detailed spell selection will use the shared spell system."
             },
+            { "type": "spell_grant", "key": "abjuration_savant_3", "name": "Abjuration Savant", "destination": "spellbook", "choose": 2, "countsAgainstLimit": false, "filter": { "lists": ["Wizard"], "schools": ["Abjuration"], "minLevel": 1, "maxLevel": 2 } },
+            { "type": "spell_grant", "key": "abjuration_savant_5", "name": "Abjuration Savant", "destination": "spellbook", "choose": 1, "countsAgainstLimit": false, "classLevel": 5, "filter": { "lists": ["Wizard"], "schools": ["Abjuration"], "exactLevels": [3] } },
+            { "type": "spell_grant", "key": "abjuration_savant_7", "name": "Abjuration Savant", "destination": "spellbook", "choose": 1, "countsAgainstLimit": false, "classLevel": 7, "filter": { "lists": ["Wizard"], "schools": ["Abjuration"], "exactLevels": [4] } },
+            { "type": "spell_grant", "key": "abjuration_savant_9", "name": "Abjuration Savant", "destination": "spellbook", "choose": 1, "countsAgainstLimit": false, "classLevel": 9, "filter": { "lists": ["Wizard"], "schools": ["Abjuration"], "exactLevels": [5] } },
+            { "type": "spell_grant", "key": "abjuration_savant_11", "name": "Abjuration Savant", "destination": "spellbook", "choose": 1, "countsAgainstLimit": false, "classLevel": 11, "filter": { "lists": ["Wizard"], "schools": ["Abjuration"], "exactLevels": [6] } },
+            { "type": "spell_grant", "key": "abjuration_savant_13", "name": "Abjuration Savant", "destination": "spellbook", "choose": 1, "countsAgainstLimit": false, "classLevel": 13, "filter": { "lists": ["Wizard"], "schools": ["Abjuration"], "exactLevels": [7] } },
+            { "type": "spell_grant", "key": "abjuration_savant_15", "name": "Abjuration Savant", "destination": "spellbook", "choose": 1, "countsAgainstLimit": false, "classLevel": 15, "filter": { "lists": ["Wizard"], "schools": ["Abjuration"], "exactLevels": [8] } },
+            { "type": "spell_grant", "key": "abjuration_savant_17", "name": "Abjuration Savant", "destination": "spellbook", "choose": 1, "countsAgainstLimit": false, "classLevel": 17, "filter": { "lists": ["Wizard"], "schools": ["Abjuration"], "exactLevels": [9] } },
             {
               "type": "feature",
               "name": "Arcane Ward",
@@ -75,7 +84,8 @@
               "type": "feature",
               "name": "Spell Breaker",
               "description": "Counterspell and Dispel Magic are always prepared and don't count against your prepared-spell limit. Cast Dispel Magic as a Bonus Action, and add your Proficiency Bonus to its ability check. When you cast either spell with a spell slot and fail to stop or end a spell, that spell slot isn't expended."
-            }
+            },
+            { "type": "spell_grant", "key": "spell_breaker_spells", "name": "Spell Breaker", "destination": "always_prepared", "spells": ["counterspell", "dispel-magic"], "countsAgainstLimit": false }
           ]
         },
         {
@@ -105,6 +115,14 @@
               "name": "Divination Savant",
               "description": "Add two Divination spells of level 2 or lower to your spellbook for free. Whenever a Wizard level first gives you access to a new spell-slot level, add one Wizard spell from the Divination school of an eligible level to your spellbook for free. Detailed spell selection will use the shared spell system."
             },
+            { "type": "spell_grant", "key": "divination_savant_3", "name": "Divination Savant", "destination": "spellbook", "choose": 2, "countsAgainstLimit": false, "filter": { "lists": ["Wizard"], "schools": ["Divination"], "minLevel": 1, "maxLevel": 2 } },
+            { "type": "spell_grant", "key": "divination_savant_5", "name": "Divination Savant", "destination": "spellbook", "choose": 1, "countsAgainstLimit": false, "classLevel": 5, "filter": { "lists": ["Wizard"], "schools": ["Divination"], "exactLevels": [3] } },
+            { "type": "spell_grant", "key": "divination_savant_7", "name": "Divination Savant", "destination": "spellbook", "choose": 1, "countsAgainstLimit": false, "classLevel": 7, "filter": { "lists": ["Wizard"], "schools": ["Divination"], "exactLevels": [4] } },
+            { "type": "spell_grant", "key": "divination_savant_9", "name": "Divination Savant", "destination": "spellbook", "choose": 1, "countsAgainstLimit": false, "classLevel": 9, "filter": { "lists": ["Wizard"], "schools": ["Divination"], "exactLevels": [5] } },
+            { "type": "spell_grant", "key": "divination_savant_11", "name": "Divination Savant", "destination": "spellbook", "choose": 1, "countsAgainstLimit": false, "classLevel": 11, "filter": { "lists": ["Wizard"], "schools": ["Divination"], "exactLevels": [6] } },
+            { "type": "spell_grant", "key": "divination_savant_13", "name": "Divination Savant", "destination": "spellbook", "choose": 1, "countsAgainstLimit": false, "classLevel": 13, "filter": { "lists": ["Wizard"], "schools": ["Divination"], "exactLevels": [7] } },
+            { "type": "spell_grant", "key": "divination_savant_15", "name": "Divination Savant", "destination": "spellbook", "choose": 1, "countsAgainstLimit": false, "classLevel": 15, "filter": { "lists": ["Wizard"], "schools": ["Divination"], "exactLevels": [8] } },
+            { "type": "spell_grant", "key": "divination_savant_17", "name": "Divination Savant", "destination": "spellbook", "choose": 1, "countsAgainstLimit": false, "classLevel": 17, "filter": { "lists": ["Wizard"], "schools": ["Divination"], "exactLevels": [9] } },
             {
               "type": "feature",
               "key": "portent",
@@ -145,7 +163,8 @@
                 "activation": "bonus_action",
                 "uses": { "max": 1, "per": "short_rest" }
               }
-            }
+            },
+            { "type": "spell_grant", "key": "third_eye_see_invisibility", "name": "The Third Eye", "destination": "known", "spells": ["see-invisibility"], "countsAgainstLimit": false }
           ]
         },
         {
@@ -175,6 +194,23 @@
               "name": "Evocation Savant",
               "description": "Add two Evocation spells of level 2 or lower to your spellbook for free. Whenever a Wizard level first gives you access to a new spell-slot level, add one Wizard spell from the Evocation school of an eligible level to your spellbook for free. Detailed spell selection will use the shared spell system."
             },
+            {
+              "type": "spell_grant",
+              "key": "evocation_savant_3",
+              "name": "Evocation Savant",
+              "description": "Choose two level 1 or 2 Wizard Evocation spells to add to your spellbook without counting against its normal spell total.",
+              "destination": "spellbook",
+              "choose": 2,
+              "countsAgainstLimit": false,
+              "filter": { "lists": ["Wizard"], "schools": ["Evocation"], "minLevel": 1, "maxLevel": 2 }
+            },
+            { "type": "spell_grant", "key": "evocation_savant_5", "name": "Evocation Savant", "destination": "spellbook", "choose": 1, "countsAgainstLimit": false, "classLevel": 5, "filter": { "lists": ["Wizard"], "schools": ["Evocation"], "exactLevels": [3] } },
+            { "type": "spell_grant", "key": "evocation_savant_7", "name": "Evocation Savant", "destination": "spellbook", "choose": 1, "countsAgainstLimit": false, "classLevel": 7, "filter": { "lists": ["Wizard"], "schools": ["Evocation"], "exactLevels": [4] } },
+            { "type": "spell_grant", "key": "evocation_savant_9", "name": "Evocation Savant", "destination": "spellbook", "choose": 1, "countsAgainstLimit": false, "classLevel": 9, "filter": { "lists": ["Wizard"], "schools": ["Evocation"], "exactLevels": [5] } },
+            { "type": "spell_grant", "key": "evocation_savant_11", "name": "Evocation Savant", "destination": "spellbook", "choose": 1, "countsAgainstLimit": false, "classLevel": 11, "filter": { "lists": ["Wizard"], "schools": ["Evocation"], "exactLevels": [6] } },
+            { "type": "spell_grant", "key": "evocation_savant_13", "name": "Evocation Savant", "destination": "spellbook", "choose": 1, "countsAgainstLimit": false, "classLevel": 13, "filter": { "lists": ["Wizard"], "schools": ["Evocation"], "exactLevels": [7] } },
+            { "type": "spell_grant", "key": "evocation_savant_15", "name": "Evocation Savant", "destination": "spellbook", "choose": 1, "countsAgainstLimit": false, "classLevel": 15, "filter": { "lists": ["Wizard"], "schools": ["Evocation"], "exactLevels": [8] } },
+            { "type": "spell_grant", "key": "evocation_savant_17", "name": "Evocation Savant", "destination": "spellbook", "choose": 1, "countsAgainstLimit": false, "classLevel": 17, "filter": { "lists": ["Wizard"], "schools": ["Evocation"], "exactLevels": [9] } },
             {
               "type": "feature",
               "name": "Potent Cantrip",
@@ -231,11 +267,20 @@
               "name": "Illusion Savant",
               "description": "Add two Illusion spells of level 2 or lower to your spellbook for free. Whenever a Wizard level first gives you access to a new spell-slot level, add one Wizard spell from the Illusion school of an eligible level to your spellbook for free. Detailed spell selection will use the shared spell system."
             },
+            { "type": "spell_grant", "key": "illusion_savant_3", "name": "Illusion Savant", "destination": "spellbook", "choose": 2, "countsAgainstLimit": false, "filter": { "lists": ["Wizard"], "schools": ["Illusion"], "minLevel": 1, "maxLevel": 2 } },
+            { "type": "spell_grant", "key": "illusion_savant_5", "name": "Illusion Savant", "destination": "spellbook", "choose": 1, "countsAgainstLimit": false, "classLevel": 5, "filter": { "lists": ["Wizard"], "schools": ["Illusion"], "exactLevels": [3] } },
+            { "type": "spell_grant", "key": "illusion_savant_7", "name": "Illusion Savant", "destination": "spellbook", "choose": 1, "countsAgainstLimit": false, "classLevel": 7, "filter": { "lists": ["Wizard"], "schools": ["Illusion"], "exactLevels": [4] } },
+            { "type": "spell_grant", "key": "illusion_savant_9", "name": "Illusion Savant", "destination": "spellbook", "choose": 1, "countsAgainstLimit": false, "classLevel": 9, "filter": { "lists": ["Wizard"], "schools": ["Illusion"], "exactLevels": [5] } },
+            { "type": "spell_grant", "key": "illusion_savant_11", "name": "Illusion Savant", "destination": "spellbook", "choose": 1, "countsAgainstLimit": false, "classLevel": 11, "filter": { "lists": ["Wizard"], "schools": ["Illusion"], "exactLevels": [6] } },
+            { "type": "spell_grant", "key": "illusion_savant_13", "name": "Illusion Savant", "destination": "spellbook", "choose": 1, "countsAgainstLimit": false, "classLevel": 13, "filter": { "lists": ["Wizard"], "schools": ["Illusion"], "exactLevels": [7] } },
+            { "type": "spell_grant", "key": "illusion_savant_15", "name": "Illusion Savant", "destination": "spellbook", "choose": 1, "countsAgainstLimit": false, "classLevel": 15, "filter": { "lists": ["Wizard"], "schools": ["Illusion"], "exactLevels": [8] } },
+            { "type": "spell_grant", "key": "illusion_savant_17", "name": "Illusion Savant", "destination": "spellbook", "choose": 1, "countsAgainstLimit": false, "classLevel": 17, "filter": { "lists": ["Wizard"], "schools": ["Illusion"], "exactLevels": [9] } },
             {
               "type": "feature",
               "name": "Improved Illusions",
               "description": "Minor Illusion is always prepared; if you already know it, learn another Wizard cantrip. Cast Minor Illusion as a Bonus Action. Illusion spells you cast need no Verbal component, and if such a spell has a range of 10 feet or more, its range increases by 60 feet."
-            }
+            },
+            { "type": "spell_grant", "key": "improved_illusions_minor_illusion", "name": "Improved Illusions", "destination": "always_prepared", "spells": ["minor-illusion"], "countsAgainstLimit": false }
           ]
         },
         {
@@ -261,7 +306,8 @@
                 "activation": "action",
                 "uses": { "max": 1, "per": "long_rest" }
               }
-            }
+            },
+            { "type": "spell_grant", "key": "phantasmal_creatures_spells", "name": "Phantasmal Creatures", "destination": "always_prepared", "spells": ["summon-beast", "summon-fey"], "countsAgainstLimit": false }
           ]
         },
         {
@@ -633,7 +679,9 @@
           "type": "feature",
           "name": "Spell Mastery",
           "description": "Choose a level 1 and a level 2 spell in your spellbook that each have a casting time of an action. They are always prepared and can be cast at their lowest level without a spell slot. After a Long Rest, replace one with an eligible spell of the same level. Detailed spell selection will use the shared spell system."
-        }
+        },
+        { "type": "spell_grant", "key": "spell_mastery_1", "name": "Spell Mastery (Level 1)", "destination": "always_prepared", "choose": 1, "countsAgainstLimit": false, "fromDestination": "spellbook", "filter": { "exactLevels": [1], "castingTimes": ["action"] } },
+        { "type": "spell_grant", "key": "spell_mastery_2", "name": "Spell Mastery (Level 2)", "destination": "always_prepared", "choose": 1, "countsAgainstLimit": false, "fromDestination": "spellbook", "filter": { "exactLevels": [2], "castingTimes": ["action"] } }
       ]
     },
     {
@@ -688,7 +736,8 @@
           "type": "feature",
           "name": "Signature Spells",
           "description": "Choose two level 3 spells in your spellbook. They are always prepared, and each can be cast once at level 3 without a spell slot per Short or Long Rest. Casting either at a higher level still requires a spell slot. Detailed spell selection and per-spell tracking will use the shared spell system."
-        }
+        },
+        { "type": "spell_grant", "key": "signature_spells", "name": "Signature Spells", "destination": "always_prepared", "choose": 2, "countsAgainstLimit": false, "fromDestination": "spellbook", "filter": { "exactLevels": [3] } }
       ]
     }
   ]

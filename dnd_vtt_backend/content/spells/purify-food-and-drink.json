@@ -1,0 +1,59 @@
+{
+  "index": "purify-food-and-drink",
+  "name": "Purify Food and Drink",
+  "level": 1,
+  "school": "Transmutation",
+  "casting_time": "1 action",
+  "range": "10 feet",
+  "components": [
+    "V",
+    "S"
+  ],
+  "duration": "Instantaneous",
+  "ritual": true,
+  "concentration": false,
+  "classes": [
+    "Cleric",
+    "Druid",
+    "Paladin"
+  ],
+  "subclasses": [
+    {
+      "class": "Bard",
+      "subclass": "College of Lore"
+    }
+  ],
+  "species": [],
+  "backgrounds": [],
+  "feats": [
+    "Magic Initiate",
+    "Ritual Caster"
+  ],
+  "other_options": [
+    "Pact of the Tome"
+  ],
+  "mechanics": {
+    "saving_throws": [],
+    "ability_checks": [],
+    "damage_types": [],
+    "conditions": [],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [
+      "S"
+    ],
+    "misc_tags": []
+  },
+  "description": "You remove poison and rot from nonmagical food and drink in a 5- foot-radius Sphere centered on a point within range.",
+  "source": {
+    "book": "Player's Handbook",
+    "edition": 2024,
+    "code": "XPHB",
+    "page": 310,
+    "srd_5_2_1": true,
+    "rules_text": "SRD 5.2.1"
+  }
+}

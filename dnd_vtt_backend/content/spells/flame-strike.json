@@ -1,0 +1,64 @@
+{
+  "index": "flame-strike",
+  "name": "Flame Strike",
+  "level": 5,
+  "school": "Evocation",
+  "casting_time": "1 action",
+  "range": "60 feet",
+  "components": [
+    "V",
+    "S",
+    "M"
+  ],
+  "material": "a pinch of sulfur",
+  "duration": "Instantaneous",
+  "ritual": false,
+  "concentration": false,
+  "classes": [
+    "Cleric"
+  ],
+  "subclasses": [
+    {
+      "class": "Cleric",
+      "subclass": "Light Domain"
+    },
+    {
+      "class": "Paladin",
+      "subclass": "Oath of Devotion"
+    }
+  ],
+  "species": [],
+  "backgrounds": [],
+  "feats": [],
+  "other_options": [],
+  "mechanics": {
+    "saving_throws": [
+      "dexterity"
+    ],
+    "ability_checks": [],
+    "damage_types": [
+      "fire",
+      "radiant"
+    ],
+    "conditions": [],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [
+      "Y"
+    ],
+    "misc_tags": []
+  },
+  "description": "A vertical column of brilliant fire roars down from above. Each creature in a 10-foot-radius, 40-foot-high Cylinder centered on a point within range makes a Dexterity saving throw, taking 5d6 Fire damage and 5d6 Radiant damage on a failed save or half as much damage on a successful one.",
+  "higher_levels": "The Fire damage and the Radiant damage increase by 1d6 for each spell slot level above 5.",
+  "source": {
+    "book": "Player's Handbook",
+    "edition": 2024,
+    "code": "XPHB",
+    "page": 275,
+    "srd_5_2_1": true,
+    "rules_text": "SRD 5.2.1"
+  }
+}

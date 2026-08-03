@@ -1,0 +1,56 @@
+{
+  "index": "arms-of-hadar",
+  "name": "Arms of Hadar",
+  "level": 1,
+  "school": "Conjuration",
+  "casting_time": "1 action",
+  "range": "10 feet (Emanation)",
+  "components": [
+    "V",
+    "S"
+  ],
+  "duration": "Instantaneous",
+  "ritual": false,
+  "concentration": false,
+  "classes": [
+    "Warlock"
+  ],
+  "subclasses": [
+    {
+      "class": "Sorcerer",
+      "subclass": "Aberrant Sorcery"
+    }
+  ],
+  "species": [],
+  "backgrounds": [],
+  "feats": [],
+  "other_options": [],
+  "mechanics": {
+    "saving_throws": [
+      "strength"
+    ],
+    "ability_checks": [],
+    "damage_types": [
+      "necrotic"
+    ],
+    "conditions": [],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [
+      "S"
+    ],
+    "misc_tags": []
+  },
+  "description": "Each creature in a 10-foot Emanation from you makes a Strength saving throw. On a failure, it takes 2d6 Necrotic damage and can\u0027t take Reactions until the start of its next turn; on a success, it takes half damage. **Higher-Level Slots.** Damage increases by 1d6 per slot level above 1.",
+  "source": {
+    "book": "Player's Handbook",
+    "edition": 2024,
+    "code": "XPHB",
+    "page": 243,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

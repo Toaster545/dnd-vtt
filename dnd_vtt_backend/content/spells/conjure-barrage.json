@@ -1,0 +1,56 @@
+{
+  "index": "conjure-barrage",
+  "name": "Conjure Barrage",
+  "level": 3,
+  "school": "Conjuration",
+  "casting_time": "1 action",
+  "range": "60 feet (Cone)",
+  "components": [
+    "V",
+    "S",
+    "M"
+  ],
+  "material": "a Melee or Ranged weapon worth at least 1 CP",
+  "material_cost_cp": 1,
+  "duration": "Instantaneous",
+  "ritual": false,
+  "concentration": false,
+  "classes": [
+    "Ranger"
+  ],
+  "subclasses": [],
+  "species": [],
+  "backgrounds": [],
+  "feats": [],
+  "other_options": [],
+  "mechanics": {
+    "saving_throws": [
+      "dexterity"
+    ],
+    "ability_checks": [],
+    "damage_types": [
+      "force"
+    ],
+    "conditions": [],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [
+      "N"
+    ],
+    "misc_tags": [
+      "SGT"
+    ]
+  },
+  "description": "Spectral copies of the weapon or ammunition used to cast the spell sweep through a 60-foot Cone. Creatures you choose in the Cone make a Dexterity save, taking 5d8 Force damage on a failure or half on a success. **Higher-Level Slots.** Damage increases by 1d8 per slot level above 3.",
+  "source": {
+    "book": "Player's Handbook",
+    "edition": 2024,
+    "code": "XPHB",
+    "page": 254,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

@@ -1,0 +1,72 @@
+{
+  "index": "shillelagh",
+  "name": "Shillelagh",
+  "level": 0,
+  "school": "Transmutation",
+  "casting_time": "1 bonus action",
+  "range": "Self",
+  "components": [
+    "V",
+    "S",
+    "M"
+  ],
+  "material": "mistletoe",
+  "duration": "1 minute",
+  "ritual": false,
+  "concentration": false,
+  "classes": [
+    "Druid"
+  ],
+  "subclasses": [
+    {
+      "class": "Bard",
+      "subclass": "College of Lore"
+    }
+  ],
+  "species": [],
+  "backgrounds": [],
+  "feats": [
+    "Druidic Warrior",
+    "Magic Initiate"
+  ],
+  "other_options": [
+    "Pact of the Tome"
+  ],
+  "mechanics": {
+    "saving_throws": [],
+    "ability_checks": [],
+    "damage_types": [
+      "force"
+    ],
+    "conditions": [],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [],
+    "misc_tags": [
+      "AAD",
+      "SCL"
+    ],
+    "scaling": {
+      "label": "damage",
+      "values": {
+        "1": "1d8",
+        "5": "1d10",
+        "11": "1d12",
+        "17": "2d6"
+      }
+    }
+  },
+  "description": "A Club or Quarterstaff you are holding is imbued with nature's power. For the duration, you can use your spellcasting ability instead of Strength for the attack and damage rolls of melee attacks using that weapon, and the weapon's damage die becomes a d8. If the attack deals damage, it can be Force damage or the weapon's normal damage type (your choice).\n\nThe spell ends early if you cast it again or if you let go of the weapon.",
+  "cantrip_upgrade": "The weapon's damage die changes when you reach levels 5 (d10), 11 (d12), and 17 (2d6).",
+  "source": {
+    "book": "Player's Handbook",
+    "edition": 2024,
+    "code": "XPHB",
+    "page": 316,
+    "srd_5_2_1": true,
+    "rules_text": "SRD 5.2.1"
+  }
+}

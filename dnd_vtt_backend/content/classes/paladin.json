@@ -33,6 +33,7 @@
     "goldAlternative": 150
   },
   "spellcasting_ability": "charisma",
+  "spellcasting": { "key": "class:paladin", "list": "Paladin", "ability": "charisma", "mode": "prepared", "progression": "half" },
   "subclass_level": 3,
   "subclasses": [
     {
@@ -49,6 +50,18 @@
               "name": "Oath of Devotion Spells",
               "description": "These spells are always prepared and don't count against your prepared-spell limit: at Paladin level 3, Protection from Evil and Good and Shield of Faith; level 5, Aid and Zone of Truth; level 9, Beacon of Hope and Dispel Magic; level 13, Freedom of Movement and Guardian of Faith; level 17, Commune and Flame Strike."
             },
+            {
+              "type": "spell_grant",
+              "key": "oath_of_devotion_spells_3",
+              "name": "Oath of Devotion Spells",
+              "destination": "always_prepared",
+              "spells": ["protection-from-evil-and-good", "shield-of-faith"],
+              "countsAgainstLimit": false
+            },
+            { "type": "spell_grant", "key": "devotion_spells_5", "name": "Oath of Devotion Spells", "destination": "always_prepared", "spells": ["aid", "zone-of-truth"], "countsAgainstLimit": false, "classLevel": 5 },
+            { "type": "spell_grant", "key": "devotion_spells_9", "name": "Oath of Devotion Spells", "destination": "always_prepared", "spells": ["beacon-of-hope", "dispel-magic"], "countsAgainstLimit": false, "classLevel": 9 },
+            { "type": "spell_grant", "key": "devotion_spells_13", "name": "Oath of Devotion Spells", "destination": "always_prepared", "spells": ["freedom-of-movement", "guardian-of-faith"], "countsAgainstLimit": false, "classLevel": 13 },
+            { "type": "spell_grant", "key": "devotion_spells_17", "name": "Oath of Devotion Spells", "destination": "always_prepared", "spells": ["commune", "flame-strike"], "countsAgainstLimit": false, "classLevel": 17 },
             {
               "type": "feature",
               "name": "Sacred Weapon",
@@ -119,6 +132,11 @@
               "name": "Oath of Glory Spells",
               "description": "These spells are always prepared and don't count against your prepared-spell limit: at Paladin level 3, Guiding Bolt and Heroism; level 5, Enhance Ability and Magic Weapon; level 9, Haste and Protection from Energy; level 13, Compulsion and Freedom of Movement; level 17, Legend Lore and Yolande's Regal Presence."
             },
+            { "type": "spell_grant", "key": "glory_spells_3", "name": "Oath of Glory Spells", "destination": "always_prepared", "spells": ["guiding-bolt", "heroism"], "countsAgainstLimit": false, "classLevel": 3 },
+            { "type": "spell_grant", "key": "glory_spells_5", "name": "Oath of Glory Spells", "destination": "always_prepared", "spells": ["enhance-ability", "magic-weapon"], "countsAgainstLimit": false, "classLevel": 5 },
+            { "type": "spell_grant", "key": "glory_spells_9", "name": "Oath of Glory Spells", "destination": "always_prepared", "spells": ["haste", "protection-from-energy"], "countsAgainstLimit": false, "classLevel": 9 },
+            { "type": "spell_grant", "key": "glory_spells_13", "name": "Oath of Glory Spells", "destination": "always_prepared", "spells": ["compulsion", "freedom-of-movement"], "countsAgainstLimit": false, "classLevel": 13 },
+            { "type": "spell_grant", "key": "glory_spells_17", "name": "Oath of Glory Spells", "destination": "always_prepared", "spells": ["legend-lore", "yolandes-regal-presence"], "countsAgainstLimit": false, "classLevel": 17 },
             {
               "type": "feature",
               "name": "Peerless Athlete",
@@ -195,7 +213,12 @@
               "type": "feature",
               "name": "Oath of the Ancients Spells",
               "description": "These spells are always prepared and don't count against your prepared-spell limit: at Paladin level 3, Ensnaring Strike and Speak with Animals; level 5, Misty Step and Moonbeam; level 9, Plant Growth and Protection from Energy; level 13, Ice Storm and Stoneskin; level 17, Commune with Nature and Tree Stride."
-            }
+            },
+            { "type": "spell_grant", "key": "ancients_spells_3", "name": "Oath of the Ancients Spells", "destination": "always_prepared", "spells": ["ensnaring-strike", "speak-with-animals"], "countsAgainstLimit": false, "classLevel": 3 },
+            { "type": "spell_grant", "key": "ancients_spells_5", "name": "Oath of the Ancients Spells", "destination": "always_prepared", "spells": ["misty-step", "moonbeam"], "countsAgainstLimit": false, "classLevel": 5 },
+            { "type": "spell_grant", "key": "ancients_spells_9", "name": "Oath of the Ancients Spells", "destination": "always_prepared", "spells": ["plant-growth", "protection-from-energy"], "countsAgainstLimit": false, "classLevel": 9 },
+            { "type": "spell_grant", "key": "ancients_spells_13", "name": "Oath of the Ancients Spells", "destination": "always_prepared", "spells": ["ice-storm", "stoneskin"], "countsAgainstLimit": false, "classLevel": 13 },
+            { "type": "spell_grant", "key": "ancients_spells_17", "name": "Oath of the Ancients Spells", "destination": "always_prepared", "spells": ["commune-with-nature", "tree-stride"], "countsAgainstLimit": false, "classLevel": 17 }
           ]
         },
         {
@@ -257,6 +280,11 @@
               "name": "Oath of Vengeance Spells",
               "description": "These spells are always prepared and don't count against your prepared-spell limit: at Paladin level 3, Bane and Hunter's Mark; level 5, Hold Person and Misty Step; level 9, Haste and Protection from Energy; level 13, Banishment and Dimension Door; level 17, Hold Monster and Scrying."
             },
+            { "type": "spell_grant", "key": "vengeance_spells_3", "name": "Oath of Vengeance Spells", "destination": "always_prepared", "spells": ["bane", "hunters-mark"], "countsAgainstLimit": false, "classLevel": 3 },
+            { "type": "spell_grant", "key": "vengeance_spells_5", "name": "Oath of Vengeance Spells", "destination": "always_prepared", "spells": ["hold-person", "misty-step"], "countsAgainstLimit": false, "classLevel": 5 },
+            { "type": "spell_grant", "key": "vengeance_spells_9", "name": "Oath of Vengeance Spells", "destination": "always_prepared", "spells": ["haste", "protection-from-energy"], "countsAgainstLimit": false, "classLevel": 9 },
+            { "type": "spell_grant", "key": "vengeance_spells_13", "name": "Oath of Vengeance Spells", "destination": "always_prepared", "spells": ["banishment", "dimension-door"], "countsAgainstLimit": false, "classLevel": 13 },
+            { "type": "spell_grant", "key": "vengeance_spells_17", "name": "Oath of Vengeance Spells", "destination": "always_prepared", "spells": ["hold-monster", "scrying"], "countsAgainstLimit": false, "classLevel": 17 },
             {
               "type": "feature",
               "name": "Vow of Enmity",
@@ -395,7 +423,8 @@
             "activation": "bonus_action",
             "uses": { "max": 1, "per": "long_rest" }
           }
-        }
+        },
+        { "type": "spell_grant", "key": "paladins_smite_spell", "name": "Paladin's Smite", "destination": "always_prepared", "spells": ["divine-smite"], "countsAgainstLimit": false, "freeCast": { "uses": 1, "recovery": "long_rest" } }
       ]
     },
     {
@@ -468,7 +497,8 @@
             "activation": "action",
             "uses": { "max": 1, "per": "long_rest" }
           }
-        }
+        },
+        { "type": "spell_grant", "key": "faithful_steed_spell", "name": "Faithful Steed", "destination": "always_prepared", "spells": ["find-steed"], "countsAgainstLimit": false, "freeCast": { "uses": 1, "recovery": "long_rest" } }
       ]
     },
     {

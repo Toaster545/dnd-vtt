@@ -1,0 +1,82 @@
+{
+  "index": "magic-circle",
+  "name": "Magic Circle",
+  "level": 3,
+  "school": "Abjuration",
+  "casting_time": "1 minute",
+  "range": "10 feet",
+  "components": [
+    "V",
+    "S",
+    "M"
+  ],
+  "material": "salt and powdered silver worth 100+ GP, which the spell consumes",
+  "material_cost_cp": 10000,
+  "material_consumed": true,
+  "duration": "1 hour",
+  "ritual": false,
+  "concentration": false,
+  "classes": [
+    "Cleric",
+    "Paladin",
+    "Warlock",
+    "Wizard"
+  ],
+  "subclasses": [
+    {
+      "class": "Bard",
+      "subclass": "College of Lore"
+    },
+    {
+      "class": "Fighter",
+      "subclass": "Eldritch Knight"
+    },
+    {
+      "class": "Rogue",
+      "subclass": "Arcane Trickster"
+    },
+    {
+      "class": "Wizard",
+      "subclass": "Abjurer"
+    }
+  ],
+  "species": [],
+  "backgrounds": [],
+  "feats": [],
+  "other_options": [],
+  "mechanics": {
+    "saving_throws": [
+      "charisma"
+    ],
+    "ability_checks": [],
+    "damage_types": [],
+    "conditions": [],
+    "affects_creature_types": [
+      "celestial",
+      "elemental",
+      "fey",
+      "fiend",
+      "undead"
+    ],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [
+      "Y"
+    ],
+    "misc_tags": [
+      "SGT"
+    ]
+  },
+  "description": "You create a 10-foot-radius, 20-foot-tall Cylinder of magical energy centered on a point on the ground that you can see within range. Glowing runes appear wherever the Cylinder intersects with the floor or other surface. \n\nChoose one or more of the following types of creatures: Celestials, Elementals, Fey, Fiends, or Undead. The circle affects a creature of the chosen type in the following ways: \n\n- The creature can't willingly enter the Cylinder by nonmagical means. If the creature tries to use teleportation or interplanar travel to do so, it must first succeed on a Charisma saving throw. \n\n- The creature has Disadvantage on attack rolls against targets within the Cylinder. \n\n- Targets within the Cylinder can't be possessed by or gain the Charmed or Frightened condition from the creature. \n\nEach time you cast this spell, you can cause its magic to operate in the reverse direction, preventing a creature of the specified type from leaving the Cylinder and protecting targets outside it.",
+  "higher_levels": "The duration increases by 1 hour for each spell slot level above 3.",
+  "source": {
+    "book": "Player's Handbook",
+    "edition": 2024,
+    "code": "XPHB",
+    "page": 293,
+    "srd_5_2_1": true,
+    "rules_text": "SRD 5.2.1"
+  }
+}

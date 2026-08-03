@@ -3,5 +3,43 @@
   "name": "Magic Initiate",
   "description": "Choose the Cleric, Druid, or Wizard spell list. Learn two cantrips and one level 1 spell from it, and choose Intelligence, Wisdom, or Charisma as their spellcasting ability. The level 1 spell is always prepared and can be cast once per Long Rest without a spell slot or with your spell slots. You may replace one chosen spell with an eligible spell whenever you gain a level.",
   "category": "origin",
+  "grants": [
+    {
+      "type": "choice",
+      "key": "magic_initiate_list",
+      "name": "Magic Initiate Spell List",
+      "choose": 1,
+      "options": [
+        {
+          "name": "Cleric",
+          "grants": [
+            { "type": "spell_grant", "key": "magic_initiate_cleric_cantrips", "name": "Magic Initiate (Cleric) Cantrips", "destination": "known", "choose": 2, "countsAgainstLimit": false, "sourceKey": "magic-initiate-cleric", "sourceName": "Magic Initiate (Cleric)", "ability": { "choiceKey": "magic_initiate_ability" }, "filter": { "lists": ["Cleric"], "exactLevels": [0] } },
+            { "type": "spell_grant", "key": "magic_initiate_cleric_spell", "name": "Magic Initiate (Cleric) Spell", "destination": "always_prepared", "choose": 1, "countsAgainstLimit": false, "sourceKey": "magic-initiate-cleric", "sourceName": "Magic Initiate (Cleric)", "ability": { "choiceKey": "magic_initiate_ability" }, "filter": { "lists": ["Cleric"], "exactLevels": [1] }, "freeCast": { "uses": 1, "recovery": "long_rest" } }
+          ]
+        },
+        {
+          "name": "Druid",
+          "grants": [
+            { "type": "spell_grant", "key": "magic_initiate_druid_cantrips", "name": "Magic Initiate (Druid) Cantrips", "destination": "known", "choose": 2, "countsAgainstLimit": false, "sourceKey": "magic-initiate-druid", "sourceName": "Magic Initiate (Druid)", "ability": { "choiceKey": "magic_initiate_ability" }, "filter": { "lists": ["Druid"], "exactLevels": [0] } },
+            { "type": "spell_grant", "key": "magic_initiate_druid_spell", "name": "Magic Initiate (Druid) Spell", "destination": "always_prepared", "choose": 1, "countsAgainstLimit": false, "sourceKey": "magic-initiate-druid", "sourceName": "Magic Initiate (Druid)", "ability": { "choiceKey": "magic_initiate_ability" }, "filter": { "lists": ["Druid"], "exactLevels": [1] }, "freeCast": { "uses": 1, "recovery": "long_rest" } }
+          ]
+        },
+        {
+          "name": "Wizard",
+          "grants": [
+            { "type": "spell_grant", "key": "magic_initiate_wizard_cantrips", "name": "Magic Initiate (Wizard) Cantrips", "destination": "known", "choose": 2, "countsAgainstLimit": false, "sourceKey": "magic-initiate-wizard", "sourceName": "Magic Initiate (Wizard)", "ability": { "choiceKey": "magic_initiate_ability" }, "filter": { "lists": ["Wizard"], "exactLevels": [0] } },
+            { "type": "spell_grant", "key": "magic_initiate_wizard_spell", "name": "Magic Initiate (Wizard) Spell", "destination": "always_prepared", "choose": 1, "countsAgainstLimit": false, "sourceKey": "magic-initiate-wizard", "sourceName": "Magic Initiate (Wizard)", "ability": { "choiceKey": "magic_initiate_ability" }, "filter": { "lists": ["Wizard"], "exactLevels": [1] }, "freeCast": { "uses": 1, "recovery": "long_rest" } }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "choice",
+      "key": "magic_initiate_ability",
+      "name": "Magic Initiate Spellcasting Ability",
+      "choose": 1,
+      "options": [{ "name": "Intelligence" }, { "name": "Wisdom" }, { "name": "Charisma" }]
+    }
+  ],
   "repeatable": true
 }

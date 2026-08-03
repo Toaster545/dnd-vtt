@@ -1,0 +1,63 @@
+{
+  "index": "steel-wind-strike",
+  "name": "Steel Wind Strike",
+  "level": 5,
+  "school": "Conjuration",
+  "casting_time": "1 action",
+  "range": "30 feet",
+  "components": [
+    "S",
+    "M"
+  ],
+  "material": "a Melee weapon worth 1+ SP",
+  "material_cost_cp": 10,
+  "duration": "Instantaneous",
+  "ritual": false,
+  "concentration": false,
+  "classes": [
+    "Ranger",
+    "Wizard"
+  ],
+  "subclasses": [
+    {
+      "class": "Cleric",
+      "subclass": "War Domain"
+    }
+  ],
+  "species": [],
+  "backgrounds": [],
+  "feats": [],
+  "other_options": [],
+  "mechanics": {
+    "spell_attacks": [
+      "melee"
+    ],
+    "saving_throws": [],
+    "ability_checks": [],
+    "damage_types": [
+      "force"
+    ],
+    "conditions": [],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [
+      "MT"
+    ],
+    "misc_tags": [
+      "SGT",
+      "TP"
+    ]
+  },
+  "description": "Choose up to five creatures you can see within range and make a melee spell attack against each. A hit deals 6d10 Force damage. After the attacks, teleport to an unoccupied space you can see within 5 feet of one target.",
+  "source": {
+    "book": "Player's Handbook",
+    "edition": 2024,
+    "code": "XPHB",
+    "page": 320,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

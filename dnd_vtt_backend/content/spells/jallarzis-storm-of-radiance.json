@@ -1,0 +1,65 @@
+{
+  "index": "jallarzis-storm-of-radiance",
+  "name": "Jallarzi's Storm of Radiance",
+  "level": 5,
+  "school": "Evocation",
+  "casting_time": "1 action",
+  "range": "120 feet",
+  "components": [
+    "V",
+    "S",
+    "M"
+  ],
+  "material": "a pinch of phosphorus",
+  "duration": "Concentration, up to 1 minute",
+  "ritual": false,
+  "concentration": true,
+  "classes": [
+    "Warlock",
+    "Wizard"
+  ],
+  "subclasses": [
+    {
+      "class": "Wizard",
+      "subclass": "Evoker"
+    }
+  ],
+  "species": [],
+  "backgrounds": [],
+  "feats": [],
+  "other_options": [],
+  "mechanics": {
+    "saving_throws": [
+      "constitution"
+    ],
+    "ability_checks": [],
+    "damage_types": [
+      "radiant",
+      "thunder"
+    ],
+    "conditions": [
+      "blinded",
+      "deafened"
+    ],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [
+      "Y"
+    ],
+    "misc_tags": [
+      "SGT"
+    ]
+  },
+  "description": "Create a 10-foot-radius, 40-foot-high storm Cylinder. Creatures inside are Blinded and Deafened and can\u0027t cast spells with Verbal components. When the storm appears, or when a creature first enters or ends a turn there, it makes a Constitution save and takes 2d10 Radiant plus 2d10 Thunder damage on a failure, or half on a success, once per turn. **Higher-Level Slots.** Each damage type increases by 1d10 per slot level above 5.",
+  "source": {
+    "book": "Player's Handbook",
+    "edition": 2024,
+    "code": "XPHB",
+    "page": 289,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

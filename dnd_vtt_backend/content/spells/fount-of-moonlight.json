@@ -1,0 +1,63 @@
+{
+  "index": "fount-of-moonlight",
+  "name": "Fount of Moonlight",
+  "level": 4,
+  "school": "Evocation",
+  "casting_time": "1 action",
+  "range": "Self",
+  "components": [
+    "V",
+    "S"
+  ],
+  "duration": "Concentration, up to 10 minutes",
+  "ritual": false,
+  "concentration": true,
+  "classes": [
+    "Bard",
+    "Druid"
+  ],
+  "subclasses": [
+    {
+      "class": "Druid",
+      "subclass": "Circle of the Moon"
+    }
+  ],
+  "species": [],
+  "backgrounds": [],
+  "feats": [],
+  "other_options": [],
+  "mechanics": {
+    "saving_throws": [
+      "constitution"
+    ],
+    "ability_checks": [],
+    "damage_types": [
+      "radiant"
+    ],
+    "conditions": [
+      "blinded"
+    ],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [
+      "radiant"
+    ],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [],
+    "misc_tags": [
+      "AAD",
+      "LGT",
+      "SGT"
+    ]
+  },
+  "description": "Moonlight surrounds you, shedding Bright Light for 20 feet and Dim Light for another 20. You gain Resistance to Radiant damage, and your melee hits deal 2d6 extra Radiant damage. After a visible creature within 60 feet damages you, you can use a Reaction to force a Constitution save; on a failure, it is Blinded until the end of your next turn.",
+  "source": {
+    "book": "Player's Handbook",
+    "edition": 2024,
+    "code": "XPHB",
+    "page": 277,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

@@ -35,7 +35,15 @@ function simpleGrantComplete(grant: TraitGrant, choices: Choices): boolean {
   return picked(choices, grant.key) >= grant.choose;
 }
 
-export function isRaceSelectionComplete(selection: RaceCompletionSource | null): boolean {
+function featGrantsComplete(feat: DndFeat | undefined, parentKey: string, choices: Choices): boolean {
+  if (!feat) return false;
+  return (feat.grants ?? []).every(grant => {
+    if (grant.type !== 'choice' && grant.type !== 'skill_choice') return true;
+    return picked(choices, `${parentKey}:feat:${grant.key}`) >= grant.choose;
+  });
+}
+
+export function isRaceSelectionComplete(selection: RaceCompletionSource | null, feats: DndFeat[] = []): boolean {
   if (!selection) return false;
   const { race, subrace, traits } = selection;
   if (race.subraces.length > 0 && !subrace) return false;
@@ -43,7 +51,12 @@ export function isRaceSelectionComplete(selection: RaceCompletionSource | null):
   if (picked(traits, 'languages') < 2) return false;
 
   const grants = [...(race.grants ?? []), ...(subrace?.grants ?? [])];
-  return grants.every(grant => simpleGrantComplete(grant, traits));
+  return grants.every(grant => {
+    if (!simpleGrantComplete(grant, traits)) return false;
+    if (grant.type !== 'feat_pick') return true;
+    return (traits[grant.key] ?? []).every(index =>
+      featGrantsComplete(feats.find(feat => feat.index === index), grant.key, traits));
+  });
 }
 
 function classGrantComplete(
@@ -62,15 +75,19 @@ function classGrantComplete(
       return picked(entry.traits, grant.key) >=
         resolveProgressiveChoiceLimit(grant.choose, grant.chooseByLevel, entry.level);
     case 'weapon_mastery':
-    case 'feat_pick':
       return picked(entry.traits, grant.key) >= grant.choose;
+    case 'feat_pick':
+      return picked(entry.traits, grant.key) >= grant.choose
+        && (entry.traits[grant.key] ?? []).every(index =>
+          featGrantsComplete(feats.find(feat => feat.index === index), grant.key, entry.traits));
     case 'ability_choice': {
       const featIndex = grant.allowFeat ? entry.traits[`${grant.key}:feat`]?.[0] : undefined;
       if (!featIndex) return picked(entry.traits, grant.key) >= grant.points;
       const feat = feats.find(candidate => candidate.index === featIndex);
       if (!feat) return false;
       const needsAbility = (feat.abilityIncrease?.abilities.length ?? 0) > 1;
-      return !needsAbility || picked(entry.traits, `${grant.key}:feat_ability`) >= 1;
+      return (!needsAbility || picked(entry.traits, `${grant.key}:feat_ability`) >= 1)
+        && featGrantsComplete(feat, grant.key, entry.traits);
     }
     default:
       return true;

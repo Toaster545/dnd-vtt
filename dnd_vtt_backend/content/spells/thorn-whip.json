@@ -1,0 +1,76 @@
+{
+  "index": "thorn-whip",
+  "name": "Thorn Whip",
+  "level": 0,
+  "school": "Transmutation",
+  "casting_time": "1 action",
+  "range": "30 feet",
+  "components": [
+    "V",
+    "S",
+    "M"
+  ],
+  "material": "the stem of a plant with thorns",
+  "duration": "Instantaneous",
+  "ritual": false,
+  "concentration": false,
+  "classes": [
+    "Druid"
+  ],
+  "subclasses": [
+    {
+      "class": "Bard",
+      "subclass": "College of Lore"
+    }
+  ],
+  "species": [],
+  "backgrounds": [],
+  "feats": [
+    "Druidic Warrior",
+    "Magic Initiate"
+  ],
+  "other_options": [
+    "Pact of the Tome"
+  ],
+  "mechanics": {
+    "spell_attacks": [
+      "melee"
+    ],
+    "saving_throws": [],
+    "ability_checks": [],
+    "damage_types": [
+      "piercing"
+    ],
+    "conditions": [],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [
+      "ST"
+    ],
+    "misc_tags": [
+      "FMV",
+      "SCL"
+    ],
+    "scaling": {
+      "label": "Piercing damage",
+      "values": {
+        "1": "1d6",
+        "5": "2d6",
+        "11": "3d6",
+        "17": "4d6"
+      }
+    }
+  },
+  "description": "Make a melee spell attack against a creature within 30 feet. On a hit, it takes 1d6 Piercing damage, and you can pull a Large or smaller target up to 10 feet toward you. **Cantrip Upgrade.** Damage becomes 2d6 at level 5, 3d6 at level 11, and 4d6 at level 17.",
+  "source": {
+    "book": "Player's Handbook",
+    "edition": 2024,
+    "code": "XPHB",
+    "page": 333,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}
