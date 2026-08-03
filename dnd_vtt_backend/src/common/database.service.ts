@@ -73,6 +73,7 @@ export class DatabaseService implements OnModuleInit {
     if (version < 14) await this.applyV14();
     if (version < 15) await this.applyV15();
     if (version < 16) await this.applyV16();
+    if (version < 17) await this.applyV17();
   }
 
   // ── V1: initial schema (explicit columns on characters) ─────────────────────
@@ -498,6 +499,42 @@ export class DatabaseService implements OnModuleInit {
     await this.db.execute(`PRAGMA user_version = 16`);
     this.logger.log(
       'Applied schema migration v16 (campaign last-visited tracking)',
+    );
+  }
+
+  // ── V17: DM-authored custom content (monsters, items, spells), one library per creating
+  // user, reusable across every campaign they DM. `data` holds the full content-shape payload
+  // (same shape as the static SRD JSON files), with `data.index` always `custom:<id>`.
+  private async applyV17() {
+    const createTable = (name: string) => `
+      CREATE TABLE ${name} (
+        id TEXT PRIMARY KEY,
+        created_by TEXT NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
+        name TEXT NOT NULL,
+        data TEXT NOT NULL DEFAULT '{}',
+        created_at TEXT NOT NULL DEFAULT (datetime('now')),
+        updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+      )
+    `;
+
+    await this.db.execute(createTable('custom_monsters'));
+    await this.db.execute(
+      `CREATE INDEX idx_custom_monsters_created_by ON custom_monsters(created_by)`,
+    );
+
+    await this.db.execute(createTable('custom_items'));
+    await this.db.execute(
+      `CREATE INDEX idx_custom_items_created_by ON custom_items(created_by)`,
+    );
+
+    await this.db.execute(createTable('custom_spells'));
+    await this.db.execute(
+      `CREATE INDEX idx_custom_spells_created_by ON custom_spells(created_by)`,
+    );
+
+    await this.db.execute(`PRAGMA user_version = 17`);
+    this.logger.log(
+      'Applied schema migration v17 (custom monsters/items/spells libraries)',
     );
   }
 }

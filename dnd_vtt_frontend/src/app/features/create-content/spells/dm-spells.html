@@ -1,0 +1,74 @@
+@if (showForm()) {
+  <app-spell-form class="flex flex-col flex-1 min-h-0"
+    [spell]="editingSpell()" [duplicateFrom]="duplicatingSpell()" (saved)="onSaved()" (cancelled)="onCancelled()" />
+} @else {
+  <div class="flex-1 overflow-auto p-6">
+    <div class="flex items-center mb-5 gap-3">
+      <h2 class="font-brand text-lg text-parchment m-0 flex-1">Spells</h2>
+      <input class="field-input w-56" [ngModel]="search()" (ngModelChange)="onSearchChange($event)" placeholder="Search spells…" name="search" />
+      <button class="btn-primary" (click)="openCreate()">
+        <mat-icon>add</mat-icon> New Spell
+      </button>
+    </div>
+
+    @if (loading()) {
+      <div class="flex items-center justify-center py-10">
+        <span class="spinner-lg"></span>
+      </div>
+    } @else {
+      <h3 class="text-xs font-semibold text-gold uppercase tracking-wide mb-2">Your Homebrew</h3>
+      @if (filteredSpells().length === 0) {
+        <p class="text-slate text-sm mb-5">
+          {{ spells().length === 0 ? 'No spells yet. Create your first one above.' : 'No matches.' }}
+        </p>
+      } @else {
+        <ul class="divide-y divide-white/8 mb-5">
+          @for (s of filteredSpells(); track s.index) {
+            <li class="flex items-center p-3 gap-3 cursor-pointer hover:bg-white/5" (click)="openEdit(s)">
+              <div class="flex-1 min-w-0">
+                <p class="text-parchment font-medium truncate m-0">{{ s.name }}</p>
+                <p class="text-slate text-xs m-0 mt-0.5">{{ s.level === 0 ? 'Cantrip' : 'Level ' + s.level }} · {{ s.school }}</p>
+              </div>
+              <div class="flex items-center gap-1.5">
+                <span class="text-xs text-slate border border-white/10 rounded px-2 py-0.5">{{ s.classes.join(', ') || 'No classes' }}</span>
+                <button class="btn-icon" type="button" (click)="openDuplicate(s, $event)" title="Duplicate">
+                  <mat-icon class="text-base">content_copy</mat-icon>
+                </button>
+                <button class="btn-icon" type="button" (click)="onDelete(s, $event)" title="Delete">
+                  <mat-icon class="text-base">delete</mat-icon>
+                </button>
+              </div>
+            </li>
+          }
+        </ul>
+      }
+
+      <button class="flex items-center gap-1.5 w-full text-left mb-2" type="button" (click)="officialExpanded.set(!officialExpanded())">
+        <mat-icon class="text-base text-slate">{{ officialExpanded() ? 'expand_more' : 'chevron_right' }}</mat-icon>
+        <h3 class="text-xs font-semibold text-slate uppercase tracking-wide m-0">Official (SRD) · {{ filteredOfficial().length }}</h3>
+      </button>
+      @if (officialExpanded()) {
+        @if (filteredOfficial().length === 0) {
+          <p class="text-slate text-sm">No matches.</p>
+        } @else {
+          <ul class="divide-y divide-white/8">
+            @for (s of filteredOfficial(); track s.index) {
+              <li class="flex items-center p-3 gap-3">
+                <div class="flex-1 min-w-0">
+                  <p class="text-parchment font-medium truncate m-0">{{ s.name }}</p>
+                  <p class="text-slate text-xs m-0 mt-0.5">{{ s.level === 0 ? 'Cantrip' : 'Level ' + s.level }} · {{ s.school }}</p>
+                </div>
+                <div class="flex items-center gap-1.5">
+                  <span class="text-xs text-slate border border-white/10 rounded px-2 py-0.5">{{ s.classes.join(', ') || 'No classes' }}</span>
+                  <button class="btn-icon" type="button" (click)="openDuplicate(s, $event)" title="Duplicate as homebrew">
+                    <mat-icon class="text-base">content_copy</mat-icon>
+                  </button>
+                </div>
+              </li>
+            }
+          </ul>
+        }
+      }
+    }
+  </div>
+}

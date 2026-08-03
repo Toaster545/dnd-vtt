@@ -7,7 +7,6 @@ export interface Encounter {
   monsters: string[];
   character_ids: string[];
   status: 'draft' | 'active' | 'ended';
-  join_code?: string | null;
   summary?: string;
   visible_to_players?: boolean;
   // Whose turn it currently is on the encounter's map, and which round of combat that's in — null

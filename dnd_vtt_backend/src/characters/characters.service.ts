@@ -343,7 +343,7 @@ export class CharactersService {
       const spellIndex = this.requiredString(body.spellIndex, 'spellIndex');
       const sourceKey = this.requiredString(body.sourceKey, 'sourceKey');
       const method = this.requiredString(body.method, 'method');
-      const spell = this.content.getSpell(spellIndex) as Record<
+      const spell = (await this.content.getSpell(spellIndex)) as Record<
         string,
         unknown
       >;

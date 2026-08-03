@@ -12,7 +12,7 @@ import { portraitDataUri, randomPortraitSeed } from '../../../core/utils/avatar'
 import { resolveSpellcasting, type SpellSelectionRequirement } from '../../../core/utils/spellcasting';
 import { CharacterService } from '../../../core/services/character.service';
 import { CharacterStatsService } from '../../../core/services/character-stats.service';
-import { Character, Ability, ABILITIES, defaultCharacter, abilityModifier } from '../../../core/models/character.model';
+import { Character, Ability, ABILITIES, ScoreMethod, POINT_BUY_MIN, defaultCharacter, abilityModifier } from '../../../core/models/character.model';
 import { PortraitPickerDialogComponent } from '../../../shared/portrait-picker-dialog/portrait-picker-dialog';
 import { RaceStepComponent, Subrace, RaceChoice } from './steps/race-step/race-step';
 import { ClassStepComponent, ClassEntry } from './steps/class-step/class-step';
@@ -56,9 +56,10 @@ export class CharacterWizardComponent implements OnInit, OnDestroy {
   private statsService     = inject(CharacterStatsService);
   private dialog           = inject(MatDialog);
 
-  readonly character = input<Character | null>(null);
-  readonly saved     = output<void>();
-  readonly cancelled = output<void>();
+  readonly character  = input<Character | null>(null);
+  readonly saved      = output<void>();
+  readonly cancelled  = output<void>();
+  readonly viewSheet  = output<string>();
 
   readonly steps = STEPS;
 
@@ -102,6 +103,7 @@ export class CharacterWizardComponent implements OnInit, OnDestroy {
     strength: null, dexterity: null, constitution: null,
     intelligence: null, wisdom: null, charisma: null,
   });
+  scoreMethod = signal<ScoreMethod>('standard');
 
   characterName = signal('');
   portraitSeed  = signal(randomPortraitSeed());
@@ -254,7 +256,7 @@ export class CharacterWizardComponent implements OnInit, OnDestroy {
     !isRaceSelectionComplete(this.raceSelection(), this.feats()) || this.raceHasSkillConflict(),
     !areClassSelectionsComplete(this.selectedClasses(), this.feats()) || this.classHasSkillConflict(),
     !isBackgroundSelectionComplete(this.backgroundSelection(), this.feats()) || this.backgroundHasSkillConflict(),
-    !areAbilityAssignmentsComplete(this.assignments()),
+    !areAbilityAssignmentsComplete(this.assignments(), this.scoreMethod()),
     !areStartingEquipmentChoicesComplete(
       this.primaryClass(),
       this.selectedBackground(),
@@ -475,6 +477,8 @@ export class CharacterWizardComponent implements OnInit, OnDestroy {
     }
     const spells = [...spellEntries.values()];
     const hp = this.maxHP();
+    const previousMaxHp = existing?.max_hp;
+    const hpGain = previousMaxHp !== undefined ? Math.max(0, hp - previousMaxHp) : 0;
 
     return {
       ...(existing ?? defaultCharacter()),
@@ -498,7 +502,7 @@ export class CharacterWizardComponent implements OnInit, OnDestroy {
       max_hp: hp,
       // Clamped to the (possibly just-lowered) max — e.g. leveling a character down elsewhere
       // shrinks max_hp on the next wizard save, and current_hp shouldn't end up exceeding it.
-      current_hp: Math.min(this.currentHp() ?? hp, hp),
+      current_hp: Math.min((this.currentHp() ?? hp) + hpGain, hp),
       armor_class: this.armorClass(),
       speed: this.speed(),
       skills: this.skillsRecord(),
@@ -570,12 +574,13 @@ export class CharacterWizardComponent implements OnInit, OnDestroy {
 
   async ngOnInit() {
 
+    const campaignId = this.character()?.campaign_id ?? undefined;
     const [races, classes, backgrounds, items, spells, feats] = await Promise.all([
       this.content.getRaces(),
       this.content.getClasses(),
       this.content.getBackgrounds(),
-      this.content.getItems(),
-      this.content.getSpells(),
+      this.content.getItems(campaignId),
+      this.content.getSpells(campaignId),
       this.content.getFeats(),
     ]);
     this.races.set(races);
@@ -625,6 +630,9 @@ export class CharacterWizardComponent implements OnInit, OnDestroy {
       const scores = existing.ability_scores as Record<Ability, number>;
       if (scores) {
         const bonus = this.bonusScores();
+        // The original method isn't stored, and reconstructed base values won't generally
+        // fit the standard array or a point-buy budget — Manual Entry accepts any value.
+        this.scoreMethod.set('manual');
         this.assignments.set(ABILITIES.reduce((acc, ab) => ({
           ...acc, [ab]: scores[ab] ? scores[ab] - bonus[ab] : null,
         }), {} as Record<Ability, number | null>));
@@ -675,6 +683,17 @@ export class CharacterWizardComponent implements OnInit, OnDestroy {
 
   assign(ab: Ability, value: number | null) {
     this.assignments.update(curr => ({ ...curr, [ab]: value }));
+  }
+
+  // Switching methods clears the prior picks since they don't carry meaning across methods
+  // (e.g. a standard-array 15 isn't a valid point-buy value) — point buy starts every ability
+  // at its floor (8) rather than blank, since that's the natural starting point for +/- controls.
+  setScoreMethod(method: ScoreMethod) {
+    this.scoreMethod.set(method);
+    const initial = method === 'pointbuy' ? POINT_BUY_MIN : null;
+    this.assignments.set(ABILITIES.reduce(
+      (acc, ab) => ({ ...acc, [ab]: initial }), {} as Record<Ability, number | null>,
+    ));
   }
 
   toggleItem(index: string) {
@@ -752,6 +771,7 @@ export class CharacterWizardComponent implements OnInit, OnDestroy {
 
   async finish() { await this.save(); this.saved.emit(); }
   async cancelAndSave() { await this.save(); this.cancelled.emit(); }
+  async openSheet() { await this.save(); const id = this.characterId(); if (id) this.viewSheet.emit(id); }
   prev() { this.activeStep.update(s => Math.max(0, s - 1)); }
   next() { this.activeStep.update(s => Math.min(STEPS.length - 1, s + 1)); }
 }

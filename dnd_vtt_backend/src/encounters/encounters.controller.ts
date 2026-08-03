@@ -32,13 +32,6 @@ export class EncountersController {
     return this.encounters.findAllForUser(user.id);
   }
 
-  // Any authenticated user (not just the owning DM) can resolve a join code — a player owns no
-  // encounters, so this is the one deliberate exception to the dm_id-scoped reads below.
-  @Get('join/:code')
-  findByJoinCode(@Param('code') code: string) {
-    return this.encounters.findByJoinCode(code);
-  }
-
   @Get(':id')
   findOne(@Param('id') id: string, @CurrentUser() user: RequestUser) {
     return this.encounters.findOne(id, user.id);

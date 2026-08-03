@@ -1,0 +1,31 @@
+<button class="btn-ghost text-sm mb-3" (click)="back.emit()">
+  <mat-icon class="text-base">arrow_back</mat-icon> Roster
+</button>
+
+<div class="flex items-center gap-2 mb-1">
+  <img [src]="portraitUri()" class="w-9 h-9 rounded-full border border-white/10 flex-shrink-0" alt="" />
+  <h3 class="font-brand text-lg text-parchment m-0 flex-1 truncate">{{ character().name }}</h3>
+  <input type="color" class="h-7 w-7 rounded cursor-pointer border border-white/10 bg-transparent flex-shrink-0"
+    [ngModel]="token().color" (ngModelChange)="colorChanged.emit($event)"
+    name="characterTokenColor" matTooltip="Token color" />
+</div>
+<p class="text-coal text-xs mb-3">
+  Level {{ character().level }} {{ character().race }} {{ classLabel() }}
+</p>
+
+<div class="flex items-center gap-3 mb-4">
+  <div class="text-center">
+    <div class="text-[10px] text-slate uppercase tracking-widest">AC</div>
+    <div class="font-brand text-xl text-gold">{{ character().armor_class }}</div>
+  </div>
+  <div class="text-center flex-1">
+    <div class="text-[10px] text-slate uppercase tracking-widest">HP</div>
+    <div class="font-brand text-xl text-parchment">{{ character().current_hp }} / {{ character().max_hp }}</div>
+  </div>
+</div>
+
+<p class="text-xs text-slate mb-4">Speed {{ character().speed }} ft.</p>
+
+<button class="btn-primary w-full text-sm" (click)="openSheet.emit()">
+  Open Character Sheet
+</button>

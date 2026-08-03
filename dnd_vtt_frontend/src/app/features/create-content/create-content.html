@@ -1,9 +1,9 @@
 <div class="flex flex-1 min-h-0 overflow-hidden">
   <!-- Sidebar nav -->
   <nav class="w-48 border-r border-white/10 py-2 flex-shrink-0">
-    <a class="nav-item" [routerLink]="['/home/campaigns/manage', campaignId]">
+    <a class="nav-item" [routerLink]="['/home']">
       <mat-icon class="text-lg">arrow_back</mat-icon>
-      Back to campaign
+      Back to home
     </a>
     <button class="nav-item" [class.active]="activeSection() === 'monsters'" (click)="activeSection.set('monsters')">
       <mat-icon class="text-lg">pets</mat-icon>
@@ -23,18 +23,8 @@
   <div class="flex-1 overflow-hidden flex flex-col">
     @switch (activeSection()) {
       @case ('monsters') { <app-dm-monsters class="flex flex-col flex-1 min-h-0" /> }
-      @case ('equipement') {
-        <div class="flex-1 overflow-auto p-6">
-          <h2 class="font-brand text-lg text-parchment mb-3">Equipement</h2>
-          <p class="text-slate text-sm">Equipement coming soon.</p>
-        </div>
-      }
-      @case ('spells') {
-        <div class="flex-1 overflow-auto p-6">
-          <h2 class="font-brand text-lg text-parchment mb-3">Spells</h2>
-          <p class="text-slate text-sm">Spells coming soon.</p>
-        </div>
-      }
+      @case ('equipement') { <app-dm-items class="flex flex-col flex-1 min-h-0" /> }
+      @case ('spells') { <app-dm-spells class="flex flex-col flex-1 min-h-0" /> }
     }
   </div>
 </div>

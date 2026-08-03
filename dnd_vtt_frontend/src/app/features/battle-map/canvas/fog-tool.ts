@@ -6,7 +6,7 @@ interface Cell { col: number; row: number; }
 // Cell the pointer is currently over, floored like token placement — fog tools target whole
 // cells, not free positions like the measure tool does.
 export function cellUnderPointer(stage: Konva.Stage, cellSize: number): Cell | null {
-  const pos = stage.getPointerPosition();
+  const pos = stage.getRelativePointerPosition();
   if (!pos || !cellSize) return null;
   return { col: Math.floor(pos.x / cellSize), row: Math.floor(pos.y / cellSize) };
 }

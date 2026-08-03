@@ -19,12 +19,14 @@ import { EncounterToolbarComponent } from './components/encounter-toolbar/encoun
 import { RosterPanelComponent } from './components/roster-panel/roster-panel';
 import { CustomTokenEditorComponent } from './components/custom-token-editor/custom-token-editor';
 import { MonsterTokenDetailComponent } from './components/monster-token-detail/monster-token-detail';
+import { CharacterTokenDetailComponent } from './components/character-token-detail/character-token-detail';
 
 @Component({
   selector: 'app-dm-encounter-play',
   imports: [
     FormsModule, MatIconModule, MatTooltipModule, BattleMapComponent, CharacterPlaySheetComponent, ResizeHandleDirective,
     EncounterToolbarComponent, RosterPanelComponent, CustomTokenEditorComponent, MonsterTokenDetailComponent,
+    CharacterTokenDetailComponent,
   ],
   templateUrl: './dm-encounter-play.html',
   host: { class: 'flex flex-col flex-1 min-h-0 overflow-hidden' },
@@ -97,6 +99,7 @@ export class DmEncounterPlayComponent implements OnInit, OnDestroy {
 
   viewingCharacter = signal<Character | null>(null);
   viewingCharacterToken = signal<MapToken | null>(null);
+  viewingCharacterSummary = signal<{ token: MapToken; character: Character } | null>(null);
   viewingMonsterToken = signal<{ token: MapToken; monster: DndMonster } | null>(null);
   hpAdjustAmount = signal(0);
   viewingCustomToken = signal<MapToken | null>(null);
@@ -132,7 +135,7 @@ export class DmEncounterPlayComponent implements OnInit, OnDestroy {
   async ngOnInit() {
     const [encounter, monsters, characters] = await Promise.all([
       this.encounterService.getById(this.encounterId),
-      this.content.getMonsters(),
+      this.content.getMonsters(this.campaignId),
       this.characterService.getMyCharacters(),
     ]);
     this.monsters.set(monsters);
@@ -150,6 +153,14 @@ export class DmEncounterPlayComponent implements OnInit, OnDestroy {
 
   backToSession() {
     void this.router.navigate(['/home/campaigns/manage', this.campaignId, 'sessions', this.sessionId]);
+  }
+
+  // Pops the read-only player view out into its own browser window/tab so the DM can drag it onto
+  // a second monitor for the table to watch — see PlayerViewComponent.
+  openPlayerView() {
+    const encounter = this.selected();
+    if (!encounter?.id) return;
+    window.open(`/encounters/${encounter.id}/player-view`, '_blank', 'noopener,noreferrer');
   }
 
   ngOnDestroy() {
@@ -359,10 +370,7 @@ export class DmEncounterPlayComponent implements OnInit, OnDestroy {
   onTokenClicked(token: MapToken) {
     if (token.character_id) {
       const character = this.characterFor(token.character_id);
-      if (character) {
-        this.viewingCharacter.set(character);
-        this.viewingCharacterToken.set(token);
-      }
+      if (character) this.viewingCharacterSummary.set({ token, character });
       return;
     }
     if (token.monster_index) {
@@ -371,6 +379,25 @@ export class DmEncounterPlayComponent implements OnInit, OnDestroy {
       return;
     }
     this.viewingCustomToken.set(token);
+  }
+
+  closeCharacterSummary() {
+    this.viewingCharacterSummary.set(null);
+  }
+
+  async setCharacterSummaryTokenColor(color: string) {
+    const current = this.viewingCharacterSummary();
+    if (!current) return;
+    const updated = await this.mapService.upsertToken({ ...current.token, color });
+    this.viewingCharacterSummary.set({ ...current, token: updated });
+  }
+
+  openCharacterSheetFromSummary() {
+    const current = this.viewingCharacterSummary();
+    if (!current) return;
+    this.viewingCharacter.set(current.character);
+    this.viewingCharacterToken.set(current.token);
+    this.viewingCharacterSummary.set(null);
   }
 
   closeCustomTokenView() {

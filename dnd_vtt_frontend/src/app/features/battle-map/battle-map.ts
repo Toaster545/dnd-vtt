@@ -4,6 +4,8 @@ import {
 import { ActivatedRoute } from '@angular/router';
 import Konva from 'konva';
 import { Subscription } from 'rxjs';
+import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { BattleMapService } from '../../core/services/battle-map.service';
 import { AuthService } from '../../core/services/auth.service';
 import { MapToken, BattleMap, MapFog, PlacingEntity, MeasureShape, FogToolName } from '../../core/models/campaign.model';
@@ -17,6 +19,7 @@ import { MeasurementTool, FEET_PER_SQUARE } from './canvas/measurement-tool';
 import { FogTool } from './canvas/fog-tool';
 import { PortraitCache } from './canvas/portrait-cache';
 import { StagePointerTools } from './canvas/stage-pointer-tools';
+import { StageView } from './canvas/stage-view';
 import { MapToolbarComponent } from './components/map-toolbar/map-toolbar';
 import { TurnOrderPanelComponent } from './components/turn-order-panel/turn-order-panel';
 import { MainLayoutComponent } from '../../shared/layout/main-layout/main-layout';
@@ -26,7 +29,7 @@ import { PageHeaderComponent } from '../../shared/layout/page-header/page-header
   selector: 'app-battle-map',
   imports: [
     ResizeHandleDirective, MapToolbarComponent, TurnOrderPanelComponent,
-    MainLayoutComponent, PageHeaderComponent,
+    MainLayoutComponent, PageHeaderComponent, MatIconModule, MatTooltipModule,
   ],
   templateUrl: './battle-map.html',
   styleUrl: './battle-map.scss',
@@ -87,6 +90,22 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
     this.activeFogTool.set(null);
   }
 
+  zoomIn() {
+    this.stageView?.zoomIn();
+  }
+
+  zoomOut() {
+    this.stageView?.zoomOut();
+  }
+
+  rotateView(deg: number) {
+    this.stageView?.rotateBy(deg);
+  }
+
+  resetView() {
+    this.stageView?.resetView();
+  }
+
   async toggleFogEnabled() {
     await this.mapService.setFogEnabled(this.mapId, !this.fog().enabled);
   }
@@ -136,6 +155,7 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
   private measurementTool = new MeasurementTool();
   private fogTool = new FogTool((cells, revealed) => this.mapService.paintFog(this.mapId, cells, revealed));
   private pointerTools?: StagePointerTools;
+  private stageView?: StageView;
   private mapId!: string;
   private routeMapId: string | null = null;
   private viewReady = signal(false);
@@ -175,6 +195,11 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
 
     effect(() => {
       this.currentTurnTokenChanged.emit(this.currentTurnToken());
+    });
+
+    effect(() => {
+      const canPan = !this.activeFogTool() && !this.activeMeasureTool();
+      this.stageView?.setPannable(canPan);
     });
   }
 
@@ -262,12 +287,14 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.stage.on('click tap', (e) => {
       if (e.target === this.konvaImg && this.controlsMap() && !this.activeMeasureTool() && !this.activeFogTool()) {
-        const pos = this.stage!.getPointerPosition()!;
+        const pos = this.stage!.getRelativePointerPosition()!;
         const col = Math.floor(pos.x / this.cellSize);
         const row = Math.floor(pos.y / this.cellSize);
         this.addTokenAt(col, row);
       }
     });
+
+    this.stageView = new StageView(this.stage, () => !this.activeFogTool() && !this.activeMeasureTool());
 
     this.pointerTools = new StagePointerTools(this.stage, this.fogTool, this.measurementTool, {
       cellSize: () => this.cellSize,

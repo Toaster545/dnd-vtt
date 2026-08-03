@@ -9,7 +9,7 @@ export const FEET_PER_SQUARE = 5;
 // intersections. Kept in grid units (not raw pixels) since Measurement/drawMeasurement already
 // work in col/row and multiply back by cellSize.
 export function pointerToGridPos(stage: Konva.Stage, cellSize: number): { col: number; row: number } {
-  const pos = stage.getPointerPosition()!;
+  const pos = stage.getRelativePointerPosition()!;
   return {
     col: pos.x / cellSize,
     row: pos.y / cellSize,

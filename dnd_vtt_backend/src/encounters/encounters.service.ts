@@ -7,7 +7,6 @@ import {
 import { randomUUID } from 'crypto';
 import { DatabaseService } from '../common/database.service';
 import { CreateEncounterDto } from './dto/create-encounter.dto';
-import { generateJoinCode } from '../common/join-code.util';
 import { EncounterPresenceGateway } from './encounter-presence.gateway';
 import type { RequestUser } from '../common/current-user.decorator';
 
@@ -141,25 +140,14 @@ export class EncountersService {
 
   async start(id: string, dmId: string) {
     await this.findOne(id, dmId);
-    let code: string;
-    do {
-      code = generateJoinCode();
-    } while (
-      (
-        await this.db.execute(
-          `SELECT id FROM encounters WHERE join_code = ? AND status = 'active'`,
-          [code],
-        )
-      ).rows.length > 0
-    );
 
     // Starting play necessarily reveals the encounter — players need to see it to join it. The DM
     // can still re-hide it afterward via setVisibility. Also resets any turn tracking left over
     // from a previous run of this encounter, so play always starts from "no active turn, round 1".
     await this.db.execute(
-      `UPDATE encounters SET status='active', join_code=?, visible_to_players=1,
+      `UPDATE encounters SET status='active', visible_to_players=1,
        current_turn_token_id=NULL, round_number=1, updated_at=? WHERE id=?`,
-      [code, new Date().toISOString(), id],
+      [new Date().toISOString(), id],
     );
     const updated = await this.findOne(id, dmId);
 
@@ -194,22 +182,10 @@ export class EncountersService {
   async stop(id: string, dmId: string) {
     await this.findOne(id, dmId);
     await this.db.execute(
-      `UPDATE encounters SET status='ended', join_code=NULL, updated_at=? WHERE id=?`,
+      `UPDATE encounters SET status='ended', updated_at=? WHERE id=?`,
       [new Date().toISOString(), id],
     );
     return this.findOne(id, dmId);
-  }
-
-  // No dmId/ownership check — this is the one lookup a player (who owns no encounters) needs to
-  // be able to do, resolving a code to the encounter regardless of who's asking.
-  async findByJoinCode(code: string) {
-    const result = await this.db.execute(
-      `SELECT * FROM encounters WHERE join_code = ? AND status = 'active'`,
-      [code.trim().toUpperCase()],
-    );
-    const row = result.rows[0];
-    if (!row) throw new NotFoundException('No active encounter with that code');
-    return this.deserialize(row);
   }
 
   private deserialize(row: Record<string, unknown>) {
@@ -232,7 +208,6 @@ export class EncountersService {
       monsters,
       character_ids: this.db.parseJson(row.character_ids as string, []),
       status: row.status,
-      join_code: row.join_code,
       summary: row.summary ?? '',
       visible_to_players: !!row.visible_to_players,
       current_turn_token_id: row.current_turn_token_id ?? null,

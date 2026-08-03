@@ -5,7 +5,6 @@ import { firstValueFrom } from 'rxjs';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatDialog } from '@angular/material/dialog';
-import { AuthService } from '../../../../core/services/auth.service';
 import { CampaignService } from '../../../../core/services/campaign.service';
 import { SessionService } from '../../../../core/services/session.service';
 import { CharacterService } from '../../../../core/services/character.service';
@@ -52,7 +51,6 @@ export class DmCampaignHubComponent implements OnInit {
   private confirm          = inject(ConfirmService);
   private dialog           = inject(MatDialog);
   private recentActivity   = inject(RecentActivityService);
-  auth = inject(AuthService);
 
   campaignId = this.route.snapshot.paramMap.get('campaignId')!;
 
@@ -63,6 +61,9 @@ export class DmCampaignHubComponent implements OnInit {
   editingCharacter = signal<Character | null>(null);
   showWizard       = signal(false);
   sheetCharacter   = signal<Character | null>(null);
+  // Set only when the sheet was opened via the wizard's "View Sheet" button (as opposed to
+  // viewMember) — routes closeCharacterSheet() back into the wizard instead of the roster.
+  sheetFromWizard  = signal(false);
 
   showForm = signal(false);
   saving   = signal(false);
@@ -104,7 +105,7 @@ export class DmCampaignHubComponent implements OnInit {
           this.content.getRace(toContentIndex(char.race)).catch(() => null),
           this.content.getBackground(toContentIndex(char.background)).catch(() => null),
           this.content.getFeats(),
-          this.content.getItems(),
+          this.content.getItems(this.campaignId),
         ]);
         const primary = char.classes?.[0];
         const classesForFeats: ClassChoiceSource[] = classData ? [{
@@ -251,9 +252,16 @@ export class DmCampaignHubComponent implements OnInit {
     this.showWizard.set(false);
   }
 
+  async onViewCharacterSheet(id: string) {
+    this.showWizard.set(false);
+    this.sheetFromWizard.set(true);
+    this.sheetCharacter.set(await this.characterService.getCharacter(id));
+  }
+
   // Quick view/edit of HP, rest, equipment, and spell prep — the same play sheet a player uses on
   // their own character, opened here read/write for the DM without going through the full wizard.
   async viewMember(member: CampaignMember) {
+    this.sheetFromWizard.set(false);
     this.sheetCharacter.set(await this.characterService.getCharacter(member.character_id));
   }
 
@@ -268,6 +276,15 @@ export class DmCampaignHubComponent implements OnInit {
   }
 
   closeCharacterSheet() {
+    if (this.sheetFromWizard()) {
+      // sheetCharacter is already the latest saved copy (kept current by onCharacterSheetSaved),
+      // so reuse it as the wizard's starting point instead of re-fetching.
+      this.editingCharacter.set(this.sheetCharacter());
+      this.sheetFromWizard.set(false);
+      this.sheetCharacter.set(null);
+      this.showWizard.set(true);
+      return;
+    }
     this.sheetCharacter.set(null);
   }
 

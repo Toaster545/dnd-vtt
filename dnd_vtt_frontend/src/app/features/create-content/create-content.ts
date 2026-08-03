@@ -1,21 +1,20 @@
-import { Component, inject, signal } from '@angular/core';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { Component, signal } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { DmMonstersComponent } from './monsters/dm-monsters';
+import { DmItemsComponent } from './items/dm-items';
+import { DmSpellsComponent } from './spells/dm-spells';
 
 type CreateSection = 'monsters' | 'equipement' | 'spells';
 
-// Routed at campaigns/manage/:campaignId/create (see app.routes.ts), reachable from the campaign
-// hub's admin-only "Create" link — monster/equipment/spell authoring still writes to the one
-// shared library, not campaign-scoped data, despite living under a specific campaign's URL.
+// Routed at home/content-library (see app.routes.ts) — a personal library owned by the current
+// user, reusable across every campaign they DM, not scoped to any single campaign.
 @Component({
   selector: 'app-create-content',
-  imports: [RouterLink, MatIconModule, DmMonstersComponent],
+  imports: [RouterLink, MatIconModule, DmMonstersComponent, DmItemsComponent, DmSpellsComponent],
   templateUrl: './create-content.html',
   styleUrl: './create-content.scss',
 })
 export class CreateContentComponent {
-  private route = inject(ActivatedRoute);
-  campaignId = this.route.snapshot.paramMap.get('campaignId')!;
   activeSection = signal<CreateSection>('monsters');
 }

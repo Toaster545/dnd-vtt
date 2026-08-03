@@ -5,10 +5,11 @@
     [character]="editingCharacter()"
     (saved)="onCharacterSaved()"
     (cancelled)="onCharacterCancelled()"
+    (viewSheet)="onViewCharacterSheet($event)"
   />
 } @else if (sheetCharacter(); as sc) {
   <app-character-play-sheet class="flex-1 min-h-0" [character]="sc" (saved)="onCharacterSheetSaved($event)">
-    <button sheetHeaderLeading class="btn-icon" (click)="closeCharacterSheet()" matTooltip="Back to campaign">
+    <button sheetHeaderLeading class="btn-icon" (click)="closeCharacterSheet()" [matTooltip]="sheetFromWizard() ? 'Back to editor' : 'Back to campaign'">
       <mat-icon>arrow_back</mat-icon>
     </button>
   </app-character-play-sheet>
@@ -43,12 +44,10 @@
         <mat-icon class="text-base">map</mat-icon>
         Maps
       </a>
-      @if (auth.isAdmin()) {
-        <a class="btn-outline text-sm gap-1.5" [routerLink]="['/home/campaigns/manage', campaignId, 'create']" matTooltip="Author monsters, equipment, and spells">
-          <mat-icon class="text-base">auto_stories</mat-icon>
-          Create
-        </a>
-      }
+      <a class="btn-outline text-sm gap-1.5" [routerLink]="['/home/content-library']" matTooltip="Author monsters, equipment, and spells for your campaigns">
+        <mat-icon class="text-base">auto_stories</mat-icon>
+        Create
+      </a>
     </div>
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">

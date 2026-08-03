@@ -40,6 +40,11 @@ export const routes: Routes = [
     loadComponent: () => import('./features/battle-map/battle-map').then(m => m.BattleMapComponent),
   },
   {
+    path: 'encounters/:encounterId/player-view',
+    canActivate: [authGuard, staleSessionGuard],
+    loadComponent: () => import('./features/player-view/player-view').then(m => m.PlayerViewComponent),
+  },
+  {
     path: 'home',
     canActivate: [authGuard, staleSessionGuard],
     loadComponent: () => import('./features/shell/shell').then(m => m.ShellComponent),
@@ -81,9 +86,10 @@ export const routes: Routes = [
         path: 'campaigns/manage/:campaignId',
         loadComponent: () =>
           import('./features/dm/dm-campaigns/dm-campaign-hub/dm-campaign-hub').then(m => m.DmCampaignHubComponent),
+        data: { bgOverlay: 0.9 },
       },
       {
-        path: 'campaigns/manage/:campaignId/create',
+        path: 'content-library',
         loadComponent: () =>
           import('./features/create-content/create-content').then(m => m.CreateContentComponent),
       },
@@ -93,6 +99,7 @@ export const routes: Routes = [
           import('./features/dm/dm-campaigns/dm-campaign-maps/dm-campaign-maps').then(
             m => m.DmCampaignMapsComponent,
           ),
+          data: { bgOverlay: 0.9 },
       },
       {
         path: 'campaigns/manage/:campaignId/sessions/:sessionId',

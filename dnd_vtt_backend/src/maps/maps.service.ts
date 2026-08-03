@@ -100,7 +100,9 @@ export class MapsService {
       token.monster_index &&
       initiative == null
     ) {
-      initiative = this.rollMonsterInitiative(token.monster_index as string);
+      initiative = await this.rollMonsterInitiative(
+        token.monster_index as string,
+      );
     }
 
     await this.db.execute(
@@ -154,7 +156,9 @@ export class MapsService {
         'Only monster tokens can reroll initiative',
       );
 
-    const initiative = this.rollMonsterInitiative(row.monster_index as string);
+    const initiative = await this.rollMonsterInitiative(
+      row.monster_index as string,
+    );
     await this.db.execute('UPDATE map_tokens SET initiative = ? WHERE id = ?', [
       initiative,
       tokenId,
@@ -252,9 +256,11 @@ export class MapsService {
     await this.assertCampaignAccess(map.campaign_id as string, user);
   }
 
-  private rollMonsterInitiative(monsterIndex: string): number | null {
+  private async rollMonsterInitiative(
+    monsterIndex: string,
+  ): Promise<number | null> {
     try {
-      const monster = this.content.getMonster(monsterIndex) as {
+      const monster = (await this.content.getMonster(monsterIndex)) as {
         ability_scores?: { dexterity?: number };
         initiative_bonus?: number;
       };

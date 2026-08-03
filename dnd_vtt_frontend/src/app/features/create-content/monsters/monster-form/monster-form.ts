@@ -11,10 +11,6 @@ interface SkillBonus { skill: string; bonus: number; }
 
 const SIZES = ['Tiny', 'Small', 'Medium', 'Large', 'Huge', 'Gargantuan'];
 
-function slugify(s: string): string {
-  return s.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
-}
-
 function tagsFrom(raw: string): string[] {
   return raw.split(',').map(s => s.trim()).filter(Boolean);
 }
@@ -28,6 +24,9 @@ export class MonsterFormComponent implements OnInit {
   private monsterService = inject(MonsterService);
 
   readonly monster   = input<DndMonster | null>(null);
+  // Set instead of `monster` to seed the form from an existing monster (official or homebrew)
+  // without editing it — save() still creates a brand-new custom entry.
+  readonly duplicateFrom = input<DndMonster | null>(null);
   readonly saved     = output<DndMonster>();
   readonly cancelled = output<void>();
 
@@ -39,8 +38,9 @@ export class MonsterFormComponent implements OnInit {
   error  = signal<string | null>(null);
 
   name = signal('');
-  index = signal('');
-  private indexEdited = false;
+  // The server assigns a permanent `custom:<uuid>` index on create; we just carry it through on
+  // edit so MonsterService.updateMonster knows which row to hit.
+  private originalIndex: string | null = null;
 
   size      = signal('Medium');
   type      = signal('');
@@ -91,17 +91,17 @@ export class MonsterFormComponent implements OnInit {
   description = signal('');
 
   readonly canSave = computed(() =>
-    !!(this.name().trim() && this.index().trim() && this.type().trim() && this.alignment().trim() &&
+    !!(this.name().trim() && this.type().trim() && this.alignment().trim() &&
        this.hitDice().trim() && this.challengeRating().trim() &&
        this.actions().some(a => a.name.trim())));
 
   ngOnInit() {
-    const m = this.monster();
+    const editing = this.monster();
+    const m = editing ?? this.duplicateFrom();
     if (!m) return;
-    this.indexEdited = true; // index is locked while editing — don't re-slugify it from name edits
+    if (editing) this.originalIndex = editing.index;
 
-    this.name.set(m.name);
-    this.index.set(m.index);
+    this.name.set(editing ? m.name : `Copy of ${m.name}`);
     this.size.set(m.size);
     this.type.set(m.type);
     this.alignment.set(m.alignment);
@@ -153,11 +153,6 @@ export class MonsterFormComponent implements OnInit {
 
   onNameChange(v: string) {
     this.name.set(v);
-    if (!this.indexEdited) this.index.set(slugify(v));
-  }
-  onIndexChange(v: string) {
-    this.indexEdited = true;
-    this.index.set(slugify(v));
   }
 
   private updateAt<T>(list: WritableSignal<T[]>, i: number, patch: Partial<T>) {
@@ -178,7 +173,7 @@ export class MonsterFormComponent implements OnInit {
   addSkill() { this.addTo(this.skills, { skill: '', bonus: 0 }); }
   removeSkill(i: number) { this.removeAt(this.skills, i); }
 
-  private buildMonster(): DndMonster {
+  private buildMonster(): Omit<DndMonster, 'index'> {
     const speed: DndMonster['speed'] = {};
     if (this.speedWalk() != null) speed.walk = this.speedWalk()!;
     if (this.speedFly() != null) speed.fly = this.speedFly()!;
@@ -197,8 +192,7 @@ export class MonsterFormComponent implements OnInit {
     const skills = Object.fromEntries(
       this.skills().filter(s => s.skill.trim()).map(s => [s.skill.trim(), s.bonus]));
 
-    const monster: DndMonster = {
-      index: this.index(),
+    const monster: Omit<DndMonster, 'index'> = {
       name: this.name().trim(),
       size: this.size(),
       type: this.type().trim(),
@@ -243,7 +237,7 @@ export class MonsterFormComponent implements OnInit {
     try {
       const built = this.buildMonster();
       const saved = this.isEdit()
-        ? await this.monsterService.updateMonster(built)
+        ? await this.monsterService.updateMonster({ ...built, index: this.originalIndex! })
         : await this.monsterService.createMonster(built);
       this.saved.emit(saved);
     } catch (e) {

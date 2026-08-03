@@ -144,12 +144,12 @@ export class CharacterPlaySheetComponent {
     return this.actionsService.compute(classes, char.resource_uses ?? {}, char.ability_scores);
   });
 
-  // The four Actions-tab groups, in display order: weapon/spell attacks (below), then
-  // trackable class features split by their action economy — "Other Actions" (activation
-  // 'action'/'reaction') alongside the static reference lists below, then Bonus Actions, then
-  // Special ("free" activation — resources like Action Surge that don't cost any action-economy
-  // slot at all).
-  otherResourceActions = computed(() => this.actions().filter(a => a.activation === 'action' || a.activation === 'reaction'));
+  // The Actions-tab groups, in display order: weapon/spell attacks (below), then trackable
+  // class features split by their action economy — Bonus Actions, Special ("free" activation
+  // — resources like Action Surge that don't cost any action-economy slot at all), Reactions,
+  // then plain Actions (activation 'action') alongside the static reference lists below.
+  actionResourceActions   = computed(() => this.actions().filter(a => a.activation === 'action'));
+  reactionResourceActions = computed(() => this.actions().filter(a => a.activation === 'reaction'));
   bonusActions         = computed(() => this.actions().filter(a => a.activation === 'bonus_action'));
   specialActions       = computed(() => this.actions().filter(a => a.activation === 'free'));
 
@@ -164,6 +164,11 @@ export class CharacterPlaySheetComponent {
     { source: 'Action', name: 'Ready', detail: 'Choose a trigger and an action or movement to take in response to it, using your reaction when it occurs.' },
     { source: 'Action', name: 'Search', detail: 'Make a Wisdom (Perception) or Intelligence (Investigation) check to find something.' },
     { source: 'Action', name: 'Use an Object', detail: 'Interact with a second object, or use an object that requires your action.' },
+  ];
+
+  // The standard PHB reaction every character can always take.
+  readonly universalReactions: DisplayFeature[] = [
+    { source: 'Reaction', name: 'Opportunity Attack', detail: 'When a hostile creature you can see moves out of your reach, you can use your reaction to make one melee attack against it.' },
   ];
 
   // Weapons the character has actually chosen mastery for (across every weapon_mastery grant on
@@ -281,6 +286,8 @@ export class CharacterPlaySheetComponent {
   });
   bonusActionSpells = computed(() => this.castableSpells()
     .filter(row => this.castingTimeKind(row.spell) === 'bonus_action'));
+  reactionSpells = computed(() => this.castableSpells()
+    .filter(row => this.castingTimeKind(row.spell) === 'reaction'));
   bonusActionFeatures = computed<DisplayFeature[]>(() => {
     const out: DisplayFeature[] = [];
     const hasPactBlade = this.resolvedClasses().some(rc =>
@@ -418,11 +425,12 @@ export class CharacterPlaySheetComponent {
       ? char.classes
       : (char.class ? [{ name: char.class, level: char.level, subclass: char.subclass, choices: {} as Record<string, string[]> }] : []);
 
+    const campaignId = char.campaign_id ?? undefined;
     const [race, bg, items, spells, feats] = await Promise.all([
       char.race ? this.content.getRace(toIndex(char.race)).catch(() => null) : Promise.resolve(null),
       char.background ? this.content.getBackground(toIndex(char.background)).catch(() => null) : Promise.resolve(null),
-      this.content.getItems(),
-      this.content.getSpells(),
+      this.content.getItems(campaignId),
+      this.content.getSpells(campaignId),
       this.content.getFeats(),
     ]);
 

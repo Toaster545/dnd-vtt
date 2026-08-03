@@ -1,0 +1,74 @@
+@if (showForm()) {
+  <app-item-form class="flex flex-col flex-1 min-h-0"
+    [item]="editingItem()" [duplicateFrom]="duplicatingItem()" (saved)="onSaved()" (cancelled)="onCancelled()" />
+} @else {
+  <div class="flex-1 overflow-auto p-6">
+    <div class="flex items-center mb-5 gap-3">
+      <h2 class="font-brand text-lg text-parchment m-0 flex-1">Equipement</h2>
+      <input class="field-input w-56" [ngModel]="search()" (ngModelChange)="onSearchChange($event)" placeholder="Search items…" name="search" />
+      <button class="btn-primary" (click)="openCreate()">
+        <mat-icon>add</mat-icon> New Item
+      </button>
+    </div>
+
+    @if (loading()) {
+      <div class="flex items-center justify-center py-10">
+        <span class="spinner-lg"></span>
+      </div>
+    } @else {
+      <h3 class="text-xs font-semibold text-gold uppercase tracking-wide mb-2">Your Homebrew</h3>
+      @if (filteredItems().length === 0) {
+        <p class="text-slate text-sm mb-5">
+          {{ items().length === 0 ? 'No items yet. Create your first one above.' : 'No matches.' }}
+        </p>
+      } @else {
+        <ul class="divide-y divide-white/8 mb-5">
+          @for (i of filteredItems(); track i.index) {
+            <li class="flex items-center p-3 gap-3 cursor-pointer hover:bg-white/5" (click)="openEdit(i)">
+              <div class="flex-1 min-w-0">
+                <p class="text-parchment font-medium truncate m-0">{{ i.name }}</p>
+                <p class="text-slate text-xs m-0 mt-0.5">{{ i.type }} · {{ i.category }}</p>
+              </div>
+              <div class="flex items-center gap-1.5">
+                <span class="text-xs text-slate border border-white/10 rounded px-2 py-0.5">{{ i.cost }}</span>
+                <button class="btn-icon" type="button" (click)="openDuplicate(i, $event)" title="Duplicate">
+                  <mat-icon class="text-base">content_copy</mat-icon>
+                </button>
+                <button class="btn-icon" type="button" (click)="onDelete(i, $event)" title="Delete">
+                  <mat-icon class="text-base">delete</mat-icon>
+                </button>
+              </div>
+            </li>
+          }
+        </ul>
+      }
+
+      <button class="flex items-center gap-1.5 w-full text-left mb-2" type="button" (click)="officialExpanded.set(!officialExpanded())">
+        <mat-icon class="text-base text-slate">{{ officialExpanded() ? 'expand_more' : 'chevron_right' }}</mat-icon>
+        <h3 class="text-xs font-semibold text-slate uppercase tracking-wide m-0">Official (SRD) · {{ filteredOfficial().length }}</h3>
+      </button>
+      @if (officialExpanded()) {
+        @if (filteredOfficial().length === 0) {
+          <p class="text-slate text-sm">No matches.</p>
+        } @else {
+          <ul class="divide-y divide-white/8">
+            @for (i of filteredOfficial(); track i.index) {
+              <li class="flex items-center p-3 gap-3">
+                <div class="flex-1 min-w-0">
+                  <p class="text-parchment font-medium truncate m-0">{{ i.name }}</p>
+                  <p class="text-slate text-xs m-0 mt-0.5">{{ i.type }} · {{ i.category }}</p>
+                </div>
+                <div class="flex items-center gap-1.5">
+                  <span class="text-xs text-slate border border-white/10 rounded px-2 py-0.5">{{ i.cost }}</span>
+                  <button class="btn-icon" type="button" (click)="openDuplicate(i, $event)" title="Duplicate as homebrew">
+                    <mat-icon class="text-base">content_copy</mat-icon>
+                  </button>
+                </div>
+              </li>
+            }
+          </ul>
+        }
+      }
+    }
+  </div>
+}

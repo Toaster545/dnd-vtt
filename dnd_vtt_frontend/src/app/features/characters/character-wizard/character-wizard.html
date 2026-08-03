@@ -27,6 +27,12 @@
         <label class="field-label">Level</label>
         <input class="field-input py-1 text-sm" type="number" [ngModel]="level()" (ngModelChange)="level.set(+$event)" min="1" max="20" name="level" />
       </div>
+      @if (isEditing()) {
+        <button class="btn-outline text-sm gap-1.5 ml-auto" (click)="openSheet()" matTooltip="View the play sheet for this character">
+          <mat-icon class="text-base">badge</mat-icon>
+          View Sheet
+        </button>
+      }
     </div>
 
     <!-- Step tabs -->
@@ -93,7 +99,9 @@
           [assignments]="assignments()"
           [bonusScores]="bonusScores()"
           [finalScores]="finalScores()"
+          [method]="scoreMethod()"
           (assignmentChanged)="assign($event.ability, $event.value)"
+          (methodChanged)="setScoreMethod($event)"
         />
       }
       @if (activeStep() === 4) {

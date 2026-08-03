@@ -153,6 +153,10 @@ export class DashboardComponent implements OnInit {
     void this.router.navigate(['/home/campaigns']);
   }
 
+  goToContentLibrary() {
+    void this.router.navigate(['/home/content-library']);
+  }
+
   goToSettings() {
     void this.router.navigate(['/settings']);
   }

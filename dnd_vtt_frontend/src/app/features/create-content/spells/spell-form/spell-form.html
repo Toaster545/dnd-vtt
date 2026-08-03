@@ -1,0 +1,207 @@
+<div class="flex flex-col flex-1 min-h-0">
+  <div class="flex items-center gap-3 flex-shrink-0 px-6 py-4 border-b border-white/10 bg-surface sticky top-0 z-10">
+    <h2 class="font-brand text-lg text-parchment m-0 flex-1">{{ isEdit() ? 'Edit Spell' : 'New Spell' }}</h2>
+    <button class="btn-ghost text-sm" type="button" (click)="cancelled.emit()">Cancel</button>
+    <button class="btn-primary text-sm" type="button" [disabled]="!canSave() || saving()" (click)="save()">
+      @if (saving()) { <span class="spinner-sm"></span> } @else { <mat-icon class="text-base">save</mat-icon> }
+      Save Spell
+    </button>
+  </div>
+
+  @if (error()) {
+    <p class="field-error px-6 pt-3 m-0">{{ error() }}</p>
+  }
+
+  <div class="flex-1 overflow-y-auto p-6">
+    <div class="grid grid-cols-1 xl:grid-cols-2 gap-5 items-start">
+
+      <div class="card card-body">
+        <h3 class="text-sm font-semibold text-gold uppercase tracking-wide mb-3">Identity</h3>
+        <div class="grid grid-cols-2 gap-3">
+          <div class="field col-span-2">
+            <label class="field-label">Name</label>
+            <input class="field-input" [ngModel]="name()" (ngModelChange)="name.set($event)" placeholder="e.g. Sunfire Bolt" name="name" />
+          </div>
+          <div class="field">
+            <label class="field-label">Level (0 = cantrip)</label>
+            <input class="field-input" type="number" min="0" max="9" [ngModel]="level()" (ngModelChange)="level.set(+$event)" name="level" />
+          </div>
+          <div class="field">
+            <label class="field-label">School</label>
+            <select class="field-input" [ngModel]="school()" (ngModelChange)="school.set($event)" name="school">
+              @for (s of schools; track s) { <option [value]="s">{{ s }}</option> }
+            </select>
+          </div>
+          <div class="field">
+            <label class="field-label">Casting Time</label>
+            <input class="field-input" [ngModel]="castingTime()" (ngModelChange)="castingTime.set($event)" placeholder="1 action" name="castingTime" />
+          </div>
+          <div class="field">
+            <label class="field-label">Range</label>
+            <input class="field-input" [ngModel]="range()" (ngModelChange)="range.set($event)" placeholder="60 feet" name="range" />
+          </div>
+          <div class="field col-span-2">
+            <label class="field-label">Duration</label>
+            <input class="field-input" [ngModel]="duration()" (ngModelChange)="duration.set($event)" placeholder="Instantaneous" name="duration" />
+          </div>
+          <div class="field">
+            <label class="flex items-center gap-2 text-sm text-parchment">
+              <input type="checkbox" [ngModel]="ritual()" (ngModelChange)="ritual.set($event)" name="ritual" />
+              Ritual
+            </label>
+          </div>
+          <div class="field">
+            <label class="flex items-center gap-2 text-sm text-parchment">
+              <input type="checkbox" [ngModel]="concentration()" (ngModelChange)="concentration.set($event)" name="concentration" />
+              Concentration
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <div class="card card-body">
+        <h3 class="text-sm font-semibold text-gold uppercase tracking-wide mb-3">Components</h3>
+        <div class="flex gap-4 mb-3">
+          <label class="flex items-center gap-2 text-sm text-parchment">
+            <input type="checkbox" [ngModel]="componentV()" (ngModelChange)="componentV.set($event)" name="componentV" /> V
+          </label>
+          <label class="flex items-center gap-2 text-sm text-parchment">
+            <input type="checkbox" [ngModel]="componentS()" (ngModelChange)="componentS.set($event)" name="componentS" /> S
+          </label>
+          <label class="flex items-center gap-2 text-sm text-parchment">
+            <input type="checkbox" [ngModel]="componentM()" (ngModelChange)="componentM.set($event)" name="componentM" /> M
+          </label>
+        </div>
+        @if (componentM()) {
+          <div class="grid grid-cols-2 gap-3">
+            <div class="field col-span-2">
+              <label class="field-label">Material</label>
+              <input class="field-input" [ngModel]="material()" (ngModelChange)="material.set($event)" placeholder="a pinch of sulfur" name="material" />
+            </div>
+            <div class="field">
+              <label class="field-label">Material Cost (cp)</label>
+              <input class="field-input" type="number" [ngModel]="materialCostCp()" (ngModelChange)="materialCostCp.set($event === '' ? null : +$event)" name="materialCostCp" />
+            </div>
+            <div class="field flex items-end">
+              <label class="flex items-center gap-2 text-sm text-parchment">
+                <input type="checkbox" [ngModel]="materialConsumed()" (ngModelChange)="materialConsumed.set($event)" name="materialConsumed" />
+                Consumed on cast
+              </label>
+            </div>
+          </div>
+        }
+      </div>
+
+      <div class="card card-body xl:col-span-2">
+        <h3 class="text-sm font-semibold text-gold uppercase tracking-wide mb-3">Who can learn it</h3>
+        <p class="text-slate text-xs mb-3">
+          Class names must match existing classes exactly (e.g. "Wizard") or the spell won't show up in that class's spell picker.
+        </p>
+        <div class="grid grid-cols-2 gap-3">
+          <div class="field col-span-2">
+            <label class="field-label">Classes</label>
+            <input class="field-input" [ngModel]="classes()" (ngModelChange)="classes.set($event)" placeholder="Wizard, Sorcerer" name="classes" />
+          </div>
+          <div class="field">
+            <label class="field-label">Species</label>
+            <input class="field-input" [ngModel]="species()" (ngModelChange)="species.set($event)" name="species" />
+          </div>
+          <div class="field">
+            <label class="field-label">Backgrounds</label>
+            <input class="field-input" [ngModel]="backgrounds()" (ngModelChange)="backgrounds.set($event)" name="backgrounds" />
+          </div>
+          <div class="field">
+            <label class="field-label">Feats</label>
+            <input class="field-input" [ngModel]="feats()" (ngModelChange)="feats.set($event)" name="feats" />
+          </div>
+          <div class="field">
+            <label class="field-label">Other Options</label>
+            <input class="field-input" [ngModel]="otherOptions()" (ngModelChange)="otherOptions.set($event)" name="otherOptions" />
+          </div>
+        </div>
+
+        <div class="flex items-center mt-4 mb-2 gap-2">
+          <h4 class="text-xs font-semibold text-gold uppercase tracking-wide flex-1 m-0">Subclasses</h4>
+          <button class="btn-icon" type="button" (click)="addSubclass()" title="Add subclass">
+            <mat-icon class="text-base">add</mat-icon>
+          </button>
+        </div>
+        @for (row of subclasses(); track $index) {
+          <div class="flex items-center gap-2 mb-2">
+            <input class="field-input flex-1" placeholder="Class" [ngModel]="row.class" (ngModelChange)="updateSubclass($index, { class: $event })" name="subclassClass{{ $index }}" />
+            <input class="field-input flex-1" placeholder="Subclass" [ngModel]="row.subclass" (ngModelChange)="updateSubclass($index, { subclass: $event })" name="subclassName{{ $index }}" />
+            <button class="btn-icon" type="button" (click)="removeSubclass($index)" title="Remove"><mat-icon class="text-base">close</mat-icon></button>
+          </div>
+        }
+      </div>
+
+      <div class="card card-body xl:col-span-2">
+        <div class="flex items-center gap-2 mb-3">
+          <h3 class="text-sm font-semibold text-gold uppercase tracking-wide flex-1 m-0">Advanced Mechanics</h3>
+          <button class="btn-ghost text-xs" type="button" (click)="showAdvanced.set(!showAdvanced())">
+            {{ showAdvanced() ? 'Hide' : 'Show' }}
+          </button>
+        </div>
+        @if (showAdvanced()) {
+          <div class="grid grid-cols-2 gap-3">
+            <div class="field">
+              <label class="field-label">Saving Throws</label>
+              <input class="field-input" [ngModel]="savingThrows()" (ngModelChange)="savingThrows.set($event)" placeholder="dexterity" name="savingThrows" />
+            </div>
+            <div class="field">
+              <label class="field-label">Damage Types</label>
+              <input class="field-input" [ngModel]="damageTypes()" (ngModelChange)="damageTypes.set($event)" placeholder="fire" name="damageTypes" />
+            </div>
+            <div class="field">
+              <label class="field-label">Area Tags</label>
+              <input class="field-input" [ngModel]="areaTags()" (ngModelChange)="areaTags.set($event)" placeholder="MT" name="areaTags" />
+            </div>
+            <div class="field">
+              <label class="field-label">Misc Tags</label>
+              <input class="field-input" [ngModel]="miscTags()" (ngModelChange)="miscTags.set($event)" placeholder="SCL" name="miscTags" />
+            </div>
+          </div>
+
+          <div class="flex items-center mt-4 mb-2 gap-2">
+            <h4 class="text-xs font-semibold text-gold uppercase tracking-wide flex-1 m-0">Damage Scaling</h4>
+            <button class="btn-icon" type="button" (click)="addScalingRow()" title="Add scaling row">
+              <mat-icon class="text-base">add</mat-icon>
+            </button>
+          </div>
+          <div class="field mb-2">
+            <label class="field-label">Scaling Label</label>
+            <input class="field-input" [ngModel]="scalingLabel()" (ngModelChange)="scalingLabel.set($event)" placeholder="e.g. Fire damage" name="scalingLabel" />
+          </div>
+          @for (row of scalingRows(); track $index) {
+            <div class="flex items-center gap-2 mb-2">
+              <input class="field-input w-24" placeholder="Level" [ngModel]="row.level" (ngModelChange)="updateScalingRow($index, { level: $event })" name="scalingLevel{{ $index }}" />
+              <input class="field-input flex-1" placeholder="Value (e.g. 2d6)" [ngModel]="row.value" (ngModelChange)="updateScalingRow($index, { value: $event })" name="scalingValue{{ $index }}" />
+              <button class="btn-icon" type="button" (click)="removeScalingRow($index)" title="Remove"><mat-icon class="text-base">close</mat-icon></button>
+            </div>
+          }
+        }
+      </div>
+
+      <div class="card card-body xl:col-span-2">
+        <h3 class="text-sm font-semibold text-gold uppercase tracking-wide mb-3">Description</h3>
+        <div class="grid grid-cols-1 gap-3">
+          <div class="field">
+            <label class="field-label">Description</label>
+            <textarea class="field-input min-h-24" [ngModel]="description()" (ngModelChange)="description.set($event)" name="description"></textarea>
+          </div>
+          <div class="field">
+            <label class="field-label">At Higher Levels</label>
+            <textarea class="field-input min-h-16" [ngModel]="higherLevels()" (ngModelChange)="higherLevels.set($event)" name="higherLevels"></textarea>
+          </div>
+          @if (level() === 0) {
+            <div class="field">
+              <label class="field-label">Cantrip Upgrade</label>
+              <textarea class="field-input min-h-16" [ngModel]="cantripUpgrade()" (ngModelChange)="cantripUpgrade.set($event)" name="cantripUpgrade"></textarea>
+            </div>
+          }
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>

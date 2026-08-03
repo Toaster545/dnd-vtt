@@ -44,4 +44,10 @@ export class CharacterWizardPageComponent implements OnInit {
   onCancelled() {
     void this.router.navigate(['/home']);
   }
+
+  onViewSheet(id: string) {
+    // Flagged so CharacterSheetPageComponent's back button returns here instead of to the
+    // characters list — see its `cameFromWizard`.
+    void this.router.navigate(['/home/characters', id], { queryParams: { from: 'wizard' } });
+  }
 }
