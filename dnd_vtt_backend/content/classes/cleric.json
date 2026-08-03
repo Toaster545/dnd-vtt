@@ -194,8 +194,10 @@
             },
             {
               "type": "feature",
+              "key": "invoke-duplicity",
               "name": "Invoke Duplicity",
-              "description": "As a Bonus Action, expend Channel Divinity to create a visual duplicate in an unoccupied space within 30 feet for 1 minute. You can cast spells as if in its space, gain Advantage against a creature distracted by both of you within 5 feet, and use a Bonus Action to move it up to 30 feet within 120 feet of you."
+              "description": "As a Bonus Action, expend Channel Divinity to create a visual duplicate in an unoccupied space within 30 feet for 1 minute. You can cast spells as if in its space, gain Advantage against a creature distracted by both of you within 5 feet, and use a Bonus Action to move it up to 30 feet within 120 feet of you.",
+              "action": { "activation": "bonus_action" }
             }
           ]
         },

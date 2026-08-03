@@ -366,8 +366,10 @@
           "grants": [
             {
               "type": "feature",
+              "key": "fast-hands",
               "name": "Fast Hands",
-              "description": "As a Bonus Action, make a Dexterity (Sleight of Hand) check to pick a lock, disarm a trap with Thieves' Tools, or pick a pocket; take the Utilize action; or take the Magic action to use a magic item that requires that action."
+              "description": "As a Bonus Action, make a Dexterity (Sleight of Hand) check to pick a lock, disarm a trap with Thieves' Tools, or pick a pocket; take the Utilize action; or take the Magic action to use a magic item that requires that action.",
+              "action": { "activation": "bonus_action" }
             },
             {
               "type": "feature",
@@ -582,8 +584,10 @@
       "grants": [
         {
           "type": "feature",
+          "key": "cunning-action",
           "name": "Cunning Action",
-          "description": "On your turn, take Dash, Disengage, or Hide as a Bonus Action."
+          "description": "On your turn, take Dash, Disengage, or Hide as a Bonus Action.",
+          "action": { "activation": "bonus_action" }
         }
       ]
     },
@@ -600,8 +604,10 @@
         },
         {
           "type": "feature",
+          "key": "steady-aim",
           "name": "Steady Aim",
-          "description": "If you haven't moved during the current turn, use a Bonus Action to gain Advantage on your next attack roll this turn. Your Speed becomes 0 until the turn ends."
+          "description": "If you haven't moved during the current turn, use a Bonus Action to gain Advantage on your next attack roll this turn. Your Speed becomes 0 until the turn ends.",
+          "action": { "activation": "bonus_action" }
         }
       ]
     },

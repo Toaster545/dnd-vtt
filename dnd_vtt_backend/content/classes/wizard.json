@@ -82,8 +82,10 @@
           "grants": [
             {
               "type": "feature",
+              "key": "spell-breaker",
               "name": "Spell Breaker",
-              "description": "Counterspell and Dispel Magic are always prepared and don't count against your prepared-spell limit. Cast Dispel Magic as a Bonus Action, and add your Proficiency Bonus to its ability check. When you cast either spell with a spell slot and fail to stop or end a spell, that spell slot isn't expended."
+              "description": "Counterspell and Dispel Magic are always prepared and don't count against your prepared-spell limit. Cast Dispel Magic as a Bonus Action, and add your Proficiency Bonus to its ability check. When you cast either spell with a spell slot and fail to stop or end a spell, that spell slot isn't expended.",
+              "action": { "activation": "bonus_action" }
             },
             { "type": "spell_grant", "key": "spell_breaker_spells", "name": "Spell Breaker", "destination": "always_prepared", "spells": ["counterspell", "dispel-magic"], "countsAgainstLimit": false }
           ]
@@ -277,8 +279,10 @@
             { "type": "spell_grant", "key": "illusion_savant_17", "name": "Illusion Savant", "destination": "spellbook", "choose": 1, "countsAgainstLimit": false, "classLevel": 17, "filter": { "lists": ["Wizard"], "schools": ["Illusion"], "exactLevels": [9] } },
             {
               "type": "feature",
+              "key": "improved-illusions",
               "name": "Improved Illusions",
-              "description": "Minor Illusion is always prepared; if you already know it, learn another Wizard cantrip. Cast Minor Illusion as a Bonus Action. Illusion spells you cast need no Verbal component, and if such a spell has a range of 10 feet or more, its range increases by 60 feet."
+              "description": "Minor Illusion is always prepared; if you already know it, learn another Wizard cantrip. Cast Minor Illusion as a Bonus Action. Illusion spells you cast need no Verbal component, and if such a spell has a range of 10 feet or more, its range increases by 60 feet.",
+              "action": { "activation": "bonus_action" }
             },
             { "type": "spell_grant", "key": "improved_illusions_minor_illusion", "name": "Improved Illusions", "destination": "always_prepared", "spells": ["minor-illusion"], "countsAgainstLimit": false }
           ]
@@ -332,8 +336,10 @@
           "grants": [
             {
               "type": "feature",
+              "key": "illusory-reality",
               "name": "Illusory Reality",
-              "description": "When you cast an Illusion spell with a spell slot, choose one inanimate, nonmagical object that is part of the illusion. As a Bonus Action while the spell lasts, make that object real for 1 minute. It can't deal damage or give any creature a condition."
+              "description": "When you cast an Illusion spell with a spell slot, choose one inanimate, nonmagical object that is part of the illusion. As a Bonus Action while the spell lasts, make that object real for 1 minute. It can't deal damage or give any creature a condition.",
+              "action": { "activation": "bonus_action" }
             }
           ]
         }

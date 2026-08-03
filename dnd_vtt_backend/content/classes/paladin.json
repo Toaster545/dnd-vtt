@@ -139,8 +139,10 @@
             { "type": "spell_grant", "key": "glory_spells_17", "name": "Oath of Glory Spells", "destination": "always_prepared", "spells": ["legend-lore", "yolandes-regal-presence"], "countsAgainstLimit": false, "classLevel": 17 },
             {
               "type": "feature",
+              "key": "peerless-athlete",
               "name": "Peerless Athlete",
-              "description": "As a Bonus Action, expend one Channel Divinity use. For 1 hour, you have Advantage on Strength (Athletics) and Dexterity (Acrobatics) checks, and your Long and High Jump distances increase by 10 feet, still costing movement."
+              "description": "As a Bonus Action, expend one Channel Divinity use. For 1 hour, you have Advantage on Strength (Athletics) and Dexterity (Acrobatics) checks, and your Long and High Jump distances increase by 10 feet, still costing movement.",
+              "action": { "activation": "bonus_action" }
             }
           ]
         },

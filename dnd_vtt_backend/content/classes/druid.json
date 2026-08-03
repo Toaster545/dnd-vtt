@@ -214,8 +214,10 @@
             { "type": "spell_grant", "key": "sea_spells_9", "name": "Circle of the Sea Spells", "destination": "always_prepared", "spells": ["conjure-elemental", "hold-monster"], "countsAgainstLimit": false, "classLevel": 9 },
             {
               "type": "feature",
+              "key": "wrath-of-the-sea",
               "name": "Wrath of the Sea",
-              "description": "As a Bonus Action, expend one Wild Shape use to create a 5-foot Emanation around yourself for 10 minutes. When it appears and as a Bonus Action on later turns, choose a visible creature in it. On a failed Constitution save against your spell save DC, it takes a number of d6 Cold damage equal to your Wisdom modifier (minimum 1d6) and, if Large or smaller, is pushed up to 15 feet away."
+              "description": "As a Bonus Action, expend one Wild Shape use to create a 5-foot Emanation around yourself for 10 minutes. When it appears and as a Bonus Action on later turns, choose a visible creature in it. On a failed Constitution save against your spell save DC, it takes a number of d6 Cold damage equal to your Wisdom modifier (minimum 1d6) and, if Large or smaller, is pushed up to 15 feet away.",
+              "action": { "activation": "bonus_action" }
             }
           ]
         },
@@ -280,8 +282,10 @@
             },
             {
               "type": "feature",
+              "key": "starry-form",
               "name": "Starry Form",
-              "description": "As a Bonus Action, expend one Wild Shape use to become luminous for 10 minutes. Each time you enter the form, choose a constellation. Archer makes a 60-foot ranged spell attack on activation and later Bonus Actions for 1d8 plus Wisdom Radiant damage. Chalice lets you or a creature within 30 feet regain 1d8 plus Wisdom Hit Points when one of your slotted spells heals. Dragon treats d20 rolls of 9 or lower as 10 on Intelligence or Wisdom checks and Constitution saves to maintain Concentration."
+              "description": "As a Bonus Action, expend one Wild Shape use to become luminous for 10 minutes. Each time you enter the form, choose a constellation. Archer makes a 60-foot ranged spell attack on activation and later Bonus Actions for 1d8 plus Wisdom Radiant damage. Chalice lets you or a creature within 30 feet regain 1d8 plus Wisdom Hit Points when one of your slotted spells heals. Dragon treats d20 rolls of 9 or lower as 10 on Intelligence or Wisdom checks and Constitution saves to maintain Concentration.",
+              "action": { "activation": "bonus_action" }
             },
             { "type": "spell_grant", "key": "star_map_spells", "name": "Star Map", "destination": "always_prepared", "spells": ["guidance", "guiding-bolt"], "countsAgainstLimit": false }
           ]

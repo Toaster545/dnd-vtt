@@ -191,7 +191,9 @@ export class DmCampaignHubComponent implements OnInit {
   async applyPartyLevel() {
     this.savingPartyLevel.set(true);
     try {
-      this.campaign.set(await this.campaignService.setPartyLevel(this.campaignId, this.partyLevel));
+      const campaign = await this.campaignService.setPartyLevel(this.campaignId, this.partyLevel);
+      this.campaign.set(campaign);
+      void this.loadMemberMaxHp(campaign.members);
     } finally {
       this.savingPartyLevel.set(false);
     }
@@ -205,7 +207,9 @@ export class DmCampaignHubComponent implements OnInit {
     if (!await this.confirm.confirm(`Level up the whole party to level ${next}?`, 'Level Party Up', 'Level Up')) return;
     this.savingPartyLevel.set(true);
     try {
-      this.campaign.set(await this.campaignService.setPartyLevel(this.campaignId, next));
+      const campaign = await this.campaignService.setPartyLevel(this.campaignId, next);
+      this.campaign.set(campaign);
+      void this.loadMemberMaxHp(campaign.members);
       this.partyLevel = next;
     } finally {
       this.savingPartyLevel.set(false);

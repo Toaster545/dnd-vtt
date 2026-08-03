@@ -183,8 +183,10 @@
           "grants": [
             {
               "type": "feature",
+              "key": "shadow-step",
               "name": "Shadow Step",
-              "description": "While entirely in Dim Light or Darkness, use a Bonus Action to teleport up to 60 feet to an unoccupied space you can see that is also in Dim Light or Darkness. You then have Advantage on the next melee attack you make before the end of the current turn."
+              "description": "While entirely in Dim Light or Darkness, use a Bonus Action to teleport up to 60 feet to an unoccupied space you can see that is also in Dim Light or Darkness. You then have Advantage on the next melee attack you make before the end of the current turn.",
+              "action": { "activation": "bonus_action" }
             }
           ]
         },
