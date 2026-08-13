@@ -1,0 +1,43 @@
+{
+  "index": "homunculus-servant",
+  "name": "Homunculus Servant",
+  "level": 2,
+  "school": "Conjuration",
+  "casting_time": "1 hour",
+  "range": "10 feet",
+  "components": ["V", "S", "M"],
+  "material": "a gem or crystal worth 100+ GP",
+  "material_cost_cp": 10000,
+  "material_consumed": false,
+  "duration": "Instantaneous",
+  "ritual": true,
+  "concentration": false,
+  "classes": ["Artificer"],
+  "subclasses": [],
+  "species": [],
+  "backgrounds": [],
+  "feats": [],
+  "other_options": [],
+  "mechanics": {
+    "saving_throws": [],
+    "ability_checks": [],
+    "damage_types": ["force"],
+    "conditions": [],
+    "affects_creature_types": ["construct"],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [],
+    "misc_tags": ["SGT", "SMN"]
+  },
+  "description": "Summon a Tiny Construct companion in an open space within range, replacing any homunculus you already have from this spell. It is an ally that shares your Initiative and acts immediately after you, obeying your commands without using your action and otherwise Dodging. It has a 20-foot Speed, a 30-foot Fly Speed, one-mile telepathy with you, a Force attack that uses your spell attack modifier, and a Reaction that delivers your touch-range spells. Its Hit Points, Hit Dice, checks, saves, and Force damage scale with the spell slot's level.",
+  "source": {
+    "book": "Eberron: Forge of the Artificer",
+    "edition": 2024,
+    "code": "EFA",
+    "page": 21,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

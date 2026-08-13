@@ -78,6 +78,10 @@ const spells = spellFiles.map(
   (file) =>
     JSON.parse(readFileSync(join(spellsRoot, file), 'utf8')) as SpellContent,
 );
+const phbSpells = spells.filter((spell) => spell.source.code === 'XPHB');
+const supplementalSpells = spells.filter(
+  (spell) => spell.source.code !== 'XPHB',
+);
 const manifest = JSON.parse(
   readFileSync(join(contentRoot, 'manifests', 'phb-2024-spells.json'), 'utf8'),
 ) as SpellManifest;
@@ -108,14 +112,33 @@ function contentFile(folder: string, index: string): Record<string, unknown> {
 
 describe("Player's Handbook 2024 spell content", () => {
   it('contains the exact 391-spell PHB catalog and manifest', () => {
-    expect(spells).toHaveLength(391);
+    expect(phbSpells).toHaveLength(391);
     expect(manifest.total).toBe(391);
     expect(manifest.spells).toHaveLength(391);
     expect(manifest.spells.map((spell) => spell.index).sort()).toEqual(
-      spells.map((spell) => spell.index).sort(),
+      phbSpells.map((spell) => spell.index).sort(),
     );
-    expect(new Set(spells.map((spell) => spell.index)).size).toBe(391);
-    expect(new Set(spells.map((spell) => spell.name)).size).toBe(391);
+    expect(new Set(spells.map((spell) => spell.index)).size).toBe(
+      spells.length,
+    );
+    expect(new Set(spells.map((spell) => spell.name)).size).toBe(spells.length);
+  });
+
+  it('includes the supplemental Artificer spell outside the PHB manifest', () => {
+    expect(supplementalSpells).toHaveLength(1);
+    expect(supplementalSpells[0]).toMatchObject({
+      index: 'homunculus-servant',
+      level: 2,
+      ritual: true,
+      classes: ['Artificer'],
+      source: {
+        book: 'Eberron: Forge of the Artificer',
+        edition: 2024,
+        code: 'EFA',
+        srd_5_2_1: false,
+        rules_text: 'reference-only',
+      },
+    });
   });
 
   it('encodes every PHB species and feat that automatically grants spells', () => {
@@ -155,6 +178,7 @@ describe("Player's Handbook 2024 spell content", () => {
       'sorcerer',
       'warlock',
       'wizard',
+      'artificer',
     ];
     for (const classIndex of classes) {
       expect(
@@ -202,7 +226,7 @@ describe("Player's Handbook 2024 spell content", () => {
     const counts = Object.fromEntries(
       Array.from({ length: 10 }, (_, level) => [
         String(level),
-        spells.filter((spell) => spell.level === level).length,
+        phbSpells.filter((spell) => spell.level === level).length,
       ]),
     );
     expect(counts).toEqual({
@@ -242,11 +266,9 @@ describe("Player's Handbook 2024 spell content", () => {
       expect(spell.duration).not.toBe('');
       expect(spell.components.length).toBeGreaterThan(0);
       expect(spell.classes.length).toBeGreaterThan(0);
-      expect(spell.source).toMatchObject({
-        book: "Player's Handbook",
-        edition: 2024,
-        code: 'XPHB',
-      });
+      expect(spell.source.edition).toBe(2024);
+      expect(spell.source.book).not.toBe('');
+      expect(spell.source.code).not.toBe('');
     }
   });
 
@@ -255,7 +277,7 @@ describe("Player's Handbook 2024 spell content", () => {
     expect(acidSplash).toMatchObject({
       level: 0,
       school: 'Evocation',
-      classes: ['Sorcerer', 'Wizard'],
+      classes: ['Artificer', 'Sorcerer', 'Wizard'],
       species: ['Elf'],
       feats: ['Magic Initiate'],
       other_options: ['Pact of the Tome'],
@@ -313,7 +335,7 @@ describe("Player's Handbook 2024 spell content", () => {
     );
     expect(compelledDuel?.description).toContain('Wisdom saving throw');
 
-    const referenceOnlySpells = spells.filter(
+    const referenceOnlySpells = phbSpells.filter(
       (spell) => spell.source.rules_text === 'reference-only',
     );
     expect(Object.keys(referenceOnlySummaries).sort()).toEqual(

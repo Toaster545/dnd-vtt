@@ -1,6 +1,7 @@
 # Spell content attribution
 
-This directory contains a catalog of the 391 spells listed in the 2024 _Player's Handbook_.
+This directory contains the 391 spells listed in the 2024 _Player's Handbook_, plus supplemental
+spells required by supported classes. Each spell's `source` object identifies its book.
 
 Rules text is included only where the spell is available in the **System Reference Document 5.2.1**. SRD 5.2.1 is copyright Wizards of the Coast LLC and is used under the [Creative Commons Attribution 4.0 International License](https://creativecommons.org/licenses/by/4.0/).
 
