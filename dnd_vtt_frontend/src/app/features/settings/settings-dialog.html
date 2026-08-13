@@ -1,15 +1,12 @@
-<app-main-layout>
-  <app-header
-    layoutHeader
-    (selectCharacters)="goToCharacters()"
-    (selectCampaigns)="goToCampaigns()"
-    (selectDashboard)="goToDashboard()"
-  />
+<div class="flex items-center justify-between px-6 pt-5 pb-1">
+  <h2 class="font-brand text-lg text-parchment m-0">Settings</h2>
+  <button class="btn-icon" mat-dialog-close matTooltip="Close">
+    <mat-icon>close</mat-icon>
+  </button>
+</div>
 
-  <div class="p-6 overflow-y-auto flex-1 min-h-0">
-    <div class="max-w-3xl mx-auto flex flex-col gap-5">
-
-      <h2 class="font-brand text-lg text-parchment m-0">Settings</h2>
+<mat-dialog-content class="!pt-3">
+  <div class="flex flex-col gap-5" style="width: 640px; max-width: 100%;">
 
       <div class="card">
         <div class="card-header border-b border-white/10">
@@ -199,6 +196,13 @@
         <mat-icon>logout</mat-icon> Sign out
       </button>
 
-    </div>
+      <p class="text-slate text-xs text-center">
+        This work includes material from the System Reference Document 5.2 ("SRD 5.2") by Wizards
+        of the Coast LLC, available at
+        <a class="text-gold/80 hover:text-gold" href="https://www.dndbeyond.com/srd" target="_blank" rel="noopener">dndbeyond.com/srd</a>.
+        The SRD 5.2 is licensed under the
+        <a class="text-gold/80 hover:text-gold" href="https://creativecommons.org/licenses/by/4.0/legalcode" target="_blank" rel="noopener">Creative Commons Attribution 4.0 International License</a>.
+      </p>
+
   </div>
-</app-main-layout>
+</mat-dialog-content>

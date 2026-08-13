@@ -25,11 +25,6 @@ export const routes: Routes = [
     data: { bgOverlay: 0.6 },
   },
   {
-    path: 'settings',
-    canActivate: [authGuard, staleSessionGuard],
-    loadComponent: () => import('./features/settings/settings').then(m => m.SettingsComponent),
-  },
-  {
     path: 'battle-map',
     canActivate: [authGuard, staleSessionGuard],
     loadComponent: () => import('./features/battle-map/battle-map').then(m => m.BattleMapComponent),
