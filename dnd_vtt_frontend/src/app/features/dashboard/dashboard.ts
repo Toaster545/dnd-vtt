@@ -1,5 +1,6 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
+import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { CharacterService } from '../../core/services/character.service';
@@ -12,6 +13,7 @@ import { Character } from '../../core/models/character.model';
 import { Campaign } from '../../core/models/campaign.model';
 import { MainLayoutComponent } from '../../shared/layout/main-layout/main-layout';
 import { AppHeaderComponent } from '../../shared/layout/app-header/app-header';
+import { SettingsDialogComponent } from '../settings/settings-dialog';
 
 type CampaignCopy = Character & { campaign_name: string; edit_unlocked: boolean };
 
@@ -39,6 +41,7 @@ export class DashboardComponent implements OnInit {
   private statsService     = inject(CharacterStatsService);
   private recentActivity   = inject(RecentActivityService);
   private router           = inject(Router);
+  private dialog           = inject(MatDialog);
 
   loading = signal(true);
   latestCharacter = signal<(Character & { campaign_name?: string }) | null>(null);
@@ -158,6 +161,6 @@ export class DashboardComponent implements OnInit {
   }
 
   goToSettings() {
-    void this.router.navigate(['/settings']);
+    this.dialog.open(SettingsDialogComponent, { width: '700px', maxWidth: '95vw', maxHeight: '85vh' });
   }
 }

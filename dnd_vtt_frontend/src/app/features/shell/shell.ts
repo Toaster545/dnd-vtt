@@ -1,6 +1,7 @@
 import { Component, inject, signal, OnInit, OnDestroy } from '@angular/core';
 import { Router, RouterOutlet, NavigationEnd } from '@angular/router';
 import { filter, Subscription } from 'rxjs';
+import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { AuthService } from '../../core/services/auth.service';
@@ -9,6 +10,7 @@ import { EncounterService } from '../../core/services/encounter.service';
 import { EncounterStartedEvent } from '../../core/models/encounter.model';
 import { MainLayoutComponent } from '../../shared/layout/main-layout/main-layout';
 import { AppHeaderComponent } from '../../shared/layout/app-header/app-header';
+import { SettingsDialogComponent } from '../settings/settings-dialog';
 
 type Tab = 'characters' | 'campaigns' | 'content-library';
 
@@ -27,6 +29,7 @@ export class ShellComponent implements OnInit, OnDestroy {
   private router           = inject(Router);
   private campaignService  = inject(CampaignService);
   private encounterService = inject(EncounterService);
+  private dialog           = inject(MatDialog);
   auth = inject(AuthService);
   activeTab = signal<Tab>('characters');
 
@@ -91,6 +94,6 @@ export class ShellComponent implements OnInit, OnDestroy {
   }
 
   goToSettings() {
-    void this.router.navigate(['/settings']);
+    this.dialog.open(SettingsDialogComponent, { width: '700px', maxWidth: '95vw', maxHeight: '85vh' });
   }
 }

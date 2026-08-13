@@ -1,6 +1,6 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
-import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { AuthService } from '../../core/services/auth.service';
@@ -11,8 +11,6 @@ import { UserAdminService } from '../../core/services/user-admin.service';
 import { UserProfile, UserRole } from '../../core/models/user.model';
 import { getErrorMessage } from '../../core/utils/error-message';
 import { ConfirmService } from '../../shared/confirm.service';
-import { MainLayoutComponent } from '../../shared/layout/main-layout/main-layout';
-import { AppHeaderComponent } from '../../shared/layout/app-header/app-header';
 
 interface UserEditForm {
   username: string;
@@ -21,16 +19,18 @@ interface UserEditForm {
   password: string;
 }
 
-// Very basic settings page: an account section every user sees, plus an admin-only section
-// gated on the same auth.isAdmin() signal adminGuard itself checks (see core/guards/admin.guard.ts)
-// rather than duplicating role logic — more admin-only settings should be added under that guard.
+// Settings, opened as a MatDialog overlay (see ShellComponent/DashboardComponent goToSettings())
+// rather than routed to, so it always floats on top of whatever page the user was on and closes
+// via the default backdrop-click behavior. An account section every user sees, plus an admin-only
+// section gated on the same auth.isAdmin() signal adminGuard itself checks
+// (see core/guards/admin.guard.ts) rather than duplicating role logic — more admin-only settings
+// should be added under that guard.
 @Component({
-  selector: 'app-settings',
-  imports: [FormsModule, MatIconModule, MatTooltipModule, MainLayoutComponent, AppHeaderComponent],
-  templateUrl: './settings.html',
+  selector: 'app-settings-dialog',
+  imports: [FormsModule, MatDialogModule, MatIconModule, MatTooltipModule],
+  templateUrl: './settings-dialog.html',
 })
-export class SettingsComponent implements OnInit {
-  private router = inject(Router);
+export class SettingsDialogComponent implements OnInit {
   private userAdmin = inject(UserAdminService);
   private confirm = inject(ConfirmService);
   auth = inject(AuthService);
@@ -108,18 +108,6 @@ export class SettingsComponent implements OnInit {
     } catch (e) {
       this.usersError.set(getErrorMessage(e));
     }
-  }
-
-  goToCharacters() {
-    void this.router.navigate(['/home']);
-  }
-
-  goToCampaigns() {
-    void this.router.navigate(['/home/campaigns']);
-  }
-
-  goToDashboard() {
-    void this.router.navigate(['/dashboard']);
   }
 
   formatDate(iso?: string): string {
