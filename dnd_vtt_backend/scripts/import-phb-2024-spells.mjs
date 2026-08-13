@@ -12,6 +12,92 @@ const SCHOOL_NAMES = {
   T: 'Transmutation',
 };
 
+// Eberron: Forge of the Artificer adds this class access to PHB spells. Keep
+// it here so regenerating the PHB records does not discard that access.
+const ARTIFICER_PHB_SPELLS = new Set([
+  'acid-splash',
+  'aid',
+  'alarm',
+  'alter-self',
+  'animate-objects',
+  'arcane-eye',
+  'arcane-lock',
+  'arcane-vigor',
+  'bigbys-hand',
+  'blink',
+  'blur',
+  'circle-of-power',
+  'continual-flame',
+  'create-food-and-water',
+  'creation',
+  'cure-wounds',
+  'dancing-lights',
+  'darkvision',
+  'detect-magic',
+  'disguise-self',
+  'dispel-magic',
+  'dragons-breath',
+  'elemental-weapon',
+  'elementalism',
+  'enhance-ability',
+  'enlarge-reduce',
+  'expeditious-retreat',
+  'fabricate',
+  'faerie-fire',
+  'false-life',
+  'feather-fall',
+  'fire-bolt',
+  'fly',
+  'freedom-of-movement',
+  'glyph-of-warding',
+  'grease',
+  'greater-restoration',
+  'guidance',
+  'haste',
+  'heat-metal',
+  'identify',
+  'invisibility',
+  'jump',
+  'leomunds-secret-chest',
+  'lesser-restoration',
+  'levitate',
+  'light',
+  'longstrider',
+  'mage-hand',
+  'magic-mouth',
+  'magic-weapon',
+  'message',
+  'mordenkainens-faithful-hound',
+  'mordenkainens-private-sanctum',
+  'otilukes-resilient-sphere',
+  'poison-spray',
+  'prestidigitation',
+  'protection-from-energy',
+  'protection-from-poison',
+  'purify-food-and-drink',
+  'ray-of-frost',
+  'resistance',
+  'revivify',
+  'rope-trick',
+  'sanctuary',
+  'see-invisibility',
+  'shocking-grasp',
+  'spare-the-dying',
+  'spider-climb',
+  'stone-shape',
+  'stoneskin',
+  'summon-construct',
+  'thorn-whip',
+  'thunderclap',
+  'true-strike',
+  'wall-of-stone',
+  'water-breathing',
+  'water-walk',
+  'web',
+]);
+
+const SUPPLEMENTAL_SPELL_FILES = new Set(['homunculus-servant.json']);
+
 function usage() {
   console.error(
     'Usage: node scripts/import-phb-2024-spells.mjs <spells-xphb.json> <srd-5.2-spells.json> <spell-source-lookup.json>',
@@ -245,13 +331,18 @@ for (const phbSpell of phbSpells) {
   const index = slugify(phbSpell.name);
   const lookup = sourceLookup.xphb?.[phbSpell.name.toLowerCase()] ?? {};
   const access = phbAccessMetadata(lookup);
+  if (ARTIFICER_PHB_SPELLS.has(index)) {
+    access.classes = uniqueSorted([...access.classes, 'Artificer']);
+  }
   const srdMatch = resolveSrdSpell(phbSpell, srdByName);
   const rulesTextAvailable = Boolean(srdMatch);
   const description = rulesTextAvailable
     ? srdMatch.spell.description
     : referenceOnlySummaries[index];
   if (!description) {
-    throw new Error(`Missing reference-only rules summary for ${phbSpell.name} (${index})`);
+    throw new Error(
+      `Missing reference-only rules summary for ${phbSpell.name} (${index})`,
+    );
   }
 
   const record = {
@@ -326,7 +417,12 @@ if (duplicateIndexes.length)
 
 const generatedNames = new Set(generated.map((spell) => `${spell.index}.json`));
 const staleFiles = readdirSync(outputDir)
-  .filter((file) => file.endsWith('.json') && !generatedNames.has(file))
+  .filter(
+    (file) =>
+      file.endsWith('.json') &&
+      !generatedNames.has(file) &&
+      !SUPPLEMENTAL_SPELL_FILES.has(file),
+  )
   .map((file) => basename(file));
 if (staleFiles.length) {
   throw new Error(

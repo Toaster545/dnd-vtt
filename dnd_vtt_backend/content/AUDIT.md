@@ -5,8 +5,8 @@ access to this app. Not a substitute for a real legal review before launch — s
 
 **Bottom line: NOTICE.md's claim that "no ... content outside the SRD 5.2 [is] used" is false.**
 This pass verified every category against the primary source text and found real, out-of-license
-content in every category except playable classes — most severely in feats (79% of entries),
-subclasses (75%), and backgrounds (75%). See "Summary of findings" below.
+content in every category — most severely in feats (79% of entries), subclasses, and backgrounds
+(75%). The later Artificer addition is itself non-SRD. See "Summary of findings" below.
 
 ## Method
 
@@ -27,16 +27,21 @@ text were all cross-checked, not just one or the other. This supersedes and corr
 
 | Category | Total | In SRD 5.2.1 | Not in SRD 5.2.1 |
 |---|---|---|---|
-| Classes | 12 | 12 | 0 |
-| Subclasses | 48 | 12 | **36** |
-| Spells | 391 | 339 | **52** |
+| Classes | 13 | 12 | **1** |
+| Subclasses | 53 | 12 | **41** |
+| Spells | 392 | 339 | **53** |
 | Feats | 77 | 16 | **61** |
 | Backgrounds | 16 | 4 | **12** |
 | Races/species | 10 | 9 | **1** |
-| Items | 93 | 90 | **3** |
+| Items | 94 | 91 | **3** |
 | Monsters | 35 | 31 | **4** |
 
-## Classes & subclasses (12 classes, 48 subclasses)
+## Classes & subclasses (13 classes, 53 subclasses)
+
+**Post-audit addition:** `classes/artificer.json` implements the 2024-rules Artificer and its five
+subclasses from _Eberron: Forge of the Artificer_. Neither the class nor its subclasses are in SRD
+5.2.1. The file explicitly records `srd_5_2_1: false`; this adds one non-SRD class and five non-SRD
+subclasses to the totals below.
 
 **Previous audit's conclusion here was wrong and is corrected now.** It claimed every class's
 4-subclass roster "matches the full official 2024 Player's Handbook lineup exactly" and treated
@@ -69,18 +74,22 @@ most consequential finding in this audit: it's baked into every class file, so i
 by deleting a handful of standalone JSON files — it needs either removing 3 of 4 subclasses per
 class, or a real license for the non-SRD ones, before selling access.
 
-The base 12 classes themselves (Barbarian, Bard, Cleric, Druid, Fighter, Monk, Paladin, Ranger,
+The original 12 base classes (Barbarian, Bard, Cleric, Druid, Fighter, Monk, Paladin, Ranger,
 Rogue, Sorcerer, Warlock, Wizard) do match the SRD's own "Classes" table of contents exactly.
 
-## Spells (391 entries)
+## Spells (392 entries)
+
+**Post-audit addition:** `spells/homunculus-servant.json` is a reference-only summary from
+_Eberron: Forge of the Artificer_, explicitly tagged `srd_5_2_1: false`. The PHB manifest remains
+the exact original 391-spell catalog; the Artificer spell is supplemental.
 
 Every spell file already self-tags `source.srd_5_2_1: true/false` and `source.edition: 2024`. This
 pass spot-checked that self-tagging against the extracted SRD text and it holds up: e.g. "Toll the
 Dead", "Witch Bolt", "Summon Undead", "Thorn Whip", and the Forgotten-Realms-named "Yolande's Regal
 Presence"/"Jallarzi's Storm of Radiance" — all tagged `srd_5_2_1: false` — have zero matches in the
 SRD text, while "Fireball", "Magic Missile", and "Cure Wounds" — tagged `true` — appear repeatedly.
-**339 of 391 spells are genuinely SRD; the other 52 are 2024 Player's Handbook-exclusive spells the
-data already correctly flags as non-SRD** (full list: run `jq -r 'select(.source.srd_5_2_1==false)
+**Of the 391 PHB spells, 339 are genuinely SRD; the other 52 are 2024 Player's Handbook-exclusive
+spells the data already correctly flags as non-SRD** (full list: run `jq -r 'select(.source.srd_5_2_1==false)
 | .name' content/spells/*.json`, or see the spell files' own `source` field).
 
 Worth noting for remediation: this flag is currently **inert**. `srd_5_2_1` exists on the DTO/model
@@ -132,7 +141,11 @@ Revelation) anywhere in the document. **`content/races/aasimar.json` is 2024 PHB
 in the SRD** — notable since Aasimar is otherwise a fairly prominent player-facing race in this
 app's content. The other 9 races match the SRD exactly.
 
-## Items (93 entries)
+## Items (94 entries)
+
+**Post-audit addition:** `items/tinkers-tools.json` makes the Artificer's starting equipment
+selectable as a concrete inventory item. Tinker's Tools are present in SRD 5.2.1, so this addition
+changes the item total without adding another non-SRD item.
 
 Checked against the SRD's Equipment chapter (weapons, armor, tools, packs, adventuring gear
 tables). 90 of 93 matched once curly-apostrophe items (Thieves' Tools, Burglar's Pack, etc., which

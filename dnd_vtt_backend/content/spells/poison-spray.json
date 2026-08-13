@@ -13,6 +13,7 @@
   "ritual": false,
   "concentration": false,
   "classes": [
+    "Artificer",
     "Druid",
     "Sorcerer",
     "Warlock",

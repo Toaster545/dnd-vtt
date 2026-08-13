@@ -15,6 +15,7 @@
   "ritual": true,
   "concentration": false,
   "classes": [
+    "Artificer",
     "Druid",
     "Ranger",
     "Sorcerer",

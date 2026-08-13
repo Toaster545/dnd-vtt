@@ -15,6 +15,7 @@
   "ritual": false,
   "concentration": true,
   "classes": [
+    "Artificer",
     "Bard",
     "Sorcerer",
     "Warlock",

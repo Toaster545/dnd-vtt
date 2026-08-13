@@ -1,0 +1,1323 @@
+{
+  "index": "artificer",
+  "name": "Artificer",
+  "description": "Inventive spellcasters who channel magic through tools, create temporary magic items, and specialize in alchemy, arcane armor, artillery, construct companions, or magical cartography.",
+  "primary_abilities": ["intelligence"],
+  "hit_die": 8,
+  "saving_throws": ["constitution", "intelligence"],
+  "armor_training": ["Light Armor", "Medium Armor", "Shields"],
+  "weapon_proficiencies": ["Simple Weapons"],
+  "tool_proficiencies": ["Thieves' Tools", "Tinker's Tools"],
+  "skill_choices": {
+    "count": 2,
+    "from": [
+      "Arcana",
+      "History",
+      "Investigation",
+      "Medicine",
+      "Nature",
+      "Perception",
+      "Sleight of Hand"
+    ]
+  },
+  "starting_equipment": {
+    "fixed": [
+      { "key": "armor", "item": "studded-leather-armor" },
+      { "key": "dagger", "item": "dagger" },
+      { "key": "thieves_tools", "item": "thieves-tools" },
+      { "key": "tinkers_tools", "item": "tinkers-tools" },
+      { "key": "pack", "item": "dungeoneers-pack" }
+    ],
+    "groups": [],
+    "gold": 16,
+    "goldAlternative": 150
+  },
+  "spellcasting_ability": "intelligence",
+  "spellcasting": {
+    "key": "class:artificer",
+    "name": "Artificer",
+    "list": "Artificer",
+    "ability": "intelligence",
+    "mode": "prepared",
+    "progression": "half"
+  },
+  "subclass_level": 3,
+  "source": {
+    "book": "Eberron: Forge of the Artificer",
+    "edition": 2024,
+    "code": "EFA",
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  },
+  "levels": [
+    {
+      "level": 1,
+      "proficiency_bonus": 2,
+      "features": ["Spellcasting", "Tinker's Magic"],
+      "cantrips_known": 2,
+      "prepared_spells": 2,
+      "spell_slots": { "1": 2 },
+      "class_specific": { "plans_known": 0, "replicated_items": 0 },
+      "grants": [
+        {
+          "type": "skill_choice",
+          "key": "skills",
+          "name": "Artificer Skill Proficiencies",
+          "choose": 2,
+          "description": "Choose two skills from the Artificer skill list."
+        },
+        {
+          "type": "choice",
+          "key": "artisans_tools",
+          "name": "Artisan's Tool Proficiency",
+          "choose": 1,
+          "description": "Gain proficiency with one type of Artisan's Tools.",
+          "options": [
+            {
+              "name": "Alchemist's Supplies",
+              "effects": [
+                { "type": "tool_proficiency", "tags": ["Alchemist's Supplies"] }
+              ]
+            },
+            {
+              "name": "Brewer's Supplies",
+              "effects": [
+                { "type": "tool_proficiency", "tags": ["Brewer's Supplies"] }
+              ]
+            },
+            {
+              "name": "Calligrapher's Supplies",
+              "effects": [
+                {
+                  "type": "tool_proficiency",
+                  "tags": ["Calligrapher's Supplies"]
+                }
+              ]
+            },
+            {
+              "name": "Carpenter's Tools",
+              "effects": [
+                { "type": "tool_proficiency", "tags": ["Carpenter's Tools"] }
+              ]
+            },
+            {
+              "name": "Cartographer's Tools",
+              "effects": [
+                { "type": "tool_proficiency", "tags": ["Cartographer's Tools"] }
+              ]
+            },
+            {
+              "name": "Cobbler's Tools",
+              "effects": [
+                { "type": "tool_proficiency", "tags": ["Cobbler's Tools"] }
+              ]
+            },
+            {
+              "name": "Cook's Utensils",
+              "effects": [
+                { "type": "tool_proficiency", "tags": ["Cook's Utensils"] }
+              ]
+            },
+            {
+              "name": "Glassblower's Tools",
+              "effects": [
+                { "type": "tool_proficiency", "tags": ["Glassblower's Tools"] }
+              ]
+            },
+            {
+              "name": "Jeweler's Tools",
+              "effects": [
+                { "type": "tool_proficiency", "tags": ["Jeweler's Tools"] }
+              ]
+            },
+            {
+              "name": "Leatherworker's Tools",
+              "effects": [
+                {
+                  "type": "tool_proficiency",
+                  "tags": ["Leatherworker's Tools"]
+                }
+              ]
+            },
+            {
+              "name": "Mason's Tools",
+              "effects": [
+                { "type": "tool_proficiency", "tags": ["Mason's Tools"] }
+              ]
+            },
+            {
+              "name": "Painter's Supplies",
+              "effects": [
+                { "type": "tool_proficiency", "tags": ["Painter's Supplies"] }
+              ]
+            },
+            {
+              "name": "Potter's Tools",
+              "effects": [
+                { "type": "tool_proficiency", "tags": ["Potter's Tools"] }
+              ]
+            },
+            {
+              "name": "Smith's Tools",
+              "effects": [
+                { "type": "tool_proficiency", "tags": ["Smith's Tools"] }
+              ]
+            },
+            {
+              "name": "Tinker's Tools",
+              "effects": [
+                { "type": "tool_proficiency", "tags": ["Tinker's Tools"] }
+              ]
+            },
+            {
+              "name": "Weaver's Tools",
+              "effects": [
+                { "type": "tool_proficiency", "tags": ["Weaver's Tools"] }
+              ]
+            },
+            {
+              "name": "Woodcarver's Tools",
+              "effects": [
+                { "type": "tool_proficiency", "tags": ["Woodcarver's Tools"] }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "feature",
+          "name": "Spellcasting",
+          "description": "Prepare Artificer spells using Intelligence. Thieves' Tools, Tinker's Tools, or any Artisan's Tools with which you are proficient serve as your spellcasting focus. You can replace one Artificer cantrip whenever you finish a Long Rest."
+        },
+        {
+          "type": "feature",
+          "key": "artificer-tinkers-magic",
+          "name": "Tinker's Magic",
+          "description": "You know Mending. As a Magic action while holding Tinker's Tools, create one useful mundane adventuring item in an empty space within 5 feet. It vanishes when you finish your next Long Rest. Uses equal your Intelligence modifier (minimum once) per Long Rest.",
+          "action": {
+            "activation": "action",
+            "uses": {
+              "max": 1,
+              "maxAbilityModifier": "intelligence",
+              "minimum": 1,
+              "per": "long_rest"
+            }
+          }
+        },
+        {
+          "type": "spell_grant",
+          "key": "tinkers_magic_mending",
+          "name": "Tinker's Magic",
+          "destination": "known",
+          "spells": ["mending"],
+          "countsAgainstLimit": false
+        }
+      ]
+    },
+    {
+      "level": 2,
+      "proficiency_bonus": 2,
+      "features": ["Replicate Magic Item"],
+      "cantrips_known": 2,
+      "prepared_spells": 3,
+      "spell_slots": { "1": 2 },
+      "class_specific": { "plans_known": 4, "replicated_items": 2 },
+      "grants": [
+        {
+          "type": "choice",
+          "key": "magic_item_plans",
+          "name": "Magic Item Plans",
+          "choose": 4,
+          "chooseByLevel": { "6": 5, "10": 6, "14": 7, "18": 8 },
+          "description": "Learn plans used by Replicate Magic Item. You can replace one plan whenever you gain an Artificer level. Options unlock at Artificer levels 2, 6, 10, and 14.",
+          "options": [
+            { "name": "Alchemy Jug" },
+            { "name": "Bag of Holding" },
+            { "name": "Cap of Water Breathing" },
+            {
+              "name": "Common Magic Item",
+              "description": "Choose a non-cursed Common magic item other than a Potion or Scroll. This plan can be learned more than once for different items."
+            },
+            { "name": "Goggles of Night" },
+            { "name": "Manifold Tool" },
+            { "name": "Repeating Shot" },
+            { "name": "Returning Weapon" },
+            { "name": "Rope of Climbing" },
+            { "name": "Sending Stones" },
+            { "name": "Shield +1" },
+            { "name": "Wand of Magic Detection" },
+            { "name": "Wand of Secrets" },
+            { "name": "Wand of the War Mage +1" },
+            { "name": "Weapon +1" },
+            { "name": "Wraps of Unarmed Power +1" },
+            { "name": "Armor +1", "prerequisite": { "level": 6 } },
+            { "name": "Boots of Elvenkind", "prerequisite": { "level": 6 } },
+            {
+              "name": "Boots of the Winding Path",
+              "prerequisite": { "level": 6 }
+            },
+            { "name": "Cloak of Elvenkind", "prerequisite": { "level": 6 } },
+            {
+              "name": "Cloak of the Manta Ray",
+              "prerequisite": { "level": 6 }
+            },
+            { "name": "Eyes of Charming", "prerequisite": { "level": 6 } },
+            { "name": "Eyes of Minute Seeing", "prerequisite": { "level": 6 } },
+            { "name": "Gloves of Thievery", "prerequisite": { "level": 6 } },
+            { "name": "Helm of Awareness", "prerequisite": { "level": 6 } },
+            { "name": "Lantern of Revealing", "prerequisite": { "level": 6 } },
+            { "name": "Mind Sharpener", "prerequisite": { "level": 6 } },
+            {
+              "name": "Necklace of Adaptation",
+              "prerequisite": { "level": 6 }
+            },
+            { "name": "Pipes of Haunting", "prerequisite": { "level": 6 } },
+            { "name": "Dazzling Weapon", "prerequisite": { "level": 6 } },
+            { "name": "Repulsion Shield", "prerequisite": { "level": 6 } },
+            { "name": "Ring of Swimming", "prerequisite": { "level": 6 } },
+            { "name": "Ring of Water Walking", "prerequisite": { "level": 6 } },
+            { "name": "Sentinel Shield", "prerequisite": { "level": 6 } },
+            { "name": "Spell-Refueling Ring", "prerequisite": { "level": 6 } },
+            {
+              "name": "Wand of Magic Missiles",
+              "prerequisite": { "level": 6 }
+            },
+            { "name": "Wand of Web", "prerequisite": { "level": 6 } },
+            { "name": "Weapon of Warning", "prerequisite": { "level": 6 } },
+            { "name": "Armor of Resistance", "prerequisite": { "level": 10 } },
+            { "name": "Dagger of Venom", "prerequisite": { "level": 10 } },
+            { "name": "Elven Chain", "prerequisite": { "level": 10 } },
+            {
+              "name": "Ring of Feather Falling",
+              "prerequisite": { "level": 10 }
+            },
+            { "name": "Ring of Jumping", "prerequisite": { "level": 10 } },
+            {
+              "name": "Ring of Mind Shielding",
+              "prerequisite": { "level": 10 }
+            },
+            { "name": "Shield +2", "prerequisite": { "level": 10 } },
+            {
+              "name": "Uncommon Wondrous Item",
+              "description": "Choose a non-cursed Uncommon Wondrous Item. This plan can be learned more than once for different items.",
+              "prerequisite": { "level": 10 }
+            },
+            {
+              "name": "Wand of the War Mage +2",
+              "prerequisite": { "level": 10 }
+            },
+            { "name": "Weapon +2", "prerequisite": { "level": 10 } },
+            {
+              "name": "Wraps of Unarmed Power +2",
+              "prerequisite": { "level": 10 }
+            },
+            { "name": "Armor +2", "prerequisite": { "level": 14 } },
+            {
+              "name": "Arrow-Catching Shield",
+              "prerequisite": { "level": 14 }
+            },
+            { "name": "Flame Tongue", "prerequisite": { "level": 14 } },
+            {
+              "name": "Rare Wondrous Item",
+              "description": "Choose a non-cursed Rare Wondrous Item. This plan can be learned more than once for different items.",
+              "prerequisite": { "level": 14 }
+            },
+            { "name": "Ring of Free Action", "prerequisite": { "level": 14 } },
+            { "name": "Ring of Protection", "prerequisite": { "level": 14 } },
+            { "name": "Ring of the Ram", "prerequisite": { "level": 14 } }
+          ]
+        },
+        {
+          "type": "feature",
+          "name": "Replicate Magic Item",
+          "description": "After a Long Rest with Tinker's Tools in hand, create two different temporary magic items based on plans you know. The limit rises to three items at level 6, four at 10, five at 14, and six at 18. You can immediately attune to a created item; created Wands and Weapons can be Artificer spellcasting focuses."
+        }
+      ]
+    },
+    {
+      "level": 3,
+      "proficiency_bonus": 2,
+      "features": ["Artificer Subclass"],
+      "cantrips_known": 2,
+      "prepared_spells": 4,
+      "spell_slots": { "1": 3 },
+      "class_specific": { "plans_known": 4, "replicated_items": 2 },
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Artificer Subclass",
+          "description": "Choose an Artificer specialization, gaining features now and again at Artificer levels 5, 9, and 15."
+        }
+      ]
+    },
+    {
+      "level": 4,
+      "proficiency_bonus": 2,
+      "features": ["Ability Score Improvement"],
+      "cantrips_known": 2,
+      "prepared_spells": 5,
+      "spell_slots": { "1": 3 },
+      "class_specific": { "plans_known": 4, "replicated_items": 2 },
+      "grants": [
+        {
+          "type": "ability_choice",
+          "key": "asi_4",
+          "name": "Ability Score Improvement",
+          "description": "Increase one ability score by 2, or two scores by 1 each, to a maximum of 20 (or take a feat).",
+          "points": 2,
+          "allowFeat": true
+        }
+      ]
+    },
+    {
+      "level": 5,
+      "proficiency_bonus": 3,
+      "features": ["Artificer Subclass Feature"],
+      "cantrips_known": 2,
+      "prepared_spells": 6,
+      "spell_slots": { "1": 4, "2": 2 },
+      "class_specific": { "plans_known": 4, "replicated_items": 2 },
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Artificer Subclass Feature",
+          "description": "Gain a feature from your chosen Artificer subclass."
+        }
+      ]
+    },
+    {
+      "level": 6,
+      "proficiency_bonus": 3,
+      "features": ["Magic Item Tinker"],
+      "cantrips_known": 2,
+      "prepared_spells": 6,
+      "spell_slots": { "1": 4, "2": 2 },
+      "class_specific": { "plans_known": 5, "replicated_items": 3 },
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Charge Magic Item",
+          "description": "As a Bonus Action, touch a charged item made with Replicate Magic Item and expend a level 1+ spell slot. The item regains charges equal to the slot's level.",
+          "action": { "activation": "bonus_action" }
+        },
+        {
+          "type": "feature",
+          "key": "artificer-drain-magic-item",
+          "name": "Drain Magic Item",
+          "description": "As a Bonus Action, dismiss one item made with Replicate Magic Item to create a temporary spell slot: level 1 for a Common item or level 2 for an Uncommon or Rare item. Use once per Long Rest.",
+          "action": {
+            "activation": "bonus_action",
+            "uses": { "max": 1, "per": "long_rest" }
+          }
+        },
+        {
+          "type": "feature",
+          "key": "artificer-transmute-magic-item",
+          "name": "Transmute Magic Item",
+          "description": "As a Magic action, transform one item made with Replicate Magic Item into an item based on another plan you know. Use once per Long Rest.",
+          "action": {
+            "activation": "action",
+            "uses": { "max": 1, "per": "long_rest" }
+          }
+        }
+      ]
+    },
+    {
+      "level": 7,
+      "proficiency_bonus": 3,
+      "features": ["Flash of Genius"],
+      "cantrips_known": 2,
+      "prepared_spells": 7,
+      "spell_slots": { "1": 4, "2": 3 },
+      "class_specific": { "plans_known": 5, "replicated_items": 3 },
+      "grants": [
+        {
+          "type": "feature",
+          "key": "artificer-flash-of-genius",
+          "name": "Flash of Genius",
+          "description": "When you or a creature you can see within 30 feet fails an ability check or saving throw, use your Reaction to add your Intelligence modifier, potentially turning the failure into a success. Uses equal your Intelligence modifier (minimum once) per Long Rest.",
+          "action": {
+            "activation": "reaction",
+            "uses": {
+              "max": 1,
+              "maxAbilityModifier": "intelligence",
+              "minimum": 1,
+              "per": "long_rest"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "level": 8,
+      "proficiency_bonus": 3,
+      "features": ["Ability Score Improvement"],
+      "cantrips_known": 2,
+      "prepared_spells": 7,
+      "spell_slots": { "1": 4, "2": 3 },
+      "class_specific": { "plans_known": 5, "replicated_items": 3 },
+      "grants": [
+        {
+          "type": "ability_choice",
+          "key": "asi_8",
+          "name": "Ability Score Improvement",
+          "description": "Increase one ability score by 2, or two scores by 1 each, to a maximum of 20 (or take a feat).",
+          "points": 2,
+          "allowFeat": true
+        }
+      ]
+    },
+    {
+      "level": 9,
+      "proficiency_bonus": 4,
+      "features": ["Artificer Subclass Feature"],
+      "cantrips_known": 2,
+      "prepared_spells": 9,
+      "spell_slots": { "1": 4, "2": 3, "3": 2 },
+      "class_specific": { "plans_known": 5, "replicated_items": 3 },
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Artificer Subclass Feature",
+          "description": "Gain a feature from your chosen Artificer subclass."
+        }
+      ]
+    },
+    {
+      "level": 10,
+      "proficiency_bonus": 4,
+      "features": ["Magic Item Adept"],
+      "cantrips_known": 3,
+      "prepared_spells": 9,
+      "spell_slots": { "1": 4, "2": 3, "3": 2 },
+      "class_specific": { "plans_known": 6, "replicated_items": 4 },
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Magic Item Adept",
+          "description": "You can be attuned to as many as four magic items at the same time."
+        }
+      ]
+    },
+    {
+      "level": 11,
+      "proficiency_bonus": 4,
+      "features": ["Spell-Storing Item"],
+      "cantrips_known": 3,
+      "prepared_spells": 10,
+      "spell_slots": { "1": 4, "2": 3, "3": 3 },
+      "class_specific": { "plans_known": 6, "replicated_items": 4 },
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Spell-Storing Item",
+          "description": "After a Long Rest, store one level 1-3 Artificer spell with a Magic-action casting time and no consumed Material component in a weapon or spellcasting focus. A holder can produce the spell using your spellcasting ability, up to twice your Intelligence modifier (minimum twice) before the stored magic expires."
+        }
+      ]
+    },
+    {
+      "level": 12,
+      "proficiency_bonus": 4,
+      "features": ["Ability Score Improvement"],
+      "cantrips_known": 3,
+      "prepared_spells": 10,
+      "spell_slots": { "1": 4, "2": 3, "3": 3 },
+      "class_specific": { "plans_known": 6, "replicated_items": 4 },
+      "grants": [
+        {
+          "type": "ability_choice",
+          "key": "asi_12",
+          "name": "Ability Score Improvement",
+          "description": "Increase one ability score by 2, or two scores by 1 each, to a maximum of 20 (or take a feat).",
+          "points": 2,
+          "allowFeat": true
+        }
+      ]
+    },
+    {
+      "level": 13,
+      "proficiency_bonus": 5,
+      "features": [],
+      "cantrips_known": 3,
+      "prepared_spells": 11,
+      "spell_slots": { "1": 4, "2": 3, "3": 3, "4": 1 },
+      "class_specific": { "plans_known": 6, "replicated_items": 4 },
+      "grants": []
+    },
+    {
+      "level": 14,
+      "proficiency_bonus": 5,
+      "features": ["Advanced Artifice"],
+      "cantrips_known": 4,
+      "prepared_spells": 11,
+      "spell_slots": { "1": 4, "2": 3, "3": 3, "4": 1 },
+      "class_specific": { "plans_known": 7, "replicated_items": 5 },
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Advanced Artifice",
+          "description": "You can be attuned to as many as five magic items at once. When you finish a Short Rest, regain one expended use of Flash of Genius."
+        }
+      ]
+    },
+    {
+      "level": 15,
+      "proficiency_bonus": 5,
+      "features": ["Artificer Subclass Feature"],
+      "cantrips_known": 4,
+      "prepared_spells": 12,
+      "spell_slots": { "1": 4, "2": 3, "3": 3, "4": 2 },
+      "class_specific": { "plans_known": 7, "replicated_items": 5 },
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Artificer Subclass Feature",
+          "description": "Gain the capstone feature from your chosen Artificer subclass."
+        }
+      ]
+    },
+    {
+      "level": 16,
+      "proficiency_bonus": 5,
+      "features": ["Ability Score Improvement"],
+      "cantrips_known": 4,
+      "prepared_spells": 12,
+      "spell_slots": { "1": 4, "2": 3, "3": 3, "4": 2 },
+      "class_specific": { "plans_known": 7, "replicated_items": 5 },
+      "grants": [
+        {
+          "type": "ability_choice",
+          "key": "asi_16",
+          "name": "Ability Score Improvement",
+          "description": "Increase one ability score by 2, or two scores by 1 each, to a maximum of 20 (or take a feat).",
+          "points": 2,
+          "allowFeat": true
+        }
+      ]
+    },
+    {
+      "level": 17,
+      "proficiency_bonus": 6,
+      "features": [],
+      "cantrips_known": 4,
+      "prepared_spells": 14,
+      "spell_slots": { "1": 4, "2": 3, "3": 3, "4": 3, "5": 1 },
+      "class_specific": { "plans_known": 7, "replicated_items": 5 },
+      "grants": []
+    },
+    {
+      "level": 18,
+      "proficiency_bonus": 6,
+      "features": ["Magic Item Master"],
+      "cantrips_known": 4,
+      "prepared_spells": 14,
+      "spell_slots": { "1": 4, "2": 3, "3": 3, "4": 3, "5": 1 },
+      "class_specific": { "plans_known": 8, "replicated_items": 6 },
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Magic Item Master",
+          "description": "You can be attuned to as many as six magic items at the same time."
+        }
+      ]
+    },
+    {
+      "level": 19,
+      "proficiency_bonus": 6,
+      "features": ["Epic Boon"],
+      "cantrips_known": 4,
+      "prepared_spells": 15,
+      "spell_slots": { "1": 4, "2": 3, "3": 3, "4": 3, "5": 2 },
+      "class_specific": { "plans_known": 8, "replicated_items": 6 },
+      "grants": [
+        {
+          "type": "feat_pick",
+          "key": "epic_boon_19",
+          "name": "Epic Boon",
+          "choose": 1,
+          "description": "Choose an Epic Boon feat or another feat for which you qualify. Boon of Energy Resistance is recommended.",
+          "category": "epic"
+        }
+      ]
+    },
+    {
+      "level": 20,
+      "proficiency_bonus": 6,
+      "features": ["Soul of Artifice"],
+      "cantrips_known": 4,
+      "prepared_spells": 15,
+      "spell_slots": { "1": 4, "2": 3, "3": 3, "4": 3, "5": 2 },
+      "class_specific": { "plans_known": 8, "replicated_items": 6 },
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Soul of Artifice",
+          "description": "Cheat Death: when reduced to 0 Hit Points without dying outright, dismiss any number of Uncommon or Rare items made with Replicate Magic Item and instead retain 20 Hit Points per item. Magical Guidance: while attuned to at least one magic item, a Short Rest restores every use of Flash of Genius."
+        }
+      ]
+    }
+  ],
+  "subclasses": [
+    {
+      "index": "alchemist",
+      "name": "Alchemist",
+      "description": "Create experimental magical elixirs that heal, empower allies, and turn volatile reagents against enemies.",
+      "levels": [
+        {
+          "level": 3,
+          "features": [
+            "Tools of the Trade",
+            "Alchemist Spells",
+            "Experimental Elixir"
+          ],
+          "grants": [
+            {
+              "type": "feature",
+              "name": "Tools of the Trade",
+              "description": "Gain proficiency with Alchemist's Supplies and the Herbalism Kit. You craft potions in half the normal time.",
+              "effects": [
+                {
+                  "type": "tool_proficiency",
+                  "tags": ["Alchemist's Supplies", "Herbalism Kit"]
+                }
+              ]
+            },
+            {
+              "type": "spell_grant",
+              "key": "alchemist_spells_3",
+              "name": "Alchemist Spells",
+              "destination": "always_prepared",
+              "spells": ["healing-word", "ray-of-sickness"],
+              "countsAgainstLimit": false
+            },
+            {
+              "type": "spell_grant",
+              "key": "alchemist_spells_5",
+              "name": "Alchemist Spells",
+              "destination": "always_prepared",
+              "spells": ["flaming-sphere", "melfs-acid-arrow"],
+              "countsAgainstLimit": false,
+              "classLevel": 5
+            },
+            {
+              "type": "spell_grant",
+              "key": "alchemist_spells_9",
+              "name": "Alchemist Spells",
+              "destination": "always_prepared",
+              "spells": ["gaseous-form", "mass-healing-word"],
+              "countsAgainstLimit": false,
+              "classLevel": 9
+            },
+            {
+              "type": "spell_grant",
+              "key": "alchemist_spells_13",
+              "name": "Alchemist Spells",
+              "destination": "always_prepared",
+              "spells": ["death-ward", "vitriolic-sphere"],
+              "countsAgainstLimit": false,
+              "classLevel": 13
+            },
+            {
+              "type": "spell_grant",
+              "key": "alchemist_spells_17",
+              "name": "Alchemist Spells",
+              "destination": "always_prepared",
+              "spells": ["cloudkill", "raise-dead"],
+              "countsAgainstLimit": false,
+              "classLevel": 17
+            },
+            {
+              "type": "feature",
+              "name": "Experimental Elixir",
+              "description": "After each Long Rest with Alchemist's Supplies, make two randomly determined elixirs. The total rises to three at Artificer level 5, four at level 9, and five at level 15. A creature drinks or administers one as a Bonus Action. An elixir can heal, increase Speed or AC, bolster attacks and saves, grant flight, or duplicate another result; expending a spell slot creates an additional elixir with a chosen effect."
+            }
+          ]
+        },
+        {
+          "level": 5,
+          "features": ["Alchemical Savant"],
+          "grants": [
+            {
+              "type": "feature",
+              "name": "Alchemical Savant",
+              "description": "Once per spell, when you cast through Alchemist's Supplies and a roll restores Hit Points or deals Acid, Fire, Necrotic, or Poison damage, add your Intelligence modifier (minimum +1) to one such roll."
+            }
+          ]
+        },
+        {
+          "level": 9,
+          "features": ["Restorative Reagents"],
+          "grants": [
+            {
+              "type": "feature",
+              "name": "Fortify",
+              "description": "A creature that drinks one of your Experimental Elixirs also gains Temporary Hit Points equal to your Intelligence modifier plus your Artificer level."
+            },
+            {
+              "type": "feature",
+              "key": "alchemist-restore",
+              "name": "Restore",
+              "description": "Cast Lesser Restoration through Alchemist's Supplies without a spell slot or preparation. Uses equal your Intelligence modifier (minimum once) per Long Rest.",
+              "action": {
+                "activation": "action",
+                "uses": {
+                  "max": 1,
+                  "maxAbilityModifier": "intelligence",
+                  "minimum": 1,
+                  "per": "long_rest"
+                }
+              }
+            },
+            {
+              "type": "spell_grant",
+              "key": "alchemist_lesser_restoration",
+              "name": "Restorative Reagents",
+              "destination": "always_prepared",
+              "spells": ["lesser-restoration"],
+              "countsAgainstLimit": false,
+              "freeCast": {
+                "uses": "spellcasting_ability_modifier",
+                "minimum": 1,
+                "recovery": "long_rest"
+              }
+            }
+          ]
+        },
+        {
+          "level": 15,
+          "features": ["Chemical Mastery"],
+          "grants": [
+            {
+              "type": "feature",
+              "name": "Chemical Mastery",
+              "description": "Gain Resistance to Acid and Poison damage and immunity to the Poisoned condition. Once per turn, when an Artificer spell deals Acid, Fire, Necrotic, or Poison damage, it deals an extra 2d8 Force damage to one target."
+            },
+            {
+              "type": "spell_grant",
+              "key": "alchemist_chemical_mastery",
+              "name": "Chemical Mastery",
+              "destination": "always_prepared",
+              "spells": ["tashas-bubbling-cauldron"],
+              "countsAgainstLimit": false,
+              "freeCast": { "uses": 1, "recovery": "long_rest" }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "index": "armorer",
+      "name": "Armorer",
+      "description": "Transform armor into a customizable arcane exosuit built for power, protection, or infiltration.",
+      "levels": [
+        {
+          "level": 3,
+          "features": [
+            "Tools of the Trade",
+            "Armorer Spells",
+            "Arcane Armor",
+            "Armor Model"
+          ],
+          "grants": [
+            {
+              "type": "feature",
+              "name": "Tools of the Trade",
+              "description": "Gain Heavy Armor training and proficiency with Smith's Tools. You craft armor in half the normal time.",
+              "effects": [
+                { "type": "armor_proficiency", "tags": ["heavy"] },
+                { "type": "tool_proficiency", "tags": ["Smith's Tools"] }
+              ]
+            },
+            {
+              "type": "spell_grant",
+              "key": "armorer_spells_3",
+              "name": "Armorer Spells",
+              "destination": "always_prepared",
+              "spells": ["magic-missile", "thunderwave"],
+              "countsAgainstLimit": false
+            },
+            {
+              "type": "spell_grant",
+              "key": "armorer_spells_5",
+              "name": "Armorer Spells",
+              "destination": "always_prepared",
+              "spells": ["mirror-image", "shatter"],
+              "countsAgainstLimit": false,
+              "classLevel": 5
+            },
+            {
+              "type": "spell_grant",
+              "key": "armorer_spells_9",
+              "name": "Armorer Spells",
+              "destination": "always_prepared",
+              "spells": ["hypnotic-pattern", "lightning-bolt"],
+              "countsAgainstLimit": false,
+              "classLevel": 9
+            },
+            {
+              "type": "spell_grant",
+              "key": "armorer_spells_13",
+              "name": "Armorer Spells",
+              "destination": "always_prepared",
+              "spells": ["fire-shield", "greater-invisibility"],
+              "countsAgainstLimit": false,
+              "classLevel": 13
+            },
+            {
+              "type": "spell_grant",
+              "key": "armorer_spells_17",
+              "name": "Armorer Spells",
+              "destination": "always_prepared",
+              "spells": ["passwall", "wall-of-force"],
+              "countsAgainstLimit": false,
+              "classLevel": 17
+            },
+            {
+              "type": "feature",
+              "name": "Arcane Armor",
+              "description": "Turn worn armor into Arcane Armor. It ignores its Strength requirement, can be donned or doffed with a Utilize action, can't be removed against your will, can replace missing limbs, and serves as your spellcasting focus."
+            },
+            {
+              "type": "choice",
+              "key": "armor_model",
+              "name": "Armor Model",
+              "choose": 1,
+              "description": "Choose your Arcane Armor model, changing it after a Short or Long Rest. Its special weapon uses Intelligence for attack and damage rolls.",
+              "options": [
+                {
+                  "name": "Dreadnaught",
+                  "description": "A 1d10 Force reach weapon can push or pull a smaller target 10 feet. As a Bonus Action a limited number of times per Long Rest, become Large for 1 minute and extend your reach by 5 feet."
+                },
+                {
+                  "name": "Guardian",
+                  "description": "A 1d8 Thunder melee weapon hinders attacks against anyone but you. While Bloodied, use a Bonus Action to gain Temporary Hit Points equal to your Artificer level."
+                },
+                {
+                  "name": "Infiltrator",
+                  "description": "A 90/300 ranged launcher deals 1d6 Lightning plus an extra 1d6 once per turn. Your Speed increases by 5 feet and the armor doesn't impose Disadvantage on Stealth checks."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "level": 5,
+          "features": ["Extra Attack"],
+          "grants": [
+            {
+              "type": "feature",
+              "name": "Extra Attack",
+              "description": "Attack twice instead of once whenever you take the Attack action on your turn."
+            }
+          ]
+        },
+        {
+          "level": 9,
+          "features": ["Improved Armorer"],
+          "grants": [
+            {
+              "type": "feature",
+              "name": "Improved Armorer",
+              "description": "Learn one additional Replicate Magic Item plan, which must create Armor. You can create one additional replicated item from that plan. You also gain +1 to attack and damage rolls with your Armor Model's special weapon."
+            }
+          ]
+        },
+        {
+          "level": 15,
+          "features": ["Perfected Armor"],
+          "grants": [
+            {
+              "type": "feature",
+              "name": "Perfected Armor",
+              "description": "Your model improves. Dreadnaught increases its weapon damage, can become Huge, extends reach farther, and strengthens physical checks and saves. Guardian increases weapon damage and can pull a nearby enemy to you before striking it. Infiltrator increases launcher damage, makes struck targets easier for allies to hit, and grants bursts of flight."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "index": "artillerist",
+      "name": "Artillerist",
+      "description": "Project destructive or protective magic through an Eldritch Cannon and an empowered arcane firearm.",
+      "levels": [
+        {
+          "level": 3,
+          "features": [
+            "Tools of the Trade",
+            "Artillerist Spells",
+            "Eldritch Cannon"
+          ],
+          "grants": [
+            {
+              "type": "feature",
+              "name": "Tools of the Trade",
+              "description": "Gain proficiency with Martial Ranged weapons and Woodcarver's Tools. You craft magic Wands in half the normal time.",
+              "effects": [
+                { "type": "weapon_proficiency", "tags": ["martial ranged"] },
+                { "type": "tool_proficiency", "tags": ["Woodcarver's Tools"] }
+              ]
+            },
+            {
+              "type": "spell_grant",
+              "key": "artillerist_spells_3",
+              "name": "Artillerist Spells",
+              "destination": "always_prepared",
+              "spells": ["shield", "thunderwave"],
+              "countsAgainstLimit": false
+            },
+            {
+              "type": "spell_grant",
+              "key": "artillerist_spells_5",
+              "name": "Artillerist Spells",
+              "destination": "always_prepared",
+              "spells": ["scorching-ray", "shatter"],
+              "countsAgainstLimit": false,
+              "classLevel": 5
+            },
+            {
+              "type": "spell_grant",
+              "key": "artillerist_spells_9",
+              "name": "Artillerist Spells",
+              "destination": "always_prepared",
+              "spells": ["fireball", "wind-wall"],
+              "countsAgainstLimit": false,
+              "classLevel": 9
+            },
+            {
+              "type": "spell_grant",
+              "key": "artillerist_spells_13",
+              "name": "Artillerist Spells",
+              "destination": "always_prepared",
+              "spells": ["ice-storm", "wall-of-fire"],
+              "countsAgainstLimit": false,
+              "classLevel": 13
+            },
+            {
+              "type": "spell_grant",
+              "key": "artillerist_spells_17",
+              "name": "Artillerist Spells",
+              "destination": "always_prepared",
+              "spells": ["cone-of-cold", "wall-of-force"],
+              "countsAgainstLimit": false,
+              "classLevel": 17
+            },
+            {
+              "type": "feature",
+              "name": "Eldritch Cannon",
+              "description": "Create a Small or Tiny magical cannon. Command it as a Bonus Action to use one mode: a 20-foot cone of Fire, a ranged Force blast that pushes its target, or a protective pulse of Temporary Hit Points. Create one without a spell slot per Long Rest; further cannons cost a spell slot. It shares your Initiative, moves when commanded, and lasts until destroyed or replaced."
+            }
+          ]
+        },
+        {
+          "level": 5,
+          "features": ["Arcane Firearm"],
+          "grants": [
+            {
+              "type": "feature",
+              "name": "Arcane Firearm",
+              "description": "Turn a Rod, Staff, Wand, or Martial Ranged weapon into an Arcane Firearm and spellcasting focus. Once per Artificer spell cast through it, add 1d8 to one damage roll."
+            }
+          ]
+        },
+        {
+          "level": 9,
+          "features": ["Explosive Cannon"],
+          "grants": [
+            {
+              "type": "feature",
+              "name": "Explosive Cannon",
+              "description": "Your cannon's damage rolls increase by 1d8 and its protective pulse improves. When the cannon takes damage, you can use your Reaction to detonate it, dealing Force damage to nearby creatures before it is destroyed."
+            }
+          ]
+        },
+        {
+          "level": 15,
+          "features": ["Fortified Position"],
+          "grants": [
+            {
+              "type": "feature",
+              "name": "Fortified Position",
+              "description": "Maintain two Eldritch Cannons at once and activate both with the same Bonus Action. You and allies have Half Cover while within 10 feet of one of your cannons."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "index": "battle-smith",
+      "name": "Battle Smith",
+      "description": "Combine martial magic with a loyal Steel Defender that protects allies and fights at your command.",
+      "levels": [
+        {
+          "level": 3,
+          "features": [
+            "Tools of the Trade",
+            "Battle Smith Spells",
+            "Battle Ready",
+            "Steel Defender"
+          ],
+          "grants": [
+            {
+              "type": "feature",
+              "name": "Tools of the Trade",
+              "description": "Gain proficiency with Martial weapons and Smith's Tools. You craft nonmagical and magic weapons in half the normal time.",
+              "effects": [
+                { "type": "weapon_proficiency", "tags": ["martial"] },
+                { "type": "tool_proficiency", "tags": ["Smith's Tools"] }
+              ]
+            },
+            {
+              "type": "spell_grant",
+              "key": "battle_smith_spells_3",
+              "name": "Battle Smith Spells",
+              "destination": "always_prepared",
+              "spells": ["heroism", "shield"],
+              "countsAgainstLimit": false
+            },
+            {
+              "type": "spell_grant",
+              "key": "battle_smith_spells_5",
+              "name": "Battle Smith Spells",
+              "destination": "always_prepared",
+              "spells": ["shining-smite", "warding-bond"],
+              "countsAgainstLimit": false,
+              "classLevel": 5
+            },
+            {
+              "type": "spell_grant",
+              "key": "battle_smith_spells_9",
+              "name": "Battle Smith Spells",
+              "destination": "always_prepared",
+              "spells": ["aura-of-vitality", "conjure-barrage"],
+              "countsAgainstLimit": false,
+              "classLevel": 9
+            },
+            {
+              "type": "spell_grant",
+              "key": "battle_smith_spells_13",
+              "name": "Battle Smith Spells",
+              "destination": "always_prepared",
+              "spells": ["aura-of-purity", "fire-shield"],
+              "countsAgainstLimit": false,
+              "classLevel": 13
+            },
+            {
+              "type": "spell_grant",
+              "key": "battle_smith_spells_17",
+              "name": "Battle Smith Spells",
+              "destination": "always_prepared",
+              "spells": ["banishing-smite", "mass-cure-wounds"],
+              "countsAgainstLimit": false,
+              "classLevel": 17
+            },
+            {
+              "type": "feature",
+              "name": "Battle Ready",
+              "description": "Use Intelligence instead of Strength or Dexterity for attack and damage rolls with magic weapons. Any weapon with which you are proficient can serve as your Artificer spellcasting focus."
+            },
+            {
+              "type": "feature",
+              "name": "Steel Defender",
+              "description": "Create a customizable Medium Construct companion whose durability and attacks scale with your Artificer level and spellcasting. It acts immediately after you, Dodging unless commanded with a Bonus Action, and can impose Disadvantage on an attack against a nearby creature. Mending can restore its Hit Points, and a spell slot can revive or replace it."
+            }
+          ]
+        },
+        {
+          "level": 5,
+          "features": ["Extra Attack"],
+          "grants": [
+            {
+              "type": "feature",
+              "name": "Extra Attack",
+              "description": "Attack twice instead of once when taking the Attack action. You can replace one attack with a command that lets your Steel Defender use its Force-Empowered Rend."
+            }
+          ]
+        },
+        {
+          "level": 9,
+          "features": ["Arcane Jolt"],
+          "grants": [
+            {
+              "type": "feature",
+              "key": "battle-smith-arcane-jolt",
+              "name": "Arcane Jolt",
+              "description": "Once per turn when you or your Steel Defender hits, either deal an extra 2d6 Force damage or restore 2d6 Hit Points to a creature or object within 30 feet of the target. Uses equal your Intelligence modifier (minimum once) per Long Rest.",
+              "action": {
+                "activation": "free",
+                "uses": {
+                  "max": 1,
+                  "maxAbilityModifier": "intelligence",
+                  "minimum": 1,
+                  "per": "long_rest"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "level": 15,
+          "features": ["Improved Defender"],
+          "grants": [
+            {
+              "type": "feature",
+              "name": "Improved Defender",
+              "description": "Arcane Jolt's damage and healing increase to 4d6. When your Steel Defender uses its defensive Reaction, the attacker also takes Force damage equal to 1d4 plus your Intelligence modifier."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "index": "cartographer",
+      "name": "Cartographer",
+      "description": "Create linked magical maps that coordinate allies, expose enemies, and open paths across the battlefield.",
+      "levels": [
+        {
+          "level": 3,
+          "features": [
+            "Tools of the Trade",
+            "Cartographer Spells",
+            "Adventurer's Atlas",
+            "Mapping Magic"
+          ],
+          "grants": [
+            {
+              "type": "feature",
+              "name": "Tools of the Trade",
+              "description": "Gain proficiency with Calligrapher's Supplies and Cartographer's Tools. You scribe Spell Scrolls in half the normal time.",
+              "effects": [
+                {
+                  "type": "tool_proficiency",
+                  "tags": ["Calligrapher's Supplies", "Cartographer's Tools"]
+                }
+              ]
+            },
+            {
+              "type": "spell_grant",
+              "key": "cartographer_spells_3",
+              "name": "Cartographer Spells",
+              "destination": "always_prepared",
+              "spells": ["faerie-fire", "guiding-bolt", "healing-word"],
+              "countsAgainstLimit": false
+            },
+            {
+              "type": "spell_grant",
+              "key": "cartographer_spells_5",
+              "name": "Cartographer Spells",
+              "destination": "always_prepared",
+              "spells": ["locate-object", "mind-spike"],
+              "countsAgainstLimit": false,
+              "classLevel": 5
+            },
+            {
+              "type": "spell_grant",
+              "key": "cartographer_spells_9",
+              "name": "Cartographer Spells",
+              "destination": "always_prepared",
+              "spells": ["clairvoyance", "haste"],
+              "countsAgainstLimit": false,
+              "classLevel": 9
+            },
+            {
+              "type": "spell_grant",
+              "key": "cartographer_spells_13",
+              "name": "Cartographer Spells",
+              "destination": "always_prepared",
+              "spells": ["dimension-door", "locate-creature"],
+              "countsAgainstLimit": false,
+              "classLevel": 13
+            },
+            {
+              "type": "spell_grant",
+              "key": "cartographer_spells_17",
+              "name": "Cartographer Spells",
+              "destination": "always_prepared",
+              "spells": ["scrying", "teleportation-circle"],
+              "countsAgainstLimit": false,
+              "classLevel": 17
+            },
+            {
+              "type": "feature",
+              "name": "Adventurer's Atlas",
+              "description": "After a Long Rest, create linked maps equal to your Intelligence modifier (minimum one). Each holder adds 1d4 to Initiative, always knows the other holders' locations on the same plane, and can target another holder without seeing them if the effect is in range and doesn't require an attack roll."
+            },
+            {
+              "type": "feature",
+              "key": "cartographer-illuminated-cartography",
+              "name": "Illuminated Cartography",
+              "description": "Cast Faerie Fire without a spell slot through Cartographer's Tools. Uses equal your Intelligence modifier (minimum once) per Long Rest.",
+              "action": {
+                "activation": "action",
+                "uses": {
+                  "max": 1,
+                  "maxAbilityModifier": "intelligence",
+                  "minimum": 1,
+                  "per": "long_rest"
+                }
+              }
+            },
+            {
+              "type": "spell_grant",
+              "key": "cartographer_faerie_fire",
+              "name": "Illuminated Cartography",
+              "destination": "always_prepared",
+              "spells": ["faerie-fire"],
+              "countsAgainstLimit": false,
+              "freeCast": {
+                "uses": "spellcasting_ability_modifier",
+                "minimum": 1,
+                "recovery": "long_rest"
+              }
+            },
+            {
+              "type": "feature",
+              "name": "Portal Jump",
+              "description": "Spend half your Speed to teleport up to 10 feet to a space you can see, or to an open space within 5 feet of a map holder within 30 feet. This special movement requires no action."
+            }
+          ]
+        },
+        {
+          "level": 5,
+          "features": ["Guided Precision"],
+          "grants": [
+            {
+              "type": "feature",
+              "name": "Guided Precision",
+              "description": "Taking damage can't end your Concentration on Faerie Fire. Once per turn, add your Intelligence modifier to one damage roll of a Cartographer spell or to an attack that hits a creature affected by your Faerie Fire."
+            }
+          ]
+        },
+        {
+          "level": 9,
+          "features": ["Ingenious Movement"],
+          "grants": [
+            {
+              "type": "feature",
+              "name": "Ingenious Movement",
+              "description": "When you use Flash of Genius, you or one willing creature you can see within 30 feet can teleport up to 30 feet to a space you can see as part of the same Reaction."
+            }
+          ]
+        },
+        {
+          "level": 15,
+          "features": ["Superior Atlas"],
+          "grants": [
+            {
+              "type": "feature",
+              "name": "Superior Atlas",
+              "description": "A map holder reduced to 0 Hit Points without dying can destroy the map to teleport beside you or another map holder and become Stable. While at least one map exists, damage can't end your Concentration on Artificer spells."
+            },
+            {
+              "type": "spell_grant",
+              "key": "cartographer_unerring_path",
+              "name": "Unerring Path",
+              "destination": "always_prepared",
+              "spells": ["find-the-path"],
+              "countsAgainstLimit": false,
+              "freeCast": { "uses": 1, "recovery": "long_rest" }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

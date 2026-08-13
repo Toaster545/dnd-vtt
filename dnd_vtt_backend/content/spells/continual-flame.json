@@ -17,6 +17,7 @@
   "ritual": false,
   "concentration": false,
   "classes": [
+    "Artificer",
     "Cleric",
     "Druid",
     "Wizard"
