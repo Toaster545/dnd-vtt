@@ -12,29 +12,6 @@
   "duration": "Instantaneous",
   "ritual": false,
   "concentration": false,
-  "classes": [
-    "Bard",
-    "Druid"
-  ],
-  "subclasses": [
-    {
-      "class": "Bard",
-      "subclass": "College of Lore"
-    },
-    {
-      "class": "Druid",
-      "subclass": "Circle of the Moon"
-    }
-  ],
-  "species": [],
-  "backgrounds": [],
-  "feats": [
-    "Druidic Warrior",
-    "Magic Initiate"
-  ],
-  "other_options": [
-    "Pact of the Tome"
-  ],
   "mechanics": {
     "spell_attacks": [
       "ranged"

@@ -17,6 +17,7 @@
       >
         <div class="flex items-center gap-3">
           <span class="font-medium text-sm" [class]="selected ? 'text-parchment' : 'text-slate'">{{ race.name }}</span>
+          <span class="text-[10px] text-coal border border-white/10 rounded px-1.5 py-0.5" [title]="race.source?.book">{{ race.source?.code || 'XPHB' }}</span>
         </div>
         <div class="flex items-center gap-3 text-xs text-coal flex-shrink-0 ml-4">
           <span>{{ race.creature_type }}</span>

@@ -12,22 +12,6 @@
   "duration": "Instantaneous",
   "ritual": false,
   "concentration": false,
-  "classes": [
-    "Cleric"
-  ],
-  "subclasses": [
-    {
-      "class": "Bard",
-      "subclass": "College of Lore"
-    }
-  ],
-  "species": [],
-  "backgrounds": [],
-  "feats": [
-    "Magic Initiate",
-    "Shadow-Touched"
-  ],
-  "other_options": [],
   "mechanics": {
     "saving_throws": [
       "constitution"

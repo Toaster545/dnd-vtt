@@ -13,7 +13,13 @@ interface SpellSourceGroup {
   name: string;
   source: ResolvedSpellcastingSource | null;
   requirements: SpellSelectionRequirement[];
-  granted: ResolvedSpellOrigin[];
+}
+
+interface GrantedSpellGroup {
+  spell: DndSpell;
+  origins: ResolvedSpellOrigin[];
+  providers: string[];
+  alwaysPrepared: boolean;
 }
 
 interface SpellLevelGroup {
@@ -75,23 +81,41 @@ export class SpellsStepComponent {
 
   readonly groups = computed<SpellSourceGroup[]>(() => {
     const result = this.resolution();
-    const sourceKeys = new Set([
-      ...result.sources.map(source => source.key),
-      ...result.requirements.map(requirement => requirement.sourceKey),
-    ]);
+    const sourceKeys = new Set(result.requirements.map(requirement => requirement.sourceKey));
     return [...sourceKeys].map(key => {
       const source = result.sources.find(candidate => candidate.key === key) ?? null;
       const requirements = result.requirements.filter(requirement => requirement.sourceKey === key);
-      const granted = [...result.known, ...result.alwaysPrepared]
-        .filter(origin => origin.sourceKey === key && origin.granted);
       return {
         key,
         name: source?.name ?? requirements[0]?.sourceName ?? 'Spells',
         source,
         requirements,
-        granted,
       };
-    }).filter(group => group.requirements.length > 0 || group.granted.length > 0);
+    }).filter(group => group.requirements.length > 0);
+  });
+
+  readonly grantedSpellGroups = computed<GrantedSpellGroup[]>(() => {
+    const result = this.resolution();
+    const origins = [...result.known, ...result.spellbook, ...result.prepared, ...result.alwaysPrepared]
+      .filter(origin => origin.granted);
+    const bySpell = new Map<string, ResolvedSpellOrigin[]>();
+    for (const origin of origins) {
+      bySpell.set(origin.spellIndex, [...(bySpell.get(origin.spellIndex) ?? []), origin]);
+    }
+    return [...bySpell.entries()]
+      .map(([index, spellOrigins]) => {
+        const spell = this.spellByIndex().get(index);
+        if (!spell) return null;
+        return {
+          spell,
+          origins: spellOrigins,
+          providers: [...new Set(spellOrigins.map(origin =>
+            origin.providedBy ?? origin.subclassName ?? origin.sourceName))],
+          alwaysPrepared: spellOrigins.some(origin => origin.category === 'always_prepared'),
+        };
+      })
+      .filter((group): group is GrantedSpellGroup => group !== null)
+      .sort((a, b) => a.spell.level - b.spell.level || a.spell.name.localeCompare(b.spell.name));
   });
 
   readonly globalErrors = computed(() =>
@@ -164,10 +188,6 @@ export class SpellsStepComponent {
       label: level === 0 ? 'Cantrips' : `Level ${level} Spells`,
       spells: levelSpells,
     }));
-  }
-
-  grantedSpell(origin: ResolvedSpellOrigin): DndSpell | null {
-    return this.spellByIndex().get(origin.spellIndex) ?? null;
   }
 
   isSelected(requirement: SpellSelectionRequirement, index: string): boolean {
@@ -335,6 +355,15 @@ export class SpellsStepComponent {
 
   levelLabel(level: number): string {
     return level === 0 ? 'Cantrip' : `Level ${level}`;
+  }
+
+  accessLabels(spell: DndSpell): string[] {
+    return [...new Set((spell.access ?? []).map(access => {
+      const provider = access.parent_name
+        ? `${access.parent_name} — ${access.provider_name}`
+        : access.provider_name;
+      return access.detail ? `${provider} (${access.detail})` : provider;
+    }))];
   }
 
   private matchesSearch(spell: DndSpell, query: string): boolean {

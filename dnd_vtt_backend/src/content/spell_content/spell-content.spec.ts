@@ -1,11 +1,7 @@
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
+import { createHash } from 'node:crypto';
 import { join } from 'node:path';
-
-interface SpellAccessSubclass {
-  class: string;
-  subclass: string;
-  variant?: string;
-}
+import { buildSpellAccess, buildSpellLists } from '../spell-access';
 
 interface SpellContent {
   index: string;
@@ -21,12 +17,6 @@ interface SpellContent {
   duration: string;
   ritual: boolean;
   concentration: boolean;
-  classes: string[];
-  subclasses: SpellAccessSubclass[];
-  species: string[];
-  backgrounds: string[];
-  feats: string[];
-  other_options: string[];
   mechanics: {
     spell_attacks?: string[];
     saving_throws: string[];
@@ -77,6 +67,28 @@ const spellFiles = readdirSync(spellsRoot)
 const spells = spellFiles.map(
   (file) =>
     JSON.parse(readFileSync(join(spellsRoot, file), 'utf8')) as SpellContent,
+);
+const providerFiles = (folder: string) =>
+  readdirSync(join(contentRoot, folder))
+    .filter((file) => file.endsWith('.json'))
+    .sort()
+    .map(
+      (file) =>
+        JSON.parse(
+          readFileSync(join(contentRoot, folder, file), 'utf8'),
+        ) as Record<string, unknown>,
+    );
+const classes = providerFiles('classes');
+const races = providerFiles('races');
+const backgrounds = providerFiles('backgrounds');
+const feats = providerFiles('feats');
+const spellLists = buildSpellLists(classes);
+const spellAccess = buildSpellAccess(
+  spells as unknown as Record<string, unknown>[],
+  classes,
+  races,
+  backgrounds,
+  feats,
 );
 const phbSpells = spells.filter((spell) => spell.source.code === 'XPHB');
 const supplementalSpells = spells.filter(
@@ -130,7 +142,6 @@ describe("Player's Handbook 2024 spell content", () => {
       index: 'homunculus-servant',
       level: 2,
       ritual: true,
-      classes: ['Artificer'],
       source: {
         book: 'Eberron: Forge of the Artificer',
         edition: 2024,
@@ -222,6 +233,85 @@ describe("Player's Handbook 2024 spell content", () => {
     expect(missing).toEqual([]);
   });
 
+  it('keeps every migrated class list byte-for-byte equivalent to the former spell-owned lists', () => {
+    const expected: Record<string, [number, string]> = {
+      Artificer: [
+        80,
+        '1a003ff712a3a165e8b579a047d229129328c738ef07fc501df5ea87d3ebacc2',
+      ],
+      Bard: [
+        140,
+        '1e23cb1e4d992d55e172d092a41edbbcfa81528435a68e349e626cfd9f3922d1',
+      ],
+      Cleric: [
+        117,
+        '17732c9b300d5435a50417bdd19c54dd2a2ece96ecd3e9c4d9083725b6ca1c60',
+      ],
+      Druid: [
+        135,
+        'd49c61f260e21c2eb2a4630f76f721cc6c827018d77a28435bfd9158cd73112b',
+      ],
+      Paladin: [
+        51,
+        '2c3f323be91ceb8db63364131e57f396aa4ffb7bdad39b944e62f9fb0979bb64',
+      ],
+      Ranger: [
+        61,
+        '2439c2551fca3d87743bc17b758fe41fec56cdf6a22f9587d5ad3895cb4a804c',
+      ],
+      Sorcerer: [
+        150,
+        '1f520b0b935e5a71a1c7c0d01e3c93ff4e842d34a5b4ca79894004ddc6e8fcbc',
+      ],
+      Warlock: [
+        91,
+        '012101bd8fa48fbafcb9639363a4df394bd71c672a6ab4594867f489ff4b900f',
+      ],
+      Wizard: [
+        242,
+        'b68badb048f9247d55612a64248fa910d8d305200232eb73c90a45f512d8bbae',
+      ],
+    };
+    expect(Object.keys(spellLists).sort()).toEqual(
+      Object.keys(expected).sort(),
+    );
+    for (const [name, [count, hash]] of Object.entries(expected)) {
+      const indexes = spellLists[name];
+      expect(indexes).toHaveLength(count);
+      expect(
+        createHash('sha256')
+          .update([...indexes].sort().join('\n'))
+          .digest('hex'),
+      ).toBe(hash);
+    }
+  });
+
+  it('keeps subclass spellcasting lists equivalent to the former spell-owned lists', () => {
+    const expectedHash =
+      '35ce029748bb8f56d0d96b409dfb848471a81198b15face5f7b23fccfa211063';
+    for (const [classIndex, subclassIndex] of [
+      ['fighter', 'eldritch-knight'],
+      ['rogue', 'arcane-trickster'],
+    ]) {
+      const cls = classes.find((entry) => entry.index === classIndex);
+      const subclasses = Array.isArray(cls?.subclasses)
+        ? (cls.subclasses as Record<string, unknown>[])
+        : [];
+      const subclass = subclasses.find(
+        (entry) => entry.index === subclassIndex,
+      );
+      const spellcasting = subclass?.spellcasting as
+        Record<string, unknown> | undefined;
+      const indexes = spellcasting?.spells as string[];
+      expect(indexes).toHaveLength(151);
+      expect(
+        createHash('sha256')
+          .update([...indexes].sort().join('\n'))
+          .digest('hex'),
+      ).toBe(expectedHash);
+    }
+  });
+
   it('matches the PHB level distribution', () => {
     const counts = Object.fromEntries(
       Array.from({ length: 10 }, (_, level) => [
@@ -265,22 +355,18 @@ describe("Player's Handbook 2024 spell content", () => {
       expect(spell.range).not.toBe('');
       expect(spell.duration).not.toBe('');
       expect(spell.components.length).toBeGreaterThan(0);
-      expect(spell.classes.length).toBeGreaterThan(0);
+      expect(spellAccess.get(spell.index)?.length).toBeGreaterThan(0);
       expect(spell.source.edition).toBe(2024);
       expect(spell.source.book).not.toBe('');
       expect(spell.source.code).not.toBe('');
     }
   });
 
-  it('includes PHB-only access metadata and excludes non-PHB sources', () => {
+  it('removes reverse access fields from spells and derives access from every provider type', () => {
     const acidSplash = spells.find((spell) => spell.index === 'acid-splash');
     expect(acidSplash).toMatchObject({
       level: 0,
       school: 'Evocation',
-      classes: ['Artificer', 'Sorcerer', 'Wizard'],
-      species: ['Elf'],
-      feats: ['Magic Initiate'],
-      other_options: ['Pact of the Tome'],
       mechanics: {
         saving_throws: ['dexterity'],
         damage_types: ['acid'],
@@ -291,12 +377,48 @@ describe("Player's Handbook 2024 spell content", () => {
       },
       source: { page: 239, srd_5_2_1: true },
     });
-    expect(acidSplash?.subclasses).toContainEqual({
-      class: 'Fighter',
-      subclass: 'Eldritch Knight',
-    });
-    expect(acidSplash?.subclasses).not.toContainEqual(
-      expect.objectContaining({ subclass: 'Arcana Domain' }),
+    for (const spell of spells) {
+      for (const field of [
+        'classes',
+        'subclasses',
+        'species',
+        'backgrounds',
+        'feats',
+        'other_options',
+      ]) {
+        expect(spell).not.toHaveProperty(field);
+      }
+    }
+    const acidAccess = spellAccess.get('acid-splash') ?? [];
+    expect(acidAccess).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ kind: 'class', provider_name: 'Artificer' }),
+        expect.objectContaining({ kind: 'class', provider_name: 'Sorcerer' }),
+        expect.objectContaining({ kind: 'class', provider_name: 'Wizard' }),
+        expect.objectContaining({
+          kind: 'subclass',
+          provider_name: 'Eldritch Knight',
+        }),
+        expect.objectContaining({
+          kind: 'species',
+          provider_name: 'Elf',
+          detail: 'High Elf',
+        }),
+        expect.objectContaining({
+          kind: 'feat',
+          provider_name: 'Magic Initiate',
+          detail: 'Magic Initiate (Wizard)',
+        }),
+        expect.objectContaining({
+          kind: 'background',
+          provider_name: 'Sage',
+          detail: 'Magic Initiate (Wizard)',
+        }),
+        expect.objectContaining({
+          kind: 'class_feature',
+          provider_name: 'Pact of the Tome',
+        }),
+      ]),
     );
   });
 
@@ -317,13 +439,15 @@ describe("Player's Handbook 2024 spell content", () => {
       (spell) => spell.index === 'armor-of-agathys',
     );
     expect(armorOfAgathys).toMatchObject({
-      classes: ['Warlock'],
       source: {
         page: 243,
         srd_5_2_1: false,
         rules_text: 'reference-only',
       },
     });
+    expect(spellAccess.get('armor-of-agathys')).toContainEqual(
+      expect.objectContaining({ kind: 'class', provider_name: 'Warlock' }),
+    );
     expect(armorOfAgathys?.description).toContain('5 Temporary Hit Points');
 
     const compelledDuel = spells.find(

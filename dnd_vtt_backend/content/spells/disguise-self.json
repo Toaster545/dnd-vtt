@@ -12,47 +12,6 @@
   "duration": "1 hour",
   "ritual": false,
   "concentration": false,
-  "classes": [
-    "Artificer",
-    "Bard",
-    "Sorcerer",
-    "Wizard"
-  ],
-  "subclasses": [
-    {
-      "class": "Bard",
-      "subclass": "College of Lore"
-    },
-    {
-      "class": "Cleric",
-      "subclass": "Trickery Domain"
-    },
-    {
-      "class": "Fighter",
-      "subclass": "Eldritch Knight"
-    },
-    {
-      "class": "Ranger",
-      "subclass": "Gloom Stalker"
-    },
-    {
-      "class": "Rogue",
-      "subclass": "Arcane Trickster"
-    },
-    {
-      "class": "Wizard",
-      "subclass": "Illusionist"
-    }
-  ],
-  "species": [],
-  "backgrounds": [],
-  "feats": [
-    "Magic Initiate",
-    "Shadow-Touched"
-  ],
-  "other_options": [
-    "Mask of Many Faces"
-  ],
   "mechanics": {
     "saving_throws": [],
     "ability_checks": [

@@ -12,28 +12,6 @@
   "duration": "Concentration, up to 10 minutes",
   "ritual": false,
   "concentration": true,
-  "classes": [
-    "Sorcerer",
-    "Wizard"
-  ],
-  "subclasses": [
-    {
-      "class": "Fighter",
-      "subclass": "Psi Warrior"
-    },
-    {
-      "class": "Sorcerer",
-      "subclass": "Aberrant Sorcery"
-    },
-    {
-      "class": "Warlock",
-      "subclass": "Great Old One Patron"
-    }
-  ],
-  "species": [],
-  "backgrounds": [],
-  "feats": [],
-  "other_options": [],
   "mechanics": {
     "saving_throws": [
       "strength"

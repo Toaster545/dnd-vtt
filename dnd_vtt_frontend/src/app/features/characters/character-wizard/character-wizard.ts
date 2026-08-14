@@ -3,7 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { ContentService, DndRace, DndClass, DndBackground, DndItem, DndSpell, DndFeat, TraitEffect, TraitGrant } from '../../../core/services/content.service';
+import { ContentService, DndContentSource, DndRace, DndClass, DndBackground, DndItem, DndSpell, DndFeat, TraitEffect, TraitGrant } from '../../../core/services/content.service';
 import { ClassChoiceSource, averageHpFormula, collectFeatEffects, collectTraitEffects, reachableGrants, resolveCharacterFeatPicks, resolveLanguageProficiencies, unarmoredDefenseBonus } from '../../../core/utils/character-effects';
 import { isStructuredEquipment, resolveStartingEquipment } from '../../../core/utils/starting-equipment';
 import { resolveBackgroundSkills } from '../../../core/utils/background-skills';
@@ -12,8 +12,10 @@ import { portraitDataUri, randomPortraitSeed } from '../../../core/utils/avatar'
 import { resolveSpellcasting, type SpellSelectionRequirement } from '../../../core/utils/spellcasting';
 import { CharacterService } from '../../../core/services/character.service';
 import { CharacterStatsService } from '../../../core/services/character-stats.service';
+import { CampaignService } from '../../../core/services/campaign.service';
 import { Character, Ability, ABILITIES, ScoreMethod, POINT_BUY_MIN, defaultCharacter, abilityModifier } from '../../../core/models/character.model';
 import { PortraitPickerDialogComponent } from '../../../shared/portrait-picker-dialog/portrait-picker-dialog';
+import { ContentSourceDialogComponent } from '../../../shared/components/content-source-dialog/content-source-dialog';
 import { RaceStepComponent, Subrace, RaceChoice } from './steps/race-step/race-step';
 import { ClassStepComponent, ClassEntry } from './steps/class-step/class-step';
 import { BackgroundStepComponent, BackgroundChoice } from './steps/background-step/background-step';
@@ -54,6 +56,7 @@ export class CharacterWizardComponent implements OnInit, OnDestroy {
   private content          = inject(ContentService);
   private characterService = inject(CharacterService);
   private statsService     = inject(CharacterStatsService);
+  private campaignService  = inject(CampaignService);
   private dialog           = inject(MatDialog);
 
   readonly character  = input<Character | null>(null);
@@ -70,8 +73,19 @@ export class CharacterWizardComponent implements OnInit, OnDestroy {
   backgrounds = signal<DndBackground[]>([]);
   items       = signal<DndItem[]>([]);
   spells      = signal<DndSpell[]>([]);
+  spellLists  = signal<Record<string, string[]>>({});
   feats       = signal<DndFeat[]>([]);
+  sources     = signal<DndContentSource[]>([]);
+  enabledSources = signal<Set<string>>(new Set(['XPHB']));
+  campaignAllowedSources = signal<Set<string> | null>(null);
   loading     = signal(true);
+
+  private allRaces: DndRace[] = [];
+  private allClasses: DndClass[] = [];
+  private allBackgrounds: DndBackground[] = [];
+  private allItems: DndItem[] = [];
+  private allSpells: DndSpell[] = [];
+  private allFeats: DndFeat[] = [];
 
   selectedItemIndices = signal<Set<string>>(new Set());
   spellChoices        = signal<Record<string, string[]>>({});
@@ -406,6 +420,7 @@ export class CharacterWizardComponent implements OnInit, OnDestroy {
     characterLevel: this.level(),
     abilityScores: this.finalScores(),
     spells: this.spells(),
+    spellLists: this.spellLists(),
     classes: this.reconciledClasses().map(entry => ({
       cls: entry.cls,
       level: entry.level,
@@ -511,6 +526,7 @@ export class CharacterWizardComponent implements OnInit, OnDestroy {
       currency: existing?.currency ?? this.startingCurrency(),
       spells,
       spell_choices: this.spellChoices(),
+      enabled_sources: [...this.enabledSources()],
     } as Character;
   });
 
@@ -560,6 +576,7 @@ export class CharacterWizardComponent implements OnInit, OnDestroy {
       this.selectedBackground(); this.backgroundTraits();
       this.assignments(); this.selectedItemIndices(); this.spellChoices();
       this.classEquipChoices(); this.backgroundEquipChoices();
+      this.enabledSources();
       this.currentHp();
 
       if (!this.initialized) return;
@@ -575,23 +592,34 @@ export class CharacterWizardComponent implements OnInit, OnDestroy {
   async ngOnInit() {
 
     const campaignId = this.character()?.campaign_id ?? undefined;
-    const [races, classes, backgrounds, items, spells, feats] = await Promise.all([
+    const [sources, races, classes, backgrounds, items, spells, spellLists, feats, campaign] = await Promise.all([
+      this.content.getSources(),
       this.content.getRaces(),
       this.content.getClasses(),
       this.content.getBackgrounds(),
       this.content.getItems(campaignId),
       this.content.getSpells(campaignId),
+      this.content.getSpellLists(),
       this.content.getFeats(),
+      campaignId ? this.campaignService.getById(campaignId) : Promise.resolve(null),
     ]);
-    this.races.set(races);
-    this.classes.set(classes);
-    this.backgrounds.set(backgrounds);
-    this.items.set(items);
-    this.spells.set(spells);
-    this.feats.set(feats);
-    this.loading.set(false);
+    this.sources.set(sources);
+    this.allRaces = races;
+    this.allClasses = classes;
+    this.allBackgrounds = backgrounds;
+    this.allItems = items;
+    this.allSpells = spells;
+    this.spellLists.set(spellLists);
+    this.allFeats = feats;
+    if (campaign) {
+      this.campaignAllowedSources.set(new Set(campaign.allowed_sources));
+    }
 
     const existing = this.character();
+    this.enabledSources.set(new Set(existing?.enabled_sources ?? ['XPHB']));
+    this.applySourceFilters();
+    this.loading.set(false);
+
     if (existing) {
       this.existingCharacter.set(existing);
       this.characterId.set(existing.id ?? null);
@@ -600,8 +628,8 @@ export class CharacterWizardComponent implements OnInit, OnDestroy {
       this.level.set(existing.level);
       this.alignment.set(existing.alignment);
       this.currentHp.set(existing.current_hp);
-      const race = races.find(r => r.name === existing.race) ?? null;
-      const bg   = backgrounds.find(b => b.name === existing.background) ?? null;
+      const race = this.allRaces.find(r => r.name === existing.race) ?? null;
+      const bg   = this.allBackgrounds.find(b => b.name === existing.background) ?? null;
       this.selectedRace.set(race);
       this.selectedBackground.set(bg);
       if (existing.subrace && race) {
@@ -618,7 +646,7 @@ export class CharacterWizardComponent implements OnInit, OnDestroy {
       // Restore classes
       const classEntries = (existing.classes ?? (existing.class ? [{ name: existing.class, level: existing.level, subclass: existing.subclass }] : []))
         .map(c => {
-          const cls = classes.find(cl => cl.name === c.name);
+          const cls = this.allClasses.find(cl => cl.name === c.name);
           if (!cls) return null;
           return { cls, level: c.level ?? existing.level, subclass: c.subclass ?? '', skills: c.skills ?? [], traits: c.choices ?? {} } as ClassEntry;
         })
@@ -654,6 +682,63 @@ export class CharacterWizardComponent implements OnInit, OnDestroy {
     }
 
     setTimeout(() => { this.initialized = true; }, 0);
+  }
+
+  openSourcesDialog() {
+    this.dialog.open(ContentSourceDialogComponent, {
+      data: {
+        sources: this.sources(),
+        enabledCodes: [...this.enabledSources()],
+        allowedCodes: this.campaignAllowedSources()
+          ? [...this.campaignAllowedSources()!]
+          : null,
+      },
+      width: '680px',
+      maxWidth: '95vw',
+      maxHeight: '85vh',
+    }).afterClosed().subscribe((result: string[] | null | undefined) => {
+      if (!result) return;
+      this.enabledSources.set(new Set(result));
+      this.applySourceFilters(true);
+    });
+  }
+
+  private applySourceFilters(clearUnavailable = false) {
+    const enabled = this.enabledSources();
+    const include = <T extends { source?: { code: string } }>(entry: T) =>
+      enabled.has(entry.source?.code ?? 'XPHB');
+    this.races.set(this.allRaces.filter(include));
+    this.classes.set(this.allClasses.filter(include).map(cls => ({
+      ...cls,
+      subclasses: cls.subclasses.filter(include),
+    })));
+    this.backgrounds.set(this.allBackgrounds.filter(include));
+    this.items.set(this.allItems.filter(include));
+    this.spells.set(this.allSpells.filter(include));
+    this.feats.set(this.allFeats.filter(include));
+
+    if (!clearUnavailable) return;
+    if (this.selectedRace() && !include(this.selectedRace()!)) {
+      this.selectedRace.set(null);
+      this.selectedSubrace.set(null);
+      this.raceTraits.set({});
+    }
+    this.selectedClasses.update(entries => entries.filter(entry => include(entry.cls)));
+    if (this.selectedBackground() && !include(this.selectedBackground()!)) {
+      this.selectedBackground.set(null);
+      this.backgroundTraits.set({});
+    }
+    const itemIndexes = new Set(this.items().map(item => item.index));
+    this.selectedItemIndices.update(indices =>
+      new Set([...indices].filter(index => itemIndexes.has(index))),
+    );
+    const spellIndexes = new Set(this.spells().map(spell => spell.index));
+    this.spellChoices.update(choices => Object.fromEntries(
+      Object.entries(choices).map(([key, indexes]) => [
+        key,
+        indexes.filter(index => spellIndexes.has(index)),
+      ]),
+    ));
   }
 
   private scheduleSave() {
@@ -754,6 +839,7 @@ export class CharacterWizardComponent implements OnInit, OnDestroy {
       characterLevel: this.level(),
       abilityScores: this.finalScores(),
       spells: this.spells(),
+      spellLists: this.spellLists(),
       classes: this.reconciledClasses().map(entry => ({ cls: entry.cls, level: entry.level, subclass: entry.subclass, choices: entry.traits })),
       race: this.selectedRace() ? { race: this.selectedRace()!, subrace: this.selectedSubrace(), choices: this.raceTraits() } : null,
       background: this.selectedBackground() ? { background: this.selectedBackground()!, choices: this.backgroundTraits() } : null,

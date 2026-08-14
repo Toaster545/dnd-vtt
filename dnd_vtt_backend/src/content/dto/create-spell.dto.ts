@@ -13,12 +13,6 @@ import {
   ValidateNested,
 } from 'class-validator';
 
-export class SpellSubclassRefDto {
-  @IsString() @IsNotEmpty() class: string;
-  @IsString() @IsNotEmpty() subclass: string;
-  @IsString() @IsOptional() variant?: string;
-}
-
 export class SpellScalingDto {
   @IsString() @IsNotEmpty() label: string;
   @IsObject() values: Record<string, string>;
@@ -81,17 +75,6 @@ export class CreateSpellDto {
   @IsString() @IsNotEmpty() duration: string;
   @IsBoolean() ritual: boolean;
   @IsBoolean() concentration: boolean;
-
-  @IsArray() @IsString({ each: true }) classes: string[];
-  @IsArray()
-  @ValidateNested({ each: true })
-  @Type(() => SpellSubclassRefDto)
-  @IsOptional()
-  subclasses?: SpellSubclassRefDto[];
-  @IsArray() @IsString({ each: true }) @IsOptional() species?: string[];
-  @IsArray() @IsString({ each: true }) @IsOptional() backgrounds?: string[];
-  @IsArray() @IsString({ each: true }) @IsOptional() feats?: string[];
-  @IsArray() @IsString({ each: true }) @IsOptional() other_options?: string[];
 
   @ValidateNested()
   @Type(() => SpellMechanicsDto)

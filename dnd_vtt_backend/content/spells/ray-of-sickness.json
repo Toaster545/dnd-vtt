@@ -12,38 +12,6 @@
   "duration": "Instantaneous",
   "ritual": false,
   "concentration": false,
-  "classes": [
-    "Sorcerer",
-    "Wizard"
-  ],
-  "subclasses": [
-    {
-      "class": "Bard",
-      "subclass": "College of Lore"
-    },
-    {
-      "class": "Druid",
-      "subclass": "Circle of the Land",
-      "variant": "Tropical Land"
-    },
-    {
-      "class": "Fighter",
-      "subclass": "Eldritch Knight"
-    },
-    {
-      "class": "Rogue",
-      "subclass": "Arcane Trickster"
-    }
-  ],
-  "species": [
-    "Tiefling"
-  ],
-  "backgrounds": [],
-  "feats": [
-    "Magic Initiate",
-    "Shadow-Touched"
-  ],
-  "other_options": [],
   "mechanics": {
     "spell_attacks": [
       "ranged"

@@ -8,6 +8,18 @@ import { join } from 'path';
 import { randomUUID } from 'crypto';
 import { DatabaseService } from '../common/database.service';
 import type { RequestUser } from '../common/current-user.decorator';
+import {
+  CONTENT_SOURCES,
+  HOMEBREW_SOURCE_CODE,
+  MONSTER_MANUAL_SOURCE_CODE,
+  PHB_SOURCE_CODE,
+  sourceReference,
+} from './content-sources';
+import {
+  buildSpellAccess,
+  buildSpellLists,
+  type SpellAccessReference,
+} from './spell-access';
 
 const CONTENT_PATH = join(process.cwd(), 'content');
 
@@ -32,8 +44,11 @@ export class ContentService {
     if (this.cache.has(key)) return this.cache.get(key) as T[];
     const dir = join(CONTENT_PATH, type);
     const files = readdirSync(dir).filter((f) => f.endsWith('.json'));
-    const items = files.map(
-      (f) => JSON.parse(readFileSync(join(dir, f), 'utf-8')) as T,
+    const items = files.map((f) =>
+      this.withSource(
+        JSON.parse(readFileSync(join(dir, f), 'utf-8')) as T,
+        this.fallbackSource(type),
+      ),
     );
     this.cache.set(key, items);
     return items;
@@ -44,12 +59,46 @@ export class ContentService {
     if (this.cache.has(key)) return this.cache.get(key) as T;
     const file = join(CONTENT_PATH, type, `${index}.json`);
     try {
-      const item = JSON.parse(readFileSync(file, 'utf-8')) as T;
+      const item = this.withSource(
+        JSON.parse(readFileSync(file, 'utf-8')) as T,
+        this.fallbackSource(type),
+      );
       this.cache.set(key, item);
       return item;
     } catch {
       throw new NotFoundException(`${type}/${index} not found`);
     }
+  }
+
+  getSources() {
+    return CONTENT_SOURCES;
+  }
+
+  private fallbackSource(type: string): string {
+    return type === 'monsters' ? MONSTER_MANUAL_SOURCE_CODE : PHB_SOURCE_CODE;
+  }
+
+  private withSource<T>(value: T, fallbackCode: string): T {
+    if (!value || typeof value !== 'object') return value;
+    const record = value as Record<string, unknown>;
+    const existing =
+      record.source && typeof record.source === 'object'
+        ? (record.source as Record<string, unknown>)
+        : {};
+    const code =
+      typeof existing.code === 'string' && existing.code
+        ? existing.code
+        : fallbackCode;
+    const normalized: Record<string, unknown> = {
+      ...record,
+      source: { ...sourceReference(code), ...existing, code },
+    };
+    if (Array.isArray(record.subclasses)) {
+      normalized.subclasses = record.subclasses.map((subclass: unknown) =>
+        this.withSource<unknown>(subclass, code),
+      );
+    }
+    return normalized as T;
   }
 
   getClasses() {
@@ -75,6 +124,10 @@ export class ContentService {
   }
   getFeat(index: string) {
     return this.loadOne('feats', index);
+  }
+
+  getSpellLists() {
+    return buildSpellLists(this.loadAll<Record<string, unknown>>('classes'));
   }
 
   // ── Monsters / items / spells: static SRD content merged with DM-authored custom content ──
@@ -107,10 +160,44 @@ export class ContentService {
     return this.getMergedOne<Record<string, unknown>>('items', index);
   }
   async getSpells(campaignId?: string, user?: RequestUser) {
-    return this.getMerged<Record<string, unknown>>('spells', campaignId, user);
+    const spells = await this.getMerged<Record<string, unknown>>(
+      'spells',
+      campaignId,
+      user,
+    );
+    return spells.map((spell) => this.withSpellAccess(spell));
   }
   async getSpell(index: string) {
-    return this.getMergedOne<Record<string, unknown>>('spells', index);
+    return this.withSpellAccess(
+      await this.getMergedOne<Record<string, unknown>>('spells', index),
+    );
+  }
+
+  private withSpellAccess<T extends Record<string, unknown>>(
+    spell: T,
+  ): T & {
+    access: SpellAccessReference[];
+  } {
+    return {
+      ...spell,
+      access: this.getSpellAccessRegistry().get(String(spell.index)) ?? [],
+    };
+  }
+
+  private getSpellAccessRegistry() {
+    const key = 'derived:spell-access';
+    if (this.cache.has(key)) {
+      return this.cache.get(key) as Map<string, SpellAccessReference[]>;
+    }
+    const registry = buildSpellAccess(
+      this.loadAll<Record<string, unknown>>('spells'),
+      this.loadAll<Record<string, unknown>>('classes'),
+      this.loadAll<Record<string, unknown>>('races'),
+      this.loadAll<Record<string, unknown>>('backgrounds'),
+      this.loadAll<Record<string, unknown>>('feats'),
+    );
+    this.cache.set(key, registry);
+    return registry;
   }
 
   private async getMerged<T>(
@@ -163,7 +250,12 @@ export class ContentService {
       `SELECT data FROM ${CUSTOM_TABLE[kind]} WHERE created_by = ? ORDER BY name ASC`,
       [dmId],
     );
-    return result.rows.map((row) => JSON.parse(row.data as string) as T);
+    return result.rows.map((row) =>
+      this.withSource(
+        JSON.parse(row.data as string) as T,
+        HOMEBREW_SOURCE_CODE,
+      ),
+    );
   }
 
   private async loadCustomOne<T>(
@@ -175,7 +267,12 @@ export class ContentService {
       [id],
     );
     const row = result.rows[0];
-    return row ? (JSON.parse(row.data as string) as T) : null;
+    return row
+      ? this.withSource(
+          JSON.parse(row.data as string) as T,
+          HOMEBREW_SOURCE_CODE,
+        )
+      : null;
   }
 
   private async findCustomRow(kind: CustomContentKind, id: string) {
@@ -202,7 +299,12 @@ export class ContentService {
       `SELECT data FROM ${CUSTOM_TABLE[kind]} WHERE created_by = ? ORDER BY name ASC`,
       [user.id],
     );
-    return result.rows.map((row) => JSON.parse(row.data as string) as unknown);
+    return result.rows.map((row) =>
+      this.withSource(
+        JSON.parse(row.data as string) as unknown,
+        HOMEBREW_SOURCE_CODE,
+      ),
+    );
   }
 
   async createCustom(
@@ -212,7 +314,7 @@ export class ContentService {
   ) {
     const id = randomUUID();
     const index = `${CUSTOM_PREFIX}${id}`;
-    const data = { ...dto, index };
+    const data = this.withSource({ ...dto, index }, HOMEBREW_SOURCE_CODE);
     await this.db.execute(
       `INSERT INTO ${CUSTOM_TABLE[kind]} (id, created_by, name, data) VALUES (?, ?, ?, ?)`,
       [
@@ -234,7 +336,7 @@ export class ContentService {
     const id = this.requireCustomId(index);
     const row = await this.findCustomRow(kind, id);
     if (row.created_by !== user.id) throw new ForbiddenException();
-    const data = { ...dto, index };
+    const data = this.withSource({ ...dto, index }, HOMEBREW_SOURCE_CODE);
     await this.db.execute(
       `UPDATE ${CUSTOM_TABLE[kind]} SET name = ?, data = ?, updated_at = datetime('now') WHERE id = ?`,
       [typeof dto.name === 'string' ? dto.name : '', JSON.stringify(data), id],

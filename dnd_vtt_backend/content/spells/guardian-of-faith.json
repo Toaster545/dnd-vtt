@@ -11,23 +11,6 @@
   "duration": "8 hours",
   "ritual": false,
   "concentration": false,
-  "classes": [
-    "Cleric"
-  ],
-  "subclasses": [
-    {
-      "class": "Paladin",
-      "subclass": "Oath of Devotion"
-    },
-    {
-      "class": "Warlock",
-      "subclass": "Celestial Patron"
-    }
-  ],
-  "species": [],
-  "backgrounds": [],
-  "feats": [],
-  "other_options": [],
   "mechanics": {
     "saving_throws": [
       "dexterity"

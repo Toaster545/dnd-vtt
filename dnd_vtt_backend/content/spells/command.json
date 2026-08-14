@@ -11,36 +11,6 @@
   "duration": "Instantaneous",
   "ritual": false,
   "concentration": false,
-  "classes": [
-    "Bard",
-    "Cleric",
-    "Paladin"
-  ],
-  "subclasses": [
-    {
-      "class": "Bard",
-      "subclass": "College of Glamour"
-    },
-    {
-      "class": "Bard",
-      "subclass": "College of Lore"
-    },
-    {
-      "class": "Sorcerer",
-      "subclass": "Draconic Sorcery"
-    },
-    {
-      "class": "Warlock",
-      "subclass": "Fiend Patron"
-    }
-  ],
-  "species": [],
-  "backgrounds": [],
-  "feats": [
-    "Fey-Touched",
-    "Magic Initiate"
-  ],
-  "other_options": [],
   "mechanics": {
     "saving_throws": [
       "wisdom"

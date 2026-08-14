@@ -12,7 +12,14 @@
             · {{ member.character_race || '—' }} {{ member.character_class || '—' }} · Lv {{ member.character_level }}
           }
         </p>
+        @if (member.source_compatible === false) {
+          <p class="text-danger text-xs m-0 mt-0.5">{{ member.source_incompatibility_reason }}</p>
+        }
       </div>
+      @if (member.source_compatible === false) {
+        <mat-icon class="text-danger text-base flex-shrink-0"
+                  [matTooltip]="member.source_incompatibility_reason || 'Character uses a disallowed source'">warning</mat-icon>
+      }
       @if (maxHpFor(member) != null) {
         <span class="text-xs text-slate border border-white/10 rounded px-2 py-0.5 flex-shrink-0">
           HP {{ currentHpFor(member) }}/{{ maxHpFor(member) }}

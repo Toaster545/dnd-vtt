@@ -15,31 +15,6 @@
   "duration": "Concentration, up to 10 minutes",
   "ritual": false,
   "concentration": true,
-  "classes": [
-    "Bard",
-    "Cleric",
-    "Druid",
-    "Warlock",
-    "Wizard"
-  ],
-  "subclasses": [
-    {
-      "class": "Cleric",
-      "subclass": "Light Domain"
-    },
-    {
-      "class": "Paladin",
-      "subclass": "Oath of Vengeance"
-    },
-    {
-      "class": "Wizard",
-      "subclass": "Diviner"
-    }
-  ],
-  "species": [],
-  "backgrounds": [],
-  "feats": [],
-  "other_options": [],
   "mechanics": {
     "saving_throws": [
       "wisdom"

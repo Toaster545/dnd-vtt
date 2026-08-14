@@ -5,7 +5,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { CampaignService } from '../../core/services/campaign.service';
 import { CharacterService } from '../../core/services/character.service';
-import { Campaign } from '../../core/models/campaign.model';
+import { ContentService, DndContentSource } from '../../core/services/content.service';
+import { Campaign, CampaignJoinPreview } from '../../core/models/campaign.model';
 import { Character } from '../../core/models/character.model';
 import { ConfirmService } from '../../shared/confirm.service';
 
@@ -21,14 +22,17 @@ type NewCampaignMode = 'join' | 'create';
   selector: 'app-campaigns',
   imports: [FormsModule, RouterLink, MatIconModule, MatTooltipModule],
   templateUrl: './campaigns.html',
+  host: { class: 'flex flex-col flex-1 min-h-0 overflow-hidden' },
 })
 export class CampaignsComponent implements OnInit {
   private campaignService  = inject(CampaignService);
   private characterService = inject(CharacterService);
+  private contentService   = inject(ContentService);
   private confirm          = inject(ConfirmService);
 
   campaigns  = signal<Campaign[]>([]);
   characters = signal<Character[]>([]);
+  sources    = signal<DndContentSource[]>([]);
   loading    = signal(true);
 
   showForm = signal(false);
@@ -38,10 +42,14 @@ export class CampaignsComponent implements OnInit {
   newName        = '';
   newDescription = '';
   saving         = signal(false);
+  allowedSources = signal(new Set(['XPHB']));
+  createSourcesExpanded = signal(false);
 
   // Join
   joining      = signal(false);
   joinError    = signal<string | null>(null);
+  joinPreview  = signal<CampaignJoinPreview | null>(null);
+  previewingJoin = signal(false);
   selectedCharacterId = signal<string | null>(null);
   joinCode = '';
 
@@ -50,12 +58,14 @@ export class CampaignsComponent implements OnInit {
   async ngOnInit() { await this.load(); }
 
   private async load() {
-    const [campaigns, characters] = await Promise.all([
+    const [campaigns, characters, sources] = await Promise.all([
       this.campaignService.getAll(),
       this.characterService.getMyCharacters(),
+      this.contentService.getSources(),
     ]);
     this.campaigns.set(campaigns);
     this.characters.set(characters);
+    this.sources.set(sources);
     this.loading.set(false);
   }
 
@@ -67,19 +77,69 @@ export class CampaignsComponent implements OnInit {
   closeForm() {
     this.showForm.set(false);
     this.joinError.set(null);
+    this.joinPreview.set(null);
   }
 
   selectCharacter(id: string) {
+    if (this.characterCompatibility(id)?.compatible === false) return;
     this.selectedCharacterId.set(id);
+  }
+
+  sourceAllowed(source: DndContentSource): boolean {
+    return this.allowedSources().has(source.code);
+  }
+
+  toggleAllowedSource(source: DndContentSource) {
+    if (source.code === 'XPHB') return;
+    const next = new Set(this.allowedSources());
+    if (next.has(source.code)) next.delete(source.code);
+    else next.add(source.code);
+    this.allowedSources.set(next);
+  }
+
+  sourceLabel(code: string): string {
+    return this.sources().find(source => source.code === code)?.short_name ?? code;
+  }
+
+  characterCompatibility(characterId?: string) {
+    if (!characterId) return undefined;
+    return this.joinPreview()?.characters.find(character => character.character_id === characterId);
+  }
+
+  async onJoinCodeChange(value: string) {
+    this.joinCode = value.toUpperCase();
+    this.joinPreview.set(null);
+    this.joinError.set(null);
+    if (this.joinCode.trim().length !== 6) return;
+    const requestedCode = this.joinCode.trim();
+    this.previewingJoin.set(true);
+    try {
+      const preview = await this.campaignService.previewJoin(requestedCode);
+      if (this.joinCode.trim() !== requestedCode) return;
+      this.joinPreview.set(preview);
+      if (this.characterCompatibility(this.selectedCharacterId() ?? undefined)?.compatible === false) {
+        this.selectedCharacterId.set(null);
+      }
+    } catch (error) {
+      if (this.joinCode.trim() !== requestedCode) return;
+      this.joinError.set(this.errorMessage(error, 'No campaign with that code.'));
+    } finally {
+      this.previewingJoin.set(false);
+    }
   }
 
   async createCampaign() {
     if (!this.newName.trim()) return;
     this.saving.set(true);
     try {
-      await this.campaignService.create(this.newName.trim(), this.newDescription.trim());
+      await this.campaignService.create(
+        this.newName.trim(),
+        this.newDescription.trim(),
+        [...this.allowedSources()],
+      );
       this.newName        = '';
       this.newDescription = '';
+      this.allowedSources.set(new Set(['XPHB']));
       this.showForm.set(false);
       await this.load();
     } finally { this.saving.set(false); }
@@ -96,11 +156,17 @@ export class CampaignsComponent implements OnInit {
       this.selectedCharacterId.set(null);
       this.showForm.set(false);
       await this.load();
-    } catch {
-      this.joinError.set('No campaign with that code.');
+    } catch (error) {
+      this.joinError.set(this.errorMessage(error, 'Could not join that campaign.'));
     } finally {
       this.joining.set(false);
     }
+  }
+
+  private errorMessage(error: unknown, fallback: string): string {
+    const response = error as { error?: { message?: string | string[] } };
+    const message = response?.error?.message;
+    return Array.isArray(message) ? message.join(' ') : message || fallback;
   }
 
   async deleteCampaign(campaign: Campaign, event: Event) {

@@ -62,6 +62,21 @@ describe('Warlock class content', () => {
     expect(warlock.levels[19].class_specific.invocations_known).toBe(10);
   });
 
+  it('owns the complete Archfey and Celestial level 3 spell grants', () => {
+    const subclassSpells = (subclassIndex: string, grantKey: string) =>
+      warlock.subclasses
+        .find((subclass) => subclass.index === subclassIndex)
+        ?.levels.flatMap((level) => level.grants ?? [])
+        .find((grant) => grant.key === grantKey)?.spells;
+
+    expect(subclassSpells('archfey', 'archfey_spells_3')).toEqual(
+      expect.arrayContaining(['phantasmal-force']),
+    );
+    expect(subclassSpells('celestial', 'celestial_spells_3')).toEqual(
+      expect.arrayContaining(['light', 'sacred-flame']),
+    );
+  });
+
   it('uses the structured starting-equipment package', () => {
     expect(warlock.starting_equipment.groups).toEqual([]);
     expect(warlock.starting_equipment.gold).toBe(15);

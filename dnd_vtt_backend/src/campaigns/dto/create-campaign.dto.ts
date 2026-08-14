@@ -1,6 +1,10 @@
-import { IsString, IsNotEmpty, IsOptional } from 'class-validator';
+import { IsArray, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class CreateCampaignDto {
   @IsString() @IsNotEmpty() name: string;
   @IsString() @IsOptional() description?: string;
+  @IsArray()
+  @IsString({ each: true })
+  @IsOptional()
+  allowed_sources?: string[];
 }

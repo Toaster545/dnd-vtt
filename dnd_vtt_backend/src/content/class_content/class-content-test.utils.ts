@@ -8,6 +8,7 @@ export interface Grant {
   key?: string;
   choose?: number;
   chooseByLevel?: Record<string, number>;
+  spells?: string[];
   skills?: string[];
   category?: string;
   proficiency?: string[];
