@@ -33,19 +33,46 @@
             </p>
           } @else {
             <div class="field mb-4">
+              <label class="field-label">Campaign join code</label>
+              <input class="field-input uppercase tracking-widest" [ngModel]="joinCode"
+                     (ngModelChange)="onJoinCodeChange($event)" name="joinCode" maxlength="6" placeholder="ABC123" />
+              @if (previewingJoin()) {
+                <p class="text-slate text-xs mt-2">Checking campaign rules…</p>
+              } @else if (joinPreview(); as preview) {
+                <p class="text-parchment text-sm mt-2 mb-1">{{ preview.campaign_name }}</p>
+                <div class="flex flex-wrap gap-1">
+                  @for (code of preview.allowed_sources; track code) {
+                    <span class="text-[10px] text-gold border border-gold/25 rounded px-1.5 py-0.5">{{ sourceLabel(code) }}</span>
+                  }
+                </div>
+              }
+            </div>
+
+            <div class="field mb-4">
               <label class="field-label">Which character?</label>
               <div class="flex flex-col gap-1.5">
                 @for (character of characters(); track character.id) {
+                  @let compatibility = characterCompatibility(character.id);
                   <button type="button"
-                    class="flex items-center gap-2 px-3 py-2 rounded border text-left text-sm w-full cursor-pointer"
-                    [class]="selectedCharacterId() === character.id ? 'border-gold/50 bg-gold/5' : 'border-white/10 hover:border-white/30'"
+                    class="flex items-center gap-2 px-3 py-2 rounded border text-left text-sm w-full"
+                    [class]="compatibility?.compatible === false
+                      ? 'border-danger/25 bg-danger/5 cursor-not-allowed opacity-70'
+                      : selectedCharacterId() === character.id
+                        ? 'border-gold/50 bg-gold/5 cursor-pointer'
+                        : 'border-white/10 hover:border-white/30 cursor-pointer'"
+                    [disabled]="compatibility?.compatible === false"
                     (click)="selectCharacter(character.id!)"
                     style="font-family: inherit;"
                   >
                     <span class="w-4 h-4 rounded-full border flex items-center justify-center shrink-0 text-[9px]"
                       [class]="selectedCharacterId() === character.id ? 'bg-gold border-gold text-canvas font-bold' : 'border-slate/50 text-transparent'">●</span>
-                    <span class="text-parchment">{{ character.name }}</span>
-                    <span class="text-coal text-xs">Level {{ character.level }} {{ classLabel(character) }}</span>
+                    <span class="min-w-0 flex-1">
+                      <span class="text-parchment">{{ character.name }}</span>
+                      <span class="text-coal text-xs ml-2">Level {{ character.level }} {{ classLabel(character) }}</span>
+                      @if (compatibility?.reason) {
+                        <span class="block text-danger text-xs mt-0.5">{{ compatibility!.reason }}</span>
+                      }
+                    </span>
                   </button>
                 }
               </div>
@@ -54,16 +81,11 @@
               </p>
             </div>
 
-            <div class="field mb-4">
-              <label class="field-label">Campaign join code</label>
-              <input class="field-input uppercase tracking-widest" [(ngModel)]="joinCode" name="joinCode" maxlength="6" placeholder="ABC123" />
-            </div>
-
             @if (joinError()) {
               <p class="text-danger text-sm mb-3">{{ joinError() }}</p>
             }
 
-            <button class="btn-primary" [disabled]="!selectedCharacterId() || !joinCode.trim() || joining()" (click)="join()">
+            <button class="btn-primary" [disabled]="!selectedCharacterId() || !joinPreview() || joining()" (click)="join()">
               @if (joining()) { <span class="spinner-sm"></span> } @else { Join Campaign }
             </button>
           }
@@ -77,6 +99,34 @@
             <div class="field">
               <label class="field-label">Description (optional)</label>
               <textarea class="field-input" [(ngModel)]="newDescription" name="description" rows="3"></textarea>
+            </div>
+            <div class="field">
+              <button type="button" class="flex items-center gap-2 w-full text-left py-1"
+                      (click)="createSourcesExpanded.set(!createSourcesExpanded())">
+                <mat-icon class="text-base text-slate">{{ createSourcesExpanded() ? 'expand_more' : 'chevron_right' }}</mat-icon>
+                <span class="field-label m-0 flex-1">Allowed character sources</span>
+                <span class="text-[10px] text-gold border border-gold/25 rounded px-1.5 py-0.5">
+                  {{ allowedSources().size }} enabled
+                </span>
+              </button>
+              <p class="text-coal text-xs mt-1 mb-2">Characters using sources not selected here cannot join. You can change this later.</p>
+              @if (createSourcesExpanded()) {
+                <div class="flex flex-col gap-2 mt-2">
+                  @for (source of sources(); track source.code) {
+                    @if (source.player_options) {
+                      <label class="flex items-start gap-2 rounded border border-white/10 p-2"
+                             [class.opacity-70]="source.code === 'XPHB'">
+                        <input type="checkbox" class="mt-0.5" [checked]="sourceAllowed(source)"
+                               [disabled]="source.code === 'XPHB'" (change)="toggleAllowedSource(source)" />
+                        <span>
+                          <span class="block text-parchment text-sm">{{ source.name }}</span>
+                          <span class="block text-coal text-xs">{{ source.description }}</span>
+                        </span>
+                      </label>
+                    }
+                  }
+                </div>
+              }
             </div>
             <div>
               <button class="btn-primary" type="submit" [disabled]="!newName.trim() || saving()">
@@ -106,6 +156,11 @@
               }
             </div>
             @if (campaign.description) { <p class="text-slate text-sm m-0 mt-1 max-w-2xl">{{ campaign.description }}</p> }
+            <div class="flex flex-wrap gap-1 mt-2">
+              @for (code of campaign.allowed_sources; track code) {
+                <span class="text-[10px] text-slate border border-white/10 rounded px-1.5 py-0.5">{{ sourceLabel(code) }}</span>
+              }
+            </div>
             @if (campaign.is_owner) {
               <p class="text-slate text-xs m-0 mt-2">
                 Join code <span class="text-gold font-mono">{{ campaign.join_code }}</span>

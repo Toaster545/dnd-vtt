@@ -14,28 +14,6 @@
   "duration": "Concentration, up to 10 minutes",
   "ritual": true,
   "concentration": true,
-  "classes": [
-    "Cleric",
-    "Druid",
-    "Paladin",
-    "Ranger"
-  ],
-  "subclasses": [
-    {
-      "class": "Bard",
-      "subclass": "College of Lore"
-    }
-  ],
-  "species": [],
-  "backgrounds": [],
-  "feats": [
-    "Fey-Touched",
-    "Magic Initiate",
-    "Ritual Caster"
-  ],
-  "other_options": [
-    "Pact of the Tome"
-  ],
   "mechanics": {
     "saving_throws": [],
     "ability_checks": [],

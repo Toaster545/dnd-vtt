@@ -2,7 +2,7 @@ import { Component, inject, signal, computed, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { SpellService } from '../../../core/services/spell.service';
-import { ContentService, DndSpell } from '../../../core/services/content.service';
+import { ContentService, DndContentSource, DndSpell } from '../../../core/services/content.service';
 import { ConfirmService } from '../../../shared/confirm.service';
 import { SpellFormComponent } from './spell-form/spell-form';
 
@@ -18,22 +18,44 @@ export class DmSpellsComponent implements OnInit {
 
   spells         = signal<DndSpell[]>([]);
   officialSpells = signal<DndSpell[]>([]);
+  sources        = signal<DndContentSource[]>([]);
   loading        = signal(true);
   showForm       = signal(false);
   editingSpell   = signal<DndSpell | null>(null);
   duplicatingSpell = signal<DndSpell | null>(null);
 
   search = signal('');
+  sourceFilter = signal('all');
+  accessFilter = signal('all');
   officialExpanded = signal(false);
 
-  filteredSpells   = computed(() => this.filterByName(this.spells()));
-  filteredOfficial = computed(() => this.filterByName(this.officialSpells()));
+  filteredSpells   = computed(() => this.filter(this.spells(), 'HOMEBREW'));
+  filteredOfficial = computed(() => this.filter(this.officialSpells(), 'XPHB'));
+  accessOptions = computed(() => {
+    const options = new Map<string, string>();
+    for (const spell of [...this.spells(), ...this.officialSpells()]) {
+      for (const access of spell.access ?? []) {
+        const key = `${access.kind}:${access.provider_index}`;
+        const label = access.parent_name
+          ? `${access.parent_name} — ${access.provider_name}`
+          : access.provider_name;
+        options.set(key, label);
+      }
+    }
+    return [...options].map(([key, label]) => ({ key, label })).sort((a, b) => a.label.localeCompare(b.label));
+  });
 
   async ngOnInit() { await this.load(); }
 
-  private filterByName(list: DndSpell[]): DndSpell[] {
+  private filter(list: DndSpell[], fallbackSource: string): DndSpell[] {
     const q = this.search().trim().toLowerCase();
-    return q ? list.filter(s => s.name.toLowerCase().includes(q)) : list;
+    const source = this.sourceFilter();
+    const access = this.accessFilter();
+    return list.filter(spell =>
+      (!q || spell.name.toLowerCase().includes(q)) &&
+      (source === 'all' || (spell.source?.code ?? fallbackSource) === source) &&
+      (access === 'all' || (spell.access ?? []).some(entry => `${entry.kind}:${entry.provider_index}` === access)),
+    );
   }
 
   onSearchChange(v: string) {
@@ -41,16 +63,24 @@ export class DmSpellsComponent implements OnInit {
     if (v.trim()) this.officialExpanded.set(true);
   }
 
+  accessLabel(spell: DndSpell): string {
+    const names = [...new Set((spell.access ?? []).map(access => access.provider_name))];
+    if (names.length === 0) return 'No providers';
+    return names.length > 3 ? `${names.slice(0, 3).join(', ')} +${names.length - 3}` : names.join(', ');
+  }
+
   private async load() {
     this.loading.set(true);
     // Own library (editable) + the static SRD set (read-only reference) — the campaign-merged
     // set the character wizard/sheet actually use lives behind getSpells(campaignId), separately.
-    const [mine, official] = await Promise.all([
+    const [mine, official, sources] = await Promise.all([
       this.spellService.getMine(),
       this.content.getSpells(),
+      this.content.getSources(),
     ]);
     this.spells.set(mine);
     this.officialSpells.set(official);
+    this.sources.set(sources);
     this.loading.set(false);
   }
 

@@ -12,20 +12,6 @@
   "duration": "10 minutes",
   "ritual": false,
   "concentration": false,
-  "classes": [
-    "Bard",
-    "Wizard"
-  ],
-  "subclasses": [
-    {
-      "class": "Wizard",
-      "subclass": "Abjurer"
-    }
-  ],
-  "species": [],
-  "backgrounds": [],
-  "feats": [],
-  "other_options": [],
   "mechanics": {
     "saving_throws": [
       "constitution",

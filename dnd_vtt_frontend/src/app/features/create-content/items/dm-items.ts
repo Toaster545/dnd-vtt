@@ -2,7 +2,7 @@ import { Component, inject, signal, computed, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { ItemService } from '../../../core/services/item.service';
-import { ContentService, DndItem } from '../../../core/services/content.service';
+import { ContentService, DndContentSource, DndItem } from '../../../core/services/content.service';
 import { ConfirmService } from '../../../shared/confirm.service';
 import { ItemFormComponent } from './item-form/item-form';
 
@@ -18,22 +18,28 @@ export class DmItemsComponent implements OnInit {
 
   items          = signal<DndItem[]>([]);
   officialItems  = signal<DndItem[]>([]);
+  sources        = signal<DndContentSource[]>([]);
   loading        = signal(true);
   showForm       = signal(false);
   editingItem    = signal<DndItem | null>(null);
   duplicatingItem = signal<DndItem | null>(null);
 
   search = signal('');
+  sourceFilter = signal('all');
   officialExpanded = signal(false);
 
-  filteredItems    = computed(() => this.filterByName(this.items()));
-  filteredOfficial = computed(() => this.filterByName(this.officialItems()));
+  filteredItems    = computed(() => this.filter(this.items(), 'HOMEBREW'));
+  filteredOfficial = computed(() => this.filter(this.officialItems(), 'XPHB'));
 
   async ngOnInit() { await this.load(); }
 
-  private filterByName(list: DndItem[]): DndItem[] {
+  private filter(list: DndItem[], fallbackSource: string): DndItem[] {
     const q = this.search().trim().toLowerCase();
-    return q ? list.filter(i => i.name.toLowerCase().includes(q)) : list;
+    const source = this.sourceFilter();
+    return list.filter(item =>
+      (!q || item.name.toLowerCase().includes(q)) &&
+      (source === 'all' || (item.source?.code ?? fallbackSource) === source),
+    );
   }
 
   onSearchChange(v: string) {
@@ -45,12 +51,14 @@ export class DmItemsComponent implements OnInit {
     this.loading.set(true);
     // Own library (editable) + the static SRD set (read-only reference) — the campaign-merged
     // set the character wizard/sheet actually use lives behind getItems(campaignId), separately.
-    const [mine, official] = await Promise.all([
+    const [mine, official, sources] = await Promise.all([
       this.itemService.getMine(),
       this.content.getItems(),
+      this.content.getSources(),
     ]);
     this.items.set(mine);
     this.officialItems.set(official);
+    this.sources.set(sources);
     this.loading.set(false);
   }
 

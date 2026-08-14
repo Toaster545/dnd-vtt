@@ -12,17 +12,6 @@
   "duration": "Instantaneous",
   "ritual": false,
   "concentration": false,
-  "classes": [
-    "Bard",
-    "Sorcerer",
-    "Warlock",
-    "Wizard"
-  ],
-  "subclasses": [],
-  "species": [],
-  "backgrounds": [],
-  "feats": [],
-  "other_options": [],
   "mechanics": {
     "saving_throws": [
       "constitution",
@@ -43,7 +32,7 @@
     ],
     "misc_tags": []
   },
-  "description": "Creatures in a 20-foot-radius Sphere make an Intelligence save, taking 8d6 Psychic damage on a failure or half on a success. A failed save also muddles the creature for 1 minute, causing it to subtract 1d6 from attack rolls, ability checks, and Constitution saves to maintain Concentration. It repeats the Intelligence save at each turn\u0027s end.",
+  "description": "Creatures in a 20-foot-radius Sphere make an Intelligence save, taking 8d6 Psychic damage on a failure or half on a success. A failed save also muddles the creature for 1 minute, causing it to subtract 1d6 from attack rolls, ability checks, and Constitution saves to maintain Concentration. It repeats the Intelligence save at each turn's end.",
   "source": {
     "book": "Player's Handbook",
     "edition": 2024,

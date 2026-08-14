@@ -15,20 +15,6 @@
   "duration": "Concentration, up to 1 hour",
   "ritual": false,
   "concentration": true,
-  "classes": [
-    "Cleric",
-    "Paladin"
-  ],
-  "subclasses": [
-    {
-      "class": "Warlock",
-      "subclass": "Celestial Patron"
-    }
-  ],
-  "species": [],
-  "backgrounds": [],
-  "feats": [],
-  "other_options": [],
   "mechanics": {
     "saving_throws": [],
     "ability_checks": [],

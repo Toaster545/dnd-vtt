@@ -8,7 +8,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { CampaignService } from '../../../../core/services/campaign.service';
 import { SessionService } from '../../../../core/services/session.service';
 import { CharacterService } from '../../../../core/services/character.service';
-import { ContentService } from '../../../../core/services/content.service';
+import { ContentService, DndContentSource } from '../../../../core/services/content.service';
 import { CharacterStatsService } from '../../../../core/services/character-stats.service';
 import { RecentActivityService } from '../../../../core/services/recent-activity.service';
 import { ClassChoiceSource } from '../../../../core/utils/character-effects';
@@ -57,6 +57,10 @@ export class DmCampaignHubComponent implements OnInit {
   campaign = signal<CampaignHub | null>(null);
   loading  = signal(true);
   copied   = signal(false);
+  sources  = signal<DndContentSource[]>([]);
+  sourcesExpanded = signal(false);
+  savingSources = signal(false);
+  sourceError = signal<string | null>(null);
 
   editingCharacter = signal<Character | null>(null);
   showWizard       = signal(false);
@@ -87,12 +91,43 @@ export class DmCampaignHubComponent implements OnInit {
     this.recentActivity.markCampaignViewed(this.campaignId);
     this.loading.set(true);
     try {
-      const campaign = await this.campaignService.getById(this.campaignId);
+      const [campaign, sources] = await Promise.all([
+        this.campaignService.getById(this.campaignId),
+        this.content.getSources(),
+      ]);
       this.campaign.set(campaign);
+      this.sources.set(sources);
       this.partyLevel = campaign.members.reduce((max, m) => Math.max(max, m.character_level ?? 1), 1);
       void this.loadMemberMaxHp(campaign.members);
     } finally {
       this.loading.set(false);
+    }
+  }
+
+  sourceAllowed(source: DndContentSource): boolean {
+    return this.campaign()?.allowed_sources.includes(source.code) ?? source.code === 'XPHB';
+  }
+
+  async toggleAllowedSource(source: DndContentSource) {
+    const campaign = this.campaign();
+    if (!campaign || source.code === 'XPHB' || this.savingSources()) return;
+    const allowed = new Set(campaign.allowed_sources);
+    if (allowed.has(source.code)) allowed.delete(source.code);
+    else allowed.add(source.code);
+    this.savingSources.set(true);
+    this.sourceError.set(null);
+    try {
+      this.campaign.set(await this.campaignService.update(this.campaignId, {
+        allowed_sources: [...allowed],
+      }));
+    } catch (error) {
+      const response = error as { error?: { message?: string | string[] } };
+      const message = response?.error?.message;
+      this.sourceError.set(
+        Array.isArray(message) ? message.join(' ') : message || 'Could not update campaign sources.',
+      );
+    } finally {
+      this.savingSources.set(false);
     }
   }
 

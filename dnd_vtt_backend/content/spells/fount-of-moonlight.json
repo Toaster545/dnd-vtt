@@ -12,20 +12,6 @@
   "duration": "Concentration, up to 10 minutes",
   "ritual": false,
   "concentration": true,
-  "classes": [
-    "Bard",
-    "Druid"
-  ],
-  "subclasses": [
-    {
-      "class": "Druid",
-      "subclass": "Circle of the Moon"
-    }
-  ],
-  "species": [],
-  "backgrounds": [],
-  "feats": [],
-  "other_options": [],
   "mechanics": {
     "saving_throws": [
       "constitution"

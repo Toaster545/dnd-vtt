@@ -12,21 +12,6 @@
   "duration": "Concentration, up to 10 minutes",
   "ritual": true,
   "concentration": true,
-  "classes": [
-    "Bard",
-    "Cleric",
-    "Ranger"
-  ],
-  "subclasses": [
-    {
-      "class": "Bard",
-      "subclass": "College of Lore"
-    }
-  ],
-  "species": [],
-  "backgrounds": [],
-  "feats": [],
-  "other_options": [],
   "mechanics": {
     "saving_throws": [],
     "ability_checks": [],

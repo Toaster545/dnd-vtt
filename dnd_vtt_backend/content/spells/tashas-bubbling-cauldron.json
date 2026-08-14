@@ -14,15 +14,6 @@
   "duration": "10 minutes",
   "ritual": false,
   "concentration": false,
-  "classes": [
-    "Warlock",
-    "Wizard"
-  ],
-  "subclasses": [],
-  "species": [],
-  "backgrounds": [],
-  "feats": [],
-  "other_options": [],
   "mechanics": {
     "saving_throws": [],
     "ability_checks": [],

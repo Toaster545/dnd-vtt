@@ -11,24 +11,6 @@
   "duration": "Concentration, up to 1 hour",
   "ritual": true,
   "concentration": true,
-  "classes": [
-    "Druid",
-    "Ranger"
-  ],
-  "subclasses": [
-    {
-      "class": "Barbarian",
-      "subclass": "Path of the Wild Heart"
-    },
-    {
-      "class": "Bard",
-      "subclass": "College of Lore"
-    }
-  ],
-  "species": [],
-  "backgrounds": [],
-  "feats": [],
-  "other_options": [],
   "mechanics": {
     "saving_throws": [],
     "ability_checks": [],

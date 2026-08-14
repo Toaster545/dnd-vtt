@@ -5,7 +5,6 @@ import { MatIconModule } from '@angular/material/icon';
 import { SpellService } from '../../../../core/services/spell.service';
 import { DndSpell } from '../../../../core/services/content.service';
 
-interface SubclassRow { class: string; subclass: string; }
 interface ScalingRow { level: string; value: string; }
 
 const SCHOOLS = [
@@ -17,9 +16,6 @@ function tagsFrom(raw: string): string[] {
   return raw.split(',').map(s => s.trim()).filter(Boolean);
 }
 
-// Values typed into `classes` must match existing SRD class names verbatim — spellcasting.ts's
-// eligibility filter matches on that string, so a typo'd class name silently won't surface a
-// custom spell in that class's spell picker.
 @Component({
   selector: 'app-spell-form',
   imports: [FormsModule, MatIconModule],
@@ -59,13 +55,6 @@ export class SpellFormComponent implements OnInit {
   materialCostCp   = signal<number | null>(null);
   materialConsumed = signal(false);
 
-  classes      = signal('');
-  species      = signal('');
-  backgrounds  = signal('');
-  feats        = signal('');
-  otherOptions = signal('');
-  subclasses   = signal<SubclassRow[]>([]);
-
   showAdvanced  = signal(false);
   savingThrows  = signal('');
   damageTypes   = signal('');
@@ -104,13 +93,6 @@ export class SpellFormComponent implements OnInit {
     this.materialCostCp.set(s.material_cost_cp ?? null);
     this.materialConsumed.set(!!s.material_consumed);
 
-    this.classes.set((s.classes ?? []).join(', '));
-    this.species.set((s.species ?? []).join(', '));
-    this.backgrounds.set((s.backgrounds ?? []).join(', '));
-    this.feats.set((s.feats ?? []).join(', '));
-    this.otherOptions.set((s.other_options ?? []).join(', '));
-    this.subclasses.set((s.subclasses ?? []).map(sc => ({ class: sc.class, subclass: sc.subclass })));
-
     const m = s.mechanics ?? ({} as DndSpell['mechanics']);
     this.savingThrows.set((m.saving_throws ?? []).join(', '));
     this.damageTypes.set((m.damage_types ?? []).join(', '));
@@ -137,10 +119,6 @@ export class SpellFormComponent implements OnInit {
     list.update(rows => rows.filter((_, idx) => idx !== i));
   }
 
-  updateSubclass(i: number, patch: Partial<SubclassRow>) { this.updateAt(this.subclasses, i, patch); }
-  addSubclass() { this.addTo(this.subclasses, { class: '', subclass: '' }); }
-  removeSubclass(i: number) { this.removeAt(this.subclasses, i); }
-
   updateScalingRow(i: number, patch: Partial<ScalingRow>) { this.updateAt(this.scalingRows, i, patch); }
   addScalingRow() { this.addTo(this.scalingRows, { level: '', value: '' }); }
   removeScalingRow(i: number) { this.removeAt(this.scalingRows, i); }
@@ -163,12 +141,6 @@ export class SpellFormComponent implements OnInit {
       duration: this.duration().trim(),
       ritual: this.ritual(),
       concentration: this.concentration(),
-      classes: tagsFrom(this.classes()),
-      species: tagsFrom(this.species()),
-      backgrounds: tagsFrom(this.backgrounds()),
-      feats: tagsFrom(this.feats()),
-      other_options: tagsFrom(this.otherOptions()),
-      subclasses: this.subclasses().filter(sc => sc.class.trim() && sc.subclass.trim()),
       mechanics: {
         saving_throws: tagsFrom(this.savingThrows()),
         ability_checks: [],

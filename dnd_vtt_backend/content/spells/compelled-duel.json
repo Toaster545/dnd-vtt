@@ -11,16 +11,6 @@
   "duration": "Concentration, up to 1 minute",
   "ritual": false,
   "concentration": true,
-  "classes": [
-    "Paladin"
-  ],
-  "subclasses": [],
-  "species": [],
-  "backgrounds": [],
-  "feats": [
-    "Fey-Touched"
-  ],
-  "other_options": [],
   "mechanics": {
     "saving_throws": [
       "wisdom"

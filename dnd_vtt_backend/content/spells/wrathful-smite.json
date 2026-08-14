@@ -11,16 +11,6 @@
   "duration": "1 minute",
   "ritual": false,
   "concentration": false,
-  "classes": [
-    "Paladin"
-  ],
-  "subclasses": [],
-  "species": [],
-  "backgrounds": [],
-  "feats": [
-    "Shadow-Touched"
-  ],
-  "other_options": [],
   "mechanics": {
     "saving_throws": [
       "wisdom"

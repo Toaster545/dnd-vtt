@@ -12,21 +12,6 @@
   "duration": "8 hours",
   "ritual": true,
   "concentration": false,
-  "classes": [
-    "Cleric",
-    "Druid",
-    "Ranger"
-  ],
-  "subclasses": [
-    {
-      "class": "Bard",
-      "subclass": "College of Lore"
-    }
-  ],
-  "species": [],
-  "backgrounds": [],
-  "feats": [],
-  "other_options": [],
   "mechanics": {
     "saving_throws": [],
     "ability_checks": [],

@@ -3,6 +3,27 @@ import { environment } from '../../../environments/environment';
 
 const API = environment.apiUrl;
 
+export interface DndContentSource {
+  code: string;
+  name: string;
+  short_name: string;
+  edition: number;
+  description: string;
+  default_enabled: boolean;
+  player_options: boolean;
+  requires: string[];
+}
+
+export interface DndSourceReference {
+  code: string;
+  book: string;
+  edition: number;
+  page?: number;
+  srd_5_2_1?: boolean;
+  srd_name?: string;
+  rules_text?: 'SRD 5.2.1' | 'reference-only';
+}
+
 export interface SpellSlots {
   '1'?: number; '2'?: number; '3'?: number; '4'?: number; '5'?: number;
   '6'?: number; '7'?: number; '8'?: number; '9'?: number;
@@ -116,6 +137,7 @@ export interface SpellcastingDefinition {
   key: string;
   name?: string;
   list: string;
+  spells: string[];
   ability: SpellcastingAbility;
   mode: 'prepared' | 'known' | 'spellbook';
   progression: 'full' | 'half' | 'third' | 'pact';
@@ -154,6 +176,7 @@ export interface DndFeat {
   // Whether the feat can be taken more than once. Most can't — only set per the book. Feat
   // pickers exclude non-repeatable feats the character already has.
   repeatable?: boolean;
+  source?: DndSourceReference;
 }
 
 export interface ClassLevel {
@@ -173,6 +196,7 @@ export interface Subclass {
   index: string;
   name: string;
   description?: string;
+  source?: DndSourceReference;
   spellcasting?: SpellcastingDefinition;
   // Same shape as ClassLevel; `features` is the legacy flat fallback for subclasses not yet restructured.
   levels: {
@@ -204,6 +228,7 @@ export interface DndClass {
   subclass_level: number;
   subclasses: Subclass[];
   levels: ClassLevel[];
+  source?: DndSourceReference;
 }
 
 export interface DndRace {
@@ -227,6 +252,7 @@ export interface DndRace {
     traits: string[];
     grants?: TraitGrant[];
   }[];
+  source?: DndSourceReference;
 }
 
 export interface DndBackground {
@@ -241,6 +267,7 @@ export interface DndBackground {
   // Ability score increase lives here, not on race — see TraitGrant's 'ability_choice'.
   // Always a single grant: 3 points, restricted to this background's 3 relevant abilities.
   grants?: TraitGrant[];
+  source?: DndSourceReference;
 }
 
 // One equipment grant: either a specific catalog item, or "any item whose category starts with
@@ -288,6 +315,7 @@ export interface DndItem {
   cost: string;
   description: string;
   mastery?: { property: string; description: string };
+  source?: DndSourceReference;
 }
 
 export interface DndSpell {
@@ -304,12 +332,7 @@ export interface DndSpell {
   duration: string;
   ritual: boolean;
   concentration: boolean;
-  classes: string[];
-  subclasses: { class: string; subclass: string; variant?: string }[];
-  species: string[];
-  backgrounds: string[];
-  feats: string[];
-  other_options: string[];
+  access: DndSpellAccess[];
   mechanics: {
     spell_attacks?: string[];
     saving_throws: string[];
@@ -328,15 +351,17 @@ export interface DndSpell {
   description: string;
   higher_levels?: string;
   cantrip_upgrade?: string;
-  source: {
-    book: string;
-    edition: number;
-    code: string;
-    page: number;
-    srd_5_2_1: boolean;
-    srd_name?: string;
-    rules_text: 'SRD 5.2.1' | 'reference-only';
-  };
+  source: DndSourceReference;
+}
+
+export interface DndSpellAccess {
+  kind: 'class' | 'subclass' | 'species' | 'background' | 'feat' | 'class_feature';
+  provider_index: string;
+  provider_name: string;
+  parent_name?: string;
+  detail?: string;
+  source_code?: string;
+  mode: 'list' | 'grant' | 'choice';
 }
 
 export interface DndMonster {
@@ -375,6 +400,7 @@ export interface DndMonster {
   reactions?: { name: string; description: string }[];
   legendary_actions?: { name: string; description: string }[];
   description?: string;
+  source?: DndSourceReference;
 }
 
 export type CustomContentKind = 'monsters' | 'items' | 'spells';
@@ -408,6 +434,7 @@ export class ContentService {
     }
   }
 
+  getSources()                      { return this.get<DndContentSource[]>('sources'); }
   getClasses()                      { return this.get<DndClass[]>('classes'); }
   getClass(index: string)           { return this.get<DndClass>(`classes/${index}`); }
   getRaces()                        { return this.get<DndRace[]>('races'); }
@@ -417,6 +444,7 @@ export class ContentService {
   getItems(campaignId?: string)     { return this.get<DndItem[]>(`items${campaignId ? `?campaignId=${campaignId}` : ''}`); }
   getItem(index: string)            { return this.get<DndItem>(`items/${index}`); }
   getSpells(campaignId?: string)    { return this.get<DndSpell[]>(`spells${campaignId ? `?campaignId=${campaignId}` : ''}`); }
+  getSpellLists()                   { return this.get<Record<string, string[]>>('spell-lists'); }
   getSpell(index: string)           { return this.get<DndSpell>(`spells/${index}`); }
   getFeats()                        { return this.get<DndFeat[]>('feats'); }
   getFeat(index: string)            { return this.get<DndFeat>(`feats/${index}`); }

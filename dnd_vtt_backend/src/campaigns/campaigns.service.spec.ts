@@ -1,4 +1,8 @@
-import { ForbiddenException, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  ForbiddenException,
+  NotFoundException,
+} from '@nestjs/common';
 import { randomUUID } from 'crypto';
 import { CampaignsService } from './campaigns.service';
 import { CharactersService } from '../characters/characters.service';
@@ -52,6 +56,7 @@ describe('CampaignsService', () => {
     expect(campaign.join_code).toMatch(/^[A-Z0-9]{6}$/);
     expect(campaign.sessions).toEqual([]);
     expect(campaign.members).toEqual([]);
+    expect(campaign.allowed_sources).toEqual(['XPHB']);
   });
 
   it('throws NotFoundException for a nonexistent campaign', async () => {
@@ -178,6 +183,60 @@ describe('CampaignsService', () => {
           characterId: source.id,
         } as JoinCampaignDto),
       ).rejects.toThrow(NotFoundException);
+    });
+
+    it('previews and rejects a character that uses a source the campaign does not allow', async () => {
+      const campaign = await campaigns.create(dmId, { name: 'PHB only' });
+      const playerId = await insertProfile(db);
+      const artificer = await characters.create(playerId, {
+        name: 'Tink',
+        class: 'Artificer',
+      });
+
+      const preview = await campaigns.previewJoin(
+        playerId,
+        campaign.join_code as string,
+      );
+      expect(preview.characters).toEqual([
+        expect.objectContaining({
+          character_id: artificer.id,
+          compatible: false,
+          disallowed_sources: ['EFA'],
+        }),
+      ]);
+      await expect(
+        campaigns.join(asPlayer(playerId), {
+          joinCode: campaign.join_code as string,
+          characterId: artificer.id,
+        } as JoinCampaignDto),
+      ).rejects.toThrow(BadRequestException);
+    });
+
+    it('allows an Eberron character after the DM enables Eberron', async () => {
+      let campaign = await campaigns.create(dmId, { name: 'Eberron' });
+      campaign = await campaigns.update(campaign.id as string, dmId, {
+        allowed_sources: ['XPHB', 'EFA'],
+      });
+      const playerId = await insertProfile(db);
+      const artificer = await characters.create(playerId, {
+        name: 'Tink',
+        class: 'Artificer',
+      });
+
+      const joined = await campaigns.join(asPlayer(playerId), {
+        joinCode: campaign.join_code as string,
+        characterId: artificer.id,
+      } as JoinCampaignDto);
+
+      expect(joined.members[0].source_compatible).toBe(true);
+      const phbOnly = await campaigns.update(campaign.id as string, dmId, {
+        allowed_sources: ['XPHB'],
+      });
+      expect(phbOnly.allowed_sources).toEqual(['XPHB']);
+      expect(phbOnly.members[0].source_compatible).toBe(false);
+      expect(phbOnly.members[0].source_incompatibility_reason).toContain(
+        'Eberron: Forge of the Artificer',
+      );
     });
   });
 

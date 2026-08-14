@@ -15,14 +15,6 @@
   "duration": "Until dispelled",
   "ritual": true,
   "concentration": false,
-  "classes": [
-    "Wizard"
-  ],
-  "subclasses": [],
-  "species": [],
-  "backgrounds": [],
-  "feats": [],
-  "other_options": [],
   "mechanics": {
     "saving_throws": [],
     "ability_checks": [],

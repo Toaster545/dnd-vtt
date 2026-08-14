@@ -74,6 +74,8 @@ export class DatabaseService implements OnModuleInit {
     if (version < 15) await this.applyV15();
     if (version < 16) await this.applyV16();
     if (version < 17) await this.applyV17();
+    if (version < 18) await this.applyV18();
+    if (version < 19) await this.applyV19();
   }
 
   // ── V1: initial schema (explicit columns on characters) ─────────────────────
@@ -535,6 +537,65 @@ export class DatabaseService implements OnModuleInit {
     await this.db.execute(`PRAGMA user_version = 17`);
     this.logger.log(
       'Applied schema migration v17 (custom monsters/items/spells libraries)',
+    );
+  }
+
+  // ── V18: explicit character-enabled and campaign-allowed content sources ────────────────
+  // Both entities already use extensible JSON data blobs. Persisting the choices there keeps
+  // source policy close to the character/campaign without adding one column per future book.
+  // Existing Artificers are opted into Eberron so the migration never makes a saved character
+  // internally inconsistent; every other existing character and campaign defaults to PHB only.
+  private async applyV18() {
+    await this.db.execute(`
+      UPDATE characters
+      SET data = json_set(
+        CASE WHEN json_valid(data) THEN data ELSE '{}' END,
+        '$.enabled_sources',
+        CASE
+          WHEN lower(class) = 'artificer' THEN json('["XPHB","EFA"]')
+          ELSE json('["XPHB"]')
+        END
+      )
+      WHERE json_type(data, '$.enabled_sources') IS NULL
+    `);
+    await this.db.execute(`
+      UPDATE campaigns
+      SET data = json_set(
+        CASE WHEN json_valid(data) THEN data ELSE '{}' END,
+        '$.allowed_sources',
+        json('["XPHB"]')
+      )
+      WHERE json_type(data, '$.allowed_sources') IS NULL
+    `);
+
+    await this.db.execute(`PRAGMA user_version = 18`);
+    this.logger.log(
+      'Applied schema migration v18 (character and campaign content sources)',
+    );
+  }
+
+  // ── V19: provider-owned spell access ──────────────────────────────────────
+  // Spell records now describe only the spell itself. Classes, subclasses, species,
+  // backgrounds, feats, and class features own their spell-list/grant relationships, and the
+  // API derives reverse access metadata from those providers. Strip the obsolete reverse fields
+  // from existing homebrew spell JSON so static and database-backed spells use the same shape.
+  private async applyV19() {
+    await this.db.execute(`
+      UPDATE custom_spells
+      SET data = json_remove(
+        data,
+        '$.classes',
+        '$.subclasses',
+        '$.species',
+        '$.backgrounds',
+        '$.feats',
+        '$.other_options'
+      )
+      WHERE json_valid(data)
+    `);
+    await this.db.execute(`PRAGMA user_version = 19`);
+    this.logger.log(
+      'Applied schema migration v19 (provider-owned spell access)',
     );
   }
 }

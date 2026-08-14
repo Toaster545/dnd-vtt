@@ -11,14 +11,6 @@
   "duration": "1 minute",
   "ritual": false,
   "concentration": false,
-  "classes": [
-    "Paladin"
-  ],
-  "subclasses": [],
-  "species": [],
-  "backgrounds": [],
-  "feats": [],
-  "other_options": [],
   "mechanics": {
     "saving_throws": [
       "constitution"

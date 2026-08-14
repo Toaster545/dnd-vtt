@@ -12,101 +12,17 @@ const SCHOOL_NAMES = {
   T: 'Transmutation',
 };
 
-// Eberron: Forge of the Artificer adds this class access to PHB spells. Keep
-// it here so regenerating the PHB records does not discard that access.
-const ARTIFICER_PHB_SPELLS = new Set([
-  'acid-splash',
-  'aid',
-  'alarm',
-  'alter-self',
-  'animate-objects',
-  'arcane-eye',
-  'arcane-lock',
-  'arcane-vigor',
-  'bigbys-hand',
-  'blink',
-  'blur',
-  'circle-of-power',
-  'continual-flame',
-  'create-food-and-water',
-  'creation',
-  'cure-wounds',
-  'dancing-lights',
-  'darkvision',
-  'detect-magic',
-  'disguise-self',
-  'dispel-magic',
-  'dragons-breath',
-  'elemental-weapon',
-  'elementalism',
-  'enhance-ability',
-  'enlarge-reduce',
-  'expeditious-retreat',
-  'fabricate',
-  'faerie-fire',
-  'false-life',
-  'feather-fall',
-  'fire-bolt',
-  'fly',
-  'freedom-of-movement',
-  'glyph-of-warding',
-  'grease',
-  'greater-restoration',
-  'guidance',
-  'haste',
-  'heat-metal',
-  'identify',
-  'invisibility',
-  'jump',
-  'leomunds-secret-chest',
-  'lesser-restoration',
-  'levitate',
-  'light',
-  'longstrider',
-  'mage-hand',
-  'magic-mouth',
-  'magic-weapon',
-  'message',
-  'mordenkainens-faithful-hound',
-  'mordenkainens-private-sanctum',
-  'otilukes-resilient-sphere',
-  'poison-spray',
-  'prestidigitation',
-  'protection-from-energy',
-  'protection-from-poison',
-  'purify-food-and-drink',
-  'ray-of-frost',
-  'resistance',
-  'revivify',
-  'rope-trick',
-  'sanctuary',
-  'see-invisibility',
-  'shocking-grasp',
-  'spare-the-dying',
-  'spider-climb',
-  'stone-shape',
-  'stoneskin',
-  'summon-construct',
-  'thorn-whip',
-  'thunderclap',
-  'true-strike',
-  'wall-of-stone',
-  'water-breathing',
-  'water-walk',
-  'web',
-]);
-
 const SUPPLEMENTAL_SPELL_FILES = new Set(['homunculus-servant.json']);
 
 function usage() {
   console.error(
-    'Usage: node scripts/import-phb-2024-spells.mjs <spells-xphb.json> <srd-5.2-spells.json> <spell-source-lookup.json>',
+    'Usage: node scripts/import-phb-2024-spells.mjs <spells-xphb.json> <srd-5.2-spells.json>',
   );
   process.exit(1);
 }
 
-const [, , phbPath, srdPath, lookupPath] = process.argv;
-if (!phbPath || !srdPath || !lookupPath) usage();
+const [, , phbPath, srdPath] = process.argv;
+if (!phbPath || !srdPath) usage();
 
 function loadJson(path) {
   return JSON.parse(readFileSync(resolve(path), 'utf8'));
@@ -254,46 +170,6 @@ function uniqueSorted(values) {
   return [...new Set(values)].sort((a, b) => a.localeCompare(b));
 }
 
-function phbAccessMetadata(sourceLookup = {}) {
-  const classes = Object.keys(sourceLookup.class?.XPHB ?? {});
-
-  const subclasses = [];
-  for (const [className, classSources] of Object.entries(
-    sourceLookup.subclass?.XPHB ?? {},
-  )) {
-    for (const [classSource, subclassEntries] of Object.entries(classSources)) {
-      if (classSource !== 'XPHB') continue;
-      for (const [subclassName, details] of Object.entries(subclassEntries)) {
-        const variants = details?.subSubclasses?.length
-          ? details.subSubclasses
-          : [undefined];
-        for (const variant of variants) {
-          subclasses.push({
-            class: className,
-            subclass: details?.name ?? subclassName,
-            ...(variant ? { variant } : {}),
-          });
-        }
-      }
-    }
-  }
-
-  return {
-    classes: uniqueSorted(classes),
-    subclasses: subclasses.sort((a, b) =>
-      `${a.class}:${a.subclass}:${a.variant ?? ''}`.localeCompare(
-        `${b.class}:${b.subclass}:${b.variant ?? ''}`,
-      ),
-    ),
-    species: uniqueSorted(Object.keys(sourceLookup.race?.XPHB ?? {})),
-    backgrounds: uniqueSorted(Object.keys(sourceLookup.background?.XPHB ?? {})),
-    feats: uniqueSorted(Object.keys(sourceLookup.feat?.XPHB ?? {})),
-    other_options: uniqueSorted(
-      Object.keys(sourceLookup.optionalfeature?.XPHB ?? {}),
-    ),
-  };
-}
-
 function resolveSrdSpell(phbSpell, srdByName) {
   if (!phbSpell.srd52) return null;
   const srdName =
@@ -308,7 +184,6 @@ function resolveSrdSpell(phbSpell, srdByName) {
 
 const phbDocument = loadJson(phbPath);
 const srdSpells = loadJson(srdPath);
-const sourceLookup = loadJson(lookupPath);
 const referenceOnlySummaries = loadJson(
   resolve('scripts', 'reference-only-spell-summaries.json'),
 );
@@ -329,11 +204,6 @@ mkdirSync(manifestDir, { recursive: true });
 const generated = [];
 for (const phbSpell of phbSpells) {
   const index = slugify(phbSpell.name);
-  const lookup = sourceLookup.xphb?.[phbSpell.name.toLowerCase()] ?? {};
-  const access = phbAccessMetadata(lookup);
-  if (ARTIFICER_PHB_SPELLS.has(index)) {
-    access.classes = uniqueSorted([...access.classes, 'Artificer']);
-  }
   const srdMatch = resolveSrdSpell(phbSpell, srdByName);
   const rulesTextAvailable = Boolean(srdMatch);
   const description = rulesTextAvailable
@@ -368,12 +238,6 @@ for (const phbSpell of phbSpells) {
     concentration: Boolean(
       phbSpell.duration?.some((duration) => duration.concentration),
     ),
-    classes: access.classes,
-    subclasses: access.subclasses,
-    species: access.species,
-    backgrounds: access.backgrounds,
-    feats: access.feats,
-    other_options: access.other_options,
     mechanics: spellMechanics(phbSpell),
     description,
     ...(srdMatch?.spell.higherLevelSlot
