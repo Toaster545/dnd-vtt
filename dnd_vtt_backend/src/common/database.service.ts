@@ -579,7 +579,10 @@ export class DatabaseService implements OnModuleInit {
     await this.db.execute(`PRAGMA user_version = 18`);
     this.logger.log(
       'Applied schema migration v18 (dynamic lighting / darkness)',
-  // ── V18: explicit character-enabled and campaign-allowed content sources ────────────────
+    );
+  }
+
+  // ── V19: explicit character-enabled and campaign-allowed content sources ────────────────
   // Both entities already use extensible JSON data blobs. Persisting the choices there keeps
   // source policy close to the character/campaign without adding one column per future book.
   // Existing Artificers are opted into Eberron so the migration never makes a saved character
@@ -607,13 +610,13 @@ export class DatabaseService implements OnModuleInit {
       WHERE json_type(data, '$.allowed_sources') IS NULL
     `);
 
-    await this.db.execute(`PRAGMA user_version = 18`);
+    await this.db.execute(`PRAGMA user_version = 19`);
     this.logger.log(
-      'Applied schema migration v18 (character and campaign content sources)',
+      'Applied schema migration v19 (character and campaign content sources)',
     );
   }
 
-  // ── V19: provider-owned spell access ──────────────────────────────────────
+  // ── V20: provider-owned spell access ──────────────────────────────────────
   // Spell records now describe only the spell itself. Classes, subclasses, species,
   // backgrounds, feats, and class features own their spell-list/grant relationships, and the
   // API derives reverse access metadata from those providers. Strip the obsolete reverse fields
@@ -632,9 +635,9 @@ export class DatabaseService implements OnModuleInit {
       )
       WHERE json_valid(data)
     `);
-    await this.db.execute(`PRAGMA user_version = 19`);
+    await this.db.execute(`PRAGMA user_version = 20`);
     this.logger.log(
-      'Applied schema migration v19 (provider-owned spell access)',
+      'Applied schema migration v20 (provider-owned spell access)',
     );
   }
 }
