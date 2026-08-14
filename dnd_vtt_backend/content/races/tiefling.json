@@ -4,6 +4,7 @@
   "description": "Tieflings are linked by blood to Fiends of the Lower Planes. Their abyssal, chthonic, or infernal legacy promises supernatural power but does not determine their outlook or destiny.",
   "creature_type": "Humanoid",
   "speed": 30,
+  "darkvision_ft": 60,
   "size": "Small or Medium",
   "size_options": ["Small", "Medium"],
   "traits": ["Darkvision", "Fiendish Legacy", "Otherworldly Presence"],

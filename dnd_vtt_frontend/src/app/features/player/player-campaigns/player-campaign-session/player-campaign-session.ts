@@ -8,6 +8,7 @@ import { CharacterService } from '../../../../core/services/character.service';
 import { CampaignService } from '../../../../core/services/campaign.service';
 import { SessionService } from '../../../../core/services/session.service';
 import { BattleMapService } from '../../../../core/services/battle-map.service';
+import { ContentService } from '../../../../core/services/content.service';
 import { AuthService } from '../../../../core/services/auth.service';
 import { Encounter, PresentPlayer } from '../../../../core/models/encounter.model';
 import { Character } from '../../../../core/models/character.model';
@@ -20,6 +21,14 @@ import { PartyListComponent } from '../../../../shared/components/party-list/par
 
 const REJOIN_KEY = 'dnd-player-campaign-encounter';
 interface StoredRejoin { encounterId: string; }
+
+// Character.race stores the race's display name (e.g. "Half-Elf"), not its content index (e.g.
+// "half-elf") — same conversion dm-campaign-session.ts/dm-campaign-hub.ts/character-play-sheet.ts
+// each do before calling ContentService.getRace(), which looks the race up by a case-sensitive
+// filename and 404s on a raw display name.
+function toContentIndex(name: string): string {
+  return name.toLowerCase().replace(/\s+/g, '-');
+}
 
 @Component({
   selector: 'app-player-campaign-session',
@@ -41,6 +50,7 @@ export class PlayerCampaignSessionComponent implements OnInit, OnDestroy {
   private campaignService  = inject(CampaignService);
   private sessionService   = inject(SessionService);
   private mapService       = inject(BattleMapService);
+  private contentService   = inject(ContentService);
   auth                     = inject(AuthService);
 
   // Angular reuses this component instance across navigations to the same route config even when
@@ -63,6 +73,10 @@ export class PlayerCampaignSessionComponent implements OnInit, OnDestroy {
 
   activeEncounter = signal<Encounter | null>(null);
   activeCharacter = signal<Character | null>(null);
+  // Darkvision is personal, not a shared light — this is only ever fed to *this* browser's own
+  // battle-map instance (see BattleMapComponent.myDarkvisionFt), never broadcast, so another
+  // player never sees through it. null = no darkvision (race grants none and no DM override).
+  myDarkvisionFt = signal<number | null>(null);
   view = signal<'map' | 'sheet'>('map');
   showLiveNotes = signal(false);
 
@@ -171,6 +185,7 @@ export class PlayerCampaignSessionComponent implements OnInit, OnDestroy {
       const character = await this.characterService.getCharacter(characterId);
       this.activeEncounter.set(encounter);
       this.activeCharacter.set(character);
+      void this.refreshDarkvision(character);
       this.view.set('map');
       this.saveStoredRejoin({ encounterId: encounter.id! });
       this.announceSelf(encounter.id!, character);
@@ -205,12 +220,31 @@ export class PlayerCampaignSessionComponent implements OnInit, OnDestroy {
     this.currentTurnToken.set(null);
     this.activeEncounter.set(null);
     this.activeCharacter.set(null);
+    this.myDarkvisionFt.set(null);
   }
 
   onCharacterSaved(character: Character) {
     this.activeCharacter.set(character);
+    void this.refreshDarkvision(character);
     const encounter = this.activeEncounter();
     if (encounter?.id) this.announceSelf(encounter.id, character);
+  }
+
+  // An explicit character.darkvision_ft (including 0, a DM override removing it) always wins;
+  // otherwise it's whatever the character's race grants, looked up live rather than flattened
+  // onto the character at creation — so a DM's later override always takes effect immediately
+  // without needing the player to re-save their character.
+  private async refreshDarkvision(character: Character) {
+    if (character.darkvision_ft != null) {
+      this.myDarkvisionFt.set(character.darkvision_ft);
+      return;
+    }
+    try {
+      const race = await this.contentService.getRace(toContentIndex(character.race));
+      this.myDarkvisionFt.set(race.darkvision_ft ?? null);
+    } catch {
+      this.myDarkvisionFt.set(null);
+    }
   }
 
   private announceSelf(encounterId: string, character: Character) {

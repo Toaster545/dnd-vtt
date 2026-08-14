@@ -39,6 +39,7 @@
             [characterPortraits]="characterPortraits()"
             [currentTurnTokenId]="encounter.current_turn_token_id ?? null"
             [myCharacterId]="activeCharacter()?.id ?? null" [myMoveSpeedFt]="activeCharacter()?.speed ?? null"
+            [myDarkvisionFt]="myDarkvisionFt()"
             (currentTurnTokenChanged)="currentTurnToken.set($event)" class="flex-1 min-w-0" />
         } @else {
           <div class="flex-1 flex items-center justify-center text-slate text-sm">

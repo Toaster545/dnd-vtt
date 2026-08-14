@@ -4,6 +4,7 @@
   "description": "Dwarves were raised from the earth by gods of the forge. Their affinity for stone and metal is matched by mountain-like resilience, and their lives can span about 350 years.",
   "creature_type": "Humanoid",
   "speed": 30,
+  "darkvision_ft": 120,
   "size": "Medium",
   "traits": ["Darkvision", "Dwarven Resilience", "Dwarven Toughness", "Stonecunning"],
   "grants": [

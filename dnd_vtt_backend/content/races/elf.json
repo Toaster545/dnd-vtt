@@ -4,6 +4,7 @@
   "description": "Elves are long-lived people touched by the Feywild. Their surroundings can shape a lineage over generations, producing traditions such as drow, high elves, and wood elves.",
   "creature_type": "Humanoid",
   "speed": 30,
+  "darkvision_ft": 60,
   "size": "Medium",
   "traits": ["Darkvision", "Elven Lineage", "Fey Ancestry", "Keen Senses", "Trance"],
   "grants": [

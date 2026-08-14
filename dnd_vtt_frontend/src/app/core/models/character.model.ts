@@ -126,6 +126,13 @@ export interface Character {
   armor_class: number;
   speed: number;
 
+  // Darkvision range in feet. null/undefined means "use the race's default" (see DndRace.darkvision_ft,
+  // looked up live — not flattened at creation like speed/AC, so it stays correct if the DM patches
+  // this later without having to re-run the wizard). An explicit value here — including 0 — overrides
+  // the race default; used for e.g. magic items/feats/house rules the DM grants outside of race, set
+  // via the DM's character-token-detail popover on the battle map, not the wizard.
+  darkvision_ft?: number | null;
+
   // Proficiencies — class defaults computed at runtime, player choices stored here
   skills: Record<string, boolean>;
   expertise: Record<string, boolean>;

@@ -12,7 +12,7 @@
     <div class="card">
       <div class="card-header border-b border-white/10">
         <h3 class="font-brand text-parchment m-0">Upload Map</h3>
-        <p class="text-sm text-slate mt-1 mb-0">Export your Dungeondraft map as PNG, then upload it here.</p>
+        <p class="text-sm text-slate mt-1 mb-0">Upload a PNG or JPEG battle map image — from Dungeondraft, another map tool, or any image you have.</p>
       </div>
       <div class="card-body flex flex-col gap-4">
         @if (error()) {
@@ -22,12 +22,8 @@
           <label class="field-label">Map Name</label>
           <input class="field-input" [(ngModel)]="newMapName" placeholder="e.g. Goblin Cave Level 1" />
         </div>
-        <div class="field">
-          <label class="field-label">Grid Cell Size (px)</label>
-          <input class="field-input" type="number" [(ngModel)]="newGridSize" min="20" max="200" />
-        </div>
         <div>
-          <p class="field-label mb-2">Map Image (PNG/WebP)</p>
+          <p class="field-label mb-2">Map Image (PNG/JPEG/WebP)</p>
           <label class="btn-outline cursor-pointer inline-flex">
             <mat-icon class="text-base">upload_file</mat-icon>
             Choose File
@@ -37,9 +33,30 @@
             <span class="ml-3 text-sm text-slate">{{ selectedFile.name }}</span>
           }
         </div>
+        <div class="field">
+          <label class="field-label">Vertical Grid Squares</label>
+          <input class="field-input" type="number" [(ngModel)]="verticalSquares" min="1" max="200" />
+          <p class="text-xs text-slate mt-1 mb-0">
+            How many grid squares tall the map is. The pixel grid size is worked out
+            automatically from the image.
+          </p>
+        </div>
+        @if (previewUrl && imgWidth) {
+          <div class="field">
+            <p class="field-label mb-2">Grid Preview</p>
+            <div class="relative rounded overflow-hidden border border-white/10 max-w-sm"
+                 [style.aspect-ratio]="previewAspectRatio">
+              <img [src]="previewUrl" alt="Map preview" class="absolute inset-0 w-full h-full object-cover" />
+              <div class="absolute inset-0 pointer-events-none" [style.background-image]="gridOverlayBackground"></div>
+            </div>
+            <p class="text-xs text-slate mt-2 mb-0">
+              {{ imgWidth }}×{{ imgHeight }}px → {{ gridSize }}px cells, ≈{{ horizontalSquares }} squares wide.
+            </p>
+          </div>
+        }
         <div>
           <button class="btn-primary" (click)="upload()"
-                  [disabled]="uploading() || !selectedFile || !newMapName">
+                  [disabled]="uploading() || !selectedFile || !newMapName || !gridSize">
             @if (uploading()) { <span class="spinner-sm"></span> } @else { Upload Map }
           </button>
         </div>

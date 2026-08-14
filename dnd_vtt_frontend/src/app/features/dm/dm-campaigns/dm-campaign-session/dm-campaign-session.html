@@ -53,7 +53,7 @@
           <!-- Left: map -->
           <div class="field">
             <label class="field-label">
-              {{ existingMap() ? 'Replace map' : 'Map (optional)' }} — DungeonDraft Universal VTT export
+              {{ existingMap() ? 'Replace map' : 'Map (optional)' }} — PNG, JPEG, WebP, or DungeonDraft (.dd2vtt) export
             </label>
 
             @if (existingMap() && !imagePreviewUrl()) {
@@ -66,7 +66,8 @@
               </div>
             }
 
-            <input class="field-input" type="file" accept=".dd2vtt" [disabled]="parsingFile()" (change)="onFileChange($event)" />
+            <input class="field-input" type="file" accept=".dd2vtt,image/png,image/jpeg,image/webp"
+                   [disabled]="parsingFile()" (change)="onFileChange($event)" />
 
             @if (parsingFile()) {
               <p class="text-slate text-xs mt-1"><span class="spinner-sm"></span> Processing map file…</p>
@@ -76,9 +77,21 @@
               <p class="text-danger text-xs mt-1">{{ uploadError() }}</p>
             }
 
+            @if (mapKind() === 'image') {
+              <div class="field mt-2">
+                <label class="field-label">Vertical Grid Squares</label>
+                <input class="field-input" type="number" min="1" max="200"
+                       [(ngModel)]="verticalSquares" name="verticalSquares" (ngModelChange)="recomputeImageGrid()" />
+                <p class="text-xs text-slate mt-1 mb-0">
+                  How many grid squares tall the map is — the pixel grid size is worked out from the image.
+                </p>
+              </div>
+            }
+
             @if (imagePreviewUrl()) {
               <p class="text-xs text-coal mt-2">
-                {{ mapCols() }} × {{ mapRows() }} cells · {{ pixelsPerGrid() }} px/cell (from file)
+                {{ mapCols() }} × {{ mapRows() }} cells · {{ pixelsPerGrid() }} px/cell
+                {{ mapKind() === 'dd2vtt' ? '(from file)' : '(computed)' }}
               </p>
             }
             <div #previewContainer class="w-full h-80 mt-2 rounded border border-white/10 bg-black/20"></div>

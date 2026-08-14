@@ -20,6 +20,9 @@
             (click)="moveRangeToggled.emit()" matTooltip="Show my movement range">
       <mat-icon class="text-base">directions_walk</mat-icon>
     </button>
+    <input type="color" class="w-8 h-8 rounded cursor-pointer border border-white/10 bg-transparent p-0.5"
+           [ngModel]="myTokenColor()" (ngModelChange)="myTokenColorChanged.emit($event)"
+           matTooltip="My token color" />
   }
 
   @if (isAdmin()) {
@@ -46,6 +49,16 @@
     </button>
     <button class="btn-icon w-8 h-8" (click)="revealAllFog.emit()" matTooltip="Reveal entire map">
       <mat-icon class="text-base">restart_alt</mat-icon>
+    </button>
+
+    <div class="w-px bg-white/10 mx-1"></div>
+    <button class="btn-icon w-8 h-8" [class.border-gold/50]="lightingEnabled()" [class.bg-gold/5]="lightingEnabled()"
+            (click)="lightingEnabledToggled.emit()" matTooltip="Darkness: on/off (map starts fully lit)">
+      <mat-icon class="text-base">{{ lightingEnabled() ? 'dark_mode' : 'light_mode' }}</mat-icon>
+    </button>
+    <button class="btn-icon w-8 h-8" [class.border-gold/50]="activeLightTool() === 'place'" [class.bg-gold/5]="activeLightTool() === 'place'"
+            (click)="lightToolToggled.emit()" matTooltip="Place torch: click the map or a token">
+      <mat-icon class="text-base">local_fire_department</mat-icon>
     </button>
   }
 </div>

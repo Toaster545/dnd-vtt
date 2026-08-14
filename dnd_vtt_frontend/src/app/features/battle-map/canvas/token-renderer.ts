@@ -18,6 +18,10 @@ export interface TokenRenderContext {
   onTokenClick: (token: MapToken) => void;
   onTokenMoved: (token: MapToken, col: number, row: number) => void;
   onTokenContextMenu: (token: MapToken) => void;
+  // Fires on every drag frame (not just dragend), purely local — no network call. Lets a light
+  // attached to this token track the drag live instead of snapping into place only once
+  // tokens_updated round-trips back from the server at dragend.
+  onTokenDragMove?: (token: MapToken, xPx: number, yPx: number) => void;
 }
 
 function hpFor(token: MapToken, ctx: TokenRenderContext): { hp: number; max_hp: number } | null {
@@ -76,6 +80,7 @@ export function renderTokens(layer: Konva.Layer, tokens: MapToken[], ctx: TokenR
     // gets expensive on canvas-farbling browsers (Firefox/Safari private-browsing windows in
     // particular default to it even when the regular window doesn't).
     const shape = new Konva.Shape({
+      id: token.id ?? '',
       x: cx,
       y: cy,
       draggable: ctx.isAdmin && !ctx.activeMeasureTool,
@@ -181,6 +186,13 @@ export function renderTokens(layer: Konva.Layer, tokens: MapToken[], ctx: TokenR
       // currently tracking on this exact node (a full renderTokens() rebuild here would destroy
       // and recreate the node, silently ending the drag).
       shape.on('dragstart', () => shape.moveToTop());
+      if (ctx.onTokenDragMove) {
+        const onDragMove = ctx.onTokenDragMove;
+        shape.on('dragmove', () => {
+          const pos = shape.position();
+          onDragMove(token, pos.x, pos.y);
+        });
+      }
       shape.on('dragend', () => {
         const pos = shape.position();
         ctx.onTokenMoved(token, Math.floor(pos.x / cellSize), Math.floor(pos.y / cellSize));

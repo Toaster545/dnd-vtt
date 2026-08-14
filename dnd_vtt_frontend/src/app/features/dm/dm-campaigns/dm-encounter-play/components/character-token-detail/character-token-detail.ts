@@ -18,6 +18,9 @@ export class CharacterTokenDetailComponent {
   readonly back = output<void>();
   readonly colorChanged = output<string>();
   readonly openSheet = output<void>();
+  // null = clear the override (fall back to whatever the character's race grants); an explicit
+  // number — including 0 — overrides it. See Character.darkvision_ft.
+  readonly darkvisionChanged = output<number | null>();
 
   portraitUri(): string {
     const c = this.character();
@@ -27,5 +30,12 @@ export class CharacterTokenDetailComponent {
   classLabel(): string {
     const c = this.character();
     return c.subclass ? `${c.subclass} (${c.class})` : c.class;
+  }
+
+  onDarkvisionInput(event: Event) {
+    const raw = (event.target as HTMLInputElement).value.trim();
+    const value = raw === '' ? null : Math.floor(Number(raw));
+    if (raw !== '' && Number.isNaN(value)) return;
+    this.darkvisionChanged.emit(value);
   }
 }

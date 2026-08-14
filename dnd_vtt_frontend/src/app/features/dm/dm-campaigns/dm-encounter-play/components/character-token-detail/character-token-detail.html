@@ -26,6 +26,20 @@
 
 <p class="text-xs text-slate mb-4">Speed {{ character().speed }} ft.</p>
 
+<div class="field mb-4">
+  <label class="field-label">Darkvision override (ft)</label>
+  <input
+    class="field-input w-24 text-sm"
+    type="number"
+    min="0"
+    step="5"
+    [value]="character().darkvision_ft ?? ''"
+    placeholder="Auto from race"
+    matTooltip="Overrides this character's race-derived darkvision range for dark maps. Leave blank to use the race default."
+    (change)="onDarkvisionInput($event)"
+  />
+</div>
+
 <button class="btn-primary w-full text-sm" (click)="openSheet.emit()">
   Open Character Sheet
 </button>
