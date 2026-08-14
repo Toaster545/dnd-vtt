@@ -11,23 +11,6 @@
   "duration": "Instantaneous",
   "ritual": false,
   "concentration": false,
-  "classes": [
-    "Bard",
-    "Cleric",
-    "Druid"
-  ],
-  "subclasses": [
-    {
-      "class": "Bard",
-      "subclass": "College of Lore"
-    }
-  ],
-  "species": [],
-  "backgrounds": [],
-  "feats": [
-    "Magic Initiate"
-  ],
-  "other_options": [],
   "mechanics": {
     "saving_throws": [],
     "ability_checks": [],

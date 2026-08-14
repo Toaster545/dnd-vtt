@@ -11,23 +11,6 @@
   "duration": "30 days",
   "ritual": false,
   "concentration": false,
-  "classes": [
-    "Bard",
-    "Cleric",
-    "Druid",
-    "Paladin",
-    "Wizard"
-  ],
-  "subclasses": [
-    {
-      "class": "Warlock",
-      "subclass": "Fiend Patron"
-    }
-  ],
-  "species": [],
-  "backgrounds": [],
-  "feats": [],
-  "other_options": [],
   "mechanics": {
     "saving_throws": [
       "wisdom"

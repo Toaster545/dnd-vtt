@@ -12,22 +12,6 @@
   "duration": "Concentration, up to 1 minute",
   "ritual": false,
   "concentration": true,
-  "classes": [
-    "Bard",
-    "Paladin"
-  ],
-  "subclasses": [
-    {
-      "class": "Paladin",
-      "subclass": "Oath of Glory"
-    }
-  ],
-  "species": [],
-  "backgrounds": [],
-  "feats": [
-    "Fey-Touched"
-  ],
-  "other_options": [],
   "mechanics": {
     "saving_throws": [],
     "ability_checks": [],

@@ -16,29 +16,6 @@
   "duration": "Instantaneous",
   "ritual": false,
   "concentration": false,
-  "classes": [
-    "Bard",
-    "Cleric",
-    "Wizard"
-  ],
-  "subclasses": [
-    {
-      "class": "Paladin",
-      "subclass": "Oath of Glory"
-    },
-    {
-      "class": "Sorcerer",
-      "subclass": "Draconic Sorcery"
-    },
-    {
-      "class": "Wizard",
-      "subclass": "Diviner"
-    }
-  ],
-  "species": [],
-  "backgrounds": [],
-  "feats": [],
-  "other_options": [],
   "mechanics": {
     "saving_throws": [],
     "ability_checks": [],

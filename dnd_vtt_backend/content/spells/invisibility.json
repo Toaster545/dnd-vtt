@@ -14,42 +14,6 @@
   "duration": "Concentration, up to 1 hour",
   "ritual": false,
   "concentration": true,
-  "classes": [
-    "Bard",
-    "Sorcerer",
-    "Warlock",
-    "Wizard"
-  ],
-  "subclasses": [
-    {
-      "class": "Bard",
-      "subclass": "College of Lore"
-    },
-    {
-      "class": "Cleric",
-      "subclass": "Trickery Domain"
-    },
-    {
-      "class": "Fighter",
-      "subclass": "Eldritch Knight"
-    },
-    {
-      "class": "Rogue",
-      "subclass": "Arcane Trickster"
-    },
-    {
-      "class": "Wizard",
-      "subclass": "Illusionist"
-    }
-  ],
-  "species": [],
-  "backgrounds": [],
-  "feats": [
-    "Shadow-Touched"
-  ],
-  "other_options": [
-    "One with Shadows"
-  ],
   "mechanics": {
     "saving_throws": [],
     "ability_checks": [],

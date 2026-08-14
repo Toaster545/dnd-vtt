@@ -92,7 +92,7 @@ describe('SpellsStepComponent', () => {
     const selectedCard = selectedButton.closest<HTMLElement>('[data-spell-card]')!;
     const selectedMarker = Array.from(selectedCard.querySelectorAll('span'))
       .find(span => span.textContent?.trim() === 'Selected')!;
-    expect(selectedButton.className).toContain('h-[4.25rem]');
+    expect(selectedButton.className).toContain('h-[4.75rem]');
     expect(selectedMarker.className).toContain('text-[11px]');
     expect(selectedMarker.className).toContain('bottom-[0.85rem]');
 
@@ -112,7 +112,7 @@ describe('SpellsStepComponent', () => {
 
     const unavailable = resolution([]);
     unavailable.requirements[0].unavailableSpellIndices = ['minor-illusion'];
-    unavailable.requirements[0].unavailableSpellSources = { 'minor-illusion': 'Forest Gnome Magic' };
+    unavailable.requirements[0].unavailableSpellSources = { 'minor-illusion': 'Rock Gnome trait' };
     fixture.componentRef.setInput('resolution', unavailable);
     fixture.detectChanges();
 
@@ -122,8 +122,9 @@ describe('SpellsStepComponent', () => {
     const spellCard = () => spellButton().closest<HTMLElement>('[data-spell-card]')!;
     expect(spellButton().disabled).toBe(true);
     expect(spellButton().className).toContain('border-white/8');
-    expect(spellButton().title).toContain('Forest Gnome Magic');
-    expect(spellCard().textContent).toContain('Already selected');
+    expect(spellButton().title).toContain('Rock Gnome trait');
+    expect(spellCard().textContent).toContain('Unavailable — Rock Gnome trait');
+    expect(spellCard().textContent).toContain('Unavailable');
 
     const duplicate = resolution(['minor-illusion'], ['minor-illusion']);
     duplicate.requirements[0].errors[0] = {
@@ -139,6 +140,38 @@ describe('SpellsStepComponent', () => {
     expect(spellButton().className).toContain('border-danger/60');
     expect(spellButton().title).toContain('Duplicate spell');
     expect(spellCard().textContent).toContain('Remove');
+  });
+
+  it('groups every granted spell once at the top and labels its provider', async () => {
+    await TestBed.configureTestingModule({ imports: [SpellsStepComponent] }).compileComponents();
+    const fixture = TestBed.createComponent(SpellsStepComponent);
+    const withGrants = resolution([]);
+    withGrants.known = [{
+      spellIndex: 'minor-illusion', sourceKey: 'grant:rock-gnome', sourceName: 'Rock Gnome',
+      category: 'known', castingAbility: 'intelligence', spellAttackBonus: 5, spellSaveDc: 13,
+      granted: true, countsAgainstLimit: false, providedBy: 'Rock Gnome trait',
+    }];
+    withGrants.alwaysPrepared = [{
+      spellIndex: 'cure-wounds', sourceKey: 'class:wizard', sourceName: 'Wizard',
+      subclassName: 'Cartographer', category: 'always_prepared', castingAbility: 'intelligence',
+      spellAttackBonus: 5, spellSaveDc: 13, granted: true, countsAgainstLimit: false,
+      providedBy: 'Cartographer',
+    }];
+    fixture.componentRef.setInput('spells', spells);
+    fixture.componentRef.setInput('resolution', withGrants);
+    fixture.detectChanges();
+
+    const root = fixture.nativeElement as HTMLElement;
+    const grantedSection = root.querySelector<HTMLElement>('[data-granted-spells]')!;
+    const sourceSection = Array.from(root.querySelectorAll<HTMLElement>('section'))
+      .find(section => section !== grantedSection)!;
+    const text = grantedSection.textContent?.replace(/\s+/g, ' ');
+
+    expect(fixture.componentInstance.grantedSpellGroups()).toHaveLength(2);
+    expect(text).toContain('Minor Illusion — Rock Gnome trait');
+    expect(text).toContain('Cure Wounds — Cartographer');
+    expect(grantedSection.compareDocumentPosition(sourceSection) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(root.textContent?.match(/Granted \/ Always Prepared/g)).toHaveLength(1);
   });
 
   it('filters by spell metadata while always grouping visible spells by level', async () => {

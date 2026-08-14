@@ -14,23 +14,6 @@
   "duration": "Concentration, up to 1 minute",
   "ritual": false,
   "concentration": true,
-  "classes": [
-    "Warlock"
-  ],
-  "subclasses": [
-    {
-      "class": "Sorcerer",
-      "subclass": "Aberrant Sorcery"
-    },
-    {
-      "class": "Warlock",
-      "subclass": "Great Old One Patron"
-    }
-  ],
-  "species": [],
-  "backgrounds": [],
-  "feats": [],
-  "other_options": [],
   "mechanics": {
     "saving_throws": [
       "dexterity"

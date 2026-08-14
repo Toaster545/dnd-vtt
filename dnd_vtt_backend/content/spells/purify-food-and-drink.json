@@ -12,26 +12,6 @@
   "duration": "Instantaneous",
   "ritual": true,
   "concentration": false,
-  "classes": [
-    "Cleric",
-    "Druid",
-    "Paladin"
-  ],
-  "subclasses": [
-    {
-      "class": "Bard",
-      "subclass": "College of Lore"
-    }
-  ],
-  "species": [],
-  "backgrounds": [],
-  "feats": [
-    "Magic Initiate",
-    "Ritual Caster"
-  ],
-  "other_options": [
-    "Pact of the Tome"
-  ],
   "mechanics": {
     "saving_throws": [],
     "ability_checks": [],

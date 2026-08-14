@@ -12,29 +12,6 @@
   "duration": "Instantaneous",
   "ritual": false,
   "concentration": false,
-  "classes": [
-    "Bard",
-    "Druid",
-    "Ranger"
-  ],
-  "subclasses": [
-    {
-      "class": "Bard",
-      "subclass": "College of Lore"
-    },
-    {
-      "class": "Paladin",
-      "subclass": "Oath of the Ancients"
-    },
-    {
-      "class": "Warlock",
-      "subclass": "Archfey Patron"
-    }
-  ],
-  "species": [],
-  "backgrounds": [],
-  "feats": [],
-  "other_options": [],
   "mechanics": {
     "saving_throws": [],
     "ability_checks": [],

@@ -12,15 +12,6 @@
   "duration": "7 days",
   "ritual": false,
   "concentration": false,
-  "classes": [
-    "Cleric",
-    "Druid"
-  ],
-  "subclasses": [],
-  "species": [],
-  "backgrounds": [],
-  "feats": [],
-  "other_options": [],
   "mechanics": {
     "saving_throws": [
       "constitution"

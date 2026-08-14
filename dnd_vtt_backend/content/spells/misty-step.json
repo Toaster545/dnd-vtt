@@ -11,54 +11,6 @@
   "duration": "Instantaneous",
   "ritual": false,
   "concentration": false,
-  "classes": [
-    "Sorcerer",
-    "Warlock",
-    "Wizard"
-  ],
-  "subclasses": [
-    {
-      "class": "Bard",
-      "subclass": "College of Lore"
-    },
-    {
-      "class": "Druid",
-      "subclass": "Circle of the Land",
-      "variant": "Temperate Land"
-    },
-    {
-      "class": "Fighter",
-      "subclass": "Eldritch Knight"
-    },
-    {
-      "class": "Paladin",
-      "subclass": "Oath of the Ancients"
-    },
-    {
-      "class": "Paladin",
-      "subclass": "Oath of Vengeance"
-    },
-    {
-      "class": "Ranger",
-      "subclass": "Fey Wanderer"
-    },
-    {
-      "class": "Rogue",
-      "subclass": "Arcane Trickster"
-    },
-    {
-      "class": "Warlock",
-      "subclass": "Archfey Patron"
-    }
-  ],
-  "species": [
-    "Elf"
-  ],
-  "backgrounds": [],
-  "feats": [
-    "Fey-Touched"
-  ],
-  "other_options": [],
   "mechanics": {
     "saving_throws": [],
     "ability_checks": [],

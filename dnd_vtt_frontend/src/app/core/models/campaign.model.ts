@@ -7,6 +7,7 @@ export interface Campaign {
   background_url?: string | null;
   created_at?: string;
   updated_at?: string;
+  allowed_sources: string[];
   // Only present on the CampaignService.getAll() list (CampaignsService.findAllForUser on the
   // backend) — true when the current user is this campaign's DM, false when they're just a
   // joined member. A single user can own some campaigns and be a member of others, so the list
@@ -42,6 +43,20 @@ export interface CampaignMember {
   // omitted from the `members` array returned to other players; the DM and the member themselves
   // always see it regardless of this flag.
   visible_to_party?: boolean;
+  source_compatible?: boolean;
+  source_incompatibility_reason?: string | null;
+}
+
+export interface CampaignJoinPreview {
+  campaign_id: string;
+  campaign_name: string;
+  allowed_sources: string[];
+  characters: {
+    character_id: string;
+    compatible: boolean;
+    disallowed_sources: string[];
+    reason: string | null;
+  }[];
 }
 
 // GET /campaigns/:id payload — the campaign plus what's inside it, scoped to whatever the caller

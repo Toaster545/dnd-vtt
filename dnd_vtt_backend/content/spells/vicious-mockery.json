@@ -11,16 +11,6 @@
   "duration": "Instantaneous",
   "ritual": false,
   "concentration": false,
-  "classes": [
-    "Bard"
-  ],
-  "subclasses": [],
-  "species": [],
-  "backgrounds": [],
-  "feats": [],
-  "other_options": [
-    "Pact of the Tome"
-  ],
   "mechanics": {
     "saving_throws": [
       "wisdom"

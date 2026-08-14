@@ -16,45 +16,6 @@
   "duration": "Concentration, up to 10 minutes",
   "ritual": false,
   "concentration": true,
-  "classes": [
-    "Cleric",
-    "Druid",
-    "Paladin",
-    "Warlock",
-    "Wizard"
-  ],
-  "subclasses": [
-    {
-      "class": "Bard",
-      "subclass": "College of Lore"
-    },
-    {
-      "class": "Fighter",
-      "subclass": "Eldritch Knight"
-    },
-    {
-      "class": "Paladin",
-      "subclass": "Oath of Devotion"
-    },
-    {
-      "class": "Rogue",
-      "subclass": "Arcane Trickster"
-    },
-    {
-      "class": "Sorcerer",
-      "subclass": "Clockwork Sorcery"
-    },
-    {
-      "class": "Wizard",
-      "subclass": "Abjurer"
-    }
-  ],
-  "species": [],
-  "backgrounds": [],
-  "feats": [
-    "Magic Initiate"
-  ],
-  "other_options": [],
   "mechanics": {
     "saving_throws": [],
     "ability_checks": [],

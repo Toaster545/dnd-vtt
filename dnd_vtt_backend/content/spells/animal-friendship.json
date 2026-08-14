@@ -14,24 +14,6 @@
   "duration": "24 hours",
   "ritual": false,
   "concentration": false,
-  "classes": [
-    "Bard",
-    "Druid",
-    "Ranger"
-  ],
-  "subclasses": [
-    {
-      "class": "Bard",
-      "subclass": "College of Lore"
-    }
-  ],
-  "species": [],
-  "backgrounds": [],
-  "feats": [
-    "Fey-Touched",
-    "Magic Initiate"
-  ],
-  "other_options": [],
   "mechanics": {
     "saving_throws": [
       "wisdom"

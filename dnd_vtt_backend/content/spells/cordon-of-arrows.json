@@ -14,14 +14,6 @@
   "duration": "8 hours",
   "ritual": false,
   "concentration": false,
-  "classes": [
-    "Ranger"
-  ],
-  "subclasses": [],
-  "species": [],
-  "backgrounds": [],
-  "feats": [],
-  "other_options": [],
   "mechanics": {
     "saving_throws": [
       "dexterity"

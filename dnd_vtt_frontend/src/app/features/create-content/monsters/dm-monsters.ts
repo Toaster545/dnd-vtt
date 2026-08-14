@@ -2,7 +2,7 @@ import { Component, inject, signal, computed, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { MonsterService } from '../../../core/services/monster.service';
-import { ContentService, DndMonster } from '../../../core/services/content.service';
+import { ContentService, DndContentSource, DndMonster } from '../../../core/services/content.service';
 import { ConfirmService } from '../../../shared/confirm.service';
 import { MonsterFormComponent } from './monster-form/monster-form';
 
@@ -18,22 +18,28 @@ export class DmMonstersComponent implements OnInit {
 
   monsters        = signal<DndMonster[]>([]);
   officialMonsters = signal<DndMonster[]>([]);
+  sources          = signal<DndContentSource[]>([]);
   loading         = signal(true);
   showForm        = signal(false);
   editingMonster  = signal<DndMonster | null>(null);
   duplicatingMonster = signal<DndMonster | null>(null);
 
   search = signal('');
+  sourceFilter = signal('all');
   officialExpanded = signal(false);
 
-  filteredMonsters = computed(() => this.filterByName(this.monsters()));
-  filteredOfficial = computed(() => this.filterByName(this.officialMonsters()));
+  filteredMonsters = computed(() => this.filter(this.monsters(), 'HOMEBREW'));
+  filteredOfficial = computed(() => this.filter(this.officialMonsters(), 'XPHB'));
 
   async ngOnInit() { await this.load(); }
 
-  private filterByName(list: DndMonster[]): DndMonster[] {
+  private filter(list: DndMonster[], fallbackSource: string): DndMonster[] {
     const q = this.search().trim().toLowerCase();
-    return q ? list.filter(m => m.name.toLowerCase().includes(q)) : list;
+    const source = this.sourceFilter();
+    return list.filter(monster =>
+      (!q || monster.name.toLowerCase().includes(q)) &&
+      (source === 'all' || (monster.source?.code ?? fallbackSource) === source),
+    );
   }
 
   onSearchChange(v: string) {
@@ -45,12 +51,14 @@ export class DmMonstersComponent implements OnInit {
     this.loading.set(true);
     // Own library (editable) + the static SRD set (read-only reference) — the campaign-merged
     // set players/encounters actually use lives behind getMonsters(campaignId), separately.
-    const [mine, official] = await Promise.all([
+    const [mine, official, sources] = await Promise.all([
       this.monsterService.getMine(),
       this.content.getMonsters(),
+      this.content.getSources(),
     ]);
     this.monsters.set(mine);
     this.officialMonsters.set(official);
+    this.sources.set(sources);
     this.loading.set(false);
   }
 

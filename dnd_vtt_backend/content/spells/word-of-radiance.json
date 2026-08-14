@@ -13,24 +13,6 @@
   "duration": "Instantaneous",
   "ritual": false,
   "concentration": false,
-  "classes": [
-    "Cleric"
-  ],
-  "subclasses": [
-    {
-      "class": "Bard",
-      "subclass": "College of Lore"
-    }
-  ],
-  "species": [],
-  "backgrounds": [],
-  "feats": [
-    "Blessed Warrior",
-    "Magic Initiate"
-  ],
-  "other_options": [
-    "Pact of the Tome"
-  ],
   "mechanics": {
     "saving_throws": [
       "constitution"

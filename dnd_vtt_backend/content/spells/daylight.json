@@ -12,31 +12,6 @@
   "duration": "1 hour",
   "ritual": false,
   "concentration": false,
-  "classes": [
-    "Cleric",
-    "Druid",
-    "Paladin",
-    "Ranger",
-    "Sorcerer"
-  ],
-  "subclasses": [
-    {
-      "class": "Bard",
-      "subclass": "College of Lore"
-    },
-    {
-      "class": "Cleric",
-      "subclass": "Light Domain"
-    },
-    {
-      "class": "Warlock",
-      "subclass": "Celestial Patron"
-    }
-  ],
-  "species": [],
-  "backgrounds": [],
-  "feats": [],
-  "other_options": [],
   "mechanics": {
     "saving_throws": [],
     "ability_checks": [],

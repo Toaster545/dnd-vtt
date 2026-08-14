@@ -12,37 +12,6 @@
   "duration": "1 round",
   "ritual": false,
   "concentration": false,
-  "classes": [
-    "Cleric"
-  ],
-  "subclasses": [
-    {
-      "class": "Bard",
-      "subclass": "College of Lore"
-    },
-    {
-      "class": "Cleric",
-      "subclass": "War Domain"
-    },
-    {
-      "class": "Druid",
-      "subclass": "Circle of the Stars"
-    },
-    {
-      "class": "Paladin",
-      "subclass": "Oath of Glory"
-    },
-    {
-      "class": "Warlock",
-      "subclass": "Celestial Patron"
-    }
-  ],
-  "species": [],
-  "backgrounds": [],
-  "feats": [
-    "Magic Initiate"
-  ],
-  "other_options": [],
   "mechanics": {
     "spell_attacks": [
       "ranged"

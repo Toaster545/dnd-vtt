@@ -11,20 +11,6 @@
   "duration": "1 minute",
   "ritual": true,
   "concentration": false,
-  "classes": [
-    "Warlock",
-    "Wizard"
-  ],
-  "subclasses": [
-    {
-      "class": "Wizard",
-      "subclass": "Diviner"
-    }
-  ],
-  "species": [],
-  "backgrounds": [],
-  "feats": [],
-  "other_options": [],
   "mechanics": {
     "saving_throws": [
       "intelligence"

@@ -12,25 +12,6 @@
   "duration": "Instantaneous",
   "ritual": false,
   "concentration": false,
-  "classes": [
-    "Bard",
-    "Cleric",
-    "Druid"
-  ],
-  "subclasses": [
-    {
-      "class": "Cleric",
-      "subclass": "Life Domain"
-    },
-    {
-      "class": "Druid",
-      "subclass": "Circle of the Moon"
-    }
-  ],
-  "species": [],
-  "backgrounds": [],
-  "feats": [],
-  "other_options": [],
   "mechanics": {
     "saving_throws": [],
     "ability_checks": [],

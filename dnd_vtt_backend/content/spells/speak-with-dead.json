@@ -14,31 +14,6 @@
   "duration": "10 minutes",
   "ritual": false,
   "concentration": false,
-  "classes": [
-    "Bard",
-    "Cleric",
-    "Wizard"
-  ],
-  "subclasses": [
-    {
-      "class": "Bard",
-      "subclass": "College of Lore"
-    },
-    {
-      "class": "Fighter",
-      "subclass": "Eldritch Knight"
-    },
-    {
-      "class": "Rogue",
-      "subclass": "Arcane Trickster"
-    }
-  ],
-  "species": [],
-  "backgrounds": [],
-  "feats": [],
-  "other_options": [
-    "Whispers of the Grave"
-  ],
   "mechanics": {
     "saving_throws": [],
     "ability_checks": [],

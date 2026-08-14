@@ -3,8 +3,9 @@ import type { AbilityScores } from '../models/character.model';
 import type { DndClass, DndFeat, DndRace, DndSpell, SpellcastingDefinition, TraitGrant } from '../services/content.service';
 import {
   describeSpellUpcast, isSpellAttack, resolveSpellAttackDamage,
-  resolveSpellAttackNote, resolveSpellcasting,
+  resolveSpellAttackNote, resolveSpellcasting as resolveSpellcastingImpl,
 } from './spellcasting';
+import type { SpellcastingResolverInput } from './spellcasting';
 
 const scores: AbilityScores = {
   strength: 10,
@@ -15,8 +16,15 @@ const scores: AbilityScores = {
   charisma: 14,
 };
 
-function spell(index: string, name: string, level: number, school: string, classes: string[]): DndSpell {
-  return { index, name, level, school, classes } as DndSpell;
+const testSpellLists: Record<string, string[]> = {};
+
+function spell(index: string, name: string, level: number, school: string, lists: string[]): DndSpell {
+  for (const list of lists) (testSpellLists[list] ??= []).push(index);
+  return { index, name, level, school, casting_time: '1 action', access: [] } as unknown as DndSpell;
+}
+
+function resolveSpellcasting(input: Omit<SpellcastingResolverInput, 'spellLists'>) {
+  return resolveSpellcastingImpl({ ...input, spellLists: testSpellLists });
 }
 
 const spells = [
@@ -33,10 +41,12 @@ const spells = [
   spell('cure-wounds', 'Cure Wounds', 1, 'Evocation', ['Bard', 'Cleric', 'Druid', 'Paladin', 'Ranger']),
 ];
 
+type TestSpellcastingDefinition = Omit<SpellcastingDefinition, 'spells'> & { spells?: string[] };
+
 function classContent(
   index: string,
   name: string,
-  spellcasting: SpellcastingDefinition,
+  spellcasting: TestSpellcastingDefinition,
   level: number,
   levelFields: Record<string, unknown>,
   grants: TraitGrant[] = [],
@@ -44,13 +54,16 @@ function classContent(
   return {
     index,
     name,
-    spellcasting,
+    spellcasting: {
+      ...spellcasting,
+      spells: spellcasting.spells ?? testSpellLists[spellcasting.list] ?? [],
+    },
     levels: [{ level, proficiency_bonus: 2, features: [], grants, ...levelFields }],
     subclasses: [],
   } as unknown as DndClass;
 }
 
-const wizardDefinition: SpellcastingDefinition = {
+const wizardDefinition: TestSpellcastingDefinition = {
   key: 'class:wizard',
   list: 'Wizard',
   ability: 'intelligence',
@@ -200,7 +213,7 @@ describe('resolveSpellcasting', () => {
     const conflictingCantrips = conflict.requirements.find(requirement => requirement.kind === 'cantrips')!;
     expect(conflictingCantrips.invalidSelectedSpellIndices).toContain('minor-illusion');
     expect(conflictingCantrips.unavailableSpellIndices).toContain('minor-illusion');
-    expect(conflictingCantrips.unavailableSpellSources['minor-illusion']).toBe('Forest Gnome Magic');
+    expect(conflictingCantrips.unavailableSpellSources['minor-illusion']).toBe('Gnome trait');
     expect(conflict.validationErrors).toContainEqual(expect.objectContaining({
       code: 'duplicate_spell', spellIndex: 'minor-illusion',
     }));
@@ -392,6 +405,9 @@ describe('resolveSpellcasting', () => {
       spellChoices: { 'class:paladin:prepared': ['shield-of-faith'] },
     });
     expect(duplicate.requirements[0].invalidSelectedSpellIndices).toEqual(['shield-of-faith']);
+    expect(duplicate.requirements[0].eligibleSpellIndices).toContain('shield-of-faith');
+    expect(duplicate.requirements[0].unavailableSpellIndices).toContain('shield-of-faith');
+    expect(duplicate.requirements[0].unavailableSpellSources['shield-of-faith']).toBe('Devotion Spells');
     expect(duplicate.requirements[0].remaining).toBe(1);
 
     const valid = resolveSpellcasting({
@@ -404,6 +420,41 @@ describe('resolveSpellcasting', () => {
     expect(valid.prepared.map((entry) => entry.spellIndex)).toEqual(['cure-wounds']);
     expect(valid.alwaysPrepared.map((entry) => entry.spellIndex)).toEqual(['shield-of-faith']);
     expect(valid.isComplete).toBe(true);
+  });
+
+  it('keeps subclass-granted class spells visible and identifies the subclass provider', () => {
+    const artificer = classContent('artificer', 'Artificer', {
+      key: 'class:artificer', list: 'Wizard', spells: ['magic-missile', 'burning-hands'],
+      ability: 'intelligence', mode: 'prepared', progression: 'half',
+    }, 3, { prepared_spells: 1, spell_slots: { '1': 3 } });
+    artificer.subclasses = [{
+      index: 'cartographer',
+      name: 'Cartographer',
+      levels: [{
+        level: 3,
+        features: [],
+        grants: [{
+          type: 'spell_grant', key: 'cartographer-spells', name: 'Cartographer Spells',
+          destination: 'always_prepared', spells: ['magic-missile'], countsAgainstLimit: false,
+        }],
+      }],
+    }] as DndClass['subclasses'];
+
+    const result = resolveSpellcasting({
+      characterLevel: 3,
+      abilityScores: scores,
+      spells,
+      classes: [{ cls: artificer, level: 3, subclass: 'Cartographer' }],
+    });
+    const prepared = result.requirements.find(requirement => requirement.kind === 'prepared')!;
+
+    expect(prepared.eligibleSpellIndices).toContain('magic-missile');
+    expect(prepared.unavailableSpellIndices).toContain('magic-missile');
+    expect(prepared.unavailableSpellSources['magic-missile']).toBe('Cartographer');
+    expect(result.alwaysPrepared).toContainEqual(expect.objectContaining({
+      spellIndex: 'magic-missile',
+      providedBy: 'Cartographer',
+    }));
   });
 
   it('combines normal multiclass slots and keeps Pact Magic separate', () => {

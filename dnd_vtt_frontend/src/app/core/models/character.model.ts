@@ -90,6 +90,9 @@ export interface Character {
   // Set once a template is cloned into a campaign (see CampaignsService.join on the backend) —
   // null/undefined for a portable template character not yet tied to any campaign.
   campaign_id?: string | null;
+  // Source books enabled for this character. PHB 2024 (XPHB) is always present; expansion
+  // codes such as EFA opt the wizard into their character options.
+  enabled_sources?: string[];
 
   // Identity (reference content by name)
   name: string;
@@ -188,6 +191,7 @@ export function proficiencyBonus(level: number): number {
 
 export function defaultCharacter(): Omit<Character, 'name'> {
   return {
+    enabled_sources: ['XPHB'],
     race: '', class: '', level: 1, background: '', languages: ['Common'], alignment: 'True Neutral',
     ability_scores: { strength: 10, dexterity: 10, constitution: 10, intelligence: 10, wisdom: 10, charisma: 10 },
     max_hp: 10, current_hp: 10, temp_hp: 0, hit_dice_used: 0,

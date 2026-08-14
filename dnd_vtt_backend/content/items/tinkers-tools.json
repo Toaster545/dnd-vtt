@@ -1,0 +1,12 @@
+{
+  "index": "tinkers-tools",
+  "name": "Tinker's Tools",
+  "type": "gear",
+  "category": "Tool",
+  "damage": null,
+  "damage_type": null,
+  "properties": [],
+  "weight": 10,
+  "cost": "50 gp",
+  "description": "Hand tools, thread, needles, whetstones, scraps, and other implements used to repair ordinary objects and create small devices."
+}

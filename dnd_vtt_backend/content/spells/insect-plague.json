@@ -14,26 +14,6 @@
   "duration": "Concentration, up to 10 minutes",
   "ritual": false,
   "concentration": true,
-  "classes": [
-    "Cleric",
-    "Druid",
-    "Sorcerer"
-  ],
-  "subclasses": [
-    {
-      "class": "Druid",
-      "subclass": "Circle of the Land",
-      "variant": "Tropical Land"
-    },
-    {
-      "class": "Warlock",
-      "subclass": "Fiend Patron"
-    }
-  ],
-  "species": [],
-  "backgrounds": [],
-  "feats": [],
-  "other_options": [],
   "mechanics": {
     "saving_throws": [
       "constitution"

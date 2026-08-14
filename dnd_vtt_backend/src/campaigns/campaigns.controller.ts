@@ -47,6 +47,14 @@ export class CampaignsController {
     return this.campaigns.join(user, dto);
   }
 
+  @Get('join-preview/:joinCode')
+  previewJoin(
+    @Param('joinCode') joinCode: string,
+    @CurrentUser() user: RequestUser,
+  ) {
+    return this.campaigns.previewJoin(user.id, joinCode);
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string, @CurrentUser() user: RequestUser) {
     return this.campaigns.findOne(id, user);
