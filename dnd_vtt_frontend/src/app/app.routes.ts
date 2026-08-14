@@ -38,6 +38,9 @@ export const routes: Routes = [
     path: 'encounters/:encounterId/player-view',
     canActivate: [authGuard, staleSessionGuard],
     loadComponent: () => import('./features/player-view/player-view').then(m => m.PlayerViewComponent),
+    // Fully opaque — this screen is just the map, and the app-wide Settings background would
+    // otherwise show through around it.
+    data: { bgOverlay: 1 },
   },
   {
     path: 'home',
@@ -110,6 +113,9 @@ export const routes: Routes = [
           import('./features/dm/dm-campaigns/dm-encounter-play/dm-encounter-play').then(
             m => m.DmEncounterPlayComponent,
           ),
+        // Fully opaque — the app-wide Settings background would otherwise show through around
+        // the map/roster; the session hub this is launched from keeps its own overlay.
+        data: { bgOverlay: 1 },
       },
       {
         path: 'campaigns/:campaignId',

@@ -135,6 +135,38 @@ export interface Measurement {
 // Which fog-of-war brush/rectangle tool is currently armed on the battle map toolbar.
 export type FogToolName = 'reveal-brush' | 'hide-brush' | 'reveal-rect' | 'hide-rect';
 
+// A DM-placed torch/light source. Either standalone (x/y set, a fixed point on the map) or
+// attached to a token (token_id set, x/y left undefined/null) — an attached light's on-screen
+// position is derived live from that token's current position, never stored, so it can't drift
+// out of sync as the token moves. Two-tier radius mirrors 5e's bright/dim light rules (a torch is
+// 20ft bright + 20ft dim); both are in feet, converted to px at render time via FEET_PER_SQUARE.
+// Independent of fog of war — see MapLighting.
+export interface MapLight {
+  id?: string;
+  map_id: string;
+  token_id?: string | null;
+  x?: number | null;
+  y?: number | null;
+  bright_radius_ft: number;
+  dim_radius_ft: number;
+  color: string;
+  enabled: boolean;
+  label: string;
+}
+
+// Per-map lit/dark toggle plus the lights placed on it. `enabled: false` means the map is fully
+// lit (no darkness overlay at all, regardless of what's in `lights`) — same "off by default,
+// invisible until the DM opts in" shape as MapFog. Persisted per map and broadcast live.
+export interface MapLighting {
+  enabled: boolean;
+  lights: MapLight[];
+}
+
+// Only one lighting tool for now: click to drop a standalone torch, or click a token to attach
+// one to it. Stays armed across placements (like fog's brush/rect tools) so a DM can drop several
+// torches without re-arming.
+export type LightToolName = 'place';
+
 // What's "armed" from an encounter's roster sidebar, ready to be dropped onto the map on the next
 // click — built by the roster UI (from a Character or a DndMonster), consumed by BattleMapComponent
 // to fill in a new token's fields instead of a manually-typed label/color.

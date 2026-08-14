@@ -392,6 +392,15 @@ export class DmEncounterPlayComponent implements OnInit, OnDestroy {
     this.viewingCharacterSummary.set({ ...current, token: updated });
   }
 
+  // The DM already has full write access to a party member's campaign copy (see
+  // CharactersService.update's isOwningDm carve-out) — no separate permission plumbing needed.
+  async setCharacterSummaryDarkvision(darkvision_ft: number | null) {
+    const current = this.viewingCharacterSummary();
+    if (!current) return;
+    const updated = await this.characterService.saveCharacter({ ...current.character, darkvision_ft });
+    this.viewingCharacterSummary.set({ ...current, character: updated });
+  }
+
   openCharacterSheetFromSummary() {
     const current = this.viewingCharacterSummary();
     if (!current) return;

@@ -33,11 +33,6 @@
     <button class="btn-icon" (click)="openDescriptionDialog()" matTooltip="Edit description">
       <mat-icon>edit_note</mat-icon>
     </button>
-    @if (showForm()) {
-      <button class="btn-outline text-sm" (click)="cancelForm()">Cancel</button>
-    } @else {
-      <button class="btn-outline text-sm" (click)="startCreate()">+ New Encounter</button>
-    }
   </div>
 
   @if (showForm()) {
@@ -53,7 +48,7 @@
           <!-- Left: map -->
           <div class="field">
             <label class="field-label">
-              {{ existingMap() ? 'Replace map' : 'Map (optional)' }} — DungeonDraft Universal VTT export
+              {{ existingMap() ? 'Replace map' : 'Map (optional)' }} — PNG, JPEG, WebP, or DungeonDraft (.dd2vtt) export
             </label>
 
             @if (existingMap() && !imagePreviewUrl()) {
@@ -66,7 +61,8 @@
               </div>
             }
 
-            <input class="field-input" type="file" accept=".dd2vtt" [disabled]="parsingFile()" (change)="onFileChange($event)" />
+            <input class="field-input" type="file" accept=".dd2vtt,image/png,image/jpeg,image/webp"
+                   [disabled]="parsingFile()" (change)="onFileChange($event)" />
 
             @if (parsingFile()) {
               <p class="text-slate text-xs mt-1"><span class="spinner-sm"></span> Processing map file…</p>
@@ -76,9 +72,21 @@
               <p class="text-danger text-xs mt-1">{{ uploadError() }}</p>
             }
 
+            @if (mapKind() === 'image') {
+              <div class="field mt-2">
+                <label class="field-label">Vertical Grid Squares</label>
+                <input class="field-input" type="number" min="1" max="200"
+                       [(ngModel)]="verticalSquares" name="verticalSquares" (ngModelChange)="recomputeImageGrid()" />
+                <p class="text-xs text-slate mt-1 mb-0">
+                  How many grid squares tall the map is — the pixel grid size is worked out from the image.
+                </p>
+              </div>
+            }
+
             @if (imagePreviewUrl()) {
               <p class="text-xs text-coal mt-2">
-                {{ mapCols() }} × {{ mapRows() }} cells · {{ pixelsPerGrid() }} px/cell (from file)
+                {{ mapCols() }} × {{ mapRows() }} cells · {{ pixelsPerGrid() }} px/cell
+                {{ mapKind() === 'dd2vtt' ? '(from file)' : '(computed)' }}
               </p>
             }
             <div #previewContainer class="w-full h-80 mt-2 rounded border border-white/10 bg-black/20"></div>
@@ -154,41 +162,53 @@
 
   <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
     <div class="lg:col-span-2">
+      <div class="flex items-center gap-3 mb-3">
+        <h3 class="font-brand text-sm text-parchment m-0 flex-1">Encounters</h3>
+        @if (showForm()) {
+          <button class="btn-outline text-sm" (click)="cancelForm()">Cancel</button>
+        } @else {
+          <button class="btn-outline text-sm" (click)="startCreate()">+ New Encounter</button>
+        }
+      </div>
+
       @if (!loading()) {
         <ul class="divide-y divide-white/8">
           @for (encounter of encounters(); track encounter.id) {
-            <li class="flex items-center py-3 gap-3">
-              <div class="flex-1 min-w-0">
-                <p class="text-parchment font-medium truncate m-0">
-                  {{ encounter.name }}
-                  <span class="text-xs text-coal border border-white/10 rounded px-1.5 py-0.5 ml-1">{{ encounter.status }}</span>
-                </p>
-                <p class="text-slate text-xs m-0 mt-0.5">
-                  {{ encounter.monsters.length }} monster type{{ encounter.monsters.length === 1 ? '' : 's' }}
-                  · {{ encounter.character_ids.length }} character{{ encounter.character_ids.length === 1 ? '' : 's' }}
-                  @if (encounter.map_id) { · map attached }
-                  · {{ formatDate(encounter.created_at) }}
-                </p>
-              </div>
-              <a class="btn-outline text-xs" [routerLink]="['/home/campaigns/manage', campaignId, 'sessions', sessionId, 'encounters', encounter.id]">
-                Play
+            <li>
+              <a
+                [routerLink]="['/home/campaigns/manage', campaignId, 'sessions', sessionId, 'encounters', encounter.id]"
+                class="flex items-center py-3 px-2 -mx-2 gap-3 rounded cursor-pointer no-underline hover:bg-white/5 transition-colors"
+              >
+                <div class="flex-1 min-w-0">
+                  <p class="text-parchment font-medium truncate m-0">
+                    {{ encounter.name }}
+                    <span class="text-xs text-coal border border-white/10 rounded px-1.5 py-0.5 ml-1">{{ encounter.status }}</span>
+                  </p>
+                  <p class="text-slate text-xs m-0 mt-0.5">
+                    {{ encounter.monsters.length }} monster type{{ encounter.monsters.length === 1 ? '' : 's' }}
+                    · {{ encounter.character_ids.length }} character{{ encounter.character_ids.length === 1 ? '' : 's' }}
+                    @if (encounter.map_id) { · map attached }
+                    · {{ formatDate(encounter.created_at) }}
+                  </p>
+                </div>
+                <button class="btn-icon"
+                        [class]="encounter.visible_to_players ? 'text-gold' : 'text-slate hover:text-parchment'"
+                        (click)="toggleVisibility(encounter, $event)"
+                        [matTooltip]="encounter.visible_to_players ? 'Visible to players — click to hide' : 'Hidden from players — click to reveal'">
+                  <mat-icon>{{ encounter.visible_to_players ? 'visibility' : 'visibility_off' }}</mat-icon>
+                </button>
+                <button class="btn-icon text-slate hover:text-parchment"
+                        (click)="startEdit(encounter, $event)"
+                        matTooltip="Edit encounter">
+                  <mat-icon>edit</mat-icon>
+                </button>
+                <button class="btn-icon text-danger/70 hover:text-danger"
+                        (click)="deleteEncounter(encounter.id!, $event)"
+                        matTooltip="Delete encounter">
+                  <mat-icon>delete</mat-icon>
+                </button>
+                <mat-icon class="text-slate">chevron_right</mat-icon>
               </a>
-              <button class="btn-icon"
-                      [class]="encounter.visible_to_players ? 'text-gold' : 'text-slate hover:text-parchment'"
-                      (click)="toggleVisibility(encounter, $event)"
-                      [matTooltip]="encounter.visible_to_players ? 'Visible to players — click to hide' : 'Hidden from players — click to reveal'">
-                <mat-icon>{{ encounter.visible_to_players ? 'visibility' : 'visibility_off' }}</mat-icon>
-              </button>
-              <button class="btn-icon text-slate hover:text-parchment"
-                      (click)="startEdit(encounter)"
-                      matTooltip="Edit encounter">
-                <mat-icon>edit</mat-icon>
-              </button>
-              <button class="btn-icon text-danger/70 hover:text-danger"
-                      (click)="deleteEncounter(encounter.id!)"
-                      matTooltip="Delete encounter">
-                <mat-icon>delete</mat-icon>
-              </button>
             </li>
           } @empty {
             <p class="text-slate text-sm py-4">No encounters yet.</p>

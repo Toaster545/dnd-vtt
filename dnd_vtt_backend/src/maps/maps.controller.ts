@@ -68,6 +68,16 @@ export class MapsController {
     return this.maps.upsertToken(id, body, user);
   }
 
+  @Post(':id/tokens/:tokenId/color')
+  setTokenColor(
+    @Param('id') mapId: string,
+    @Param('tokenId') tokenId: string,
+    @Body() body: { color: string },
+    @CurrentUser() user: RequestUser,
+  ) {
+    return this.maps.setTokenColor(mapId, tokenId, body.color, user);
+  }
+
   @Delete(':id/tokens/:tokenId')
   deleteToken(
     @Param('id') mapId: string,
@@ -112,5 +122,37 @@ export class MapsController {
   @Post(':id/fog/reset')
   resetFog(@Param('id') id: string, @CurrentUser() user: RequestUser) {
     return this.maps.resetFog(id, user);
+  }
+
+  @Get(':id/lighting')
+  getLighting(@Param('id') id: string) {
+    return this.maps.getLighting(id);
+  }
+
+  @Post(':id/lighting/toggle')
+  setLightingEnabled(
+    @Param('id') id: string,
+    @Body() body: { enabled: boolean },
+    @CurrentUser() user: RequestUser,
+  ) {
+    return this.maps.setLightingEnabled(id, !!body.enabled, user);
+  }
+
+  @Post(':id/lighting/lights')
+  upsertLight(
+    @Param('id') id: string,
+    @Body() body: Record<string, unknown>,
+    @CurrentUser() user: RequestUser,
+  ) {
+    return this.maps.upsertLight(id, body, user);
+  }
+
+  @Delete(':id/lighting/lights/:lightId')
+  deleteLight(
+    @Param('id') mapId: string,
+    @Param('lightId') lightId: string,
+    @CurrentUser() user: RequestUser,
+  ) {
+    return this.maps.deleteLight(lightId, mapId, user);
   }
 }

@@ -4,6 +4,7 @@
   "description": "Dragonborn resemble wingless, bipedal dragons. Their scales, horns, and coloration reflect a draconic ancestor whose magic shapes their breath and defenses.",
   "creature_type": "Humanoid",
   "speed": 30,
+  "darkvision_ft": 60,
   "size": "Medium",
   "traits": ["Draconic Ancestry", "Breath Weapon", "Damage Resistance", "Darkvision", "Draconic Flight"],
   "grants": [

@@ -1,0 +1,37 @@
+<div>
+  <div class="flex items-center justify-between mb-2">
+    <h3 class="text-xs font-semibold text-slate uppercase tracking-wider">Light Source</h3>
+    <button class="text-slate hover:text-parchment text-xs" (click)="closed.emit()">Close</button>
+  </div>
+  <div class="flex flex-col gap-3">
+    <div class="field">
+      <label class="field-label">Label</label>
+      <input class="field-input" maxlength="20"
+             [ngModel]="light().label" (ngModelChange)="fieldChanged.emit({ label: $event })" />
+    </div>
+    <div class="flex items-center gap-3">
+      <span class="field-label">Glow color</span>
+      <input type="color" class="h-8 w-14 rounded cursor-pointer border border-white/10 bg-transparent"
+             matTooltip="Tints the light this torch actually casts, not just its map marker."
+             [ngModel]="light().color" (ngModelChange)="fieldChanged.emit({ color: $event })" />
+    </div>
+    <div class="field">
+      <label class="field-label">Bright radius (ft)</label>
+      <input class="field-input" type="number" min="0" step="5"
+             [ngModel]="light().bright_radius_ft" (ngModelChange)="fieldChanged.emit({ bright_radius_ft: $event })" />
+    </div>
+    <div class="field">
+      <label class="field-label">Dim radius (ft, beyond bright)</label>
+      <input class="field-input" type="number" min="0" step="5"
+             [ngModel]="light().dim_radius_ft" (ngModelChange)="fieldChanged.emit({ dim_radius_ft: $event })" />
+    </div>
+    <label class="flex items-center gap-2 cursor-pointer text-sm text-parchment">
+      <input type="checkbox" class="accent-gold w-4 h-4"
+             [ngModel]="light().enabled" (ngModelChange)="fieldChanged.emit({ enabled: $event })" />
+      Lit (uncheck to snuff without deleting)
+    </label>
+    <button class="btn-danger text-sm w-full justify-center" (click)="deleteRequested.emit()">
+      Remove light
+    </button>
+  </div>
+</div>

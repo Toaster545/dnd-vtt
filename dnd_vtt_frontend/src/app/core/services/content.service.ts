@@ -237,6 +237,9 @@ export interface DndRace {
   description?: string;
   creature_type: string;
   speed: number;
+  // Feet, only present for races that actually grant it (SRD standard is 60ft, Dwarf/Orc 120ft).
+  // See Character.darkvision_ft for the per-character override this feeds as a default.
+  darkvision_ft?: number;
   size: string;
   size_options?: string[];
   // No ability_bonuses — species don't grant ASIs (see DndBackground.grants instead).

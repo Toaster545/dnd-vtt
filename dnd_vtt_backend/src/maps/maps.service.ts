@@ -140,7 +140,50 @@ export class MapsService {
     await this.db.execute('DELETE FROM map_tokens WHERE id = ?', [tokenId]);
     const tokens = await this.getTokens(mapId);
     this.gateway.broadcastTokens(mapId, tokens);
+    // A light attached to this token cascades away with it (map_lights.token_id ON DELETE
+    // CASCADE) — tell already-connected clients so an attached torch doesn't linger on screen.
+    await this.broadcastLighting(mapId);
     return { deleted: true };
+  }
+
+  // Narrow carve-out alongside the DM-only upsertToken above: a player may recolor their own
+  // character's token (cosmetic only) without the full map-mutation access `assertMapAccess`
+  // demands. Anyone else's token, or a non-hex color, is rejected.
+  async setTokenColor(
+    mapId: string,
+    tokenId: string,
+    color: string,
+    user: RequestUser,
+  ) {
+    if (typeof color !== 'string' || !/^#[0-9a-fA-F]{6}$/.test(color)) {
+      throw new BadRequestException('Color must be a hex string like #a1b2c3');
+    }
+    const map = await this.findOne(mapId);
+    const result = await this.db.execute(
+      'SELECT * FROM map_tokens WHERE id = ? AND map_id = ?',
+      [tokenId, mapId],
+    );
+    const token = result.rows[0];
+    if (!token) throw new NotFoundException('Token not found');
+
+    const isDm = await this.isCampaignDm(map.campaign_id as string, user);
+    if (!isDm) {
+      if (!token.is_player || !token.character_id)
+        throw new ForbiddenException();
+      const owns = await this.db.execute(
+        'SELECT id FROM characters WHERE id = ? AND user_id = ?',
+        [token.character_id, user.id],
+      );
+      if (!owns.rows[0]) throw new ForbiddenException();
+    }
+
+    await this.db.execute('UPDATE map_tokens SET color = ? WHERE id = ?', [
+      color,
+      tokenId,
+    ]);
+    const tokens = await this.getTokens(mapId);
+    this.gateway.broadcastTokens(mapId, tokens);
+    return tokens.find((t) => t.id === tokenId);
   }
 
   async rerollInitiative(mapId: string, tokenId: string, user: RequestUser) {
@@ -237,6 +280,118 @@ export class MapsService {
     return fog;
   }
 
+  // Dynamic lighting/darkness — independent of fog of war. `map_lighting.enabled` is the
+  // per-map lit/dark toggle; `map_lights` holds DM-placed torches, each either standalone
+  // (x/y set, token_id null) or attached to a token (token_id set, x/y left null — the light's
+  // live position is derived from the token on the frontend, never persisted here).
+  async getLighting(mapId: string) {
+    const lightingResult = await this.db.execute(
+      'SELECT * FROM map_lighting WHERE map_id = ?',
+      [mapId],
+    );
+    const lightsResult = await this.db.execute(
+      'SELECT * FROM map_lights WHERE map_id = ?',
+      [mapId],
+    );
+    return {
+      enabled: !!lightingResult.rows[0]?.enabled,
+      lights: lightsResult.rows.map((r) => this.deserializeLight(r)),
+    };
+  }
+
+  async setLightingEnabled(mapId: string, enabled: boolean, user: RequestUser) {
+    await this.assertMapAccess(mapId, user);
+    await this.upsertMapLighting(mapId, enabled);
+    return this.broadcastLighting(mapId);
+  }
+
+  async upsertLight(
+    mapId: string,
+    light: Record<string, unknown>,
+    user: RequestUser,
+  ) {
+    await this.assertMapAccess(mapId, user);
+
+    const tokenId = (light.token_id as string | null | undefined) ?? null;
+    if (tokenId) {
+      const tokenResult = await this.db.execute(
+        'SELECT id FROM map_tokens WHERE id = ? AND map_id = ?',
+        [tokenId, mapId],
+      );
+      if (!tokenResult.rows[0])
+        throw new BadRequestException('Token not found on this map');
+    }
+    // Attached lights never carry their own position — force it server-side regardless of
+    // what the client sent, so an attached light can't drift out of sync with its token.
+    const x = tokenId ? null : ((light.x as number | null | undefined) ?? null);
+    const y = tokenId ? null : ((light.y as number | null | undefined) ?? null);
+    if (!tokenId && (x == null || y == null))
+      throw new BadRequestException('Standalone lights require x and y');
+
+    const id = (light.id as string) || randomUUID();
+    await this.db.execute(
+      `INSERT INTO map_lights (id, map_id, token_id, x, y, bright_radius_ft, dim_radius_ft, color, enabled, label)
+       VALUES (?,?,?,?,?,?,?,?,?,?)
+       ON CONFLICT(id) DO UPDATE SET
+         token_id=excluded.token_id, x=excluded.x, y=excluded.y,
+         bright_radius_ft=excluded.bright_radius_ft, dim_radius_ft=excluded.dim_radius_ft,
+         color=excluded.color, enabled=excluded.enabled, label=excluded.label`,
+      [
+        id,
+        mapId,
+        tokenId,
+        x,
+        y,
+        light.bright_radius_ft ?? 20,
+        light.dim_radius_ft ?? 20,
+        light.color ?? '#ffa542',
+        light.enabled === false ? 0 : 1,
+        light.label ?? 'Torch',
+      ],
+    );
+    const lighting = await this.broadcastLighting(mapId);
+    return lighting.lights.find((l) => l.id === id);
+  }
+
+  async deleteLight(lightId: string, mapId: string, user: RequestUser) {
+    await this.assertMapAccess(mapId, user);
+    await this.db.execute(
+      'DELETE FROM map_lights WHERE id = ? AND map_id = ?',
+      [lightId, mapId],
+    );
+    await this.broadcastLighting(mapId);
+    return { deleted: true };
+  }
+
+  private deserializeLight(row: Record<string, unknown>) {
+    return {
+      id: row.id as string,
+      map_id: row.map_id as string,
+      token_id: (row.token_id as string | null) ?? null,
+      x: row.x != null ? Number(row.x) : null,
+      y: row.y != null ? Number(row.y) : null,
+      bright_radius_ft: Number(row.bright_radius_ft),
+      dim_radius_ft: Number(row.dim_radius_ft),
+      color: row.color as string,
+      enabled: !!row.enabled,
+      label: row.label as string,
+    };
+  }
+
+  private async upsertMapLighting(mapId: string, enabled: boolean) {
+    await this.db.execute(
+      `INSERT INTO map_lighting (map_id, enabled) VALUES (?,?)
+       ON CONFLICT(map_id) DO UPDATE SET enabled=excluded.enabled`,
+      [mapId, enabled ? 1 : 0],
+    );
+  }
+
+  private async broadcastLighting(mapId: string) {
+    const lighting = await this.getLighting(mapId);
+    this.gateway.broadcastLighting(mapId, lighting);
+    return lighting;
+  }
+
   private async assertCampaignAccess(campaignId: string, user: RequestUser) {
     if (campaignId === 'default') {
       if (user.role !== 'admin') throw new ForbiddenException();
@@ -249,6 +404,21 @@ export class MapsService {
     const row = result.rows[0];
     if (!row) throw new NotFoundException('Campaign not found');
     if (row.dm_id !== user.id) throw new ForbiddenException();
+  }
+
+  // Non-throwing version of assertCampaignAccess, for call sites (setTokenColor) that have a
+  // legitimate non-DM path instead of treating "not the DM" as an error.
+  private async isCampaignDm(
+    campaignId: string,
+    user: RequestUser,
+  ): Promise<boolean> {
+    if (campaignId === 'default') return user.role === 'admin';
+    const result = await this.db.execute(
+      'SELECT dm_id FROM campaigns WHERE id = ?',
+      [campaignId],
+    );
+    const row = result.rows[0];
+    return !!row && row.dm_id === user.id;
   }
 
   private async assertMapAccess(mapId: string, user: RequestUser) {

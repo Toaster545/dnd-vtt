@@ -4,6 +4,7 @@
   "description": "Orcs inherit endurance, determination, and dark-adapted sight from ancestors shaped for long journeys across plains, caverns, and seas.",
   "creature_type": "Humanoid",
   "speed": 30,
+  "darkvision_ft": 120,
   "size": "Medium",
   "traits": ["Adrenaline Rush", "Darkvision", "Relentless Endurance"],
   "grants": [

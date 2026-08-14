@@ -12,6 +12,11 @@ export class EncounterService {
   private http = inject(HttpClient);
   private socketService = inject(SocketService);
 
+  // The single player-side presence announcement currently in effect (see announcePresence), so a
+  // dropped/reconnected socket can re-announce itself into `encounter-presence:${encounterId}`
+  // without the caller having to know or care that a reconnect happened.
+  private activeAnnounce: { encounterId: string; reannounce: () => void } | null = null;
+
   getAll(): Promise<Encounter[]> {
     return firstValueFrom(this.http.get<Encounter[]>(`${API}/encounters`));
   }
@@ -65,29 +70,47 @@ export class EncounterService {
       // singleton shared with other live features (e.g. map token watching), so tearing down one
       // subscriber must never disconnect it or drop another subscriber's listeners wholesale.
       const handleUpdate = (players: PresentPlayer[]) => observer.next(players);
+      // Re-joins on every (re)connect, not just the first — see BattleMapService.joinMapRoom for
+      // why: socket.io drops server-side room membership across a reconnected transport, so
+      // without this, a network blip silently stops delivering further presence updates.
+      const rejoin = () => socket.emit('watch_encounter_presence', encounterId);
+      socket.on('connect', rejoin);
       socket.connect();
-      socket.emit('watch_encounter_presence', encounterId);
+      if (socket.connected) rejoin();
       socket.on('encounter_players_updated', handleUpdate);
 
       return () => {
+        socket.off('connect', rejoin);
         socket.off('encounter_players_updated', handleUpdate);
       };
     });
   }
 
   // Player side: announce (or stop announcing) that this browser is viewing the encounter as a
-  // given character — fire-and-forget, the DM's watchPresence() picks up the broadcast.
+  // given character — the DM's watchPresence() picks up the broadcast. Re-announces itself on
+  // every reconnect (see activeAnnounce) since this, like watchPresence's join, doesn't survive a
+  // dropped/reconnected transport on its own — without it, a player who loses their connection
+  // mid-session silently stops receiving turn_changed pushes (same room) until they hard-refresh.
   announcePresence(encounterId: string, info: {
     username: string; characterId: string; characterName: string; hp?: number; max_hp?: number;
     portraitSeed?: string;
   }) {
     const socket = this.socketService.socket;
+    if (this.activeAnnounce) socket.off('connect', this.activeAnnounce.reannounce);
+    const reannounce = () => socket.emit('announce_presence', { encounterId, ...info });
+    this.activeAnnounce = { encounterId, reannounce };
+    socket.on('connect', reannounce);
     socket.connect();
-    socket.emit('announce_presence', { encounterId, ...info });
+    if (socket.connected) reannounce();
   }
 
   leavePresence(encounterId: string) {
-    this.socketService.socket.emit('leave_presence', encounterId);
+    const socket = this.socketService.socket;
+    if (this.activeAnnounce?.encounterId === encounterId) {
+      socket.off('connect', this.activeAnnounce.reannounce);
+      this.activeAnnounce = null;
+    }
+    socket.emit('leave_presence', encounterId);
   }
 
   // Live turn-state push (current token + round) after the DM steps the turn forward/back. Relies
