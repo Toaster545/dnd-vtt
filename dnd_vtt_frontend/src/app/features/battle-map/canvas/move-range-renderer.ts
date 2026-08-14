@@ -29,7 +29,7 @@ export function renderMoveRange(
     for (const [col, row] of reachableTiles(startCol, startRow, rangeFt)) {
       layer.add(new Konva.Rect({
         x: col * cellSize, y: row * cellSize, width: cellSize, height: cellSize,
-        fill: 'rgba(76, 175, 130, 0.25)',
+        fill: token.color, opacity: 0.25,
       }));
     }
   }

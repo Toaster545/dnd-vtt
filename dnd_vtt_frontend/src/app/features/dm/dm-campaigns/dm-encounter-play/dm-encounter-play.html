@@ -17,6 +17,7 @@
   } @else {
     <div class="flex flex-col h-full overflow-hidden">
       <app-encounter-toolbar
+        class="hide-in-fullscreen"
         [encounter]="encounter"
         [currentTurnToken]="currentTurnToken()"
         [togglingStatus]="togglingStatus()"

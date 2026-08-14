@@ -49,6 +49,11 @@
           <button class="btn-icon w-8 h-8" (click)="resetView()" matTooltip="Reset zoom/pan/rotation">
             <mat-icon class="text-base">crop_free</mat-icon>
           </button>
+          <div class="w-px bg-white/10 mx-1"></div>
+          <button class="btn-icon w-8 h-8" (click)="toggleFullscreen()"
+                  [matTooltip]="isFullscreen() ? 'Exit fullscreen (Esc)' : 'Fullscreen'">
+            <mat-icon class="text-base">{{ isFullscreen() ? 'fullscreen_exit' : 'fullscreen' }}</mat-icon>
+          </button>
         </div>
       }
 

@@ -275,7 +275,8 @@ export class DmCampaignSessionComponent implements OnInit, OnDestroy {
     this.showForm.set(true);
   }
 
-  async startEdit(encounter: Encounter) {
+  async startEdit(encounter: Encounter, event: Event) {
+    event.stopPropagation();
     this.resetForm();
     this.editingId.set(encounter.id!);
     this.name = encounter.name;
@@ -495,7 +496,8 @@ export class DmCampaignSessionComponent implements OnInit, OnDestroy {
     return new File([blob], filename, { type: blob.type || 'image/png' });
   }
 
-  async deleteEncounter(id: string) {
+  async deleteEncounter(id: string, event: Event) {
+    event.stopPropagation();
     const enc = this.encounters().find(e => e.id === id);
     if (!await this.confirm.confirm(`Delete "${enc?.name ?? 'this encounter'}"? This cannot be undone.`, 'Delete Encounter')) return;
     await this.encounterService.remove(id);

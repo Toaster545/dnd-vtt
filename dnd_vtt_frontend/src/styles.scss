@@ -51,6 +51,17 @@ html {
   transition: background-color 0.15s ease;
 }
 
+// BattleMapComponent.toggleFullscreen() fullscreens the whole <html> element rather than just the
+// map canvas, so the persistent app shell header and each screen's own top bar/toolbar (DM's
+// encounter toolbar, the player's session nav) need to be hidden separately — elements marked
+// .hide-in-fullscreen collapse for as long as anything on the page is fullscreened, wherever they
+// sit in the DOM relative to the fullscreened element. See shell.html, dm-encounter-play.html, and
+// player-campaign-session.html for the marked elements; battle-map.html's own toolbar/turn-order
+// panel are left alone since those are the controls fullscreen is meant to leave usable.
+html:fullscreen .hide-in-fullscreen {
+  display: none;
+}
+
 @layer components {
   // ── Buttons ─────────────────────────────────────────────────
   .btn {

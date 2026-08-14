@@ -68,6 +68,22 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
   error = signal<string | null>(null);
   selectedTokenId = signal<string | null>(null);
 
+  // Whole-page fullscreen (not just the map canvas) so the DM's roster/turn-order panels and the
+  // player's own session chrome stay visible — this only hides the browser's own tab/address bar.
+  // Shared across every screen that embeds this component (DM encounter play, player session
+  // view, the standalone player-view screen) since it's implemented once, here. Escape always
+  // exits it — that's native Fullscreen API behavior, the same for every user, no code needed.
+  isFullscreen = signal(!!document.fullscreenElement);
+  private readonly onFullscreenChange = () => this.isFullscreen.set(!!document.fullscreenElement);
+
+  async toggleFullscreen() {
+    if (document.fullscreenElement) {
+      await document.exitFullscreen();
+    } else {
+      await document.documentElement.requestFullscreen();
+    }
+  }
+
   newToken = { label: 'Token', color: '#e74c3c', size: 1, is_player: false };
 
   controlsMap = computed(() => this.canControl() ?? (!this.embedded() && this.auth.isAdmin()));
@@ -276,6 +292,7 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnInit() {
     this.routeMapId = this.route.snapshot.paramMap.get('id');
+    document.addEventListener('fullscreenchange', this.onFullscreenChange);
   }
 
   ngAfterViewInit() {
@@ -283,11 +300,13 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy() {
+    document.removeEventListener('fullscreenchange', this.onFullscreenChange);
     this.tokenSub?.unsubscribe();
     this.measureSub?.unsubscribe();
     this.fogSub?.unsubscribe();
     this.lightingSub?.unsubscribe();
     this.resizeObserver?.disconnect();
+    this.stageView?.destroy();
     this.stage?.destroy();
   }
 
@@ -375,6 +394,10 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
     this.mapLayer.add(this.konvaImg);
 
     this.stage.on('click tap', (e) => {
+      // Middle-click is reserved for camera panning (see StageView) — Konva fires 'click' for any
+      // button whose down/up land on the same target, so without this a middle-click would also
+      // place a torch or drop a new token here.
+      if ('button' in e.evt && (e.evt as MouseEvent).button === 1) return;
       if (this.activeLightTool() === 'place' && this.controlsMap()) {
         if (e.target === this.konvaImg) {
           const pos = this.stage!.getRelativePointerPosition()!;

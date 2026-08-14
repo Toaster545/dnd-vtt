@@ -10,6 +10,7 @@ import { SessionService } from '../../../../core/services/session.service';
 import { BattleMapService } from '../../../../core/services/battle-map.service';
 import { ContentService } from '../../../../core/services/content.service';
 import { AuthService } from '../../../../core/services/auth.service';
+import { BackgroundService } from '../../../../core/services/background.service';
 import { Encounter, PresentPlayer } from '../../../../core/models/encounter.model';
 import { Character } from '../../../../core/models/character.model';
 import { BattleMap, CampaignMember, MapToken } from '../../../../core/models/campaign.model';
@@ -51,6 +52,7 @@ export class PlayerCampaignSessionComponent implements OnInit, OnDestroy {
   private sessionService   = inject(SessionService);
   private mapService       = inject(BattleMapService);
   private contentService   = inject(ContentService);
+  private background       = inject(BackgroundService);
   auth                     = inject(AuthService);
 
   // Angular reuses this component instance across navigations to the same route config even when
@@ -184,6 +186,10 @@ export class PlayerCampaignSessionComponent implements OnInit, OnDestroy {
     try {
       const character = await this.characterService.getCharacter(characterId);
       this.activeEncounter.set(encounter);
+      // The app-wide background picked in Settings would otherwise show through around/behind
+      // the battle map — fully opaque it while an encounter's up; resetEncounterState() below
+      // reverts to the session hub's normal overlay the moment the player leaves the map view.
+      this.background.setPageOverlay(1);
       this.activeCharacter.set(character);
       void this.refreshDarkvision(character);
       this.view.set('map');
@@ -221,6 +227,7 @@ export class PlayerCampaignSessionComponent implements OnInit, OnDestroy {
     this.activeEncounter.set(null);
     this.activeCharacter.set(null);
     this.myDarkvisionFt.set(null);
+    this.background.resetPageOverlay();
   }
 
   onCharacterSaved(character: Character) {

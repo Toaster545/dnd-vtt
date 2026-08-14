@@ -24,12 +24,17 @@ export class StagePointerTools {
     private measurementTool: MeasurementTool,
     private config: StagePointerToolsConfig,
   ) {
-    stage.on('mousedown touchstart', () => this.onDown());
+    stage.on('mousedown touchstart', e => this.onDown(e));
     stage.on('mousemove touchmove', () => this.onMove());
     stage.on('mouseup touchend', () => this.onUp());
   }
 
-  private onDown() {
+  // Middle-click is reserved for camera panning (see StageView) regardless of which tool is
+  // armed, so it must never also start a fog paint / measurement here. Only the start matters —
+  // onMove/onUp are driven off state onDown sets, so leaving those unguarded is harmless: they
+  // simply stay no-ops for a drag that never began.
+  private onDown(e: Konva.KonvaEventObject<Event>) {
+    if ('button' in e.evt && (e.evt as MouseEvent).button === 1) return;
     const cellSize = this.config.cellSize();
     const fogTool = this.config.activeFogTool();
     if (fogTool === 'reveal-brush' || fogTool === 'hide-brush') {
