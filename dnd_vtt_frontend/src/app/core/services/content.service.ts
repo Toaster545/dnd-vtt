@@ -1,5 +1,6 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { environment } from '../../../environments/environment';
+import { AuthTokenService } from './auth-token.service';
 
 const API = environment.apiUrl;
 
@@ -411,10 +412,11 @@ export type CustomContentKind = 'monsters' | 'items' | 'spells';
 @Injectable({ providedIn: 'root' })
 export class ContentService {
   private cache = new Map<string, unknown>();
+  private tokens = inject(AuthTokenService);
 
   private async get<T>(path: string): Promise<T> {
     if (this.cache.has(path)) return this.cache.get(path) as T;
-    const token = localStorage.getItem('auth_token');
+    const token = this.tokens.accessToken();
     const res = await fetch(`${API}/content/${path}`, {
       headers: token ? { Authorization: `Bearer ${token}` } : {},
     });

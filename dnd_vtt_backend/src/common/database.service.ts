@@ -77,6 +77,7 @@ export class DatabaseService implements OnModuleInit {
     if (version < 18) await this.applyV18();
     if (version < 19) await this.applyV19();
     if (version < 20) await this.applyV20();
+    if (version < 21) await this.applyV21();
   }
 
   // ── V1: initial schema (explicit columns on characters) ─────────────────────
@@ -638,6 +639,50 @@ export class DatabaseService implements OnModuleInit {
     await this.db.execute(`PRAGMA user_version = 20`);
     this.logger.log(
       'Applied schema migration v20 (provider-owned spell access)',
+    );
+  }
+
+  // ── V21: mobile player context, secure sessions, drafts, and visibility ───────────────
+  private async applyV21() {
+    await this.db.execute(
+      `ALTER TABLE campaigns ADD COLUMN current_session_id TEXT`,
+    );
+    await this.db.execute(
+      `ALTER TABLE battle_maps ADD COLUMN visibility_revision INTEGER NOT NULL DEFAULT 0`,
+    );
+    await this.db.execute(
+      `ALTER TABLE map_tokens ADD COLUMN visible_to_players INTEGER NOT NULL DEFAULT 1`,
+    );
+    await this.db.execute(
+      `ALTER TABLE map_tokens ADD COLUMN name_visible_to_players INTEGER NOT NULL DEFAULT 1`,
+    );
+    await this.db.execute(
+      `ALTER TABLE characters ADD COLUMN creation_status TEXT NOT NULL DEFAULT 'complete' CHECK(creation_status IN ('draft','complete'))`,
+    );
+    await this.db.execute(
+      `ALTER TABLE characters ADD COLUMN draft_step INTEGER NOT NULL DEFAULT 0`,
+    );
+    await this.db.execute(`
+      CREATE TABLE auth_sessions (
+        id          TEXT PRIMARY KEY,
+        user_id     TEXT NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
+        token_hash  TEXT NOT NULL,
+        client_type TEXT NOT NULL CHECK(client_type IN ('web','native')),
+        expires_at  TEXT NOT NULL,
+        revoked_at  TEXT,
+        created_at  TEXT NOT NULL DEFAULT (datetime('now')),
+        last_used_at TEXT
+      )
+    `);
+    await this.db.execute(
+      `CREATE INDEX idx_auth_sessions_user_id ON auth_sessions(user_id)`,
+    );
+    await this.db.execute(
+      `CREATE INDEX idx_auth_sessions_expires_at ON auth_sessions(expires_at)`,
+    );
+    await this.db.execute(`PRAGMA user_version = 21`);
+    this.logger.log(
+      'Applied schema migration v21 (mobile context, secure auth, drafts, visibility)',
     );
   }
 }

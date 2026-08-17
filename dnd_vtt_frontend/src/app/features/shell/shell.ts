@@ -1,5 +1,5 @@
 import { Component, inject, signal, OnInit, OnDestroy } from '@angular/core';
-import { Router, RouterOutlet, NavigationEnd } from '@angular/router';
+import { Router, RouterOutlet, NavigationEnd, RouterLink, RouterLinkActive } from '@angular/router';
 import { filter, Subscription } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
@@ -22,8 +22,9 @@ type Tab = 'characters' | 'campaigns' | 'content-library';
 // URL in syncActiveTabFromUrl, not which view renders.
 @Component({
   selector: 'app-shell',
-  imports: [MatIconModule, MatTooltipModule, RouterOutlet, MainLayoutComponent, AppHeaderComponent],
+  imports: [MatIconModule, MatTooltipModule, RouterOutlet, RouterLink, RouterLinkActive, MainLayoutComponent, AppHeaderComponent],
   templateUrl: './shell.html',
+  styleUrl: './shell.scss',
 })
 export class ShellComponent implements OnInit, OnDestroy {
   private router           = inject(Router);
@@ -90,7 +91,7 @@ export class ShellComponent implements OnInit, OnDestroy {
   }
 
   goToDashboard() {
-    void this.router.navigate(['/dashboard']);
+    void this.router.navigate(['/home/dashboard']);
   }
 
   goToSettings() {

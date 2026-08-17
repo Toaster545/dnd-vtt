@@ -75,7 +75,7 @@ export class EncounterService {
       // without this, a network blip silently stops delivering further presence updates.
       const rejoin = () => socket.emit('watch_encounter_presence', encounterId);
       socket.on('connect', rejoin);
-      socket.connect();
+      this.socketService.connect();
       if (socket.connected) rejoin();
       socket.on('encounter_players_updated', handleUpdate);
 
@@ -100,7 +100,7 @@ export class EncounterService {
     const reannounce = () => socket.emit('announce_presence', { encounterId, ...info });
     this.activeAnnounce = { encounterId, reannounce };
     socket.on('connect', reannounce);
-    socket.connect();
+    this.socketService.connect();
     if (socket.connected) reannounce();
   }
 
@@ -120,7 +120,7 @@ export class EncounterService {
     return new Observable(observer => {
       const socket = this.socketService.socket;
       const handleUpdate = (state: { current_turn_token_id: string | null; round_number: number }) => observer.next(state);
-      socket.connect();
+      this.socketService.connect();
       socket.on('turn_changed', handleUpdate);
 
       return () => {
@@ -135,7 +135,7 @@ export class EncounterService {
     return new Observable(observer => {
       const socket = this.socketService.socket;
       const handleStart = (event: EncounterStartedEvent) => observer.next(event);
-      socket.connect();
+      this.socketService.connect();
       socket.on('encounter_started', handleStart);
 
       return () => {

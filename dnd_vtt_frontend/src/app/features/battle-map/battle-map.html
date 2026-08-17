@@ -31,7 +31,7 @@
           (lightToolToggled)="toggleLightTool()"
         />
 
-        <div class="absolute top-2 right-2 flex gap-1 bg-surface/90 rounded p-1 border border-white/10">
+        <div class="map-view-controls absolute top-2 right-2 flex gap-1 bg-surface/90 rounded p-1 border border-white/10">
           <button class="btn-icon w-8 h-8" (click)="zoomOut()" matTooltip="Zoom out">
             <mat-icon class="text-base">remove</mat-icon>
           </button>
@@ -49,6 +49,14 @@
           <button class="btn-icon w-8 h-8" (click)="resetView()" matTooltip="Reset zoom/pan/rotation">
             <mat-icon class="text-base">crop_free</mat-icon>
           </button>
+          <button class="btn-icon w-8 h-8" (click)="fitMap()" matTooltip="Fit map">
+            <mat-icon class="text-base">fit_screen</mat-icon>
+          </button>
+          @if (myToken()) {
+            <button class="btn-icon w-8 h-8" (click)="centerOnPlayerToken()" matTooltip="Center on my token">
+              <mat-icon class="text-base">my_location</mat-icon>
+            </button>
+          }
           <div class="w-px bg-white/10 mx-1"></div>
           <button class="btn-icon w-8 h-8" (click)="toggleFullscreen()"
                   [matTooltip]="isFullscreen() ? 'Exit fullscreen (Esc)' : 'Fullscreen'">

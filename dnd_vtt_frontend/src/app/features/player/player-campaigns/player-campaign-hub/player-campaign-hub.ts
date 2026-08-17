@@ -12,6 +12,7 @@ import { NotesPanelComponent } from '../../../../shared/components/notes-panel/n
 import { PartyListComponent } from '../../../../shared/components/party-list/party-list';
 import { CharacterWizardComponent } from '../../../characters/character-wizard/character-wizard';
 import { CharacterPlaySheetComponent } from '../../../characters/character-play-sheet/character-play-sheet';
+import { PlayerContextService } from '../../../../core/services/player-context.service';
 
 @Component({
   selector: 'app-player-campaign-hub',
@@ -32,6 +33,7 @@ export class PlayerCampaignHubComponent implements OnInit {
   private campaignService  = inject(CampaignService);
   private characterService = inject(CharacterService);
   private recentActivity   = inject(RecentActivityService);
+  private playerContext    = inject(PlayerContextService);
   auth                     = inject(AuthService);
 
   campaignId = this.route.snapshot.paramMap.get('campaignId')!;
@@ -48,7 +50,11 @@ export class PlayerCampaignHubComponent implements OnInit {
 
   async ngOnInit() {
     this.recentActivity.markCampaignViewed(this.campaignId);
-    this.campaign.set(await this.campaignService.getById(this.campaignId));
+    const [campaign] = await Promise.all([
+      this.campaignService.getById(this.campaignId),
+      this.playerContext.selectCampaign(this.campaignId),
+    ]);
+    this.campaign.set(campaign);
     this.loading.set(false);
   }
 

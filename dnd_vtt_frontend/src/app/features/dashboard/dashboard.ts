@@ -1,6 +1,5 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
-import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { CharacterService } from '../../core/services/character.service';
@@ -11,9 +10,6 @@ import { RecentActivityService } from '../../core/services/recent-activity.servi
 import { ClassChoiceSource } from '../../core/utils/character-effects';
 import { Character } from '../../core/models/character.model';
 import { Campaign } from '../../core/models/campaign.model';
-import { MainLayoutComponent } from '../../shared/layout/main-layout/main-layout';
-import { AppHeaderComponent } from '../../shared/layout/app-header/app-header';
-import { SettingsDialogComponent } from '../settings/settings-dialog';
 
 type CampaignCopy = Character & { campaign_name: string; edit_unlocked: boolean };
 
@@ -31,7 +27,7 @@ function lastTouched(c: Character): number {
 
 @Component({
   selector: 'app-dashboard',
-  imports: [RouterLink, MatIconModule, MatTooltipModule, MainLayoutComponent, AppHeaderComponent],
+  imports: [RouterLink, MatIconModule, MatTooltipModule],
   templateUrl: './dashboard.html',
 })
 export class DashboardComponent implements OnInit {
@@ -41,7 +37,6 @@ export class DashboardComponent implements OnInit {
   private statsService     = inject(CharacterStatsService);
   private recentActivity   = inject(RecentActivityService);
   private router           = inject(Router);
-  private dialog           = inject(MatDialog);
 
   loading = signal(true);
   latestCharacter = signal<(Character & { campaign_name?: string }) | null>(null);
@@ -149,7 +144,7 @@ export class DashboardComponent implements OnInit {
   }
 
   goToCharacters() {
-    void this.router.navigate(['/home']);
+    void this.router.navigate(['/home/characters']);
   }
 
   goToCampaigns() {
@@ -160,7 +155,4 @@ export class DashboardComponent implements OnInit {
     void this.router.navigate(['/home/content-library']);
   }
 
-  goToSettings() {
-    this.dialog.open(SettingsDialogComponent, { width: '700px', maxWidth: '95vw', maxHeight: '85vh' });
-  }
 }

@@ -7,6 +7,8 @@ export interface AbilityScores {
   charisma: number;
 }
 
+export type CharacterCreationStatus = 'draft' | 'complete';
+
 export type Ability = keyof AbilityScores;
 
 export const ABILITIES: Ability[] = [
@@ -87,6 +89,8 @@ export interface DeathSaves {
 export interface Character {
   id?: string;
   user_id?: string;
+  creation_status?: CharacterCreationStatus;
+  draft_step?: number;
   // Set once a template is cloned into a campaign (see CampaignsService.join on the backend) —
   // null/undefined for a portable template character not yet tied to any campaign.
   campaign_id?: string | null;

@@ -163,6 +163,8 @@ const CHARACTER_COLUMN_KEYS = new Set([
   'class',
   'level',
   'campaign_id',
+  'creation_status',
+  'draft_step',
   'created_at',
   'updated_at',
 ]);
@@ -254,14 +256,20 @@ export class CharactersService {
     return result.rows.length > 0;
   }
 
-  async create(userId: string, body: Record<string, unknown>) {
+  async create(
+    userId: string,
+    body: Record<string, unknown>,
+    creationStatus: 'draft' | 'complete' = 'complete',
+    draftStep = 0,
+  ) {
     const id = randomUUID();
     const now = new Date().toISOString();
     const { name, race, class: cls, level, ...rest } = body;
     const data = this.normalizeCharacterSources(rest, cls);
     await this.db.execute(
-      `INSERT INTO characters (id, user_id, name, race, class, level, data, created_at, updated_at)
-       VALUES (?,?,?,?,?,?,?,?,?)`,
+      `INSERT INTO characters
+       (id, user_id, name, race, class, level, data, creation_status, draft_step, created_at, updated_at)
+       VALUES (?,?,?,?,?,?,?,?,?,?,?)`,
       [
         id,
         userId,
@@ -270,11 +278,84 @@ export class CharactersService {
         cls ?? '',
         level ?? 1,
         JSON.stringify(data),
+        creationStatus,
+        draftStep,
         now,
         now,
       ],
     );
     return this.findOne(id, userId);
+  }
+
+  createDraft(userId: string, body: Record<string, unknown>) {
+    return this.create(userId, body, 'draft', Number(body.draft_step ?? 0));
+  }
+
+  async updateDraft(
+    id: string,
+    user: RequestUser,
+    body: Record<string, unknown>,
+  ) {
+    const existing = (await this.findOne(id, user.id)) as Record<
+      string,
+      unknown
+    >;
+    if (existing.campaign_id) {
+      throw new ForbiddenException('Campaign characters cannot be drafts.');
+    }
+    const draftStep = Math.max(0, Math.min(6, Number(body.draft_step ?? 0)));
+    const character = { ...body };
+    delete character.draft_step;
+    delete character.creation_status;
+    await this.update(id, user, character);
+    await this.db.execute(
+      `UPDATE characters SET creation_status='draft', draft_step=?, updated_at=? WHERE id=?`,
+      [draftStep, new Date().toISOString(), id],
+    );
+    return this.findOne(id, user.id);
+  }
+
+  async completeDraft(id: string, user: RequestUser) {
+    const character = (await this.findOne(id, user.id)) as Record<
+      string,
+      unknown
+    >;
+    if (character.campaign_id) {
+      throw new ForbiddenException('Campaign characters cannot be drafts.');
+    }
+    const scores = character.ability_scores as
+      Record<string, unknown> | undefined;
+    const requiredScores = [
+      'strength',
+      'dexterity',
+      'constitution',
+      'intelligence',
+      'wisdom',
+      'charisma',
+    ];
+    if (
+      typeof character.name !== 'string' ||
+      !character.name.trim() ||
+      typeof character.race !== 'string' ||
+      !character.race.trim() ||
+      typeof character.class !== 'string' ||
+      !character.class.trim() ||
+      typeof character.background !== 'string' ||
+      !character.background.trim() ||
+      !scores ||
+      requiredScores.some(
+        (ability) => !Number.isFinite(Number(scores[ability])),
+      )
+    ) {
+      throw new BadRequestException(
+        'Complete the class, race, background, ability scores, and details before finishing.',
+      );
+    }
+    await this.db.execute(
+      `UPDATE characters SET creation_status='complete', updated_at=? WHERE id=?`,
+      [new Date().toISOString(), id],
+    );
+    return this.findOne(id, user.id);
   }
 
   async update(id: string, user: RequestUser, body: Record<string, unknown>) {
@@ -988,6 +1069,8 @@ export class CharactersService {
       class: row.class,
       level: row.level,
       campaign_id: row.campaign_id ?? null,
+      creation_status: row.creation_status ?? 'complete',
+      draft_step: Number(row.draft_step ?? 0),
       created_at: row.created_at,
       updated_at: row.updated_at,
     };

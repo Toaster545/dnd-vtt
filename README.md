@@ -240,6 +240,31 @@ requirements, a required class feature, or specific classes) and an optional mec
 
 There's no ORM — schema changes are hand-rolled migrations gated by `PRAGMA user_version` in `DatabaseService`.
 
+## Mobile, PWA, and Capacitor
+
+The same Angular application supplies the desktop DM workspace and the player-focused mobile shell. Below 1024px it exposes Home, Character, Campaign, Encounter, and Map navigation with safe-area spacing. Current-game routes use the DM-selected campaign session and active encounter rather than timestamps.
+
+Node.js 22+ is required for Capacitor 8. Useful commands:
+
+```bash
+cd dnd_vtt_frontend
+npm run build
+npm test -- --watch=false
+npm run e2e
+npm run cap:sync
+npm run cap:open:android
+npm run cap:run:android
+npm run android:debug
+npm run cap:open:ios
+npm run cap:run:ios
+```
+
+Set `JWT_SECRET`, `DB_PATH`, and an exact comma-separated `CORS_ORIGINS` list. Production should include the deployed HTTPS origin plus `https://localhost` and `capacitor://localhost`. Native API/WebSocket traffic targets `https://dnd.mathomelab.ca`; change the production environment deliberately for another private deployment.
+
+Android requires JDK 21, Android Studio 2025.2.1+, and API 24+. iOS requires macOS, Xcode 26, and iOS 15+. Native projects contain bundled web assets; no remote `server.url` is used. Signing/provisioning material and public store publication are excluded.
+
+See [mobile architecture](docs/mobile/architecture.md), [PWA installation](docs/mobile/pwa-installation.md), [Capacitor development](docs/mobile/capacitor-development.md), and [test evidence](docs/mobile/testing.md). Known limitations include no offline mutations or push notifications and required emulator/physical-device release testing.
+
 ## License
 
 MIT

@@ -1,0 +1,11 @@
+:host { display: block; height: 100%; }
+@media (max-width: 1023px) {
+  .sheet-header { padding: .65rem .75rem; align-items: flex-start; flex-wrap: wrap; gap: .5rem; background: var(--dnd-bg-base); }
+  .sheet-header h2 { font-size: 1.15rem; }
+  .sheet-header p { font-size: .7rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: calc(100vw - 5rem); }
+  .sheet-combat-strip { order: 3; width: 100%; overflow-x: auto; align-items: center; justify-content: flex-start; gap: 1rem; padding: .4rem 0; }
+  .sheet-combat-strip > * { flex: 0 0 auto; }
+  .conditions-summary { min-width: 6rem; }
+  .sheet-tabs button { padding: .75rem; }
+  .sheet-body { padding: 1rem; }
+}

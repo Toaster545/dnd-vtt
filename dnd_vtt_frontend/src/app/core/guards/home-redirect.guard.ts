@@ -14,7 +14,7 @@ export const homeRedirectGuard: CanActivateFn = () => {
   return from(auth.ready).pipe(
     map(() => {
       if (!auth.isLoggedIn()) return router.createUrlTree(['/auth/login']);
-      return router.createUrlTree(['/dashboard']);
+      return router.createUrlTree(['/home/dashboard']);
     }),
   );
 };

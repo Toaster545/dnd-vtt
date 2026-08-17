@@ -32,7 +32,9 @@ import {
   isRaceSelectionComplete,
 } from './wizard-completion';
 
-const STEPS = ['Race', 'Class', 'Background', 'Abilities', 'Equipment', 'Spells', 'Details'];
+const STEPS = ['Class', 'Race', 'Background', 'Ability Scores', 'Equipment', 'Spells', 'Details'];
+const ACTIVE_DRAFT_KEY = 'character.active-draft-id';
+const ACTIVE_DRAFT_STEP_KEY = 'character.active-draft-step';
 
 @Component({
   selector: 'app-character-wizard',
@@ -267,8 +269,8 @@ export class CharacterWizardComponent implements OnInit, OnDestroy {
   isEditing  = computed(() => this.characterId() !== null);
   isLastStep = computed(() => this.activeStep() === STEPS.length - 1);
   incompleteSteps = computed(() => [
-    !isRaceSelectionComplete(this.raceSelection(), this.feats()) || this.raceHasSkillConflict(),
     !areClassSelectionsComplete(this.selectedClasses(), this.feats()) || this.classHasSkillConflict(),
+    !isRaceSelectionComplete(this.raceSelection(), this.feats()) || this.raceHasSkillConflict(),
     !isBackgroundSelectionComplete(this.backgroundSelection(), this.feats()) || this.backgroundHasSkillConflict(),
     !areAbilityAssignmentsComplete(this.assignments(), this.scoreMethod()),
     !areStartingEquipmentChoicesComplete(
@@ -578,8 +580,10 @@ export class CharacterWizardComponent implements OnInit, OnDestroy {
       this.classEquipChoices(); this.backgroundEquipChoices();
       this.enabledSources();
       this.currentHp();
+      const step = this.activeStep();
 
       if (!this.initialized) return;
+      localStorage.setItem(ACTIVE_DRAFT_STEP_KEY, String(step));
       this.scheduleSave();
     });
   }
@@ -623,6 +627,12 @@ export class CharacterWizardComponent implements OnInit, OnDestroy {
     if (existing) {
       this.existingCharacter.set(existing);
       this.characterId.set(existing.id ?? null);
+      if (existing.creation_status === 'draft') {
+        const localStep = Number(localStorage.getItem(ACTIVE_DRAFT_STEP_KEY));
+        this.activeStep.set(Number.isInteger(localStep) && localStep >= 0 && localStep < STEPS.length
+          ? localStep
+          : Math.max(0, Math.min(STEPS.length - 1, existing.draft_step ?? 0)));
+      }
       this.characterName.set(existing.name);
       this.portraitSeed.set(existing.portrait_seed ?? randomPortraitSeed());
       this.level.set(existing.level);
@@ -858,8 +868,22 @@ export class CharacterWizardComponent implements OnInit, OnDestroy {
     if (this.saveTimer) { clearTimeout(this.saveTimer); this.saveTimer = null; }
     this.saving.set(true);
     try {
-      const result = await this.characterService.saveCharacter(this.draftCharacter());
+      const draft = this.draftCharacter();
+      const existing = this.existingCharacter();
+      let result: Character;
+      if (!this.characterId()) {
+        result = await this.characterService.createDraft(draft, this.activeStep());
+      } else if (existing?.creation_status === 'draft') {
+        result = await this.characterService.updateDraft(this.characterId()!, draft, this.activeStep());
+      } else {
+        result = await this.characterService.saveCharacter(draft);
+      }
       this.characterId.set(result.id ?? null);
+      this.existingCharacter.set(result);
+      if (result.creation_status === 'draft' && result.id) {
+        localStorage.setItem(ACTIVE_DRAFT_KEY, result.id);
+        localStorage.setItem(ACTIVE_DRAFT_STEP_KEY, String(this.activeStep()));
+      }
       this.saveStatus.set('saved');
       if (this.statusTimer) clearTimeout(this.statusTimer);
       this.statusTimer = setTimeout(() => this.saveStatus.set('idle'), 2000);
@@ -868,7 +892,17 @@ export class CharacterWizardComponent implements OnInit, OnDestroy {
     }
   }
 
-  async finish() { await this.save(); this.saved.emit(); }
+  async finish() {
+    await this.save();
+    const id = this.characterId();
+    if (id && this.existingCharacter()?.creation_status === 'draft') {
+      const completed = await this.characterService.completeDraft(id);
+      this.existingCharacter.set(completed);
+      localStorage.removeItem(ACTIVE_DRAFT_KEY);
+      localStorage.removeItem(ACTIVE_DRAFT_STEP_KEY);
+    }
+    this.saved.emit();
+  }
   async cancelAndSave() { await this.save(); this.cancelled.emit(); }
   async openSheet() { await this.save(); const id = this.characterId(); if (id) this.viewSheet.emit(id); }
   prev() { this.activeStep.update(s => Math.max(0, s - 1)); }

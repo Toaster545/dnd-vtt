@@ -9,7 +9,9 @@ import {
   UseGuards,
   UseInterceptors,
   Query,
+  Res,
 } from '@nestjs/common';
+import type { Response } from 'express';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { MapsService } from './maps.service';
 import { JwtGuard } from '../auth/jwt.guard';
@@ -30,8 +32,36 @@ export class MapsController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.maps.findOne(id);
+  findOne(@Param('id') id: string, @CurrentUser() user: RequestUser) {
+    return this.maps.findOne(id, user);
+  }
+
+  @Get(':id/player-state')
+  playerState(@Param('id') id: string, @CurrentUser() user: RequestUser) {
+    return this.maps.getPlayerState(id, user);
+  }
+
+  @Get(':id/image')
+  async image(
+    @Param('id') id: string,
+    @CurrentUser() user: RequestUser,
+    @Res() response: Response,
+  ) {
+    const file = await this.maps.getImageFile(id, user, true);
+    response.setHeader('Cache-Control', 'private, no-store');
+    return response.sendFile(file);
+  }
+
+  @Get(':id/player-image')
+  async playerImage(
+    @Param('id') id: string,
+    @CurrentUser() user: RequestUser,
+    @Res() response: Response,
+  ) {
+    const image = await this.maps.getPlayerImage(id, user);
+    response.setHeader('Cache-Control', 'private, no-store');
+    response.type('image/png');
+    return response.send(image);
   }
 
   @Post()
@@ -55,8 +85,8 @@ export class MapsController {
   }
 
   @Get(':id/tokens')
-  getTokens(@Param('id') id: string) {
-    return this.maps.getTokens(id);
+  getTokens(@Param('id') id: string, @CurrentUser() user: RequestUser) {
+    return this.maps.getTokens(id, user);
   }
 
   @Post(':id/tokens')
@@ -97,8 +127,8 @@ export class MapsController {
   }
 
   @Get(':id/fog')
-  getFog(@Param('id') id: string) {
-    return this.maps.getFog(id);
+  getFog(@Param('id') id: string, @CurrentUser() user: RequestUser) {
+    return this.maps.getFog(id, user);
   }
 
   @Post(':id/fog/toggle')
@@ -125,8 +155,8 @@ export class MapsController {
   }
 
   @Get(':id/lighting')
-  getLighting(@Param('id') id: string) {
-    return this.maps.getLighting(id);
+  getLighting(@Param('id') id: string, @CurrentUser() user: RequestUser) {
+    return this.maps.getLighting(id, user);
   }
 
   @Post(':id/lighting/toggle')

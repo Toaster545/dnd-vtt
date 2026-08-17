@@ -61,6 +61,7 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
   auth = inject(AuthService);
   private route = inject(ActivatedRoute);
   private confirm = inject(ConfirmService);
+  private mapImageObjectUrl?: string;
 
   map = signal<BattleMap | null>(null);
   tokens = signal<MapToken[]>([]);
@@ -139,6 +140,19 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
 
   resetView() {
     this.stageView?.resetView();
+  }
+
+  fitMap() {
+    this.stageView?.resetView();
+  }
+
+  centerOnPlayerToken() {
+    const token = this.myToken();
+    if (!token || !this.cellSize) return;
+    this.stageView?.centerOn({
+      x: (token.x + token.size / 2) * this.cellSize,
+      y: (token.y + token.size / 2) * this.cellSize,
+    });
   }
 
   async toggleFogEnabled() {
@@ -308,6 +322,7 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
     this.resizeObserver?.disconnect();
     this.stageView?.destroy();
     this.stage?.destroy();
+    if (this.mapImageObjectUrl) URL.revokeObjectURL(this.mapImageObjectUrl);
   }
 
   private async loadMap(id: string) {
@@ -328,6 +343,10 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
     this.resizeObserver = undefined;
     this.stage?.destroy();
     this.stage = undefined;
+    if (this.mapImageObjectUrl) {
+      URL.revokeObjectURL(this.mapImageObjectUrl);
+      this.mapImageObjectUrl = undefined;
+    }
 
     try {
       // Fetched together so the fog/lighting state is already correct for the first paint in
@@ -361,7 +380,13 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
       this.error.set('Failed to load the map image.');
       this.loading.set(false);
     };
-    img.src = map.image_url;
+    void this.mapService.getMapImage(map.image_url).then((blob) => {
+      this.mapImageObjectUrl = URL.createObjectURL(blob);
+      img.src = this.mapImageObjectUrl;
+    }).catch(() => {
+      this.error.set('Failed to load the authorized map image.');
+      this.loading.set(false);
+    });
   }
 
   private buildStage() {

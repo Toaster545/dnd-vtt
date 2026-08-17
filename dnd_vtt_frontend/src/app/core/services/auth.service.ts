@@ -4,20 +4,19 @@ import { Router } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { UserProfile } from '../models/user.model';
+import { AuthTokenService, SessionResponse } from './auth-token.service';
+import { SocketService } from './socket.service';
 
 export type AuthReady = Promise<void>;
 
 const API = environment.apiUrl;
 
-interface LoginResponse {
-  access_token: string;
-  profile: UserProfile;
-}
-
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private http = inject(HttpClient);
   private router = inject(Router);
+  private tokens = inject(AuthTokenService);
+  private sockets = inject(SocketService);
 
   private _profile = signal<UserProfile | null>(null);
 
@@ -29,16 +28,14 @@ export class AuthService {
 
   constructor() {
     if (environment.devBypass) {
-      localStorage.setItem('auth_token', 'dev');
+      this.tokens.setAccessToken('dev');
       // Set a stub admin profile immediately so guards never block,
       // then replace it with real data from the backend in the background.
       this._profile.set({ id: 'dev', email: '', username: 'Dev DM', role: 'admin', created_at: '' });
       this.ready = Promise.resolve();
       this.loadProfile();
-    } else if (localStorage.getItem('auth_token')) {
-      this.ready = this.loadProfile();
     } else {
-      this.ready = Promise.resolve();
+      this.ready = this.restoreSession();
     }
   }
 
@@ -50,17 +47,30 @@ export class AuthService {
 
   async signIn(email: string, password: string) {
     const res = await firstValueFrom(
-      this.http.post<LoginResponse>(`${API}/auth/login`, { email, password })
+      this.http.post<SessionResponse>(`${API}/auth/login`, {
+        email,
+        password,
+        client_type: this.tokens.isNative ? 'native' : 'web',
+      })
     );
-    localStorage.setItem('auth_token', res.access_token);
+    await this.tokens.acceptSession(res);
     this._profile.set(res.profile);
+    this.sockets.refreshAuthentication();
     return res;
   }
 
   async signOut() {
-    localStorage.removeItem('auth_token');
+    const refreshToken = await this.tokens.nativeRefreshToken();
+    try {
+      await firstValueFrom(
+        this.http.post(`${API}/auth/logout`, refreshToken ? { refresh_token: refreshToken } : {}),
+      );
+    } finally {
+      this.sockets.disconnect();
+      await this.tokens.clear();
+    }
     this._profile.set(null);
-    this.router.navigate(['/auth/login']);
+    void this.router.navigate(['/auth/login']);
   }
 
   private async loadProfile(): Promise<void> {
@@ -70,7 +80,18 @@ export class AuthService {
       );
       this._profile.set(profile);
     } catch {
-      localStorage.removeItem('auth_token');
+      await this.tokens.clear();
+    }
+  }
+
+  private async restoreSession(): Promise<void> {
+    try {
+      const session = await this.tokens.refresh();
+      this._profile.set(session?.profile ?? null);
+      if (session) this.sockets.refreshAuthentication();
+    } catch {
+      await this.tokens.clear();
+      this._profile.set(null);
     }
   }
 }

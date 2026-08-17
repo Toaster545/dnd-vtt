@@ -24,6 +24,10 @@ jobs:
         working-directory: dnd_vtt_backend
         run: npm test
 
+      - name: Build backend
+        working-directory: dnd_vtt_backend
+        run: npm run build
+
   backend-lint:
     runs-on: ubuntu-latest
     steps:
@@ -63,3 +67,61 @@ jobs:
       - name: Lint frontend
         working-directory: dnd_vtt_frontend
         run: npm run lint
+
+      - name: Run frontend unit tests
+        working-directory: dnd_vtt_frontend
+        run: npm test -- --watch=false
+
+      - name: Build PWA
+        working-directory: dnd_vtt_frontend
+        run: npm run build
+
+      - name: Verify PWA artifacts
+        working-directory: dnd_vtt_frontend
+        run: test -f dist/dnd-app/browser/ngsw.json && test -f dist/dnd-app/browser/manifest.webmanifest && node -e "const c=require('./dist/dnd-app/browser/ngsw.json'); if ((c.dataGroups ?? []).length) process.exit(1)"
+
+  playwright-critical:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: |
+            dnd_vtt_frontend/package-lock.json
+            dnd_vtt_backend/package-lock.json
+      - run: npm ci
+        working-directory: dnd_vtt_frontend
+      - run: npm ci
+        working-directory: dnd_vtt_backend
+      - run: npm run build
+        working-directory: dnd_vtt_frontend
+      - run: npm run build
+        working-directory: dnd_vtt_backend
+      - run: npx playwright install --with-deps chromium
+        working-directory: dnd_vtt_frontend
+      - run: npm run e2e
+        working-directory: dnd_vtt_frontend
+
+  android-debug:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: dnd_vtt_frontend/package-lock.json
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+      - run: npm ci
+        working-directory: dnd_vtt_frontend
+      - run: npm run build
+        working-directory: dnd_vtt_frontend
+      - run: npx cap sync android
+        working-directory: dnd_vtt_frontend
+      - run: ./gradlew assembleDebug
+        working-directory: dnd_vtt_frontend/android

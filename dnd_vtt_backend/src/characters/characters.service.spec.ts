@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ConflictException,
   ForbiddenException,
   NotFoundException,
@@ -62,6 +63,24 @@ describe('CharactersService', () => {
       class: 'Wizard',
       level: 3,
     });
+  });
+
+  it('autosaves and resumes a draft, then validates completion', async () => {
+    const draft = await service.createDraft(ownerId, {
+      name: 'Aria',
+      draft_step: 2,
+    });
+    expect(draft).toMatchObject({ creation_status: 'draft', draft_step: 2 });
+    const updated = await service.updateDraft(draft.id as string, owner, {
+      ...draft,
+      race: 'Elf',
+      class: 'Wizard',
+      draft_step: 4,
+    });
+    expect(updated).toMatchObject({ creation_status: 'draft', draft_step: 4 });
+    await expect(
+      service.completeDraft(draft.id as string, owner),
+    ).rejects.toThrow(BadRequestException);
   });
 
   it('rejects reading a character owned by someone else', async () => {

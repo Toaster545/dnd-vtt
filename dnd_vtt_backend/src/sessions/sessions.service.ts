@@ -64,6 +64,7 @@ export class SessionsService {
     const session = await this.findOne(id);
     if (session.dm_id !== user.id) {
       await this.assertActiveMember(session.campaign_id as string, user.id);
+      if (!session.visible_to_players) throw new ForbiddenException();
     }
     return session;
   }

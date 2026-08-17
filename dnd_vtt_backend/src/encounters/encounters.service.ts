@@ -3,6 +3,7 @@ import {
   NotFoundException,
   ForbiddenException,
   BadRequestException,
+  ConflictException,
 } from '@nestjs/common';
 import { randomUUID } from 'crypto';
 import { DatabaseService } from '../common/database.service';
@@ -37,8 +38,10 @@ export class EncountersService {
     if (!sessionRow) throw new NotFoundException('Session not found');
 
     const isOwner = sessionRow.dm_id === user.id;
-    if (!isOwner)
+    if (!isOwner) {
       await this.assertActiveMember(sessionRow.campaign_id as string, user.id);
+      if (!sessionRow.visible_to_players) throw new ForbiddenException();
+    }
 
     const result = await this.db.execute(
       isOwner
@@ -66,6 +69,40 @@ export class EncountersService {
     if (!row) throw new NotFoundException('Encounter not found');
     if (row.dm_id !== dmId) throw new ForbiddenException();
     return this.deserialize(row);
+  }
+
+  async findPlayerState(id: string, user: RequestUser) {
+    const result = await this.db.execute(
+      `SELECT e.*, s.campaign_id, s.visible_to_players AS session_visible,
+              c.dm_id AS campaign_dm_id
+       FROM encounters e
+       JOIN sessions s ON s.id = e.session_id
+       JOIN campaigns c ON c.id = s.campaign_id
+       WHERE e.id = ?`,
+      [id],
+    );
+    const row = result.rows[0];
+    if (!row) throw new NotFoundException('Encounter not found');
+    const isOwner = row.campaign_dm_id === user.id;
+    if (!isOwner) {
+      await this.assertActiveMember(row.campaign_id as string, user.id);
+      if (!row.session_visible || !row.visible_to_players) {
+        throw new ForbiddenException();
+      }
+    }
+    if (isOwner) return this.deserialize(row);
+    return {
+      id: row.id,
+      session_id: row.session_id,
+      campaign_id: row.campaign_id,
+      name: row.name,
+      map_id: row.map_id ?? null,
+      status: row.status,
+      summary: row.summary ?? '',
+      current_turn_token_id: row.current_turn_token_id ?? null,
+      round_number: Number(row.round_number ?? 1),
+      updated_at: row.updated_at,
+    };
   }
 
   async create(dmId: string, dto: CreateEncounterDto) {
@@ -139,7 +176,28 @@ export class EncountersService {
   }
 
   async start(id: string, dmId: string) {
-    await this.findOne(id, dmId);
+    const current = await this.findOne(id, dmId);
+    if (!current.session_id) {
+      throw new BadRequestException('Encounter is not attached to a session');
+    }
+    const sessionResult = await this.db.execute(
+      `SELECT campaign_id FROM sessions WHERE id = ?`,
+      [current.session_id],
+    );
+    const campaignId = sessionResult.rows[0]?.campaign_id as string | undefined;
+    if (!campaignId)
+      throw new BadRequestException('Encounter session is invalid');
+    const active = await this.db.execute(
+      `SELECT e.id FROM encounters e
+       JOIN sessions s ON s.id = e.session_id
+       WHERE s.campaign_id = ? AND e.status = 'active' AND e.id <> ? LIMIT 1`,
+      [campaignId, id],
+    );
+    if (active.rows[0]) {
+      throw new ConflictException(
+        'Stop the active campaign encounter before starting another.',
+      );
+    }
 
     // Starting play necessarily reveals the encounter — players need to see it to join it. The DM
     // can still re-hide it afterward via setVisibility. Also resets any turn tracking left over
@@ -161,11 +219,11 @@ export class EncountersService {
         [updated.session_id],
       );
 
-      const session = await this.db.execute(
-        'SELECT campaign_id FROM sessions WHERE id = ?',
-        [updated.session_id],
+      await this.db.execute(
+        `UPDATE campaigns SET current_session_id=?, updated_at=? WHERE id=?`,
+        [updated.session_id, new Date().toISOString(), campaignId],
       );
-      const campaignId = session.rows[0]?.campaign_id as string | undefined;
+
       if (campaignId) {
         this.presence.notifyEncounterStarted({
           encounterId: updated.id as string,

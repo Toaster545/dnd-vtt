@@ -23,7 +23,7 @@ export class BattleMapService {
   private joinMapRoom(socket: Socket, mapId: string, onRejoin: () => void): () => void {
     const rejoin = () => { socket.emit('join_map', mapId); onRejoin(); };
     socket.on('connect', rejoin);
-    socket.connect();
+    this.socketService.connect();
     if (socket.connected) rejoin();
     return rejoin;
   }
@@ -34,6 +34,10 @@ export class BattleMapService {
 
   async getMap(mapId: string): Promise<BattleMap> {
     return firstValueFrom(this.http.get<BattleMap>(`${API}/maps/${mapId}`));
+  }
+
+  async getMapImage(imageUrl: string): Promise<Blob> {
+    return firstValueFrom(this.http.get(imageUrl, { responseType: 'blob' }));
   }
 
   async createMap(map: Partial<BattleMap>): Promise<BattleMap> {
@@ -112,7 +116,7 @@ export class BattleMapService {
       const socket = this.socketService.socket;
       const handleUpdate = (event: { senderId: string; measurement: Measurement | null }) => observer.next(event);
 
-      socket.connect();
+      this.socketService.connect();
       socket.on('measure', handleUpdate);
 
       return () => {
