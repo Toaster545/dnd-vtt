@@ -4,7 +4,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { Character } from '../../../../../../core/models/character.model';
 import { MapToken } from '../../../../../../core/models/campaign.model';
-import { portraitDataUri } from '../../../../../../core/utils/avatar';
+import { portraitDataUri, portraitSource } from '../../../../../../core/utils/avatar';
 
 @Component({
   selector: 'app-character-token-detail',
@@ -24,7 +24,7 @@ export class CharacterTokenDetailComponent {
 
   portraitUri(): string {
     const c = this.character();
-    return portraitDataUri(c.portrait_seed || c.id!);
+    return portraitDataUri(portraitSource(c.portrait_seed || c.id!, c.avatar_recipe));
   }
 
   classLabel(): string {

@@ -13,6 +13,8 @@ import { AuthService } from '../../../../core/services/auth.service';
 import { BackgroundService } from '../../../../core/services/background.service';
 import { Encounter, PresentPlayer } from '../../../../core/models/encounter.model';
 import { Character } from '../../../../core/models/character.model';
+import { PortraitSource } from '../../../../core/models/avatar.model';
+import { portraitSource } from '../../../../core/utils/avatar';
 import { BattleMap, CampaignMember, MapToken } from '../../../../core/models/campaign.model';
 import { Session } from '../../../../core/models/session.model';
 import { BattleMapComponent } from '../../../battle-map/battle-map';
@@ -105,9 +107,11 @@ export class PlayerCampaignSessionComponent implements OnInit, OnDestroy {
   // Same idea as characterHp above — self-reported presence data, not a fetched Character, so a
   // present player's token can show their portrait without the DM's Character-fetch machinery.
   characterPortraits = computed(() => {
-    const map: Record<string, string> = {};
+    const map: Record<string, PortraitSource> = {};
     for (const p of this.presentPlayers()) {
-      if (p.characterId && p.portraitSeed) map[p.characterId] = p.portraitSeed;
+      if (p.characterId) {
+        map[p.characterId] = portraitSource(p.portraitSeed || p.characterId, p.avatarRecipe);
+      }
     }
     return map;
   });
@@ -262,6 +266,7 @@ export class PlayerCampaignSessionComponent implements OnInit, OnDestroy {
       hp: character.current_hp,
       max_hp: character.max_hp,
       portraitSeed: character.portrait_seed,
+      avatarRecipe: character.avatar_recipe,
     });
   }
 

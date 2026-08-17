@@ -11,6 +11,8 @@ import { BattleMapService } from '../../../../core/services/battle-map.service';
 import { AuthService } from '../../../../core/services/auth.service';
 import { Encounter, PresentPlayer } from '../../../../core/models/encounter.model';
 import { Character } from '../../../../core/models/character.model';
+import { PortraitSource } from '../../../../core/models/avatar.model';
+import { portraitSource } from '../../../../core/utils/avatar';
 import { MapToken, PlacingEntity } from '../../../../core/models/campaign.model';
 import { BattleMapComponent } from '../../../battle-map/battle-map';
 import { CharacterPlaySheetComponent } from '../../../characters/character-play-sheet/character-play-sheet';
@@ -90,9 +92,9 @@ export class DmEncounterPlayComponent implements OnInit, OnDestroy {
   });
 
   characterPortraits = computed(() => {
-    const map: Record<string, string> = {};
+    const map: Record<string, PortraitSource> = {};
     for (const c of Object.values(this.allCharactersById())) {
-      if (c.id && c.portrait_seed) map[c.id] = c.portrait_seed;
+      if (c.id) map[c.id] = portraitSource(c.portrait_seed || c.id, c.avatar_recipe);
     }
     return map;
   });

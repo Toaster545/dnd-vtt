@@ -21,6 +21,7 @@ import { getErrorMessage } from '../../core/utils/error-message';
 import { MeasurementTool } from './canvas/measurement-tool';
 import { FogTool } from './canvas/fog-tool';
 import { PortraitCache } from './canvas/portrait-cache';
+import { PortraitSource } from '../../core/models/avatar.model';
 import { StagePointerTools } from './canvas/stage-pointer-tools';
 import { StageView } from './canvas/stage-view';
 import { MapToolbarComponent } from './components/map-toolbar/map-toolbar';
@@ -45,7 +46,7 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
   readonly embedded   = input(false);
   readonly placingEntity = input<PlacingEntity | null>(null);
   readonly characterHp = input<Record<string, { hp: number; max_hp: number }>>({});
-  readonly characterPortraits = input<Record<string, string>>({});
+  readonly characterPortraits = input<Record<string, PortraitSource>>({});
   readonly currentTurnTokenId = input<string | null>(null);
   readonly myCharacterId = input<string | null>(null);
   readonly myMoveSpeedFt = input<number | null>(null);
@@ -575,8 +576,8 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  private resolvePortraitImages(seeds: Record<string, string>): Record<string, HTMLImageElement> {
-    return this.portraitCache.resolve(seeds, () => this.renderTokens(this.lastTokens));
+  private resolvePortraitImages(sources: Record<string, PortraitSource>): Record<string, HTMLImageElement> {
+    return this.portraitCache.resolve(sources, () => this.renderTokens(this.lastTokens));
   }
 
   private renderMeasurements() {
