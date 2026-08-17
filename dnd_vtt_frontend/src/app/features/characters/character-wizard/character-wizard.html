@@ -6,10 +6,10 @@
   } @else {
 
     <div class="wizard-header flex items-end gap-3 flex-shrink-0 px-6 pt-4 bg-black/40">
-      <button class="btn-icon" (click)="cancelAndSave()" matTooltip="Back to characters">
+      <button class="wizard-back-button btn-icon" (click)="cancelAndSave()" matTooltip="Back to characters">
         <mat-icon>arrow_back</mat-icon>
       </button>
-      <div class="field">
+      <div class="wizard-portrait-field field">
         <button
           type="button"
           class="w-11 h-11 rounded-full overflow-hidden border border-white/10 hover:border-gold/60 transition-colors cursor-pointer p-0"
@@ -19,21 +19,21 @@
           <img [src]="portraitUri()" class="w-full h-full" alt="" />
         </button>
       </div>
-      <div class="field flex-1 max-w-xs">
+      <div class="wizard-name-field field flex-1 max-w-xs">
         <label class="field-label">Character Name</label>
         <input class="field-input py-1 text-sm" [ngModel]="characterName()" (ngModelChange)="characterName.set($event)" placeholder="Unnamed Character" name="charName" />
       </div>
-      <div class="field w-20">
+      <div class="wizard-level-field field w-20">
         <label class="field-label">Level</label>
         <input class="field-input py-1 text-sm" type="number" [ngModel]="level()" (ngModelChange)="level.set(+$event)" min="1" max="20" name="level" />
       </div>
-      <button class="btn-outline text-sm gap-1.5 ml-auto" (click)="openSourcesDialog()" matTooltip="Choose character content sources">
+      <button class="wizard-sources-button btn-outline text-sm gap-1.5 ml-auto" (click)="openSourcesDialog()" matTooltip="Choose character content sources">
         <mat-icon class="text-base">auto_stories</mat-icon>
         Sources
         <span class="toolbar-badge text-[10px]">{{ enabledSources().size }}</span>
       </button>
       @if (isEditing()) {
-        <button class="btn-outline text-sm gap-1.5" (click)="openSheet()" matTooltip="View the play sheet for this character">
+        <button class="wizard-sheet-button btn-outline text-sm gap-1.5" (click)="openSheet()" matTooltip="View the play sheet for this character">
           <mat-icon class="text-base">badge</mat-icon>
           View Sheet
         </button>
@@ -55,7 +55,7 @@
             [class]="activeStep() === $index ? 'bg-gold text-on-accent' : 'bg-white/10 text-slate'">
             {{ $index + 1 }}
           </span>
-          <span>{{ label }}</span>
+          <span class="wizard-step-label">{{ label }}</span>
           @if (stepNeedsAttention($index)) {
             <span class="text-gold text-sm font-bold leading-none" title="Choices remaining" aria-label="Choices remaining">*</span>
           }
