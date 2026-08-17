@@ -1,3 +1,5 @@
+import { AvatarRecipeV1 } from './avatar.model';
+
 export interface Encounter {
   id?: string;
   dm_id?: string;
@@ -36,4 +38,5 @@ export interface PresentPlayer {
   hp?: number;
   max_hp?: number;
   portraitSeed?: string;
+  avatarRecipe?: AvatarRecipeV1;
 }

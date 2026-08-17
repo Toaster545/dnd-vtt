@@ -2,7 +2,7 @@ import { Component, input, output } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { CampaignMember } from '../../../core/models/campaign.model';
-import { portraitDataUri } from '../../../core/utils/avatar';
+import { portraitDataUri, portraitSource } from '../../../core/utils/avatar';
 
 // The campaign roster, shared verbatim across the DM/player campaign hubs and the DM/player
 // session hubs — those four call sites previously each hand-rolled the same <ul> of member rows.
@@ -44,7 +44,10 @@ export class PartyListComponent {
   // Falls back to the character id as the DiceBear seed for members created before portraits
   // existed — still deterministic per-character, just not one the player ever explicitly picked.
   portraitFor(member: CampaignMember): string {
-    return portraitDataUri(member.character_portrait_seed || member.character_id);
+    return portraitDataUri(portraitSource(
+      member.character_portrait_seed || member.character_id,
+      member.character_avatar_recipe,
+    ));
   }
 
   // Prefers the live-recomputed value passed in via memberMaxHp — falls back to the stored value

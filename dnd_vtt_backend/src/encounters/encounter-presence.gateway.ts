@@ -7,6 +7,7 @@ import {
   OnGatewayDisconnect,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
+import { AvatarRecipeV1, parseAvatarRecipe } from '../common/avatar-recipe';
 
 interface PresentPlayer {
   socketId: string;
@@ -19,6 +20,7 @@ interface PresentPlayer {
   hp?: number;
   max_hp?: number;
   portraitSeed?: string;
+  avatarRecipe?: AvatarRecipeV1;
 }
 
 // Tracks which players currently have an encounter open (for the DM's "Players" roster section) —
@@ -55,6 +57,7 @@ export class EncounterPresenceGateway implements OnGatewayDisconnect {
       hp?: number;
       max_hp?: number;
       portraitSeed?: string;
+      avatarRecipe?: unknown;
     },
   ) {
     void client.join(`encounter-presence:${data.encounterId}`);
@@ -70,6 +73,7 @@ export class EncounterPresenceGateway implements OnGatewayDisconnect {
       hp: data.hp,
       max_hp: data.max_hp,
       portraitSeed: data.portraitSeed,
+      avatarRecipe: parseAvatarRecipe(data.avatarRecipe) ?? undefined,
     });
     this.broadcast(data.encounterId);
   }

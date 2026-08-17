@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { firstValueFrom, Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { Encounter, EncounterStartedEvent, PresentPlayer } from '../models/encounter.model';
+import { AvatarRecipeV1 } from '../models/avatar.model';
 import { SocketService } from './socket.service';
 
 const API = environment.apiUrl;
@@ -94,6 +95,7 @@ export class EncounterService {
   announcePresence(encounterId: string, info: {
     username: string; characterId: string; characterName: string; hp?: number; max_hp?: number;
     portraitSeed?: string;
+    avatarRecipe?: AvatarRecipeV1;
   }) {
     const socket = this.socketService.socket;
     if (this.activeAnnounce) socket.off('connect', this.activeAnnounce.reannounce);
