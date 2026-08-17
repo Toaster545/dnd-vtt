@@ -3,6 +3,8 @@ import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { EncounterService } from '../../core/services/encounter.service';
 import { Encounter, PresentPlayer } from '../../core/models/encounter.model';
+import { PortraitSource } from '../../core/models/avatar.model';
+import { portraitSource } from '../../core/utils/avatar';
 import { BattleMapComponent } from '../battle-map/battle-map';
 
 // A read-only, chrome-free window showing exactly what players see on the battle map — meant to be
@@ -38,9 +40,11 @@ export class PlayerViewComponent implements OnInit, OnDestroy {
   });
 
   characterPortraits = computed(() => {
-    const map: Record<string, string> = {};
+    const map: Record<string, PortraitSource> = {};
     for (const p of this.presentPlayers()) {
-      if (p.characterId && p.portraitSeed) map[p.characterId] = p.portraitSeed;
+      if (p.characterId) {
+        map[p.characterId] = portraitSource(p.portraitSeed || p.characterId, p.avatarRecipe);
+      }
     }
     return map;
   });

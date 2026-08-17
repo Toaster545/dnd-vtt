@@ -1,0 +1,84 @@
+{
+  "id": "custom-template",
+  "version": 1,
+  "label": "Custom Template",
+  "enabled": false,
+  "viewBox": "0 0 980 980",
+  "colorSlots": ["skin", "hair", "eyes", "details", "metal", "accessories"],
+  "colors": [
+    {
+      "id": "skin",
+      "label": "Skin",
+      "default": "#ffffff",
+      "palette": ["#ffffff"]
+    },
+    {
+      "id": "hair",
+      "label": "Hair",
+      "default": "#17120f",
+      "palette": ["#17120f"]
+    },
+    {
+      "id": "eyes",
+      "label": "Eyes",
+      "default": "#2f2118",
+      "palette": ["#2f2118"]
+    },
+    {
+      "id": "details",
+      "label": "Details",
+      "default": "#000000",
+      "palette": ["#000000"]
+    },
+    {
+      "id": "metal",
+      "label": "Metal",
+      "default": "#c9a227",
+      "palette": ["#c9a227"]
+    },
+    {
+      "id": "accessories",
+      "label": "Accessories",
+      "default": "#8b1a1a",
+      "palette": ["#8b1a1a"]
+    }
+  ],
+  "categories": [
+    {
+      "id": "ears",
+      "label": "Ears",
+      "minSelections": 0,
+      "maxSelections": 1,
+      "noneWeight": 2,
+      "parts": []
+    },
+    {
+      "id": "horns",
+      "label": "Horns",
+      "minSelections": 0,
+      "maxSelections": 1,
+      "noneWeight": 2,
+      "parts": []
+    },
+    {
+      "id": "scars",
+      "label": "Scars",
+      "minSelections": 0,
+      "maxSelections": 3,
+      "noneWeight": 2,
+      "parts": []
+    },
+    {
+      "id": "tattoos",
+      "label": "Tattoos",
+      "minSelections": 0,
+      "maxSelections": 2,
+      "noneWeight": 2,
+      "parts": []
+    }
+  ],
+  "license": {
+    "name": "Original project artwork",
+    "source": "Replace with artist/source details before enabling"
+  }
+}

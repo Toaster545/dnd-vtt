@@ -6,7 +6,7 @@ import { CharacterService } from '../../core/services/character.service';
 import { RecentActivityService } from '../../core/services/recent-activity.service';
 import { Character } from '../../core/models/character.model';
 import { ConfirmService } from '../../shared/confirm.service';
-import { portraitDataUri } from '../../core/utils/avatar';
+import { portraitDataUri, portraitSource } from '../../core/utils/avatar';
 
 // campaign_name/edit_unlocked are only present on campaign copies (joined in from the campaigns/
 // campaign_members tables on the backend) — absent/undefined for a portable template that isn't
@@ -81,6 +81,6 @@ export class CharactersComponent implements OnInit {
   // Falls back to the character id as the DiceBear seed for characters created before portraits
   // existed — still deterministic per-character, just not one the player ever explicitly picked.
   portraitFor(c: CharacterListItem): string {
-    return portraitDataUri(c.portrait_seed || c.id!);
+    return portraitDataUri(portraitSource(c.portrait_seed || c.id!, c.avatar_recipe));
   }
 }

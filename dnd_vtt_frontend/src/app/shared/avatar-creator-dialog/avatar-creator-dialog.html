@@ -1,0 +1,186 @@
+<h2 mat-dialog-title class="font-brand text-parchment flex items-center gap-2">
+  <mat-icon class="text-gold">face</mat-icon>
+  Create Your Avatar
+</h2>
+
+<mat-dialog-content class="avatar-dialog-content !p-0">
+  <div class="avatar-layout">
+    <section class="preview-panel" aria-label="Avatar preview">
+      <div class="preview-frame">
+        <img [src]="previewUri()" class="w-full h-full" alt="Current avatar preview" />
+      </div>
+      @if (styles.length > 1) {
+        <label class="field">
+          <span class="field-label">Style</span>
+          <select class="field-input" [ngModel]="style().id" (ngModelChange)="changeStyle($event)">
+            @for (candidate of styles; track candidate.id) {
+              <option [value]="candidate.id">{{ candidate.label }}</option>
+            }
+          </select>
+        </label>
+      } @else {
+        <p class="text-xs text-slate text-center m-0">{{ style().label }} style</p>
+      }
+      <button type="button" class="btn-primary w-full justify-center" (click)="randomizeAll()">
+        <mat-icon class="text-base">casino</mat-icon>
+        Randomize All
+      </button>
+    </section>
+
+    <nav class="category-nav" aria-label="Avatar categories">
+      @for (category of style().categories; track category.id) {
+        <button
+          type="button"
+          class="category-button"
+          [class.active]="activePanel() === category.id"
+          [attr.aria-pressed]="activePanel() === category.id"
+          (click)="activePanel.set(category.id)"
+        >
+          <span>{{ category.label }}</span>
+          <span class="category-value">{{ selectedLabel(category) }}</span>
+        </button>
+      }
+    </nav>
+
+    <section class="options-panel">
+      @if (activeCategory(); as category) {
+        <div
+          class="options-heading flex items-start justify-between gap-3 mb-3.5 max-[480px]:flex-col"
+        >
+          <div>
+            <h3 class="font-brand text-parchment m-0">{{ category.label }}</h3>
+            <p class="text-xs text-slate m-0 mt-1">
+              {{ selectedLabel(category) }}
+              @if (category.maxSelections > 1) {
+                · Choose up to {{ category.maxSelections }}
+              }
+            </p>
+          </div>
+          <div
+            class="flex flex-wrap justify-end gap-2 max-[480px]:w-full max-[480px]:justify-start"
+          >
+            @for (color of colorsFor(category); track color.id) {
+              <button
+                type="button"
+                class="btn-ghost min-h-9 px-2.5 text-xs"
+                [matMenuTriggerFor]="colorMenu"
+                [matMenuTriggerData]="{ color: color }"
+                [attr.aria-label]="'Choose ' + color.label.toLowerCase() + ' color'"
+              >
+                <span
+                  class="h-[18px] w-[18px] rounded-full border border-white/30"
+                  [style.background-color]="colorValue(color.id)"
+                  aria-hidden="true"
+                ></span>
+                {{ color.label }} color
+              </button>
+            }
+            @if (category.parts.length > 0) {
+              <button
+                type="button"
+                class="btn-ghost px-3"
+                (click)="randomizeCategory(category)"
+                [attr.aria-label]="'Randomize ' + category.label"
+              >
+                <mat-icon class="text-base">casino</mat-icon>
+                Random
+              </button>
+            }
+          </div>
+        </div>
+
+        @if (category.parts.length > 0) {
+          <div class="part-grid">
+            @if (category.minSelections === 0) {
+              <button
+                type="button"
+                class="part-option min-h-[105px] justify-center"
+                [class.selected]="(recipe().parts[category.id] ?? []).length === 0"
+                (click)="clearCategory(category)"
+                [attr.aria-pressed]="(recipe().parts[category.id] ?? []).length === 0"
+              >
+                <mat-icon>block</mat-icon>
+                <span>None</span>
+              </button>
+            }
+            @for (part of category.parts; track part.id) {
+              <button
+                type="button"
+                class="part-option"
+                [class.selected]="isSelected(category.id, part.id)"
+                [attr.aria-pressed]="isSelected(category.id, part.id)"
+                [attr.aria-label]="category.label + ' ' + part.label"
+                (click)="togglePart(category, part)"
+              >
+                <img [src]="partPreview(category, part)" alt="" loading="lazy" />
+                <span>{{ part.label }}</span>
+              </button>
+            }
+          </div>
+        } @else {
+          <div
+            class="flex items-start gap-3 rounded-lg border border-dashed border-white/20 bg-white/[0.03] p-[18px]"
+            role="status"
+          >
+            <mat-icon class="text-gold" aria-hidden="true">palette</mat-icon>
+            <div>
+              <p class="m-0 text-parchment">
+                Ready for your {{ category.label.toLowerCase() }} art
+              </p>
+              <p class="m-0 mt-1 text-xs text-slate">
+                Add SVG parts to this category through the versioned avatar asset pack.
+              </p>
+            </div>
+          </div>
+        }
+      }
+    </section>
+  </div>
+</mat-dialog-content>
+
+<mat-menu #colorMenu="matMenu" class="avatar-color-menu">
+  <ng-template matMenuContent let-color="color">
+    <div class="w-[310px] max-w-[calc(100vw-48px)] p-3" (click)="$event.stopPropagation()">
+      <p class="field-label m-0">{{ color.label }} color</p>
+      <div
+        class="mt-2.5 mb-3 flex flex-wrap gap-2"
+        role="group"
+        [attr.aria-label]="color.label + ' colors'"
+      >
+        @for (swatch of color.palette; track swatch) {
+          <button
+            type="button"
+            class="color-swatch"
+            [class.selected]="colorValue(color.id) === swatch"
+            [style.background-color]="swatch"
+            [attr.aria-label]="color.label + ' ' + swatch"
+            [attr.aria-pressed]="colorValue(color.id) === swatch"
+            (click)="setColor(color.id, swatch)"
+          ></button>
+        }
+      </div>
+      <label class="custom-color-control">
+        <span class="sr-only">Custom {{ color.label }} color</span>
+        <input
+          type="color"
+          [ngModel]="colorValue(color.id)"
+          (ngModelChange)="setColor(color.id, $event)"
+        />
+        <input
+          class="field-input color-hex"
+          type="text"
+          maxlength="7"
+          pattern="#[0-9a-fA-F]{6}"
+          [ngModel]="colorValue(color.id)"
+          (change)="setColorInput(color.id, $event)"
+          [attr.aria-label]="color.label + ' hex color'"
+        />
+      </label>
+    </div>
+  </ng-template>
+</mat-menu>
+
+<mat-dialog-actions align="end" class="!px-5 !py-4 gap-2 border-t border-white/10">
+  <button type="button" class="btn-ghost" [mat-dialog-close]="null">Cancel</button>
+  <button type="button" class="btn-primary" [mat-dialog-close]="recipe()">Apply Avatar</button>
+</mat-dialog-actions>

@@ -83,6 +83,56 @@ describe('CharactersService', () => {
     ).rejects.toThrow(BadRequestException);
   });
 
+  it('persists a validated avatar recipe and rejects malformed recipes', async () => {
+    const avatarRecipe = {
+      schemaVersion: 1,
+      styleId: 'lorelei',
+      styleVersion: 1,
+      seed: 'aria-avatar',
+      parts: {
+        face: ['variant01'],
+        ears: [],
+        eyes: ['variant02'],
+        eyebrows: ['variant03'],
+        nose: ['variant04'],
+        mouth: ['happy05'],
+        hair: ['variant06'],
+        horns: [],
+        facialHair: [],
+        faceDetails: ['freckles'],
+        scars: [],
+        tattoos: [],
+        piercings: [],
+        accessories: ['glasses:variant01'],
+      },
+      colors: {
+        skin: '#f7d7c4',
+        hair: '#38251c',
+        eyes: '#39704e',
+        eyebrows: '#38251c',
+        mouth: '#7d2731',
+        details: '#68432c',
+        piercings: '#c9a227',
+        accessories: '#c9a227',
+      },
+    };
+    const created = await service.create(ownerId, {
+      name: 'Aria',
+      avatar_recipe: avatarRecipe,
+    });
+    expect(created.avatar_recipe).toEqual(avatarRecipe);
+
+    await expect(
+      service.update(created.id as string, owner, {
+        ...created,
+        avatar_recipe: {
+          ...avatarRecipe,
+          colors: { ...avatarRecipe.colors, skin: 'javascript:x' },
+        },
+      }),
+    ).rejects.toThrow(BadRequestException);
+  });
+
   it('rejects reading a character owned by someone else', async () => {
     const created = await service.create(ownerId, { name: 'Aria' });
     const otherId = await insertProfile(db);

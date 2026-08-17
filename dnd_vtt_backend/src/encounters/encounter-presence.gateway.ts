@@ -11,18 +11,19 @@ import {
 import { Server, Socket } from 'socket.io';
 import { DatabaseService } from '../common/database.service';
 import { SocketAuthService } from '../auth/socket-auth.service';
+import { AvatarRecipeV1, parseAvatarRecipe } from '../common/avatar-recipe';
 
 interface PresentPlayer {
   socketId: string;
   username: string;
   characterId: string;
   characterName: string;
-  // Self-reported by the announcing player's own client (same trust level as that player already
-  // editing their own sheet) — lets fellow players see each other's HP on the map without opening
-  // up character reads across accounts the way the DM's admin-only endpoint does.
+  // Identity, health, and portrait data come from the authorized server record rather than the
+  // announcing client's payload.
   hp?: number;
   max_hp?: number;
   portraitSeed?: string;
+  avatarRecipe?: AvatarRecipeV1;
 }
 
 // Tracks which players currently have an encounter open (for the DM's "Players" roster section) —
@@ -127,6 +128,7 @@ export class EncounterPresenceGateway
         typeof characterData.portrait_seed === 'string'
           ? characterData.portrait_seed
           : undefined,
+      avatarRecipe: parseAvatarRecipe(characterData.avatar_recipe) ?? undefined,
     });
     this.broadcast(data.encounterId);
   }

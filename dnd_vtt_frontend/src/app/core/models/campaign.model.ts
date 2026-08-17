@@ -1,3 +1,5 @@
+import { AvatarRecipeV1 } from './avatar.model';
+
 export interface Campaign {
   id: string;
   dm_id: string;
@@ -29,6 +31,7 @@ export interface CampaignMember {
   character_current_hp?: number | null;
   character_armor_class?: number | null;
   character_portrait_seed?: string | null;
+  character_avatar_recipe?: AvatarRecipeV1 | null;
   source_character_id?: string | null;
   status?: 'active' | 'removed';
   joined_at?: string;

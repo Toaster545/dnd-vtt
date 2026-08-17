@@ -8,13 +8,20 @@ import { ClassChoiceSource, averageHpFormula, collectFeatEffects, collectTraitEf
 import { isStructuredEquipment, resolveStartingEquipment } from '../../../core/utils/starting-equipment';
 import { resolveBackgroundSkills } from '../../../core/utils/background-skills';
 import { resolveBackgroundOriginFeat } from '../../../core/utils/background-origin-feat';
-import { portraitDataUri, randomPortraitSeed } from '../../../core/utils/avatar';
+import {
+  normalizeAvatarRecipe,
+  portraitDataUri,
+  portraitSource,
+  randomAvatarRecipe,
+  randomPortraitSeed,
+} from '../../../core/utils/avatar';
 import { resolveSpellcasting, type SpellSelectionRequirement } from '../../../core/utils/spellcasting';
 import { CharacterService } from '../../../core/services/character.service';
 import { CharacterStatsService } from '../../../core/services/character-stats.service';
 import { CampaignService } from '../../../core/services/campaign.service';
 import { Character, Ability, ABILITIES, ScoreMethod, POINT_BUY_MIN, defaultCharacter, abilityModifier } from '../../../core/models/character.model';
-import { PortraitPickerDialogComponent } from '../../../shared/portrait-picker-dialog/portrait-picker-dialog';
+import { AvatarRecipeV1 } from '../../../core/models/avatar.model';
+import { AvatarCreatorDialogComponent } from '../../../shared/avatar-creator-dialog/avatar-creator-dialog';
 import { ContentSourceDialogComponent } from '../../../shared/components/content-source-dialog/content-source-dialog';
 import { RaceStepComponent, Subrace, RaceChoice } from './steps/race-step/race-step';
 import { ClassStepComponent, ClassEntry } from './steps/class-step/class-step';
@@ -122,8 +129,12 @@ export class CharacterWizardComponent implements OnInit, OnDestroy {
   scoreMethod = signal<ScoreMethod>('standard');
 
   characterName = signal('');
-  portraitSeed  = signal(randomPortraitSeed());
-  portraitUri   = computed(() => portraitDataUri(this.portraitSeed()));
+  private readonly initialPortraitSeed = randomPortraitSeed();
+  portraitSeed  = signal(this.initialPortraitSeed);
+  avatarRecipe  = signal<AvatarRecipeV1 | null>(randomAvatarRecipe(this.initialPortraitSeed));
+  portraitUri   = computed(() =>
+    portraitDataUri(portraitSource(this.portraitSeed(), this.avatarRecipe())),
+  );
   level         = signal(1);
   alignment     = signal('True Neutral');
   currentHp     = signal<number | null>(null);
@@ -502,6 +513,7 @@ export class CharacterWizardComponent implements OnInit, OnDestroy {
       id: this.characterId() ?? undefined,
       name: this.characterName().trim() || 'Unnamed Character',
       portrait_seed: this.portraitSeed(),
+      avatar_recipe: this.avatarRecipe() ?? undefined,
       race: this.selectedRace()?.name ?? '',
       subrace: this.selectedSubrace()?.name ?? '',
       race_choices: this.raceTraits(),
@@ -573,7 +585,7 @@ export class CharacterWizardComponent implements OnInit, OnDestroy {
     });
 
     effect(() => {
-      this.characterName(); this.portraitSeed(); this.level(); this.alignment();
+      this.characterName(); this.portraitSeed(); this.avatarRecipe(); this.level(); this.alignment();
       this.selectedRace(); this.selectedSubrace(); this.raceTraits(); this.selectedClasses();
       this.selectedBackground(); this.backgroundTraits();
       this.assignments(); this.selectedItemIndices(); this.spellChoices();
@@ -635,6 +647,7 @@ export class CharacterWizardComponent implements OnInit, OnDestroy {
       }
       this.characterName.set(existing.name);
       this.portraitSeed.set(existing.portrait_seed ?? randomPortraitSeed());
+      this.avatarRecipe.set(normalizeAvatarRecipe(existing.avatar_recipe));
       this.level.set(existing.level);
       this.alignment.set(existing.alignment);
       this.currentHp.set(existing.current_hp);
@@ -758,11 +771,17 @@ export class CharacterWizardComponent implements OnInit, OnDestroy {
   }
 
   openPortraitPicker() {
-    this.dialog.open(PortraitPickerDialogComponent, {
-      data: { seed: this.portraitSeed() },
-      width: '440px',
-    }).afterClosed().subscribe((result: string | null | undefined) => {
-      if (result) this.portraitSeed.set(result);
+    this.dialog.open(AvatarCreatorDialogComponent, {
+      data: { seed: this.portraitSeed(), recipe: this.avatarRecipe() },
+      width: '960px',
+      maxWidth: 'calc(100vw - 16px)',
+      maxHeight: 'calc(100vh - 16px)',
+      autoFocus: false,
+    }).afterClosed().subscribe((result: AvatarRecipeV1 | null | undefined) => {
+      const recipe = normalizeAvatarRecipe(result);
+      if (!recipe) return;
+      this.portraitSeed.set(recipe.seed);
+      this.avatarRecipe.set(recipe);
     });
   }
 

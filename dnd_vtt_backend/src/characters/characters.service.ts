@@ -9,6 +9,7 @@ import { randomUUID } from 'crypto';
 import { DatabaseService } from '../common/database.service';
 import type { RequestUser } from '../common/current-user.decorator';
 import { ContentService } from '../content/content.service';
+import { parseAvatarRecipe } from '../common/avatar-recipe';
 import {
   EBERRON_SOURCE_CODE,
   disallowedSources,
@@ -265,7 +266,9 @@ export class CharactersService {
     const id = randomUUID();
     const now = new Date().toISOString();
     const { name, race, class: cls, level, ...rest } = body;
-    const data = this.normalizeCharacterSources(rest, cls);
+    const data = this.normalizeCharacterAvatar(
+      this.normalizeCharacterSources(rest, cls),
+    );
     await this.db.execute(
       `INSERT INTO characters
        (id, user_id, name, race, class, level, data, creation_status, draft_step, created_at, updated_at)
@@ -393,7 +396,9 @@ export class CharactersService {
         return this.updatePlayerEditableFields(id, existing, body, user);
     }
     const { name, race, class: cls, level, ...rest } = body;
-    const data = this.normalizeCharacterSources(rest, cls);
+    const data = this.normalizeCharacterAvatar(
+      this.normalizeCharacterSources(rest, cls),
+    );
     if (existing.campaign_id) {
       await this.assertCampaignSources(
         existing.campaign_id as string,
@@ -1106,6 +1111,21 @@ export class CharactersService {
         ...required,
       ]),
     };
+  }
+
+  private normalizeCharacterAvatar(
+    data: Record<string, unknown>,
+  ): Record<string, unknown> {
+    if (!Object.prototype.hasOwnProperty.call(data, 'avatar_recipe'))
+      return data;
+    if (data.avatar_recipe == null) {
+      const withoutRecipe = { ...data };
+      delete withoutRecipe.avatar_recipe;
+      return withoutRecipe;
+    }
+    const recipe = parseAvatarRecipe(data.avatar_recipe);
+    if (!recipe) throw new BadRequestException('Invalid avatar recipe');
+    return { ...data, avatar_recipe: recipe };
   }
 
   private async assertCampaignSources(
