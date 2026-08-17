@@ -251,9 +251,11 @@ export function resolveSpellAttackNote(spell: DndSpell, characterLevel: number):
 export interface ResolvedSpellSlotPool {
   key: string;
   name: string;
-  type: 'normal' | 'pact';
+  type: 'normal' | 'pact' | 'restricted';
   slots: Record<string, number>;
   pactSlotLevel?: number;
+  allowedSpellIndices?: string[];
+  recovery?: 'short_rest' | 'long_rest';
 }
 
 export interface SpellcastingResolution {
@@ -294,6 +296,13 @@ interface GrantContext {
 interface SpellListExpansionContext {
   grant: Extract<TraitGrant, { type: 'spell_list_expansion' }>;
   sourceKey?: string;
+}
+
+interface FeatSpellListExpansionContext {
+  grant: Extract<TraitGrant, { type: 'spell_list_expansion' }>;
+  scope: string;
+  sourceName: string;
+  choices: Record<string, string[]>;
 }
 
 interface PendingRequirement {
@@ -594,6 +603,30 @@ function activeSpellGrants(input: SpellcastingResolverInput, sources: ActiveSour
     && (!context.grant.classLevel || (context.sourceLevel ?? 0) >= context.grant.classLevel));
 }
 
+function activeFeatSpellListExpansions(input: SpellcastingResolverInput): FeatSpellListExpansionContext[] {
+  const expansions: FeatSpellListExpansionContext[] = [];
+  const visit = (
+    grants: TraitGrant[], choices: Record<string, string[]>, scope: string, sourceName: string,
+  ) => {
+    for (const grant of grants) {
+      if (grant.type === 'spell_list_expansion') expansions.push({ grant, scope, sourceName, choices });
+      if (grant.type !== 'choice') continue;
+      const selected = new Set(choices[grant.key] ?? []);
+      for (const option of grant.options) {
+        if (selected.has(option.name)) visit(option.grants ?? [], choices, `${scope}:option:${grant.key}:${normalize(option.name)}`, sourceName);
+      }
+    }
+  };
+  for (const selection of input.feats ?? []) {
+    const choices = {
+      ...(selection.choices ?? {}),
+      ...(selection.ability ? { __feat_ability__: [selection.ability] } : {}),
+    };
+    visit(selection.feat.grants ?? [], choices, `feat:${selection.scope}:${selection.feat.index}`, selection.feat.name);
+  }
+  return expansions;
+}
+
 function spellOnList(
   spell: DndSpell,
   list: string,
@@ -826,7 +859,37 @@ function resolveFreeCast(
   };
 }
 
-function slotPools(sources: ActiveSource[]): ResolvedSpellSlotPool[] {
+function dragonmarkSlotPool(input: SpellcastingResolverInput): ResolvedSpellSlotPool | null {
+  const potent = (input.feats ?? []).find(selection => selection.feat.index === 'potent-dragonmark');
+  if (!potent) return null;
+  const definition = (potent.feat.grants ?? []).find(
+    (grant): grant is Extract<TraitGrant, { type: 'dragonmark_slot' }> => grant.type === 'dragonmark_slot',
+  );
+  if (!definition) return null;
+
+  const allowed = new Set<string>();
+  for (const selection of input.feats ?? []) {
+    if (!selection.feat.tags?.includes('dragonmark')) continue;
+    for (const grant of selection.feat.grants ?? []) {
+      if (grant.type === 'spell_list_expansion') {
+        (grant.spells ?? []).forEach(spell => allowed.add(spell));
+      }
+      if (grant.type === 'spell_grant') (grant.spells ?? []).forEach(spell => allowed.add(spell));
+    }
+  }
+  if (!allowed.size) return null;
+  const level = Math.min(definition.maxLevel, Math.ceil(input.characterLevel / 2));
+  return {
+    key: `restricted:${definition.key}`,
+    name: definition.name,
+    type: 'restricted',
+    slots: { [String(level)]: 1 },
+    allowedSpellIndices: [...allowed],
+    recovery: definition.recovery,
+  };
+}
+
+function slotPools(input: SpellcastingResolverInput, sources: ActiveSource[]): ResolvedSpellSlotPool[] {
   const pools: ResolvedSpellSlotPool[] = [];
   const normal = sources.filter((source) => source.progression !== 'pact' && Object.keys(source.spellSlots).length);
   if (normal.length === 1) {
@@ -849,6 +912,8 @@ function slotPools(sources: ActiveSource[]): ResolvedSpellSlotPool[] {
       pactSlotLevel: source.pactMagic!.slot_level,
     });
   }
+  const dragonmark = dragonmarkSlotPool(input);
+  if (dragonmark) pools.push(dragonmark);
   return pools;
 }
 
@@ -862,6 +927,23 @@ export function resolveSpellcasting(input: SpellcastingResolverInput): Spellcast
   const primaryCasterSource = sources.find((source) => source.castingAbility) ?? null;
   const grants = activeSpellGrants(input, sources);
   const listExpansions = activeSpellListExpansions(input, sources);
+  const featExpansions = activeFeatSpellListExpansions(input);
+  const activeFeatIndexes = new Set((input.feats ?? []).map(selection => selection.feat.index));
+  for (const context of featExpansions) {
+    if (!context.grant.alwaysPreparedIfFeat || !activeFeatIndexes.has(context.grant.alwaysPreparedIfFeat)) continue;
+    grants.push({
+      grant: {
+        type: 'spell_grant', key: `${context.grant.key}:always-prepared`, name: context.grant.name,
+        destination: 'always_prepared', spells: context.grant.spells ?? [], countsAgainstLimit: false,
+        sourceKey: context.grant.sourceKey, sourceName: context.grant.sourceName,
+        ability: context.grant.ability,
+      },
+      scope: `${context.scope}:potent`, origin: 'feat', sourceName: context.sourceName, choices: context.choices,
+    });
+  }
+  const featExpandedSpellIndexes = new Set(
+    featExpansions.flatMap(context => context.grant.spells ?? []),
+  );
   const pending: PendingRequirement[] = [];
   const known: ResolvedSpellOrigin[] = [];
   const spellbook: ResolvedSpellOrigin[] = [];
@@ -948,7 +1030,8 @@ export function resolveSpellcasting(input: SpellcastingResolverInput): Spellcast
         for (const spell of list) sourceSpellIndexes.add(spell);
       }
     }
-    const listSpells = input.spells.filter((spell) => sourceSpellIndexes.has(spell.index));
+    const listSpells = input.spells.filter((spell) =>
+      sourceSpellIndexes.has(spell.index) || featExpandedSpellIndexes.has(spell.index));
     if (source.cantripLimit > 0) {
       pending.push({
         key: `${source.key}:cantrips`, source, name: `${source.name} Cantrips`, kind: 'cantrips', destination: 'known',
@@ -1165,7 +1248,7 @@ export function resolveSpellcasting(input: SpellcastingResolverInput): Spellcast
     spellbook,
     prepared,
     alwaysPrepared,
-    slotPools: slotPools(sources),
+    slotPools: slotPools(input, sources),
     validationErrors,
     isComplete,
   };

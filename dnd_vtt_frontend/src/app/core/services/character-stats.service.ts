@@ -24,6 +24,7 @@ export interface ComputedStats {
   ability_modifiers: Record<Ability, number>;
   suggested_max_hp: number;
   initiative: number;
+  initiative_advantage: boolean;
   saving_throw_proficient: Set<string>;
   saving_throw_bonuses: Record<Ability, number>;
   skill_bonuses: Record<string, number>;
@@ -100,9 +101,16 @@ export class CharacterStatsService {
       choices: char.race_choices ?? {},
       subrace: char.subrace,
     } : null;
+    const equipment = [
+      ...char.equipment,
+      ...(char.replicated_items ?? []).map(entry => ({
+        itemIndex: entry.itemIndex, name: entry.planName, quantity: 1, equipped: entry.equipped,
+      })),
+    ];
     const allEffects = [
       ...collectTraitEffects(classesForFeats, feats, raceForFeats),
       ...collectFeatEffects(resolveBackgroundOriginFeat(backgroundData, feats), char.background_choices ?? {}),
+      ...equippedItems(equipment, items).flatMap(item => item.effects ?? []),
     ];
 
     const hit_die = classData?.hit_die ?? 8;
@@ -134,13 +142,13 @@ export class CharacterStatsService {
       ...acc, [ab]: mods[ab] + (saveProfSet.has(ab) ? prof : 0) + savingThrowAbilityBonus,
     }), {} as Record<Ability, number>);
 
-    const conditionalAcBonus = activeEffects(allEffects.filter(e => e.type === 'ac_bonus'), char.equipment, items)
+    const conditionalAcBonus = activeEffects(allEffects.filter(e => e.type === 'ac_bonus'), equipment, items)
       .reduce((sum, e) => sum + (e.value ?? 0), 0);
     const unarmoredBonus = unarmoredDefenseBonus(
-      activeEffects(allEffects.filter(e => e.type === 'unarmored_defense'), char.equipment, items),
+      activeEffects(allEffects.filter(e => e.type === 'unarmored_defense'), equipment, items),
       mods,
     );
-    const computed_ac = baseArmorClass(char.equipment, items, mods.dexterity) + conditionalAcBonus + unarmoredBonus;
+    const computed_ac = baseArmorClass(equipment, items, mods.dexterity) + conditionalAcBonus + unarmoredBonus;
 
     const untrainedSkillBonus = allEffects
       .filter(effect => effect.type === 'untrained_skill_bonus')
@@ -168,7 +176,7 @@ export class CharacterStatsService {
     const passive_investigation = 10 + (skill_bonuses['Investigation'] ?? mods.intelligence);
     const passive_insight = 10 + (skill_bonuses['Insight'] ?? mods.wisdom);
 
-    const weapon_attacks: WeaponAttack[] = equippedItems(char.equipment, items)
+    const weapon_attacks: WeaponAttack[] = equippedItems(equipment, items)
       .filter(it => it.type === 'weapon')
       .map(weapon => {
         const abilityMod = weaponAbilityMod(weapon, mods);
@@ -177,15 +185,15 @@ export class CharacterStatsService {
         const isThrown = weapon.properties.some(p => p.startsWith('Thrown'));
 
         const rangedAttackBonus = isRanged
-          ? activeEffects(allEffects.filter(e => e.type === 'ranged_attack_bonus'), char.equipment, items)
+          ? activeEffects(allEffects.filter(e => e.type === 'ranged_attack_bonus'), equipment, items)
               .reduce((sum, e) => sum + (e.value ?? 0), 0)
           : 0;
         const meleeDamageBonus = !isRanged
-          ? activeEffects(allEffects.filter(e => e.type === 'melee_damage_bonus'), char.equipment, items)
+          ? activeEffects(allEffects.filter(e => e.type === 'melee_damage_bonus'), equipment, items)
               .reduce((sum, e) => sum + (e.value ?? 0), 0)
           : 0;
         const thrownDamageBonus = isThrown
-          ? activeEffects(allEffects.filter(e => e.type === 'thrown_damage_bonus'), char.equipment, items)
+          ? activeEffects(allEffects.filter(e => e.type === 'thrown_damage_bonus'), equipment, items)
               .reduce((sum, e) => sum + (e.value ?? 0), 0)
           : 0;
 
@@ -217,12 +225,14 @@ export class CharacterStatsService {
     const initiativeProficiencyBonus = allEffects.some(effect => effect.type === 'initiative_proficiency_bonus')
       ? prof
       : 0;
+    const initiative_advantage = allEffects.some(effect => effect.type === 'initiative_advantage');
 
     return {
       proficiency_bonus: prof,
       ability_modifiers: mods,
       suggested_max_hp,
       initiative: mods.dexterity + initiativeAbilityBonus + initiativeProficiencyBonus,
+      initiative_advantage,
       saving_throw_proficient: saveProfSet,
       saving_throw_bonuses,
       skill_bonuses,

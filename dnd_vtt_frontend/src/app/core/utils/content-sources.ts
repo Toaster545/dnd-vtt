@@ -18,3 +18,17 @@ export function characterContentEnabled(
   const definition = sources.find(source => source.code === code);
   return definition?.locked === true || enabledCodes.has(code);
 }
+
+// Encounter/reference content from DM-only sources (for example the Monster Manual) is not a
+// character option and is therefore always available. Player-option supplements such as EFA
+// follow the campaign's allowed-source selection; campaign homebrew is always included.
+export function campaignContentEnabled(
+  entry: SourcedContent,
+  allowedCodes: ReadonlySet<string>,
+  sources: readonly DndContentSource[],
+): boolean {
+  const code = sourceCode(entry, 'XMM');
+  if (code === 'HOMEBREW') return true;
+  const definition = sources.find(source => source.code === code);
+  return definition?.player_options === false || definition?.locked === true || allowedCodes.has(code);
+}

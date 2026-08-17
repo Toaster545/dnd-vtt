@@ -1,0 +1,105 @@
+{
+  "index": "mark-of-handling",
+  "name": "Mark of Handling",
+  "description": "Manifest the Mark of Handling; gain its intuition, magic, and expanded spell list.",
+  "category": "origin",
+  "tags": [
+    "dragonmark"
+  ],
+  "exclusiveGroup": "dragonmark",
+  "grants": [
+    {
+      "type": "feature",
+      "name": "Handling Intuition",
+      "description": "Your dragonmark improves checks and special tasks associated with handling."
+    },
+    {
+      "type": "choice",
+      "key": "dragonmark_spellcasting_ability",
+      "name": "Dragonmark Spellcasting Ability",
+      "choose": 1,
+      "description": "Choose Intelligence, Wisdom, or Charisma for this mark.",
+      "options": [
+        {
+          "name": "Intelligence"
+        },
+        {
+          "name": "Wisdom"
+        },
+        {
+          "name": "Charisma"
+        }
+      ]
+    },
+    {
+      "type": "spell_grant",
+      "key": "mark-of-handling_animal-friendship",
+      "name": "Mark of Handling",
+      "destination": "always_prepared",
+      "spells": [
+        "animal-friendship"
+      ],
+      "countsAgainstLimit": false,
+      "sourceKey": "mark-of-handling",
+      "sourceName": "Mark of Handling",
+      "characterLevel": 1,
+      "ability": {
+        "choiceKey": "dragonmark_spellcasting_ability"
+      },
+      "freeCast": {
+        "uses": 1,
+        "recovery": "long_rest"
+      }
+    },
+    {
+      "type": "spell_grant",
+      "key": "mark-of-handling_speak-with-animals",
+      "name": "Mark of Handling",
+      "destination": "always_prepared",
+      "spells": [
+        "speak-with-animals"
+      ],
+      "countsAgainstLimit": false,
+      "sourceKey": "mark-of-handling",
+      "sourceName": "Mark of Handling",
+      "characterLevel": 1,
+      "ability": {
+        "choiceKey": "dragonmark_spellcasting_ability"
+      },
+      "freeCast": {
+        "uses": 1,
+        "recovery": "long_rest"
+      }
+    },
+    {
+      "type": "spell_list_expansion",
+      "key": "mark-of-handling_spells_of_the_mark",
+      "name": "Spells of the Mark",
+      "spells": [
+        "command",
+        "find-familiar",
+        "beast-sense",
+        "calm-emotions",
+        "beacon-of-hope",
+        "conjure-animals",
+        "aura-of-life",
+        "dominate-beast",
+        "awaken"
+      ],
+      "alwaysPreparedIfFeat": "potent-dragonmark",
+      "sourceKey": "mark-of-handling",
+      "sourceName": "Mark of Handling",
+      "ability": {
+        "choiceKey": "dragonmark_spellcasting_ability"
+      }
+    }
+  ],
+  "source": {
+    "code": "EFA",
+    "book": "Eberron: Forge of the Artificer",
+    "edition": 2024,
+    "page": 39,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

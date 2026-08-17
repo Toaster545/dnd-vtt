@@ -1,0 +1,84 @@
+{
+  "index": "boromar-underboss",
+  "name": "Boromar Underboss",
+  "size": "Small",
+  "type": "humanoid (halfling)",
+  "alignment": "L E",
+  "armor_class": 16,
+  "hit_points": 104,
+  "hit_dice": "19d6 + 38",
+  "speed": {
+    "walk": 30
+  },
+  "ability_scores": {
+    "strength": 10,
+    "dexterity": 18,
+    "constitution": 15,
+    "intelligence": 12,
+    "wisdom": 14,
+    "charisma": 17
+  },
+  "saving_throws": {
+    "Dexterity": 7,
+    "Constitution": 5,
+    "Wisdom": 5
+  },
+  "skills": {
+    "Insight": 5,
+    "Perception": 8,
+    "Sleight Of Hand": 10
+  },
+  "damage_vulnerabilities": [],
+  "damage_resistances": [
+    "poison"
+  ],
+  "damage_immunities": [],
+  "condition_immunities": [],
+  "senses": {
+    "passive_perception": 18
+  },
+  "languages": [
+    "Common",
+    "Halfling",
+    "Thieves' cant"
+  ],
+  "challenge_rating": "8",
+  "xp": 3900,
+  "traits": [
+    {
+      "name": "Hustle",
+      "description": "Reference-only rule. See Eberron: Forge of the Artificer, page 57."
+    }
+  ],
+  "actions": [
+    {
+      "name": "Multiattack",
+      "description": "Reference-only rule. See Eberron: Forge of the Artificer, page 57."
+    },
+    {
+      "name": "Poisoned Blade",
+      "description": "Reference-only rule. See Eberron: Forge of the Artificer, page 57."
+    },
+    {
+      "name": "Arcane Firearm",
+      "description": "Reference-only rule. See Eberron: Forge of the Artificer, page 57."
+    }
+  ],
+  "reactions": [
+    {
+      "name": "Uncanny Dodge",
+      "description": "Reference-only rule. See Eberron: Forge of the Artificer, page 57."
+    }
+  ],
+  "legendary_actions": [],
+  "description": "Reference stat block from Eberron: Forge of the Artificer, page 57.",
+  "rules_text": "reference-only",
+  "source": {
+    "code": "EFA",
+    "book": "Eberron: Forge of the Artificer",
+    "edition": 2024,
+    "page": 57,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

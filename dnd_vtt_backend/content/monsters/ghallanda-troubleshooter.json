@@ -1,0 +1,79 @@
+{
+  "index": "ghallanda-troubleshooter",
+  "name": "Ghallanda Troubleshooter",
+  "size": "Small",
+  "type": "humanoid (halfling)",
+  "alignment": "N",
+  "armor_class": 14,
+  "hit_points": 78,
+  "hit_dice": "12d6 + 36",
+  "speed": {
+    "walk": 30
+  },
+  "ability_scores": {
+    "strength": 10,
+    "dexterity": 16,
+    "constitution": 17,
+    "intelligence": 13,
+    "wisdom": 14,
+    "charisma": 17
+  },
+  "saving_throws": {
+    "Dexterity": 5,
+    "Constitution": 5,
+    "Wisdom": 4,
+    "Charisma": 5
+  },
+  "skills": {
+    "Insight": 4,
+    "Perception": 4,
+    "Stealth": 5
+  },
+  "damage_vulnerabilities": [],
+  "damage_resistances": [],
+  "damage_immunities": [],
+  "condition_immunities": [
+    "frightened"
+  ],
+  "senses": {
+    "passive_perception": 14
+  },
+  "languages": [
+    "Common",
+    "Halfling"
+  ],
+  "challenge_rating": "3",
+  "xp": 700,
+  "traits": [
+    {
+      "name": "Hustle",
+      "description": "Reference-only rule. See Eberron: Forge of the Artificer, page 80."
+    }
+  ],
+  "actions": [
+    {
+      "name": "Multiattack",
+      "description": "Reference-only rule. See Eberron: Forge of the Artificer, page 80."
+    },
+    {
+      "name": "Poisoned Dagger",
+      "description": "Reference-only rule. See Eberron: Forge of the Artificer, page 80."
+    },
+    {
+      "name": "Nimble Escape (Bonus Action)",
+      "description": "Reference-only rule. See Eberron: Forge of the Artificer, page 80."
+    }
+  ],
+  "reactions": [],
+  "legendary_actions": [],
+  "description": "Reference stat block from Eberron: Forge of the Artificer, page 80.",
+  "rules_text": "reference-only",
+  "source": {
+    "code": "EFA",
+    "book": "Eberron: Forge of the Artificer",
+    "edition": 2024,
+    "page": 80,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

@@ -1,0 +1,63 @@
+{
+  "index": "aberrant-heir",
+  "name": "Aberrant Heir",
+  "description": "An Eberron background from Eberron: Forge of the Artificer.",
+  "skill_proficiencies": [
+    "History",
+    "Intimidation"
+  ],
+  "tool_proficiencies": [
+    "Disguise Kit"
+  ],
+  "languages": "None",
+  "starting_equipment": {
+    "fixed": [
+      {
+        "key": "dagger-0",
+        "item": "dagger",
+        "quantity": 1
+      },
+      {
+        "key": "disguise-kit-1",
+        "item": "disguise-kit",
+        "quantity": 1
+      },
+      {
+        "key": "costume-2",
+        "item": "costume",
+        "quantity": 1
+      },
+      {
+        "key": "travelers-clothes-3",
+        "item": "travelers-clothes",
+        "quantity": 1
+      }
+    ],
+    "groups": [],
+    "gold": 16,
+    "goldAlternative": 50
+  },
+  "feature": "Origin Feat: Aberrant Dragonmark",
+  "grants": [
+    {
+      "type": "ability_choice",
+      "key": "ability_scores",
+      "name": "Ability Scores",
+      "points": 3,
+      "abilities": [
+        "strength",
+        "constitution",
+        "charisma"
+      ],
+      "description": "Increase one listed ability by 2 and another by 1, or increase all three by 1."
+    }
+  ],
+  "source": {
+    "code": "EFA",
+    "book": "Eberron: Forge of the Artificer",
+    "edition": 2024,
+    "page": 25,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

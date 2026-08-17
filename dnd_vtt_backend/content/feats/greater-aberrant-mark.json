@@ -1,0 +1,55 @@
+{
+  "index": "greater-aberrant-mark",
+  "name": "Greater Aberrant Mark",
+  "category": "general",
+  "source": {
+    "code": "EFA",
+    "book": "Eberron: Forge of the Artificer",
+    "edition": 2024,
+    "page": 43,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  },
+  "description": "Improve Aberrant Fortitude and channel Hit Dice into temporary Hit Points and Force damage.",
+  "prerequisite": {
+    "level": 4,
+    "feats": [
+      "aberrant-dragonmark"
+    ]
+  },
+  "abilityIncrease": {
+    "abilities": [
+      "constitution"
+    ],
+    "amount": 1
+  },
+  "grants": [
+    {
+      "type": "feature",
+      "name": "Improved Fortitude",
+      "description": "Aberrant Fortitude uses a d6 and refreshes on a Short or Long Rest.",
+      "key": "aberrant-fortitude",
+      "action": {
+        "activation": "reaction",
+        "uses": {
+          "max": 1,
+          "per": "short_rest"
+        }
+      }
+    },
+    {
+      "type": "feature",
+      "name": "Mark of Inspiration",
+      "description": "After casting a cantrip, expend Hit Dice to gain temporary Hit Points and deal Force damage.",
+      "key": "mark-of-inspiration",
+      "action": {
+        "activation": "free",
+        "uses": {
+          "max": 1,
+          "maxProficiencyBonus": true,
+          "per": "long_rest"
+        }
+      }
+    }
+  ]
+}

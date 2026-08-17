@@ -1,0 +1,34 @@
+{
+  "index": "greater-mark-of-making",
+  "name": "Greater Mark of Making",
+  "description": "Deepen the Mark of Making, improving its intuition and signature benefit.",
+  "category": "general",
+  "prerequisite": {
+    "level": 4,
+    "feats": [
+      "mark-of-making"
+    ]
+  },
+  "abilityIncrease": {
+    "abilities": [
+      "strength",
+      "dexterity",
+      "constitution",
+      "intelligence",
+      "wisdom",
+      "charisma"
+    ],
+    "amount": 1
+  },
+  "tags": [
+    "dragonmark-upgrade"
+  ],
+  "source": {
+    "code": "EFA",
+    "book": "Eberron: Forge of the Artificer",
+    "edition": 2024,
+    "page": 45,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

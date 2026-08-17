@@ -1,0 +1,68 @@
+{
+  "index": "inquisitive",
+  "name": "Inquisitive",
+  "description": "An Eberron background from Eberron: Forge of the Artificer.",
+  "skill_proficiencies": [
+    "Insight",
+    "Investigation"
+  ],
+  "tool_proficiencies": [
+    "Thieves' Tools"
+  ],
+  "languages": "None",
+  "starting_equipment": {
+    "fixed": [
+      {
+        "key": "thieves-tools-0",
+        "item": "thieves-tools",
+        "quantity": 1
+      },
+      {
+        "key": "bullseye-lantern-1",
+        "item": "bullseye-lantern",
+        "quantity": 1
+      },
+      {
+        "key": "crowbar-2",
+        "item": "crowbar",
+        "quantity": 1
+      },
+      {
+        "key": "oil-3",
+        "item": "oil",
+        "quantity": 10
+      },
+      {
+        "key": "travelers-clothes-4",
+        "item": "travelers-clothes",
+        "quantity": 1
+      }
+    ],
+    "groups": [],
+    "gold": 10,
+    "goldAlternative": 50
+  },
+  "feature": "Origin Feat: Alert",
+  "grants": [
+    {
+      "type": "ability_choice",
+      "key": "ability_scores",
+      "name": "Ability Scores",
+      "points": 3,
+      "abilities": [
+        "constitution",
+        "intelligence",
+        "charisma"
+      ],
+      "description": "Increase one listed ability by 2 and another by 1, or increase all three by 1."
+    }
+  ],
+  "source": {
+    "code": "EFA",
+    "book": "Eberron: Forge of the Artificer",
+    "edition": 2024,
+    "page": 33,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

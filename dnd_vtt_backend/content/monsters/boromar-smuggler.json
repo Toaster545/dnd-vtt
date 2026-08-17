@@ -1,0 +1,72 @@
+{
+  "index": "boromar-smuggler",
+  "name": "Boromar Smuggler",
+  "size": "Small",
+  "type": "humanoid (halfling)",
+  "alignment": "N E",
+  "armor_class": 13,
+  "hit_points": 27,
+  "hit_dice": "6d6 + 6",
+  "speed": {
+    "walk": 40
+  },
+  "ability_scores": {
+    "strength": 11,
+    "dexterity": 15,
+    "constitution": 12,
+    "intelligence": 11,
+    "wisdom": 10,
+    "charisma": 14
+  },
+  "saving_throws": {
+    "Dexterity": 4,
+    "Wisdom": 2
+  },
+  "skills": {
+    "Perception": 2,
+    "Sleight Of Hand": 6,
+    "Stealth": 6
+  },
+  "damage_vulnerabilities": [],
+  "damage_resistances": [],
+  "damage_immunities": [],
+  "condition_immunities": [],
+  "senses": {
+    "passive_perception": 12
+  },
+  "languages": [
+    "Common",
+    "Halfling",
+    "Thieves' cant"
+  ],
+  "challenge_rating": "1/2",
+  "xp": 100,
+  "traits": [
+    {
+      "name": "Hustle",
+      "description": "Reference-only rule. See Eberron: Forge of the Artificer, page 57."
+    }
+  ],
+  "actions": [
+    {
+      "name": "Shortsword",
+      "description": "Reference-only rule. See Eberron: Forge of the Artificer, page 57."
+    },
+    {
+      "name": "Pistol",
+      "description": "Reference-only rule. See Eberron: Forge of the Artificer, page 57."
+    }
+  ],
+  "reactions": [],
+  "legendary_actions": [],
+  "description": "Reference stat block from Eberron: Forge of the Artificer, page 57.",
+  "rules_text": "reference-only",
+  "source": {
+    "code": "EFA",
+    "book": "Eberron: Forge of the Artificer",
+    "edition": 2024,
+    "page": 57,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

@@ -37,6 +37,7 @@
     ]
   },
   "description": "Summon a Tiny Construct companion in an open space within range, replacing any homunculus you already have from this spell. It is an ally that shares your Initiative and acts immediately after you, obeying your commands without using your action and otherwise Dodging. It has a 20-foot Speed, a 30-foot Fly Speed, one-mile telepathy with you, a Force attack that uses your spell attack modifier, and a Reaction that delivers your touch-range spells. Its Hit Points, Hit Dice, checks, saves, and Force damage scale with the spell slot's level.",
+  "companion_index": "homunculus-servant",
   "source": {
     "book": "Eberron: Forge of the Artificer",
     "edition": 2024,

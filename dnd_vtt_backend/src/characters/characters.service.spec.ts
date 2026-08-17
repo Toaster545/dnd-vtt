@@ -391,6 +391,53 @@ describe('CharactersService', () => {
       expect(longRestState.spell_slot_uses).toEqual({});
       expect(longRestState.spell_free_cast_uses).toEqual({});
     });
+
+    it('enforces and restores the Potent Dragonmark restricted slot', async () => {
+      const created = await service.create(ownerId, {
+        name: 'Mira',
+        race: 'Human',
+        class: 'Wizard',
+        level: 8,
+        background: 'House Cannith Heir',
+        enabled_sources: ['EFA'],
+        classes: [
+          {
+            name: 'Wizard',
+            level: 8,
+            choices: { 'asi_8:feat': ['potent-dragonmark'] },
+          },
+        ],
+        spell_slot_uses: {},
+      });
+      const command = {
+        spellIndex: 'magic-weapon',
+        sourceKey: 'mark-of-making',
+        method: 'restricted',
+        poolKey: 'restricted:potent_dragonmark_slot',
+        slotLevel: 4,
+      };
+
+      await service.castSpell(created.id as string, owner, command);
+      await expect(
+        service.castSpell(created.id as string, owner, command),
+      ).rejects.toThrow(ConflictException);
+      await expect(
+        service.castSpell(created.id as string, owner, {
+          ...command,
+          spellIndex: 'cure-wounds',
+        }),
+      ).rejects.toThrow(BadRequestException);
+
+      const rested = await service.restoreSpellcasting(
+        created.id as string,
+        owner,
+        { type: 'short_rest' },
+      );
+      const state = rested as SpellcastingCharacterState;
+      expect(
+        state.spell_slot_uses?.['restricted:potent_dragonmark_slot'],
+      ).toBeUndefined();
+    });
   });
 
   it('rejects preparation changes while the character is in an active encounter', async () => {
@@ -427,6 +474,94 @@ describe('CharactersService', () => {
         spell_choices: { 'class:wizard:prepared': ['shield'] },
       }),
     ).rejects.toThrow(ConflictException);
+  });
+
+  describe('replicateItem', () => {
+    async function makeArtificer(
+      plans: string[] = ['Returning Weapon', 'Repeating Shot'],
+    ) {
+      return service.create(ownerId, {
+        name: 'Forge',
+        class: 'Artificer',
+        level: 2,
+        classes: [
+          {
+            name: 'Artificer',
+            level: 2,
+            choices: { magic_item_plans: plans },
+          },
+        ],
+      });
+    }
+
+    it('creates, equips, and dismisses a learned replicated item', async () => {
+      const created = await makeArtificer();
+      const createdItem = (await service.replicateItem(
+        created.id as string,
+        owner,
+        {
+          itemIndex: 'returning-weapon',
+          action: 'create',
+        },
+      )) as unknown as { replicated_items: Record<string, unknown>[] };
+      expect(createdItem.replicated_items).toEqual([
+        expect.objectContaining({
+          itemIndex: 'returning-weapon',
+          planName: 'Returning Weapon',
+          equipped: false,
+        }),
+      ]);
+
+      const equipped = (await service.replicateItem(
+        created.id as string,
+        owner,
+        {
+          itemIndex: 'returning-weapon',
+          action: 'toggle',
+        },
+      )) as unknown as { replicated_items: Record<string, unknown>[] };
+      expect(equipped.replicated_items[0].equipped).toBe(true);
+
+      const dismissed = (await service.replicateItem(
+        created.id as string,
+        owner,
+        {
+          itemIndex: 'returning-weapon',
+          action: 'dismiss',
+        },
+      )) as unknown as { replicated_items: Record<string, unknown>[] };
+      expect(dismissed.replicated_items).toEqual([]);
+    });
+
+    it('rejects items whose plan the Artificer has not learned', async () => {
+      const created = await makeArtificer(['Returning Weapon']);
+      await expect(
+        service.replicateItem(created.id as string, owner, {
+          itemIndex: 'repeating-shot',
+          action: 'create',
+        }),
+      ).rejects.toThrow(BadRequestException);
+    });
+
+    it('enforces the replicated-item limit from the Artificer table', async () => {
+      const created = await makeArtificer([
+        'Returning Weapon',
+        'Repeating Shot',
+        'Manifold Tool',
+      ]);
+      for (const itemIndex of ['returning-weapon', 'repeating-shot']) {
+        await service.replicateItem(created.id as string, owner, {
+          itemIndex,
+          action: 'create',
+        });
+      }
+      await expect(
+        service.replicateItem(created.id as string, owner, {
+          itemIndex: 'manifold-tool',
+          action: 'create',
+        }),
+      ).rejects.toThrow(ConflictException);
+    });
   });
 
   describe('grantItem', () => {

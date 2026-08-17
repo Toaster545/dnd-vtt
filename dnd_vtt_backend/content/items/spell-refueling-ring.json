@@ -1,0 +1,42 @@
+{
+  "index": "spell-refueling-ring",
+  "name": "Spell-Refueling Ring",
+  "type": "magic",
+  "category": "Ring",
+  "damage": null,
+  "damage_type": null,
+  "properties": [],
+  "weight": 0,
+  "cost": "Magic item",
+  "description": "Once per dawn as a Bonus Action, recover one expended spell slot of level 3 or lower.",
+  "rarity": "uncommon",
+  "requires_attunement": "Spellcaster",
+  "charges": {
+    "max": 1,
+    "recovery": "dawn"
+  },
+  "actions": [
+    {
+      "key": "item:spell-refueling-ring",
+      "name": "Spell-Refueling Ring",
+      "description": "Once per dawn as a Bonus Action, recover one expended spell slot of level 3 or lower.",
+      "activation": "bonus_action",
+      "uses": {
+        "max": 1,
+        "per": "long_rest"
+      }
+    }
+  ],
+  "artificer_plan": {
+    "name": "Spell-Refueling Ring",
+    "itemIndex": "spell-refueling-ring"
+  },
+  "source": {
+    "code": "EFA",
+    "book": "Eberron: Forge of the Artificer",
+    "edition": 2024,
+    "page": 112,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

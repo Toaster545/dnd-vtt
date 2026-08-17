@@ -1,0 +1,77 @@
+{
+  "index": "steel-defender",
+  "name": "Steel Defender",
+  "size": "Medium",
+  "type": "construct",
+  "alignment": "N",
+  "armor_class": 12,
+  "armor_class_desc": "12 + your Intelligence modifier",
+  "hit_points": 0,
+  "hit_points_formula": "5 + five times your Artificer level (the defender has a number of Hit Dice [d8s] equal to your Artificer level)",
+  "hit_dice": "Special",
+  "speed": {
+    "walk": 40
+  },
+  "ability_scores": {
+    "strength": 14,
+    "dexterity": 12,
+    "constitution": 14,
+    "intelligence": 4,
+    "wisdom": 10,
+    "charisma": 6
+  },
+  "saving_throws": {},
+  "skills": {},
+  "damage_vulnerabilities": [],
+  "damage_resistances": [],
+  "damage_immunities": [
+    "poison"
+  ],
+  "condition_immunities": [
+    "charmed",
+    "exhaustion",
+    "poisoned"
+  ],
+  "senses": {
+    "passive_perception": 10,
+    "darkvision": 60
+  },
+  "languages": [
+    "understands the languages you know"
+  ],
+  "challenge_rating": "Special",
+  "xp": 0,
+  "traits": [
+    {
+      "name": "Steel Bond",
+      "description": "Add the creator’s Proficiency Bonus to the defender’s ability checks and saving throws."
+    }
+  ],
+  "actions": [
+    {
+      "name": "Force-Empowered Rend",
+      "description": "Melee spell attack; on a hit, deal 1d8 + 2 + Intelligence modifier Force damage."
+    },
+    {
+      "name": "Repair (3/Day)",
+      "description": "Restore 2d8 + Intelligence modifier Hit Points to itself or a nearby Construct or object."
+    }
+  ],
+  "reactions": [
+    {
+      "name": "Deflect Attack",
+      "description": "Impose Disadvantage on a nearby attack against a creature other than the defender."
+    }
+  ],
+  "legendary_actions": [],
+  "description": "Reference stat block from Eberron: Forge of the Artificer, page 19.",
+  "rules_text": "reference-only",
+  "source": {
+    "code": "EFA",
+    "book": "Eberron: Forge of the Artificer",
+    "edition": 2024,
+    "page": 19,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

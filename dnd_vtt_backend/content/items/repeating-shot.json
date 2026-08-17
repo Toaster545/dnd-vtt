@@ -1,0 +1,26 @@
+{
+  "index": "repeating-shot",
+  "name": "Repeating Shot",
+  "type": "magic",
+  "category": "Magic Weapon Template",
+  "damage": null,
+  "damage_type": null,
+  "properties": [],
+  "weight": 0,
+  "cost": "Magic item",
+  "description": "A +1 ranged weapon that ignores Loading and produces its own magical ammunition.",
+  "rarity": "uncommon",
+  "requires_attunement": true,
+  "artificer_plan": {
+    "name": "Repeating Shot",
+    "itemIndex": "repeating-shot"
+  },
+  "source": {
+    "code": "EFA",
+    "book": "Eberron: Forge of the Artificer",
+    "edition": 2024,
+    "page": 112,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

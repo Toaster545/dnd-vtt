@@ -1,0 +1,69 @@
+{
+  "index": "cannith-artificer",
+  "name": "Cannith Artificer",
+  "size": "Small",
+  "type": "humanoid (human)",
+  "alignment": "N",
+  "armor_class": 16,
+  "hit_points": 71,
+  "hit_dice": "11d8 + 22",
+  "speed": {
+    "walk": 30
+  },
+  "ability_scores": {
+    "strength": 13,
+    "dexterity": 13,
+    "constitution": 14,
+    "intelligence": 18,
+    "wisdom": 14,
+    "charisma": 11
+  },
+  "saving_throws": {
+    "Constitution": 4,
+    "Intelligence": 6
+  },
+  "skills": {
+    "Arcana": 6,
+    "Perception": 4,
+    "Sleight Of Hand": 3
+  },
+  "damage_vulnerabilities": [],
+  "damage_resistances": [],
+  "damage_immunities": [],
+  "condition_immunities": [],
+  "senses": {
+    "passive_perception": 14
+  },
+  "languages": [
+    "Common plus two other languages"
+  ],
+  "challenge_rating": "4",
+  "xp": 1100,
+  "traits": [],
+  "actions": [
+    {
+      "name": "Multiattack",
+      "description": "Reference-only rule. See Eberron: Forge of the Artificer, page 80."
+    },
+    {
+      "name": "Battering Mace",
+      "description": "Reference-only rule. See Eberron: Forge of the Artificer, page 80."
+    },
+    {
+      "name": "Artillery Strike",
+      "description": "Reference-only rule. See Eberron: Forge of the Artificer, page 80."
+    }
+  ],
+  "reactions": [],
+  "legendary_actions": [],
+  "description": "Reference stat block from Eberron: Forge of the Artificer, page 80.",
+  "rules_text": "reference-only",
+  "source": {
+    "code": "EFA",
+    "book": "Eberron: Forge of the Artificer",
+    "edition": 2024,
+    "page": 80,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

@@ -1,0 +1,76 @@
+{
+  "index": "tarkanan-marauder",
+  "name": "Tarkanan Marauder",
+  "size": "Small",
+  "type": "humanoid",
+  "alignment": "C E",
+  "armor_class": 16,
+  "hit_points": 247,
+  "hit_dice": "26d8 + 130",
+  "speed": {
+    "walk": 40
+  },
+  "ability_scores": {
+    "strength": 15,
+    "dexterity": 17,
+    "constitution": 20,
+    "intelligence": 16,
+    "wisdom": 15,
+    "charisma": 13
+  },
+  "saving_throws": {
+    "Dexterity": 7,
+    "Constitution": 9,
+    "Wisdom": 6
+  },
+  "skills": {
+    "Deception": 5,
+    "Perception": 6,
+    "Stealth": 7
+  },
+  "damage_vulnerabilities": [],
+  "damage_resistances": [],
+  "damage_immunities": [],
+  "condition_immunities": [],
+  "senses": {
+    "passive_perception": 16
+  },
+  "languages": [
+    "Common",
+    "Thieves' cant"
+  ],
+  "challenge_rating": "11",
+  "xp": 7200,
+  "traits": [
+    {
+      "name": "Evasion",
+      "description": "Reference-only rule. See Eberron: Forge of the Artificer, page 73."
+    }
+  ],
+  "actions": [
+    {
+      "name": "Multiattack",
+      "description": "Reference-only rule. See Eberron: Forge of the Artificer, page 73."
+    },
+    {
+      "name": "Aberrant Strike",
+      "description": "Reference-only rule. See Eberron: Forge of the Artificer, page 73."
+    },
+    {
+      "name": "Tear Through Space (Bonus Action)",
+      "description": "Reference-only rule. See Eberron: Forge of the Artificer, page 73."
+    }
+  ],
+  "reactions": [],
+  "legendary_actions": [],
+  "description": "Reference stat block from Eberron: Forge of the Artificer, page 73.",
+  "rules_text": "reference-only",
+  "source": {
+    "code": "EFA",
+    "book": "Eberron: Forge of the Artificer",
+    "edition": 2024,
+    "page": 73,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

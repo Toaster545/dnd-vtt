@@ -148,6 +148,12 @@ export interface Character {
 
   // Inventory
   equipment: EquipmentEntry[];
+  replicated_items?: {
+    itemIndex: string;
+    planName: string;
+    equipped: boolean;
+    createdAt: string;
+  }[];
   currency: Currency;
 
   // Spells

@@ -1,0 +1,40 @@
+{
+  "index": "potent-dragonmark",
+  "name": "Potent Dragonmark",
+  "category": "general",
+  "source": {
+    "code": "EFA",
+    "book": "Eberron: Forge of the Artificer",
+    "edition": 2024,
+    "page": 45,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  },
+  "description": "Always prepare your Spells of the Mark and gain a short-rest slot usable only for Dragonmark spells.",
+  "prerequisite": {
+    "level": 4,
+    "featTags": [
+      "dragonmark"
+    ]
+  },
+  "abilityIncrease": {
+    "abilities": [
+      "strength",
+      "dexterity",
+      "constitution",
+      "intelligence",
+      "wisdom",
+      "charisma"
+    ],
+    "amount": 1
+  },
+  "grants": [
+    {
+      "type": "dragonmark_slot",
+      "key": "potent_dragonmark_slot",
+      "name": "Dragonmark Spell Slot",
+      "maxLevel": 5,
+      "recovery": "short_rest"
+    }
+  ]
+}

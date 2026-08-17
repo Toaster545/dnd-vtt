@@ -7,12 +7,14 @@ import { Subscription } from 'rxjs';
 import { EncounterService } from '../../../../core/services/encounter.service';
 import { ContentService, DndMonster } from '../../../../core/services/content.service';
 import { CharacterService } from '../../../../core/services/character.service';
+import { CampaignService } from '../../../../core/services/campaign.service';
 import { BattleMapService } from '../../../../core/services/battle-map.service';
 import { AuthService } from '../../../../core/services/auth.service';
 import { Encounter, PresentPlayer } from '../../../../core/models/encounter.model';
 import { Character } from '../../../../core/models/character.model';
 import { PortraitSource } from '../../../../core/models/avatar.model';
 import { portraitSource } from '../../../../core/utils/avatar';
+import { campaignContentEnabled } from '../../../../core/utils/content-sources';
 import { MapToken, PlacingEntity } from '../../../../core/models/campaign.model';
 import { BattleMapComponent } from '../../../battle-map/battle-map';
 import { CharacterPlaySheetComponent } from '../../../characters/character-play-sheet/character-play-sheet';
@@ -39,6 +41,7 @@ export class DmEncounterPlayComponent implements OnInit, OnDestroy {
   private encounterService = inject(EncounterService);
   private content          = inject(ContentService);
   private characterService = inject(CharacterService);
+  private campaignService  = inject(CampaignService);
   private mapService       = inject(BattleMapService);
   private auth              = inject(AuthService);
 
@@ -135,12 +138,15 @@ export class DmEncounterPlayComponent implements OnInit, OnDestroy {
   });
 
   async ngOnInit() {
-    const [encounter, monsters, characters] = await Promise.all([
+    const [encounter, monsters, characters, campaign, sources] = await Promise.all([
       this.encounterService.getById(this.encounterId),
       this.content.getMonsters(this.campaignId),
       this.characterService.getMyCharacters(),
+      this.campaignService.getById(this.campaignId),
+      this.content.getSources(),
     ]);
-    this.monsters.set(monsters);
+    const allowed = new Set(campaign.allowed_sources);
+    this.monsters.set(monsters.filter(monster => campaignContentEnabled(monster, allowed, sources)));
     this.characters.set(characters);
     this.loading.set(false);
 

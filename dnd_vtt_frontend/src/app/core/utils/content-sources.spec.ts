@@ -1,16 +1,50 @@
 import { describe, expect, it } from 'vitest';
 import type { DndContentSource } from '../services/content.service';
-import { characterContentEnabled } from './content-sources';
+import { campaignContentEnabled, characterContentEnabled } from './content-sources';
+
+function source(
+  code: string,
+  name: string,
+  playerOptions: boolean,
+  locked: boolean,
+): DndContentSource {
+  return {
+    code,
+    name,
+    short_name: code,
+    edition: 2024,
+    description: '',
+    default_enabled: locked,
+    locked,
+    player_options: playerOptions,
+    requires: [],
+  };
+}
 
 const sources: DndContentSource[] = [
-  { code: 'XPHB', name: 'PHB', short_name: 'PHB', edition: 2024, description: '', default_enabled: true, locked: true, player_options: true, requires: [] },
-  { code: 'XGE', name: 'XGE', short_name: 'XGE', edition: 2017, description: '', default_enabled: false, locked: false, player_options: true, requires: ['XPHB'] },
+  source('XPHB', "Player's Handbook", true, true),
+  source('EFA', 'Eberron: Forge of the Artificer', true, false),
+  source('XGE', "Xanathar's Guide to Everything", true, false),
+  source('XMM', 'Monster Manual', false, false),
+  source('HOMEBREW', 'Homebrew', false, false),
 ];
 
-describe('character content source gate', () => {
-  it('keeps core content available and gates optional books', () => {
+describe('content source gates', () => {
+  it('always includes locked core and homebrew character content', () => {
     expect(characterContentEnabled({ source: { code: 'XPHB' } }, new Set(), sources)).toBe(true);
-    expect(characterContentEnabled({ source: { code: 'XGE' } }, new Set(), sources)).toBe(false);
-    expect(characterContentEnabled({ source: { code: 'XGE' } }, new Set(['XGE']), sources)).toBe(true);
+    expect(characterContentEnabled({ source: { code: 'HOMEBREW' } }, new Set(), sources)).toBe(true);
+  });
+
+  it.each(['EFA', 'XGE'])('only includes optional %s character content when selected', (code) => {
+    expect(characterContentEnabled({ source: { code } }, new Set(), sources)).toBe(false);
+    expect(characterContentEnabled({ source: { code } }, new Set([code]), sources)).toBe(true);
+  });
+
+  it('keeps DM-only and homebrew encounter content available while gating player books', () => {
+    expect(campaignContentEnabled({ source: { code: 'XMM' } }, new Set(), sources)).toBe(true);
+    expect(campaignContentEnabled({ source: { code: 'HOMEBREW' } }, new Set(), sources)).toBe(true);
+    expect(campaignContentEnabled({ source: { code: 'EFA' } }, new Set(), sources)).toBe(false);
+    expect(campaignContentEnabled({ source: { code: 'EFA' } }, new Set(['EFA']), sources)).toBe(true);
+    expect(campaignContentEnabled({ source: { code: 'XGE' } }, new Set(), sources)).toBe(false);
   });
 });

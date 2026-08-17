@@ -1,0 +1,77 @@
+{
+  "index": "aberrant-dragonmark",
+  "name": "Aberrant Dragonmark",
+  "category": "origin",
+  "description": "Manifest an unstable dragonmark that bolsters Constitution and channels unpredictable Sorcerer magic.",
+  "tags": [
+    "dragonmark",
+    "aberrant-dragonmark"
+  ],
+  "exclusiveGroup": "dragonmark",
+  "source": {
+    "code": "EFA",
+    "book": "Eberron: Forge of the Artificer",
+    "edition": 2024,
+    "page": 39,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  },
+  "grants": [
+    {
+      "type": "feature",
+      "name": "Aberrant Fortitude",
+      "description": "After failing a Constitution save, use your Reaction to add 1d4, potentially succeeding.",
+      "key": "aberrant-fortitude",
+      "action": {
+        "activation": "reaction",
+        "uses": {
+          "max": 1,
+          "per": "long_rest"
+        }
+      }
+    },
+    {
+      "type": "spell_grant",
+      "key": "aberrant_cantrip",
+      "name": "Aberrant Magic Cantrip",
+      "destination": "known",
+      "choose": 1,
+      "countsAgainstLimit": false,
+      "list": "Sorcerer",
+      "sourceKey": "aberrant-dragonmark",
+      "sourceName": "Aberrant Dragonmark",
+      "ability": "constitution",
+      "filter": {
+        "exactLevels": [
+          0
+        ]
+      }
+    },
+    {
+      "type": "spell_grant",
+      "key": "aberrant_spell",
+      "name": "Aberrant Magic Spell",
+      "destination": "always_prepared",
+      "choose": 1,
+      "countsAgainstLimit": false,
+      "list": "Sorcerer",
+      "sourceKey": "aberrant-dragonmark",
+      "sourceName": "Aberrant Dragonmark",
+      "ability": "constitution",
+      "filter": {
+        "exactLevels": [
+          1
+        ]
+      },
+      "freeCast": {
+        "uses": 1,
+        "recovery": "short_rest"
+      }
+    },
+    {
+      "type": "feature",
+      "name": "Aberrant Surge",
+      "description": "When casting the chosen spell, you may expend and roll a Hit Die to create temporary Hit Points or Force damage based on the roll."
+    }
+  ]
+}

@@ -71,6 +71,22 @@ type SpellcastingSource = {
   levels: SpellcastingLevel[];
 };
 
+type FeatGrant = {
+  type: string;
+  key?: string;
+  name?: string;
+  spells?: string[];
+  maxLevel?: number;
+  recovery?: 'short_rest' | 'long_rest';
+};
+
+type ContentFeat = {
+  index: string;
+  name: string;
+  tags?: string[];
+  grants?: FeatGrant[];
+};
+
 const MULTICLASS_SLOTS: Record<number, Record<string, number>> = {
   1: { '1': 2 },
   2: { '1': 3 },
@@ -486,7 +502,11 @@ export class CharactersService {
           throw new BadRequestException(
             'Only cantrips can use the cantrip casting method.',
           );
-      } else if (method === 'slot' || method === 'pact') {
+      } else if (
+        method === 'slot' ||
+        method === 'pact' ||
+        method === 'restricted'
+      ) {
         if (spellLevel === 0)
           throw new BadRequestException('Cantrips do not expend spell slots.');
         const poolKey = this.requiredString(body.poolKey, 'poolKey');
@@ -501,6 +521,14 @@ export class CharactersService {
           throw new BadRequestException(
             'That spell-slot pool is not available.',
           );
+        if (
+          pool.type === 'restricted' &&
+          !pool.allowedSpellIndices?.includes(spellIndex)
+        ) {
+          throw new BadRequestException(
+            'That restricted slot cannot cast this spell.',
+          );
+        }
         if (
           pool.type === 'slot' &&
           slotLevel > spellLevel &&
@@ -638,6 +666,104 @@ export class CharactersService {
         });
       }
       data.equipment = equipment;
+      await this.writeCharacterData(id, data);
+      return this.findOneReadable(id, user);
+    });
+  }
+
+  async replicateItem(
+    id: string,
+    user: RequestUser,
+    body: Record<string, unknown>,
+  ) {
+    return this.withCharacterLock(id, async () => {
+      const character = (await this.findOneReadable(id, user)) as Record<
+        string,
+        unknown
+      >;
+      const data = this.characterData(character);
+      if (!stringArray(data.enabled_sources).includes('EFA')) {
+        throw new BadRequestException(
+          'Eberron content is not enabled for this character.',
+        );
+      }
+      const itemIndex = this.requiredString(body.itemIndex, 'itemIndex');
+      const action = this.requiredString(body.action, 'action');
+      if (!['create', 'dismiss', 'toggle'].includes(action)) {
+        throw new BadRequestException(
+          'action must be create, dismiss, or toggle.',
+        );
+      }
+      const item = await this.content.getItem(itemIndex);
+      const plan = item.artificer_plan as Record<string, unknown> | undefined;
+      const planName = typeof plan?.name === 'string' ? plan.name : '';
+      if (!planName)
+        throw new BadRequestException(
+          'That item is not an Artificer Magic Item Plan.',
+        );
+
+      const classSelections = Array.isArray(data.classes)
+        ? (data.classes as Record<string, unknown>[])
+        : [];
+      const artificerSelection = classSelections.find(
+        (entry) =>
+          typeof entry.name === 'string' &&
+          entry.name.toLowerCase() === 'artificer',
+      );
+      if (!artificerSelection)
+        throw new BadRequestException('This character is not an Artificer.');
+      const classLevel = Number(artificerSelection.level ?? 0);
+      const choices =
+        artificerSelection.choices &&
+        typeof artificerSelection.choices === 'object'
+          ? (artificerSelection.choices as Record<string, unknown>)
+          : {};
+      if (!stringArray(choices.magic_item_plans).includes(planName)) {
+        throw new BadRequestException(
+          `${planName} is not one of this Artificer’s learned plans.`,
+        );
+      }
+
+      const artificer = this.content.getClass('artificer') as {
+        levels?: { level?: number; class_specific?: Record<string, unknown> }[];
+      };
+      const levelData = artificer.levels?.find(
+        (entry) => entry.level === classLevel,
+      );
+      const maximum = Number(levelData?.class_specific?.replicated_items ?? 0);
+      const replicated = Array.isArray(data.replicated_items)
+        ? [...(data.replicated_items as Record<string, unknown>[])]
+        : [];
+      const existingIndex = replicated.findIndex(
+        (entry) => entry.itemIndex === itemIndex,
+      );
+
+      if (action === 'create') {
+        if (existingIndex >= 0)
+          throw new ConflictException(`${planName} is already replicated.`);
+        if (replicated.length >= maximum) {
+          throw new ConflictException(
+            `This Artificer can maintain ${maximum} replicated item${maximum === 1 ? '' : 's'}.`,
+          );
+        }
+        replicated.push({
+          itemIndex,
+          planName,
+          equipped: false,
+          createdAt: new Date().toISOString(),
+        });
+      } else {
+        if (existingIndex < 0)
+          throw new NotFoundException('That replicated item is not active.');
+        if (action === 'dismiss') replicated.splice(existingIndex, 1);
+        else
+          replicated[existingIndex] = {
+            ...replicated[existingIndex],
+            equipped: replicated[existingIndex].equipped !== true,
+          };
+      }
+
+      data.replicated_items = replicated;
       await this.writeCharacterData(id, data);
       return this.findOneReadable(id, user);
     });
@@ -826,7 +952,12 @@ export class CharactersService {
         data.active_concentration = null;
       } else {
         for (const pool of this.resolveSlotPools(character)) {
-          if (pool.type === 'pact') delete slotUses[pool.key];
+          if (
+            pool.type === 'pact' ||
+            (pool.type === 'restricted' && pool.recovery === 'short_rest')
+          ) {
+            delete slotUses[pool.key];
+          }
         }
         data.spell_slot_uses = slotUses;
         const freeCasts = this.freeCastRecord(data.spell_free_cast_uses);
@@ -975,8 +1106,10 @@ export class CharactersService {
   private resolveSlotPools(character: Record<string, unknown>): {
     key: string;
     name: string;
-    type: 'slot' | 'pact';
+    type: 'slot' | 'pact' | 'restricted';
     slots: Record<string, number>;
+    allowedSpellIndices?: string[];
+    recovery?: 'short_rest' | 'long_rest';
   }[] {
     const entries =
       Array.isArray(character.classes) && character.classes.length
@@ -996,8 +1129,10 @@ export class CharactersService {
     const pools: {
       key: string;
       name: string;
-      type: 'slot' | 'pact';
+      type: 'slot' | 'pact' | 'restricted';
       slots: Record<string, number>;
+      allowedSpellIndices?: string[];
+      recovery?: 'short_rest' | 'long_rest';
     }[] = [];
     for (const entry of entries) {
       const name = typeof entry.name === 'string' ? entry.name : '';
@@ -1075,7 +1210,104 @@ export class CharactersService {
         slots: MULTICLASS_SLOTS[casterLevel] ?? {},
       });
     }
+    const dragonmarkPool = this.resolveDragonmarkSlotPool(character);
+    if (dragonmarkPool) pools.push(dragonmarkPool);
     return pools;
+  }
+
+  private resolveDragonmarkSlotPool(character: Record<string, unknown>): {
+    key: string;
+    name: string;
+    type: 'restricted';
+    slots: Record<string, number>;
+    allowedSpellIndices: string[];
+    recovery: 'short_rest' | 'long_rest';
+  } | null {
+    const feats = this.content.getFeats() as ContentFeat[];
+    const byIndex = new Map(feats.map((feat) => [feat.index, feat]));
+    const selected = new Set<string>();
+    const collectChoiceValues = (value: unknown): void => {
+      if (!value || typeof value !== 'object') return;
+      if (Array.isArray(value)) {
+        for (const entry of value) {
+          if (typeof entry === 'string' && byIndex.has(entry))
+            selected.add(entry);
+          else collectChoiceValues(entry);
+        }
+        return;
+      }
+      for (const entry of Object.values(value as Record<string, unknown>)) {
+        collectChoiceValues(entry);
+      }
+    };
+    collectChoiceValues(character.classes);
+    collectChoiceValues(character.race_choices);
+    collectChoiceValues(character.background_choices);
+
+    const backgrounds = this.content.getBackgrounds() as {
+      name?: string;
+      index?: string;
+      feature?: string;
+    }[];
+    const backgroundName =
+      typeof character.background === 'string'
+        ? character.background.toLowerCase()
+        : '';
+    const background = backgrounds.find(
+      (entry) =>
+        entry.name?.toLowerCase() === backgroundName ||
+        entry.index?.toLowerCase() === backgroundName,
+    );
+    const originFeatName = background?.feature?.match(
+      /^Origin Feat:\s*(.+)$/i,
+    )?.[1];
+    if (originFeatName) {
+      const originFeat = feats.find(
+        (feat) => feat.name.toLowerCase() === originFeatName.toLowerCase(),
+      );
+      if (originFeat) selected.add(originFeat.index);
+    }
+
+    const potent = byIndex.get('potent-dragonmark');
+    if (!potent || !selected.has(potent.index)) return null;
+    const definition = potent.grants?.find(
+      (grant) => grant.type === 'dragonmark_slot',
+    );
+    if (
+      !definition?.key ||
+      !definition.name ||
+      !definition.maxLevel ||
+      !definition.recovery
+    ) {
+      return null;
+    }
+    const allowedSpellIndices = new Set<string>();
+    for (const featIndex of selected) {
+      const feat = byIndex.get(featIndex);
+      if (!feat?.tags?.includes('dragonmark')) continue;
+      for (const grant of feat.grants ?? []) {
+        if (
+          grant.type === 'spell_grant' ||
+          grant.type === 'spell_list_expansion'
+        ) {
+          for (const spell of grant.spells ?? [])
+            allowedSpellIndices.add(spell);
+        }
+      }
+    }
+    if (!allowedSpellIndices.size) return null;
+    const slotLevel = Math.min(
+      definition.maxLevel,
+      Math.ceil(Number(character.level ?? 1) / 2),
+    );
+    return {
+      key: `restricted:${definition.key}`,
+      name: definition.name,
+      type: 'restricted',
+      slots: { [String(slotLevel)]: 1 },
+      allowedSpellIndices: [...allowedSpellIndices],
+      recovery: definition.recovery,
+    };
   }
 
   private async hasEditAccess(

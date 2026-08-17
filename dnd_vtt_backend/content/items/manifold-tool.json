@@ -1,0 +1,26 @@
+{
+  "index": "manifold-tool",
+  "name": "Manifold Tool",
+  "type": "magic",
+  "category": "Wondrous Item",
+  "damage": null,
+  "damage_type": null,
+  "properties": [],
+  "weight": 0,
+  "cost": "Magic item",
+  "description": "A transforming tool that supports artisan work and can grant temporary proficiency with its assumed form.",
+  "rarity": "common",
+  "requires_attunement": true,
+  "artificer_plan": {
+    "name": "Manifold Tool",
+    "itemIndex": "manifold-tool"
+  },
+  "source": {
+    "code": "EFA",
+    "book": "Eberron: Forge of the Artificer",
+    "edition": 2024,
+    "page": 112,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

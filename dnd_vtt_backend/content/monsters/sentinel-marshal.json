@@ -1,0 +1,69 @@
+{
+  "index": "sentinel-marshal",
+  "name": "Sentinel Marshal",
+  "size": "Small",
+  "type": "humanoid (human)",
+  "alignment": "L N",
+  "armor_class": 16,
+  "hit_points": 110,
+  "hit_dice": "20d8 + 20",
+  "speed": {
+    "walk": 30
+  },
+  "ability_scores": {
+    "strength": 18,
+    "dexterity": 19,
+    "constitution": 12,
+    "intelligence": 11,
+    "wisdom": 15,
+    "charisma": 10
+  },
+  "saving_throws": {
+    "Dexterity": 7,
+    "Constitution": 4
+  },
+  "skills": {
+    "Athletics": 7,
+    "Insight": 5,
+    "Perception": 8
+  },
+  "damage_vulnerabilities": [],
+  "damage_resistances": [],
+  "damage_immunities": [],
+  "condition_immunities": [],
+  "senses": {
+    "passive_perception": 18
+  },
+  "languages": [
+    "Common plus two other languages"
+  ],
+  "challenge_rating": "6",
+  "xp": 2300,
+  "traits": [],
+  "actions": [
+    {
+      "name": "Multiattack",
+      "description": "Reference-only rule. See Eberron: Forge of the Artificer, page 83."
+    },
+    {
+      "name": "Longsword",
+      "description": "Reference-only rule. See Eberron: Forge of the Artificer, page 83."
+    },
+    {
+      "name": "Pistol",
+      "description": "Reference-only rule. See Eberron: Forge of the Artificer, page 83."
+    }
+  ],
+  "reactions": [],
+  "legendary_actions": [],
+  "description": "Reference stat block from Eberron: Forge of the Artificer, page 83.",
+  "rules_text": "reference-only",
+  "source": {
+    "code": "EFA",
+    "book": "Eberron: Forge of the Artificer",
+    "edition": 2024,
+    "page": 83,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

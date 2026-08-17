@@ -2,12 +2,26 @@
   "index": "artificer",
   "name": "Artificer",
   "description": "Inventive spellcasters who channel magic through tools, create temporary magic items, and specialize in alchemy, arcane armor, artillery, construct companions, or magical cartography.",
-  "primary_abilities": ["intelligence"],
+  "primary_abilities": [
+    "intelligence"
+  ],
   "hit_die": 8,
-  "saving_throws": ["constitution", "intelligence"],
-  "armor_training": ["Light Armor", "Medium Armor", "Shields"],
-  "weapon_proficiencies": ["Simple Weapons"],
-  "tool_proficiencies": ["Thieves' Tools", "Tinker's Tools"],
+  "saving_throws": [
+    "constitution",
+    "intelligence"
+  ],
+  "armor_training": [
+    "Light Armor",
+    "Medium Armor",
+    "Shields"
+  ],
+  "weapon_proficiencies": [
+    "Simple Weapons"
+  ],
+  "tool_proficiencies": [
+    "Thieves' Tools",
+    "Tinker's Tools"
+  ],
   "skill_choices": {
     "count": 2,
     "from": [
@@ -22,11 +36,26 @@
   },
   "starting_equipment": {
     "fixed": [
-      { "key": "armor", "item": "studded-leather-armor" },
-      { "key": "dagger", "item": "dagger" },
-      { "key": "thieves_tools", "item": "thieves-tools" },
-      { "key": "tinkers_tools", "item": "tinkers-tools" },
-      { "key": "pack", "item": "dungeoneers-pack" }
+      {
+        "key": "armor",
+        "item": "studded-leather-armor"
+      },
+      {
+        "key": "dagger",
+        "item": "dagger"
+      },
+      {
+        "key": "thieves_tools",
+        "item": "thieves-tools"
+      },
+      {
+        "key": "tinkers_tools",
+        "item": "tinkers-tools"
+      },
+      {
+        "key": "pack",
+        "item": "dungeoneers-pack"
+      }
     ],
     "groups": [],
     "gold": 16,
@@ -135,11 +164,19 @@
     {
       "level": 1,
       "proficiency_bonus": 2,
-      "features": ["Spellcasting", "Tinker's Magic"],
+      "features": [
+        "Spellcasting",
+        "Tinker's Magic"
+      ],
       "cantrips_known": 2,
       "prepared_spells": 2,
-      "spell_slots": { "1": 2 },
-      "class_specific": { "plans_known": 0, "replicated_items": 0 },
+      "spell_slots": {
+        "1": 2
+      },
+      "class_specific": {
+        "plans_known": 0,
+        "replicated_items": 0
+      },
       "grants": [
         {
           "type": "skill_choice",
@@ -158,13 +195,23 @@
             {
               "name": "Alchemist's Supplies",
               "effects": [
-                { "type": "tool_proficiency", "tags": ["Alchemist's Supplies"] }
+                {
+                  "type": "tool_proficiency",
+                  "tags": [
+                    "Alchemist's Supplies"
+                  ]
+                }
               ]
             },
             {
               "name": "Brewer's Supplies",
               "effects": [
-                { "type": "tool_proficiency", "tags": ["Brewer's Supplies"] }
+                {
+                  "type": "tool_proficiency",
+                  "tags": [
+                    "Brewer's Supplies"
+                  ]
+                }
               ]
             },
             {
@@ -172,44 +219,76 @@
               "effects": [
                 {
                   "type": "tool_proficiency",
-                  "tags": ["Calligrapher's Supplies"]
+                  "tags": [
+                    "Calligrapher's Supplies"
+                  ]
                 }
               ]
             },
             {
               "name": "Carpenter's Tools",
               "effects": [
-                { "type": "tool_proficiency", "tags": ["Carpenter's Tools"] }
+                {
+                  "type": "tool_proficiency",
+                  "tags": [
+                    "Carpenter's Tools"
+                  ]
+                }
               ]
             },
             {
               "name": "Cartographer's Tools",
               "effects": [
-                { "type": "tool_proficiency", "tags": ["Cartographer's Tools"] }
+                {
+                  "type": "tool_proficiency",
+                  "tags": [
+                    "Cartographer's Tools"
+                  ]
+                }
               ]
             },
             {
               "name": "Cobbler's Tools",
               "effects": [
-                { "type": "tool_proficiency", "tags": ["Cobbler's Tools"] }
+                {
+                  "type": "tool_proficiency",
+                  "tags": [
+                    "Cobbler's Tools"
+                  ]
+                }
               ]
             },
             {
               "name": "Cook's Utensils",
               "effects": [
-                { "type": "tool_proficiency", "tags": ["Cook's Utensils"] }
+                {
+                  "type": "tool_proficiency",
+                  "tags": [
+                    "Cook's Utensils"
+                  ]
+                }
               ]
             },
             {
               "name": "Glassblower's Tools",
               "effects": [
-                { "type": "tool_proficiency", "tags": ["Glassblower's Tools"] }
+                {
+                  "type": "tool_proficiency",
+                  "tags": [
+                    "Glassblower's Tools"
+                  ]
+                }
               ]
             },
             {
               "name": "Jeweler's Tools",
               "effects": [
-                { "type": "tool_proficiency", "tags": ["Jeweler's Tools"] }
+                {
+                  "type": "tool_proficiency",
+                  "tags": [
+                    "Jeweler's Tools"
+                  ]
+                }
               ]
             },
             {
@@ -217,50 +296,87 @@
               "effects": [
                 {
                   "type": "tool_proficiency",
-                  "tags": ["Leatherworker's Tools"]
+                  "tags": [
+                    "Leatherworker's Tools"
+                  ]
                 }
               ]
             },
             {
               "name": "Mason's Tools",
               "effects": [
-                { "type": "tool_proficiency", "tags": ["Mason's Tools"] }
+                {
+                  "type": "tool_proficiency",
+                  "tags": [
+                    "Mason's Tools"
+                  ]
+                }
               ]
             },
             {
               "name": "Painter's Supplies",
               "effects": [
-                { "type": "tool_proficiency", "tags": ["Painter's Supplies"] }
+                {
+                  "type": "tool_proficiency",
+                  "tags": [
+                    "Painter's Supplies"
+                  ]
+                }
               ]
             },
             {
               "name": "Potter's Tools",
               "effects": [
-                { "type": "tool_proficiency", "tags": ["Potter's Tools"] }
+                {
+                  "type": "tool_proficiency",
+                  "tags": [
+                    "Potter's Tools"
+                  ]
+                }
               ]
             },
             {
               "name": "Smith's Tools",
               "effects": [
-                { "type": "tool_proficiency", "tags": ["Smith's Tools"] }
+                {
+                  "type": "tool_proficiency",
+                  "tags": [
+                    "Smith's Tools"
+                  ]
+                }
               ]
             },
             {
               "name": "Tinker's Tools",
               "effects": [
-                { "type": "tool_proficiency", "tags": ["Tinker's Tools"] }
+                {
+                  "type": "tool_proficiency",
+                  "tags": [
+                    "Tinker's Tools"
+                  ]
+                }
               ]
             },
             {
               "name": "Weaver's Tools",
               "effects": [
-                { "type": "tool_proficiency", "tags": ["Weaver's Tools"] }
+                {
+                  "type": "tool_proficiency",
+                  "tags": [
+                    "Weaver's Tools"
+                  ]
+                }
               ]
             },
             {
               "name": "Woodcarver's Tools",
               "effects": [
-                { "type": "tool_proficiency", "tags": ["Woodcarver's Tools"] }
+                {
+                  "type": "tool_proficiency",
+                  "tags": [
+                    "Woodcarver's Tools"
+                  ]
+                }
               ]
             }
           ]
@@ -290,7 +406,9 @@
           "key": "tinkers_magic_mending",
           "name": "Tinker's Magic",
           "destination": "known",
-          "spells": ["mending"],
+          "spells": [
+            "mending"
+          ],
           "countsAgainstLimit": false
         }
       ]
@@ -298,114 +416,332 @@
     {
       "level": 2,
       "proficiency_bonus": 2,
-      "features": ["Replicate Magic Item"],
+      "features": [
+        "Replicate Magic Item"
+      ],
       "cantrips_known": 2,
       "prepared_spells": 3,
-      "spell_slots": { "1": 2 },
-      "class_specific": { "plans_known": 4, "replicated_items": 2 },
+      "spell_slots": {
+        "1": 2
+      },
+      "class_specific": {
+        "plans_known": 4,
+        "replicated_items": 2
+      },
       "grants": [
         {
           "type": "choice",
           "key": "magic_item_plans",
           "name": "Magic Item Plans",
           "choose": 4,
-          "chooseByLevel": { "6": 5, "10": 6, "14": 7, "18": 8 },
+          "chooseByLevel": {
+            "6": 5,
+            "10": 6,
+            "14": 7,
+            "18": 8
+          },
           "description": "Learn plans used by Replicate Magic Item. You can replace one plan whenever you gain an Artificer level. Options unlock at Artificer levels 2, 6, 10, and 14.",
           "options": [
-            { "name": "Alchemy Jug" },
-            { "name": "Bag of Holding" },
-            { "name": "Cap of Water Breathing" },
+            {
+              "name": "Alchemy Jug"
+            },
+            {
+              "name": "Bag of Holding"
+            },
+            {
+              "name": "Cap of Water Breathing"
+            },
             {
               "name": "Common Magic Item",
               "description": "Choose a non-cursed Common magic item other than a Potion or Scroll. This plan can be learned more than once for different items."
             },
-            { "name": "Goggles of Night" },
-            { "name": "Manifold Tool" },
-            { "name": "Repeating Shot" },
-            { "name": "Returning Weapon" },
-            { "name": "Rope of Climbing" },
-            { "name": "Sending Stones" },
-            { "name": "Shield +1" },
-            { "name": "Wand of Magic Detection" },
-            { "name": "Wand of Secrets" },
-            { "name": "Wand of the War Mage +1" },
-            { "name": "Weapon +1" },
-            { "name": "Wraps of Unarmed Power +1" },
-            { "name": "Armor +1", "prerequisite": { "level": 6 } },
-            { "name": "Boots of Elvenkind", "prerequisite": { "level": 6 } },
+            {
+              "name": "Goggles of Night"
+            },
+            {
+              "name": "Manifold Tool",
+              "itemIndex": "manifold-tool"
+            },
+            {
+              "name": "Repeating Shot",
+              "itemIndex": "repeating-shot"
+            },
+            {
+              "name": "Returning Weapon",
+              "itemIndex": "returning-weapon"
+            },
+            {
+              "name": "Rope of Climbing"
+            },
+            {
+              "name": "Sending Stones"
+            },
+            {
+              "name": "Shield +1"
+            },
+            {
+              "name": "Wand of Magic Detection"
+            },
+            {
+              "name": "Wand of Secrets"
+            },
+            {
+              "name": "Wand of the War Mage +1"
+            },
+            {
+              "name": "Weapon +1"
+            },
+            {
+              "name": "Wraps of Unarmed Power +1"
+            },
+            {
+              "name": "Armor +1",
+              "prerequisite": {
+                "level": 6
+              }
+            },
+            {
+              "name": "Boots of Elvenkind",
+              "prerequisite": {
+                "level": 6
+              }
+            },
             {
               "name": "Boots of the Winding Path",
-              "prerequisite": { "level": 6 }
+              "prerequisite": {
+                "level": 6
+              },
+              "itemIndex": "boots-of-the-winding-path"
             },
-            { "name": "Cloak of Elvenkind", "prerequisite": { "level": 6 } },
+            {
+              "name": "Cloak of Elvenkind",
+              "prerequisite": {
+                "level": 6
+              }
+            },
             {
               "name": "Cloak of the Manta Ray",
-              "prerequisite": { "level": 6 }
+              "prerequisite": {
+                "level": 6
+              }
             },
-            { "name": "Eyes of Charming", "prerequisite": { "level": 6 } },
-            { "name": "Eyes of Minute Seeing", "prerequisite": { "level": 6 } },
-            { "name": "Gloves of Thievery", "prerequisite": { "level": 6 } },
-            { "name": "Helm of Awareness", "prerequisite": { "level": 6 } },
-            { "name": "Lantern of Revealing", "prerequisite": { "level": 6 } },
-            { "name": "Mind Sharpener", "prerequisite": { "level": 6 } },
+            {
+              "name": "Eyes of Charming",
+              "prerequisite": {
+                "level": 6
+              }
+            },
+            {
+              "name": "Eyes of Minute Seeing",
+              "prerequisite": {
+                "level": 6
+              }
+            },
+            {
+              "name": "Gloves of Thievery",
+              "prerequisite": {
+                "level": 6
+              }
+            },
+            {
+              "name": "Helm of Awareness",
+              "prerequisite": {
+                "level": 6
+              },
+              "itemIndex": "helm-of-awareness"
+            },
+            {
+              "name": "Lantern of Revealing",
+              "prerequisite": {
+                "level": 6
+              }
+            },
+            {
+              "name": "Mind Sharpener",
+              "prerequisite": {
+                "level": 6
+              },
+              "itemIndex": "mind-sharpener"
+            },
             {
               "name": "Necklace of Adaptation",
-              "prerequisite": { "level": 6 }
+              "prerequisite": {
+                "level": 6
+              }
             },
-            { "name": "Pipes of Haunting", "prerequisite": { "level": 6 } },
-            { "name": "Dazzling Weapon", "prerequisite": { "level": 6 } },
-            { "name": "Repulsion Shield", "prerequisite": { "level": 6 } },
-            { "name": "Ring of Swimming", "prerequisite": { "level": 6 } },
-            { "name": "Ring of Water Walking", "prerequisite": { "level": 6 } },
-            { "name": "Sentinel Shield", "prerequisite": { "level": 6 } },
-            { "name": "Spell-Refueling Ring", "prerequisite": { "level": 6 } },
+            {
+              "name": "Pipes of Haunting",
+              "prerequisite": {
+                "level": 6
+              }
+            },
+            {
+              "name": "Dazzling Weapon",
+              "prerequisite": {
+                "level": 6
+              },
+              "itemIndex": "dazzling-weapon"
+            },
+            {
+              "name": "Repulsion Shield",
+              "prerequisite": {
+                "level": 6
+              },
+              "itemIndex": "repulsion-shield"
+            },
+            {
+              "name": "Ring of Swimming",
+              "prerequisite": {
+                "level": 6
+              }
+            },
+            {
+              "name": "Ring of Water Walking",
+              "prerequisite": {
+                "level": 6
+              }
+            },
+            {
+              "name": "Sentinel Shield",
+              "prerequisite": {
+                "level": 6
+              }
+            },
+            {
+              "name": "Spell-Refueling Ring",
+              "prerequisite": {
+                "level": 6
+              },
+              "itemIndex": "spell-refueling-ring"
+            },
             {
               "name": "Wand of Magic Missiles",
-              "prerequisite": { "level": 6 }
+              "prerequisite": {
+                "level": 6
+              }
             },
-            { "name": "Wand of Web", "prerequisite": { "level": 6 } },
-            { "name": "Weapon of Warning", "prerequisite": { "level": 6 } },
-            { "name": "Armor of Resistance", "prerequisite": { "level": 10 } },
-            { "name": "Dagger of Venom", "prerequisite": { "level": 10 } },
-            { "name": "Elven Chain", "prerequisite": { "level": 10 } },
+            {
+              "name": "Wand of Web",
+              "prerequisite": {
+                "level": 6
+              }
+            },
+            {
+              "name": "Weapon of Warning",
+              "prerequisite": {
+                "level": 6
+              }
+            },
+            {
+              "name": "Armor of Resistance",
+              "prerequisite": {
+                "level": 10
+              }
+            },
+            {
+              "name": "Dagger of Venom",
+              "prerequisite": {
+                "level": 10
+              }
+            },
+            {
+              "name": "Elven Chain",
+              "prerequisite": {
+                "level": 10
+              }
+            },
             {
               "name": "Ring of Feather Falling",
-              "prerequisite": { "level": 10 }
+              "prerequisite": {
+                "level": 10
+              }
             },
-            { "name": "Ring of Jumping", "prerequisite": { "level": 10 } },
+            {
+              "name": "Ring of Jumping",
+              "prerequisite": {
+                "level": 10
+              }
+            },
             {
               "name": "Ring of Mind Shielding",
-              "prerequisite": { "level": 10 }
+              "prerequisite": {
+                "level": 10
+              }
             },
-            { "name": "Shield +2", "prerequisite": { "level": 10 } },
+            {
+              "name": "Shield +2",
+              "prerequisite": {
+                "level": 10
+              }
+            },
             {
               "name": "Uncommon Wondrous Item",
               "description": "Choose a non-cursed Uncommon Wondrous Item. This plan can be learned more than once for different items.",
-              "prerequisite": { "level": 10 }
+              "prerequisite": {
+                "level": 10
+              }
             },
             {
               "name": "Wand of the War Mage +2",
-              "prerequisite": { "level": 10 }
+              "prerequisite": {
+                "level": 10
+              }
             },
-            { "name": "Weapon +2", "prerequisite": { "level": 10 } },
+            {
+              "name": "Weapon +2",
+              "prerequisite": {
+                "level": 10
+              }
+            },
             {
               "name": "Wraps of Unarmed Power +2",
-              "prerequisite": { "level": 10 }
+              "prerequisite": {
+                "level": 10
+              }
             },
-            { "name": "Armor +2", "prerequisite": { "level": 14 } },
+            {
+              "name": "Armor +2",
+              "prerequisite": {
+                "level": 14
+              }
+            },
             {
               "name": "Arrow-Catching Shield",
-              "prerequisite": { "level": 14 }
+              "prerequisite": {
+                "level": 14
+              }
             },
-            { "name": "Flame Tongue", "prerequisite": { "level": 14 } },
+            {
+              "name": "Flame Tongue",
+              "prerequisite": {
+                "level": 14
+              }
+            },
             {
               "name": "Rare Wondrous Item",
               "description": "Choose a non-cursed Rare Wondrous Item. This plan can be learned more than once for different items.",
-              "prerequisite": { "level": 14 }
+              "prerequisite": {
+                "level": 14
+              }
             },
-            { "name": "Ring of Free Action", "prerequisite": { "level": 14 } },
-            { "name": "Ring of Protection", "prerequisite": { "level": 14 } },
-            { "name": "Ring of the Ram", "prerequisite": { "level": 14 } }
+            {
+              "name": "Ring of Free Action",
+              "prerequisite": {
+                "level": 14
+              }
+            },
+            {
+              "name": "Ring of Protection",
+              "prerequisite": {
+                "level": 14
+              }
+            },
+            {
+              "name": "Ring of the Ram",
+              "prerequisite": {
+                "level": 14
+              }
+            }
           ]
         },
         {
@@ -418,11 +754,18 @@
     {
       "level": 3,
       "proficiency_bonus": 2,
-      "features": ["Artificer Subclass"],
+      "features": [
+        "Artificer Subclass"
+      ],
       "cantrips_known": 2,
       "prepared_spells": 4,
-      "spell_slots": { "1": 3 },
-      "class_specific": { "plans_known": 4, "replicated_items": 2 },
+      "spell_slots": {
+        "1": 3
+      },
+      "class_specific": {
+        "plans_known": 4,
+        "replicated_items": 2
+      },
       "grants": [
         {
           "type": "feature",
@@ -434,11 +777,18 @@
     {
       "level": 4,
       "proficiency_bonus": 2,
-      "features": ["Ability Score Improvement"],
+      "features": [
+        "Ability Score Improvement"
+      ],
       "cantrips_known": 2,
       "prepared_spells": 5,
-      "spell_slots": { "1": 3 },
-      "class_specific": { "plans_known": 4, "replicated_items": 2 },
+      "spell_slots": {
+        "1": 3
+      },
+      "class_specific": {
+        "plans_known": 4,
+        "replicated_items": 2
+      },
       "grants": [
         {
           "type": "ability_choice",
@@ -453,11 +803,19 @@
     {
       "level": 5,
       "proficiency_bonus": 3,
-      "features": ["Artificer Subclass Feature"],
+      "features": [
+        "Artificer Subclass Feature"
+      ],
       "cantrips_known": 2,
       "prepared_spells": 6,
-      "spell_slots": { "1": 4, "2": 2 },
-      "class_specific": { "plans_known": 4, "replicated_items": 2 },
+      "spell_slots": {
+        "1": 4,
+        "2": 2
+      },
+      "class_specific": {
+        "plans_known": 4,
+        "replicated_items": 2
+      },
       "grants": [
         {
           "type": "feature",
@@ -469,17 +827,27 @@
     {
       "level": 6,
       "proficiency_bonus": 3,
-      "features": ["Magic Item Tinker"],
+      "features": [
+        "Magic Item Tinker"
+      ],
       "cantrips_known": 2,
       "prepared_spells": 6,
-      "spell_slots": { "1": 4, "2": 2 },
-      "class_specific": { "plans_known": 5, "replicated_items": 3 },
+      "spell_slots": {
+        "1": 4,
+        "2": 2
+      },
+      "class_specific": {
+        "plans_known": 5,
+        "replicated_items": 3
+      },
       "grants": [
         {
           "type": "feature",
           "name": "Charge Magic Item",
           "description": "As a Bonus Action, touch a charged item made with Replicate Magic Item and expend a level 1+ spell slot. The item regains charges equal to the slot's level.",
-          "action": { "activation": "bonus_action" }
+          "action": {
+            "activation": "bonus_action"
+          }
         },
         {
           "type": "feature",
@@ -488,7 +856,10 @@
           "description": "As a Bonus Action, dismiss one item made with Replicate Magic Item to create a temporary spell slot: level 1 for a Common item or level 2 for an Uncommon or Rare item. Use once per Long Rest.",
           "action": {
             "activation": "bonus_action",
-            "uses": { "max": 1, "per": "long_rest" }
+            "uses": {
+              "max": 1,
+              "per": "long_rest"
+            }
           }
         },
         {
@@ -498,7 +869,10 @@
           "description": "As a Magic action, transform one item made with Replicate Magic Item into an item based on another plan you know. Use once per Long Rest.",
           "action": {
             "activation": "action",
-            "uses": { "max": 1, "per": "long_rest" }
+            "uses": {
+              "max": 1,
+              "per": "long_rest"
+            }
           }
         }
       ]
@@ -506,11 +880,19 @@
     {
       "level": 7,
       "proficiency_bonus": 3,
-      "features": ["Flash of Genius"],
+      "features": [
+        "Flash of Genius"
+      ],
       "cantrips_known": 2,
       "prepared_spells": 7,
-      "spell_slots": { "1": 4, "2": 3 },
-      "class_specific": { "plans_known": 5, "replicated_items": 3 },
+      "spell_slots": {
+        "1": 4,
+        "2": 3
+      },
+      "class_specific": {
+        "plans_known": 5,
+        "replicated_items": 3
+      },
       "grants": [
         {
           "type": "feature",
@@ -532,11 +914,19 @@
     {
       "level": 8,
       "proficiency_bonus": 3,
-      "features": ["Ability Score Improvement"],
+      "features": [
+        "Ability Score Improvement"
+      ],
       "cantrips_known": 2,
       "prepared_spells": 7,
-      "spell_slots": { "1": 4, "2": 3 },
-      "class_specific": { "plans_known": 5, "replicated_items": 3 },
+      "spell_slots": {
+        "1": 4,
+        "2": 3
+      },
+      "class_specific": {
+        "plans_known": 5,
+        "replicated_items": 3
+      },
       "grants": [
         {
           "type": "ability_choice",
@@ -551,11 +941,20 @@
     {
       "level": 9,
       "proficiency_bonus": 4,
-      "features": ["Artificer Subclass Feature"],
+      "features": [
+        "Artificer Subclass Feature"
+      ],
       "cantrips_known": 2,
       "prepared_spells": 9,
-      "spell_slots": { "1": 4, "2": 3, "3": 2 },
-      "class_specific": { "plans_known": 5, "replicated_items": 3 },
+      "spell_slots": {
+        "1": 4,
+        "2": 3,
+        "3": 2
+      },
+      "class_specific": {
+        "plans_known": 5,
+        "replicated_items": 3
+      },
       "grants": [
         {
           "type": "feature",
@@ -567,11 +966,20 @@
     {
       "level": 10,
       "proficiency_bonus": 4,
-      "features": ["Magic Item Adept"],
+      "features": [
+        "Magic Item Adept"
+      ],
       "cantrips_known": 3,
       "prepared_spells": 9,
-      "spell_slots": { "1": 4, "2": 3, "3": 2 },
-      "class_specific": { "plans_known": 6, "replicated_items": 4 },
+      "spell_slots": {
+        "1": 4,
+        "2": 3,
+        "3": 2
+      },
+      "class_specific": {
+        "plans_known": 6,
+        "replicated_items": 4
+      },
       "grants": [
         {
           "type": "feature",
@@ -583,11 +991,20 @@
     {
       "level": 11,
       "proficiency_bonus": 4,
-      "features": ["Spell-Storing Item"],
+      "features": [
+        "Spell-Storing Item"
+      ],
       "cantrips_known": 3,
       "prepared_spells": 10,
-      "spell_slots": { "1": 4, "2": 3, "3": 3 },
-      "class_specific": { "plans_known": 6, "replicated_items": 4 },
+      "spell_slots": {
+        "1": 4,
+        "2": 3,
+        "3": 3
+      },
+      "class_specific": {
+        "plans_known": 6,
+        "replicated_items": 4
+      },
       "grants": [
         {
           "type": "feature",
@@ -599,11 +1016,20 @@
     {
       "level": 12,
       "proficiency_bonus": 4,
-      "features": ["Ability Score Improvement"],
+      "features": [
+        "Ability Score Improvement"
+      ],
       "cantrips_known": 3,
       "prepared_spells": 10,
-      "spell_slots": { "1": 4, "2": 3, "3": 3 },
-      "class_specific": { "plans_known": 6, "replicated_items": 4 },
+      "spell_slots": {
+        "1": 4,
+        "2": 3,
+        "3": 3
+      },
+      "class_specific": {
+        "plans_known": 6,
+        "replicated_items": 4
+      },
       "grants": [
         {
           "type": "ability_choice",
@@ -621,18 +1047,36 @@
       "features": [],
       "cantrips_known": 3,
       "prepared_spells": 11,
-      "spell_slots": { "1": 4, "2": 3, "3": 3, "4": 1 },
-      "class_specific": { "plans_known": 6, "replicated_items": 4 },
+      "spell_slots": {
+        "1": 4,
+        "2": 3,
+        "3": 3,
+        "4": 1
+      },
+      "class_specific": {
+        "plans_known": 6,
+        "replicated_items": 4
+      },
       "grants": []
     },
     {
       "level": 14,
       "proficiency_bonus": 5,
-      "features": ["Advanced Artifice"],
+      "features": [
+        "Advanced Artifice"
+      ],
       "cantrips_known": 4,
       "prepared_spells": 11,
-      "spell_slots": { "1": 4, "2": 3, "3": 3, "4": 1 },
-      "class_specific": { "plans_known": 7, "replicated_items": 5 },
+      "spell_slots": {
+        "1": 4,
+        "2": 3,
+        "3": 3,
+        "4": 1
+      },
+      "class_specific": {
+        "plans_known": 7,
+        "replicated_items": 5
+      },
       "grants": [
         {
           "type": "feature",
@@ -644,11 +1088,21 @@
     {
       "level": 15,
       "proficiency_bonus": 5,
-      "features": ["Artificer Subclass Feature"],
+      "features": [
+        "Artificer Subclass Feature"
+      ],
       "cantrips_known": 4,
       "prepared_spells": 12,
-      "spell_slots": { "1": 4, "2": 3, "3": 3, "4": 2 },
-      "class_specific": { "plans_known": 7, "replicated_items": 5 },
+      "spell_slots": {
+        "1": 4,
+        "2": 3,
+        "3": 3,
+        "4": 2
+      },
+      "class_specific": {
+        "plans_known": 7,
+        "replicated_items": 5
+      },
       "grants": [
         {
           "type": "feature",
@@ -660,11 +1114,21 @@
     {
       "level": 16,
       "proficiency_bonus": 5,
-      "features": ["Ability Score Improvement"],
+      "features": [
+        "Ability Score Improvement"
+      ],
       "cantrips_known": 4,
       "prepared_spells": 12,
-      "spell_slots": { "1": 4, "2": 3, "3": 3, "4": 2 },
-      "class_specific": { "plans_known": 7, "replicated_items": 5 },
+      "spell_slots": {
+        "1": 4,
+        "2": 3,
+        "3": 3,
+        "4": 2
+      },
+      "class_specific": {
+        "plans_known": 7,
+        "replicated_items": 5
+      },
       "grants": [
         {
           "type": "ability_choice",
@@ -682,18 +1146,38 @@
       "features": [],
       "cantrips_known": 4,
       "prepared_spells": 14,
-      "spell_slots": { "1": 4, "2": 3, "3": 3, "4": 3, "5": 1 },
-      "class_specific": { "plans_known": 7, "replicated_items": 5 },
+      "spell_slots": {
+        "1": 4,
+        "2": 3,
+        "3": 3,
+        "4": 3,
+        "5": 1
+      },
+      "class_specific": {
+        "plans_known": 7,
+        "replicated_items": 5
+      },
       "grants": []
     },
     {
       "level": 18,
       "proficiency_bonus": 6,
-      "features": ["Magic Item Master"],
+      "features": [
+        "Magic Item Master"
+      ],
       "cantrips_known": 4,
       "prepared_spells": 14,
-      "spell_slots": { "1": 4, "2": 3, "3": 3, "4": 3, "5": 1 },
-      "class_specific": { "plans_known": 8, "replicated_items": 6 },
+      "spell_slots": {
+        "1": 4,
+        "2": 3,
+        "3": 3,
+        "4": 3,
+        "5": 1
+      },
+      "class_specific": {
+        "plans_known": 8,
+        "replicated_items": 6
+      },
       "grants": [
         {
           "type": "feature",
@@ -705,11 +1189,22 @@
     {
       "level": 19,
       "proficiency_bonus": 6,
-      "features": ["Epic Boon"],
+      "features": [
+        "Epic Boon"
+      ],
       "cantrips_known": 4,
       "prepared_spells": 15,
-      "spell_slots": { "1": 4, "2": 3, "3": 3, "4": 3, "5": 2 },
-      "class_specific": { "plans_known": 8, "replicated_items": 6 },
+      "spell_slots": {
+        "1": 4,
+        "2": 3,
+        "3": 3,
+        "4": 3,
+        "5": 2
+      },
+      "class_specific": {
+        "plans_known": 8,
+        "replicated_items": 6
+      },
       "grants": [
         {
           "type": "feat_pick",
@@ -724,11 +1219,22 @@
     {
       "level": 20,
       "proficiency_bonus": 6,
-      "features": ["Soul of Artifice"],
+      "features": [
+        "Soul of Artifice"
+      ],
       "cantrips_known": 4,
       "prepared_spells": 15,
-      "spell_slots": { "1": 4, "2": 3, "3": 3, "4": 3, "5": 2 },
-      "class_specific": { "plans_known": 8, "replicated_items": 6 },
+      "spell_slots": {
+        "1": 4,
+        "2": 3,
+        "3": 3,
+        "4": 3,
+        "5": 2
+      },
+      "class_specific": {
+        "plans_known": 8,
+        "replicated_items": 6
+      },
       "grants": [
         {
           "type": "feature",
@@ -743,6 +1249,11 @@
       "index": "alchemist",
       "name": "Alchemist",
       "description": "Create experimental magical elixirs that heal, empower allies, and turn volatile reagents against enemies.",
+      "source": {
+        "code": "EFA",
+        "book": "Eberron: Forge of the Artificer",
+        "edition": 2024
+      },
       "levels": [
         {
           "level": 3,
@@ -759,7 +1270,10 @@
               "effects": [
                 {
                   "type": "tool_proficiency",
-                  "tags": ["Alchemist's Supplies", "Herbalism Kit"]
+                  "tags": [
+                    "Alchemist's Supplies",
+                    "Herbalism Kit"
+                  ]
                 }
               ]
             },
@@ -768,7 +1282,10 @@
               "key": "alchemist_spells_3",
               "name": "Alchemist Spells",
               "destination": "always_prepared",
-              "spells": ["healing-word", "ray-of-sickness"],
+              "spells": [
+                "healing-word",
+                "ray-of-sickness"
+              ],
               "countsAgainstLimit": false
             },
             {
@@ -776,7 +1293,10 @@
               "key": "alchemist_spells_5",
               "name": "Alchemist Spells",
               "destination": "always_prepared",
-              "spells": ["flaming-sphere", "melfs-acid-arrow"],
+              "spells": [
+                "flaming-sphere",
+                "melfs-acid-arrow"
+              ],
               "countsAgainstLimit": false,
               "classLevel": 5
             },
@@ -785,7 +1305,10 @@
               "key": "alchemist_spells_9",
               "name": "Alchemist Spells",
               "destination": "always_prepared",
-              "spells": ["gaseous-form", "mass-healing-word"],
+              "spells": [
+                "gaseous-form",
+                "mass-healing-word"
+              ],
               "countsAgainstLimit": false,
               "classLevel": 9
             },
@@ -794,7 +1317,10 @@
               "key": "alchemist_spells_13",
               "name": "Alchemist Spells",
               "destination": "always_prepared",
-              "spells": ["death-ward", "vitriolic-sphere"],
+              "spells": [
+                "death-ward",
+                "vitriolic-sphere"
+              ],
               "countsAgainstLimit": false,
               "classLevel": 13
             },
@@ -803,7 +1329,10 @@
               "key": "alchemist_spells_17",
               "name": "Alchemist Spells",
               "destination": "always_prepared",
-              "spells": ["cloudkill", "raise-dead"],
+              "spells": [
+                "cloudkill",
+                "raise-dead"
+              ],
               "countsAgainstLimit": false,
               "classLevel": 17
             },
@@ -816,7 +1345,9 @@
         },
         {
           "level": 5,
-          "features": ["Alchemical Savant"],
+          "features": [
+            "Alchemical Savant"
+          ],
           "grants": [
             {
               "type": "feature",
@@ -827,7 +1358,9 @@
         },
         {
           "level": 9,
-          "features": ["Restorative Reagents"],
+          "features": [
+            "Restorative Reagents"
+          ],
           "grants": [
             {
               "type": "feature",
@@ -854,7 +1387,9 @@
               "key": "alchemist_lesser_restoration",
               "name": "Restorative Reagents",
               "destination": "always_prepared",
-              "spells": ["lesser-restoration"],
+              "spells": [
+                "lesser-restoration"
+              ],
               "countsAgainstLimit": false,
               "freeCast": {
                 "uses": "spellcasting_ability_modifier",
@@ -866,7 +1401,9 @@
         },
         {
           "level": 15,
-          "features": ["Chemical Mastery"],
+          "features": [
+            "Chemical Mastery"
+          ],
           "grants": [
             {
               "type": "feature",
@@ -878,9 +1415,14 @@
               "key": "alchemist_chemical_mastery",
               "name": "Chemical Mastery",
               "destination": "always_prepared",
-              "spells": ["tashas-bubbling-cauldron"],
+              "spells": [
+                "tashas-bubbling-cauldron"
+              ],
               "countsAgainstLimit": false,
-              "freeCast": { "uses": 1, "recovery": "long_rest" }
+              "freeCast": {
+                "uses": 1,
+                "recovery": "long_rest"
+              }
             }
           ]
         }
@@ -890,6 +1432,11 @@
       "index": "armorer",
       "name": "Armorer",
       "description": "Transform armor into a customizable arcane exosuit built for power, protection, or infiltration.",
+      "source": {
+        "code": "EFA",
+        "book": "Eberron: Forge of the Artificer",
+        "edition": 2024
+      },
       "levels": [
         {
           "level": 3,
@@ -905,8 +1452,18 @@
               "name": "Tools of the Trade",
               "description": "Gain Heavy Armor training and proficiency with Smith's Tools. You craft armor in half the normal time.",
               "effects": [
-                { "type": "armor_proficiency", "tags": ["heavy"] },
-                { "type": "tool_proficiency", "tags": ["Smith's Tools"] }
+                {
+                  "type": "armor_proficiency",
+                  "tags": [
+                    "heavy"
+                  ]
+                },
+                {
+                  "type": "tool_proficiency",
+                  "tags": [
+                    "Smith's Tools"
+                  ]
+                }
               ]
             },
             {
@@ -914,7 +1471,10 @@
               "key": "armorer_spells_3",
               "name": "Armorer Spells",
               "destination": "always_prepared",
-              "spells": ["magic-missile", "thunderwave"],
+              "spells": [
+                "magic-missile",
+                "thunderwave"
+              ],
               "countsAgainstLimit": false
             },
             {
@@ -922,7 +1482,10 @@
               "key": "armorer_spells_5",
               "name": "Armorer Spells",
               "destination": "always_prepared",
-              "spells": ["mirror-image", "shatter"],
+              "spells": [
+                "mirror-image",
+                "shatter"
+              ],
               "countsAgainstLimit": false,
               "classLevel": 5
             },
@@ -931,7 +1494,10 @@
               "key": "armorer_spells_9",
               "name": "Armorer Spells",
               "destination": "always_prepared",
-              "spells": ["hypnotic-pattern", "lightning-bolt"],
+              "spells": [
+                "hypnotic-pattern",
+                "lightning-bolt"
+              ],
               "countsAgainstLimit": false,
               "classLevel": 9
             },
@@ -940,7 +1506,10 @@
               "key": "armorer_spells_13",
               "name": "Armorer Spells",
               "destination": "always_prepared",
-              "spells": ["fire-shield", "greater-invisibility"],
+              "spells": [
+                "fire-shield",
+                "greater-invisibility"
+              ],
               "countsAgainstLimit": false,
               "classLevel": 13
             },
@@ -949,7 +1518,10 @@
               "key": "armorer_spells_17",
               "name": "Armorer Spells",
               "destination": "always_prepared",
-              "spells": ["passwall", "wall-of-force"],
+              "spells": [
+                "passwall",
+                "wall-of-force"
+              ],
               "countsAgainstLimit": false,
               "classLevel": 17
             },
@@ -983,7 +1555,9 @@
         },
         {
           "level": 5,
-          "features": ["Extra Attack"],
+          "features": [
+            "Extra Attack"
+          ],
           "grants": [
             {
               "type": "feature",
@@ -994,7 +1568,9 @@
         },
         {
           "level": 9,
-          "features": ["Improved Armorer"],
+          "features": [
+            "Improved Armorer"
+          ],
           "grants": [
             {
               "type": "feature",
@@ -1005,7 +1581,9 @@
         },
         {
           "level": 15,
-          "features": ["Perfected Armor"],
+          "features": [
+            "Perfected Armor"
+          ],
           "grants": [
             {
               "type": "feature",
@@ -1020,6 +1598,11 @@
       "index": "artillerist",
       "name": "Artillerist",
       "description": "Project destructive or protective magic through an Eldritch Cannon and an empowered arcane firearm.",
+      "source": {
+        "code": "EFA",
+        "book": "Eberron: Forge of the Artificer",
+        "edition": 2024
+      },
       "levels": [
         {
           "level": 3,
@@ -1034,8 +1617,18 @@
               "name": "Tools of the Trade",
               "description": "Gain proficiency with Martial Ranged weapons and Woodcarver's Tools. You craft magic Wands in half the normal time.",
               "effects": [
-                { "type": "weapon_proficiency", "tags": ["martial ranged"] },
-                { "type": "tool_proficiency", "tags": ["Woodcarver's Tools"] }
+                {
+                  "type": "weapon_proficiency",
+                  "tags": [
+                    "martial ranged"
+                  ]
+                },
+                {
+                  "type": "tool_proficiency",
+                  "tags": [
+                    "Woodcarver's Tools"
+                  ]
+                }
               ]
             },
             {
@@ -1043,7 +1636,10 @@
               "key": "artillerist_spells_3",
               "name": "Artillerist Spells",
               "destination": "always_prepared",
-              "spells": ["shield", "thunderwave"],
+              "spells": [
+                "shield",
+                "thunderwave"
+              ],
               "countsAgainstLimit": false
             },
             {
@@ -1051,7 +1647,10 @@
               "key": "artillerist_spells_5",
               "name": "Artillerist Spells",
               "destination": "always_prepared",
-              "spells": ["scorching-ray", "shatter"],
+              "spells": [
+                "scorching-ray",
+                "shatter"
+              ],
               "countsAgainstLimit": false,
               "classLevel": 5
             },
@@ -1060,7 +1659,10 @@
               "key": "artillerist_spells_9",
               "name": "Artillerist Spells",
               "destination": "always_prepared",
-              "spells": ["fireball", "wind-wall"],
+              "spells": [
+                "fireball",
+                "wind-wall"
+              ],
               "countsAgainstLimit": false,
               "classLevel": 9
             },
@@ -1069,7 +1671,10 @@
               "key": "artillerist_spells_13",
               "name": "Artillerist Spells",
               "destination": "always_prepared",
-              "spells": ["ice-storm", "wall-of-fire"],
+              "spells": [
+                "ice-storm",
+                "wall-of-fire"
+              ],
               "countsAgainstLimit": false,
               "classLevel": 13
             },
@@ -1078,7 +1683,10 @@
               "key": "artillerist_spells_17",
               "name": "Artillerist Spells",
               "destination": "always_prepared",
-              "spells": ["cone-of-cold", "wall-of-force"],
+              "spells": [
+                "cone-of-cold",
+                "wall-of-force"
+              ],
               "countsAgainstLimit": false,
               "classLevel": 17
             },
@@ -1086,12 +1694,21 @@
               "type": "feature",
               "name": "Eldritch Cannon",
               "description": "Create a Small or Tiny magical cannon. Command it as a Bonus Action to use one mode: a 20-foot cone of Fire, a ranged Force blast that pushes its target, or a protective pulse of Temporary Hit Points. Create one without a spell slot per Long Rest; further cannons cost a spell slot. It shares your Initiative, moves when commanded, and lasts until destroyed or replaced."
+            },
+            {
+              "type": "companion_grant",
+              "key": "artillerist-eldritch-cannon",
+              "name": "Eldritch Cannon",
+              "monsterIndex": "eldritch-cannon",
+              "description": "Your Artillerist companion uses the shared EFA Eldritch Cannon template."
             }
           ]
         },
         {
           "level": 5,
-          "features": ["Arcane Firearm"],
+          "features": [
+            "Arcane Firearm"
+          ],
           "grants": [
             {
               "type": "feature",
@@ -1102,7 +1719,9 @@
         },
         {
           "level": 9,
-          "features": ["Explosive Cannon"],
+          "features": [
+            "Explosive Cannon"
+          ],
           "grants": [
             {
               "type": "feature",
@@ -1113,7 +1732,9 @@
         },
         {
           "level": 15,
-          "features": ["Fortified Position"],
+          "features": [
+            "Fortified Position"
+          ],
           "grants": [
             {
               "type": "feature",
@@ -1128,6 +1749,11 @@
       "index": "battle-smith",
       "name": "Battle Smith",
       "description": "Combine martial magic with a loyal Steel Defender that protects allies and fights at your command.",
+      "source": {
+        "code": "EFA",
+        "book": "Eberron: Forge of the Artificer",
+        "edition": 2024
+      },
       "levels": [
         {
           "level": 3,
@@ -1143,8 +1769,18 @@
               "name": "Tools of the Trade",
               "description": "Gain proficiency with Martial weapons and Smith's Tools. You craft nonmagical and magic weapons in half the normal time.",
               "effects": [
-                { "type": "weapon_proficiency", "tags": ["martial"] },
-                { "type": "tool_proficiency", "tags": ["Smith's Tools"] }
+                {
+                  "type": "weapon_proficiency",
+                  "tags": [
+                    "martial"
+                  ]
+                },
+                {
+                  "type": "tool_proficiency",
+                  "tags": [
+                    "Smith's Tools"
+                  ]
+                }
               ]
             },
             {
@@ -1152,7 +1788,10 @@
               "key": "battle_smith_spells_3",
               "name": "Battle Smith Spells",
               "destination": "always_prepared",
-              "spells": ["heroism", "shield"],
+              "spells": [
+                "heroism",
+                "shield"
+              ],
               "countsAgainstLimit": false
             },
             {
@@ -1160,7 +1799,10 @@
               "key": "battle_smith_spells_5",
               "name": "Battle Smith Spells",
               "destination": "always_prepared",
-              "spells": ["shining-smite", "warding-bond"],
+              "spells": [
+                "shining-smite",
+                "warding-bond"
+              ],
               "countsAgainstLimit": false,
               "classLevel": 5
             },
@@ -1169,7 +1811,10 @@
               "key": "battle_smith_spells_9",
               "name": "Battle Smith Spells",
               "destination": "always_prepared",
-              "spells": ["aura-of-vitality", "conjure-barrage"],
+              "spells": [
+                "aura-of-vitality",
+                "conjure-barrage"
+              ],
               "countsAgainstLimit": false,
               "classLevel": 9
             },
@@ -1178,7 +1823,10 @@
               "key": "battle_smith_spells_13",
               "name": "Battle Smith Spells",
               "destination": "always_prepared",
-              "spells": ["aura-of-purity", "fire-shield"],
+              "spells": [
+                "aura-of-purity",
+                "fire-shield"
+              ],
               "countsAgainstLimit": false,
               "classLevel": 13
             },
@@ -1187,7 +1835,10 @@
               "key": "battle_smith_spells_17",
               "name": "Battle Smith Spells",
               "destination": "always_prepared",
-              "spells": ["banishing-smite", "mass-cure-wounds"],
+              "spells": [
+                "banishing-smite",
+                "mass-cure-wounds"
+              ],
               "countsAgainstLimit": false,
               "classLevel": 17
             },
@@ -1200,12 +1851,21 @@
               "type": "feature",
               "name": "Steel Defender",
               "description": "Create a customizable Medium Construct companion whose durability and attacks scale with your Artificer level and spellcasting. It acts immediately after you, Dodging unless commanded with a Bonus Action, and can impose Disadvantage on an attack against a nearby creature. Mending can restore its Hit Points, and a spell slot can revive or replace it."
+            },
+            {
+              "type": "companion_grant",
+              "key": "battle-smith-steel-defender",
+              "name": "Steel Defender",
+              "monsterIndex": "steel-defender",
+              "description": "Your Battle Smith companion uses the shared EFA Steel Defender stat block."
             }
           ]
         },
         {
           "level": 5,
-          "features": ["Extra Attack"],
+          "features": [
+            "Extra Attack"
+          ],
           "grants": [
             {
               "type": "feature",
@@ -1216,7 +1876,9 @@
         },
         {
           "level": 9,
-          "features": ["Arcane Jolt"],
+          "features": [
+            "Arcane Jolt"
+          ],
           "grants": [
             {
               "type": "feature",
@@ -1237,7 +1899,9 @@
         },
         {
           "level": 15,
-          "features": ["Improved Defender"],
+          "features": [
+            "Improved Defender"
+          ],
           "grants": [
             {
               "type": "feature",
@@ -1252,6 +1916,11 @@
       "index": "cartographer",
       "name": "Cartographer",
       "description": "Create linked magical maps that coordinate allies, expose enemies, and open paths across the battlefield.",
+      "source": {
+        "code": "EFA",
+        "book": "Eberron: Forge of the Artificer",
+        "edition": 2024
+      },
       "levels": [
         {
           "level": 3,
@@ -1269,7 +1938,10 @@
               "effects": [
                 {
                   "type": "tool_proficiency",
-                  "tags": ["Calligrapher's Supplies", "Cartographer's Tools"]
+                  "tags": [
+                    "Calligrapher's Supplies",
+                    "Cartographer's Tools"
+                  ]
                 }
               ]
             },
@@ -1278,7 +1950,11 @@
               "key": "cartographer_spells_3",
               "name": "Cartographer Spells",
               "destination": "always_prepared",
-              "spells": ["faerie-fire", "guiding-bolt", "healing-word"],
+              "spells": [
+                "faerie-fire",
+                "guiding-bolt",
+                "healing-word"
+              ],
               "countsAgainstLimit": false
             },
             {
@@ -1286,7 +1962,10 @@
               "key": "cartographer_spells_5",
               "name": "Cartographer Spells",
               "destination": "always_prepared",
-              "spells": ["locate-object", "mind-spike"],
+              "spells": [
+                "locate-object",
+                "mind-spike"
+              ],
               "countsAgainstLimit": false,
               "classLevel": 5
             },
@@ -1295,7 +1974,10 @@
               "key": "cartographer_spells_9",
               "name": "Cartographer Spells",
               "destination": "always_prepared",
-              "spells": ["clairvoyance", "haste"],
+              "spells": [
+                "clairvoyance",
+                "haste"
+              ],
               "countsAgainstLimit": false,
               "classLevel": 9
             },
@@ -1304,7 +1986,10 @@
               "key": "cartographer_spells_13",
               "name": "Cartographer Spells",
               "destination": "always_prepared",
-              "spells": ["dimension-door", "locate-creature"],
+              "spells": [
+                "dimension-door",
+                "locate-creature"
+              ],
               "countsAgainstLimit": false,
               "classLevel": 13
             },
@@ -1313,7 +1998,10 @@
               "key": "cartographer_spells_17",
               "name": "Cartographer Spells",
               "destination": "always_prepared",
-              "spells": ["scrying", "teleportation-circle"],
+              "spells": [
+                "scrying",
+                "teleportation-circle"
+              ],
               "countsAgainstLimit": false,
               "classLevel": 17
             },
@@ -1342,7 +2030,9 @@
               "key": "cartographer_faerie_fire",
               "name": "Illuminated Cartography",
               "destination": "always_prepared",
-              "spells": ["faerie-fire"],
+              "spells": [
+                "faerie-fire"
+              ],
               "countsAgainstLimit": false,
               "freeCast": {
                 "uses": "spellcasting_ability_modifier",
@@ -1359,7 +2049,9 @@
         },
         {
           "level": 5,
-          "features": ["Guided Precision"],
+          "features": [
+            "Guided Precision"
+          ],
           "grants": [
             {
               "type": "feature",
@@ -1370,7 +2062,9 @@
         },
         {
           "level": 9,
-          "features": ["Ingenious Movement"],
+          "features": [
+            "Ingenious Movement"
+          ],
           "grants": [
             {
               "type": "feature",
@@ -1381,7 +2075,9 @@
         },
         {
           "level": 15,
-          "features": ["Superior Atlas"],
+          "features": [
+            "Superior Atlas"
+          ],
           "grants": [
             {
               "type": "feature",
@@ -1393,9 +2089,14 @@
               "key": "cartographer_unerring_path",
               "name": "Unerring Path",
               "destination": "always_prepared",
-              "spells": ["find-the-path"],
+              "spells": [
+                "find-the-path"
+              ],
               "countsAgainstLimit": false,
-              "freeCast": { "uses": 1, "recovery": "long_rest" }
+              "freeCast": {
+                "uses": 1,
+                "recovery": "long_rest"
+              }
             }
           ]
         }

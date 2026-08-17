@@ -56,6 +56,7 @@ export type EffectCondition =
 export interface TraitOption {
   name: string;
   description?: string;
+  itemIndex?: string;
   // Gates progressive choices (e.g. Eldritch Invocations); a picked option stays visible
   // even if the prerequisite is later lost, so the player can remove it.
   prerequisite?: { level?: number; selections?: string[] };
@@ -74,6 +75,7 @@ export interface TraitAction {
     // Uses equal the named ability modifier (subject to `minimum`) when ability
     // scores are available; `max` remains the safe fallback for older callers.
     maxAbilityModifier?: 'strength' | 'dexterity' | 'constitution' | 'intelligence' | 'wisdom' | 'charisma';
+    maxProficiencyBonus?: boolean;
     minimum?: number;
     per: 'short_rest' | 'long_rest';
     // Some pools change recovery cadence without becoming a second resource.
@@ -132,11 +134,22 @@ export type TraitGrant =
       };
     }
   // Adds spells to the active class source without creating a second slot pool. This is used
-  // by subclasses such as Divine Soul whose spell choices come from an additional class list.
+  // by subclasses such as Divine Soul and by feats that expand every active class list.
   | {
       type: 'spell_list_expansion'; key: string; name: string;
       spells?: string[]; list?: string; description?: string;
-    };
+      alwaysPreparedIfFeat?: string; sourceKey?: string; sourceName?: string;
+      ability?: SpellcastingAbility;
+    }
+  // A restricted bonus slot whose level scales with character level. It is kept separate
+  // from normal and Pact Magic pools so the cast flow can enforce its origin restriction.
+  | {
+      type: 'dragonmark_slot'; key: string; name: string; maxLevel: number;
+      recovery: 'short_rest' | 'long_rest';
+    }
+  // Resolves a companion from the shared monster catalog without copying a second stat block
+  // into the class definition.
+  | { type: 'companion_grant'; key: string; name: string; monsterIndex: string; description?: string };
 
 export type SpellcastingAbility =
   | 'strength' | 'dexterity' | 'constitution' | 'intelligence' | 'wisdom' | 'charisma'
@@ -173,13 +186,15 @@ export interface DndFeat {
     classes?: string[];
     species?: string[];
     speciesChoices?: Record<string, string[]>;
+    feats?: string[];
+    featTags?: string[];
   };
   // Mechanical grants applied automatically to computed stats. Most General feats give a flat
   // or player-chosen +1 ability (max 20); `abilities.length > 1` means the player picks which.
   // `grantsSaveProficiency` (Resilient) adds save proficiency in the increased ability.
   // Fighting Style / proficiency feats instead carry `effects` (same TraitEffect shape as a
   // class `choice` option).
-  abilityIncrease?: { abilities: string[]; amount: number; grantsSaveProficiency?: boolean };
+  abilityIncrease?: { abilities: string[]; amount: number; maximum?: number; grantsSaveProficiency?: boolean };
   effects?: TraitEffect[];
   // Choices granted by the feat itself (for example Skilled's three proficiencies). These use
   // the same data-driven grant shapes as races, classes, and backgrounds.
@@ -187,6 +202,8 @@ export interface DndFeat {
   // Whether the feat can be taken more than once. Most can't — only set per the book. Feat
   // pickers exclude non-repeatable feats the character already has.
   repeatable?: boolean;
+  tags?: string[];
+  exclusiveGroup?: string;
   source?: DndSourceReference;
 }
 
@@ -332,6 +349,9 @@ export interface DndItem {
   rarity?: string;
   requires_attunement?: boolean | string;
   charges?: { max: number; recovery: 'dawn' | 'short_rest' | 'long_rest' };
+  actions?: { key: string; name: string; description?: string; activation: ActionActivation; uses?: TraitAction['uses'] }[];
+  effects?: TraitEffect[];
+  artificer_plan?: { name: string; itemIndex: string };
   source?: DndSourceReference;
 }
 
@@ -368,6 +388,7 @@ export interface DndSpell {
   description: string;
   higher_levels?: string;
   cantrip_upgrade?: string;
+  companion_index?: string;
   source: DndSourceReference;
 }
 
@@ -393,6 +414,7 @@ export interface DndMonster {
   armor_class: number;
   armor_class_desc?: string;
   hit_points: number;
+  hit_points_formula?: string;
   hit_dice: string;
   speed: { walk?: number; fly?: number; swim?: number; climb?: number; burrow?: number };
   ability_scores: {
@@ -417,6 +439,7 @@ export interface DndMonster {
   reactions?: { name: string; description: string }[];
   legendary_actions?: { name: string; description: string }[];
   description?: string;
+  rules_text?: 'reference-only';
   source?: DndSourceReference;
 }
 

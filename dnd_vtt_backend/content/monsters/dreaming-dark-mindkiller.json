@@ -1,0 +1,79 @@
+{
+  "index": "dreaming-dark-mindkiller",
+  "name": "Dreaming Dark Mindkiller",
+  "size": "Small",
+  "type": "humanoid",
+  "alignment": "L E",
+  "armor_class": 19,
+  "hit_points": 180,
+  "hit_dice": "24d8 + 72",
+  "speed": {
+    "walk": 30
+  },
+  "ability_scores": {
+    "strength": 15,
+    "dexterity": 19,
+    "constitution": 16,
+    "intelligence": 21,
+    "wisdom": 18,
+    "charisma": 17
+  },
+  "saving_throws": {
+    "Dexterity": 8,
+    "Intelligence": 9,
+    "Wisdom": 8,
+    "Charisma": 7
+  },
+  "skills": {
+    "Deception": 7,
+    "Insight": 8,
+    "Perception": 8,
+    "Stealth": 8
+  },
+  "damage_vulnerabilities": [],
+  "damage_resistances": [
+    "psychic"
+  ],
+  "damage_immunities": [],
+  "condition_immunities": [
+    "charmed",
+    "frightened"
+  ],
+  "senses": {
+    "passive_perception": 18,
+    "truesight": 30
+  },
+  "languages": [
+    "Common",
+    "Quori; telepathy 120 ft."
+  ],
+  "challenge_rating": "11",
+  "xp": 7200,
+  "traits": [],
+  "actions": [
+    {
+      "name": "Multiattack",
+      "description": "Reference-only rule. See Eberron: Forge of the Artificer, page 60."
+    },
+    {
+      "name": "Nightmare Whisper",
+      "description": "Reference-only rule. See Eberron: Forge of the Artificer, page 60."
+    },
+    {
+      "name": "Primal Fear (1/Day)",
+      "description": "Reference-only rule. See Eberron: Forge of the Artificer, page 60."
+    }
+  ],
+  "reactions": [],
+  "legendary_actions": [],
+  "description": "Reference stat block from Eberron: Forge of the Artificer, page 60.",
+  "rules_text": "reference-only",
+  "source": {
+    "code": "EFA",
+    "book": "Eberron: Forge of the Artificer",
+    "edition": 2024,
+    "page": 60,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

@@ -1,0 +1,372 @@
+{
+  "index": "boon-of-siberys",
+  "name": "Boon of Siberys",
+  "category": "epic",
+  "source": {
+    "code": "EFA",
+    "book": "Eberron: Forge of the Artificer",
+    "edition": 2024,
+    "page": 45,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  },
+  "description": "Manifest an exceptional dragonmark and cast one associated high-level spell without a slot each Long Rest.",
+  "prerequisite": {
+    "level": 19
+  },
+  "abilityIncrease": {
+    "abilities": [
+      "strength",
+      "dexterity",
+      "constitution",
+      "intelligence",
+      "wisdom",
+      "charisma"
+    ],
+    "amount": 1,
+    "maximum": 30
+  },
+  "grants": [
+    {
+      "type": "choice",
+      "key": "siberys_spellcasting_ability",
+      "name": "Siberys Spellcasting Ability",
+      "choose": 1,
+      "description": "Choose the ability for the boon spell.",
+      "options": [
+        {
+          "name": "Intelligence"
+        },
+        {
+          "name": "Wisdom"
+        },
+        {
+          "name": "Charisma"
+        }
+      ]
+    },
+    {
+      "type": "choice",
+      "key": "siberys_manifestation",
+      "name": "Siberys Manifestation",
+      "choose": 1,
+      "options": [
+        {
+          "name": "Mark of Handling",
+          "grants": [
+            {
+              "type": "spell_grant",
+              "key": "siberys_animal-shapes",
+              "name": "Boon of Siberys",
+              "destination": "always_prepared",
+              "spells": [
+                "animal-shapes"
+              ],
+              "countsAgainstLimit": false,
+              "sourceKey": "boon-of-siberys",
+              "sourceName": "Boon of Siberys",
+              "ability": {
+                "choiceKey": "siberys_spellcasting_ability"
+              },
+              "freeCast": {
+                "uses": 1,
+                "recovery": "long_rest"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Mark of Storm",
+          "grants": [
+            {
+              "type": "spell_grant",
+              "key": "siberys_control-weather",
+              "name": "Boon of Siberys",
+              "destination": "always_prepared",
+              "spells": [
+                "control-weather"
+              ],
+              "countsAgainstLimit": false,
+              "sourceKey": "boon-of-siberys",
+              "sourceName": "Boon of Siberys",
+              "ability": {
+                "choiceKey": "siberys_spellcasting_ability"
+              },
+              "freeCast": {
+                "uses": 1,
+                "recovery": "long_rest"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Mark of Making",
+          "grants": [
+            {
+              "type": "spell_grant",
+              "key": "siberys_demiplane",
+              "name": "Boon of Siberys",
+              "destination": "always_prepared",
+              "spells": [
+                "demiplane"
+              ],
+              "countsAgainstLimit": false,
+              "sourceKey": "boon-of-siberys",
+              "sourceName": "Boon of Siberys",
+              "ability": {
+                "choiceKey": "siberys_spellcasting_ability"
+              },
+              "freeCast": {
+                "uses": 1,
+                "recovery": "long_rest"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Mark of Hospitality",
+          "grants": [
+            {
+              "type": "spell_grant",
+              "key": "siberys_heroes-feast",
+              "name": "Boon of Siberys",
+              "destination": "always_prepared",
+              "spells": [
+                "heroes-feast"
+              ],
+              "countsAgainstLimit": false,
+              "sourceKey": "boon-of-siberys",
+              "sourceName": "Boon of Siberys",
+              "ability": {
+                "choiceKey": "siberys_spellcasting_ability"
+              },
+              "freeCast": {
+                "uses": 1,
+                "recovery": "long_rest"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Mark of Warding",
+          "grants": [
+            {
+              "type": "spell_grant",
+              "key": "siberys_maze",
+              "name": "Boon of Siberys",
+              "destination": "always_prepared",
+              "spells": [
+                "maze"
+              ],
+              "countsAgainstLimit": false,
+              "sourceKey": "boon-of-siberys",
+              "sourceName": "Boon of Siberys",
+              "ability": {
+                "choiceKey": "siberys_spellcasting_ability"
+              },
+              "freeCast": {
+                "uses": 1,
+                "recovery": "long_rest"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Mark of Sentinel",
+          "grants": [
+            {
+              "type": "spell_grant",
+              "key": "siberys_mind-blank",
+              "name": "Boon of Siberys",
+              "destination": "always_prepared",
+              "spells": [
+                "mind-blank"
+              ],
+              "countsAgainstLimit": false,
+              "sourceKey": "boon-of-siberys",
+              "sourceName": "Boon of Siberys",
+              "ability": {
+                "choiceKey": "siberys_spellcasting_ability"
+              },
+              "freeCast": {
+                "uses": 1,
+                "recovery": "long_rest"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Mark of Passage",
+          "grants": [
+            {
+              "type": "spell_grant",
+              "key": "siberys_plane-shift",
+              "name": "Boon of Siberys",
+              "destination": "always_prepared",
+              "spells": [
+                "plane-shift"
+              ],
+              "countsAgainstLimit": false,
+              "sourceKey": "boon-of-siberys",
+              "sourceName": "Boon of Siberys",
+              "ability": {
+                "choiceKey": "siberys_spellcasting_ability"
+              },
+              "freeCast": {
+                "uses": 1,
+                "recovery": "long_rest"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Mark of Shadow",
+          "grants": [
+            {
+              "type": "spell_grant",
+              "key": "siberys_project-image",
+              "name": "Boon of Siberys",
+              "destination": "always_prepared",
+              "spells": [
+                "project-image"
+              ],
+              "countsAgainstLimit": false,
+              "sourceKey": "boon-of-siberys",
+              "sourceName": "Boon of Siberys",
+              "ability": {
+                "choiceKey": "siberys_spellcasting_ability"
+              },
+              "freeCast": {
+                "uses": 1,
+                "recovery": "long_rest"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Mark of Healing",
+          "grants": [
+            {
+              "type": "spell_grant",
+              "key": "siberys_regenerate",
+              "name": "Boon of Siberys",
+              "destination": "always_prepared",
+              "spells": [
+                "regenerate"
+              ],
+              "countsAgainstLimit": false,
+              "sourceKey": "boon-of-siberys",
+              "sourceName": "Boon of Siberys",
+              "ability": {
+                "choiceKey": "siberys_spellcasting_ability"
+              },
+              "freeCast": {
+                "uses": 1,
+                "recovery": "long_rest"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Mark of Scribing",
+          "grants": [
+            {
+              "type": "spell_grant",
+              "key": "siberys_symbol",
+              "name": "Boon of Siberys",
+              "destination": "always_prepared",
+              "spells": [
+                "symbol"
+              ],
+              "countsAgainstLimit": false,
+              "sourceKey": "boon-of-siberys",
+              "sourceName": "Boon of Siberys",
+              "ability": {
+                "choiceKey": "siberys_spellcasting_ability"
+              },
+              "freeCast": {
+                "uses": 1,
+                "recovery": "long_rest"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Mark of Finding",
+          "grants": [
+            {
+              "type": "spell_grant",
+              "key": "siberys_teleport",
+              "name": "Boon of Siberys",
+              "destination": "always_prepared",
+              "spells": [
+                "teleport"
+              ],
+              "countsAgainstLimit": false,
+              "sourceKey": "boon-of-siberys",
+              "sourceName": "Boon of Siberys",
+              "ability": {
+                "choiceKey": "siberys_spellcasting_ability"
+              },
+              "freeCast": {
+                "uses": 1,
+                "recovery": "long_rest"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Mark of Detection",
+          "grants": [
+            {
+              "type": "spell_grant",
+              "key": "siberys_true-seeing",
+              "name": "Boon of Siberys",
+              "destination": "always_prepared",
+              "spells": [
+                "true-seeing"
+              ],
+              "countsAgainstLimit": false,
+              "sourceKey": "boon-of-siberys",
+              "sourceName": "Boon of Siberys",
+              "ability": {
+                "choiceKey": "siberys_spellcasting_ability"
+              },
+              "freeCast": {
+                "uses": 1,
+                "recovery": "long_rest"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Aberrant Magic",
+          "grants": [
+            {
+              "type": "spell_grant",
+              "key": "siberys_sorcerer_spell",
+              "name": "Boon of Siberys",
+              "destination": "always_prepared",
+              "choose": 1,
+              "countsAgainstLimit": false,
+              "list": "Sorcerer",
+              "sourceKey": "boon-of-siberys",
+              "sourceName": "Boon of Siberys",
+              "ability": {
+                "choiceKey": "siberys_spellcasting_ability"
+              },
+              "filter": {
+                "minLevel": 1,
+                "maxLevel": 8
+              },
+              "freeCast": {
+                "uses": 1,
+                "recovery": "long_rest"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

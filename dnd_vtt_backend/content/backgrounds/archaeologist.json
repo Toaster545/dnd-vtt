@@ -1,0 +1,78 @@
+{
+  "index": "archaeologist",
+  "name": "Archaeologist",
+  "description": "An Eberron background from Eberron: Forge of the Artificer.",
+  "skill_proficiencies": [
+    "History",
+    "Survival"
+  ],
+  "tool_proficiencies": [
+    "Cartographer'S Tools"
+  ],
+  "languages": "None",
+  "starting_equipment": {
+    "fixed": [
+      {
+        "key": "cartographers-tools-0",
+        "item": "cartographers-tools",
+        "quantity": 1
+      },
+      {
+        "key": "bullseye-lantern-1",
+        "item": "bullseye-lantern",
+        "quantity": 1
+      },
+      {
+        "key": "map-2",
+        "item": "map",
+        "quantity": 1
+      },
+      {
+        "key": "map-case-3",
+        "item": "map-case",
+        "quantity": 1
+      },
+      {
+        "key": "shovel-4",
+        "item": "shovel",
+        "quantity": 1
+      },
+      {
+        "key": "tent-5",
+        "item": "tent",
+        "quantity": 1
+      },
+      {
+        "key": "travelers-clothes-6",
+        "item": "travelers-clothes",
+        "quantity": 1
+      }
+    ],
+    "groups": [],
+    "gold": 17,
+    "goldAlternative": 50
+  },
+  "feature": "Origin Feat: Skilled",
+  "grants": [
+    {
+      "type": "ability_choice",
+      "key": "ability_scores",
+      "name": "Ability Scores",
+      "points": 3,
+      "abilities": [
+        "dexterity",
+        "intelligence",
+        "wisdom"
+      ],
+      "description": "Increase one listed ability by 2 and another by 1, or increase all three by 1."
+    }
+  ],
+  "source": {
+    "code": "EFA",
+    "book": "Eberron: Forge of the Artificer",
+    "edition": 2024,
+    "page": 26,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

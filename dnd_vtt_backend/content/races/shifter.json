@@ -1,0 +1,86 @@
+{
+  "index": "shifter",
+  "name": "Shifter",
+  "creature_type": "Humanoid",
+  "speed": 30,
+  "size": "Medium",
+  "size_options": [
+    "Small",
+    "Medium"
+  ],
+  "darkvision_ft": 60,
+  "description": "Humanoids with bestial aspects that emerge during a temporary shift.",
+  "traits": [
+    "Bestial Instincts",
+    "Darkvision",
+    "Shifting"
+  ],
+  "languages": [],
+  "subraces": [],
+  "source": {
+    "code": "EFA",
+    "book": "Eberron: Forge of the Artificer",
+    "edition": 2024,
+    "page": 37,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  },
+  "grants": [
+    {
+      "type": "skill_choice",
+      "key": "bestial_instincts",
+      "name": "Bestial Instincts",
+      "choose": 1,
+      "skills": [
+        "Acrobatics",
+        "Athletics",
+        "Intimidation",
+        "Survival"
+      ]
+    },
+    {
+      "type": "feature",
+      "name": "Darkvision",
+      "description": "You have Darkvision out to 60 feet."
+    },
+    {
+      "type": "choice",
+      "key": "shifting_form",
+      "name": "Shifting Form",
+      "choose": 1,
+      "description": "Choose the bestial benefit active while you are shifted.",
+      "options": [
+        {
+          "name": "Beasthide",
+          "description": "Gain additional temporary Hit Points and +1 AC while shifted."
+        },
+        {
+          "name": "Longtooth",
+          "description": "Gain a 1d6 Piercing unarmed strike usable as a Bonus Action while shifted."
+        },
+        {
+          "name": "Swiftstride",
+          "description": "Gain 10 feet of Speed and a reactive movement while shifted."
+        },
+        {
+          "name": "Wildhunt",
+          "description": "Gain Advantage on Wisdom checks and suppress nearby enemy Advantage against you."
+        }
+      ]
+    },
+    {
+      "type": "feature",
+      "name": "Shifting",
+      "description": "As a Bonus Action, shift for 1 minute and gain temporary Hit Points equal to twice your Proficiency Bonus.",
+      "key": "shifter-shifting",
+      "action": {
+        "activation": "bonus_action",
+        "uses": {
+          "max": 1,
+          "maxProficiencyBonus": true,
+          "per": "long_rest"
+        }
+      }
+    }
+  ]
+}

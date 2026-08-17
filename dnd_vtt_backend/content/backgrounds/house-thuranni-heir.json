@@ -1,0 +1,58 @@
+{
+  "index": "house-thuranni-heir",
+  "name": "House Thuranni Heir",
+  "description": "An Eberron background from Eberron: Forge of the Artificer.",
+  "skill_proficiencies": [
+    "Performance",
+    "Stealth"
+  ],
+  "tool_proficiencies": [
+    "Musical Instrument"
+  ],
+  "languages": "None",
+  "starting_equipment": {
+    "fixed": [
+      {
+        "key": "musical-instrument-0",
+        "item": "musical-instrument",
+        "quantity": 1
+      },
+      {
+        "key": "costume-1",
+        "item": "costume",
+        "quantity": 1
+      },
+      {
+        "key": "fine-clothes-2",
+        "item": "fine-clothes",
+        "quantity": 1
+      }
+    ],
+    "groups": [],
+    "gold": 13,
+    "goldAlternative": 50
+  },
+  "feature": "Origin Feat: Mark of Shadow",
+  "grants": [
+    {
+      "type": "ability_choice",
+      "key": "ability_scores",
+      "name": "Ability Scores",
+      "points": 3,
+      "abilities": [
+        "dexterity",
+        "intelligence",
+        "charisma"
+      ],
+      "description": "Increase one listed ability by 2 and another by 1, or increase all three by 1."
+    }
+  ],
+  "source": {
+    "code": "EFA",
+    "book": "Eberron: Forge of the Artificer",
+    "edition": 2024,
+    "page": 32,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

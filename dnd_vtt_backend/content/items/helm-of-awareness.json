@@ -1,0 +1,31 @@
+{
+  "index": "helm-of-awareness",
+  "name": "Helm of Awareness",
+  "type": "magic",
+  "category": "Wondrous Item",
+  "damage": null,
+  "damage_type": null,
+  "properties": [],
+  "weight": 0,
+  "cost": "Magic item",
+  "description": "While worn, this helm grants Advantage on Initiative rolls.",
+  "rarity": "uncommon",
+  "requires_attunement": false,
+  "effects": [
+    {
+      "type": "initiative_advantage"
+    }
+  ],
+  "artificer_plan": {
+    "name": "Helm of Awareness",
+    "itemIndex": "helm-of-awareness"
+  },
+  "source": {
+    "code": "EFA",
+    "book": "Eberron: Forge of the Artificer",
+    "edition": 2024,
+    "page": 112,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

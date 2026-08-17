@@ -1,0 +1,46 @@
+{
+  "index": "changeling",
+  "name": "Changeling",
+  "creature_type": "Fey",
+  "speed": 30,
+  "size": "Medium",
+  "size_options": [
+    "Small",
+    "Medium"
+  ],
+  "description": "Fey shape-shifters who can alter their appearance and voice.",
+  "traits": [
+    "Changeling Instincts",
+    "Shape-Shifter"
+  ],
+  "languages": [],
+  "subraces": [],
+  "source": {
+    "code": "EFA",
+    "book": "Eberron: Forge of the Artificer",
+    "edition": 2024,
+    "page": 34,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  },
+  "grants": [
+    {
+      "type": "skill_choice",
+      "key": "changeling_instincts",
+      "name": "Changeling Instincts",
+      "choose": 2,
+      "skills": [
+        "Deception",
+        "Insight",
+        "Intimidation",
+        "Performance",
+        "Persuasion"
+      ]
+    },
+    {
+      "type": "feature",
+      "name": "Shape-Shifter",
+      "description": "As an action, alter your appearance, voice, height, weight, and Small or Medium size without changing game statistics. While transformed this way, you have Advantage on Charisma checks."
+    }
+  ]
+}

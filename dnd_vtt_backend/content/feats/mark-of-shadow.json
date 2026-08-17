@@ -1,0 +1,100 @@
+{
+  "index": "mark-of-shadow",
+  "name": "Mark of Shadow",
+  "description": "Manifest the Mark of Shadow; gain its intuition, magic, and expanded spell list.",
+  "category": "origin",
+  "tags": [
+    "dragonmark"
+  ],
+  "exclusiveGroup": "dragonmark",
+  "grants": [
+    {
+      "type": "feature",
+      "name": "Shadow Intuition",
+      "description": "Your dragonmark improves checks and special tasks associated with shadow."
+    },
+    {
+      "type": "choice",
+      "key": "dragonmark_spellcasting_ability",
+      "name": "Dragonmark Spellcasting Ability",
+      "choose": 1,
+      "description": "Choose Intelligence, Wisdom, or Charisma for this mark.",
+      "options": [
+        {
+          "name": "Intelligence"
+        },
+        {
+          "name": "Wisdom"
+        },
+        {
+          "name": "Charisma"
+        }
+      ]
+    },
+    {
+      "type": "spell_grant",
+      "key": "mark-of-shadow_cantrips",
+      "name": "Mark of Shadow",
+      "destination": "known",
+      "spells": [
+        "minor-illusion"
+      ],
+      "countsAgainstLimit": false,
+      "sourceKey": "mark-of-shadow",
+      "sourceName": "Mark of Shadow",
+      "ability": {
+        "choiceKey": "dragonmark_spellcasting_ability"
+      }
+    },
+    {
+      "type": "spell_grant",
+      "key": "mark-of-shadow_invisibility",
+      "name": "Mark of Shadow",
+      "destination": "always_prepared",
+      "spells": [
+        "invisibility"
+      ],
+      "countsAgainstLimit": false,
+      "sourceKey": "mark-of-shadow",
+      "sourceName": "Mark of Shadow",
+      "characterLevel": 1,
+      "ability": {
+        "choiceKey": "dragonmark_spellcasting_ability"
+      },
+      "freeCast": {
+        "uses": 1,
+        "recovery": "long_rest"
+      }
+    },
+    {
+      "type": "spell_list_expansion",
+      "key": "mark-of-shadow_spells_of_the_mark",
+      "name": "Spells of the Mark",
+      "spells": [
+        "disguise-self",
+        "silent-image",
+        "darkness",
+        "pass-without-trace",
+        "clairvoyance",
+        "major-image",
+        "greater-invisibility",
+        "hallucinatory-terrain",
+        "mislead"
+      ],
+      "alwaysPreparedIfFeat": "potent-dragonmark",
+      "sourceKey": "mark-of-shadow",
+      "sourceName": "Mark of Shadow",
+      "ability": {
+        "choiceKey": "dragonmark_spellcasting_ability"
+      }
+    }
+  ],
+  "source": {
+    "code": "EFA",
+    "book": "Eberron: Forge of the Artificer",
+    "edition": 2024,
+    "page": 42,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

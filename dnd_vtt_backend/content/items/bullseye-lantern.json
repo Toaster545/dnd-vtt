@@ -1,0 +1,18 @@
+{
+  "index": "bullseye-lantern",
+  "name": "Bullseye Lantern",
+  "type": "gear",
+  "category": "Adventuring Gear",
+  "damage": null,
+  "damage_type": null,
+  "properties": [],
+  "weight": 0,
+  "cost": "See PHB 2024",
+  "description": "A lantern that focuses its light in a cone.",
+  "source": {
+    "code": "XPHB",
+    "book": "Player's Handbook",
+    "edition": 2024,
+    "rules_text": "reference-only"
+  }
+}

@@ -1,0 +1,73 @@
+{
+  "index": "vulkoori-stingblade",
+  "name": "Vulkoori Stingblade",
+  "size": "Medium",
+  "type": "humanoid (elf)",
+  "alignment": "N",
+  "armor_class": 14,
+  "hit_points": 27,
+  "hit_dice": "6d8",
+  "speed": {
+    "walk": 30
+  },
+  "ability_scores": {
+    "strength": 11,
+    "dexterity": 15,
+    "constitution": 10,
+    "intelligence": 11,
+    "wisdom": 12,
+    "charisma": 12
+  },
+  "saving_throws": {
+    "Dexterity": 4
+  },
+  "skills": {
+    "Perception": 3,
+    "Stealth": 4
+  },
+  "damage_vulnerabilities": [],
+  "damage_resistances": [
+    "poison"
+  ],
+  "damage_immunities": [],
+  "condition_immunities": [],
+  "senses": {
+    "passive_perception": 13,
+    "darkvision": 120
+  },
+  "languages": [
+    "Common",
+    "Elvish",
+    "Giant"
+  ],
+  "challenge_rating": "1/2",
+  "xp": 100,
+  "traits": [
+    {
+      "name": "Fey Ancestry",
+      "description": "Reference-only rule. See Eberron: Forge of the Artificer, page 98."
+    }
+  ],
+  "actions": [
+    {
+      "name": "Stingblade",
+      "description": "Reference-only rule. See Eberron: Forge of the Artificer, page 98."
+    },
+    {
+      "name": "Boomerang",
+      "description": "Reference-only rule. See Eberron: Forge of the Artificer, page 98."
+    }
+  ],
+  "reactions": [],
+  "legendary_actions": [],
+  "description": "Reference stat block from Eberron: Forge of the Artificer, page 98.",
+  "rules_text": "reference-only",
+  "source": {
+    "code": "EFA",
+    "book": "Eberron: Forge of the Artificer",
+    "edition": 2024,
+    "page": 98,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}
