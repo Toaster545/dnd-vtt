@@ -1,5 +1,7 @@
 import type { Server, Socket } from 'socket.io';
 import { EncounterPresenceGateway } from './encounter-presence.gateway';
+import type { DatabaseService } from '../common/database.service';
+import type { SocketAuthService } from '../auth/socket-auth.service';
 
 interface BroadcastPlayer {
   avatarRecipe?: unknown;
@@ -47,9 +49,42 @@ function recipe() {
 }
 
 describe('EncounterPresenceGateway avatar recipes', () => {
-  function setup() {
+  function setup(characterData: Record<string, unknown>) {
     const emit = jest.fn();
-    const gateway = new EncounterPresenceGateway();
+    const execute = jest
+      .fn()
+      .mockResolvedValueOnce({
+        rows: [
+          {
+            campaign_id: 'campaign-1',
+            campaign_dm_id: 'dm-1',
+            session_visible: 1,
+            visible_to_players: 1,
+            status: 'active',
+          },
+        ],
+      })
+      .mockResolvedValueOnce({ rows: [{ id: 'membership-1' }] })
+      .mockResolvedValueOnce({
+        rows: [
+          {
+            id: 'character-1',
+            name: 'Aria',
+            username: 'Player',
+            data: JSON.stringify(characterData),
+          },
+        ],
+      });
+    const db = {
+      execute,
+      parseJson: (value: string) =>
+        JSON.parse(value) as Record<string, unknown>,
+    } as unknown as DatabaseService;
+    const socketAuth = {
+      user: jest.fn(() => ({ id: 'player-1', role: 'player' })),
+      install: jest.fn(),
+    } as unknown as SocketAuthService;
+    const gateway = new EncounterPresenceGateway(db, socketAuth);
     gateway.server = { to: jest.fn(() => ({ emit })) } as unknown as Server;
     const client = {
       id: 'socket-1',
@@ -59,28 +94,29 @@ describe('EncounterPresenceGateway avatar recipes', () => {
     return { gateway, client, emit };
   }
 
-  it('normalizes a valid recipe before broadcasting it', () => {
-    const { gateway, client, emit } = setup();
-    gateway.handleAnnounce(client, {
+  it('normalizes a valid server-stored recipe before broadcasting it', async () => {
+    const avatarRecipe = recipe();
+    const { gateway, client, emit } = setup({
+      current_hp: 8,
+      max_hp: 12,
+      avatar_recipe: avatarRecipe,
+    });
+    await gateway.handleAnnounce(client, {
       encounterId: 'encounter-1',
-      username: 'Player',
       characterId: 'character-1',
-      characterName: 'Aria',
-      avatarRecipe: recipe(),
     });
     const players = broadcastPlayers(emit);
-    expect(players[0].avatarRecipe).toEqual(recipe());
+    expect(players[0].avatarRecipe).toEqual(avatarRecipe);
   });
 
-  it('drops malformed recipes while retaining the legacy seed fallback', () => {
-    const { gateway, client, emit } = setup();
-    gateway.handleAnnounce(client, {
+  it('drops malformed stored recipes while retaining the legacy seed fallback', async () => {
+    const { gateway, client, emit } = setup({
+      portrait_seed: 'legacy',
+      avatar_recipe: { rawSvg: '<script />' },
+    });
+    await gateway.handleAnnounce(client, {
       encounterId: 'encounter-1',
-      username: 'Player',
       characterId: 'character-1',
-      characterName: 'Aria',
-      portraitSeed: 'legacy',
-      avatarRecipe: { rawSvg: '<script />' },
     });
     const players = broadcastPlayers(emit);
     expect(players[0].avatarRecipe).toBeUndefined();

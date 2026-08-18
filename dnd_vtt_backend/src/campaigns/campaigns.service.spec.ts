@@ -85,6 +85,29 @@ describe('CampaignsService', () => {
     ).rejects.toThrow(ForbiddenException);
   });
 
+  it('sets an explicit current session and rejects a session from another campaign', async () => {
+    const campaign = await campaigns.create(dmId, { name: 'Current Test' });
+    const sessionId = randomUUID();
+    await db.execute(
+      `INSERT INTO sessions (id, dm_id, campaign_id, name, visible_to_players) VALUES (?, ?, ?, 'Session One', 1)`,
+      [sessionId, dmId, campaign.id],
+    );
+    const context = await campaigns.setCurrentSession(
+      campaign.id as string,
+      dmId,
+      sessionId,
+    );
+    expect(context.current_session).toMatchObject({
+      id: sessionId,
+      name: 'Session One',
+    });
+
+    const other = await campaigns.create(dmId, { name: 'Other' });
+    await expect(
+      campaigns.setCurrentSession(other.id as string, dmId, sessionId),
+    ).rejects.toThrow(BadRequestException);
+  });
+
   describe('join', () => {
     it('creates a campaign copy at the source level when the party is empty', async () => {
       const campaign = await campaigns.create(dmId, {

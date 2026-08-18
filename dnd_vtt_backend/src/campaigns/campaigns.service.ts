@@ -148,6 +148,106 @@ export class CampaignsService {
     };
   }
 
+  async setCurrentSession(
+    campaignId: string,
+    dmId: string,
+    sessionId: string | null,
+  ) {
+    const campaign = await this.getCampaignRow(campaignId);
+    if (campaign.dm_id !== dmId) throw new ForbiddenException();
+    if (sessionId) {
+      const session = await this.db.execute(
+        `SELECT id FROM sessions WHERE id = ? AND campaign_id = ?`,
+        [sessionId, campaignId],
+      );
+      if (!session.rows[0]) {
+        throw new BadRequestException('Session does not belong to campaign');
+      }
+    }
+    await this.db.execute(
+      `UPDATE campaigns SET current_session_id = ?, updated_at = ? WHERE id = ?`,
+      [sessionId, new Date().toISOString(), campaignId],
+    );
+    return this.getCurrentContext(campaignId, {
+      id: dmId,
+      role: 'admin',
+    } as RequestUser);
+  }
+
+  async getCurrentContext(campaignId: string, user: RequestUser) {
+    const campaign = await this.getCampaignRow(campaignId);
+    const isOwner = campaign.dm_id === user.id;
+    if (!isOwner) await this.assertActiveMember(campaignId, user.id);
+
+    const sessionId = campaign.current_session_id as string | null;
+    if (!sessionId) {
+      return {
+        campaign_id: campaignId,
+        current_session: null,
+        current_encounter: null,
+        current_map: null,
+        updated_at: campaign.updated_at,
+      };
+    }
+
+    const sessionResult = await this.db.execute(
+      `SELECT * FROM sessions WHERE id = ? AND campaign_id = ?`,
+      [sessionId, campaignId],
+    );
+    const session = sessionResult.rows[0];
+    if (!session || (!isOwner && !session.visible_to_players)) {
+      return {
+        campaign_id: campaignId,
+        current_session: null,
+        current_encounter: null,
+        current_map: null,
+        updated_at: campaign.updated_at,
+      };
+    }
+
+    const encounterResult = await this.db.execute(
+      isOwner
+        ? `SELECT * FROM encounters WHERE session_id = ? AND status = 'active' ORDER BY updated_at DESC LIMIT 1`
+        : `SELECT * FROM encounters WHERE session_id = ? AND status = 'active' AND visible_to_players = 1 ORDER BY updated_at DESC LIMIT 1`,
+      [sessionId],
+    );
+    const encounter = encounterResult.rows[0];
+    const mapResult = encounter?.map_id
+      ? await this.db.execute(
+          `SELECT id, campaign_id, name, grid_size, visibility_revision FROM battle_maps WHERE id = ?`,
+          [encounter.map_id],
+        )
+      : null;
+
+    return {
+      campaign_id: campaignId,
+      current_session: {
+        id: session.id,
+        campaign_id: session.campaign_id,
+        name: session.name,
+        description: session.description,
+        background_url: session.background_url ?? null,
+        visible_to_players: !!session.visible_to_players,
+        created_at: session.created_at,
+      },
+      current_encounter: encounter
+        ? {
+            id: encounter.id,
+            session_id: encounter.session_id,
+            name: encounter.name,
+            map_id: encounter.map_id ?? null,
+            status: encounter.status,
+            summary: encounter.summary ?? '',
+            current_turn_token_id: encounter.current_turn_token_id ?? null,
+            round_number: Number(encounter.round_number ?? 1),
+            updated_at: encounter.updated_at,
+          }
+        : null,
+      current_map: mapResult?.rows[0] ?? null,
+      updated_at: encounter?.updated_at ?? campaign.updated_at,
+    };
+  }
+
   async update(id: string, dmId: string, dto: UpdateCampaignDto) {
     const campaign = await this.getCampaignRow(id);
     if (campaign.dm_id !== dmId) throw new ForbiddenException();
@@ -510,6 +610,7 @@ export class CampaignsService {
       description: row.description,
       join_code: row.join_code,
       background_url: row.background_url ?? null,
+      current_session_id: row.current_session_id ?? null,
       created_at: row.created_at,
       updated_at: row.updated_at,
     };

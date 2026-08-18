@@ -9,6 +9,7 @@ export interface Campaign {
   background_url?: string | null;
   created_at?: string;
   updated_at?: string;
+  current_session_id?: string | null;
   allowed_sources: string[];
   // Only present on the CampaignService.getAll() list (CampaignsService.findAllForUser on the
   // backend) — true when the current user is this campaign's DM, false when they're just a
@@ -110,6 +111,8 @@ export interface MapToken {
   // Turn-order value: 1d20 + DEX mod, auto-rolled server-side the moment a monster token is
   // placed; null for a player token until the DM types in that player's roll.
   initiative?: number | null;
+  visible_to_players?: boolean;
+  name_visible_to_players?: boolean;
 }
 
 // Manual reveal-brush fog of war. `hidden_cells` is a set of "col,row" keys — everything else on

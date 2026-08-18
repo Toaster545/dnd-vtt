@@ -1,13 +1,4 @@
-<app-main-layout>
-  <app-header
-    layoutHeader
-    (selectCharacters)="goToCharacters()"
-    (selectCampaigns)="goToCampaigns()"
-    (selectContentLibrary)="goToContentLibrary()"
-    (selectSettings)="goToSettings()"
-  />
-
-  <div class="p-6 overflow-y-auto flex-1 min-h-0">
+  <div class="p-4 sm:p-6 overflow-y-auto flex-1 min-h-0">
     <div class="max-w-3xl mx-auto flex flex-col gap-5">
 
       <h2 class="font-brand text-lg text-parchment m-0">Dashboard</h2>
@@ -124,4 +115,3 @@
       }
     </div>
   </div>
-</app-main-layout>

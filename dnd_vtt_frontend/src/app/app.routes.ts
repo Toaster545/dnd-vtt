@@ -20,9 +20,8 @@ export const routes: Routes = [
   },
   {
     path: 'dashboard',
-    canActivate: [authGuard],
-    loadComponent: () => import('./features/dashboard/dashboard').then(m => m.DashboardComponent),
-    data: { bgOverlay: 0.6 },
+    redirectTo: 'home/dashboard',
+    pathMatch: 'full',
   },
   {
     path: 'battle-map',
@@ -49,7 +48,37 @@ export const routes: Routes = [
     children: [
       {
         path: '',
+        redirectTo: 'characters',
+        pathMatch: 'full',
+      },
+      {
+        path: 'dashboard',
+        loadComponent: () => import('./features/dashboard/dashboard').then(m => m.DashboardComponent),
+        data: { bgOverlay: 0.6 },
+      },
+      {
+        path: 'characters',
         loadComponent: () => import('./features/characters/characters').then(m => m.CharactersComponent),
+      },
+      {
+        path: 'campaign/current',
+        loadComponent: () => import('./features/player/current-player-route/current-player-route').then(m => m.CurrentPlayerRouteComponent),
+        data: { target: 'campaign', bgOverlay: 0.9 },
+      },
+      {
+        path: 'campaign/current-session',
+        loadComponent: () => import('./features/player/current-player-route/current-player-route').then(m => m.CurrentPlayerRouteComponent),
+        data: { target: 'session', bgOverlay: 0.9 },
+      },
+      {
+        path: 'campaign/current-encounter',
+        loadComponent: () => import('./features/player/current-player-route/current-player-route').then(m => m.CurrentPlayerRouteComponent),
+        data: { target: 'encounter', bgOverlay: 1 },
+      },
+      {
+        path: 'campaign/current-map',
+        loadComponent: () => import('./features/player/current-player-route/current-player-route').then(m => m.CurrentPlayerRouteComponent),
+        data: { target: 'map', bgOverlay: 1 },
       },
       {
         path: 'characters/new',

@@ -1,0 +1,14 @@
+:host { display: block; height: 100dvh; }
+.mobile-player-header, .mobile-player-nav { display: none; }
+@media (max-width: 1023px) {
+  .desktop-header { display: none; }
+  .mobile-player-header { display: flex; align-items: center; min-height: calc(48px + env(safe-area-inset-top)); padding: env(safe-area-inset-top) .75rem 0; border-bottom: 1px solid #ffffff1a; background: color-mix(in srgb, var(--dnd-bg-elevated) 94%, transparent); }
+  .mobile-player-header strong { display: flex; flex: 1; align-items: baseline; gap: .45rem; font-family: Cinzel, serif; color: var(--dnd-text); }
+  .mobile-player-header strong span { color: var(--dnd-accent); font-size: 1rem; letter-spacing: .04em; }
+  .mobile-player-header strong small { color: var(--dnd-text-muted); font-family: Nunito, sans-serif; font-size: .58rem; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; }
+  .mobile-player-nav { position: fixed; display: grid; grid-template-columns: repeat(5, 1fr); inset: auto 0 0; z-index: 1000; min-height: calc(64px + env(safe-area-inset-bottom)); padding: .25rem .25rem env(safe-area-inset-bottom); border-top: 1px solid #ffffff1a; background: color-mix(in srgb, var(--dnd-bg-elevated) 97%, transparent); }
+  .mobile-player-nav a { min-width: 0; min-height: 56px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: .1rem; color: var(--dnd-text-muted); text-decoration: none; font-size: .65rem; }
+  .mobile-player-nav a.active { color: var(--dnd-accent); }
+  .mobile-player-nav mat-icon { font-size: 23px; width: 23px; height: 23px; }
+  .mobile-content { padding-bottom: calc(64px + env(safe-area-inset-bottom)); overflow-x: hidden; }
+}

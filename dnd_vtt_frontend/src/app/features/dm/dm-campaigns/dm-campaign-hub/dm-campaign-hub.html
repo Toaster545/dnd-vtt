@@ -88,8 +88,12 @@
               >
                 <div class="flex-1 min-w-0">
                   <p class="text-parchment font-medium truncate m-0">{{ session.name }}</p>
-                  <p class="text-slate text-xs m-0 mt-0.5">{{ formatDate(session.created_at) }}</p>
+                  <p class="text-slate text-xs m-0 mt-0.5">{{ formatDate(session.created_at) }} @if (c.current_session_id === session.id) { · Current }</p>
                 </div>
+                <button class="btn-icon" [class.text-gold]="c.current_session_id === session.id"
+                        (click)="setCurrentSession(session, $event)" matTooltip="Set current session">
+                  <mat-icon>{{ c.current_session_id === session.id ? 'star' : 'star_outline' }}</mat-icon>
+                </button>
                 <button
                   class="btn-icon"
                   [class]="session.visible_to_players ? 'text-gold' : 'text-slate hover:text-parchment'"

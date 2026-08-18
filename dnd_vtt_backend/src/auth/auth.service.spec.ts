@@ -69,6 +69,26 @@ describe('AuthService', () => {
         username: 'alice',
         role: 'player',
       });
+      expect(result.refresh_token).toEqual(expect.any(String));
+      expect(result.client_type).toBe('web');
+    });
+
+    it('rotates a refresh session and rejects replay of the old credential', async () => {
+      const login = await service.login('a@test.com', 'password123');
+      const refreshed = await service.refresh(login.refresh_token);
+      expect(refreshed.access_token).toEqual(expect.any(String));
+      expect(refreshed.refresh_token).not.toBe(login.refresh_token);
+      await expect(service.refresh(login.refresh_token)).rejects.toThrow(
+        UnauthorizedException,
+      );
+    });
+
+    it('revokes a refresh session on logout', async () => {
+      const login = await service.login('a@test.com', 'password123', 'native');
+      await service.logout(login.refresh_token);
+      await expect(service.refresh(login.refresh_token)).rejects.toThrow(
+        UnauthorizedException,
+      );
     });
 
     it('rejects an unknown email', async () => {

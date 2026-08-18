@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { Campaign, CampaignHub, CampaignJoinPreview, CampaignMember } from '../models/campaign.model';
+import { PlayerCurrentContext } from '../models/player.model';
 
 const API = environment.apiUrl;
 
@@ -16,6 +17,16 @@ export class CampaignService {
 
   getById(id: string): Promise<CampaignHub> {
     return firstValueFrom(this.http.get<CampaignHub>(`${API}/campaigns/${id}`));
+  }
+
+  getCurrentContext(id: string): Promise<PlayerCurrentContext> {
+    return firstValueFrom(this.http.get<PlayerCurrentContext>(`${API}/campaigns/${id}/current-context`));
+  }
+
+  setCurrentSession(id: string, sessionId: string | null): Promise<PlayerCurrentContext> {
+    return firstValueFrom(
+      this.http.patch<PlayerCurrentContext>(`${API}/campaigns/${id}/current-session`, { session_id: sessionId }),
+    );
   }
 
   create(name: string, description: string, allowedSources: string[]): Promise<CampaignHub> {

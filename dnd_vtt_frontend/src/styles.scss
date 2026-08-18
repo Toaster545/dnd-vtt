@@ -1,5 +1,13 @@
 @use '@angular/material' as mat;
 @use './tokens' as t;
+@import '@fontsource/cinzel/400.css';
+@import '@fontsource/cinzel/600.css';
+@import '@fontsource/cinzel/700.css';
+@import '@fontsource/nunito/400.css';
+@import '@fontsource/nunito/500.css';
+@import '@fontsource/nunito/600.css';
+@import '@fontsource/nunito/700.css';
+@import 'material-icons/iconfont/material-icons.css';
 
 @tailwind base;
 @tailwind components;
@@ -30,8 +38,16 @@ html {
     margin: 0;
     padding: 0;
     height: 100%;
+    min-height: 100dvh;
+    overflow-x: hidden;
     -webkit-font-smoothing: antialiased;
   }
+}
+
+button, a, input, select, textarea { touch-action: manipulation; }
+@media (max-width: 1023px) {
+  button, [role='button'], input, select { min-height: 44px; }
+  .mat-mdc-dialog-container { max-width: calc(100vw - 1rem); }
 }
 
 // App-wide default strength for the background darkening overlay below. Overridden per page by

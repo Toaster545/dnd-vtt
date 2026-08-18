@@ -1,7 +1,7 @@
 <app-main-layout>
   <app-header
     layoutHeader
-    class="hide-in-fullscreen"
+    class="hide-in-fullscreen desktop-header"
     [activeTab]="activeTab()"
     (selectCharacters)="selectCharacters()"
     (selectCampaigns)="goToCampaigns()"
@@ -9,6 +9,11 @@
     (selectDashboard)="goToDashboard()"
     (selectSettings)="goToSettings()"
   />
+
+  <header layoutHeader class="mobile-player-header hide-in-fullscreen">
+    <strong><span>NatOne</span><small>D&amp;D VTT</small></strong>
+    <button class="btn-icon" type="button" (click)="goToSettings()" aria-label="Settings"><mat-icon>settings</mat-icon></button>
+  </header>
 
   @if (liveAlert(); as alert) {
     <div class="flex items-center gap-3 px-4 py-2.5 bg-gold/10 border-b border-gold/30 flex-shrink-0">
@@ -23,7 +28,15 @@
     </div>
   }
 
-  <div class="flex-1 overflow-hidden flex flex-col min-h-0">
+  <div class="mobile-content flex-1 overflow-hidden flex flex-col min-h-0">
     <router-outlet></router-outlet>
   </div>
+
+  <nav class="mobile-player-nav hide-in-fullscreen" aria-label="Player navigation">
+    <a routerLink="/home/dashboard" routerLinkActive="active"><mat-icon>home</mat-icon><span>Home</span></a>
+    <a routerLink="/home/characters" routerLinkActive="active"><mat-icon>badge</mat-icon><span>Character</span></a>
+    <a routerLink="/home/campaign/current" routerLinkActive="active"><mat-icon>groups</mat-icon><span>Campaign</span></a>
+    <a routerLink="/home/campaign/current-encounter" routerLinkActive="active"><mat-icon>swords</mat-icon><span>Encounter</span></a>
+    <a routerLink="/home/campaign/current-map" routerLinkActive="active"><mat-icon>map</mat-icon><span>Map</span></a>
+  </nav>
 </app-main-layout>

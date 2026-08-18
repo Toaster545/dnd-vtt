@@ -1,0 +1,38 @@
+name: Android Release Build
+
+on:
+  workflow_dispatch:
+
+jobs:
+  android-debug:
+    name: Android debug build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: dnd_vtt_frontend/package-lock.json
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - name: Install frontend dependencies
+        working-directory: dnd_vtt_frontend
+        run: npm ci
+
+      - name: Build web application
+        working-directory: dnd_vtt_frontend
+        run: npm run build
+
+      - name: Sync Capacitor Android project
+        working-directory: dnd_vtt_frontend
+        run: npx cap sync android
+
+      - name: Build Android debug APK
+        working-directory: dnd_vtt_frontend/android
+        run: ./gradlew assembleDebug

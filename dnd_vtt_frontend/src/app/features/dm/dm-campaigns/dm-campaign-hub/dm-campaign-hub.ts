@@ -213,6 +213,14 @@ export class DmCampaignHubComponent implements OnInit {
     await this.load();
   }
 
+  async setCurrentSession(session: Session, event: Event) {
+    event.stopPropagation();
+    event.preventDefault();
+    const current = this.campaign()?.current_session_id === session.id;
+    await this.campaignService.setCurrentSession(this.campaignId, current ? null : session.id);
+    await this.load();
+  }
+
   async deleteSession(session: Session, event: Event) {
     event.stopPropagation();
     event.preventDefault();

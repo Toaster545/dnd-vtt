@@ -98,6 +98,11 @@ export class StageView {
     this.stage.batchDraw();
   }
 
+  centerOn(worldPoint: Point) {
+    this.stage.position(this.screenPositionFor(worldPoint, this.screenCenter(), this.stage.scaleX()));
+    this.stage.batchDraw();
+  }
+
   setPannable(canPan: boolean) {
     if (this.stage.isDragging() && !canPan) this.stage.stopDrag();
     this.stage.draggable(canPan);
