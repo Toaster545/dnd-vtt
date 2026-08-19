@@ -80,6 +80,18 @@ export class CharacterService {
     );
   }
 
+  async restoreHitPoints(
+    id: string,
+    type: 'short_rest' | 'long_rest',
+    hitDiceUsed?: number,
+    healed?: number,
+  ): Promise<Character> {
+    const body: Record<string, unknown> = { type, hitDiceUsed, healed };
+    return firstValueFrom(
+      this.http.post<Character>(`${API}/characters/${id}/life-rest`, body)
+    );
+  }
+
   async endConcentration(id: string): Promise<Character> {
     return firstValueFrom(
       this.http.patch<Character>(`${API}/characters/${id}/concentration`, {})
