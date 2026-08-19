@@ -840,6 +840,61 @@ export class CharactersService {
     });
   }
 
+  async restoreLife(
+    id: string,
+    user: RequestUser,
+    body: Record<string, unknown>,
+  ) {
+    const type = body.type;
+    if (type !== 'short_rest' && type !== 'long_rest')
+      throw new BadRequestException(
+        'Rest type must be short_rest or long_rest.',
+      );
+    return this.withCharacterLock(id, async () => {
+      const character = (await this.findOneReadable(id, user)) as Record<
+        string,
+        unknown
+      >;
+      const data = this.characterData(character);
+      const classes = data.classes as { level: number }[];
+
+      let totalHitDice = 0;
+
+      for (const cls of classes) {
+        const level = cls.level;
+        totalHitDice += level;
+      }
+
+      if (type === 'long_rest') {
+        data.current_hp = data.max_hp;
+        const recoveredDice = Math.trunc(totalHitDice / 2);
+        data.hit_dice_used = Math.max(
+          0,
+          (data.hit_dice_used as number) - recoveredDice,
+        );
+      } else {
+        const hitDiceUsed = Number(body.hitDiceUsed ?? 0);
+        const healed = Number(body.healed ?? 0);
+        if (!Number.isInteger(hitDiceUsed) || hitDiceUsed < 0)
+          throw new BadRequestException('Invalid hitDiceUsed');
+        if (!Number.isInteger(healed) || healed < 0)
+          throw new BadRequestException('Invalid healed amount');
+
+        const existingUsed = Number(data.hit_dice_used ?? 0);
+        const available = Math.max(0, totalHitDice - existingUsed);
+        if (hitDiceUsed > available)
+          throw new BadRequestException('Not enough hit dice available');
+
+        data.hit_dice_used = existingUsed + hitDiceUsed;
+        const currentHp = Number(data.current_hp ?? 0);
+        const maxHp = Number(data.max_hp ?? 0);
+        data.current_hp = Math.min(maxHp, currentHp + healed);
+      }
+      await this.writeCharacterData(id, data);
+      return this.findOneReadable(id, user);
+    });
+  }
+
   async endConcentration(id: string, user: RequestUser) {
     return this.withCharacterLock(id, async () => {
       const character = (await this.findOneReadable(id, user)) as Record<

@@ -136,6 +136,13 @@ export class CharacterPlaySheetComponent {
   grantSpellError      = signal('');
   grantSpellNotice     = signal('');
 
+  // Short-rest dialog state
+  showShortRestDialog = signal(false);
+  shortRestHitDice = signal<number>(0);
+  shortRestHealed = signal<number>(0);
+  shortRestError = signal('');
+  shortRestBusy = signal(false);
+
   hpAdjustAmount  = signal<number>(0);
   currencyOrder   = CURRENCY_ORDER;
   currencyAdjustAmounts = signal<Record<keyof Currency, number>>({ cp: 0, sp: 0, ep: 0, gp: 0, pp: 0 });
@@ -615,20 +622,72 @@ export class CharacterPlaySheetComponent {
   async rest(type: 'short_rest' | 'long_rest') {
     const char = this.localChar();
     if (!char?.id || this.persisting()) return;
-    this.persisting.set(true);
-    try {
-      const withResources = await this.characterService.saveCharacter({
-        ...char,
-        resource_uses: this.actionsService.rest(char.resource_uses ?? {}, this.actions(), type),
-      });
-      const result = await this.characterService.restoreSpellcasting(char.id, type);
-      this.localChar.set({ ...result, resource_uses: withResources.resource_uses });
-      this.saved.emit(this.localChar()!);
-      this.castNotice.set(type === 'long_rest' ? 'Long Rest complete.' : 'Short Rest complete. Pact Magic and short-rest free casts restored.');
-    } finally {
-      this.persisting.set(false);
-    }
+      if (type === 'short_rest') {
+        this.shortRestHitDice.set(0);
+        this.shortRestHealed.set(0);
+        this.shortRestError.set('');
+        this.showShortRestDialog.set(true);
+        return;
+      }
+
+      this.persisting.set(true);
+      try {
+        const withResources = await this.characterService.saveCharacter({
+          ...char,
+          resource_uses: this.actionsService.rest(char.resource_uses ?? {}, this.actions(), type),
+        });
+        const healedResult = await this.characterService.restoreHitPoints(char.id, type);
+        this.localChar.set({ ...healedResult, resource_uses: withResources.resource_uses });
+        this.saved.emit(this.localChar()!);
+        this.castNotice.set(type === 'long_rest' ? 'Long Rest complete.' : 'Short Rest complete. Pact Magic and short-rest free casts restored.');
+      } finally {
+        this.persisting.set(false);
+      }
   }
+
+    openShortRestDialog() {
+      const char = this.localChar();
+      if (!char) return;
+      this.shortRestHitDice.set(0);
+      this.shortRestHealed.set(0);
+      this.shortRestError.set('');
+      this.showShortRestDialog.set(true);
+    }
+
+    closeShortRestDialog() {
+      this.showShortRestDialog.set(false);
+      this.shortRestError.set('');
+    }
+
+    async confirmShortRest() {
+      const char = this.localChar();
+      if (!char?.id || this.persisting()) return;
+      const hitDiceUsed = Math.max(0, Math.floor(this.shortRestHitDice()));
+      const healed = Math.max(0, Math.floor(this.shortRestHealed()));
+      const available = Math.max(0, (char.level ?? 0) - (char.hit_dice_used ?? 0));
+      if (hitDiceUsed > available) {
+        this.shortRestError.set(`You only have ${available} hit dice available.`);
+        return;
+      }
+      this.persisting.set(true);
+      this.shortRestBusy.set(true);
+      try {
+        const withResources = await this.characterService.saveCharacter({
+          ...char,
+          resource_uses: this.actionsService.rest(char.resource_uses ?? {}, this.actions(), 'short_rest'),
+        });
+        const healedResult = await this.characterService.restoreHitPoints(char.id, 'short_rest', hitDiceUsed, healed);
+        this.localChar.set({ ...healedResult, resource_uses: withResources.resource_uses });
+        this.saved.emit(this.localChar()!);
+        this.castNotice.set('Short Rest complete. Pact Magic and short-rest free casts restored.');
+        this.showShortRestDialog.set(false);
+      } catch (err) {
+        this.shortRestError.set(`Could not complete short rest. ${err}`);
+      } finally {
+        this.persisting.set(false);
+        this.shortRestBusy.set(false);
+      }
+    }
 
   // Inventory
   toggleEquipped(entry: EquipmentEntry) {

@@ -128,6 +128,15 @@ export class CharactersController {
     return this.characters.restoreSpellcasting(id, user, body);
   }
 
+  @Post(':id/life-rest')
+  lifeRest(
+    @Param('id') id: string,
+    @CurrentUser() user: RequestUser,
+    @Body() body: Record<string, unknown>,
+  ) {
+    return this.characters.restoreLife(id, user, body);
+  }
+
   @Patch(':id/concentration')
   endConcentration(@Param('id') id: string, @CurrentUser() user: RequestUser) {
     return this.characters.endConcentration(id, user);
