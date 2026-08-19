@@ -3,11 +3,12 @@
 # TODO
 
 ## General
-- [ ] Rests (short long)
+- [X] Rests (short long)
 - [ ] Shop?
 - [x] Spells
 - [X] Equipement
 - [ ] Party Inventory
+- [ ] Fix AC Issue (Klérin has an AC of 10 with armor)
 - [ ] Defenses (resistances n shit)
 - [ ] Physical descriptions (character creation)
 - [ ] Backstory text section
@@ -92,10 +93,10 @@
 - [ ] check general todo list
 
 ## Anthony
-- [ ] Rests (short long)
-    - [ ] Short Rests
-        - [ ] Add Hit dice if not already functionnal
-    - [ ] Long Rests
+- [X] Rests (short long)
+    - [X] Short Rests
+        - [X] Add Hit dice if not already functionnal
+    - [X] Long Rests
 - [ ] Equipement
     - [ ] Custom Equipement creator
     - [ ] Buy Equipement on character creation

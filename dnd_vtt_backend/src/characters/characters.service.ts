@@ -840,10 +840,12 @@ export class CharactersService {
     });
   }
 
-  async restoreLife( id: string,
+  async restoreLife(
+    id: string,
     user: RequestUser,
-    body: Record<string, unknown>,) {
-      const type = body.type;
+    body: Record<string, unknown>,
+  ) {
+    const type = body.type;
     if (type !== 'short_rest' && type !== 'long_rest')
       throw new BadRequestException(
         'Rest type must be short_rest or long_rest.',
@@ -864,11 +866,12 @@ export class CharactersService {
       }
 
       if (type === 'long_rest') {
-        
         data.current_hp = data.max_hp;
         const recoveredDice = Math.trunc(totalHitDice / 2);
-        data.hit_dice_used = Math.max(0, (data.hit_dice_used as number) - recoveredDice);
-
+        data.hit_dice_used = Math.max(
+          0,
+          (data.hit_dice_used as number) - recoveredDice,
+        );
       } else {
         const hitDiceUsed = Number(body.hitDiceUsed ?? 0);
         const healed = Number(body.healed ?? 0);
