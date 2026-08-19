@@ -92,4 +92,13 @@
 - [ ] check general todo list
 
 ## Anthony
-- [ ] spells
+- [ ] Rests (short long)
+    - [ ] Short Rests
+        - [ ] Add Hit dice if not already functionnal
+    - [ ] Long Rests
+- [ ] Equipement
+    - [ ] Custom Equipement creator
+    - [ ] Buy Equipement on character creation
+    - [ ] DM Can add later Equipement
+- [ ] Party Inventory
+    - [ ] Way for the DM to see everything the party owns
