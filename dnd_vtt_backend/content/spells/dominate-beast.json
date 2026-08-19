@@ -12,21 +12,6 @@
   "duration": "Concentration, up to 1 minute",
   "ritual": false,
   "concentration": true,
-  "classes": [
-    "Druid",
-    "Ranger",
-    "Sorcerer"
-  ],
-  "subclasses": [
-    {
-      "class": "Warlock",
-      "subclass": "Archfey Patron"
-    }
-  ],
-  "species": [],
-  "backgrounds": [],
-  "feats": [],
-  "other_options": [],
   "mechanics": {
     "saving_throws": [
       "wisdom"

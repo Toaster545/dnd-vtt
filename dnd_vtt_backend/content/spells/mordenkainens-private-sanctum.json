@@ -14,27 +14,6 @@
   "duration": "24 hours",
   "ritual": false,
   "concentration": false,
-  "classes": [
-    "Wizard"
-  ],
-  "subclasses": [
-    {
-      "class": "Fighter",
-      "subclass": "Eldritch Knight"
-    },
-    {
-      "class": "Rogue",
-      "subclass": "Arcane Trickster"
-    },
-    {
-      "class": "Wizard",
-      "subclass": "Abjurer"
-    }
-  ],
-  "species": [],
-  "backgrounds": [],
-  "feats": [],
-  "other_options": [],
   "mechanics": {
     "saving_throws": [],
     "ability_checks": [],

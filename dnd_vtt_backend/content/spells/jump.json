@@ -14,34 +14,6 @@
   "duration": "1 minute",
   "ritual": false,
   "concentration": false,
-  "classes": [
-    "Druid",
-    "Ranger",
-    "Sorcerer",
-    "Wizard"
-  ],
-  "subclasses": [
-    {
-      "class": "Bard",
-      "subclass": "College of Lore"
-    },
-    {
-      "class": "Fighter",
-      "subclass": "Eldritch Knight"
-    },
-    {
-      "class": "Rogue",
-      "subclass": "Arcane Trickster"
-    }
-  ],
-  "species": [],
-  "backgrounds": [],
-  "feats": [
-    "Magic Initiate"
-  ],
-  "other_options": [
-    "Otherworldly Leap"
-  ],
   "mechanics": {
     "saving_throws": [],
     "ability_checks": [],

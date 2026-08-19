@@ -4,6 +4,7 @@
   "description": "Gnomes are magical, inventive folk whose cleverness helped them thrive in forests and underground homes. Their forest and rock lineages express that ancient magic in different ways.",
   "creature_type": "Humanoid",
   "speed": 30,
+  "darkvision_ft": 60,
   "size": "Small",
   "traits": ["Darkvision", "Gnomish Cunning", "Gnomish Lineage"],
   "grants": [

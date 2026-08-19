@@ -28,21 +28,31 @@ export class CharacterWizardPageComponent implements OnInit {
   character = signal<Character | null>(null);
 
   async ngOnInit() {
-    const id = this.route.snapshot.paramMap.get('id');
+    const routedId = this.route.snapshot.paramMap.get('id');
+    const id = routedId ?? localStorage.getItem('character.active-draft-id');
     if (id) {
-      const character = await this.characterService.getCharacter(id);
-      this.recentActivity.markCharacterViewed(id);
-      this.character.set(character);
+      try {
+        const character = await this.characterService.getCharacter(id);
+        if (routedId || character.creation_status === 'draft') {
+          this.recentActivity.markCharacterViewed(id);
+          this.character.set(character);
+        }
+      } catch {
+        if (!routedId) {
+          localStorage.removeItem('character.active-draft-id');
+          localStorage.removeItem('character.active-draft-step');
+        }
+      }
     }
     this.ready.set(true);
   }
 
   onSaved() {
-    void this.router.navigate(['/home']);
+    void this.router.navigate(['/home/characters']);
   }
 
   onCancelled() {
-    void this.router.navigate(['/home']);
+    void this.router.navigate(['/home/characters']);
   }
 
   onViewSheet(id: string) {

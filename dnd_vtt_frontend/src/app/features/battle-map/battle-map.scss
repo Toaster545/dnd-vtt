@@ -1,0 +1,4 @@
+@media (max-width: 1023px) {
+  .map-view-controls { top: auto; bottom: .5rem; right: .5rem; max-width: calc(100vw - 1rem); overflow-x: auto; }
+  aside { position: absolute; right: .5rem; bottom: 4rem; z-index: 20; width: min(18rem, calc(100vw - 1rem)) !important; max-height: 35dvh; border: 1px solid #ffffff1a; border-radius: .5rem; }
+}

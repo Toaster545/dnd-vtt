@@ -15,19 +15,6 @@
   "duration": "10 days",
   "ritual": false,
   "concentration": false,
-  "classes": [
-    "Wizard"
-  ],
-  "subclasses": [
-    {
-      "class": "Wizard",
-      "subclass": "Abjurer"
-    }
-  ],
-  "species": [],
-  "backgrounds": [],
-  "feats": [],
-  "other_options": [],
   "mechanics": {
     "saving_throws": [],
     "ability_checks": [],

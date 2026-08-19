@@ -14,41 +14,6 @@
   "duration": "8 hours",
   "ritual": true,
   "concentration": false,
-  "classes": [
-    "Ranger",
-    "Wizard"
-  ],
-  "subclasses": [
-    {
-      "class": "Bard",
-      "subclass": "College of Lore"
-    },
-    {
-      "class": "Fighter",
-      "subclass": "Eldritch Knight"
-    },
-    {
-      "class": "Rogue",
-      "subclass": "Arcane Trickster"
-    },
-    {
-      "class": "Sorcerer",
-      "subclass": "Clockwork Sorcery"
-    },
-    {
-      "class": "Wizard",
-      "subclass": "Abjurer"
-    }
-  ],
-  "species": [],
-  "backgrounds": [],
-  "feats": [
-    "Magic Initiate",
-    "Ritual Caster"
-  ],
-  "other_options": [
-    "Pact of the Tome"
-  ],
   "mechanics": {
     "saving_throws": [],
     "ability_checks": [],

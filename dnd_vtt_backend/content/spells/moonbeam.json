@@ -14,27 +14,6 @@
   "duration": "Concentration, up to 1 minute",
   "ritual": false,
   "concentration": true,
-  "classes": [
-    "Druid"
-  ],
-  "subclasses": [
-    {
-      "class": "Bard",
-      "subclass": "College of Lore"
-    },
-    {
-      "class": "Druid",
-      "subclass": "Circle of the Moon"
-    },
-    {
-      "class": "Paladin",
-      "subclass": "Oath of the Ancients"
-    }
-  ],
-  "species": [],
-  "backgrounds": [],
-  "feats": [],
-  "other_options": [],
   "mechanics": {
     "saving_throws": [
       "constitution"

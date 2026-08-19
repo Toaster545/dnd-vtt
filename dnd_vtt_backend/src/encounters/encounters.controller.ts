@@ -37,6 +37,11 @@ export class EncountersController {
     return this.encounters.findOne(id, user.id);
   }
 
+  @Get(':id/player-state')
+  playerState(@Param('id') id: string, @CurrentUser() user: RequestUser) {
+    return this.encounters.findPlayerState(id, user);
+  }
+
   @Post()
   create(@Body() dto: CreateEncounterDto, @CurrentUser() user: RequestUser) {
     return this.encounters.create(user.id, dto);

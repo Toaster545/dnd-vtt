@@ -20,9 +20,8 @@ export const routes: Routes = [
   },
   {
     path: 'dashboard',
-    canActivate: [authGuard],
-    loadComponent: () => import('./features/dashboard/dashboard').then(m => m.DashboardComponent),
-    data: { bgOverlay: 0.6 },
+    redirectTo: 'home/dashboard',
+    pathMatch: 'full',
   },
   {
     path: 'battle-map',
@@ -38,6 +37,9 @@ export const routes: Routes = [
     path: 'encounters/:encounterId/player-view',
     canActivate: [authGuard, staleSessionGuard],
     loadComponent: () => import('./features/player-view/player-view').then(m => m.PlayerViewComponent),
+    // Fully opaque — this screen is just the map, and the app-wide Settings background would
+    // otherwise show through around it.
+    data: { bgOverlay: 1 },
   },
   {
     path: 'home',
@@ -46,7 +48,37 @@ export const routes: Routes = [
     children: [
       {
         path: '',
+        redirectTo: 'characters',
+        pathMatch: 'full',
+      },
+      {
+        path: 'dashboard',
+        loadComponent: () => import('./features/dashboard/dashboard').then(m => m.DashboardComponent),
+        data: { bgOverlay: 0.6 },
+      },
+      {
+        path: 'characters',
         loadComponent: () => import('./features/characters/characters').then(m => m.CharactersComponent),
+      },
+      {
+        path: 'campaign/current',
+        loadComponent: () => import('./features/player/current-player-route/current-player-route').then(m => m.CurrentPlayerRouteComponent),
+        data: { target: 'campaign', bgOverlay: 0.9 },
+      },
+      {
+        path: 'campaign/current-session',
+        loadComponent: () => import('./features/player/current-player-route/current-player-route').then(m => m.CurrentPlayerRouteComponent),
+        data: { target: 'session', bgOverlay: 0.9 },
+      },
+      {
+        path: 'campaign/current-encounter',
+        loadComponent: () => import('./features/player/current-player-route/current-player-route').then(m => m.CurrentPlayerRouteComponent),
+        data: { target: 'encounter', bgOverlay: 1 },
+      },
+      {
+        path: 'campaign/current-map',
+        loadComponent: () => import('./features/player/current-player-route/current-player-route').then(m => m.CurrentPlayerRouteComponent),
+        data: { target: 'map', bgOverlay: 1 },
       },
       {
         path: 'characters/new',
@@ -110,6 +142,9 @@ export const routes: Routes = [
           import('./features/dm/dm-campaigns/dm-encounter-play/dm-encounter-play').then(
             m => m.DmEncounterPlayComponent,
           ),
+        // Fully opaque — the app-wide Settings background would otherwise show through around
+        // the map/roster; the session hub this is launched from keeps its own overlay.
+        data: { bgOverlay: 1 },
       },
       {
         path: 'campaigns/:campaignId',

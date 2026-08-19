@@ -4,6 +4,7 @@
   "description": "Aasimar carry a spark of the Upper Planes within their souls. That celestial light can heal, ward against radiant and necrotic power, and emerge as a dramatic revelation in battle.",
   "creature_type": "Humanoid",
   "speed": 30,
+  "darkvision_ft": 60,
   "size": "Small or Medium",
   "size_options": ["Small", "Medium"],
   "traits": ["Celestial Resistance", "Darkvision", "Healing Hands", "Light Bearer", "Celestial Revelation"],

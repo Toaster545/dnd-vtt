@@ -9,6 +9,29 @@ import { randomUUID } from 'crypto';
 import { DatabaseService } from '../common/database.service';
 import type { RequestUser } from '../common/current-user.decorator';
 import { ContentService } from '../content/content.service';
+import { parseAvatarRecipe } from '../common/avatar-recipe';
+import {
+  EBERRON_SOURCE_CODE,
+  disallowedSources,
+  normalizePlayerSources,
+  sourceDefinition,
+  sourceName,
+} from '../content/content-sources';
+
+function stringArray(value: unknown): string[] {
+  return Array.isArray(value)
+    ? value.filter((entry): entry is string => typeof entry === 'string')
+    : [];
+}
+
+function recordArray(value: unknown): Record<string, unknown>[] {
+  return Array.isArray(value)
+    ? value.filter(
+        (entry): entry is Record<string, unknown> =>
+          !!entry && typeof entry === 'object' && !Array.isArray(entry),
+      )
+    : [];
+}
 
 type FreeCastState = {
   used: number;
@@ -141,6 +164,8 @@ const CHARACTER_COLUMN_KEYS = new Set([
   'class',
   'level',
   'campaign_id',
+  'creation_status',
+  'draft_step',
   'created_at',
   'updated_at',
 ]);
@@ -232,13 +257,22 @@ export class CharactersService {
     return result.rows.length > 0;
   }
 
-  async create(userId: string, body: Record<string, unknown>) {
+  async create(
+    userId: string,
+    body: Record<string, unknown>,
+    creationStatus: 'draft' | 'complete' = 'complete',
+    draftStep = 0,
+  ) {
     const id = randomUUID();
     const now = new Date().toISOString();
     const { name, race, class: cls, level, ...rest } = body;
+    const data = this.normalizeCharacterAvatar(
+      this.normalizeCharacterSources(rest, cls),
+    );
     await this.db.execute(
-      `INSERT INTO characters (id, user_id, name, race, class, level, data, created_at, updated_at)
-       VALUES (?,?,?,?,?,?,?,?,?)`,
+      `INSERT INTO characters
+       (id, user_id, name, race, class, level, data, creation_status, draft_step, created_at, updated_at)
+       VALUES (?,?,?,?,?,?,?,?,?,?,?)`,
       [
         id,
         userId,
@@ -246,12 +280,85 @@ export class CharactersService {
         race ?? '',
         cls ?? '',
         level ?? 1,
-        JSON.stringify(rest),
+        JSON.stringify(data),
+        creationStatus,
+        draftStep,
         now,
         now,
       ],
     );
     return this.findOne(id, userId);
+  }
+
+  createDraft(userId: string, body: Record<string, unknown>) {
+    return this.create(userId, body, 'draft', Number(body.draft_step ?? 0));
+  }
+
+  async updateDraft(
+    id: string,
+    user: RequestUser,
+    body: Record<string, unknown>,
+  ) {
+    const existing = (await this.findOne(id, user.id)) as Record<
+      string,
+      unknown
+    >;
+    if (existing.campaign_id) {
+      throw new ForbiddenException('Campaign characters cannot be drafts.');
+    }
+    const draftStep = Math.max(0, Math.min(6, Number(body.draft_step ?? 0)));
+    const character = { ...body };
+    delete character.draft_step;
+    delete character.creation_status;
+    await this.update(id, user, character);
+    await this.db.execute(
+      `UPDATE characters SET creation_status='draft', draft_step=?, updated_at=? WHERE id=?`,
+      [draftStep, new Date().toISOString(), id],
+    );
+    return this.findOne(id, user.id);
+  }
+
+  async completeDraft(id: string, user: RequestUser) {
+    const character = (await this.findOne(id, user.id)) as Record<
+      string,
+      unknown
+    >;
+    if (character.campaign_id) {
+      throw new ForbiddenException('Campaign characters cannot be drafts.');
+    }
+    const scores = character.ability_scores as
+      Record<string, unknown> | undefined;
+    const requiredScores = [
+      'strength',
+      'dexterity',
+      'constitution',
+      'intelligence',
+      'wisdom',
+      'charisma',
+    ];
+    if (
+      typeof character.name !== 'string' ||
+      !character.name.trim() ||
+      typeof character.race !== 'string' ||
+      !character.race.trim() ||
+      typeof character.class !== 'string' ||
+      !character.class.trim() ||
+      typeof character.background !== 'string' ||
+      !character.background.trim() ||
+      !scores ||
+      requiredScores.some(
+        (ability) => !Number.isFinite(Number(scores[ability])),
+      )
+    ) {
+      throw new BadRequestException(
+        'Complete the class, race, background, ability scores, and details before finishing.',
+      );
+    }
+    await this.db.execute(
+      `UPDATE characters SET creation_status='complete', updated_at=? WHERE id=?`,
+      [new Date().toISOString(), id],
+    );
+    return this.findOne(id, user.id);
   }
 
   async update(id: string, user: RequestUser, body: Record<string, unknown>) {
@@ -289,6 +396,15 @@ export class CharactersService {
         return this.updatePlayerEditableFields(id, existing, body, user);
     }
     const { name, race, class: cls, level, ...rest } = body;
+    const data = this.normalizeCharacterAvatar(
+      this.normalizeCharacterSources(rest, cls),
+    );
+    if (existing.campaign_id) {
+      await this.assertCampaignSources(
+        existing.campaign_id as string,
+        data.enabled_sources,
+      );
+    }
     await this.db.execute(
       `UPDATE characters SET name=?, race=?, class=?, level=?, data=?, updated_at=? WHERE id=?`,
       [
@@ -296,7 +412,7 @@ export class CharactersService {
         race ?? '',
         cls ?? '',
         level ?? 1,
-        JSON.stringify(rest),
+        JSON.stringify(data),
         new Date().toISOString(),
         id,
       ],
@@ -615,6 +731,24 @@ export class CharactersService {
       const spell = await this.content.getSpell(spellIndex);
 
       const data = this.characterData(character);
+      const spellSourceCode = (spell as Record<string, unknown>).source;
+      const sourceCode =
+        spellSourceCode && typeof spellSourceCode === 'object'
+          ? (spellSourceCode as Record<string, unknown>).code
+          : undefined;
+      if (
+        typeof sourceCode === 'string' &&
+        sourceDefinition(sourceCode)?.player_options
+      ) {
+        data.enabled_sources = normalizePlayerSources([
+          ...stringArray(data.enabled_sources),
+          sourceCode,
+        ]);
+        await this.assertCampaignSources(
+          character.campaign_id as string,
+          data.enabled_sources,
+        );
+      }
       const grantedSpells = Array.isArray(data.granted_spells)
         ? [...(data.granted_spells as Record<string, unknown>[])]
         : [];
@@ -979,9 +1113,12 @@ export class CharactersService {
   }
 
   private deserialize(row: Record<string, unknown>) {
-    const data = this.db.parseJson(row.data as string, {});
+    const data = this.normalizeCharacterSources(
+      this.db.parseJson<Record<string, unknown>>(row.data as string, {}),
+      row.class,
+    );
     return {
-      ...(data as Record<string, unknown>),
+      ...data,
       id: row.id,
       user_id: row.user_id,
       name: row.name,
@@ -989,8 +1126,80 @@ export class CharactersService {
       class: row.class,
       level: row.level,
       campaign_id: row.campaign_id ?? null,
+      creation_status: row.creation_status ?? 'complete',
+      draft_step: Number(row.draft_step ?? 0),
       created_at: row.created_at,
       updated_at: row.updated_at,
     };
+  }
+
+  private normalizeCharacterSources(
+    data: Record<string, unknown>,
+    primaryClass: unknown,
+  ): Record<string, unknown> {
+    const required = new Set<string>();
+    if (String(primaryClass).toLowerCase() === 'artificer') {
+      required.add(EBERRON_SOURCE_CODE);
+    }
+    const classes = recordArray(data.classes);
+    if (
+      classes.some((entry) => String(entry.name).toLowerCase() === 'artificer')
+    ) {
+      required.add(EBERRON_SOURCE_CODE);
+    }
+    const spellEntries = [
+      ...recordArray(data.spells),
+      ...recordArray(data.granted_spells),
+    ];
+    if (
+      spellEntries.some((entry) => entry.spellIndex === 'homunculus-servant')
+    ) {
+      required.add(EBERRON_SOURCE_CODE);
+    }
+    return {
+      ...data,
+      enabled_sources: normalizePlayerSources([
+        ...stringArray(data.enabled_sources),
+        ...required,
+      ]),
+    };
+  }
+
+  private normalizeCharacterAvatar(
+    data: Record<string, unknown>,
+  ): Record<string, unknown> {
+    if (!Object.prototype.hasOwnProperty.call(data, 'avatar_recipe'))
+      return data;
+    if (data.avatar_recipe == null) {
+      const withoutRecipe = { ...data };
+      delete withoutRecipe.avatar_recipe;
+      return withoutRecipe;
+    }
+    const recipe = parseAvatarRecipe(data.avatar_recipe);
+    if (!recipe) throw new BadRequestException('Invalid avatar recipe');
+    return { ...data, avatar_recipe: recipe };
+  }
+
+  private async assertCampaignSources(
+    campaignId: string,
+    enabledSources: unknown,
+  ) {
+    const result = await this.db.execute(
+      'SELECT data FROM campaigns WHERE id = ?',
+      [campaignId],
+    );
+    const campaignData = this.db.parseJson<Record<string, unknown>>(
+      result.rows[0]?.data as string,
+      {},
+    );
+    const disallowed = disallowedSources(
+      enabledSources,
+      campaignData.allowed_sources,
+    );
+    if (disallowed.length) {
+      throw new BadRequestException(
+        `This campaign doesn't allow ${disallowed.map(sourceName).join(', ')}.`,
+      );
+    }
   }
 }

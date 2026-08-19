@@ -5,6 +5,13 @@ const MAX_SCALE = 4;
 const WHEEL_SCALE_BY = 1.05;
 const BUTTON_SCALE_BY = 1.2;
 
+// Reserve the middle mouse button for camera panning only (see the `mousedown` handler below) —
+// left button (0) stays the only button that starts a native Konva drag, so middle-click never
+// also drags whatever token or the stage happens to be under the pointer via Konva's own built-in
+// dragButtons: [0, 1] default. This is a module-level Konva setting, so it applies everywhere
+// Konva is used in the app; the battle map is the only place that is.
+Konva.dragButtons = [0];
+
 interface Point { x: number; y: number; }
 
 function clampScale(scale: number): number {
@@ -30,11 +37,53 @@ export class StageView {
   private pinchLastCenter: Point | null = null;
   private homePosition: Point = { x: 0, y: 0 };
 
+  // Tracks an in-progress middle-button pan; null when none is active.
+  private middlePanFrom: Point | null = null;
+  private middlePanOrigin: Point = { x: 0, y: 0 };
+  private readonly onMiddlePanMove = (e: MouseEvent) => {
+    if (!this.middlePanFrom) return;
+    this.stage.position({
+      x: this.middlePanOrigin.x + (e.clientX - this.middlePanFrom.x),
+      y: this.middlePanOrigin.y + (e.clientY - this.middlePanFrom.y),
+    });
+    this.stage.batchDraw();
+  };
+  private readonly onMiddlePanEnd = () => this.endMiddlePan();
+
   constructor(private stage: Konva.Stage, private canPan: () => boolean) {
     this.stage.draggable(canPan());
     stage.on('wheel', e => this.onWheel(e));
     stage.on('touchmove', e => this.onTouchMove(e));
     stage.on('touchend touchcancel', () => this.onTouchEnd());
+    // Middle-click always pans the camera, regardless of which tool (fog brush, measure, place
+    // torch) is currently armed for the left button — the DM doesn't have to switch back to the
+    // Select/move tool just to reposition the view mid-task. Listened for at the stage level (not
+    // gated by `canPan`/`draggable`) so it works no matter what's currently under the pointer.
+    stage.on('mousedown', e => this.startMiddlePan(e));
+  }
+
+  private startMiddlePan(e: Konva.KonvaEventObject<MouseEvent>) {
+    if (e.evt.button !== 1) return;
+    e.evt.preventDefault(); // stops the browser's middle-click autoscroll marker
+    if (this.stage.isDragging()) this.stage.stopDrag();
+    this.middlePanFrom = { x: e.evt.clientX, y: e.evt.clientY };
+    this.middlePanOrigin = { ...this.stage.position() };
+    // Bound to window, not the stage, so the pan keeps tracking even if the cursor slides off the
+    // canvas mid-drag, and reliably ends on mouseup wherever that happens to land.
+    window.addEventListener('mousemove', this.onMiddlePanMove);
+    window.addEventListener('mouseup', this.onMiddlePanEnd);
+  }
+
+  private endMiddlePan() {
+    this.middlePanFrom = null;
+    window.removeEventListener('mousemove', this.onMiddlePanMove);
+    window.removeEventListener('mouseup', this.onMiddlePanEnd);
+  }
+
+  // Called from the component's ngOnDestroy, ahead of stage.destroy() — the window listeners
+  // above are only otherwise removed by their own mouseup, so a teardown mid-drag would leak them.
+  destroy() {
+    this.endMiddlePan();
   }
 
   // The letterbox offset that centers the map image in the container — used both to place the
@@ -46,6 +95,11 @@ export class StageView {
 
   centerOnHome() {
     this.stage.position(this.homePosition);
+    this.stage.batchDraw();
+  }
+
+  centerOn(worldPoint: Point) {
+    this.stage.position(this.screenPositionFor(worldPoint, this.screenCenter(), this.stage.scaleX()));
     this.stage.batchDraw();
   }
 

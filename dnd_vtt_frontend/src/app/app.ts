@@ -3,14 +3,33 @@ import { RouterOutlet } from '@angular/router';
 import { BackgroundService } from './core/services/background.service';
 import { ColorSchemeService } from './core/services/color-scheme.service';
 import { UiScaleService } from './core/services/ui-scale.service';
+import { PwaService } from './core/services/pwa.service';
+import { NativeLifecycleService } from './core/services/native-lifecycle.service';
 
 @Component({
   selector: 'app-root',
   imports: [RouterOutlet],
-  template: '<div class="app-bg-overlay" aria-hidden="true"></div><router-outlet />',
+  template: `
+    <div class="app-bg-overlay" aria-hidden="true"></div>
+    @if (!pwa.online()) {
+      <div class="connection-banner" role="status">Offline — saved screens remain available; changes require a connection.</div>
+    } @else if (pwa.reconnecting()) {
+      <div class="connection-banner" role="status">Reconnected — refreshing live state…</div>
+    }
+    @if (pwa.installAvailable()) {
+      <button class="install-prompt" type="button" (click)="pwa.install()">Install D&amp;D VTT</button>
+    }
+    <router-outlet />
+  `,
+  styles: [`
+    .connection-banner { position: fixed; z-index: 10000; inset: 0 0 auto; padding: .5rem 1rem; text-align: center; background: #7f1d1d; color: white; }
+    .install-prompt { position: fixed; z-index: 9999; right: 1rem; bottom: calc(5.5rem + env(safe-area-inset-bottom)); min-height: 44px; border: 1px solid #b9913f; border-radius: .5rem; padding: .5rem .9rem; background: #111218; color: #f1e5c8; }
+  `],
 })
 export class App {
   private readonly _background = inject(BackgroundService);
   private readonly _colorScheme = inject(ColorSchemeService);
   private readonly _uiScale = inject(UiScaleService);
+  readonly pwa = inject(PwaService);
+  private readonly _nativeLifecycle = inject(NativeLifecycleService);
 }

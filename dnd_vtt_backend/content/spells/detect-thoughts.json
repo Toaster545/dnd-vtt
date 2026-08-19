@@ -14,43 +14,6 @@
   "duration": "Concentration, up to 1 minute",
   "ritual": false,
   "concentration": true,
-  "classes": [
-    "Bard",
-    "Sorcerer",
-    "Wizard"
-  ],
-  "subclasses": [
-    {
-      "class": "Bard",
-      "subclass": "College of Lore"
-    },
-    {
-      "class": "Fighter",
-      "subclass": "Eldritch Knight"
-    },
-    {
-      "class": "Rogue",
-      "subclass": "Arcane Trickster"
-    },
-    {
-      "class": "Sorcerer",
-      "subclass": "Aberrant Sorcery"
-    },
-    {
-      "class": "Warlock",
-      "subclass": "Great Old One Patron"
-    },
-    {
-      "class": "Wizard",
-      "subclass": "Diviner"
-    }
-  ],
-  "species": [],
-  "backgrounds": [],
-  "feats": [
-    "Telepathic"
-  ],
-  "other_options": [],
   "mechanics": {
     "saving_throws": [
       "wisdom"

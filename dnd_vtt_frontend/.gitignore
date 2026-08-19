@@ -34,6 +34,8 @@ yarn-error.log
 .sass-cache/
 /connect.lock
 /coverage
+/playwright-report/
+/test-results/
 /libpeerconnection.log
 testem.log
 /typings
@@ -42,3 +44,16 @@ __screenshots__/
 # System files
 .DS_Store
 Thumbs.db
+
+# Native build products, secrets, signing, and per-user IDE data
+/android/.gradle/
+/android/app/build/
+/android/local.properties
+/android/*.jks
+/android/*.keystore
+/ios/App/DerivedData/
+/ios/App/build/
+/ios/App/*.xcuserstate
+/ios/App/xcuserdata/
+*.mobileprovision
+*.p12

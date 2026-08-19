@@ -14,38 +14,6 @@
   "duration": "Concentration, up to 10 minutes",
   "ritual": false,
   "concentration": true,
-  "classes": [
-    "Bard",
-    "Sorcerer",
-    "Wizard"
-  ],
-  "subclasses": [
-    {
-      "class": "Bard",
-      "subclass": "College of Lore"
-    },
-    {
-      "class": "Fighter",
-      "subclass": "Eldritch Knight"
-    },
-    {
-      "class": "Rogue",
-      "subclass": "Arcane Trickster"
-    },
-    {
-      "class": "Wizard",
-      "subclass": "Illusionist"
-    }
-  ],
-  "species": [],
-  "backgrounds": [],
-  "feats": [
-    "Magic Initiate",
-    "Shadow-Touched"
-  ],
-  "other_options": [
-    "Misty Visions"
-  ],
   "mechanics": {
     "saving_throws": [],
     "ability_checks": [

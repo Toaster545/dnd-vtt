@@ -91,7 +91,14 @@ export class DmCampaignSessionComponent implements OnInit, OnDestroy {
   pixelsPerGrid   = signal(0);
   mapCols         = signal(0);
   mapRows         = signal(0);
+  // Which kind of file supplied the current preview — 'dd2vtt' has exact grid metadata baked in;
+  // 'image' is a plain PNG/JPEG/WebP where the grid is derived from `verticalSquares` below (same
+  // approach as DmCampaignMapsComponent) since there's no embedded resolution to read.
+  mapKind = signal<'dd2vtt' | 'image' | null>(null);
+  verticalSquares = 20;
   private mapFile: File | null = null;
+  private imgNaturalWidth = 0;
+  private imgNaturalHeight = 0;
 
   selectedMonsterIndices = signal<Set<string>>(new Set());
   selectedCharacterIds   = signal<Set<string>>(new Set());
@@ -268,7 +275,8 @@ export class DmCampaignSessionComponent implements OnInit, OnDestroy {
     this.showForm.set(true);
   }
 
-  async startEdit(encounter: Encounter) {
+  async startEdit(encounter: Encounter, event: Event) {
+    event.stopPropagation();
     this.resetForm();
     this.editingId.set(encounter.id!);
     this.name = encounter.name;
@@ -294,28 +302,78 @@ export class DmCampaignSessionComponent implements OnInit, OnDestroy {
     this.parsingFile.set(true);
 
     try {
-      let data: UniversalVTTData;
-      try {
-        data = JSON.parse(await file.text());
-        if (!data.image || !data.resolution?.pixels_per_grid) throw new Error('missing image/grid data');
-      } catch {
-        this.uploadError.set('Could not read this as a DungeonDraft Universal VTT (.dd2vtt) export.');
-        this.imagePreviewUrl.set(null);
-        this.mapFile = null;
-        input.value = '';
-        return;
+      // Plain raster images (from any map tool, not just Dungeondraft) have no embedded grid
+      // metadata — those go through the vertical-squares flow below. Anything else is assumed to
+      // be a Dungeondraft Universal VTT export, which carries its own exact pixels_per_grid.
+      if (file.type.startsWith('image/')) {
+        await this.loadPlainImage(file);
+      } else {
+        await this.loadDd2vtt(file);
       }
-
-      this.pixelsPerGrid.set(Math.round(data.resolution.pixels_per_grid));
-      this.mapCols.set(data.resolution.map_size?.x ?? 0);
-      this.mapRows.set(data.resolution.map_size?.y ?? 0);
-
-      const dataUrl = `data:image/png;base64,${data.image}`;
-      this.mapFile = await this.dataUrlToFile(dataUrl, 'map.png');
-      this.imagePreviewUrl.set(dataUrl);
+    } catch {
+      this.uploadError.set(
+        'Could not read this file. Upload a PNG, JPEG, WebP image, or a DungeonDraft Universal VTT (.dd2vtt) export.',
+      );
+      this.imagePreviewUrl.set(null);
+      this.mapKind.set(null);
+      this.mapFile = null;
+      input.value = '';
     } finally {
       this.parsingFile.set(false);
     }
+  }
+
+  private async loadDd2vtt(file: File) {
+    const data: UniversalVTTData = JSON.parse(await file.text());
+    if (!data.image || !data.resolution?.pixels_per_grid) throw new Error('missing image/grid data');
+
+    this.mapKind.set('dd2vtt');
+    this.pixelsPerGrid.set(Math.round(data.resolution.pixels_per_grid));
+    this.mapCols.set(data.resolution.map_size?.x ?? 0);
+    this.mapRows.set(data.resolution.map_size?.y ?? 0);
+
+    const dataUrl = `data:image/png;base64,${data.image}`;
+    this.mapFile = await this.dataUrlToFile(dataUrl, 'map.png');
+    this.imagePreviewUrl.set(dataUrl);
+  }
+
+  private async loadPlainImage(file: File) {
+    const dataUrl = await this.fileToDataUrl(file);
+    const { width, height } = await this.readImageDimensions(dataUrl);
+    this.imgNaturalWidth = width;
+    this.imgNaturalHeight = height;
+    this.mapKind.set('image');
+    this.mapFile = file;
+    this.recomputeImageGrid();
+    this.imagePreviewUrl.set(dataUrl);
+  }
+
+  // Re-derives the pixel grid size from the uploaded image's real height and the requested row
+  // count — called after load and whenever the DM tweaks the "Vertical Grid Squares" field.
+  recomputeImageGrid() {
+    if (this.mapKind() !== 'image' || !this.imgNaturalHeight || this.verticalSquares <= 0) return;
+    const cell = Math.round(this.imgNaturalHeight / this.verticalSquares);
+    this.pixelsPerGrid.set(cell);
+    this.mapRows.set(this.verticalSquares);
+    this.mapCols.set(cell > 0 ? Math.round(this.imgNaturalWidth / cell) : 0);
+  }
+
+  private fileToDataUrl(file: File): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result as string);
+      reader.onerror = () => reject(reader.error ?? new Error('Could not read file.'));
+      reader.readAsDataURL(file);
+    });
+  }
+
+  private readImageDimensions(url: string): Promise<{ width: number; height: number }> {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.onload = () => resolve({ width: img.naturalWidth, height: img.naturalHeight });
+      img.onerror = () => reject(new Error('Could not read image dimensions.'));
+      img.src = url;
+    });
   }
 
   private renderPreview(url: string, cellSize: number) {
@@ -438,7 +496,8 @@ export class DmCampaignSessionComponent implements OnInit, OnDestroy {
     return new File([blob], filename, { type: blob.type || 'image/png' });
   }
 
-  async deleteEncounter(id: string) {
+  async deleteEncounter(id: string, event: Event) {
+    event.stopPropagation();
     const enc = this.encounters().find(e => e.id === id);
     if (!await this.confirm.confirm(`Delete "${enc?.name ?? 'this encounter'}"? This cannot be undone.`, 'Delete Encounter')) return;
     await this.encounterService.remove(id);
@@ -467,6 +526,10 @@ export class DmCampaignSessionComponent implements OnInit, OnDestroy {
     this.uploadError.set(null);
     this.imagePreviewUrl.set(null);
     this.mapFile = null;
+    this.mapKind.set(null);
+    this.verticalSquares = 20;
+    this.imgNaturalWidth = 0;
+    this.imgNaturalHeight = 0;
     this.pixelsPerGrid.set(0);
     this.mapCols.set(0);
     this.mapRows.set(0);

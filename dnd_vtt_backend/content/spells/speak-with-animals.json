@@ -12,36 +12,6 @@
   "duration": "10 minutes",
   "ritual": true,
   "concentration": false,
-  "classes": [
-    "Bard",
-    "Druid",
-    "Ranger",
-    "Warlock"
-  ],
-  "subclasses": [
-    {
-      "class": "Barbarian",
-      "subclass": "Path of the Wild Heart"
-    },
-    {
-      "class": "Bard",
-      "subclass": "College of Lore"
-    },
-    {
-      "class": "Paladin",
-      "subclass": "Oath of the Ancients"
-    }
-  ],
-  "species": [],
-  "backgrounds": [],
-  "feats": [
-    "Fey-Touched",
-    "Magic Initiate",
-    "Ritual Caster"
-  ],
-  "other_options": [
-    "Pact of the Tome"
-  ],
   "mechanics": {
     "saving_throws": [],
     "ability_checks": [],

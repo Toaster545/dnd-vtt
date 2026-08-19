@@ -47,9 +47,31 @@ export class CampaignsController {
     return this.campaigns.join(user, dto);
   }
 
+  @Get('join-preview/:joinCode')
+  previewJoin(
+    @Param('joinCode') joinCode: string,
+    @CurrentUser() user: RequestUser,
+  ) {
+    return this.campaigns.previewJoin(user.id, joinCode);
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string, @CurrentUser() user: RequestUser) {
     return this.campaigns.findOne(id, user);
+  }
+
+  @Get(':id/current-context')
+  currentContext(@Param('id') id: string, @CurrentUser() user: RequestUser) {
+    return this.campaigns.getCurrentContext(id, user);
+  }
+
+  @Patch(':id/current-session')
+  setCurrentSession(
+    @Param('id') id: string,
+    @Body() body: { session_id: string | null },
+    @CurrentUser() user: RequestUser,
+  ) {
+    return this.campaigns.setCurrentSession(id, user.id, body.session_id);
   }
 
   @Patch(':id')

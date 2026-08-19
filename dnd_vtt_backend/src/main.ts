@@ -10,7 +10,10 @@ async function bootstrap() {
 
   app.setGlobalPrefix('api');
 
-  const origins = (process.env.CORS_ORIGINS ?? 'http://localhost:4200')
+  const origins = (
+    process.env.CORS_ORIGINS ??
+    'http://localhost:4200,https://dnd.mathomelab.ca,https://localhost,capacitor://localhost'
+  )
     .split(',')
     .map((o) => o.trim());
   app.enableCors({ origin: origins, credentials: true });
@@ -37,6 +40,9 @@ async function bootstrap() {
         }
       : {};
 
+  // Raw battle maps contain everything hidden by fog. They are served only through authenticated
+  // map endpoints; other intentionally-public campaign/session assets keep their legacy URLs.
+  server.use('/uploads/maps', (_req, res) => res.sendStatus(404));
   server.use('/uploads', express.static(join(process.cwd(), 'uploads')));
   server.use(express.static(distPath, staticOpts));
   server.use(

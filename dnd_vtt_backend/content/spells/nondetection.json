@@ -16,37 +16,6 @@
   "duration": "8 hours",
   "ritual": false,
   "concentration": false,
-  "classes": [
-    "Bard",
-    "Ranger",
-    "Wizard"
-  ],
-  "subclasses": [
-    {
-      "class": "Bard",
-      "subclass": "College of Lore"
-    },
-    {
-      "class": "Cleric",
-      "subclass": "Trickery Domain"
-    },
-    {
-      "class": "Fighter",
-      "subclass": "Eldritch Knight"
-    },
-    {
-      "class": "Rogue",
-      "subclass": "Arcane Trickster"
-    },
-    {
-      "class": "Wizard",
-      "subclass": "Abjurer"
-    }
-  ],
-  "species": [],
-  "backgrounds": [],
-  "feats": [],
-  "other_options": [],
   "mechanics": {
     "saving_throws": [],
     "ability_checks": [],

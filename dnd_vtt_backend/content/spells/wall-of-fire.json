@@ -14,41 +14,6 @@
   "duration": "Concentration, up to 1 minute",
   "ritual": false,
   "concentration": true,
-  "classes": [
-    "Druid",
-    "Sorcerer",
-    "Wizard"
-  ],
-  "subclasses": [
-    {
-      "class": "Cleric",
-      "subclass": "Light Domain"
-    },
-    {
-      "class": "Fighter",
-      "subclass": "Eldritch Knight"
-    },
-    {
-      "class": "Rogue",
-      "subclass": "Arcane Trickster"
-    },
-    {
-      "class": "Warlock",
-      "subclass": "Celestial Patron"
-    },
-    {
-      "class": "Warlock",
-      "subclass": "Fiend Patron"
-    },
-    {
-      "class": "Wizard",
-      "subclass": "Evoker"
-    }
-  ],
-  "species": [],
-  "backgrounds": [],
-  "feats": [],
-  "other_options": [],
   "mechanics": {
     "saving_throws": [
       "dexterity"

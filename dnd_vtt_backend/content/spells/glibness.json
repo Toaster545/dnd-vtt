@@ -11,15 +11,6 @@
   "duration": "1 hour",
   "ritual": false,
   "concentration": false,
-  "classes": [
-    "Bard",
-    "Warlock"
-  ],
-  "subclasses": [],
-  "species": [],
-  "backgrounds": [],
-  "feats": [],
-  "other_options": [],
   "mechanics": {
     "saving_throws": [],
     "ability_checks": [],

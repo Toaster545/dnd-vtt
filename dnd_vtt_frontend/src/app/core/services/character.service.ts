@@ -64,6 +64,22 @@ export class CharacterService {
     }
   }
 
+  async createDraft(character: Character, draftStep: number): Promise<Character> {
+    return firstValueFrom(
+      this.http.post<Character>(`${API}/characters/drafts`, { ...character, draft_step: draftStep }),
+    );
+  }
+
+  async updateDraft(id: string, character: Character, draftStep: number): Promise<Character> {
+    return firstValueFrom(
+      this.http.patch<Character>(`${API}/characters/${id}/draft`, { ...character, draft_step: draftStep }),
+    );
+  }
+
+  async completeDraft(id: string): Promise<Character> {
+    return firstValueFrom(this.http.post<Character>(`${API}/characters/${id}/complete`, {}));
+  }
+
   async deleteCharacter(id: string): Promise<void> {
     await firstValueFrom(this.http.delete(`${API}/characters/${id}`));
   }

@@ -14,39 +14,6 @@
   "duration": "Concentration, up to 1 minute",
   "ritual": false,
   "concentration": true,
-  "classes": [
-    "Bard",
-    "Sorcerer",
-    "Wizard"
-  ],
-  "subclasses": [
-    {
-      "class": "Bard",
-      "subclass": "College of Lore"
-    },
-    {
-      "class": "Fighter",
-      "subclass": "Eldritch Knight"
-    },
-    {
-      "class": "Rogue",
-      "subclass": "Arcane Trickster"
-    },
-    {
-      "class": "Wizard",
-      "subclass": "Illusionist"
-    }
-  ],
-  "species": [
-    "Elf"
-  ],
-  "backgrounds": [],
-  "feats": [
-    "Magic Initiate"
-  ],
-  "other_options": [
-    "Pact of the Tome"
-  ],
   "mechanics": {
     "saving_throws": [],
     "ability_checks": [],

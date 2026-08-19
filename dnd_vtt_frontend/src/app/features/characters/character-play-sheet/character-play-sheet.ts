@@ -153,6 +153,7 @@ export class CharacterPlaySheetComponent {
   bgData          = signal<DndBackground | null>(null);
   itemsAll        = signal<DndItem[]>([]);
   spellsAll       = signal<DndSpell[]>([]);
+  spellLists      = signal<Record<string, string[]>>({});
   featsAll        = signal<DndFeat[]>([]);
   resolvedClasses = signal<ResolvedClass[]>([]);
 
@@ -273,6 +274,7 @@ export class CharacterPlaySheetComponent {
       characterLevel: char.level,
       abilityScores: char.ability_scores,
       spells: this.spellsAll(),
+      spellLists: this.spellLists(),
       classes: this.resolvedClasses().map(rc => ({
         cls: rc.data,
         level: rc.level,
@@ -479,11 +481,12 @@ export class CharacterPlaySheetComponent {
       : (char.class ? [{ name: char.class, level: char.level, subclass: char.subclass, choices: {} as Record<string, string[]> }] : []);
 
     const campaignId = char.campaign_id ?? undefined;
-    const [race, bg, items, spells, feats] = await Promise.all([
+    const [race, bg, items, spells, spellLists, feats] = await Promise.all([
       char.race ? this.content.getRace(toIndex(char.race)).catch(() => null) : Promise.resolve(null),
       char.background ? this.content.getBackground(toIndex(char.background)).catch(() => null) : Promise.resolve(null),
       this.content.getItems(campaignId),
       this.content.getSpells(campaignId),
+      this.content.getSpellLists(),
       this.content.getFeats(),
     ]);
 
@@ -502,6 +505,7 @@ export class CharacterPlaySheetComponent {
     this.bgData.set(bg);
     this.itemsAll.set(items);
     this.spellsAll.set(spells);
+    this.spellLists.set(spellLists);
     this.featsAll.set(feats);
     this.resolvedClasses.set(resolved);
     this.loading.set(false);

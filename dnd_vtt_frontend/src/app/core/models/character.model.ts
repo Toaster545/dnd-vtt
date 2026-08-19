@@ -1,3 +1,5 @@
+import { AvatarRecipeV1 } from './avatar.model';
+
 export interface AbilityScores {
   strength: number;
   dexterity: number;
@@ -6,6 +8,8 @@ export interface AbilityScores {
   wisdom: number;
   charisma: number;
 }
+
+export type CharacterCreationStatus = 'draft' | 'complete';
 
 export type Ability = keyof AbilityScores;
 
@@ -87,9 +91,14 @@ export interface DeathSaves {
 export interface Character {
   id?: string;
   user_id?: string;
+  creation_status?: CharacterCreationStatus;
+  draft_step?: number;
   // Set once a template is cloned into a campaign (see CampaignsService.join on the backend) —
   // null/undefined for a portable template character not yet tied to any campaign.
   campaign_id?: string | null;
+  // Source books enabled for this character. PHB 2024 (XPHB) is always present; expansion
+  // codes such as EFA opt the wizard into their character options.
+  enabled_sources?: string[];
 
   // Identity (reference content by name)
   name: string;
@@ -125,6 +134,13 @@ export interface Character {
   // AC and speed stored — too many modifiers to purely compute
   armor_class: number;
   speed: number;
+
+  // Darkvision range in feet. null/undefined means "use the race's default" (see DndRace.darkvision_ft,
+  // looked up live — not flattened at creation like speed/AC, so it stays correct if the DM patches
+  // this later without having to re-run the wizard). An explicit value here — including 0 — overrides
+  // the race default; used for e.g. magic items/feats/house rules the DM grants outside of race, set
+  // via the DM's character-token-detail popover on the battle map, not the wizard.
+  darkvision_ft?: number | null;
 
   // Proficiencies — class defaults computed at runtime, player choices stored here
   skills: Record<string, boolean>;
@@ -167,6 +183,7 @@ export interface Character {
 
   avatar_url?: string;
   portrait_seed?: string; // DiceBear (Lorelei style) seed for the generated portrait shown next to the character's name
+  avatar_recipe?: AvatarRecipeV1; // Versioned, explicit avatar choices; portrait_seed remains the legacy/failure fallback
   created_at?: string;
   updated_at?: string;
 }
@@ -181,6 +198,7 @@ export function proficiencyBonus(level: number): number {
 
 export function defaultCharacter(): Omit<Character, 'name'> {
   return {
+    enabled_sources: ['XPHB'],
     race: '', class: '', level: 1, background: '', languages: ['Common'], alignment: 'True Neutral',
     ability_scores: { strength: 10, dexterity: 10, constitution: 10, intelligence: 10, wisdom: 10, charisma: 10 },
     max_hp: 10, current_hp: 10, temp_hp: 0, hit_dice_used: 0,

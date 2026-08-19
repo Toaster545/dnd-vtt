@@ -6,6 +6,7 @@ import { CharacterPlaySheetComponent } from '../character-play-sheet/character-p
 import { CharacterService } from '../../../core/services/character.service';
 import { RecentActivityService } from '../../../core/services/recent-activity.service';
 import { Character } from '../../../core/models/character.model';
+import { PlayerContextService } from '../../../core/services/player-context.service';
 
 // Routed wrapper backing /home/characters/:id — the counterpart to CharacterWizardPageComponent,
 // giving the read/play sheet its own deep-linkable URL instead of being a signal-toggled sub-view
@@ -21,6 +22,7 @@ export class CharacterSheetPageComponent implements OnInit {
   private router = inject(Router);
   private characterService = inject(CharacterService);
   private recentActivity = inject(RecentActivityService);
+  private playerContext = inject(PlayerContextService);
 
   character = signal<Character | null>(null);
 
@@ -32,7 +34,11 @@ export class CharacterSheetPageComponent implements OnInit {
 
   async ngOnInit() {
     this.recentActivity.markCharacterViewed(this.characterId);
-    this.character.set(await this.characterService.getCharacter(this.characterId));
+    const [character] = await Promise.all([
+      this.characterService.getCharacter(this.characterId),
+      this.playerContext.selectCharacter(this.characterId),
+    ]);
+    this.character.set(character);
   }
 
   onSaved(character: Character) {
@@ -44,7 +50,7 @@ export class CharacterSheetPageComponent implements OnInit {
       void this.router.navigate(['/home/characters', this.characterId, 'edit']);
       return;
     }
-    void this.router.navigate(['/home']);
+    void this.router.navigate(['/home/characters']);
   }
 
   openCampaign() {

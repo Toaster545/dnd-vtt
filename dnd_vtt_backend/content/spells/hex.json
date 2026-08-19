@@ -14,21 +14,6 @@
   "duration": "Concentration, up to 1 hour",
   "ritual": false,
   "concentration": true,
-  "classes": [
-    "Warlock"
-  ],
-  "subclasses": [
-    {
-      "class": "Warlock",
-      "subclass": "Great Old One Patron"
-    }
-  ],
-  "species": [],
-  "backgrounds": [],
-  "feats": [
-    "Fey-Touched"
-  ],
-  "other_options": [],
   "mechanics": {
     "saving_throws": [],
     "ability_checks": [],

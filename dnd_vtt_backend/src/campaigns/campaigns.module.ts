@@ -7,5 +7,6 @@ import { AuthModule } from '../auth/auth.module';
   imports: [AuthModule],
   controllers: [CampaignsController],
   providers: [CampaignsService],
+  exports: [CampaignsService],
 })
 export class CampaignsModule {}

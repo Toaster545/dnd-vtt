@@ -17,6 +17,7 @@
   } @else {
     <div class="flex flex-col h-full overflow-hidden">
       <app-encounter-toolbar
+        class="hide-in-fullscreen"
         [encounter]="encounter"
         [currentTurnToken]="currentTurnToken()"
         [togglingStatus]="togglingStatus()"
@@ -57,6 +58,7 @@
               (back)="closeCharacterSummary()"
               (colorChanged)="setCharacterSummaryTokenColor($event)"
               (openSheet)="openCharacterSheetFromSummary()"
+              (darkvisionChanged)="setCharacterSummaryDarkvision($event)"
             />
           } @else {
             <app-roster-panel

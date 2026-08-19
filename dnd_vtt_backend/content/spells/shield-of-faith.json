@@ -14,30 +14,6 @@
   "duration": "Concentration, up to 10 minutes",
   "ritual": false,
   "concentration": true,
-  "classes": [
-    "Cleric",
-    "Paladin"
-  ],
-  "subclasses": [
-    {
-      "class": "Bard",
-      "subclass": "College of Lore"
-    },
-    {
-      "class": "Cleric",
-      "subclass": "War Domain"
-    },
-    {
-      "class": "Paladin",
-      "subclass": "Oath of Devotion"
-    }
-  ],
-  "species": [],
-  "backgrounds": [],
-  "feats": [
-    "Magic Initiate"
-  ],
-  "other_options": [],
   "mechanics": {
     "saving_throws": [],
     "ability_checks": [],

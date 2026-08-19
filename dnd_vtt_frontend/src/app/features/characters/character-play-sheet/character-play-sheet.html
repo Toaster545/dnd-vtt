@@ -4,10 +4,10 @@
   <div class="flex flex-col h-full overflow-hidden">
 
     <!-- Header -->
-    <div class="flex items-center justify-between gap-4 px-6 pt-5 pb-4 border-b border-white/10 flex-shrink-0">
-      <div class="flex items-center gap-2 min-w-0">
+    <div class="sheet-header flex items-center justify-between gap-4 px-6 pt-5 pb-4 border-b border-white/10 flex-shrink-0">
+      <div class="sheet-identity flex items-center gap-2 min-w-0">
         <ng-content select="[sheetHeaderLeading]" />
-        <div class="min-w-0">
+        <div class="sheet-identity-copy min-w-0">
           <h2 class="font-brand text-2xl text-parchment m-0 leading-tight truncate">{{ char.name }}</h2>
           <p class="text-slate text-sm m-0 mt-1">
             Level {{ char.level }} {{ char.race }}
@@ -18,25 +18,33 @@
         </div>
       </div>
       @if (stats(); as s) {
-        <div class="flex items-start gap-4 flex-shrink-0">
-          <div class="flex flex-col gap-1 justify-center">
+        <div class="sheet-combat-strip flex items-start gap-4 flex-shrink-0">
+          <div class="sheet-rest-actions flex flex-col gap-1 justify-center">
             <button class="btn-outline text-xs px-2 py-1" [disabled]="persisting()" (click)="rest('short_rest')">Short Rest</button>
             <button class="btn-outline text-xs px-2 py-1" [disabled]="persisting()" (click)="rest('long_rest')">Long Rest</button>
           </div>
-          <div class="text-center">
+          <div class="sheet-stat sheet-stat-ac text-center">
             <div class="text-[10px] text-slate uppercase tracking-widest mb-0.5">AC</div>
             <div class="font-brand text-2xl leading-none text-gold">{{ s.computed_ac }}</div>
           </div>
-          <div class="text-center">
+          <div class="sheet-stat sheet-stat-temp-hp text-center">
+            <div class="text-[10px] text-slate uppercase tracking-widest mb-0.5">Temp HP</div>
+            <div class="font-brand text-2xl leading-none text-parchment">{{ char.temp_hp || 0 }}</div>
+          </div>
+          <div class="sheet-stat sheet-stat-conditions text-center conditions-summary">
+            <div class="text-[10px] text-slate uppercase tracking-widest mb-0.5">Conditions</div>
+            <div class="text-xs text-parchment max-w-40 truncate">{{ char.conditions?.length ? char.conditions.join(', ') : 'None' }}</div>
+          </div>
+          <div class="sheet-stat sheet-stat-initiative text-center">
             <div class="text-[10px] text-slate uppercase tracking-widest mb-0.5">Initiative</div>
             <div class="font-brand text-2xl leading-none text-gold">{{ fmt(s.initiative) }}</div>
           </div>
-          <div class="text-center">
+          <div class="sheet-stat sheet-stat-proficiency text-center">
             <div class="text-[10px] text-slate uppercase tracking-widest mb-0.5">Prof. Bonus</div>
             <div class="font-brand text-2xl leading-none text-gold">+{{ s.proficiency_bonus }}</div>
           </div>
-          <div class="flex items-center gap-1.5">
-            <div class="flex flex-col items-center gap-0.5">
+          <div class="sheet-hp-control flex items-center gap-1.5">
+            <div class="sheet-hp-adjuster flex flex-col items-center gap-0.5">
               <button class="btn-icon w-5 h-5 text-xs" [disabled]="!hpAdjustAmount() || char.current_hp >= char.max_hp || persisting()"
                 (click)="applyHpDelta(hpAdjustAmount())" matTooltip="Heal">+</button>
               <input class="field-input w-10 text-center text-xs py-0.5 px-1" type="number" min="0"
@@ -44,11 +52,11 @@
               <button class="btn-icon w-5 h-5 text-xs" [disabled]="!hpAdjustAmount() || char.current_hp <= 0 || persisting()"
                 (click)="applyHpDelta(-hpAdjustAmount())" matTooltip="Damage">−</button>
             </div>
-            <div class="text-center">
+            <div class="sheet-hp-summary text-center">
               <div class="text-[10px] text-slate uppercase tracking-widest mb-0.5">Hit Points</div>
               <div class="font-brand text-2xl leading-none" [class]="hpPercent(char) <= 25 ? 'text-danger' : 'text-parchment'">{{ char.current_hp }}</div>
               <div class="text-xs text-slate mt-0.5">/ {{ char.max_hp }}</div>
-              <div class="w-16 h-1.5 bg-white/10 rounded-full mt-1 overflow-hidden">
+              <div class="sheet-hp-bar w-16 h-1.5 bg-white/10 rounded-full mt-1 overflow-hidden">
                 <div class="h-full rounded-full transition-all" [class]="hpColor(char)" [style.width.%]="hpPercent(char)"></div>
               </div>
             </div>
@@ -84,7 +92,7 @@
     </div>
 
     <!-- Tabs -->
-    <div class="flex border-b border-white/10 overflow-x-auto flex-shrink-0">
+    <div class="sheet-tabs flex border-b border-white/10 overflow-x-auto flex-shrink-0">
       <button
         class="flex items-center gap-2 px-5 py-3.5 text-sm font-medium whitespace-nowrap border-b-2 transition-colors border-0 cursor-pointer"
         [class]="activeTab() === 'stats' ? 'border-gold text-gold' : 'border-transparent text-slate hover:text-parchment'"
@@ -127,7 +135,7 @@
       </button>
     </div>
 
-    <div class="flex-1 overflow-y-auto p-6">
+    <div class="sheet-body flex-1 overflow-y-auto p-6">
       @switch (activeTab()) {
 
         <!-- STATS -->

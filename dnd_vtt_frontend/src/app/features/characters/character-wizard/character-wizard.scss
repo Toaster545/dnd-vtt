@@ -3,3 +3,57 @@
   flex-direction: column;
   min-height: 0;
 }
+
+@media (max-width: 1023px) {
+  .wizard-header {
+    display: grid;
+    grid-template-columns: 44px 44px minmax(0, 1fr) 3.75rem;
+    align-items: end;
+    gap: .35rem;
+    padding: .45rem .5rem .5rem;
+  }
+
+  .wizard-header .field {
+    min-width: 0;
+  }
+
+  .wizard-back-button { grid-column: 1; }
+  .wizard-portrait-field { grid-column: 2; }
+  .wizard-name-field { grid-column: 3; width: 100%; max-width: none; }
+  .wizard-level-field { grid-column: 4; width: 100%; }
+
+  .wizard-header .field-label {
+    font-size: .55rem;
+    line-height: 1;
+    letter-spacing: .04em;
+  }
+
+  .wizard-header .field-input {
+    min-width: 0;
+    padding-inline: .5rem;
+    font-size: .72rem;
+  }
+
+  .wizard-sources-button,
+  .wizard-sheet-button {
+    grid-row: 2;
+    width: 100%;
+    margin-left: 0;
+    padding: .3rem .5rem;
+    font-size: .68rem;
+  }
+
+  .wizard-sources-button { grid-column: 1 / 3; }
+  .wizard-sheet-button { grid-column: 3 / 5; }
+
+  .wizard-tabs button {
+    flex: 0 0 auto;
+    padding: .75rem;
+  }
+
+  .wizard-main { display: block; overflow-y: auto; }
+  .wizard-step-pane { width: 100%; overflow: visible; padding: .75rem; }
+  .wizard-preview { display: none; }
+  .wizard-footer { padding: .5rem .75rem calc(.5rem + env(safe-area-inset-bottom)); gap: .5rem; }
+  .wizard-footer > div { gap: .25rem; }
+}

@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ForbiddenException,
   Injectable,
   NotFoundException,
@@ -11,6 +12,29 @@ import { CreateCampaignDto } from './dto/create-campaign.dto';
 import { JoinCampaignDto } from './dto/join-campaign.dto';
 import { UpdateCampaignDto } from './dto/update-campaign.dto';
 import type { RequestUser } from '../common/current-user.decorator';
+import {
+  DEFAULT_PLAYER_SOURCES,
+  EBERRON_SOURCE_CODE,
+  disallowedSources,
+  normalizePlayerSources,
+  sourceName,
+} from '../content/content-sources';
+import { parseAvatarRecipe } from '../common/avatar-recipe';
+
+function stringArray(value: unknown): string[] {
+  return Array.isArray(value)
+    ? value.filter((entry): entry is string => typeof entry === 'string')
+    : [];
+}
+
+function recordArray(value: unknown): Record<string, unknown>[] {
+  return Array.isArray(value)
+    ? value.filter(
+        (entry): entry is Record<string, unknown> =>
+          !!entry && typeof entry === 'object' && !Array.isArray(entry),
+      )
+    : [];
+}
 
 @Injectable()
 export class CampaignsService {
@@ -29,9 +53,12 @@ export class CampaignsService {
       ).rows.length > 0
     );
 
+    const data = JSON.stringify({
+      allowed_sources: normalizePlayerSources(dto.allowed_sources),
+    });
     await this.db.execute(
-      `INSERT INTO campaigns (id, dm_id, name, description, join_code) VALUES (?, ?, ?, ?, ?)`,
-      [id, dmId, dto.name, dto.description ?? '', joinCode],
+      `INSERT INTO campaigns (id, dm_id, name, description, join_code, data) VALUES (?, ?, ?, ?, ?, ?)`,
+      [id, dmId, dto.name, dto.description ?? '', joinCode, data],
     );
     return this.findOne(id, { id: dmId, role: 'admin' } as RequestUser);
   }
@@ -106,14 +133,118 @@ export class CampaignsService {
       [id],
     );
 
+    const deserializedCampaign = this.deserialize(campaign);
+    const allowedSources = deserializedCampaign.allowed_sources;
     return {
-      ...this.deserialize(campaign),
+      ...deserializedCampaign,
       sessions: sessions.rows,
       // The DM manages the full roster regardless of visibility; a player sees everyone the DM
       // has left visible, plus always their own row (so they can still reach their own character).
       members: members.rows
-        .map((row) => this.deserializeMember(row, { id: user.id, isOwner }))
+        .map((row) =>
+          this.deserializeMember(row, { id: user.id, isOwner }, allowedSources),
+        )
         .filter((m) => isOwner || m.visible_to_party || m.user_id === user.id),
+    };
+  }
+
+  async setCurrentSession(
+    campaignId: string,
+    dmId: string,
+    sessionId: string | null,
+  ) {
+    const campaign = await this.getCampaignRow(campaignId);
+    if (campaign.dm_id !== dmId) throw new ForbiddenException();
+    if (sessionId) {
+      const session = await this.db.execute(
+        `SELECT id FROM sessions WHERE id = ? AND campaign_id = ?`,
+        [sessionId, campaignId],
+      );
+      if (!session.rows[0]) {
+        throw new BadRequestException('Session does not belong to campaign');
+      }
+    }
+    await this.db.execute(
+      `UPDATE campaigns SET current_session_id = ?, updated_at = ? WHERE id = ?`,
+      [sessionId, new Date().toISOString(), campaignId],
+    );
+    return this.getCurrentContext(campaignId, {
+      id: dmId,
+      role: 'admin',
+    } as RequestUser);
+  }
+
+  async getCurrentContext(campaignId: string, user: RequestUser) {
+    const campaign = await this.getCampaignRow(campaignId);
+    const isOwner = campaign.dm_id === user.id;
+    if (!isOwner) await this.assertActiveMember(campaignId, user.id);
+
+    const sessionId = campaign.current_session_id as string | null;
+    if (!sessionId) {
+      return {
+        campaign_id: campaignId,
+        current_session: null,
+        current_encounter: null,
+        current_map: null,
+        updated_at: campaign.updated_at,
+      };
+    }
+
+    const sessionResult = await this.db.execute(
+      `SELECT * FROM sessions WHERE id = ? AND campaign_id = ?`,
+      [sessionId, campaignId],
+    );
+    const session = sessionResult.rows[0];
+    if (!session || (!isOwner && !session.visible_to_players)) {
+      return {
+        campaign_id: campaignId,
+        current_session: null,
+        current_encounter: null,
+        current_map: null,
+        updated_at: campaign.updated_at,
+      };
+    }
+
+    const encounterResult = await this.db.execute(
+      isOwner
+        ? `SELECT * FROM encounters WHERE session_id = ? AND status = 'active' ORDER BY updated_at DESC LIMIT 1`
+        : `SELECT * FROM encounters WHERE session_id = ? AND status = 'active' AND visible_to_players = 1 ORDER BY updated_at DESC LIMIT 1`,
+      [sessionId],
+    );
+    const encounter = encounterResult.rows[0];
+    const mapResult = encounter?.map_id
+      ? await this.db.execute(
+          `SELECT id, campaign_id, name, grid_size, visibility_revision FROM battle_maps WHERE id = ?`,
+          [encounter.map_id],
+        )
+      : null;
+
+    return {
+      campaign_id: campaignId,
+      current_session: {
+        id: session.id,
+        campaign_id: session.campaign_id,
+        name: session.name,
+        description: session.description,
+        background_url: session.background_url ?? null,
+        visible_to_players: !!session.visible_to_players,
+        created_at: session.created_at,
+      },
+      current_encounter: encounter
+        ? {
+            id: encounter.id,
+            session_id: encounter.session_id,
+            name: encounter.name,
+            map_id: encounter.map_id ?? null,
+            status: encounter.status,
+            summary: encounter.summary ?? '',
+            current_turn_token_id: encounter.current_turn_token_id ?? null,
+            round_number: Number(encounter.round_number ?? 1),
+            updated_at: encounter.updated_at,
+          }
+        : null,
+      current_map: mapResult?.rows[0] ?? null,
+      updated_at: encounter?.updated_at ?? campaign.updated_at,
     };
   }
 
@@ -130,6 +261,20 @@ export class CampaignsService {
     if (dto.background_url !== undefined) {
       fields.push('background_url = ?');
       args.push(dto.background_url);
+    }
+    if (dto.allowed_sources !== undefined) {
+      const allowedSources = normalizePlayerSources(dto.allowed_sources);
+      const data = this.db.parseJson<Record<string, unknown>>(
+        campaign.data as string,
+        {},
+      );
+      fields.push('data = ?');
+      args.push(
+        JSON.stringify({
+          ...data,
+          allowed_sources: allowedSources,
+        }),
+      );
     }
     if (fields.length > 0) {
       args.push(id);
@@ -187,6 +332,11 @@ export class CampaignsService {
     if (source.campaign_id)
       throw new ForbiddenException('That character is already a campaign copy');
 
+    const compatibility = this.characterSourceCompatibility(source, campaign);
+    if (!compatibility.compatible) {
+      throw new BadRequestException(compatibility.reason);
+    }
+
     // There's no standalone "campaign level" column — the campaign's level is whatever the
     // existing party's character copies are already at (kept in sync by setPartyLevel). A
     // freshly joining character should start there too rather than at its own source level, so
@@ -229,6 +379,32 @@ export class CampaignsService {
     );
 
     return this.findOne(campaign.id as string, user);
+  }
+
+  async previewJoin(userId: string, joinCode: string) {
+    const campaignResult = await this.db.execute(
+      'SELECT * FROM campaigns WHERE join_code = ?',
+      [joinCode.trim().toUpperCase()],
+    );
+    const campaign = campaignResult.rows[0];
+    if (!campaign) throw new NotFoundException('No campaign with that code');
+
+    const characters = await this.db.execute(
+      `SELECT * FROM characters
+       WHERE user_id = ? AND campaign_id IS NULL
+       ORDER BY created_at DESC`,
+      [userId],
+    );
+    const campaignData = this.deserialize(campaign);
+    return {
+      campaign_id: campaign.id,
+      campaign_name: campaign.name,
+      allowed_sources: campaignData.allowed_sources,
+      characters: characters.rows.map((character) => ({
+        character_id: character.id,
+        ...this.characterSourceCompatibility(character, campaign),
+      })),
+    };
   }
 
   // Full membership list including removed rows — DM-only, for the member-management view.
@@ -384,6 +560,7 @@ export class CampaignsService {
   private deserializeMember(
     row: Record<string, unknown>,
     viewer: { id: string; isOwner: boolean },
+    allowedSources: string[],
   ) {
     const data = this.db.parseJson<Record<string, unknown>>(
       row.character_data as string,
@@ -394,6 +571,10 @@ export class CampaignsService {
     // race/class plus anyone who's opted in; the DM always sees everyone's regardless.
     const revealRaceClass =
       viewer.isOwner || row.user_id === viewer.id || showRaceClass;
+    const compatibility = this.sourceCompatibility(
+      this.enabledSources(data, row.character_class),
+      allowedSources,
+    );
     return {
       user_id: row.user_id,
       username: row.username,
@@ -407,23 +588,85 @@ export class CampaignsService {
       character_current_hp: data.current_hp ?? null,
       character_armor_class: data.armor_class ?? null,
       character_portrait_seed: data.portrait_seed ?? null,
+      character_avatar_recipe: parseAvatarRecipe(data.avatar_recipe),
       show_race_class: showRaceClass,
       visible_to_party: !!row.visible_to_party,
+      source_compatible: compatibility.compatible,
+      source_incompatibility_reason: compatibility.reason,
     };
   }
 
   private deserialize(row: Record<string, unknown>) {
-    const data = this.db.parseJson(row.data as string, {});
+    const data = this.db.parseJson<Record<string, unknown>>(
+      row.data as string,
+      {},
+    );
     return {
-      ...(data as Record<string, unknown>),
+      ...data,
+      allowed_sources: normalizePlayerSources(data.allowed_sources),
       id: row.id,
       dm_id: row.dm_id,
       name: row.name,
       description: row.description,
       join_code: row.join_code,
       background_url: row.background_url ?? null,
+      current_session_id: row.current_session_id ?? null,
       created_at: row.created_at,
       updated_at: row.updated_at,
+    };
+  }
+
+  private enabledSources(
+    data: Record<string, unknown>,
+    characterClass: unknown,
+  ): string[] {
+    const enabled = Array.isArray(data.enabled_sources)
+      ? stringArray(data.enabled_sources)
+      : [...DEFAULT_PLAYER_SOURCES];
+    const classes = recordArray(data.classes);
+    const spellEntries = [
+      ...recordArray(data.spells),
+      ...recordArray(data.granted_spells),
+    ];
+    if (
+      String(characterClass).toLowerCase() === 'artificer' ||
+      classes.some(
+        (entry) => String(entry.name).toLowerCase() === 'artificer',
+      ) ||
+      spellEntries.some((entry) => entry.spellIndex === 'homunculus-servant')
+    ) {
+      enabled.push(EBERRON_SOURCE_CODE);
+    }
+    return normalizePlayerSources(enabled);
+  }
+
+  private characterSourceCompatibility(
+    character: Record<string, unknown>,
+    campaign: Record<string, unknown>,
+  ) {
+    const characterData = this.db.parseJson<Record<string, unknown>>(
+      character.data as string,
+      {},
+    );
+    const campaignData = this.db.parseJson<Record<string, unknown>>(
+      campaign.data as string,
+      {},
+    );
+    return this.sourceCompatibility(
+      this.enabledSources(characterData, character.class),
+      normalizePlayerSources(campaignData.allowed_sources),
+    );
+  }
+
+  private sourceCompatibility(enabled: unknown, allowed: unknown) {
+    const disallowed = disallowedSources(enabled, allowed);
+    return {
+      compatible: disallowed.length === 0,
+      disallowed_sources: disallowed,
+      reason:
+        disallowed.length === 0
+          ? null
+          : `This campaign doesn't allow ${disallowed.map(sourceName).join(', ')}. Remove character options from that source or ask the DM to allow it.`,
     };
   }
 }

@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ConflictException,
   ForbiddenException,
   NotFoundException,
@@ -62,6 +63,74 @@ describe('CharactersService', () => {
       class: 'Wizard',
       level: 3,
     });
+  });
+
+  it('autosaves and resumes a draft, then validates completion', async () => {
+    const draft = await service.createDraft(ownerId, {
+      name: 'Aria',
+      draft_step: 2,
+    });
+    expect(draft).toMatchObject({ creation_status: 'draft', draft_step: 2 });
+    const updated = await service.updateDraft(draft.id as string, owner, {
+      ...draft,
+      race: 'Elf',
+      class: 'Wizard',
+      draft_step: 4,
+    });
+    expect(updated).toMatchObject({ creation_status: 'draft', draft_step: 4 });
+    await expect(
+      service.completeDraft(draft.id as string, owner),
+    ).rejects.toThrow(BadRequestException);
+  });
+
+  it('persists a validated avatar recipe and rejects malformed recipes', async () => {
+    const avatarRecipe = {
+      schemaVersion: 1,
+      styleId: 'lorelei',
+      styleVersion: 1,
+      seed: 'aria-avatar',
+      parts: {
+        face: ['variant01'],
+        ears: [],
+        eyes: ['variant02'],
+        eyebrows: ['variant03'],
+        nose: ['variant04'],
+        mouth: ['happy05'],
+        hair: ['variant06'],
+        horns: [],
+        facialHair: [],
+        faceDetails: ['freckles'],
+        scars: [],
+        tattoos: [],
+        piercings: [],
+        accessories: ['glasses:variant01'],
+      },
+      colors: {
+        skin: '#f7d7c4',
+        hair: '#38251c',
+        eyes: '#39704e',
+        eyebrows: '#38251c',
+        mouth: '#7d2731',
+        details: '#68432c',
+        piercings: '#c9a227',
+        accessories: '#c9a227',
+      },
+    };
+    const created = await service.create(ownerId, {
+      name: 'Aria',
+      avatar_recipe: avatarRecipe,
+    });
+    expect(created.avatar_recipe).toEqual(avatarRecipe);
+
+    await expect(
+      service.update(created.id as string, owner, {
+        ...created,
+        avatar_recipe: {
+          ...avatarRecipe,
+          colors: { ...avatarRecipe.colors, skin: 'javascript:x' },
+        },
+      }),
+    ).rejects.toThrow(BadRequestException);
   });
 
   it('rejects reading a character owned by someone else', async () => {

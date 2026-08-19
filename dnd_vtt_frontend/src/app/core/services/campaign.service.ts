@@ -2,7 +2,8 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import { Campaign, CampaignHub, CampaignMember } from '../models/campaign.model';
+import { Campaign, CampaignHub, CampaignJoinPreview, CampaignMember } from '../models/campaign.model';
+import { PlayerCurrentContext } from '../models/player.model';
 
 const API = environment.apiUrl;
 
@@ -18,11 +19,23 @@ export class CampaignService {
     return firstValueFrom(this.http.get<CampaignHub>(`${API}/campaigns/${id}`));
   }
 
-  create(name: string, description: string): Promise<CampaignHub> {
-    return firstValueFrom(this.http.post<CampaignHub>(`${API}/campaigns`, { name, description }));
+  getCurrentContext(id: string): Promise<PlayerCurrentContext> {
+    return firstValueFrom(this.http.get<PlayerCurrentContext>(`${API}/campaigns/${id}/current-context`));
   }
 
-  update(id: string, patch: { description?: string; background_url?: string | null }): Promise<CampaignHub> {
+  setCurrentSession(id: string, sessionId: string | null): Promise<PlayerCurrentContext> {
+    return firstValueFrom(
+      this.http.patch<PlayerCurrentContext>(`${API}/campaigns/${id}/current-session`, { session_id: sessionId }),
+    );
+  }
+
+  create(name: string, description: string, allowedSources: string[]): Promise<CampaignHub> {
+    return firstValueFrom(this.http.post<CampaignHub>(`${API}/campaigns`, {
+      name, description, allowed_sources: allowedSources,
+    }));
+  }
+
+  update(id: string, patch: { description?: string; background_url?: string | null; allowed_sources?: string[] }): Promise<CampaignHub> {
     return firstValueFrom(this.http.patch<CampaignHub>(`${API}/campaigns/${id}`, patch));
   }
 
@@ -39,6 +52,12 @@ export class CampaignService {
   join(joinCode: string, characterId: string): Promise<CampaignHub> {
     return firstValueFrom(
       this.http.post<CampaignHub>(`${API}/campaigns/join`, { joinCode, characterId }),
+    );
+  }
+
+  previewJoin(joinCode: string): Promise<CampaignJoinPreview> {
+    return firstValueFrom(
+      this.http.get<CampaignJoinPreview>(`${API}/campaigns/join-preview/${joinCode.trim().toUpperCase()}`),
     );
   }
 

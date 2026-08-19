@@ -14,22 +14,6 @@
   "duration": "Instantaneous",
   "ritual": false,
   "concentration": false,
-  "classes": [
-    "Cleric",
-    "Druid",
-    "Sorcerer",
-    "Wizard"
-  ],
-  "subclasses": [
-    {
-      "class": "Wizard",
-      "subclass": "Evoker"
-    }
-  ],
-  "species": [],
-  "backgrounds": [],
-  "feats": [],
-  "other_options": [],
   "mechanics": {
     "saving_throws": [
       "constitution"

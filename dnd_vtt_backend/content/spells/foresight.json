@@ -14,22 +14,6 @@
   "duration": "8 hours",
   "ritual": false,
   "concentration": false,
-  "classes": [
-    "Bard",
-    "Druid",
-    "Warlock",
-    "Wizard"
-  ],
-  "subclasses": [
-    {
-      "class": "Wizard",
-      "subclass": "Diviner"
-    }
-  ],
-  "species": [],
-  "backgrounds": [],
-  "feats": [],
-  "other_options": [],
   "mechanics": {
     "saving_throws": [],
     "ability_checks": [],

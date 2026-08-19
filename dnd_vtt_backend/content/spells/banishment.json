@@ -14,35 +14,6 @@
   "duration": "Concentration, up to 1 minute",
   "ritual": false,
   "concentration": true,
-  "classes": [
-    "Cleric",
-    "Paladin",
-    "Sorcerer",
-    "Warlock",
-    "Wizard"
-  ],
-  "subclasses": [
-    {
-      "class": "Fighter",
-      "subclass": "Eldritch Knight"
-    },
-    {
-      "class": "Paladin",
-      "subclass": "Oath of Vengeance"
-    },
-    {
-      "class": "Rogue",
-      "subclass": "Arcane Trickster"
-    },
-    {
-      "class": "Wizard",
-      "subclass": "Abjurer"
-    }
-  ],
-  "species": [],
-  "backgrounds": [],
-  "feats": [],
-  "other_options": [],
   "mechanics": {
     "saving_throws": [
       "charisma"

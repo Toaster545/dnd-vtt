@@ -12,24 +12,6 @@
   "duration": "Concentration, up to 10 minutes",
   "ritual": false,
   "concentration": true,
-  "classes": [
-    "Druid",
-    "Wizard"
-  ],
-  "subclasses": [
-    {
-      "class": "Fighter",
-      "subclass": "Eldritch Knight"
-    },
-    {
-      "class": "Rogue",
-      "subclass": "Arcane Trickster"
-    }
-  ],
-  "species": [],
-  "backgrounds": [],
-  "feats": [],
-  "other_options": [],
   "mechanics": {
     "saving_throws": [],
     "ability_checks": [],

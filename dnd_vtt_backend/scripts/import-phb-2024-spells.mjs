@@ -12,15 +12,17 @@ const SCHOOL_NAMES = {
   T: 'Transmutation',
 };
 
+const SUPPLEMENTAL_SPELL_FILES = new Set(['homunculus-servant.json']);
+
 function usage() {
   console.error(
-    'Usage: node scripts/import-phb-2024-spells.mjs <spells-xphb.json> <srd-5.2-spells.json> <spell-source-lookup.json>',
+    'Usage: node scripts/import-phb-2024-spells.mjs <spells-xphb.json> <srd-5.2-spells.json>',
   );
   process.exit(1);
 }
 
-const [, , phbPath, srdPath, lookupPath] = process.argv;
-if (!phbPath || !srdPath || !lookupPath) usage();
+const [, , phbPath, srdPath] = process.argv;
+if (!phbPath || !srdPath) usage();
 
 function loadJson(path) {
   return JSON.parse(readFileSync(resolve(path), 'utf8'));
@@ -168,46 +170,6 @@ function uniqueSorted(values) {
   return [...new Set(values)].sort((a, b) => a.localeCompare(b));
 }
 
-function phbAccessMetadata(sourceLookup = {}) {
-  const classes = Object.keys(sourceLookup.class?.XPHB ?? {});
-
-  const subclasses = [];
-  for (const [className, classSources] of Object.entries(
-    sourceLookup.subclass?.XPHB ?? {},
-  )) {
-    for (const [classSource, subclassEntries] of Object.entries(classSources)) {
-      if (classSource !== 'XPHB') continue;
-      for (const [subclassName, details] of Object.entries(subclassEntries)) {
-        const variants = details?.subSubclasses?.length
-          ? details.subSubclasses
-          : [undefined];
-        for (const variant of variants) {
-          subclasses.push({
-            class: className,
-            subclass: details?.name ?? subclassName,
-            ...(variant ? { variant } : {}),
-          });
-        }
-      }
-    }
-  }
-
-  return {
-    classes: uniqueSorted(classes),
-    subclasses: subclasses.sort((a, b) =>
-      `${a.class}:${a.subclass}:${a.variant ?? ''}`.localeCompare(
-        `${b.class}:${b.subclass}:${b.variant ?? ''}`,
-      ),
-    ),
-    species: uniqueSorted(Object.keys(sourceLookup.race?.XPHB ?? {})),
-    backgrounds: uniqueSorted(Object.keys(sourceLookup.background?.XPHB ?? {})),
-    feats: uniqueSorted(Object.keys(sourceLookup.feat?.XPHB ?? {})),
-    other_options: uniqueSorted(
-      Object.keys(sourceLookup.optionalfeature?.XPHB ?? {}),
-    ),
-  };
-}
-
 function resolveSrdSpell(phbSpell, srdByName) {
   if (!phbSpell.srd52) return null;
   const srdName =
@@ -222,7 +184,6 @@ function resolveSrdSpell(phbSpell, srdByName) {
 
 const phbDocument = loadJson(phbPath);
 const srdSpells = loadJson(srdPath);
-const sourceLookup = loadJson(lookupPath);
 const referenceOnlySummaries = loadJson(
   resolve('scripts', 'reference-only-spell-summaries.json'),
 );
@@ -243,15 +204,15 @@ mkdirSync(manifestDir, { recursive: true });
 const generated = [];
 for (const phbSpell of phbSpells) {
   const index = slugify(phbSpell.name);
-  const lookup = sourceLookup.xphb?.[phbSpell.name.toLowerCase()] ?? {};
-  const access = phbAccessMetadata(lookup);
   const srdMatch = resolveSrdSpell(phbSpell, srdByName);
   const rulesTextAvailable = Boolean(srdMatch);
   const description = rulesTextAvailable
     ? srdMatch.spell.description
     : referenceOnlySummaries[index];
   if (!description) {
-    throw new Error(`Missing reference-only rules summary for ${phbSpell.name} (${index})`);
+    throw new Error(
+      `Missing reference-only rules summary for ${phbSpell.name} (${index})`,
+    );
   }
 
   const record = {
@@ -277,12 +238,6 @@ for (const phbSpell of phbSpells) {
     concentration: Boolean(
       phbSpell.duration?.some((duration) => duration.concentration),
     ),
-    classes: access.classes,
-    subclasses: access.subclasses,
-    species: access.species,
-    backgrounds: access.backgrounds,
-    feats: access.feats,
-    other_options: access.other_options,
     mechanics: spellMechanics(phbSpell),
     description,
     ...(srdMatch?.spell.higherLevelSlot
@@ -326,7 +281,12 @@ if (duplicateIndexes.length)
 
 const generatedNames = new Set(generated.map((spell) => `${spell.index}.json`));
 const staleFiles = readdirSync(outputDir)
-  .filter((file) => file.endsWith('.json') && !generatedNames.has(file))
+  .filter(
+    (file) =>
+      file.endsWith('.json') &&
+      !generatedNames.has(file) &&
+      !SUPPLEMENTAL_SPELL_FILES.has(file),
+  )
   .map((file) => basename(file));
 if (staleFiles.length) {
   throw new Error(

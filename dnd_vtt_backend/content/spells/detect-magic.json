@@ -12,46 +12,6 @@
   "duration": "Concentration, up to 10 minutes",
   "ritual": true,
   "concentration": true,
-  "classes": [
-    "Bard",
-    "Cleric",
-    "Druid",
-    "Paladin",
-    "Ranger",
-    "Sorcerer",
-    "Warlock",
-    "Wizard"
-  ],
-  "subclasses": [
-    {
-      "class": "Bard",
-      "subclass": "College of Lore"
-    },
-    {
-      "class": "Fighter",
-      "subclass": "Eldritch Knight"
-    },
-    {
-      "class": "Rogue",
-      "subclass": "Arcane Trickster"
-    },
-    {
-      "class": "Wizard",
-      "subclass": "Diviner"
-    }
-  ],
-  "species": [
-    "Elf"
-  ],
-  "backgrounds": [],
-  "feats": [
-    "Fey-Touched",
-    "Magic Initiate",
-    "Ritual Caster"
-  ],
-  "other_options": [
-    "Pact of the Tome"
-  ],
   "mechanics": {
     "saving_throws": [],
     "ability_checks": [],

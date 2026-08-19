@@ -46,11 +46,6 @@ const DEFAULT_SPELL_SOURCE = {
 function withSpellDefaults(dto: CreateSpellDto) {
   return {
     ...dto,
-    subclasses: dto.subclasses ?? [],
-    species: dto.species ?? [],
-    backgrounds: dto.backgrounds ?? [],
-    feats: dto.feats ?? [],
-    other_options: dto.other_options ?? [],
     mechanics: { ...DEFAULT_SPELL_MECHANICS, ...dto.mechanics },
     source: { ...DEFAULT_SPELL_SOURCE, ...dto.source },
   };
@@ -59,6 +54,10 @@ function withSpellDefaults(dto: CreateSpellDto) {
 @Controller('content')
 export class ContentController {
   constructor(private readonly content: ContentService) {}
+
+  @Get('sources') getSources() {
+    return this.content.getSources();
+  }
 
   @Get('classes') getClasses() {
     return this.content.getClasses();
@@ -169,6 +168,10 @@ export class ContentController {
   }
 
   // ── Spells ────────────────────────────────────────────────────────────────────────────────
+  @Get('spell-lists') getSpellLists() {
+    return this.content.getSpellLists();
+  }
+
   @Get('spells')
   @UseGuards(JwtGuard)
   getSpells(

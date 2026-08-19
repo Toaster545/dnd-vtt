@@ -16,30 +16,6 @@
   "duration": "Concentration, up to 1 hour",
   "ritual": false,
   "concentration": true,
-  "classes": [
-    "Druid",
-    "Ranger",
-    "Sorcerer",
-    "Wizard"
-  ],
-  "subclasses": [
-    {
-      "class": "Fighter",
-      "subclass": "Eldritch Knight"
-    },
-    {
-      "class": "Paladin",
-      "subclass": "Oath of the Ancients"
-    },
-    {
-      "class": "Rogue",
-      "subclass": "Arcane Trickster"
-    }
-  ],
-  "species": [],
-  "backgrounds": [],
-  "feats": [],
-  "other_options": [],
   "mechanics": {
     "saving_throws": [],
     "ability_checks": [],

@@ -12,25 +12,6 @@
   "duration": "Concentration, up to 1 minute",
   "ritual": false,
   "concentration": true,
-  "classes": [
-    "Druid",
-    "Ranger"
-  ],
-  "subclasses": [
-    {
-      "class": "Druid",
-      "subclass": "Circle of the Land",
-      "variant": "Temperate Land"
-    },
-    {
-      "class": "Paladin",
-      "subclass": "Oath of the Ancients"
-    }
-  ],
-  "species": [],
-  "backgrounds": [],
-  "feats": [],
-  "other_options": [],
   "mechanics": {
     "saving_throws": [],
     "ability_checks": [],

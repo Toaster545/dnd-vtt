@@ -5,71 +5,130 @@ import {
   MessageBody,
   ConnectedSocket,
   OnGatewayDisconnect,
+  OnGatewayConnection,
+  OnGatewayInit,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
+import { DatabaseService } from '../common/database.service';
+import { SocketAuthService } from '../auth/socket-auth.service';
+import { AvatarRecipeV1, parseAvatarRecipe } from '../common/avatar-recipe';
 
 interface PresentPlayer {
   socketId: string;
   username: string;
   characterId: string;
   characterName: string;
-  // Self-reported by the announcing player's own client (same trust level as that player already
-  // editing their own sheet) — lets fellow players see each other's HP on the map without opening
-  // up character reads across accounts the way the DM's admin-only endpoint does.
+  // Identity, health, and portrait data come from the authorized server record rather than the
+  // announcing client's payload.
   hp?: number;
   max_hp?: number;
   portraitSeed?: string;
+  avatarRecipe?: AvatarRecipeV1;
 }
 
 // Tracks which players currently have an encounter open (for the DM's "Players" roster section) —
 // purely in-memory/ephemeral, same as `TokensGateway`'s rooms; there's nothing to persist since
 // "who's here right now" only means anything while sockets are actually connected.
 @WebSocketGateway({
-  cors: { origin: process.env.FRONTEND_URL ?? 'http://localhost:4200' },
+  cors: {
+    origin: (
+      process.env.CORS_ORIGINS ??
+      'http://localhost:4200,https://dnd.mathomelab.ca,https://localhost,capacitor://localhost'
+    )
+      .split(',')
+      .map((origin) => origin.trim()),
+    credentials: true,
+  },
 })
-export class EncounterPresenceGateway implements OnGatewayDisconnect {
+export class EncounterPresenceGateway
+  implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
+{
   @WebSocketServer() server: Server;
 
   private presence = new Map<string, Map<string, PresentPlayer>>();
 
+  constructor(
+    private db: DatabaseService,
+    private socketAuth: SocketAuthService,
+  ) {}
+
+  afterInit(server: Server) {
+    this.socketAuth.install(server);
+  }
+
+  async handleConnection(client: Socket) {
+    const user = this.socketAuth.user(client);
+    const campaigns = await this.db.execute(
+      `SELECT id FROM campaigns WHERE dm_id = ?
+       UNION
+       SELECT campaign_id AS id FROM campaign_members
+       WHERE user_id = ? AND status = 'active'`,
+      [user.id, user.id],
+    );
+    for (const row of campaigns.rows) {
+      if (typeof row.id === 'string') void client.join(`campaign:${row.id}`);
+    }
+  }
+
   // DM side: join the room to receive broadcasts, without appearing in the roster themselves.
   @SubscribeMessage('watch_encounter_presence')
-  handleWatch(
+  async handleWatch(
     @ConnectedSocket() client: Socket,
     @MessageBody() encounterId: string,
   ) {
-    void client.join(`encounter-presence:${encounterId}`);
+    await this.assertEncounterAccess(client, encounterId);
+    await client.join(`encounter-presence:${encounterId}`);
     this.broadcast(encounterId);
   }
 
   // Player side: joining the room AND registering as present.
   @SubscribeMessage('announce_presence')
-  handleAnnounce(
+  async handleAnnounce(
     @ConnectedSocket() client: Socket,
     @MessageBody()
     data: {
       encounterId: string;
-      username: string;
       characterId: string;
-      characterName: string;
-      hp?: number;
-      max_hp?: number;
-      portraitSeed?: string;
     },
   ) {
-    void client.join(`encounter-presence:${data.encounterId}`);
+    const user = this.socketAuth.user(client);
+    const encounter = await this.assertEncounterAccess(
+      client,
+      data.encounterId,
+      true,
+    );
+    const characterResult = await this.db.execute(
+      `SELECT ch.*, p.username
+       FROM campaign_members cm
+       JOIN characters ch ON ch.id = cm.character_id
+       JOIN profiles p ON p.id = cm.user_id
+       WHERE cm.campaign_id = ? AND cm.user_id = ? AND cm.character_id = ?
+         AND cm.status = 'active'`,
+      [encounter.campaign_id, user.id, data.characterId],
+    );
+    const character = characterResult.rows[0];
+    if (!character) throw new Error('Character is not active in this campaign');
+    const characterData = this.db.parseJson<Record<string, unknown>>(
+      character.data as string,
+      {},
+    );
+    await client.join(`encounter-presence:${data.encounterId}`);
     (client.data as { presenceEncounterId?: string }).presenceEncounterId =
       data.encounterId;
     if (!this.presence.has(data.encounterId))
       this.presence.set(data.encounterId, new Map());
     this.presence.get(data.encounterId)!.set(client.id, {
       socketId: client.id,
-      username: data.username,
+      username: character.username as string,
       characterId: data.characterId,
-      characterName: data.characterName,
-      hp: data.hp,
-      max_hp: data.max_hp,
-      portraitSeed: data.portraitSeed,
+      characterName: character.name as string,
+      hp: Number(characterData.current_hp ?? 0),
+      max_hp: Number(characterData.max_hp ?? 0),
+      portraitSeed:
+        typeof characterData.portrait_seed === 'string'
+          ? characterData.portrait_seed
+          : undefined,
+      avatarRecipe: parseAvatarRecipe(characterData.avatar_recipe) ?? undefined,
     });
     this.broadcast(data.encounterId);
   }
@@ -123,6 +182,42 @@ export class EncounterPresenceGateway implements OnGatewayDisconnect {
     campaignId: string;
     name: string;
   }) {
-    this.server.emit('encounter_started', payload);
+    this.server
+      .to(`campaign:${payload.campaignId}`)
+      .emit('encounter_started', payload);
+  }
+
+  private async assertEncounterAccess(
+    client: Socket,
+    encounterId: string,
+    requireActive = false,
+  ) {
+    const user = this.socketAuth.user(client);
+    const result = await this.db.execute(
+      `SELECT e.*, s.campaign_id, s.visible_to_players AS session_visible,
+              c.dm_id AS campaign_dm_id
+       FROM encounters e
+       JOIN sessions s ON s.id = e.session_id
+       JOIN campaigns c ON c.id = s.campaign_id
+       WHERE e.id = ?`,
+      [encounterId],
+    );
+    const encounter = result.rows[0];
+    if (!encounter) throw new Error('Encounter not found');
+    if (encounter.campaign_dm_id === user.id) return encounter;
+    const membership = await this.db.execute(
+      `SELECT id FROM campaign_members
+       WHERE campaign_id = ? AND user_id = ? AND status = 'active'`,
+      [encounter.campaign_id, user.id],
+    );
+    if (
+      !membership.rows[0] ||
+      !encounter.session_visible ||
+      !encounter.visible_to_players ||
+      (requireActive && encounter.status !== 'active')
+    ) {
+      throw new Error('Forbidden');
+    }
+    return encounter;
   }
 }

@@ -14,16 +14,6 @@
   "duration": "Concentration, up to 1 hour",
   "ritual": false,
   "concentration": true,
-  "classes": [
-    "Bard",
-    "Warlock",
-    "Wizard"
-  ],
-  "subclasses": [],
-  "species": [],
-  "backgrounds": [],
-  "feats": [],
-  "other_options": [],
   "mechanics": {
     "saving_throws": [
       "wisdom"

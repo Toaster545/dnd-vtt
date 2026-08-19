@@ -13,34 +13,6 @@
   "duration": "Concentration, up to 8 hours",
   "ritual": false,
   "concentration": true,
-  "classes": [
-    "Bard",
-    "Sorcerer",
-    "Warlock",
-    "Wizard"
-  ],
-  "subclasses": [
-    {
-      "class": "Bard",
-      "subclass": "College of Lore"
-    },
-    {
-      "class": "Fighter",
-      "subclass": "Eldritch Knight"
-    },
-    {
-      "class": "Rogue",
-      "subclass": "Arcane Trickster"
-    },
-    {
-      "class": "Warlock",
-      "subclass": "Fiend Patron"
-    }
-  ],
-  "species": [],
-  "backgrounds": [],
-  "feats": [],
-  "other_options": [],
   "mechanics": {
     "saving_throws": [
       "wisdom"

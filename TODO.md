@@ -6,7 +6,7 @@
 - [ ] Rests (short long)
 - [ ] Shop?
 - [x] Spells
-- [ ] Equipement
+- [X] Equipement
 - [ ] Party Inventory
 - [ ] Defenses (resistances n shit)
 - [ ] Physical descriptions (character creation)
@@ -32,14 +32,15 @@
     - [x] add comments
     - [ ] customize campaign
         - [x] Add background image
-        - [ ] Change color scheme
+        - [X] Change color scheme
     - [ ] 
 - [x] Encounters
     - [x] Add Turns
     - [x] Measuring and player movement
     - [x] fog of war
     - [x] Add player icons
-    - [ ] Creating encounters with images
+    - [X] Creating encounters with images
+    - [X] Add lighting mechanics
 - [ ] Dashboard
     - [ ] Latest campaign and character
     - [ ] Updates to character (leveling up)
@@ -68,6 +69,7 @@
     - [x] Build a functioning Sorcerer class.
     - [x] Build a functioning Warlock class.
     - [x] Build a functioning Wizard class.
+    - [x] Build a functioning Artificer class.
 - [x] Character Creation:
     - [x] fix backgrounds (2024 version)
     - [x] Races choices and traits
@@ -75,7 +77,7 @@
     - [x] unlock race choices (don't need to complete whole thing to save)
     - [x] once spells are made, integrate them into every spellcasting class!
 - [ ] Character Sheet:
-    - [ ] attack spells that use Save DC need to be properly listed (Poison Spray currently states Attack +6, but it should be Save DC 13 or something)
+    - [X] attack spells that use Save DC need to be properly listed (Poison Spray currently states Attack +6, but it should be Save DC 13 or something)
     - [x] general spells
     - [ ] all actions
         - [ ] Unarmed strike is missing

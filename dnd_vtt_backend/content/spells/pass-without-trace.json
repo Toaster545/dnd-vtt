@@ -14,26 +14,6 @@
   "duration": "Concentration, up to 1 hour",
   "ritual": false,
   "concentration": true,
-  "classes": [
-    "Druid",
-    "Ranger"
-  ],
-  "subclasses": [
-    {
-      "class": "Bard",
-      "subclass": "College of Lore"
-    },
-    {
-      "class": "Cleric",
-      "subclass": "Trickery Domain"
-    }
-  ],
-  "species": [
-    "Elf"
-  ],
-  "backgrounds": [],
-  "feats": [],
-  "other_options": [],
   "mechanics": {
     "saving_throws": [],
     "ability_checks": [],

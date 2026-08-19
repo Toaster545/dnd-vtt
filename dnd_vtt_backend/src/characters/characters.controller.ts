@@ -43,6 +43,28 @@ export class CharactersController {
     return this.characters.create(user.id, body);
   }
 
+  @Post('drafts')
+  createDraft(
+    @CurrentUser() user: RequestUser,
+    @Body() body: Record<string, unknown>,
+  ) {
+    return this.characters.createDraft(user.id, body);
+  }
+
+  @Patch(':id/draft')
+  updateDraft(
+    @Param('id') id: string,
+    @CurrentUser() user: RequestUser,
+    @Body() body: Record<string, unknown>,
+  ) {
+    return this.characters.updateDraft(id, user, body);
+  }
+
+  @Post(':id/complete')
+  completeDraft(@Param('id') id: string, @CurrentUser() user: RequestUser) {
+    return this.characters.completeDraft(id, user);
+  }
+
   @Put(':id')
   update(
     @Param('id') id: string,

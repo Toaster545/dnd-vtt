@@ -12,16 +12,6 @@
   "duration": "Instantaneous",
   "ritual": false,
   "concentration": false,
-  "classes": [
-    "Warlock"
-  ],
-  "subclasses": [],
-  "species": [
-    "Tiefling"
-  ],
-  "backgrounds": [],
-  "feats": [],
-  "other_options": [],
   "mechanics": {
     "saving_throws": [
       "dexterity"

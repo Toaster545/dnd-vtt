@@ -12,24 +12,6 @@
   "duration": "Concentration, up to 1 minute",
   "ritual": false,
   "concentration": true,
-  "classes": [
-    "Bard",
-    "Wizard"
-  ],
-  "subclasses": [
-    {
-      "class": "Cleric",
-      "subclass": "Trickery Domain"
-    },
-    {
-      "class": "Warlock",
-      "subclass": "Great Old One Patron"
-    }
-  ],
-  "species": [],
-  "backgrounds": [],
-  "feats": [],
-  "other_options": [],
   "mechanics": {
     "saving_throws": [
       "wisdom"

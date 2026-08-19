@@ -1,4 +1,4 @@
-<div class="flex flex-col" [class.h-screen]="!embedded()" [class.h-full]="embedded()">
+<div class="flex flex-col" [style.height]="embedded() ? '100%' : '100dvh'">
   <ng-content select="[layoutHeader]"></ng-content>
   <ng-content></ng-content>
 </div>

@@ -74,6 +74,10 @@ export class DatabaseService implements OnModuleInit {
     if (version < 15) await this.applyV15();
     if (version < 16) await this.applyV16();
     if (version < 17) await this.applyV17();
+    if (version < 18) await this.applyV18();
+    if (version < 19) await this.applyV19();
+    if (version < 20) await this.applyV20();
+    if (version < 21) await this.applyV21();
   }
 
   // ── V1: initial schema (explicit columns on characters) ─────────────────────
@@ -535,6 +539,150 @@ export class DatabaseService implements OnModuleInit {
     await this.db.execute(`PRAGMA user_version = 17`);
     this.logger.log(
       'Applied schema migration v17 (custom monsters/items/spells libraries)',
+    );
+  }
+
+  // ── V18: dynamic lighting/darkness — a per-map lit/dark toggle (map_lighting, mirrors
+  // map_fog's shape) plus DM-placed light sources (map_lights) that are either standalone
+  // (fixed x/y) or attached to a token (token_id set, x/y left null — the light's position is
+  // derived live from the token's current position at render time, never persisted, so it can't
+  // go stale as the token moves). Independent of fog of war; a light attached to a token is
+  // deleted along with it (ON DELETE CASCADE).
+  private async applyV18() {
+    await this.db.execute(`
+      CREATE TABLE IF NOT EXISTS map_lighting (
+        map_id  TEXT PRIMARY KEY REFERENCES battle_maps(id) ON DELETE CASCADE,
+        enabled INTEGER NOT NULL DEFAULT 0
+      )
+    `);
+    await this.db.execute(`
+      CREATE TABLE IF NOT EXISTS map_lights (
+        id                TEXT PRIMARY KEY,
+        map_id            TEXT NOT NULL REFERENCES battle_maps(id) ON DELETE CASCADE,
+        token_id          TEXT REFERENCES map_tokens(id) ON DELETE CASCADE,
+        x                 REAL,
+        y                 REAL,
+        bright_radius_ft  INTEGER NOT NULL DEFAULT 20,
+        dim_radius_ft     INTEGER NOT NULL DEFAULT 20,
+        color             TEXT NOT NULL DEFAULT '#ffa542',
+        enabled           INTEGER NOT NULL DEFAULT 1,
+        label             TEXT NOT NULL DEFAULT 'Torch',
+        created_at        TEXT NOT NULL DEFAULT (datetime('now'))
+      )
+    `);
+    await this.db.execute(
+      `CREATE INDEX IF NOT EXISTS idx_map_lights_map_id ON map_lights(map_id)`,
+    );
+    await this.db.execute(
+      `CREATE INDEX IF NOT EXISTS idx_map_lights_token_id ON map_lights(token_id)`,
+    );
+
+    await this.db.execute(`PRAGMA user_version = 18`);
+    this.logger.log(
+      'Applied schema migration v18 (dynamic lighting / darkness)',
+    );
+  }
+
+  // ── V19: explicit character-enabled and campaign-allowed content sources ────────────────
+  // Both entities already use extensible JSON data blobs. Persisting the choices there keeps
+  // source policy close to the character/campaign without adding one column per future book.
+  // Existing Artificers are opted into Eberron so the migration never makes a saved character
+  // internally inconsistent; every other existing character and campaign defaults to PHB only.
+  private async applyV19() {
+    await this.db.execute(`
+      UPDATE characters
+      SET data = json_set(
+        CASE WHEN json_valid(data) THEN data ELSE '{}' END,
+        '$.enabled_sources',
+        CASE
+          WHEN lower(class) = 'artificer' THEN json('["XPHB","EFA"]')
+          ELSE json('["XPHB"]')
+        END
+      )
+      WHERE json_type(data, '$.enabled_sources') IS NULL
+    `);
+    await this.db.execute(`
+      UPDATE campaigns
+      SET data = json_set(
+        CASE WHEN json_valid(data) THEN data ELSE '{}' END,
+        '$.allowed_sources',
+        json('["XPHB"]')
+      )
+      WHERE json_type(data, '$.allowed_sources') IS NULL
+    `);
+
+    await this.db.execute(`PRAGMA user_version = 19`);
+    this.logger.log(
+      'Applied schema migration v19 (character and campaign content sources)',
+    );
+  }
+
+  // ── V20: provider-owned spell access ──────────────────────────────────────
+  // Spell records now describe only the spell itself. Classes, subclasses, species,
+  // backgrounds, feats, and class features own their spell-list/grant relationships, and the
+  // API derives reverse access metadata from those providers. Strip the obsolete reverse fields
+  // from existing homebrew spell JSON so static and database-backed spells use the same shape.
+  private async applyV20() {
+    await this.db.execute(`
+      UPDATE custom_spells
+      SET data = json_remove(
+        data,
+        '$.classes',
+        '$.subclasses',
+        '$.species',
+        '$.backgrounds',
+        '$.feats',
+        '$.other_options'
+      )
+      WHERE json_valid(data)
+    `);
+    await this.db.execute(`PRAGMA user_version = 20`);
+    this.logger.log(
+      'Applied schema migration v20 (provider-owned spell access)',
+    );
+  }
+
+  // ── V21: mobile player context, secure sessions, drafts, and visibility ───────────────
+  private async applyV21() {
+    await this.db.execute(
+      `ALTER TABLE campaigns ADD COLUMN current_session_id TEXT`,
+    );
+    await this.db.execute(
+      `ALTER TABLE battle_maps ADD COLUMN visibility_revision INTEGER NOT NULL DEFAULT 0`,
+    );
+    await this.db.execute(
+      `ALTER TABLE map_tokens ADD COLUMN visible_to_players INTEGER NOT NULL DEFAULT 1`,
+    );
+    await this.db.execute(
+      `ALTER TABLE map_tokens ADD COLUMN name_visible_to_players INTEGER NOT NULL DEFAULT 1`,
+    );
+    await this.db.execute(
+      `ALTER TABLE characters ADD COLUMN creation_status TEXT NOT NULL DEFAULT 'complete' CHECK(creation_status IN ('draft','complete'))`,
+    );
+    await this.db.execute(
+      `ALTER TABLE characters ADD COLUMN draft_step INTEGER NOT NULL DEFAULT 0`,
+    );
+    await this.db.execute(`
+      CREATE TABLE auth_sessions (
+        id          TEXT PRIMARY KEY,
+        user_id     TEXT NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
+        token_hash  TEXT NOT NULL,
+        client_type TEXT NOT NULL CHECK(client_type IN ('web','native')),
+        expires_at  TEXT NOT NULL,
+        revoked_at  TEXT,
+        created_at  TEXT NOT NULL DEFAULT (datetime('now')),
+        last_used_at TEXT
+      )
+    `);
+    await this.db.execute(
+      `CREATE INDEX idx_auth_sessions_user_id ON auth_sessions(user_id)`,
+    );
+    await this.db.execute(
+      `CREATE INDEX idx_auth_sessions_expires_at ON auth_sessions(expires_at)`,
+    );
+    await this.db.execute(`PRAGMA user_version = 21`);
+    this.logger.log(
+      'Applied schema migration v21 (mobile context, secure auth, drafts, visibility)',
     );
   }
 }

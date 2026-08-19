@@ -10,6 +10,7 @@ import { EncountersModule } from './encounters/encounters.module';
 import { CampaignsModule } from './campaigns/campaigns.module';
 import { NotesModule } from './notes/notes.module';
 import { UsersModule } from './users/users.module';
+import { PlayerModule } from './player/player.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { UsersModule } from './users/users.module';
     CampaignsModule,
     NotesModule,
     UsersModule,
+    PlayerModule,
   ],
 })
 export class AppModule {}

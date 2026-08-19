@@ -5,6 +5,14 @@
   <div class="flex-1 overflow-auto p-6">
     <div class="flex items-center mb-5 gap-3">
       <h2 class="font-brand text-lg text-parchment m-0 flex-1">Spells</h2>
+      <select class="field-input w-52" [ngModel]="sourceFilter()" (ngModelChange)="sourceFilter.set($event)" name="sourceFilter">
+        <option value="all">All sources</option>
+        @for (source of sources(); track source.code) { <option [value]="source.code">{{ source.short_name }}</option> }
+      </select>
+      <select class="field-input w-52" [ngModel]="accessFilter()" (ngModelChange)="accessFilter.set($event)" name="accessFilter">
+        <option value="all">All spell access</option>
+        @for (option of accessOptions(); track option.key) { <option [value]="option.key">{{ option.label }}</option> }
+      </select>
       <input class="field-input w-56" [ngModel]="search()" (ngModelChange)="onSearchChange($event)" placeholder="Search spells…" name="search" />
       <button class="btn-primary" (click)="openCreate()">
         <mat-icon>add</mat-icon> New Spell
@@ -30,7 +38,7 @@
                 <p class="text-slate text-xs m-0 mt-0.5">{{ s.level === 0 ? 'Cantrip' : 'Level ' + s.level }} · {{ s.school }}</p>
               </div>
               <div class="flex items-center gap-1.5">
-                <span class="text-xs text-slate border border-white/10 rounded px-2 py-0.5">{{ s.classes.join(', ') || 'No classes' }}</span>
+                <span class="text-xs text-slate border border-white/10 rounded px-2 py-0.5" [title]="accessLabel(s)">{{ accessLabel(s) }}</span>
                 <button class="btn-icon" type="button" (click)="openDuplicate(s, $event)" title="Duplicate">
                   <mat-icon class="text-base">content_copy</mat-icon>
                 </button>
@@ -45,7 +53,7 @@
 
       <button class="flex items-center gap-1.5 w-full text-left mb-2" type="button" (click)="officialExpanded.set(!officialExpanded())">
         <mat-icon class="text-base text-slate">{{ officialExpanded() ? 'expand_more' : 'chevron_right' }}</mat-icon>
-        <h3 class="text-xs font-semibold text-slate uppercase tracking-wide m-0">Official (SRD) · {{ filteredOfficial().length }}</h3>
+        <h3 class="text-xs font-semibold text-slate uppercase tracking-wide m-0">Published Content · {{ filteredOfficial().length }}</h3>
       </button>
       @if (officialExpanded()) {
         @if (filteredOfficial().length === 0) {
@@ -57,9 +65,10 @@
                 <div class="flex-1 min-w-0">
                   <p class="text-parchment font-medium truncate m-0">{{ s.name }}</p>
                   <p class="text-slate text-xs m-0 mt-0.5">{{ s.level === 0 ? 'Cantrip' : 'Level ' + s.level }} · {{ s.school }}</p>
+                  <p class="text-coal text-[10px] m-0 mt-0.5">{{ s.source?.book || 'Player\'s Handbook' }}</p>
                 </div>
                 <div class="flex items-center gap-1.5">
-                  <span class="text-xs text-slate border border-white/10 rounded px-2 py-0.5">{{ s.classes.join(', ') || 'No classes' }}</span>
+                  <span class="text-xs text-slate border border-white/10 rounded px-2 py-0.5" [title]="accessLabel(s)">{{ accessLabel(s) }}</span>
                   <button class="btn-icon" type="button" (click)="openDuplicate(s, $event)" title="Duplicate as homebrew">
                     <mat-icon class="text-base">content_copy</mat-icon>
                   </button>

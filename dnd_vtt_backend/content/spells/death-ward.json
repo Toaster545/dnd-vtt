@@ -12,20 +12,6 @@
   "duration": "8 hours",
   "ritual": false,
   "concentration": false,
-  "classes": [
-    "Cleric",
-    "Paladin"
-  ],
-  "subclasses": [
-    {
-      "class": "Cleric",
-      "subclass": "Life Domain"
-    }
-  ],
-  "species": [],
-  "backgrounds": [],
-  "feats": [],
-  "other_options": [],
   "mechanics": {
     "saving_throws": [],
     "ability_checks": [],

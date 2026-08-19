@@ -1,3 +1,5 @@
+import { AvatarRecipeV1 } from './avatar.model';
+
 export interface Campaign {
   id: string;
   dm_id: string;
@@ -7,6 +9,8 @@ export interface Campaign {
   background_url?: string | null;
   created_at?: string;
   updated_at?: string;
+  current_session_id?: string | null;
+  allowed_sources: string[];
   // Only present on the CampaignService.getAll() list (CampaignsService.findAllForUser on the
   // backend) — true when the current user is this campaign's DM, false when they're just a
   // joined member. A single user can own some campaigns and be a member of others, so the list
@@ -27,6 +31,7 @@ export interface CampaignMember {
   character_current_hp?: number | null;
   character_armor_class?: number | null;
   character_portrait_seed?: string | null;
+  character_avatar_recipe?: AvatarRecipeV1 | null;
   source_character_id?: string | null;
   status?: 'active' | 'removed';
   joined_at?: string;
@@ -42,6 +47,20 @@ export interface CampaignMember {
   // omitted from the `members` array returned to other players; the DM and the member themselves
   // always see it regardless of this flag.
   visible_to_party?: boolean;
+  source_compatible?: boolean;
+  source_incompatibility_reason?: string | null;
+}
+
+export interface CampaignJoinPreview {
+  campaign_id: string;
+  campaign_name: string;
+  allowed_sources: string[];
+  characters: {
+    character_id: string;
+    compatible: boolean;
+    disallowed_sources: string[];
+    reason: string | null;
+  }[];
 }
 
 // GET /campaigns/:id payload — the campaign plus what's inside it, scoped to whatever the caller
@@ -92,6 +111,8 @@ export interface MapToken {
   // Turn-order value: 1d20 + DEX mod, auto-rolled server-side the moment a monster token is
   // placed; null for a player token until the DM types in that player's roll.
   initiative?: number | null;
+  visible_to_players?: boolean;
+  name_visible_to_players?: boolean;
 }
 
 // Manual reveal-brush fog of war. `hidden_cells` is a set of "col,row" keys — everything else on
@@ -119,6 +140,38 @@ export interface Measurement {
 
 // Which fog-of-war brush/rectangle tool is currently armed on the battle map toolbar.
 export type FogToolName = 'reveal-brush' | 'hide-brush' | 'reveal-rect' | 'hide-rect';
+
+// A DM-placed torch/light source. Either standalone (x/y set, a fixed point on the map) or
+// attached to a token (token_id set, x/y left undefined/null) — an attached light's on-screen
+// position is derived live from that token's current position, never stored, so it can't drift
+// out of sync as the token moves. Two-tier radius mirrors 5e's bright/dim light rules (a torch is
+// 20ft bright + 20ft dim); both are in feet, converted to px at render time via FEET_PER_SQUARE.
+// Independent of fog of war — see MapLighting.
+export interface MapLight {
+  id?: string;
+  map_id: string;
+  token_id?: string | null;
+  x?: number | null;
+  y?: number | null;
+  bright_radius_ft: number;
+  dim_radius_ft: number;
+  color: string;
+  enabled: boolean;
+  label: string;
+}
+
+// Per-map lit/dark toggle plus the lights placed on it. `enabled: false` means the map is fully
+// lit (no darkness overlay at all, regardless of what's in `lights`) — same "off by default,
+// invisible until the DM opts in" shape as MapFog. Persisted per map and broadcast live.
+export interface MapLighting {
+  enabled: boolean;
+  lights: MapLight[];
+}
+
+// Only one lighting tool for now: click to drop a standalone torch, or click a token to attach
+// one to it. Stays armed across placements (like fog's brush/rect tools) so a DM can drop several
+// torches without re-arming.
+export type LightToolName = 'place';
 
 // What's "armed" from an encounter's roster sidebar, ready to be dropped onto the map on the next
 // click — built by the roster UI (from a Character or a DndMonster), consumed by BattleMapComponent
