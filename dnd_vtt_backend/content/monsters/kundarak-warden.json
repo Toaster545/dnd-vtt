@@ -1,0 +1,75 @@
+{
+  "index": "kundarak-warden",
+  "name": "Kundarak Warden",
+  "size": "Medium",
+  "type": "humanoid (dwarf)",
+  "alignment": "N",
+  "armor_class": 14,
+  "hit_points": 82,
+  "hit_dice": "11d8 + 33",
+  "speed": {
+    "walk": 30
+  },
+  "ability_scores": {
+    "strength": 15,
+    "dexterity": 12,
+    "constitution": 16,
+    "intelligence": 17,
+    "wisdom": 13,
+    "charisma": 10
+  },
+  "saving_throws": {
+    "Strength": 5,
+    "Dexterity": 4,
+    "Constitution": 6,
+    "Intelligence": 6,
+    "Wisdom": 4
+  },
+  "skills": {},
+  "damage_vulnerabilities": [],
+  "damage_resistances": [],
+  "damage_immunities": [],
+  "condition_immunities": [],
+  "senses": {
+    "passive_perception": 11,
+    "darkvision": 120
+  },
+  "languages": [
+    "Common",
+    "Dwarvish"
+  ],
+  "challenge_rating": "5",
+  "xp": 1800,
+  "traits": [
+    {
+      "name": "Magic Resistance",
+      "description": "Reference-only rule. See Eberron: Forge of the Artificer, page 81."
+    }
+  ],
+  "actions": [
+    {
+      "name": "Multiattack",
+      "description": "Reference-only rule. See Eberron: Forge of the Artificer, page 81."
+    },
+    {
+      "name": "Arcane Whip",
+      "description": "Reference-only rule. See Eberron: Forge of the Artificer, page 81."
+    },
+    {
+      "name": "Shackling Glyph {@recharge}",
+      "description": "Reference-only rule. See Eberron: Forge of the Artificer, page 81."
+    }
+  ],
+  "reactions": [],
+  "legendary_actions": [],
+  "description": "Reference stat block from Eberron: Forge of the Artificer, page 81.",
+  "rules_text": "reference-only",
+  "source": {
+    "code": "EFA",
+    "book": "Eberron: Forge of the Artificer",
+    "edition": 2024,
+    "page": 81,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

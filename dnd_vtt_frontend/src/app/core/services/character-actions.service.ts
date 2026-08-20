@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import { ActionActivation, TraitGrant, DndClass, Subclass } from './content.service';
+import { ActionActivation, TraitGrant, DndClass, DndFeat, DndItem, DndRace, Subclass } from './content.service';
 import { resolveProgressiveChoiceLimit } from '../utils/progressive-choice';
-import { AbilityScores, abilityModifier } from '../models/character.model';
+import { AbilityScores, abilityModifier, proficiencyBonus } from '../models/character.model';
 
 export interface CharacterAction {
   key: string;
@@ -17,6 +17,13 @@ export interface CharacterAction {
 
 type FeatureGrant = Extract<TraitGrant, { type: 'feature' }>;
 
+interface AdditionalActionSources {
+  characterLevel: number;
+  race?: { data: DndRace; choices: Record<string, string[]> } | null;
+  feats?: { feat: DndFeat; choices: Record<string, string[]>; source?: string }[];
+  items?: DndItem[];
+}
+
 function resolveLevelValue<T>(base: T, byLevel: Record<string, T> | undefined, level: number): T {
   if (!byLevel) return base;
   return Object.entries(byLevel)
@@ -31,9 +38,10 @@ export class CharacterActionsService {
   // Surge going from 1 to 2 uses) is the same resource, not a second one — the highest
   // unlocked level's declaration wins rather than being additive.
   compute(
-    classes: { data: DndClass; level: number; subclass?: Subclass | null }[],
+    classes: { data: DndClass; level: number; subclass?: Subclass | null; choices?: Record<string, string[]> }[],
     resourceUses: Record<string, number>,
     abilityScores?: AbilityScores,
+    additional: AdditionalActionSources = { characterLevel: 1 },
   ): CharacterAction[] {
     // `level` here is the unlock threshold (which level's declaration currently wins, e.g. Action
     // Surge's 1-use-vs-2-use text) — kept separate from `classLevel`, the character's actual
@@ -42,17 +50,44 @@ export class CharacterActionsService {
     // it was unlocked at).
     const winners = new Map<string, { level: number; classLevel: number; grant: FeatureGrant; source: string }>();
 
-    for (const { data, level, subclass } of classes) {
+    const collect = (
+      grants: TraitGrant[], choices: Record<string, string[]>, source: string,
+      level: number, classLevel: number,
+    ) => {
+      for (const grant of grants) {
+        if (grant.type === 'feature' && grant.action && grant.key) {
+          const existing = winners.get(grant.key);
+          if (!existing || level >= existing.level) winners.set(grant.key, { level, classLevel, grant, source });
+          continue;
+        }
+        if (grant.type !== 'choice') continue;
+        const selected = new Set(choices[grant.key] ?? []);
+        for (const option of grant.options) {
+          if (selected.has(option.name)) collect(option.grants ?? [], choices, source, level, classLevel);
+        }
+      }
+    };
+
+    for (const { data, level, subclass, choices = {} } of classes) {
       const levels = [...data.levels, ...(subclass?.levels ?? [])];
       for (const lvl of levels) {
         if (lvl.level > level) continue;
-        for (const grant of lvl.grants ?? []) {
-          if (grant.type !== 'feature' || !grant.action || !grant.key) continue;
-          const existing = winners.get(grant.key);
-          if (!existing || lvl.level >= existing.level) {
-            winners.set(grant.key, { level: lvl.level, classLevel: level, grant, source: data.name });
-          }
-        }
+        collect(lvl.grants ?? [], choices, data.name, lvl.level, level);
+      }
+    }
+
+    if (additional.race) {
+      collect(additional.race.data.grants ?? [], additional.race.choices, additional.race.data.name, 0, additional.characterLevel);
+    }
+    for (const selection of additional.feats ?? []) {
+      collect(selection.feat.grants ?? [], selection.choices, selection.source ?? selection.feat.name, 1, additional.characterLevel);
+    }
+    for (const item of additional.items ?? []) {
+      for (const action of item.actions ?? []) {
+        collect([{
+          type: 'feature', key: action.key, name: action.name, description: action.description,
+          action: { activation: action.activation, uses: action.uses },
+        }], {}, item.name, 1, additional.characterLevel);
       }
     }
 
@@ -64,9 +99,9 @@ export class CharacterActionsService {
       const abilityMax = uses?.maxAbilityModifier && abilityScores
         ? abilityModifier(abilityScores[uses.maxAbilityModifier])
         : null;
-      const max = abilityMax == null
-        ? progressiveMax
-        : Math.max(uses?.minimum ?? 0, abilityMax);
+      const proficiencyMax = uses?.maxProficiencyBonus ? proficiencyBonus(additional.characterLevel) : null;
+      const calculatedMax = abilityMax ?? proficiencyMax;
+      const max = calculatedMax == null ? progressiveMax : Math.max(uses?.minimum ?? 0, calculatedMax);
       return {
         key: grant.key!,
         name: grant.name,

@@ -1,0 +1,120 @@
+{
+  "index": "mark-of-scribing",
+  "name": "Mark of Scribing",
+  "description": "Manifest the Mark of Scribing; gain its intuition, magic, and expanded spell list.",
+  "category": "origin",
+  "tags": [
+    "dragonmark"
+  ],
+  "exclusiveGroup": "dragonmark",
+  "grants": [
+    {
+      "type": "feature",
+      "name": "Scribing Intuition",
+      "description": "Your dragonmark improves checks and special tasks associated with scribing."
+    },
+    {
+      "type": "choice",
+      "key": "dragonmark_spellcasting_ability",
+      "name": "Dragonmark Spellcasting Ability",
+      "choose": 1,
+      "description": "Choose Intelligence, Wisdom, or Charisma for this mark.",
+      "options": [
+        {
+          "name": "Intelligence"
+        },
+        {
+          "name": "Wisdom"
+        },
+        {
+          "name": "Charisma"
+        }
+      ]
+    },
+    {
+      "type": "spell_grant",
+      "key": "mark-of-scribing_cantrips",
+      "name": "Mark of Scribing",
+      "destination": "known",
+      "spells": [
+        "message"
+      ],
+      "countsAgainstLimit": false,
+      "sourceKey": "mark-of-scribing",
+      "sourceName": "Mark of Scribing",
+      "ability": {
+        "choiceKey": "dragonmark_spellcasting_ability"
+      }
+    },
+    {
+      "type": "spell_grant",
+      "key": "mark-of-scribing_comprehend-languages",
+      "name": "Mark of Scribing",
+      "destination": "always_prepared",
+      "spells": [
+        "comprehend-languages"
+      ],
+      "countsAgainstLimit": false,
+      "sourceKey": "mark-of-scribing",
+      "sourceName": "Mark of Scribing",
+      "characterLevel": 1,
+      "ability": {
+        "choiceKey": "dragonmark_spellcasting_ability"
+      },
+      "freeCast": {
+        "uses": 1,
+        "recovery": "long_rest"
+      }
+    },
+    {
+      "type": "spell_grant",
+      "key": "mark-of-scribing_magic-mouth",
+      "name": "Mark of Scribing",
+      "destination": "always_prepared",
+      "spells": [
+        "magic-mouth"
+      ],
+      "countsAgainstLimit": false,
+      "sourceKey": "mark-of-scribing",
+      "sourceName": "Mark of Scribing",
+      "characterLevel": 3,
+      "ability": {
+        "choiceKey": "dragonmark_spellcasting_ability"
+      },
+      "freeCast": {
+        "uses": 1,
+        "recovery": "long_rest"
+      }
+    },
+    {
+      "type": "spell_list_expansion",
+      "key": "mark-of-scribing_spells_of_the_mark",
+      "name": "Spells of the Mark",
+      "spells": [
+        "command",
+        "illusory-script",
+        "animal-messenger",
+        "silence",
+        "sending",
+        "tongues",
+        "arcane-eye",
+        "confusion",
+        "dream"
+      ],
+      "alwaysPreparedIfFeat": "potent-dragonmark",
+      "sourceKey": "mark-of-scribing",
+      "sourceName": "Mark of Scribing",
+      "ability": {
+        "choiceKey": "dragonmark_spellcasting_ability"
+      }
+    }
+  ],
+  "source": {
+    "code": "EFA",
+    "book": "Eberron: Forge of the Artificer",
+    "edition": 2024,
+    "page": 41,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

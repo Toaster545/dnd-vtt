@@ -1,0 +1,72 @@
+{
+  "index": "jorasco-medic",
+  "name": "Jorasco Medic",
+  "size": "Small",
+  "type": "humanoid (halfling)",
+  "alignment": "N",
+  "armor_class": 16,
+  "hit_points": 58,
+  "hit_dice": "9d6 + 27",
+  "speed": {
+    "walk": 30
+  },
+  "ability_scores": {
+    "strength": 12,
+    "dexterity": 15,
+    "constitution": 16,
+    "intelligence": 14,
+    "wisdom": 17,
+    "charisma": 14
+  },
+  "saving_throws": {
+    "Constitution": 5,
+    "Wisdom": 5
+  },
+  "skills": {
+    "Insight": 5,
+    "Medicine": 5,
+    "Perception": 5,
+    "Stealth": 4
+  },
+  "damage_vulnerabilities": [],
+  "damage_resistances": [],
+  "damage_immunities": [],
+  "condition_immunities": [],
+  "senses": {
+    "passive_perception": 15
+  },
+  "languages": [
+    "Common",
+    "Halfling"
+  ],
+  "challenge_rating": "4",
+  "xp": 1100,
+  "traits": [
+    {
+      "name": "Lucky",
+      "description": "Reference-only rule. See Eberron: Forge of the Artificer, page 81."
+    }
+  ],
+  "actions": [
+    {
+      "name": "Multiattack",
+      "description": "Reference-only rule. See Eberron: Forge of the Artificer, page 81."
+    },
+    {
+      "name": "Radiant Burst",
+      "description": "Reference-only rule. See Eberron: Forge of the Artificer, page 81."
+    }
+  ],
+  "reactions": [],
+  "legendary_actions": [],
+  "description": "Reference stat block from Eberron: Forge of the Artificer, page 81.",
+  "rules_text": "reference-only",
+  "source": {
+    "code": "EFA",
+    "book": "Eberron: Forge of the Artificer",
+    "edition": 2024,
+    "page": 81,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

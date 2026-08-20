@@ -1,0 +1,75 @@
+{
+  "index": "medani-inquisitive",
+  "name": "Medani Inquisitive",
+  "size": "Small",
+  "type": "humanoid (khoravar)",
+  "alignment": "N",
+  "armor_class": 14,
+  "hit_points": 45,
+  "hit_dice": "7d8 + 14",
+  "speed": {
+    "walk": 30
+  },
+  "ability_scores": {
+    "strength": 14,
+    "dexterity": 10,
+    "constitution": 14,
+    "intelligence": 15,
+    "wisdom": 16,
+    "charisma": 14
+  },
+  "saving_throws": {
+    "Constitution": 4,
+    "Wisdom": 5
+  },
+  "skills": {
+    "Insight": 5,
+    "Investigation": 4
+  },
+  "damage_vulnerabilities": [],
+  "damage_resistances": [],
+  "damage_immunities": [],
+  "condition_immunities": [],
+  "senses": {
+    "passive_perception": 13,
+    "darkvision": 60
+  },
+  "languages": [
+    "Common",
+    "Elvish"
+  ],
+  "challenge_rating": "3",
+  "xp": 700,
+  "traits": [],
+  "actions": [
+    {
+      "name": "Multiattack",
+      "description": "Reference-only rule. See Eberron: Forge of the Artificer, page 82."
+    },
+    {
+      "name": "Crooked Staff",
+      "description": "Reference-only rule. See Eberron: Forge of the Artificer, page 82."
+    },
+    {
+      "name": "Inquisitive Eye",
+      "description": "Reference-only rule. See Eberron: Forge of the Artificer, page 82."
+    }
+  ],
+  "reactions": [
+    {
+      "name": "Spontaneous Barrier {@recharge 4}",
+      "description": "Reference-only rule. See Eberron: Forge of the Artificer, page 82."
+    }
+  ],
+  "legendary_actions": [],
+  "description": "Reference stat block from Eberron: Forge of the Artificer, page 82.",
+  "rules_text": "reference-only",
+  "source": {
+    "code": "EFA",
+    "book": "Eberron: Forge of the Artificer",
+    "edition": 2024,
+    "page": 82,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

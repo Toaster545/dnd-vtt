@@ -1,0 +1,71 @@
+{
+  "index": "daask-raider",
+  "name": "Daask Raider",
+  "size": "Medium",
+  "type": "humanoid (gnoll)",
+  "alignment": "N E",
+  "armor_class": 15,
+  "hit_points": 33,
+  "hit_dice": "6d8 + 6",
+  "speed": {
+    "walk": 30
+  },
+  "ability_scores": {
+    "strength": 16,
+    "dexterity": 12,
+    "constitution": 13,
+    "intelligence": 10,
+    "wisdom": 11,
+    "charisma": 8
+  },
+  "saving_throws": {
+    "Strength": 5
+  },
+  "skills": {
+    "Athletics": 5,
+    "Perception": 2
+  },
+  "damage_vulnerabilities": [],
+  "damage_resistances": [],
+  "damage_immunities": [],
+  "condition_immunities": [],
+  "senses": {
+    "passive_perception": 12,
+    "darkvision": 60
+  },
+  "languages": [
+    "Common",
+    "Gnoll"
+  ],
+  "challenge_rating": "1",
+  "xp": 200,
+  "traits": [
+    {
+      "name": "Pack Tactics",
+      "description": "Reference-only rule. See Eberron: Forge of the Artificer, page 58."
+    }
+  ],
+  "actions": [
+    {
+      "name": "Pummel",
+      "description": "Reference-only rule. See Eberron: Forge of the Artificer, page 58."
+    }
+  ],
+  "reactions": [
+    {
+      "name": "Smackback",
+      "description": "Reference-only rule. See Eberron: Forge of the Artificer, page 58."
+    }
+  ],
+  "legendary_actions": [],
+  "description": "Reference stat block from Eberron: Forge of the Artificer, page 58.",
+  "rules_text": "reference-only",
+  "source": {
+    "code": "EFA",
+    "book": "Eberron: Forge of the Artificer",
+    "edition": 2024,
+    "page": 58,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

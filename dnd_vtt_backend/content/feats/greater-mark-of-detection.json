@@ -1,0 +1,34 @@
+{
+  "index": "greater-mark-of-detection",
+  "name": "Greater Mark of Detection",
+  "description": "Deepen the Mark of Detection, improving its intuition and signature benefit.",
+  "category": "general",
+  "prerequisite": {
+    "level": 4,
+    "feats": [
+      "mark-of-detection"
+    ]
+  },
+  "abilityIncrease": {
+    "abilities": [
+      "strength",
+      "dexterity",
+      "constitution",
+      "intelligence",
+      "wisdom",
+      "charisma"
+    ],
+    "amount": 1
+  },
+  "tags": [
+    "dragonmark-upgrade"
+  ],
+  "source": {
+    "code": "EFA",
+    "book": "Eberron: Forge of the Artificer",
+    "edition": 2024,
+    "page": 43,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

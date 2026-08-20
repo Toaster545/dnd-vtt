@@ -1,0 +1,74 @@
+{
+  "index": "dreaming-dark-infiltrator",
+  "name": "Dreaming Dark Infiltrator",
+  "size": "Small",
+  "type": "humanoid",
+  "alignment": "L E",
+  "armor_class": 15,
+  "hit_points": 104,
+  "hit_dice": "16d8 + 32",
+  "speed": {
+    "walk": 30
+  },
+  "ability_scores": {
+    "strength": 14,
+    "dexterity": 17,
+    "constitution": 15,
+    "intelligence": 18,
+    "wisdom": 16,
+    "charisma": 17
+  },
+  "saving_throws": {
+    "Intelligence": 7,
+    "Wisdom": 6,
+    "Charisma": 6
+  },
+  "skills": {
+    "Deception": 6,
+    "Insight": 6,
+    "Stealth": 6
+  },
+  "damage_vulnerabilities": [],
+  "damage_resistances": [
+    "psychic"
+  ],
+  "damage_immunities": [],
+  "condition_immunities": [],
+  "senses": {
+    "passive_perception": 13,
+    "truesight": 30
+  },
+  "languages": [
+    "Common",
+    "Quori; telepathy 120 ft."
+  ],
+  "challenge_rating": "7",
+  "xp": 2900,
+  "traits": [],
+  "actions": [
+    {
+      "name": "Multiattack",
+      "description": "Reference-only rule. See Eberron: Forge of the Artificer, page 59."
+    },
+    {
+      "name": "Mind Blade",
+      "description": "Reference-only rule. See Eberron: Forge of the Artificer, page 59."
+    },
+    {
+      "name": "Mind Curse (Bonus Action)",
+      "description": "Reference-only rule. See Eberron: Forge of the Artificer, page 59."
+    }
+  ],
+  "reactions": [],
+  "legendary_actions": [],
+  "description": "Reference stat block from Eberron: Forge of the Artificer, page 59.",
+  "rules_text": "reference-only",
+  "source": {
+    "code": "EFA",
+    "book": "Eberron: Forge of the Artificer",
+    "edition": 2024,
+    "page": 59,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

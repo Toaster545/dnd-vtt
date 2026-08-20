@@ -1,0 +1,30 @@
+{
+  "index": "dazzling-weapon",
+  "name": "Dazzling Weapon",
+  "type": "magic",
+  "category": "Magic Weapon Template",
+  "damage": null,
+  "damage_type": null,
+  "properties": [],
+  "weight": 0,
+  "cost": "Magic item",
+  "description": "A +1 weapon that can shed light and spend charges to try to blind a creature that hits its wielder.",
+  "rarity": "rare",
+  "requires_attunement": true,
+  "charges": {
+    "max": 4,
+    "recovery": "dawn"
+  },
+  "artificer_plan": {
+    "name": "Dazzling Weapon",
+    "itemIndex": "dazzling-weapon"
+  },
+  "source": {
+    "code": "EFA",
+    "book": "Eberron: Forge of the Artificer",
+    "edition": 2024,
+    "page": 112,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

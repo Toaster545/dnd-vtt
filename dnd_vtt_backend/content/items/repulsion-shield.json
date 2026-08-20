@@ -1,0 +1,43 @@
+{
+  "index": "repulsion-shield",
+  "name": "Repulsion Shield",
+  "type": "armor",
+  "category": "Shield",
+  "damage": null,
+  "damage_type": null,
+  "armor_class": "3",
+  "properties": [],
+  "weight": 6,
+  "cost": "Magic item",
+  "description": "A +1 shield with charges that can push a melee attacker away after it hits the wielder.",
+  "rarity": "uncommon",
+  "requires_attunement": false,
+  "charges": {
+    "max": 4,
+    "recovery": "dawn"
+  },
+  "actions": [
+    {
+      "key": "item:repulsion-shield",
+      "name": "Repulsion Shield",
+      "description": "A +1 shield with charges that can push a melee attacker away after it hits the wielder.",
+      "activation": "reaction",
+      "uses": {
+        "max": 4,
+        "per": "long_rest"
+      }
+    }
+  ],
+  "artificer_plan": {
+    "name": "Repulsion Shield",
+    "itemIndex": "repulsion-shield"
+  },
+  "source": {
+    "code": "EFA",
+    "book": "Eberron: Forge of the Artificer",
+    "edition": 2024,
+    "page": 112,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

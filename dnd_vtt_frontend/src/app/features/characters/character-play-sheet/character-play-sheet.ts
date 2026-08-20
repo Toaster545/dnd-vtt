@@ -4,7 +4,8 @@ import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import {
-  ContentService, DndClass, DndRace, DndBackground, DndItem, DndSpell, DndFeat, Subclass, TraitGrant,
+  ContentService, DndClass, DndRace, DndBackground, DndItem, DndSpell, DndFeat, DndMonster,
+  DndContentSource, Subclass, TraitGrant,
 } from '../../../core/services/content.service';
 import { ItemFormComponent } from '../../create-content/items/item-form/item-form';
 import {
@@ -17,9 +18,9 @@ import {
   abilityModifier, proficiencyBonus,
 } from '../../../core/models/character.model';
 import { adjustCurrency, CURRENCY_ORDER } from '../../../core/utils/currency';
-import { resolveCharacterFeatPicks } from '../../../core/utils/character-effects';
-import { resolveBackgroundOriginFeat } from '../../../core/utils/background-origin-feat';
+import { reachableGrants, resolveCharacterFeatPicks } from '../../../core/utils/character-effects';
 import { characterContentEnabled } from '../../../core/utils/content-sources';
+import { resolveBackgroundOriginFeat } from '../../../core/utils/background-origin-feat';
 import {
   describeSpellUpcast, isSpellAttack, isSavingThrowSpell, resolveSpellAttackDamage,
   resolveSpellcasting, ResolvedSpellOrigin, ResolvedSpellSlotPool, ResolvedSpellCategory,
@@ -43,6 +44,12 @@ interface ResolvedClass {
 interface DisplayFeature {
   source: string;
   name: string;
+  detail?: string;
+}
+
+interface ActiveCompanion {
+  monster: DndMonster;
+  source: string;
   detail?: string;
 }
 
@@ -130,6 +137,8 @@ export class CharacterPlaySheetComponent {
   grantItemBusy          = signal(false);
   grantItemError         = signal('');
   grantItemNotice        = signal('');
+  replicateItemBusy      = signal(false);
+  replicateItemError     = signal('');
 
   showGrantSpellDialog = signal(false);
   grantSpellSearch     = signal('');
@@ -154,9 +163,29 @@ export class CharacterPlaySheetComponent {
   bgData          = signal<DndBackground | null>(null);
   itemsAll        = signal<DndItem[]>([]);
   spellsAll       = signal<DndSpell[]>([]);
+  monstersAll     = signal<DndMonster[]>([]);
+  sourcesAll      = signal<DndContentSource[]>([]);
   spellLists      = signal<Record<string, string[]>>({});
   featsAll        = signal<DndFeat[]>([]);
   resolvedClasses = signal<ResolvedClass[]>([]);
+
+  activeCompanions = computed<ActiveCompanion[]>(() => {
+    const byIndex = new Map(this.monstersAll().map(monster => [monster.index, monster]));
+    const companions = new Map<string, ActiveCompanion>();
+    for (const resolved of this.resolvedClasses()) {
+      for (const grant of reachableGrants(resolved.data, resolved.subclassName, resolved.level)) {
+        if (grant.type !== 'companion_grant') continue;
+        const monster = byIndex.get(grant.monsterIndex);
+        if (monster) companions.set(monster.index, { monster, source: resolved.subclassName || resolved.name, detail: grant.description });
+      }
+    }
+    for (const row of this.spellRows()) {
+      const index = row.spell.companion_index;
+      const monster = index ? byIndex.get(index) : undefined;
+      if (monster) companions.set(index!, { monster, source: row.origins.map(origin => origin.sourceName).join(', '), detail: row.spell.description });
+    }
+    return [...companions.values()];
+  });
 
   primaryClass = computed(() => this.resolvedClasses()[0]?.data ?? null);
 
@@ -172,8 +201,29 @@ export class CharacterPlaySheetComponent {
   actions = computed<CharacterAction[]>(() => {
     const char = this.localChar();
     if (!char) return [];
-    const classes = this.resolvedClasses().map(rc => ({ data: rc.data, level: rc.level, subclass: rc.subclass }));
-    return this.actionsService.compute(classes, char.resource_uses ?? {}, char.ability_scores);
+    const classesForFeats = this.resolvedClasses().map(rc => ({
+      data: rc.data, level: rc.level, subclass: rc.subclassName, choices: rc.choices,
+    }));
+    const featSelections = resolveCharacterFeatPicks(
+      classesForFeats,
+      this.featsAll(),
+      this.raceData() ? { data: this.raceData()!, choices: char.race_choices ?? {}, subrace: char.subrace } : null,
+    );
+    const originFeat = resolveBackgroundOriginFeat(this.bgData(), this.featsAll());
+    if (originFeat) featSelections.push({
+      feat: originFeat, scope: `background:${this.bgData()!.index}:origin`, choices: char.background_choices ?? {},
+    });
+    const equipped = new Set([
+      ...char.equipment.filter(entry => entry.equipped).map(entry => entry.itemIndex),
+      ...(char.replicated_items ?? []).filter(entry => entry.equipped).map(entry => entry.itemIndex),
+    ]);
+    const classes = this.resolvedClasses().map(rc => ({ data: rc.data, level: rc.level, subclass: rc.subclass, choices: rc.choices }));
+    return this.actionsService.compute(classes, char.resource_uses ?? {}, char.ability_scores, {
+      characterLevel: char.level,
+      race: this.raceData() ? { data: this.raceData()!, choices: char.race_choices ?? {} } : null,
+      feats: featSelections.map(selection => ({ feat: selection.feat, choices: selection.choices })),
+      items: this.itemsAll().filter(item => equipped.has(item.index)),
+    });
   });
 
   // The Actions-tab groups, in display order: weapon/spell attacks (below), then trackable
@@ -228,6 +278,38 @@ export class CharacterPlaySheetComponent {
     const items = this.itemsAll();
     return char.equipment.map(e => ({ entry: e, item: items.find(it => it.index === e.itemIndex) ?? null }));
   });
+
+  replicationLimit = computed(() => {
+    const artificer = this.resolvedClasses().find(resolved => resolved.data.index === 'artificer');
+    const level = artificer?.data.levels.find(entry => entry.level === artificer.level);
+    return Number(level?.class_specific?.['replicated_items'] ?? 0);
+  });
+
+  replicablePlans = computed(() => {
+    const artificer = this.resolvedClasses().find(resolved => resolved.data.index === 'artificer');
+    if (!artificer) return [];
+    const grant = artificer.data.levels.flatMap(level => level.grants ?? [])
+      .find((candidate): candidate is Extract<TraitGrant, { type: 'choice' }> =>
+        candidate.type === 'choice' && candidate.key === 'magic_item_plans');
+    if (!grant) return [];
+    const selected = new Set(artificer.choices[grant.key] ?? []);
+    return grant.options
+      .filter(option => selected.has(option.name) && option.itemIndex)
+      .map(option => ({ option, item: this.itemsAll().find(item => item.index === option.itemIndex) ?? null }))
+      .filter((entry): entry is { option: typeof grant.options[number]; item: DndItem } => !!entry.item);
+  });
+
+  activeReplicatedItems = computed(() => {
+    const char = this.localChar();
+    if (!char) return [];
+    return (char.replicated_items ?? []).map(entry => ({
+      entry, item: this.itemsAll().find(item => item.index === entry.itemIndex) ?? null,
+    }));
+  });
+
+  isReplicatedItemActive(itemIndex: string): boolean {
+    return this.localChar()?.replicated_items?.some(entry => entry.itemIndex === itemIndex) ?? false;
+  }
 
   grantItemResults = computed(() => {
     const query = this.grantItemSearch().trim().toLowerCase();
@@ -482,13 +564,14 @@ export class CharacterPlaySheetComponent {
       : (char.class ? [{ name: char.class, level: char.level, subclass: char.subclass, choices: {} as Record<string, string[]> }] : []);
 
     const campaignId = char.campaign_id ?? undefined;
-    const [race, bg, items, spells, spellLists, feats, sources] = await Promise.all([
+    const [race, bg, items, spells, spellLists, feats, monsters, sources] = await Promise.all([
       char.race ? this.content.getRace(toIndex(char.race)).catch(() => null) : Promise.resolve(null),
       char.background ? this.content.getBackground(toIndex(char.background)).catch(() => null) : Promise.resolve(null),
       this.content.getItems(campaignId),
       this.content.getSpells(campaignId),
       this.content.getSpellLists(),
       this.content.getFeats(),
+      this.content.getMonsters(campaignId),
       this.content.getSources(),
     ]);
 
@@ -515,6 +598,8 @@ export class CharacterPlaySheetComponent {
     this.bgData.set(bg);
     this.itemsAll.set(items.filter(include));
     this.spellsAll.set(spells.filter(include));
+    this.monstersAll.set(monsters.filter(include));
+    this.sourcesAll.set(sources);
     this.spellLists.set(spellLists);
     this.featsAll.set(feats.filter(include));
     this.resolvedClasses.set(resolved);
@@ -705,6 +790,24 @@ export class CharacterPlaySheetComponent {
     if (!char) return;
     const equipment = char.equipment.map(e => e.itemIndex === entry.itemIndex ? { ...e, equipped: !e.equipped } : e);
     this.persist({ ...char, equipment });
+  }
+
+  async updateReplicatedItem(action: 'create' | 'dismiss' | 'toggle', itemIndex: string) {
+    const char = this.localChar();
+    if (!char?.id || this.replicateItemBusy()) return;
+    this.replicateItemBusy.set(true);
+    this.replicateItemError.set('');
+    try {
+      const result = await this.characterService.updateReplicatedItem(char.id, action, itemIndex);
+      this.localChar.set(result);
+      this.saved.emit(result);
+    } catch (error) {
+      const response = error as { error?: { message?: string | string[] } };
+      const message = response.error?.message;
+      this.replicateItemError.set(Array.isArray(message) ? message.join(' ') : message ?? 'Could not update the replicated item.');
+    } finally {
+      this.replicateItemBusy.set(false);
+    }
   }
 
   // DM-only counterpart to grantItem — takes the whole stack back (see
@@ -945,25 +1048,26 @@ export class CharacterPlaySheetComponent {
     }
     if (row.spell.level > 0 && castableOrigins.length) {
       for (const pool of this.spellResolution()?.slotPools ?? []) {
+        if (pool.allowedSpellIndices && !pool.allowedSpellIndices.includes(row.spell.index)) continue;
         for (const [level, maximum] of this.slotLevels(pool)) {
           const numericLevel = Number(level);
           if (numericLevel < row.spell.level) continue;
           const upcast = describeSpellUpcast(row.spell, numericLevel);
           // Pact Magic sometimes has no lower-level slot to offer. Keep that required casting
           // method, but offer normal higher-level slots only when the spell actually benefits.
-          if (numericLevel > row.spell.level && pool.type !== 'pact' && !upcast) continue;
+          if (numericLevel > row.spell.level && pool.type === 'normal' && !upcast) continue;
           const remaining = Math.max(0, maximum - this.slotUses(pool.key, level));
           for (const origin of castableOrigins) {
             methods.push({
               key: `${pool.key}:${level}:${origin.sourceKey}`,
-              label: `${pool.type === 'pact' ? 'Pact Magic' : 'Level ' + level} · ${origin.sourceName}`,
-              detail: `${remaining}/${maximum} remaining${pool.type === 'pact' ? ` · level ${level} Pact slot` : ''}`,
+              label: `${pool.type === 'pact' ? 'Pact Magic' : pool.type === 'restricted' ? pool.name : 'Level ' + level} · ${origin.sourceName}`,
+              detail: `${remaining}/${maximum} remaining${pool.type === 'pact' ? ` · level ${level} Pact slot` : pool.type === 'restricted' ? ` · level ${level}, Dragonmark spells only` : ''}`,
               available: remaining > 0,
               upcast: upcast ?? undefined,
               command: {
                 spellIndex: row.spell.index,
                 sourceKey: origin.sourceKey,
-                method: pool.type === 'pact' ? 'pact' : 'slot',
+                method: pool.type === 'pact' ? 'pact' : pool.type === 'restricted' ? 'restricted' : 'slot',
                 poolKey: pool.key,
                 slotLevel: numericLevel,
               },

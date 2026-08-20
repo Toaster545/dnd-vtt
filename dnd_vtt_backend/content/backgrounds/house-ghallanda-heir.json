@@ -1,0 +1,73 @@
+{
+  "index": "house-ghallanda-heir",
+  "name": "House Ghallanda Heir",
+  "description": "An Eberron background from Eberron: Forge of the Artificer.",
+  "skill_proficiencies": [
+    "Insight",
+    "Persuasion"
+  ],
+  "tool_proficiencies": [
+    "Cook'S Utensils"
+  ],
+  "languages": "None",
+  "starting_equipment": {
+    "fixed": [
+      {
+        "key": "cooks-utensils-0",
+        "item": "cooks-utensils",
+        "quantity": 1
+      },
+      {
+        "key": "fine-clothes-1",
+        "item": "fine-clothes",
+        "quantity": 1
+      },
+      {
+        "key": "iron-pot-2",
+        "item": "iron-pot",
+        "quantity": 1
+      },
+      {
+        "key": "lamp-3",
+        "item": "lamp",
+        "quantity": 1
+      },
+      {
+        "key": "oil-4",
+        "item": "oil",
+        "quantity": 5
+      },
+      {
+        "key": "perfume-5",
+        "item": "perfume",
+        "quantity": 1
+      }
+    ],
+    "groups": [],
+    "gold": 26,
+    "goldAlternative": 50
+  },
+  "feature": "Origin Feat: Mark of Hospitality",
+  "grants": [
+    {
+      "type": "ability_choice",
+      "key": "ability_scores",
+      "name": "Ability Scores",
+      "points": 3,
+      "abilities": [
+        "dexterity",
+        "wisdom",
+        "charisma"
+      ],
+      "description": "Increase one listed ability by 2 and another by 1, or increase all three by 1."
+    }
+  ],
+  "source": {
+    "code": "EFA",
+    "book": "Eberron: Forge of the Artificer",
+    "edition": 2024,
+    "page": 28,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

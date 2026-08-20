@@ -1,0 +1,69 @@
+{
+  "index": "lyrandar-scion",
+  "name": "Lyrandar Scion",
+  "size": "Small",
+  "type": "humanoid (khoravar)",
+  "alignment": "N",
+  "armor_class": 13,
+  "hit_points": 60,
+  "hit_dice": "11d8 + 11",
+  "speed": {
+    "walk": 30
+  },
+  "ability_scores": {
+    "strength": 12,
+    "dexterity": 16,
+    "constitution": 13,
+    "intelligence": 12,
+    "wisdom": 15,
+    "charisma": 18
+  },
+  "saving_throws": {
+    "Strength": 3,
+    "Dexterity": 5
+  },
+  "skills": {
+    "Acrobatics": 5,
+    "Perception": 4
+  },
+  "damage_vulnerabilities": [],
+  "damage_resistances": [
+    "lightning",
+    "thunder"
+  ],
+  "damage_immunities": [],
+  "condition_immunities": [],
+  "senses": {
+    "passive_perception": 14,
+    "darkvision": 60
+  },
+  "languages": [
+    "Common",
+    "Elvish"
+  ],
+  "challenge_rating": "4",
+  "xp": 1100,
+  "traits": [],
+  "actions": [
+    {
+      "name": "Multiattack",
+      "description": "Reference-only rule. See Eberron: Forge of the Artificer, page 82."
+    },
+    {
+      "name": "Thunderbolt",
+      "description": "Reference-only rule. See Eberron: Forge of the Artificer, page 82."
+    }
+  ],
+  "reactions": [],
+  "legendary_actions": [],
+  "description": "Reference stat block from Eberron: Forge of the Artificer, page 82.",
+  "rules_text": "reference-only",
+  "source": {
+    "code": "EFA",
+    "book": "Eberron: Forge of the Artificer",
+    "edition": 2024,
+    "page": 82,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

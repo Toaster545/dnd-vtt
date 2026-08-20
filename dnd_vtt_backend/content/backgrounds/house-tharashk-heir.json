@@ -1,0 +1,68 @@
+{
+  "index": "house-tharashk-heir",
+  "name": "House Tharashk Heir",
+  "description": "An Eberron background from Eberron: Forge of the Artificer.",
+  "skill_proficiencies": [
+    "Perception",
+    "Survival"
+  ],
+  "tool_proficiencies": [
+    "Gaming Set"
+  ],
+  "languages": "None",
+  "starting_equipment": {
+    "fixed": [
+      {
+        "key": "gaming-set-0",
+        "item": "gaming-set",
+        "quantity": 1
+      },
+      {
+        "key": "climbers-kit-1",
+        "item": "climbers-kit",
+        "quantity": 1
+      },
+      {
+        "key": "fine-clothes-2",
+        "item": "fine-clothes",
+        "quantity": 1
+      },
+      {
+        "key": "hunting-trap-3",
+        "item": "hunting-trap",
+        "quantity": 1
+      },
+      {
+        "key": "manacles-4",
+        "item": "manacles",
+        "quantity": 1
+      }
+    ],
+    "groups": [],
+    "gold": 2,
+    "goldAlternative": 50
+  },
+  "feature": "Origin Feat: Mark of Finding",
+  "grants": [
+    {
+      "type": "ability_choice",
+      "key": "ability_scores",
+      "name": "Ability Scores",
+      "points": 3,
+      "abilities": [
+        "constitution",
+        "intelligence",
+        "wisdom"
+      ],
+      "description": "Increase one listed ability by 2 and another by 1, or increase all three by 1."
+    }
+  ],
+  "source": {
+    "code": "EFA",
+    "book": "Eberron: Forge of the Artificer",
+    "edition": 2024,
+    "page": 32,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

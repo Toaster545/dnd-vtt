@@ -1,0 +1,80 @@
+{
+  "index": "vadalis-heir",
+  "name": "Vadalis Heir",
+  "size": "Small",
+  "type": "humanoid (human)",
+  "alignment": "N",
+  "armor_class": 14,
+  "hit_points": 52,
+  "hit_dice": "8d8 + 16",
+  "speed": {
+    "walk": 30
+  },
+  "ability_scores": {
+    "strength": 12,
+    "dexterity": 16,
+    "constitution": 15,
+    "intelligence": 10,
+    "wisdom": 17,
+    "charisma": 13
+  },
+  "saving_throws": {
+    "Dexterity": 5,
+    "Constitution": 4,
+    "Wisdom": 5
+  },
+  "skills": {
+    "Animal Handling": 7,
+    "Nature": 4,
+    "Stealth": 5
+  },
+  "damage_vulnerabilities": [],
+  "damage_resistances": [],
+  "damage_immunities": [],
+  "condition_immunities": [],
+  "senses": {
+    "passive_perception": 13
+  },
+  "languages": [
+    "Common",
+    "Sylvan"
+  ],
+  "challenge_rating": "4",
+  "xp": 1100,
+  "traits": [
+    {
+      "name": "Pack Tactics",
+      "description": "Reference-only rule. See Eberron: Forge of the Artificer, page 85."
+    }
+  ],
+  "actions": [
+    {
+      "name": "Multiattack",
+      "description": "Reference-only rule. See Eberron: Forge of the Artificer, page 85."
+    },
+    {
+      "name": "Scimitar",
+      "description": "Reference-only rule. See Eberron: Forge of the Artificer, page 85."
+    },
+    {
+      "name": "Lunar Wisp",
+      "description": "Reference-only rule. See Eberron: Forge of the Artificer, page 85."
+    },
+    {
+      "name": "Spur Beast (Bonus Action)",
+      "description": "Reference-only rule. See Eberron: Forge of the Artificer, page 85."
+    }
+  ],
+  "reactions": [],
+  "legendary_actions": [],
+  "description": "Reference stat block from Eberron: Forge of the Artificer, page 85.",
+  "rules_text": "reference-only",
+  "source": {
+    "code": "EFA",
+    "book": "Eberron: Forge of the Artificer",
+    "edition": 2024,
+    "page": 85,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

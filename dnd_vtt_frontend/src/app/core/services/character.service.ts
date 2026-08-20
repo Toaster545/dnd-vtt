@@ -7,7 +7,7 @@ import { Character } from '../models/character.model';
 export interface SpellCastCommand {
   spellIndex: string;
   sourceKey: string;
-  method: 'cantrip' | 'slot' | 'pact' | 'free';
+  method: 'cantrip' | 'slot' | 'pact' | 'restricted' | 'free';
   poolKey?: string;
   slotLevel?: number;
   freeCastKey?: string;
@@ -127,6 +127,14 @@ export class CharacterService {
   async revokeItem(id: string, itemIndex: string, quantity?: number): Promise<Character> {
     return firstValueFrom(
       this.http.post<Character>(`${API}/characters/${id}/revoke-item`, { itemIndex, quantity })
+    );
+  }
+
+  async updateReplicatedItem(
+    id: string, action: 'create' | 'dismiss' | 'toggle', itemIndex: string,
+  ): Promise<Character> {
+    return firstValueFrom(
+      this.http.post<Character>(`${API}/characters/${id}/replicate-item`, { action, itemIndex })
     );
   }
 

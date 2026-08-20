@@ -1,0 +1,18 @@
+{
+  "index": "net",
+  "name": "Net",
+  "type": "gear",
+  "category": "Adventuring Gear",
+  "damage": null,
+  "damage_type": null,
+  "properties": [],
+  "weight": 0,
+  "cost": "See PHB 2024",
+  "description": "A weighted net used to restrain a nearby creature.",
+  "source": {
+    "code": "XPHB",
+    "book": "Player's Handbook",
+    "edition": 2024,
+    "rules_text": "reference-only"
+  }
+}

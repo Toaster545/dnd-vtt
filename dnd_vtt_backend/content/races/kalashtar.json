@@ -1,0 +1,52 @@
+{
+  "index": "kalashtar",
+  "name": "Kalashtar",
+  "creature_type": "Aberration",
+  "speed": 30,
+  "size": "Medium",
+  "description": "People joined to dream spirits, possessing disciplined and telepathic minds.",
+  "traits": [
+    "Dual Mind",
+    "Mental Discipline",
+    "Mind Link",
+    "Severed from Dreams"
+  ],
+  "languages": [],
+  "subraces": [],
+  "source": {
+    "code": "EFA",
+    "book": "Eberron: Forge of the Artificer",
+    "edition": 2024,
+    "page": 35,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  },
+  "grants": [
+    {
+      "type": "feature",
+      "name": "Dual Mind",
+      "description": "You have Advantage on Wisdom and Charisma saving throws."
+    },
+    {
+      "type": "feature",
+      "name": "Mental Discipline",
+      "description": "You have Resistance to Psychic damage."
+    },
+    {
+      "type": "feature",
+      "name": "Mind Link",
+      "description": "You have telepathy out to 10 times your character level in feet and can temporarily enable a contacted creature to reply."
+    },
+    {
+      "type": "feature",
+      "name": "Severed from Dreams",
+      "description": "Dream cannot target you. After each Long Rest, choose one skill proficiency that lasts until your next Long Rest."
+    },
+    {
+      "type": "skill_choice",
+      "key": "severed_from_dreams_skill",
+      "name": "Severed from Dreams Skill",
+      "choose": 1
+    }
+  ]
+}

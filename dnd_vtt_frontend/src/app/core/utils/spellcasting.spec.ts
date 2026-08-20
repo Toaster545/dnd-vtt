@@ -572,6 +572,54 @@ describe('resolveSpellcasting', () => {
     });
     expect(result.alwaysPrepared[0].freeCast?.key).toContain('forest_magic');
   });
+
+  it('creates a scaling Dragonmark-only slot for Potent Dragonmark', () => {
+    const mark = {
+      index: 'mark-of-making',
+      name: 'Mark of Making',
+      category: 'origin',
+      tags: ['dragonmark'],
+      grants: [
+        {
+          type: 'spell_grant', key: 'mark-spell', name: 'Mark Spell',
+          destination: 'always_prepared', spells: ['magic-missile'],
+        },
+        {
+          type: 'spell_list_expansion', key: 'mark-list', name: 'Spells of the Mark',
+          spells: ['fireball'], alwaysPreparedIfFeat: 'potent-dragonmark',
+        },
+      ],
+    } as unknown as DndFeat;
+    const potent = {
+      index: 'potent-dragonmark',
+      name: 'Potent Dragonmark',
+      category: 'general',
+      grants: [{
+        type: 'dragonmark_slot', key: 'potent_dragonmark_slot',
+        name: 'Dragonmark Spell Slot', maxLevel: 5, recovery: 'short_rest',
+      }],
+    } as unknown as DndFeat;
+
+    const result = resolveSpellcasting({
+      characterLevel: 9,
+      abilityScores: scores,
+      spells,
+      classes: [],
+      feats: [
+        { feat: mark, scope: 'background:mark' },
+        { feat: potent, scope: 'class:wizard:asi_8' },
+      ],
+    });
+
+    expect(result.slotPools).toContainEqual({
+      key: 'restricted:potent_dragonmark_slot',
+      name: 'Dragonmark Spell Slot',
+      type: 'restricted',
+      slots: { '5': 1 },
+      allowedSpellIndices: expect.arrayContaining(['magic-missile', 'fireball']),
+      recovery: 'short_rest',
+    });
+  });
 });
 
 describe('describeSpellUpcast', () => {

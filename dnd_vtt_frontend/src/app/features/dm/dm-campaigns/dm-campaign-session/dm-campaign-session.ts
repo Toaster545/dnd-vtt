@@ -14,6 +14,7 @@ import { BattleMapService } from '../../../../core/services/battle-map.service';
 import { SessionService } from '../../../../core/services/session.service';
 import { CampaignService } from '../../../../core/services/campaign.service';
 import { ClassChoiceSource } from '../../../../core/utils/character-effects';
+import { campaignContentEnabled } from '../../../../core/utils/content-sources';
 import { Encounter } from '../../../../core/models/encounter.model';
 import { Character } from '../../../../core/models/character.model';
 import { BattleMap, CampaignMember, UniversalVTTData } from '../../../../core/models/campaign.model';
@@ -123,16 +124,18 @@ export class DmCampaignSessionComponent implements OnInit, OnDestroy {
   }
 
   async ngOnInit() {
-    const [session, encounters, monsters, characters, campaign] = await Promise.all([
+    const [session, encounters, monsters, characters, campaign, sources] = await Promise.all([
       this.sessionService.getById(this.sessionId),
       this.encounterService.getBySession(this.sessionId),
       this.content.getMonsters(this.campaignId),
       this.characterService.getMyCharacters(),
       this.campaignService.getById(this.campaignId),
+      this.content.getSources(),
     ]);
     this.session.set(session);
     this.encounters.set(encounters);
-    this.monsters.set(monsters);
+    const allowed = new Set(campaign.allowed_sources);
+    this.monsters.set(monsters.filter(monster => campaignContentEnabled(monster, allowed, sources)));
     this.characters.set(characters);
     this.members.set(campaign.members);
     this.loading.set(false);

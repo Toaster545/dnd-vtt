@@ -1,0 +1,18 @@
+{
+  "index": "cooks-utensils",
+  "name": "Cook's Utensils",
+  "type": "gear",
+  "category": "Artisan's Tools",
+  "damage": null,
+  "damage_type": null,
+  "properties": [],
+  "weight": 0,
+  "cost": "See PHB 2024",
+  "description": "Utensils used to prepare food.",
+  "source": {
+    "code": "XPHB",
+    "book": "Player's Handbook",
+    "edition": 2024,
+    "rules_text": "reference-only"
+  }
+}

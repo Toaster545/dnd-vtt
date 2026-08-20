@@ -1,0 +1,94 @@
+{
+  "index": "khoravar",
+  "name": "Khoravar",
+  "creature_type": "Humanoid",
+  "speed": 30,
+  "size": "Medium",
+  "size_options": [
+    "Small",
+    "Medium"
+  ],
+  "darkvision_ft": 60,
+  "description": "A people with intertwined human and elven heritage and adaptable fey gifts.",
+  "traits": [
+    "Darkvision",
+    "Fey Ancestry",
+    "Fey Gift",
+    "Lethargy Resilience",
+    "Skill Versatility"
+  ],
+  "languages": [],
+  "subraces": [],
+  "source": {
+    "code": "EFA",
+    "book": "Eberron: Forge of the Artificer",
+    "edition": 2024,
+    "page": 36,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  },
+  "grants": [
+    {
+      "type": "feature",
+      "name": "Darkvision",
+      "description": "You have Darkvision out to 60 feet."
+    },
+    {
+      "type": "feature",
+      "name": "Fey Ancestry",
+      "description": "You have Advantage on saves to avoid or end the Charmed condition."
+    },
+    {
+      "type": "choice",
+      "key": "khoravar_spellcasting_ability",
+      "name": "Fey Gift Spellcasting Ability",
+      "choose": 1,
+      "description": "Choose the ability used by your Fey Gift cantrip.",
+      "options": [
+        {
+          "name": "Intelligence"
+        },
+        {
+          "name": "Wisdom"
+        },
+        {
+          "name": "Charisma"
+        }
+      ]
+    },
+    {
+      "type": "spell_grant",
+      "key": "khoravar_fey_gift",
+      "name": "Fey Gift",
+      "destination": "known",
+      "choose": 1,
+      "countsAgainstLimit": false,
+      "sourceKey": "khoravar",
+      "sourceName": "Khoravar",
+      "ability": {
+        "choiceKey": "khoravar_spellcasting_ability"
+      },
+      "filter": {
+        "lists": [
+          "Cleric",
+          "Druid",
+          "Wizard"
+        ],
+        "exactLevels": [
+          0
+        ]
+      }
+    },
+    {
+      "type": "feature",
+      "name": "Lethargy Resilience",
+      "description": "When you fail a save against becoming Unconscious, you can succeed instead. The trait then requires multiple Long Rests before it can be used again."
+    },
+    {
+      "type": "skill_choice",
+      "key": "khoravar_skill_versatility",
+      "name": "Skill Versatility",
+      "choose": 1
+    }
+  ]
+}

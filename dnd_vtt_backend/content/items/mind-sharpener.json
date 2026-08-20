@@ -1,0 +1,42 @@
+{
+  "index": "mind-sharpener",
+  "name": "Mind Sharpener",
+  "type": "magic",
+  "category": "Wondrous Item",
+  "damage": null,
+  "damage_type": null,
+  "properties": [],
+  "weight": 0,
+  "cost": "Magic item",
+  "description": "A robe or suit of armor attachment with charges that can turn a failed Constitution save to maintain Concentration into a success.",
+  "rarity": "uncommon",
+  "requires_attunement": true,
+  "charges": {
+    "max": 4,
+    "recovery": "dawn"
+  },
+  "actions": [
+    {
+      "key": "item:mind-sharpener",
+      "name": "Mind Sharpener",
+      "description": "A robe or suit of armor attachment with charges that can turn a failed Constitution save to maintain Concentration into a success.",
+      "activation": "reaction",
+      "uses": {
+        "max": 4,
+        "per": "long_rest"
+      }
+    }
+  ],
+  "artificer_plan": {
+    "name": "Mind Sharpener",
+    "itemIndex": "mind-sharpener"
+  },
+  "source": {
+    "code": "EFA",
+    "book": "Eberron: Forge of the Artificer",
+    "edition": 2024,
+    "page": 112,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

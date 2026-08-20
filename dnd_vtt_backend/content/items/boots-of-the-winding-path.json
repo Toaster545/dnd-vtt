@@ -1,0 +1,26 @@
+{
+  "index": "boots-of-the-winding-path",
+  "name": "Boots of the Winding Path",
+  "type": "magic",
+  "category": "Wondrous Item",
+  "damage": null,
+  "damage_type": null,
+  "properties": [],
+  "weight": 0,
+  "cost": "Magic item",
+  "description": "As a Bonus Action, teleport up to 15 feet to an unoccupied space you occupied earlier this turn.",
+  "rarity": "uncommon",
+  "requires_attunement": true,
+  "artificer_plan": {
+    "name": "Boots of the Winding Path",
+    "itemIndex": "boots-of-the-winding-path"
+  },
+  "source": {
+    "code": "EFA",
+    "book": "Eberron: Forge of the Artificer",
+    "edition": 2024,
+    "page": 112,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

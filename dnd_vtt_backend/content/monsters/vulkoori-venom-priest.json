@@ -1,0 +1,75 @@
+{
+  "index": "vulkoori-venom-priest",
+  "name": "Vulkoori Venom Priest",
+  "size": "Medium",
+  "type": "humanoid (elf)",
+  "alignment": "N E",
+  "armor_class": 15,
+  "hit_points": 44,
+  "hit_dice": "8d8 + 8",
+  "speed": {
+    "walk": 30
+  },
+  "ability_scores": {
+    "strength": 15,
+    "dexterity": 16,
+    "constitution": 12,
+    "intelligence": 10,
+    "wisdom": 16,
+    "charisma": 13
+  },
+  "saving_throws": {
+    "Constitution": 3,
+    "Wisdom": 5
+  },
+  "skills": {
+    "Perception": 5,
+    "Religion": 2,
+    "Stealth": 5
+  },
+  "damage_vulnerabilities": [],
+  "damage_resistances": [
+    "poison"
+  ],
+  "damage_immunities": [],
+  "condition_immunities": [],
+  "senses": {
+    "passive_perception": 15,
+    "darkvision": 120
+  },
+  "languages": [
+    "Common",
+    "Elvish",
+    "Giant"
+  ],
+  "challenge_rating": "2",
+  "xp": 450,
+  "traits": [
+    {
+      "name": "Fey Ancestry",
+      "description": "Reference-only rule. See Eberron: Forge of the Artificer, page 98."
+    }
+  ],
+  "actions": [
+    {
+      "name": "Venom Staff",
+      "description": "Reference-only rule. See Eberron: Forge of the Artificer, page 98."
+    },
+    {
+      "name": "Intensify Poison (Bonus Action)",
+      "description": "Reference-only rule. See Eberron: Forge of the Artificer, page 98."
+    }
+  ],
+  "reactions": [],
+  "legendary_actions": [],
+  "description": "Reference stat block from Eberron: Forge of the Artificer, page 98.",
+  "rules_text": "reference-only",
+  "source": {
+    "code": "EFA",
+    "book": "Eberron: Forge of the Artificer",
+    "edition": 2024,
+    "page": 98,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

@@ -1,0 +1,73 @@
+{
+  "index": "orien-enforcer",
+  "name": "Orien Enforcer",
+  "size": "Small",
+  "type": "humanoid (human)",
+  "alignment": "N",
+  "armor_class": 16,
+  "hit_points": 55,
+  "hit_dice": "10d8 + 10",
+  "speed": {
+    "walk": 35
+  },
+  "ability_scores": {
+    "strength": 12,
+    "dexterity": 18,
+    "constitution": 13,
+    "intelligence": 16,
+    "wisdom": 14,
+    "charisma": 11
+  },
+  "saving_throws": {
+    "Dexterity": 6,
+    "Wisdom": 4
+  },
+  "skills": {
+    "Acrobatics": 6,
+    "Perception": 4
+  },
+  "damage_vulnerabilities": [],
+  "damage_resistances": [],
+  "damage_immunities": [],
+  "condition_immunities": [],
+  "senses": {
+    "passive_perception": 14
+  },
+  "languages": [
+    "Common plus two other languages"
+  ],
+  "challenge_rating": "4",
+  "xp": 1100,
+  "traits": [],
+  "actions": [
+    {
+      "name": "Multiattack",
+      "description": "Reference-only rule. See Eberron: Forge of the Artificer, page 83."
+    },
+    {
+      "name": "Dagger",
+      "description": "Reference-only rule. See Eberron: Forge of the Artificer, page 83."
+    },
+    {
+      "name": "Lightning Cage {@recharge 5}",
+      "description": "Reference-only rule. See Eberron: Forge of the Artificer, page 83."
+    }
+  ],
+  "reactions": [
+    {
+      "name": "Temporal Disruption (1/Day)",
+      "description": "Reference-only rule. See Eberron: Forge of the Artificer, page 83."
+    }
+  ],
+  "legendary_actions": [],
+  "description": "Reference stat block from Eberron: Forge of the Artificer, page 83.",
+  "rules_text": "reference-only",
+  "source": {
+    "code": "EFA",
+    "book": "Eberron: Forge of the Artificer",
+    "edition": 2024,
+    "page": 83,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

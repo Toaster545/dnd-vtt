@@ -1,0 +1,73 @@
+{
+  "index": "house-sivis-heir",
+  "name": "House Sivis Heir",
+  "description": "An Eberron background from Eberron: Forge of the Artificer.",
+  "skill_proficiencies": [
+    "History",
+    "Perception"
+  ],
+  "tool_proficiencies": [
+    "Calligrapher'S Supplies"
+  ],
+  "languages": "None",
+  "starting_equipment": {
+    "fixed": [
+      {
+        "key": "calligraphers-supplies-0",
+        "item": "calligraphers-supplies",
+        "quantity": 1
+      },
+      {
+        "key": "fine-clothes-1",
+        "item": "fine-clothes",
+        "quantity": 1
+      },
+      {
+        "key": "ink-2",
+        "item": "ink",
+        "quantity": 1
+      },
+      {
+        "key": "ink-pen-3",
+        "item": "ink-pen",
+        "quantity": 5
+      },
+      {
+        "key": "paper-4",
+        "item": "paper",
+        "quantity": 30
+      },
+      {
+        "key": "parchment-5",
+        "item": "parchment",
+        "quantity": 9
+      }
+    ],
+    "groups": [],
+    "gold": 8,
+    "goldAlternative": 50
+  },
+  "feature": "Origin Feat: Mark of Scribing",
+  "grants": [
+    {
+      "type": "ability_choice",
+      "key": "ability_scores",
+      "name": "Ability Scores",
+      "points": 3,
+      "abilities": [
+        "intelligence",
+        "wisdom",
+        "charisma"
+      ],
+      "description": "Increase one listed ability by 2 and another by 1, or increase all three by 1."
+    }
+  ],
+  "source": {
+    "code": "EFA",
+    "book": "Eberron: Forge of the Artificer",
+    "edition": 2024,
+    "page": 31,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

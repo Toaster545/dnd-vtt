@@ -38,6 +38,7 @@
           <div class="sheet-stat sheet-stat-initiative text-center">
             <div class="text-[10px] text-slate uppercase tracking-widest mb-0.5">Initiative</div>
             <div class="font-brand text-2xl leading-none text-gold">{{ fmt(s.initiative) }}</div>
+            @if (s.initiative_advantage) { <div class="text-[9px] text-gold mt-1 uppercase">Advantage</div> }
           </div>
           <div class="sheet-stat sheet-stat-proficiency text-center">
             <div class="text-[10px] text-slate uppercase tracking-widest mb-0.5">Prof. Bonus</div>
@@ -229,6 +230,28 @@
                             <span class="text-parchment font-medium">{{ f.name }}</span>
                             @if (f.detail) { <span class="text-slate"> — {{ f.detail }}</span> }
                           </div>
+                        </div>
+                      }
+                    </div>
+                  }
+                  @if (activeCompanions().length) {
+                    <h4 class="font-brand text-gold text-xs uppercase tracking-widest m-0 pt-4 pb-1.5 mb-2 border-b border-gold/25">Companions</h4>
+                    <div class="flex flex-col gap-2">
+                      @for (companion of activeCompanions(); track companion.monster.index) {
+                        <div class="rounded border border-white/10 bg-elevated px-3 py-2 text-sm">
+                          <div class="flex flex-wrap items-center gap-2">
+                            <span class="text-parchment font-medium">{{ companion.monster.name }}</span>
+                            <span class="tag">{{ companion.source }}</span>
+                            <span class="text-coal text-xs">AC {{ companion.monster.armor_class }}</span>
+                            <span class="text-coal text-xs">
+                              HP {{ companion.monster.hit_points_formula || companion.monster.hit_points }}
+                            </span>
+                          </div>
+                          @if (companion.monster.actions.length) {
+                            <div class="text-xs text-slate mt-1">
+                              {{ companion.monster.actions[0].name }} — {{ companion.monster.actions[0].description }}
+                            </div>
+                          }
                         </div>
                       }
                     </div>
@@ -487,6 +510,48 @@
               }
             </div>
 
+            @if (replicationLimit() > 0) {
+              <section class="rounded-lg border border-gold/25 bg-gold/5 p-3">
+                <div class="flex items-center justify-between gap-3 mb-2">
+                  <div>
+                    <h4 class="font-brand text-gold text-sm m-0">Replicate Magic Item</h4>
+                    <p class="text-xs text-slate mt-0.5 mb-0">{{ activeReplicatedItems().length }} / {{ replicationLimit() }} active</p>
+                  </div>
+                </div>
+                @if (replicateItemError()) { <p class="text-xs text-danger mt-0 mb-2">{{ replicateItemError() }}</p> }
+                @if (activeReplicatedItems().length) {
+                  <div class="flex flex-col gap-1.5 mb-2">
+                    @for (row of activeReplicatedItems(); track row.entry.itemIndex) {
+                      <div class="flex items-center justify-between gap-3 rounded border border-white/10 px-3 py-2">
+                        <div>
+                          <span class="text-sm text-parchment">{{ row.entry.planName }}</span>
+                          @if (row.item?.rarity) { <span class="text-xs text-coal"> · {{ row.item?.rarity }}</span> }
+                        </div>
+                        <div class="flex items-center gap-1.5">
+                          <button class="btn-outline text-xs" [disabled]="replicateItemBusy()"
+                            (click)="updateReplicatedItem('toggle', row.entry.itemIndex)">
+                            {{ row.entry.equipped ? 'Equipped' : 'Equip' }}
+                          </button>
+                          <button class="btn-icon text-danger/70" [disabled]="replicateItemBusy()"
+                            (click)="updateReplicatedItem('dismiss', row.entry.itemIndex)" matTooltip="End this replication">
+                            <mat-icon class="text-lg">close</mat-icon>
+                          </button>
+                        </div>
+                      </div>
+                    }
+                  </div>
+                }
+                <div class="flex flex-wrap gap-1.5">
+                  @for (plan of replicablePlans(); track plan.item.index) {
+                    <button class="btn-outline text-xs" [disabled]="replicateItemBusy() || activeReplicatedItems().length >= replicationLimit() || isReplicatedItemActive(plan.item.index)"
+                      (click)="updateReplicatedItem('create', plan.item.index)">
+                      Replicate {{ plan.option.name }}
+                    </button>
+                  }
+                </div>
+              </section>
+            }
+
             @if (inventoryItems().length) {
               <div class="flex flex-col gap-1.5">
                 @for (row of inventoryItems(); track row.entry.itemIndex) {
@@ -646,7 +711,7 @@
 
               @for (pool of spellResolution()?.slotPools ?? []; track pool.key) {
                 <div>
-                  <h4 class="font-brand text-gold text-xs uppercase tracking-widest m-0 pb-1.5 mb-2 border-b border-gold/25">{{ pool.name }}{{ pool.type === 'pact' ? ' (Short Rest)' : '' }}</h4>
+                  <h4 class="font-brand text-gold text-xs uppercase tracking-widest m-0 pb-1.5 mb-2 border-b border-gold/25">{{ pool.name }}{{ pool.type === 'pact' || pool.recovery === 'short_rest' ? ' (Short Rest)' : '' }}</h4>
                   <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2">
                     @for (slot of slotLevels(pool); track slot[0]) {
                       @let used = slotUses(pool.key, slot[0]);

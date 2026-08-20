@@ -1,0 +1,105 @@
+{
+  "index": "mark-of-healing",
+  "name": "Mark of Healing",
+  "description": "Manifest the Mark of Healing; gain its intuition, magic, and expanded spell list.",
+  "category": "origin",
+  "tags": [
+    "dragonmark"
+  ],
+  "exclusiveGroup": "dragonmark",
+  "grants": [
+    {
+      "type": "feature",
+      "name": "Healing Intuition",
+      "description": "Your dragonmark improves checks and special tasks associated with healing."
+    },
+    {
+      "type": "choice",
+      "key": "dragonmark_spellcasting_ability",
+      "name": "Dragonmark Spellcasting Ability",
+      "choose": 1,
+      "description": "Choose Intelligence, Wisdom, or Charisma for this mark.",
+      "options": [
+        {
+          "name": "Intelligence"
+        },
+        {
+          "name": "Wisdom"
+        },
+        {
+          "name": "Charisma"
+        }
+      ]
+    },
+    {
+      "type": "spell_grant",
+      "key": "mark-of-healing_cure-wounds",
+      "name": "Mark of Healing",
+      "destination": "always_prepared",
+      "spells": [
+        "cure-wounds"
+      ],
+      "countsAgainstLimit": false,
+      "sourceKey": "mark-of-healing",
+      "sourceName": "Mark of Healing",
+      "characterLevel": 1,
+      "ability": {
+        "choiceKey": "dragonmark_spellcasting_ability"
+      },
+      "freeCast": {
+        "uses": 1,
+        "recovery": "long_rest"
+      }
+    },
+    {
+      "type": "spell_grant",
+      "key": "mark-of-healing_lesser-restoration",
+      "name": "Mark of Healing",
+      "destination": "always_prepared",
+      "spells": [
+        "lesser-restoration"
+      ],
+      "countsAgainstLimit": false,
+      "sourceKey": "mark-of-healing",
+      "sourceName": "Mark of Healing",
+      "characterLevel": 3,
+      "ability": {
+        "choiceKey": "dragonmark_spellcasting_ability"
+      },
+      "freeCast": {
+        "uses": 1,
+        "recovery": "long_rest"
+      }
+    },
+    {
+      "type": "spell_list_expansion",
+      "key": "mark-of-healing_spells_of_the_mark",
+      "name": "Spells of the Mark",
+      "spells": [
+        "false-life",
+        "healing-word",
+        "arcane-vigor",
+        "prayer-of-healing",
+        "aura-of-vitality",
+        "mass-healing-word",
+        "aura-of-life",
+        "aura-of-purity",
+        "greater-restoration"
+      ],
+      "alwaysPreparedIfFeat": "potent-dragonmark",
+      "sourceKey": "mark-of-healing",
+      "sourceName": "Mark of Healing",
+      "ability": {
+        "choiceKey": "dragonmark_spellcasting_ability"
+      }
+    }
+  ],
+  "source": {
+    "code": "EFA",
+    "book": "Eberron: Forge of the Artificer",
+    "edition": 2024,
+    "page": 40,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

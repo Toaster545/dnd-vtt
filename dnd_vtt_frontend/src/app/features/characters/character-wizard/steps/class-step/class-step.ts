@@ -32,6 +32,7 @@ export class ClassStepComponent implements OnInit {
   readonly baseAbilityScores = input.required<Record<Ability, number>>();
   readonly proficientSkills  = input<string[]>([]);
   readonly unavailableSkills = input<string[]>([]);
+  readonly externalFeatIndices = input<string[]>([]);
   readonly classAdded        = output<ClassEntry>();
   readonly classRemoved      = output<string>();
 
@@ -584,9 +585,14 @@ export class ClassStepComponent implements OnInit {
   // exclude non-repeatable feats from a picker, without hiding a feat the picker's own grant
   // already selected (which would break deselecting it).
   private alreadyTakenElsewhere(excludeGrantKey: string): Set<string> {
-    return new Set(
-      this.allFeatPickEntries().filter(e => e.grantKey !== excludeGrantKey).map(e => e.featIndex),
-    );
+    return new Set([
+      ...this.externalFeatIndices(),
+      ...this.allFeatPickEntries().filter(e => e.grantKey !== excludeGrantKey).map(e => e.featIndex),
+    ]);
+  }
+
+  private activeFeatIndices(): Set<string> {
+    return new Set([...this.externalFeatIndices(), ...this.allFeatPickEntries().map(entry => entry.featIndex)]);
   }
 
   private hasSpellcasting(): boolean {
@@ -632,6 +638,14 @@ export class ClassStepComponent implements OnInit {
       ([key, values]) => values.some(value => (this.speciesChoices()[key] ?? []).includes(value)),
     )) return false;
     if (p.feature && !this.hasFeature(p.feature)) return false;
+    const activeFeatIndices = this.activeFeatIndices();
+    if (p.feats?.length && !p.feats.every(index => activeFeatIndices.has(index))) return false;
+    if (p.featTags?.length) {
+      const activeFeats = this.feats().filter(candidate => activeFeatIndices.has(candidate.index));
+      if (!p.featTags.every(tag => activeFeats.some(candidate => candidate.tags?.includes(tag)))) return false;
+    }
+    if (feat.exclusiveGroup && this.feats().some(candidate =>
+      candidate.index !== feat.index && candidate.exclusiveGroup === feat.exclusiveGroup && activeFeatIndices.has(candidate.index))) return false;
     return true;
   }
 

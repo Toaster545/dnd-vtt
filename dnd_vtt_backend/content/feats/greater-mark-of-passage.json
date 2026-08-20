@@ -1,0 +1,34 @@
+{
+  "index": "greater-mark-of-passage",
+  "name": "Greater Mark of Passage",
+  "description": "Deepen the Mark of Passage, improving its intuition and signature benefit.",
+  "category": "general",
+  "prerequisite": {
+    "level": 4,
+    "feats": [
+      "mark-of-passage"
+    ]
+  },
+  "abilityIncrease": {
+    "abilities": [
+      "strength",
+      "dexterity",
+      "constitution",
+      "intelligence",
+      "wisdom",
+      "charisma"
+    ],
+    "amount": 1
+  },
+  "tags": [
+    "dragonmark-upgrade"
+  ],
+  "source": {
+    "code": "EFA",
+    "book": "Eberron: Forge of the Artificer",
+    "edition": 2024,
+    "page": 46,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

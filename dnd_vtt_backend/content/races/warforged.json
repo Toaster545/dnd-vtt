@@ -1,0 +1,138 @@
+{
+  "index": "warforged",
+  "name": "Warforged",
+  "creature_type": "Construct",
+  "speed": 30,
+  "size": "Medium",
+  "size_options": [
+    "Small",
+    "Medium"
+  ],
+  "description": "Living constructs built for war and now shaping lives of their own.",
+  "traits": [
+    "Construct Resilience",
+    "Integrated Protection",
+    "Sentry's Rest",
+    "Specialized Design",
+    "Tireless"
+  ],
+  "languages": [],
+  "subraces": [],
+  "source": {
+    "code": "EFA",
+    "book": "Eberron: Forge of the Artificer",
+    "edition": 2024,
+    "page": 38,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  },
+  "grants": [
+    {
+      "type": "feature",
+      "name": "Construct Resilience",
+      "description": "You resist Poison damage and have Advantage on saves to avoid or end the Poisoned condition."
+    },
+    {
+      "type": "feature",
+      "name": "Integrated Protection",
+      "description": "You gain +1 AC, and donned armor cannot be removed from you against your will while you live.",
+      "effects": [
+        {
+          "type": "ac_bonus",
+          "value": 1
+        }
+      ]
+    },
+    {
+      "type": "feature",
+      "name": "Sentry's Rest",
+      "description": "You need not sleep and magic cannot put you to sleep. You can complete a Long Rest while conscious and motionless."
+    },
+    {
+      "type": "skill_choice",
+      "key": "specialized_design_skill",
+      "name": "Specialized Design: Skill",
+      "choose": 1
+    },
+    {
+      "type": "choice",
+      "key": "specialized_design_tool",
+      "name": "Specialized Design: Tool",
+      "choose": 1,
+      "description": "Choose one tool proficiency.",
+      "options": [
+        {
+          "name": "Alchemist's Supplies"
+        },
+        {
+          "name": "Brewer's Supplies"
+        },
+        {
+          "name": "Calligrapher's Supplies"
+        },
+        {
+          "name": "Carpenter's Tools"
+        },
+        {
+          "name": "Cartographer's Tools"
+        },
+        {
+          "name": "Cobbler's Tools"
+        },
+        {
+          "name": "Cook's Utensils"
+        },
+        {
+          "name": "Glassblower's Tools"
+        },
+        {
+          "name": "Jeweler's Tools"
+        },
+        {
+          "name": "Leatherworker's Tools"
+        },
+        {
+          "name": "Mason's Tools"
+        },
+        {
+          "name": "Painter's Supplies"
+        },
+        {
+          "name": "Potter's Tools"
+        },
+        {
+          "name": "Smith's Tools"
+        },
+        {
+          "name": "Tinker's Tools"
+        },
+        {
+          "name": "Weaver's Tools"
+        },
+        {
+          "name": "Woodcarver's Tools"
+        },
+        {
+          "name": "Disguise Kit"
+        },
+        {
+          "name": "Forgery Kit"
+        },
+        {
+          "name": "Herbalism Kit"
+        },
+        {
+          "name": "Navigator's Tools"
+        },
+        {
+          "name": "Thieves' Tools"
+        }
+      ]
+    },
+    {
+      "type": "feature",
+      "name": "Tireless",
+      "description": "You do not gain Exhaustion from dehydration, malnutrition, or suffocation."
+    }
+  ]
+}

@@ -1,0 +1,83 @@
+{
+  "index": "umbragen-shadow-walker",
+  "name": "Umbragen Shadow Walker",
+  "size": "Medium",
+  "type": "humanoid (elf)",
+  "alignment": "N",
+  "armor_class": 14,
+  "hit_points": 162,
+  "hit_dice": "25d8 + 50",
+  "speed": {
+    "walk": 30
+  },
+  "ability_scores": {
+    "strength": 12,
+    "dexterity": 19,
+    "constitution": 14,
+    "intelligence": 13,
+    "wisdom": 15,
+    "charisma": 20
+  },
+  "saving_throws": {
+    "Dexterity": 8,
+    "Wisdom": 6
+  },
+  "skills": {
+    "Arcana": 5,
+    "Perception": 6,
+    "Stealth": 8
+  },
+  "damage_vulnerabilities": [
+    "radiant"
+  ],
+  "damage_resistances": [],
+  "damage_immunities": [],
+  "condition_immunities": [],
+  "senses": {
+    "passive_perception": 16,
+    "darkvision": 120
+  },
+  "languages": [
+    "Common",
+    "Elvish",
+    "Undercommon"
+  ],
+  "challenge_rating": "9",
+  "xp": 5000,
+  "traits": [
+    {
+      "name": "Fey Ancestry",
+      "description": "Reference-only rule. See Eberron: Forge of the Artificer, page 99."
+    },
+    {
+      "name": "Sunlight Sensitivity",
+      "description": "Reference-only rule. See Eberron: Forge of the Artificer, page 99."
+    }
+  ],
+  "actions": [
+    {
+      "name": "Multiattack",
+      "description": "Reference-only rule. See Eberron: Forge of the Artificer, page 99."
+    },
+    {
+      "name": "Gloom Burst",
+      "description": "Reference-only rule. See Eberron: Forge of the Artificer, page 99."
+    },
+    {
+      "name": "Shadow Cowl",
+      "description": "Reference-only rule. See Eberron: Forge of the Artificer, page 99."
+    }
+  ],
+  "reactions": [],
+  "legendary_actions": [],
+  "description": "Reference stat block from Eberron: Forge of the Artificer, page 99.",
+  "rules_text": "reference-only",
+  "source": {
+    "code": "EFA",
+    "book": "Eberron: Forge of the Artificer",
+    "edition": 2024,
+    "page": 99,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

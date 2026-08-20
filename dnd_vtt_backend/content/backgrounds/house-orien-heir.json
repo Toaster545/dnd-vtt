@@ -1,0 +1,63 @@
+{
+  "index": "house-orien-heir",
+  "name": "House Orien Heir",
+  "description": "An Eberron background from Eberron: Forge of the Artificer.",
+  "skill_proficiencies": [
+    "Acrobatics",
+    "Athletics"
+  ],
+  "tool_proficiencies": [
+    "Cartographer'S Tools"
+  ],
+  "languages": "None",
+  "starting_equipment": {
+    "fixed": [
+      {
+        "key": "cartographers-tools-0",
+        "item": "cartographers-tools",
+        "quantity": 1
+      },
+      {
+        "key": "fine-clothes-1",
+        "item": "fine-clothes",
+        "quantity": 1
+      },
+      {
+        "key": "map-2",
+        "item": "map",
+        "quantity": 1
+      },
+      {
+        "key": "map-case-3",
+        "item": "map-case",
+        "quantity": 1
+      }
+    ],
+    "groups": [],
+    "gold": 18,
+    "goldAlternative": 50
+  },
+  "feature": "Origin Feat: Mark of Passage",
+  "grants": [
+    {
+      "type": "ability_choice",
+      "key": "ability_scores",
+      "name": "Ability Scores",
+      "points": 3,
+      "abilities": [
+        "dexterity",
+        "constitution",
+        "intelligence"
+      ],
+      "description": "Increase one listed ability by 2 and another by 1, or increase all three by 1."
+    }
+  ],
+  "source": {
+    "code": "EFA",
+    "book": "Eberron: Forge of the Artificer",
+    "edition": 2024,
+    "page": 30,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

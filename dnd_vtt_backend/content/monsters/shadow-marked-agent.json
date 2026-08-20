@@ -1,0 +1,73 @@
+{
+  "index": "shadow-marked-agent",
+  "name": "Shadow-Marked Agent",
+  "size": "Medium",
+  "type": "humanoid (elf)",
+  "alignment": "N",
+  "armor_class": 17,
+  "hit_points": 132,
+  "hit_dice": "24d8 + 24",
+  "speed": {
+    "walk": 30
+  },
+  "ability_scores": {
+    "strength": 12,
+    "dexterity": 20,
+    "constitution": 12,
+    "intelligence": 11,
+    "wisdom": 16,
+    "charisma": 17
+  },
+  "saving_throws": {
+    "Dexterity": 8,
+    "Wisdom": 6
+  },
+  "skills": {
+    "Perception": 6,
+    "Performance": 6,
+    "Sleight Of Hand": 8,
+    "Stealth": 11
+  },
+  "damage_vulnerabilities": [],
+  "damage_resistances": [],
+  "damage_immunities": [],
+  "condition_immunities": [],
+  "senses": {
+    "passive_perception": 16,
+    "darkvision": 60
+  },
+  "languages": [
+    "Common",
+    "Elvish",
+    "Thieves' cant"
+  ],
+  "challenge_rating": "7",
+  "xp": 2900,
+  "traits": [],
+  "actions": [
+    {
+      "name": "Multiattack",
+      "description": "Reference-only rule. See Eberron: Forge of the Artificer, page 84."
+    },
+    {
+      "name": "Shadow Knife",
+      "description": "Reference-only rule. See Eberron: Forge of the Artificer, page 84."
+    },
+    {
+      "name": "Shadow Cloak (Bonus Action)",
+      "description": "Reference-only rule. See Eberron: Forge of the Artificer, page 84."
+    }
+  ],
+  "reactions": [],
+  "legendary_actions": [],
+  "description": "Reference stat block from Eberron: Forge of the Artificer, page 84.",
+  "rules_text": "reference-only",
+  "source": {
+    "code": "EFA",
+    "book": "Eberron: Forge of the Artificer",
+    "edition": 2024,
+    "page": 84,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

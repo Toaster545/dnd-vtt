@@ -1,0 +1,75 @@
+{
+  "index": "sivis-scribe",
+  "name": "Sivis Scribe",
+  "size": "Small",
+  "type": "humanoid (gnome)",
+  "alignment": "N",
+  "armor_class": 15,
+  "hit_points": 56,
+  "hit_dice": "16d6",
+  "speed": {
+    "walk": 30
+  },
+  "ability_scores": {
+    "strength": 11,
+    "dexterity": 15,
+    "constitution": 10,
+    "intelligence": 16,
+    "wisdom": 12,
+    "charisma": 11
+  },
+  "saving_throws": {
+    "Wisdom": 3
+  },
+  "skills": {
+    "Arcana": 5,
+    "Sleight Of Hand": 4
+  },
+  "damage_vulnerabilities": [],
+  "damage_resistances": [],
+  "damage_immunities": [],
+  "condition_immunities": [],
+  "senses": {
+    "passive_perception": 11,
+    "darkvision": 60
+  },
+  "languages": [
+    "Common",
+    "Gnomish plus three other languages"
+  ],
+  "challenge_rating": "3",
+  "xp": 700,
+  "traits": [
+    {
+      "name": "Words of Reason",
+      "description": "Reference-only rule. See Eberron: Forge of the Artificer, page 84."
+    }
+  ],
+  "actions": [
+    {
+      "name": "Multiattack",
+      "description": "Reference-only rule. See Eberron: Forge of the Artificer, page 84."
+    },
+    {
+      "name": "Bursting Sigil",
+      "description": "Reference-only rule. See Eberron: Forge of the Artificer, page 84."
+    }
+  ],
+  "reactions": [
+    {
+      "name": "Word of Stasis {@recharge 5}",
+      "description": "Reference-only rule. See Eberron: Forge of the Artificer, page 84."
+    }
+  ],
+  "legendary_actions": [],
+  "description": "Reference stat block from Eberron: Forge of the Artificer, page 84.",
+  "rules_text": "reference-only",
+  "source": {
+    "code": "EFA",
+    "book": "Eberron: Forge of the Artificer",
+    "edition": 2024,
+    "page": 84,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

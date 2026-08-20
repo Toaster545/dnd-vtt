@@ -1,0 +1,63 @@
+{
+  "index": "house-cannith-heir",
+  "name": "House Cannith Heir",
+  "description": "An Eberron background from Eberron: Forge of the Artificer.",
+  "skill_proficiencies": [
+    "Investigation",
+    "Sleight Of Hand"
+  ],
+  "tool_proficiencies": [
+    "Artisan's Tools"
+  ],
+  "languages": "None",
+  "starting_equipment": {
+    "fixed": [
+      {
+        "key": "artisan-tools-0",
+        "category": "Artisan's Tools",
+        "label": "Artisan's Tools"
+      },
+      {
+        "key": "crowbar-1",
+        "item": "crowbar",
+        "quantity": 1
+      },
+      {
+        "key": "fine-clothes-2",
+        "item": "fine-clothes",
+        "quantity": 1
+      },
+      {
+        "key": "pouch-3",
+        "item": "pouch",
+        "quantity": 2
+      }
+    ],
+    "groups": [],
+    "gold": 17,
+    "goldAlternative": 50
+  },
+  "feature": "Origin Feat: Mark of Making",
+  "grants": [
+    {
+      "type": "ability_choice",
+      "key": "ability_scores",
+      "name": "Ability Scores",
+      "points": 3,
+      "abilities": [
+        "strength",
+        "dexterity",
+        "intelligence"
+      ],
+      "description": "Increase one listed ability by 2 and another by 1, or increase all three by 1."
+    }
+  ],
+  "source": {
+    "code": "EFA",
+    "book": "Eberron: Forge of the Artificer",
+    "edition": 2024,
+    "page": 27,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

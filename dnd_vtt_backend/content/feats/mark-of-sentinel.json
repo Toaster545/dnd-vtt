@@ -1,0 +1,85 @@
+{
+  "index": "mark-of-sentinel",
+  "name": "Mark of Sentinel",
+  "description": "Manifest the Mark of Sentinel; gain its intuition, magic, and expanded spell list.",
+  "category": "origin",
+  "tags": [
+    "dragonmark"
+  ],
+  "exclusiveGroup": "dragonmark",
+  "grants": [
+    {
+      "type": "feature",
+      "name": "Sentinel Intuition",
+      "description": "Your dragonmark improves checks and special tasks associated with sentinel."
+    },
+    {
+      "type": "choice",
+      "key": "dragonmark_spellcasting_ability",
+      "name": "Dragonmark Spellcasting Ability",
+      "choose": 1,
+      "description": "Choose Intelligence, Wisdom, or Charisma for this mark.",
+      "options": [
+        {
+          "name": "Intelligence"
+        },
+        {
+          "name": "Wisdom"
+        },
+        {
+          "name": "Charisma"
+        }
+      ]
+    },
+    {
+      "type": "spell_grant",
+      "key": "mark-of-sentinel_shield",
+      "name": "Mark of Sentinel",
+      "destination": "always_prepared",
+      "spells": [
+        "shield"
+      ],
+      "countsAgainstLimit": false,
+      "sourceKey": "mark-of-sentinel",
+      "sourceName": "Mark of Sentinel",
+      "characterLevel": 1,
+      "ability": {
+        "choiceKey": "dragonmark_spellcasting_ability"
+      },
+      "freeCast": {
+        "uses": 1,
+        "recovery": "long_rest"
+      }
+    },
+    {
+      "type": "spell_list_expansion",
+      "key": "mark-of-sentinel_spells_of_the_mark",
+      "name": "Spells of the Mark",
+      "spells": [
+        "compelled-duel",
+        "shield-of-faith",
+        "warding-bond",
+        "zone-of-truth",
+        "counterspell",
+        "protection-from-energy",
+        "death-ward",
+        "guardian-of-faith",
+        "bigbys-hand"
+      ],
+      "alwaysPreparedIfFeat": "potent-dragonmark",
+      "sourceKey": "mark-of-sentinel",
+      "sourceName": "Mark of Sentinel",
+      "ability": {
+        "choiceKey": "dragonmark_spellcasting_ability"
+      }
+    }
+  ],
+  "source": {
+    "code": "EFA",
+    "book": "Eberron: Forge of the Artificer",
+    "edition": 2024,
+    "page": 41,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

@@ -1,0 +1,75 @@
+{
+  "index": "emerald-claw-commander",
+  "name": "Emerald Claw Commander",
+  "size": "Small",
+  "type": "humanoid",
+  "alignment": "L E",
+  "armor_class": 20,
+  "hit_points": 78,
+  "hit_dice": "12d8 + 24",
+  "speed": {
+    "walk": 30
+  },
+  "ability_scores": {
+    "strength": 18,
+    "dexterity": 11,
+    "constitution": 15,
+    "intelligence": 15,
+    "wisdom": 12,
+    "charisma": 14
+  },
+  "saving_throws": {
+    "Constitution": 4,
+    "Wisdom": 3
+  },
+  "skills": {
+    "Athletics": 6,
+    "Intimidation": 4,
+    "Perception": 3
+  },
+  "damage_vulnerabilities": [],
+  "damage_resistances": [],
+  "damage_immunities": [],
+  "condition_immunities": [],
+  "senses": {
+    "passive_perception": 13
+  },
+  "languages": [
+    "Common",
+    "Dwarvish"
+  ],
+  "challenge_rating": "4",
+  "xp": 1100,
+  "traits": [
+    {
+      "name": "Aura of Authority",
+      "description": "Reference-only rule. See Eberron: Forge of the Artificer, page 90."
+    }
+  ],
+  "actions": [
+    {
+      "name": "Multiattack",
+      "description": "Reference-only rule. See Eberron: Forge of the Artificer, page 90."
+    },
+    {
+      "name": "Flail",
+      "description": "Reference-only rule. See Eberron: Forge of the Artificer, page 90."
+    },
+    {
+      "name": "Javelin",
+      "description": "Reference-only rule. See Eberron: Forge of the Artificer, page 90."
+    }
+  ],
+  "reactions": [],
+  "legendary_actions": [],
+  "description": "Reference stat block from Eberron: Forge of the Artificer, page 90.",
+  "rules_text": "reference-only",
+  "source": {
+    "code": "EFA",
+    "book": "Eberron: Forge of the Artificer",
+    "edition": 2024,
+    "page": 90,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

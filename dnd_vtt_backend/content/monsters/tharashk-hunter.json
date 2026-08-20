@@ -1,0 +1,80 @@
+{
+  "index": "tharashk-hunter",
+  "name": "Tharashk Hunter",
+  "size": "Small",
+  "type": "humanoid (human (orc)",
+  "alignment": "N",
+  "armor_class": 16,
+  "hit_points": 97,
+  "hit_dice": "15d8 + 30",
+  "speed": {
+    "walk": 40
+  },
+  "ability_scores": {
+    "strength": 12,
+    "dexterity": 19,
+    "constitution": 15,
+    "intelligence": 11,
+    "wisdom": 16,
+    "charisma": 10
+  },
+  "saving_throws": {
+    "Dexterity": 7,
+    "Constitution": 5
+  },
+  "skills": {
+    "Perception": 6,
+    "Stealth": 7,
+    "Survival": 6
+  },
+  "damage_vulnerabilities": [],
+  "damage_resistances": [],
+  "damage_immunities": [],
+  "condition_immunities": [],
+  "senses": {
+    "passive_perception": 16,
+    "darkvision": 60
+  },
+  "languages": [
+    "Common",
+    "Orc plus one other language"
+  ],
+  "challenge_rating": "6",
+  "xp": 2300,
+  "traits": [],
+  "actions": [
+    {
+      "name": "Multiattack",
+      "description": "Reference-only rule. See Eberron: Forge of the Artificer, page 85."
+    },
+    {
+      "name": "Shortsword",
+      "description": "Reference-only rule. See Eberron: Forge of the Artificer, page 85."
+    },
+    {
+      "name": "Longbow",
+      "description": "Reference-only rule. See Eberron: Forge of the Artificer, page 85."
+    },
+    {
+      "name": "Mark of Tharashk (Bonus Action)",
+      "description": "Reference-only rule. See Eberron: Forge of the Artificer, page 85."
+    }
+  ],
+  "reactions": [
+    {
+      "name": "Uncanny Dodge",
+      "description": "Reference-only rule. See Eberron: Forge of the Artificer, page 85."
+    }
+  ],
+  "legendary_actions": [],
+  "description": "Reference stat block from Eberron: Forge of the Artificer, page 85.",
+  "rules_text": "reference-only",
+  "source": {
+    "code": "EFA",
+    "book": "Eberron: Forge of the Artificer",
+    "edition": 2024,
+    "page": 85,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

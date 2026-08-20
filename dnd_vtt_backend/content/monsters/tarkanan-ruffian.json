@@ -1,0 +1,66 @@
+{
+  "index": "tarkanan-ruffian",
+  "name": "Tarkanan Ruffian",
+  "size": "Small",
+  "type": "humanoid",
+  "alignment": "C E",
+  "armor_class": 13,
+  "hit_points": 32,
+  "hit_dice": "5d8 + 10",
+  "speed": {
+    "walk": 40
+  },
+  "ability_scores": {
+    "strength": 14,
+    "dexterity": 13,
+    "constitution": 15,
+    "intelligence": 11,
+    "wisdom": 10,
+    "charisma": 13
+  },
+  "saving_throws": {
+    "Dexterity": 3,
+    "Constitution": 4
+  },
+  "skills": {
+    "Intimidation": 3,
+    "Perception": 2
+  },
+  "damage_vulnerabilities": [],
+  "damage_resistances": [],
+  "damage_immunities": [],
+  "condition_immunities": [],
+  "senses": {
+    "passive_perception": 12
+  },
+  "languages": [
+    "Common",
+    "Thieves' cant"
+  ],
+  "challenge_rating": "1",
+  "xp": 200,
+  "traits": [
+    {
+      "name": "Aberrant Surge",
+      "description": "Reference-only rule. See Eberron: Forge of the Artificer, page 73."
+    }
+  ],
+  "actions": [
+    {
+      "name": "Spear",
+      "description": "Reference-only rule. See Eberron: Forge of the Artificer, page 73."
+    }
+  ],
+  "reactions": [],
+  "legendary_actions": [],
+  "description": "Reference stat block from Eberron: Forge of the Artificer, page 73.",
+  "rules_text": "reference-only",
+  "source": {
+    "code": "EFA",
+    "book": "Eberron: Forge of the Artificer",
+    "edition": 2024,
+    "page": 73,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

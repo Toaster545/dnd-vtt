@@ -23,6 +23,7 @@ import { Character, Ability, ABILITIES, ScoreMethod, POINT_BUY_MIN, defaultChara
 import { AvatarRecipeV1 } from '../../../core/models/avatar.model';
 import { AvatarCreatorDialogComponent } from '../../../shared/avatar-creator-dialog/avatar-creator-dialog';
 import { ContentSourceDialogComponent } from '../../../shared/components/content-source-dialog/content-source-dialog';
+import { characterContentEnabled } from '../../../core/utils/content-sources';
 import { RaceStepComponent, Subrace, RaceChoice } from './steps/race-step/race-step';
 import { ClassStepComponent, ClassEntry } from './steps/class-step/class-step';
 import { BackgroundStepComponent, BackgroundChoice } from './steps/background-step/background-step';
@@ -120,6 +121,19 @@ export class CharacterWizardComponent implements OnInit, OnDestroy {
   backgroundSelection = computed<BackgroundChoice | null>(() => {
     const background = this.selectedBackground();
     return background ? { background, traits: this.backgroundTraits() } : null;
+  });
+
+  externalFeatIndices = computed(() => {
+    const indices = new Set<string>();
+    const backgroundFeat = resolveBackgroundOriginFeat(this.selectedBackground(), this.feats());
+    if (backgroundFeat) indices.add(backgroundFeat.index);
+    const race = this.selectedRace();
+    if (race) {
+      for (const selection of resolveCharacterFeatPicks([], this.feats(), {
+        data: race, choices: this.raceTraits(), subrace: this.selectedSubrace()?.name,
+      })) indices.add(selection.feat.index);
+    }
+    return [...indices];
   });
 
   assignments = signal<Record<Ability, number | null>>({
@@ -729,7 +743,7 @@ export class CharacterWizardComponent implements OnInit, OnDestroy {
   private applySourceFilters(clearUnavailable = false) {
     const enabled = this.enabledSources();
     const include = <T extends { source?: { code: string } }>(entry: T) =>
-      enabled.has(entry.source?.code ?? 'XPHB');
+      characterContentEnabled(entry, enabled, this.sources());
     this.races.set(this.allRaces.filter(include));
     this.classes.set(this.allClasses.filter(include).map(cls => ({
       ...cls,

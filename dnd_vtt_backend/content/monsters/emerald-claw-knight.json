@@ -1,0 +1,68 @@
+{
+  "index": "emerald-claw-knight",
+  "name": "Emerald Claw Knight",
+  "size": "Small",
+  "type": "humanoid",
+  "alignment": "L E",
+  "armor_class": 18,
+  "hit_points": 52,
+  "hit_dice": "8d8 + 16",
+  "speed": {
+    "walk": 30
+  },
+  "ability_scores": {
+    "strength": 17,
+    "dexterity": 11,
+    "constitution": 14,
+    "intelligence": 13,
+    "wisdom": 10,
+    "charisma": 13
+  },
+  "saving_throws": {
+    "Wisdom": 2
+  },
+  "skills": {
+    "Athletics": 5,
+    "Perception": 2
+  },
+  "damage_vulnerabilities": [],
+  "damage_resistances": [],
+  "damage_immunities": [],
+  "condition_immunities": [],
+  "senses": {
+    "passive_perception": 12
+  },
+  "languages": [
+    "Common",
+    "Dwarvish"
+  ],
+  "challenge_rating": "2",
+  "xp": 450,
+  "traits": [],
+  "actions": [
+    {
+      "name": "Multiattack",
+      "description": "Reference-only rule. See Eberron: Forge of the Artificer, page 90."
+    },
+    {
+      "name": "Flail",
+      "description": "Reference-only rule. See Eberron: Forge of the Artificer, page 90."
+    },
+    {
+      "name": "Javelin",
+      "description": "Reference-only rule. See Eberron: Forge of the Artificer, page 90."
+    }
+  ],
+  "reactions": [],
+  "legendary_actions": [],
+  "description": "Reference stat block from Eberron: Forge of the Artificer, page 90.",
+  "rules_text": "reference-only",
+  "source": {
+    "code": "EFA",
+    "book": "Eberron: Forge of the Artificer",
+    "edition": 2024,
+    "page": 90,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}
