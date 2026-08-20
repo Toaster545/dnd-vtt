@@ -1,0 +1,1080 @@
+{
+  "source": {
+    "code": "XGE",
+    "name": "Xanathar's Guide to Everything",
+    "edition": 2017,
+    "rules_text": "reference-only"
+  },
+  "compatibility": {
+    "rules_origin": "2014 legacy content",
+    "host_rules": "2024 core classes",
+    "subclass_levels": "Legacy subclass features are grouped into the nearest 2024 subclass milestone.",
+    "spell_aliases": {
+      "branding-smite": "shining-smite"
+    }
+  },
+  "counts": {
+    "published_subclasses": 31,
+    "imported_subclasses": 27,
+    "phb_2024_subclass_reprints": 4,
+    "published_spells": 95,
+    "imported_spells": 85,
+    "phb_2024_spell_reprints": 10,
+    "feats": 15,
+    "magic_items": 43
+  },
+  "catalog": {
+    "subclasses": [
+      {
+        "class_index": "barbarian",
+        "index": "ancestral-guardian",
+        "name": "Path of the Ancestral Guardian"
+      },
+      {
+        "class_index": "barbarian",
+        "index": "storm-herald",
+        "name": "Path of the Storm Herald"
+      },
+      {
+        "class_index": "bard",
+        "index": "swords",
+        "name": "College of Swords"
+      },
+      {
+        "class_index": "bard",
+        "index": "whispers",
+        "name": "College of Whispers"
+      },
+      {
+        "class_index": "cleric",
+        "index": "forge",
+        "name": "Forge Domain"
+      },
+      {
+        "class_index": "cleric",
+        "index": "grave",
+        "name": "Grave Domain"
+      },
+      {
+        "class_index": "druid",
+        "index": "dreams",
+        "name": "Circle of Dreams"
+      },
+      {
+        "class_index": "druid",
+        "index": "shepherd",
+        "name": "Circle of the Shepherd"
+      },
+      {
+        "class_index": "fighter",
+        "index": "arcane-archer",
+        "name": "Arcane Archer"
+      },
+      {
+        "class_index": "fighter",
+        "index": "cavalier",
+        "name": "Cavalier"
+      },
+      {
+        "class_index": "fighter",
+        "index": "samurai",
+        "name": "Samurai"
+      },
+      {
+        "class_index": "monk",
+        "index": "drunken-master",
+        "name": "Way of the Drunken Master"
+      },
+      {
+        "class_index": "monk",
+        "index": "kensei",
+        "name": "Way of the Kensei"
+      },
+      {
+        "class_index": "monk",
+        "index": "sun-soul",
+        "name": "Way of the Sun Soul"
+      },
+      {
+        "class_index": "paladin",
+        "index": "conquest",
+        "name": "Oath of Conquest"
+      },
+      {
+        "class_index": "paladin",
+        "index": "redemption",
+        "name": "Oath of Redemption"
+      },
+      {
+        "class_index": "ranger",
+        "index": "horizon-walker",
+        "name": "Horizon Walker"
+      },
+      {
+        "class_index": "ranger",
+        "index": "monster-slayer",
+        "name": "Monster Slayer"
+      },
+      {
+        "class_index": "rogue",
+        "index": "inquisitive",
+        "name": "Inquisitive"
+      },
+      {
+        "class_index": "rogue",
+        "index": "mastermind",
+        "name": "Mastermind"
+      },
+      {
+        "class_index": "rogue",
+        "index": "scout",
+        "name": "Scout"
+      },
+      {
+        "class_index": "rogue",
+        "index": "swashbuckler",
+        "name": "Swashbuckler"
+      },
+      {
+        "class_index": "sorcerer",
+        "index": "divine-soul",
+        "name": "Divine Soul"
+      },
+      {
+        "class_index": "sorcerer",
+        "index": "shadow",
+        "name": "Shadow Magic"
+      },
+      {
+        "class_index": "sorcerer",
+        "index": "storm",
+        "name": "Storm Sorcery"
+      },
+      {
+        "class_index": "warlock",
+        "index": "hexblade",
+        "name": "The Hexblade"
+      },
+      {
+        "class_index": "wizard",
+        "index": "war-magic",
+        "name": "War Magic"
+      }
+    ],
+    "feats": [
+      {
+        "index": "bountiful-luck",
+        "name": "Bountiful Luck"
+      },
+      {
+        "index": "dragon-fear",
+        "name": "Dragon Fear"
+      },
+      {
+        "index": "dragon-hide",
+        "name": "Dragon Hide"
+      },
+      {
+        "index": "drow-high-magic",
+        "name": "Drow High Magic"
+      },
+      {
+        "index": "dwarven-fortitude",
+        "name": "Dwarven Fortitude"
+      },
+      {
+        "index": "elven-accuracy",
+        "name": "Elven Accuracy"
+      },
+      {
+        "index": "fade-away",
+        "name": "Fade Away"
+      },
+      {
+        "index": "fey-teleportation",
+        "name": "Fey Teleportation"
+      },
+      {
+        "index": "flames-of-phlegethos",
+        "name": "Flames of Phlegethos"
+      },
+      {
+        "index": "infernal-constitution",
+        "name": "Infernal Constitution"
+      },
+      {
+        "index": "orcish-fury",
+        "name": "Orcish Fury"
+      },
+      {
+        "index": "prodigy",
+        "name": "Prodigy"
+      },
+      {
+        "index": "second-chance",
+        "name": "Second Chance"
+      },
+      {
+        "index": "squat-nimbleness",
+        "name": "Squat Nimbleness"
+      },
+      {
+        "index": "wood-elf-magic",
+        "name": "Wood Elf Magic"
+      }
+    ],
+    "magic_items": [
+      {
+        "index": "bead-of-nourishment",
+        "name": "Bead of Nourishment"
+      },
+      {
+        "index": "bead-of-refreshment",
+        "name": "Bead of Refreshment"
+      },
+      {
+        "index": "boots-of-false-tracks",
+        "name": "Boots of False Tracks"
+      },
+      {
+        "index": "candle-of-the-deep",
+        "name": "Candle of the Deep"
+      },
+      {
+        "index": "charlatans-die",
+        "name": "Charlatan's Die"
+      },
+      {
+        "index": "cloak-of-billowing",
+        "name": "Cloak of Billowing"
+      },
+      {
+        "index": "cloak-of-many-fashions",
+        "name": "Cloak of Many Fashions"
+      },
+      {
+        "index": "clockwork-amulet",
+        "name": "Clockwork Amulet"
+      },
+      {
+        "index": "clothes-of-mending",
+        "name": "Clothes of Mending"
+      },
+      {
+        "index": "dark-shard-amulet",
+        "name": "Dark Shard Amulet"
+      },
+      {
+        "index": "dread-helm",
+        "name": "Dread Helm"
+      },
+      {
+        "index": "ear-horn-of-hearing",
+        "name": "Ear Horn of Hearing"
+      },
+      {
+        "index": "enduring-spellbook",
+        "name": "Enduring Spellbook"
+      },
+      {
+        "index": "ersatz-eye",
+        "name": "Ersatz Eye"
+      },
+      {
+        "index": "hat-of-vermin",
+        "name": "Hat of Vermin"
+      },
+      {
+        "index": "hat-of-wizardry",
+        "name": "Hat of Wizardry"
+      },
+      {
+        "index": "hewards-handy-spice-pouch",
+        "name": "Heward's Handy Spice Pouch"
+      },
+      {
+        "index": "horn-of-silent-alarm",
+        "name": "Horn of Silent Alarm"
+      },
+      {
+        "index": "instrument-of-illusions",
+        "name": "Instrument of Illusions"
+      },
+      {
+        "index": "instrument-of-scribing",
+        "name": "Instrument of Scribing"
+      },
+      {
+        "index": "lock-of-trickery",
+        "name": "Lock of Trickery"
+      },
+      {
+        "index": "mystery-key",
+        "name": "Mystery Key"
+      },
+      {
+        "index": "orb-of-direction",
+        "name": "Orb of Direction"
+      },
+      {
+        "index": "orb-of-time",
+        "name": "Orb of Time"
+      },
+      {
+        "index": "perfume-of-bewitching",
+        "name": "Perfume of Bewitching"
+      },
+      {
+        "index": "pipe-of-smoke-monsters",
+        "name": "Pipe of Smoke Monsters"
+      },
+      {
+        "index": "pole-of-angling",
+        "name": "Pole of Angling"
+      },
+      {
+        "index": "pole-of-collapsing",
+        "name": "Pole of Collapsing"
+      },
+      {
+        "index": "pot-of-awakening",
+        "name": "Pot of Awakening"
+      },
+      {
+        "index": "rope-of-mending",
+        "name": "Rope of Mending"
+      },
+      {
+        "index": "ruby-of-the-war-mage",
+        "name": "Ruby of the War Mage"
+      },
+      {
+        "index": "shield-of-expression",
+        "name": "Shield of Expression"
+      },
+      {
+        "index": "staff-of-adornment",
+        "name": "Staff of Adornment"
+      },
+      {
+        "index": "staff-of-birdcalls",
+        "name": "Staff of Birdcalls"
+      },
+      {
+        "index": "staff-of-flowers",
+        "name": "Staff of Flowers"
+      },
+      {
+        "index": "talking-doll",
+        "name": "Talking Doll"
+      },
+      {
+        "index": "tankard-of-sobriety",
+        "name": "Tankard of Sobriety"
+      },
+      {
+        "index": "unbreakable-arrow",
+        "name": "Unbreakable Arrow"
+      },
+      {
+        "index": "veterans-cane",
+        "name": "Veteran's Cane"
+      },
+      {
+        "index": "wand-of-conducting",
+        "name": "Wand of Conducting"
+      },
+      {
+        "index": "wand-of-pyrotechnics",
+        "name": "Wand of Pyrotechnics"
+      },
+      {
+        "index": "wand-of-scowls",
+        "name": "Wand of Scowls"
+      },
+      {
+        "index": "wand-of-smiles",
+        "name": "Wand of Smiles"
+      }
+    ],
+    "spells": [
+      {
+        "index": "abi-dalzims-horrid-wilting",
+        "name": "Abi-Dalzim's Horrid Wilting"
+      },
+      {
+        "index": "absorb-elements",
+        "name": "Absorb Elements"
+      },
+      {
+        "index": "aganazzars-scorcher",
+        "name": "Aganazzar's Scorcher"
+      },
+      {
+        "index": "beast-bond",
+        "name": "Beast Bond"
+      },
+      {
+        "index": "bones-of-the-earth",
+        "name": "Bones of the Earth"
+      },
+      {
+        "index": "catapult",
+        "name": "Catapult"
+      },
+      {
+        "index": "catnap",
+        "name": "Catnap"
+      },
+      {
+        "index": "cause-fear",
+        "name": "Cause Fear"
+      },
+      {
+        "index": "ceremony",
+        "name": "Ceremony"
+      },
+      {
+        "index": "chaos-bolt",
+        "name": "Chaos Bolt"
+      },
+      {
+        "index": "control-flames",
+        "name": "Control Flames"
+      },
+      {
+        "index": "control-winds",
+        "name": "Control Winds"
+      },
+      {
+        "index": "create-bonfire",
+        "name": "Create Bonfire"
+      },
+      {
+        "index": "create-homunculus",
+        "name": "Create Homunculus"
+      },
+      {
+        "index": "crown-of-stars",
+        "name": "Crown of Stars"
+      },
+      {
+        "index": "danse-macabre",
+        "name": "Danse Macabre"
+      },
+      {
+        "index": "dawn",
+        "name": "Dawn"
+      },
+      {
+        "index": "druid-grove",
+        "name": "Druid Grove"
+      },
+      {
+        "index": "dust-devil",
+        "name": "Dust Devil"
+      },
+      {
+        "index": "earth-tremor",
+        "name": "Earth Tremor"
+      },
+      {
+        "index": "earthbind",
+        "name": "Earthbind"
+      },
+      {
+        "index": "elemental-bane",
+        "name": "Elemental Bane"
+      },
+      {
+        "index": "enemies-abound",
+        "name": "Enemies Abound"
+      },
+      {
+        "index": "enervation",
+        "name": "Enervation"
+      },
+      {
+        "index": "erupting-earth",
+        "name": "Erupting Earth"
+      },
+      {
+        "index": "far-step",
+        "name": "Far Step"
+      },
+      {
+        "index": "find-greater-steed",
+        "name": "Find Greater Steed"
+      },
+      {
+        "index": "flame-arrows",
+        "name": "Flame Arrows"
+      },
+      {
+        "index": "frostbite",
+        "name": "Frostbite"
+      },
+      {
+        "index": "guardian-of-nature",
+        "name": "Guardian of Nature"
+      },
+      {
+        "index": "gust",
+        "name": "Gust"
+      },
+      {
+        "index": "healing-spirit",
+        "name": "Healing Spirit"
+      },
+      {
+        "index": "holy-weapon",
+        "name": "Holy Weapon"
+      },
+      {
+        "index": "illusory-dragon",
+        "name": "Illusory Dragon"
+      },
+      {
+        "index": "immolation",
+        "name": "Immolation"
+      },
+      {
+        "index": "infernal-calling",
+        "name": "Infernal Calling"
+      },
+      {
+        "index": "infestation",
+        "name": "Infestation"
+      },
+      {
+        "index": "investiture-of-flame",
+        "name": "Investiture of Flame"
+      },
+      {
+        "index": "investiture-of-ice",
+        "name": "Investiture of Ice"
+      },
+      {
+        "index": "investiture-of-stone",
+        "name": "Investiture of Stone"
+      },
+      {
+        "index": "investiture-of-wind",
+        "name": "Investiture of Wind"
+      },
+      {
+        "index": "invulnerability",
+        "name": "Invulnerability"
+      },
+      {
+        "index": "life-transference",
+        "name": "Life Transference"
+      },
+      {
+        "index": "maddening-darkness",
+        "name": "Maddening Darkness"
+      },
+      {
+        "index": "maelstrom",
+        "name": "Maelstrom"
+      },
+      {
+        "index": "magic-stone",
+        "name": "Magic Stone"
+      },
+      {
+        "index": "mass-polymorph",
+        "name": "Mass Polymorph"
+      },
+      {
+        "index": "maximilians-earthen-grasp",
+        "name": "Maximilian's Earthen Grasp"
+      },
+      {
+        "index": "melfs-minute-meteors",
+        "name": "Melf's Minute Meteors"
+      },
+      {
+        "index": "mental-prison",
+        "name": "Mental Prison"
+      },
+      {
+        "index": "mighty-fortress",
+        "name": "Mighty Fortress"
+      },
+      {
+        "index": "mold-earth",
+        "name": "Mold Earth"
+      },
+      {
+        "index": "negative-energy-flood",
+        "name": "Negative Energy Flood"
+      },
+      {
+        "index": "power-word-pain",
+        "name": "Power Word Pain"
+      },
+      {
+        "index": "primal-savagery",
+        "name": "Primal Savagery"
+      },
+      {
+        "index": "primordial-ward",
+        "name": "Primordial Ward"
+      },
+      {
+        "index": "psychic-scream",
+        "name": "Psychic Scream"
+      },
+      {
+        "index": "pyrotechnics",
+        "name": "Pyrotechnics"
+      },
+      {
+        "index": "scatter",
+        "name": "Scatter"
+      },
+      {
+        "index": "shadow-blade",
+        "name": "Shadow Blade"
+      },
+      {
+        "index": "shadow-of-moil",
+        "name": "Shadow of Moil"
+      },
+      {
+        "index": "shape-water",
+        "name": "Shape Water"
+      },
+      {
+        "index": "sickening-radiance",
+        "name": "Sickening Radiance"
+      },
+      {
+        "index": "skill-empowerment",
+        "name": "Skill Empowerment"
+      },
+      {
+        "index": "skywrite",
+        "name": "Skywrite"
+      },
+      {
+        "index": "snare",
+        "name": "Snare"
+      },
+      {
+        "index": "snillocs-snowball-swarm",
+        "name": "Snilloc's Snowball Swarm"
+      },
+      {
+        "index": "soul-cage",
+        "name": "Soul Cage"
+      },
+      {
+        "index": "storm-sphere",
+        "name": "Storm Sphere"
+      },
+      {
+        "index": "summon-greater-demon",
+        "name": "Summon Greater Demon"
+      },
+      {
+        "index": "summon-lesser-demons",
+        "name": "Summon Lesser Demons"
+      },
+      {
+        "index": "temple-of-the-gods",
+        "name": "Temple of the Gods"
+      },
+      {
+        "index": "tensers-transformation",
+        "name": "Tenser's Transformation"
+      },
+      {
+        "index": "thunder-step",
+        "name": "Thunder Step"
+      },
+      {
+        "index": "tidal-wave",
+        "name": "Tidal Wave"
+      },
+      {
+        "index": "tiny-servant",
+        "name": "Tiny Servant"
+      },
+      {
+        "index": "transmute-rock",
+        "name": "Transmute Rock"
+      },
+      {
+        "index": "wall-of-light",
+        "name": "Wall of Light"
+      },
+      {
+        "index": "wall-of-sand",
+        "name": "Wall of Sand"
+      },
+      {
+        "index": "wall-of-water",
+        "name": "Wall of Water"
+      },
+      {
+        "index": "warding-wind",
+        "name": "Warding Wind"
+      },
+      {
+        "index": "watery-sphere",
+        "name": "Watery Sphere"
+      },
+      {
+        "index": "whirlwind",
+        "name": "Whirlwind"
+      },
+      {
+        "index": "wrath-of-nature",
+        "name": "Wrath of Nature"
+      },
+      {
+        "index": "zephyr-strike",
+        "name": "Zephyr Strike"
+      }
+    ]
+  },
+  "supplied_by_phb_2024": {
+    "subclasses": [
+      {
+        "class_index": "barbarian",
+        "index": "zealot",
+        "name": "Path of the Zealot"
+      },
+      {
+        "class_index": "bard",
+        "index": "glamour",
+        "name": "College of Glamour"
+      },
+      {
+        "class_index": "ranger",
+        "index": "gloom-stalker",
+        "name": "Gloom Stalker"
+      },
+      {
+        "class_index": "warlock",
+        "index": "celestial",
+        "name": "The Celestial"
+      }
+    ],
+    "spells": [
+      {
+        "index": "charm-monster",
+        "name": "Charm Monster"
+      },
+      {
+        "index": "dragons-breath",
+        "name": "Dragon's Breath"
+      },
+      {
+        "index": "ice-knife",
+        "name": "Ice Knife"
+      },
+      {
+        "index": "mind-spike",
+        "name": "Mind Spike"
+      },
+      {
+        "index": "steel-wind-strike",
+        "name": "Steel Wind Strike"
+      },
+      {
+        "index": "synaptic-static",
+        "name": "Synaptic Static"
+      },
+      {
+        "index": "thunderclap",
+        "name": "Thunderclap"
+      },
+      {
+        "index": "toll-the-dead",
+        "name": "Toll the Dead"
+      },
+      {
+        "index": "vitriolic-sphere",
+        "name": "Vitriolic Sphere"
+      },
+      {
+        "index": "word-of-radiance",
+        "name": "Word of Radiance"
+      }
+    ]
+  },
+  "spell_list_additions": {
+    "sorcerer": [
+      "abi-dalzims-horrid-wilting",
+      "absorb-elements",
+      "aganazzars-scorcher",
+      "catapult",
+      "catnap",
+      "chaos-bolt",
+      "control-flames",
+      "control-winds",
+      "create-bonfire",
+      "crown-of-stars",
+      "dust-devil",
+      "earth-tremor",
+      "earthbind",
+      "enemies-abound",
+      "enervation",
+      "erupting-earth",
+      "far-step",
+      "flame-arrows",
+      "frostbite",
+      "gust",
+      "immolation",
+      "infestation",
+      "investiture-of-flame",
+      "investiture-of-ice",
+      "investiture-of-stone",
+      "investiture-of-wind",
+      "mass-polymorph",
+      "maximilians-earthen-grasp",
+      "melfs-minute-meteors",
+      "mental-prison",
+      "mold-earth",
+      "power-word-pain",
+      "psychic-scream",
+      "pyrotechnics",
+      "scatter",
+      "shadow-blade",
+      "shape-water",
+      "sickening-radiance",
+      "skill-empowerment",
+      "snillocs-snowball-swarm",
+      "storm-sphere",
+      "thunder-step",
+      "tidal-wave",
+      "wall-of-light",
+      "wall-of-water",
+      "warding-wind",
+      "watery-sphere",
+      "whirlwind"
+    ],
+    "wizard": [
+      "abi-dalzims-horrid-wilting",
+      "absorb-elements",
+      "aganazzars-scorcher",
+      "catapult",
+      "catnap",
+      "cause-fear",
+      "control-flames",
+      "control-winds",
+      "create-bonfire",
+      "create-homunculus",
+      "crown-of-stars",
+      "danse-macabre",
+      "dawn",
+      "dust-devil",
+      "earth-tremor",
+      "earthbind",
+      "elemental-bane",
+      "enemies-abound",
+      "enervation",
+      "erupting-earth",
+      "far-step",
+      "flame-arrows",
+      "frostbite",
+      "gust",
+      "illusory-dragon",
+      "immolation",
+      "infernal-calling",
+      "infestation",
+      "investiture-of-flame",
+      "investiture-of-ice",
+      "investiture-of-stone",
+      "investiture-of-wind",
+      "invulnerability",
+      "life-transference",
+      "maddening-darkness",
+      "mass-polymorph",
+      "maximilians-earthen-grasp",
+      "melfs-minute-meteors",
+      "mental-prison",
+      "mighty-fortress",
+      "mold-earth",
+      "negative-energy-flood",
+      "power-word-pain",
+      "psychic-scream",
+      "pyrotechnics",
+      "scatter",
+      "shadow-blade",
+      "shape-water",
+      "sickening-radiance",
+      "skill-empowerment",
+      "skywrite",
+      "snare",
+      "snillocs-snowball-swarm",
+      "soul-cage",
+      "storm-sphere",
+      "summon-greater-demon",
+      "summon-lesser-demons",
+      "tensers-transformation",
+      "thunder-step",
+      "tidal-wave",
+      "tiny-servant",
+      "transmute-rock",
+      "wall-of-light",
+      "wall-of-sand",
+      "wall-of-water",
+      "warding-wind",
+      "watery-sphere",
+      "whirlwind"
+    ],
+    "druid": [
+      "absorb-elements",
+      "beast-bond",
+      "bones-of-the-earth",
+      "control-flames",
+      "control-winds",
+      "create-bonfire",
+      "druid-grove",
+      "dust-devil",
+      "earth-tremor",
+      "earthbind",
+      "elemental-bane",
+      "erupting-earth",
+      "flame-arrows",
+      "frostbite",
+      "guardian-of-nature",
+      "gust",
+      "healing-spirit",
+      "infestation",
+      "investiture-of-flame",
+      "investiture-of-ice",
+      "investiture-of-stone",
+      "investiture-of-wind",
+      "maelstrom",
+      "magic-stone",
+      "mold-earth",
+      "primal-savagery",
+      "primordial-ward",
+      "shape-water",
+      "skywrite",
+      "snare",
+      "tidal-wave",
+      "transmute-rock",
+      "wall-of-water",
+      "warding-wind",
+      "watery-sphere",
+      "whirlwind",
+      "wrath-of-nature"
+    ],
+    "ranger": [
+      "absorb-elements",
+      "beast-bond",
+      "flame-arrows",
+      "guardian-of-nature",
+      "healing-spirit",
+      "snare",
+      "wrath-of-nature",
+      "zephyr-strike"
+    ],
+    "artificer": [
+      "absorb-elements",
+      "catapult",
+      "catnap",
+      "create-bonfire",
+      "elemental-bane",
+      "flame-arrows",
+      "frostbite",
+      "magic-stone",
+      "pyrotechnics",
+      "skill-empowerment",
+      "skywrite",
+      "snare",
+      "tiny-servant",
+      "transmute-rock"
+    ],
+    "bard": [
+      "catnap",
+      "earth-tremor",
+      "enemies-abound",
+      "mass-polymorph",
+      "psychic-scream",
+      "pyrotechnics",
+      "skill-empowerment",
+      "skywrite",
+      "warding-wind"
+    ],
+    "warlock": [
+      "cause-fear",
+      "create-bonfire",
+      "crown-of-stars",
+      "danse-macabre",
+      "earthbind",
+      "elemental-bane",
+      "enemies-abound",
+      "enervation",
+      "far-step",
+      "frostbite",
+      "infernal-calling",
+      "infestation",
+      "investiture-of-flame",
+      "investiture-of-ice",
+      "investiture-of-stone",
+      "investiture-of-wind",
+      "maddening-darkness",
+      "magic-stone",
+      "mental-prison",
+      "negative-energy-flood",
+      "power-word-pain",
+      "psychic-scream",
+      "scatter",
+      "shadow-blade",
+      "shadow-of-moil",
+      "sickening-radiance",
+      "soul-cage",
+      "summon-greater-demon",
+      "summon-lesser-demons",
+      "thunder-step",
+      "wall-of-light"
+    ],
+    "cleric": [
+      "ceremony",
+      "dawn",
+      "holy-weapon",
+      "life-transference",
+      "temple-of-the-gods"
+    ],
+    "paladin": [
+      "ceremony",
+      "find-greater-steed",
+      "holy-weapon"
+    ]
+  },
+  "implementation": {
+    "structured": [
+      "source gating",
+      "subclass selection",
+      "subclass feature mechanics and actions",
+      "subclass spell grants",
+      "racial feat prerequisites",
+      "feat spell grants",
+      "class spell-list membership",
+      "spell metadata",
+      "magic-item catalog metadata"
+    ],
+    "descriptive_reference": [
+      "bespoke spell effects",
+      "common magic-item activation details"
+    ]
+  },
+  "non_catalog_book_systems": [
+    "tool proficiency guidance",
+    "spellcasting edge-case guidance",
+    "encounter building guidance",
+    "random encounter tables",
+    "trap design",
+    "downtime activities",
+    "magic-item distribution guidance",
+    "shared campaigns",
+    "character-name tables"
+  ]
+}

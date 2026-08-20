@@ -1,0 +1,69 @@
+{
+  "class_index": "bard",
+  "index": "whispers",
+  "name": "College of Whispers",
+  "description": "A legacy bard subclass from Xanathar's Guide to Everything.",
+  "levels": [
+    {
+      "level": 3,
+      "features": [
+        "Psychic Blades",
+        "Words of Terror"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Psychic Blades",
+          "description": "Once per round on your turn after hitting with a weapon attack, expend Bardic Inspiration to deal extra Psychic damage: 2d6 at Bard level 3, 3d6 at level 5, 5d6 at level 10, and 8d6 at level 15."
+        },
+        {
+          "type": "feature",
+          "name": "Words of Terror",
+          "description": "After speaking alone with a Humanoid for at least 1 minute, force a Wisdom save. On a failure it is Frightened of you or a chosen creature for 1 hour, ending early when it or its allies are attacked or damaged. A successful target does not detect the attempt. Regain use after a Short or Long Rest."
+        }
+      ]
+    },
+    {
+      "level": 6,
+      "features": [
+        "Mantle of Whispers"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Mantle of Whispers",
+          "description": "When a Humanoid dies within 30 feet, use your reaction to capture its shadow until used or your next Long Rest. As an action, assume its living appearance and accessible memories for 1 hour; end it as a Bonus Action. Insight contested by your Deception, with +5 to your check, can expose the disguise. Regain capture after a Short or Long Rest."
+        }
+      ]
+    },
+    {
+      "level": 14,
+      "features": [
+        "Shadow Lore"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Shadow Lore",
+          "description": "As an action, whisper to one creature within 30 feet that can hear and understand you. On a failed Wisdom save it is Charmed for 8 hours and believes you know its worst secret, ending if you or allies harm it or force a save. Regain use after a Long Rest.",
+          "action": {
+            "activation": "action",
+            "uses": {
+              "max": 1,
+              "per": "long_rest"
+            }
+          },
+          "key": "xge_bard_whispers_14_shadow-lore"
+        }
+      ]
+    }
+  ],
+  "source": {
+    "code": "XGE",
+    "book": "Xanathar's Guide to Everything",
+    "edition": 2017,
+    "page": 16,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

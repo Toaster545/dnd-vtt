@@ -1,0 +1,82 @@
+{
+  "class_index": "rogue",
+  "index": "mastermind",
+  "name": "Mastermind",
+  "description": "A legacy rogue subclass from Xanathar's Guide to Everything.",
+  "levels": [
+    {
+      "level": 3,
+      "features": [
+        "Master of Intrigue",
+        "Master of Tactics"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Master of Intrigue",
+          "description": "Gain proficiency with Disguise Kits, Forgery Kits, one Gaming Set, and two languages. After hearing a creature speak for at least 1 minute, mimic its accent well enough to pass as a native speaker unless a suspicious listener wins an Insight check against your Deception."
+        },
+        {
+          "type": "feature",
+          "name": "Master of Tactics",
+          "description": "Use Help as a Bonus Action. When helping an ally attack, the target can be within 30 feet instead of 5 feet if it can see or hear you.",
+          "action": {
+            "activation": "bonus_action"
+          },
+          "key": "xge_rogue_mastermind_3_master-of-tactics"
+        }
+      ]
+    },
+    {
+      "level": 9,
+      "features": [
+        "Insightful Manipulator"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Insightful Manipulator",
+          "description": "After observing or interacting with a creature outside combat for at least 1 minute, learn whether two chosen traits among its Intelligence, Wisdom, Charisma, and class levels are equal, superior, or inferior to yours. The DM may also reveal a personality or history detail."
+        }
+      ]
+    },
+    {
+      "level": 13,
+      "features": [
+        "Misdirection"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Misdirection",
+          "description": "When an attack targets you while a creature within 5 feet provides cover, use a Reaction to make that creature the target instead.",
+          "action": {
+            "activation": "reaction"
+          },
+          "key": "xge_rogue_mastermind_13_misdirection"
+        }
+      ]
+    },
+    {
+      "level": 17,
+      "features": [
+        "Soul of Deceit"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Soul of Deceit",
+          "description": "Your thoughts cannot be read by telepathy or similar magic unless you allow it. You can present false thoughts by winning Deception against the reader's Insight, and magic cannot compel you to speak truth, though it still reveals whether what you choose to say is truthful."
+        }
+      ]
+    }
+  ],
+  "source": {
+    "code": "XGE",
+    "book": "Xanathar's Guide to Everything",
+    "edition": 2017,
+    "page": 46,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

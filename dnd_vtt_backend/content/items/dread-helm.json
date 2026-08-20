@@ -1,0 +1,21 @@
+{
+  "index": "dread-helm",
+  "name": "Dread Helm",
+  "type": "gear",
+  "category": "Wondrous Item",
+  "damage": null,
+  "damage_type": null,
+  "properties": [],
+  "weight": 0,
+  "cost": "—",
+  "description": "A helmet that makes the wearer’s eyes glow red.",
+  "rarity": "common",
+  "source": {
+    "code": "XGE",
+    "book": "Xanathar's Guide to Everything",
+    "edition": 2017,
+    "page": 137,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

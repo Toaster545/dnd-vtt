@@ -115,9 +115,9 @@
                   @for (source of sources(); track source.code) {
                     @if (source.player_options) {
                       <label class="flex items-start gap-2 rounded border border-white/10 p-2"
-                             [class.opacity-70]="source.code === 'XPHB'">
+                             [class.opacity-70]="source.locked">
                         <input type="checkbox" class="mt-0.5" [checked]="sourceAllowed(source)"
-                               [disabled]="source.code === 'XPHB'" (change)="toggleAllowedSource(source)" />
+                               [disabled]="source.locked" (change)="toggleAllowedSource(source)" />
                         <span>
                           <span class="block text-parchment text-sm">{{ source.name }}</span>
                           <span class="block text-coal text-xs">{{ source.description }}</span>

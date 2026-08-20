@@ -1,0 +1,582 @@
+{
+  "barbarian:ancestral-guardian:3:ancestral-protectors": {
+    "description": "While raging, the first creature you hit on your turn is hindered by ancestral spirits until your next turn: it has disadvantage on attacks against anyone other than you, and a different creature it hits has resistance to that attack's damage. The effect ends if your Rage ends."
+  },
+  "barbarian:ancestral-guardian:6:spirit-shield": {
+    "description": "While raging, when another creature you can see within 30 feet takes damage, use your reaction to reduce that damage by 2d6. The reduction becomes 3d6 at Barbarian level 10 and 4d6 at level 14.",
+    "action": { "activation": "reaction" }
+  },
+  "barbarian:ancestral-guardian:10:consult-the-spirits": {
+    "description": "Cast Augury or Clairvoyance without a spell slot or material components, using Wisdom as the spellcasting ability. Clairvoyance summons an invisible ancestral spirit instead of a sensor. Regain this shared use after a Short or Long Rest."
+  },
+  "barbarian:ancestral-guardian:14:vengeful-ancestors": {
+    "description": "Whenever Spirit Shield reduces damage from an attack, the attacker takes Force damage equal to the amount prevented."
+  },
+  "barbarian:storm-herald:3:desert": {
+    "description": "When the Desert aura activates, every other creature in it takes Fire damage: 2 at Barbarian level 3, 3 at level 5, 4 at level 10, 5 at level 15, and 6 at level 20."
+  },
+  "barbarian:storm-herald:3:sea": {
+    "description": "When the Sea aura activates, choose one other creature in it. A failed Dexterity save deals 1d6 Lightning damage, or half on a success. Damage becomes 2d6 at Barbarian level 10, 3d6 at 15, and 4d6 at 20."
+  },
+  "barbarian:storm-herald:3:tundra": {
+    "description": "When the Tundra aura activates, chosen creatures in it gain Temporary Hit Points: 2 at Barbarian level 3, 3 at level 5, 4 at level 10, 5 at level 15, and 6 at level 20."
+  },
+  "barbarian:storm-herald:3:storm-aura": {
+    "description": "Choose Desert, Sea, or Tundra when you gain this feature, changing it whenever you gain a Barbarian level. While raging, the 10-foot aura activates when Rage begins and again when you use a Bonus Action. Its save DC is 8 + Proficiency Bonus + Constitution modifier.",
+    "action": { "activation": "bonus_action" }
+  },
+  "barbarian:storm-herald:6:desert": {
+    "description": "Gain Fire resistance and ignore extreme heat. As an action, ignite an unattended flammable object you touch."
+  },
+  "barbarian:storm-herald:6:sea": {
+    "description": "Gain Lightning resistance, the ability to breathe underwater, and a 30-foot Swim Speed."
+  },
+  "barbarian:storm-herald:6:tundra": {
+    "description": "Gain Cold resistance and ignore extreme cold. As an action, freeze a creature-free 5-foot cube of water you touch for 1 minute."
+  },
+  "barbarian:storm-herald:6:storm-soul": {
+    "description": "Your chosen Storm Aura environment grants its Desert, Sea, or Tundra benefit even while the aura is inactive."
+  },
+  "barbarian:storm-herald:10:shielding-storm": {
+    "description": "Chosen creatures inside your Storm Aura share the damage resistance granted by your Storm Soul."
+  },
+  "barbarian:storm-herald:14:desert": {
+    "description": "Immediately after a creature in your aura hits you, use your reaction to force a Dexterity save; on a failure it takes Fire damage equal to half your Barbarian level.",
+    "action": { "activation": "reaction" }
+  },
+  "barbarian:storm-herald:14:sea": {
+    "description": "When you hit a creature in your aura, use your reaction to force a Strength save; on a failure it falls Prone.",
+    "action": { "activation": "reaction" }
+  },
+  "barbarian:storm-herald:14:tundra": {
+    "description": "Whenever your Storm Aura activates, choose one creature you can see in it. On a failed Strength save, its Speed becomes 0 until your next turn begins."
+  },
+  "barbarian:storm-herald:14:raging-storm": {
+    "description": "Your chosen environment upgrades Storm Aura: Desert retaliates against attackers, Sea can knock a struck target Prone, and Tundra can reduce one target's Speed to 0."
+  },
+  "bard:swords:3:defensive-flourish": {
+    "description": "After a weapon hit made as part of the Attack action, expend and roll Bardic Inspiration. Add the roll to the hit's damage and to your AC until your next turn begins."
+  },
+  "bard:swords:3:mobile-flourish": {
+    "description": "After a weapon hit made as part of the Attack action, expend and roll Bardic Inspiration. Add the roll to the hit's damage, push the target 5 feet plus the number rolled, then optionally use your reaction to move up to your Speed into a space within 5 feet of it."
+  },
+  "bard:swords:3:slashing-flourish": {
+    "description": "After a weapon hit made as part of the Attack action, expend and roll Bardic Inspiration. The target and each other chosen creature within 5 feet of you take extra damage equal to the roll."
+  },
+  "bard:swords:3:blade-flourish": {
+    "description": "When you take the Attack action, your Speed increases by 10 feet for that turn. Once per turn, a weapon hit from that action can use Defensive, Mobile, or Slashing Flourish."
+  },
+  "bard:swords:3:bonus-proficiencies": {
+    "description": "Gain proficiency with Medium Armor and Scimitars. A Simple or Martial melee weapon with which you are proficient can serve as a spellcasting focus for your Bard spells.",
+    "effects": [
+      { "type": "armor_proficiency", "tags": ["medium"] },
+      { "type": "weapon_proficiency", "tags": ["scimitar"] }
+    ]
+  },
+  "bard:swords:3:fighting-style": {
+    "description": "Choose the Dueling or Two-Weapon Fighting style. You cannot select a Fighting Style option more than once."
+  },
+  "bard:swords:6:extra-attack": {
+    "description": "You can attack twice whenever you take the Attack action on your turn."
+  },
+  "bard:swords:14:masters-flourish": {
+    "description": "When you use a Blade Flourish, you can roll a d6 for the flourish instead of expending Bardic Inspiration."
+  },
+  "bard:whispers:3:psychic-blades": {
+    "description": "Once per round on your turn after hitting with a weapon attack, expend Bardic Inspiration to deal extra Psychic damage: 2d6 at Bard level 3, 3d6 at level 5, 5d6 at level 10, and 8d6 at level 15."
+  },
+  "bard:whispers:3:words-of-terror": {
+    "description": "After speaking alone with a Humanoid for at least 1 minute, force a Wisdom save. On a failure it is Frightened of you or a chosen creature for 1 hour, ending early when it or its allies are attacked or damaged. A successful target does not detect the attempt. Regain use after a Short or Long Rest."
+  },
+  "bard:whispers:6:mantle-of-whispers": {
+    "description": "When a Humanoid dies within 30 feet, use your reaction to capture its shadow until used or your next Long Rest. As an action, assume its living appearance and accessible memories for 1 hour; end it as a Bonus Action. Insight contested by your Deception, with +5 to your check, can expose the disguise. Regain capture after a Short or Long Rest."
+  },
+  "bard:whispers:14:shadow-lore": {
+    "description": "As an action, whisper to one creature within 30 feet that can hear and understand you. On a failed Wisdom save it is Charmed for 8 hours and believes you know its worst secret, ending if you or allies harm it or force a save. Regain use after a Long Rest.",
+    "action": { "activation": "action", "uses": { "max": 1, "per": "long_rest" } }
+  },
+  "cleric:forge:1:blessing-of-the-forge": {
+    "description": "At the end of a Long Rest, touch one nonmagical suit of armor or Simple or Martial weapon. Until your next Long Rest or death, it is magical and grants +1 AC if armor, or +1 to attack and damage rolls if a weapon. Only one object can carry the blessing."
+  },
+  "cleric:forge:1:bonus-proficiency": {
+    "description": "Gain proficiency with Heavy Armor and Smith's Tools.",
+    "effects": [
+      { "type": "armor_proficiency", "tags": ["heavy"] },
+      { "type": "tool_proficiency", "tags": ["Smith's Tools"] }
+    ]
+  },
+  "cleric:forge:2:channel-divinity-artisans-blessing": {
+    "description": "Expend Channel Divinity during a 1-hour ritual to transform metal worth up to 100 gp into one nonmagical item containing metal. The supplied metal must equal the item's value; you can duplicate a metal-bearing item such as a key while holding the original."
+  },
+  "cleric:forge:6:soul-of-the-forge": {
+    "description": "Gain Fire resistance. While wearing Heavy Armor, gain +1 AC.",
+    "effects": [
+      { "type": "damage_resistance", "tags": ["fire"] },
+      { "type": "ac_bonus", "value": 1, "condition": "wearing_heavy_armor" }
+    ]
+  },
+  "cleric:forge:8:divine-strike": {
+    "description": "Once on each of your turns when a weapon attack hits, deal an extra 1d8 Fire damage. The extra damage becomes 2d8 at Cleric level 14."
+  },
+  "cleric:forge:17:saint-of-forge-and-fire": {
+    "description": "Gain immunity to Fire damage. While wearing Heavy Armor, gain resistance to nonmagical Bludgeoning, Piercing, and Slashing damage.",
+    "effects": [{ "type": "damage_immunity", "tags": ["fire"] }]
+  },
+  "cleric:grave:1:circle-of-mortality": {
+    "description": "When a spell restores Hit Points to a creature at 0 Hit Points, use the maximum result for every healing die. Learn Spare the Dying without counting against cantrips; for you it has 30-foot range and casts as a Bonus Action."
+  },
+  "cleric:grave:1:eyes-of-the-grave": {
+    "description": "As an action, until your next turn ends, sense the location of Undead within 60 feet unless behind Total Cover or protected from Divination; this reveals neither identity nor abilities. Uses equal your Wisdom modifier, minimum 1, restored on a Long Rest.",
+    "action": { "activation": "action", "uses": { "max": 1, "maxAbilityModifier": "wisdom", "minimum": 1, "per": "long_rest" } }
+  },
+  "cleric:grave:2:channel-divinity-path-to-the-grave": {
+    "description": "As an action, expend Channel Divinity to curse one visible creature within 30 feet until your next turn ends. The next attack that hits it treats it as vulnerable to all damage from that attack, then the curse ends."
+  },
+  "cleric:grave:6:sentinel-at-deaths-door": {
+    "description": "When you or a creature you can see within 30 feet suffers a critical hit, use your reaction to turn it into a normal hit and cancel critical-hit triggers. Uses equal your Wisdom modifier, minimum 1, restored on a Long Rest.",
+    "action": { "activation": "reaction", "uses": { "max": 1, "maxAbilityModifier": "wisdom", "minimum": 1, "per": "long_rest" } }
+  },
+  "cleric:grave:8:potent-spellcasting": {
+    "description": "Add your Wisdom modifier to the damage of every Cleric cantrip you cast."
+  },
+  "cleric:grave:17:keeper-of-souls": {
+    "description": "Once per round when an enemy you can see dies within 60 feet and you are not Incapacitated, you or one chosen creature within 60 feet regains Hit Points equal to that enemy's Hit Dice."
+  },
+  "druid:dreams:2:balm-of-the-summer-court": {
+    "description": "Gain a pool of d6s equal to your Druid level, restored on a Long Rest. As a Bonus Action, choose a creature within 120 feet and spend up to half your Druid level in dice; it regains the total rolled and gains 1 Temporary Hit Point per die.",
+    "action": { "activation": "bonus_action" }
+  },
+  "druid:dreams:6:hearth-of-moonlight-and-shadow": {
+    "description": "At the start of a Short or Long Rest, create an invisible 30-foot-radius sphere around a touched point. Inside it, you and allies gain +5 to Stealth and Perception, and open-flame light cannot be seen outside. It ends with the rest or when you leave."
+  },
+  "druid:dreams:10:hidden-paths": {
+    "description": "As a Bonus Action, teleport yourself up to 60 feet to a visible empty space, or as an action teleport a willing creature you touch up to 30 feet. Uses equal your Wisdom modifier, minimum 1, restored on a Long Rest.",
+    "action": { "activation": "bonus_action", "uses": { "max": 1, "maxAbilityModifier": "wisdom", "minimum": 1, "per": "long_rest" } }
+  },
+  "druid:dreams:14:walker-in-dreams": {
+    "description": "After a Short Rest, cast Dream as its messenger, Scrying, or Teleportation Circle without a slot or material components. This circle leads to your most recent Long Rest location on the same plane. Regain use after a Long Rest."
+  },
+  "druid:shepherd:2:speech-of-the-woods": {
+    "description": "Speak, read, and write Sylvan. Beasts understand your speech, and you can interpret their noises and movements well enough to exchange simple recent information; this does not make them friendly.",
+    "effects": [{ "type": "language_proficiency", "tags": ["Sylvan"] }]
+  },
+  "druid:shepherd:2:spirit-totem": {
+    "description": "As a Bonus Action, summon a Bear, Hawk, or Unicorn spirit at a visible point within 60 feet for 1 minute, creating a 30-foot aura; move it 60 feet with another Bonus Action. Bear grants 5 + Druid level Temporary Hit Points on arrival and Strength advantage; Hawk grants Perception advantage and can use your reaction to grant an attack advantage; Unicorn grants detection advantage and heals chosen creatures in the aura for your Druid level when your slotted spell restores Hit Points. Regain use after a Short or Long Rest.",
+    "action": { "activation": "bonus_action", "uses": { "max": 1, "per": "short_rest" } }
+  },
+  "druid:shepherd:6:mighty-summoner": {
+    "description": "Beasts and Fey summoned or created by your spells gain 2 extra Hit Points per Hit Die, and their natural-weapon damage counts as magical against resistance and immunity."
+  },
+  "druid:shepherd:10:guardian-spirit": {
+    "description": "A Beast or Fey summoned or created by your spell regains Hit Points equal to half your Druid level whenever it ends its turn inside your Spirit Totem aura."
+  },
+  "druid:shepherd:14:faithful-summons": {
+    "description": "When unwillingly reduced to 0 Hit Points or Incapacitated, immediately gain a 9th-level Conjure Animals effect without Concentration: four chosen Beasts of CR 2 or lower appear within 20 feet for 1 hour and defend you. Regain use after a Long Rest.",
+    "action": { "activation": "free", "uses": { "max": 1, "per": "long_rest" } }
+  },
+  "fighter:arcane-archer:3:arcane-archer-lore": {
+    "description": "Gain proficiency in Arcana or Nature, and learn either Druidcraft or Prestidigitation. Intelligence is your spellcasting ability for the chosen cantrip."
+  },
+  "fighter:arcane-archer:3:arcane-shot": {
+    "description": "Learn two Arcane Shot options. Once per turn when you fire an arrow from a Shortbow or Longbow as part of the Attack action, apply one known option to that arrow. Unless an option says otherwise, decide after the arrow hits. Your save DC is 8 + Proficiency Bonus + Intelligence modifier. You have two uses, restored on a Short or Long Rest.",
+    "action": { "activation": "free", "uses": { "max": 2, "per": "short_rest" } }
+  },
+  "fighter:arcane-archer:3:arcane-shot-options": {
+    "description": "Choose from Banishing Arrow, Beguiling Arrow, Bursting Arrow, Enfeebling Arrow, Grasping Arrow, Piercing Arrow, Seeking Arrow, and Shadow Arrow. Each option modifies one arrow with its listed damage, target, and saving-throw effect; you cannot apply more than one option to an arrow."
+  },
+  "fighter:arcane-archer:7:additional-arcane-shot-option": {
+    "description": "Learn one additional Arcane Shot option."
+  },
+  "fighter:arcane-archer:7:curving-shot": {
+    "description": "When a magic-arrow attack misses, use a Bonus Action to reroll the attack against a different target within 60 feet of the original target.",
+    "action": { "activation": "bonus_action" }
+  },
+  "fighter:arcane-archer:7:magic-arrow": {
+    "description": "Arrows fired from your Shortbow or Longbow count as magical for overcoming resistance and immunity to nonmagical attacks and damage."
+  },
+  "fighter:arcane-archer:10:additional-arcane-shot-option": {
+    "description": "Learn one additional Arcane Shot option."
+  },
+  "fighter:arcane-archer:15:additional-arcane-shot-option": {
+    "description": "Learn one additional Arcane Shot option."
+  },
+  "fighter:arcane-archer:15:ever-ready-shot": {
+    "description": "When you roll Initiative with no Arcane Shot uses remaining, regain one use."
+  },
+  "fighter:arcane-archer:18:additional-arcane-shot-option": {
+    "description": "Learn one additional Arcane Shot option. The damage of every Arcane Shot option also increases by 2d6."
+  },
+  "fighter:cavalier:3:bonus-proficiency": {
+    "description": "Gain proficiency in Animal Handling, History, Insight, Performance, or Persuasion; alternatively, learn one language of your choice."
+  },
+  "fighter:cavalier:3:born-to-the-saddle": {
+    "description": "You have advantage on saves made to avoid falling from a mount. If you fall no more than 10 feet and are not Incapacitated, land on your feet. Mounting or dismounting costs only 5 feet of movement."
+  },
+  "fighter:cavalier:3:unwavering-mark": {
+    "description": "When you hit a creature with a melee weapon attack, mark it until the end of your next turn. While within 5 feet of you, it has disadvantage on attacks against others. If it damages another creature, you can make a Bonus Action melee weapon attack against it on your next turn with advantage and extra damage equal to half your Fighter level. This special attack has Strength-modifier uses, minimum 1, restored on a Long Rest.",
+    "action": { "activation": "bonus_action", "uses": { "max": 1, "maxAbilityModifier": "strength", "minimum": 1, "per": "long_rest" } }
+  },
+  "fighter:cavalier:7:warding-maneuver": {
+    "description": "When you or a visible creature within 5 feet is hit by an attack while you wield a melee weapon or Shield, use a Reaction to roll 1d8 and add it to the target's AC against that attack. If the attack still hits, the target has resistance to its damage. Uses equal your Constitution modifier, minimum 1, restored on a Long Rest.",
+    "action": { "activation": "reaction", "uses": { "max": 1, "maxAbilityModifier": "constitution", "minimum": 1, "per": "long_rest" } }
+  },
+  "fighter:cavalier:10:hold-the-line": {
+    "description": "A creature provokes an Opportunity Attack from you when it moves at least 5 feet while within your reach. If your Opportunity Attack hits, its Speed becomes 0 for the rest of that turn.",
+    "action": { "activation": "reaction" }
+  },
+  "fighter:cavalier:15:ferocious-charger": {
+    "description": "Once per turn, if you move at least 10 feet in a straight line immediately before hitting a creature with an attack, it must succeed on a Strength save (DC 8 + Proficiency Bonus + Strength modifier) or fall Prone."
+  },
+  "fighter:cavalier:18:vigilant-defender": {
+    "description": "Gain one special Reaction on every creature's turn except your own. It can be used only for an Opportunity Attack, and you cannot use it on the same turn as your normal Reaction."
+  },
+  "fighter:samurai:3:bonus-proficiency": {
+    "description": "Gain proficiency in History, Insight, Performance, or Persuasion; alternatively, learn one language of your choice."
+  },
+  "fighter:samurai:3:fighting-spirit": {
+    "description": "As a Bonus Action, gain advantage on weapon attacks until the end of the current turn and gain 5 Temporary Hit Points. The Temporary Hit Points increase to 10 at Fighter level 10 and 15 at level 15. Three uses are restored on a Long Rest.",
+    "action": { "activation": "bonus_action", "uses": { "max": 3, "per": "long_rest" } }
+  },
+  "fighter:samurai:7:elegant-courtier": {
+    "description": "Add your Wisdom modifier to Persuasion checks. Gain proficiency in Wisdom saves; if already proficient, choose Intelligence or Charisma saves instead."
+  },
+  "fighter:samurai:10:tireless-spirit": {
+    "description": "When you roll Initiative with no Fighting Spirit uses remaining, regain one use."
+  },
+  "fighter:samurai:15:rapid-strike": {
+    "description": "Once per turn when you take the Attack action and have advantage on one attack, forgo advantage on that roll to make one additional weapon attack against the same target as part of the action."
+  },
+  "fighter:samurai:18:strength-before-death": {
+    "description": "When damage reduces you to 0 Hit Points without killing you outright, use a Reaction to delay falling Unconscious and immediately take an extra turn. Damage and failed Death Saves apply normally; after that turn, you fall Unconscious if still at 0 Hit Points. Regain use after a Long Rest.",
+    "action": { "activation": "reaction", "uses": { "max": 1, "per": "long_rest" } }
+  },
+  "monk:drunken-master:3:bonus-proficiencies": {
+    "description": "Gain proficiency in Performance and Brewer's Supplies.",
+    "effects": [{ "type": "tool_proficiency", "tags": ["Brewer's Supplies"] }]
+  },
+  "monk:drunken-master:3:drunken-technique": {
+    "description": "After using Flurry of Blows, gain the benefits of Disengage and increase your Speed by 10 feet until the end of the current turn."
+  },
+  "monk:drunken-master:6:leap-to-your-feet": {
+    "description": "Standing from Prone costs 5 feet of movement instead of half your Speed."
+  },
+  "monk:drunken-master:6:redirect-attack": {
+    "description": "When a creature misses you with a melee attack, use a Reaction and spend 1 Focus Point to make that attack hit a different creature of your choice within 5 feet of the attacker, other than the attacker.",
+    "action": { "activation": "reaction" }
+  },
+  "monk:drunken-master:6:tipsy-sway": {
+    "description": "You gain Leap to Your Feet and Redirect Attack."
+  },
+  "monk:drunken-master:11:drunkards-luck": {
+    "description": "When an ability check, attack roll, or saving throw has disadvantage, spend 2 Focus Points to cancel that disadvantage for the roll."
+  },
+  "monk:drunken-master:17:intoxicated-frenzy": {
+    "description": "When using Flurry of Blows, make up to three additional attacks, for as many as five Flurry attacks total. Every Flurry attack that turn must target a different creature."
+  },
+  "monk:kensei:3:agile-parry": {
+    "description": "If you make an Unarmed Strike during the Attack action while holding a melee Kensei weapon, gain +2 AC until the start of your next turn while the weapon remains in hand."
+  },
+  "monk:kensei:3:kenseis-shot": {
+    "description": "As a Bonus Action, ranged attacks with a Kensei weapon deal an extra 1d4 damage of the weapon's type until the end of the current turn.",
+    "action": { "activation": "bonus_action" }
+  },
+  "monk:kensei:3:path-of-the-kensei": {
+    "description": "Choose one melee and one ranged simple or martial weapon lacking the Heavy and Special properties; the Longbow is allowed. Gain proficiency with them and treat them as Monk weapons. Choose one additional eligible weapon at Monk levels 6, 11, and 17. Also gain proficiency with Calligrapher's Supplies or Painter's Supplies."
+  },
+  "monk:kensei:6:one-with-the-blade": {
+    "description": "Kensei-weapon attacks count as magical against resistance and immunity. Once per turn when you hit with one, spend 1 Focus Point to add one Martial Arts die to the weapon's damage."
+  },
+  "monk:kensei:11:sharpen-the-blade": {
+    "description": "As a Bonus Action, spend up to 3 Focus Points to touch one Kensei weapon. For 1 minute, it gains an attack and damage bonus equal to the points spent. This has no effect on a magic weapon that already grants such a bonus.",
+    "action": { "activation": "bonus_action" }
+  },
+  "monk:kensei:17:unerring-accuracy": {
+    "description": "Once on each of your turns, reroll a missed attack made with a Monk weapon."
+  },
+  "monk:sun-soul:3:radiant-sun-bolt": {
+    "description": "Gain a 30-foot ranged spell attack using Dexterity, Proficiency Bonus, and your Martial Arts die; it deals radiant damage. It can replace attacks in the Attack action. After attacking with it, spend 1 Focus Point to make two more as a Bonus Action.",
+    "action": { "activation": "action" }
+  },
+  "monk:sun-soul:6:searing-arc-strike": {
+    "description": "Immediately after the Attack action, spend 2 Focus Points to cast Burning Hands as a Bonus Action. Spend additional points to increase its slot level by one per point, with total points limited to half your Monk level.",
+    "action": { "activation": "bonus_action" }
+  },
+  "monk:sun-soul:11:searing-sunburst": {
+    "description": "As an action, create a 20-foot-radius burst at a visible point within 150 feet. Creatures in it that are not behind opaque total cover make a Constitution save, taking 2d6 radiant damage on a failure and none on a success. Spend up to 3 Focus Points to add 2d6 damage per point.",
+    "action": { "activation": "action" }
+  },
+  "monk:sun-soul:17:sun-shield": {
+    "description": "Emit bright light for 30 feet and dim light for 30 more; extinguish or restore it as a Bonus Action. While shining, when a creature hits you with a melee attack, use a Reaction to deal radiant damage equal to 5 + your Wisdom modifier.",
+    "action": { "activation": "reaction" }
+  },
+  "paladin:conquest:3:channel-divinity": {
+    "description": "Gain the Conquering Presence and Guided Strike Channel Divinity options. You can expend one Channel Divinity use to activate either option."
+  },
+  "paladin:conquest:3:conquering-presence": {
+    "description": "As an action, chosen creatures you can see within 30 feet make a Wisdom save. On a failure, a creature is Frightened of you for 1 minute and repeats the save at the end of each of its turns.",
+    "action": { "activation": "action" }
+  },
+  "paladin:conquest:3:guided-strike": {
+    "description": "After making an attack roll but before learning whether it hits, expend Channel Divinity to add +10 to the roll."
+  },
+  "paladin:conquest:3:oath-spells": {
+    "description": "Always have the Oath of Conquest spells prepared at their listed Paladin levels; they do not count against the number of spells you prepare."
+  },
+  "paladin:conquest:3:tenets-of-conquest": {
+    "description": "The oath emphasizes extinguishing resistance, ruling with uncompromising strength, and continually becoming strong enough to retain authority."
+  },
+  "paladin:conquest:7:aura-of-conquest": {
+    "description": "While conscious, a creature Frightened of you that starts its turn within 10 feet has Speed 0 and takes psychic damage equal to half your Paladin level. The radius becomes 30 feet at Paladin level 18."
+  },
+  "paladin:conquest:15:scornful-rebuke": {
+    "description": "Whenever a creature hits you with an attack while you are not Incapacitated, it takes psychic damage equal to your Charisma modifier, minimum 1."
+  },
+  "paladin:conquest:20:invincible-conqueror": {
+    "description": "As an action, transform for 1 minute: gain resistance to all damage, make one additional attack whenever taking the Attack action, and score critical hits with melee weapon attacks on 19 or 20. Regain use after a Long Rest.",
+    "action": { "activation": "action", "uses": { "max": 1, "per": "long_rest" } }
+  },
+  "paladin:redemption:3:channel-divinity": {
+    "description": "Gain the Emissary of Peace and Rebuke the Violent Channel Divinity options. You can expend one Channel Divinity use to activate either option."
+  },
+  "paladin:redemption:3:emissary-of-peace": {
+    "description": "As a Bonus Action, expend Channel Divinity to gain +5 to Persuasion checks for 10 minutes.",
+    "action": { "activation": "bonus_action" }
+  },
+  "paladin:redemption:3:oath-spells": {
+    "description": "Always have the Oath of Redemption spells prepared at their listed Paladin levels; they do not count against the number of spells you prepare."
+  },
+  "paladin:redemption:3:rebuke-the-violent": {
+    "description": "Immediately after an attacker within 30 feet damages a creature other than you, use a Reaction and expend Channel Divinity. The attacker makes a Wisdom save, taking radiant damage equal to the damage it just dealt on a failure or half as much on a success.",
+    "action": { "activation": "reaction" }
+  },
+  "paladin:redemption:3:tenets-of-redemption": {
+    "description": "The oath centers on peace, innocence, patience, and wisdom, using violence only when other paths cannot preserve life."
+  },
+  "paladin:redemption:7:aura-of-the-guardian": {
+    "description": "When a creature within 10 feet takes damage, use a Reaction to take that damage instead. It cannot be reduced or prevented. The range becomes 30 feet at Paladin level 18.",
+    "action": { "activation": "reaction" }
+  },
+  "paladin:redemption:15:protective-spirit": {
+    "description": "At the end of your turn while below half your Hit Point maximum and not Incapacitated, regain 1d6 + half your Paladin level Hit Points."
+  },
+  "paladin:redemption:20:emissary-of-redemption": {
+    "description": "Gain resistance to all damage dealt by other creatures. When a creature hits you, it takes radiant damage equal to half the damage you take. These benefits stop against a creature until your next Long Rest if you attack it, damage it, or cast a spell on it."
+  },
+  "ranger:horizon-walker:3:detect-portal": {
+    "description": "As an action, detect the direction and distance to the nearest planar portal within 1 mile. Regain use after a Short or Long Rest.",
+    "action": { "activation": "action", "uses": { "max": 1, "per": "short_rest" } }
+  },
+  "ranger:horizon-walker:3:horizon-walker-magic": {
+    "description": "Always have the Horizon Walker spells prepared at their listed Ranger levels; they do not count against your prepared-spell limit."
+  },
+  "ranger:horizon-walker:3:planar-warrior": {
+    "description": "As a Bonus Action, choose a creature within 30 feet. The next weapon hit against it this turn converts all attack damage to force and deals 1d8 additional force damage; the extra damage becomes 2d8 at Ranger level 11.",
+    "action": { "activation": "bonus_action" }
+  },
+  "ranger:horizon-walker:7:ethereal-step": {
+    "description": "As a Bonus Action, cast Etherealness without a spell slot; it ends at the end of the current turn. Regain use after a Short or Long Rest.",
+    "action": { "activation": "bonus_action", "uses": { "max": 1, "per": "short_rest" } }
+  },
+  "ranger:horizon-walker:11:distant-strike": {
+    "description": "Before each attack during the Attack action, teleport up to 10 feet to a visible empty space. If you attack at least two different creatures with that action, make one additional attack against a third creature."
+  },
+  "ranger:horizon-walker:15:spectral-defense": {
+    "description": "When an attack hits you, use a Reaction to gain resistance to all of that attack's damage.",
+    "action": { "activation": "reaction" }
+  },
+  "ranger:monster-slayer:3:hunters-sense": {
+    "description": "As an action, choose a visible creature within 60 feet and learn its damage immunities, resistances, and vulnerabilities. If divination magic conceals it, you learn that it has none. Uses equal your Wisdom modifier, minimum 1, restored on a Long Rest.",
+    "action": { "activation": "action", "uses": { "max": 1, "maxAbilityModifier": "wisdom", "minimum": 1, "per": "long_rest" } }
+  },
+  "ranger:monster-slayer:3:monster-slayer-magic": {
+    "description": "Always have the Monster Slayer spells prepared at their listed Ranger levels; they do not count against your prepared-spell limit."
+  },
+  "ranger:monster-slayer:3:slayers-prey": {
+    "description": "As a Bonus Action, designate one visible creature within 60 feet. The first weapon hit against it on each of your turns deals 1d6 extra damage. The designation ends after a Short or Long Rest or when you designate another creature.",
+    "action": { "activation": "bonus_action" }
+  },
+  "ranger:monster-slayer:7:supernatural-defense": {
+    "description": "When the current target of Slayer's Prey forces you to make a saving throw or an ability check to escape its grapple, add 1d6 to the roll."
+  },
+  "ranger:monster-slayer:11:magic-users-nemesis": {
+    "description": "When a visible creature within 60 feet casts a spell or teleports, use a Reaction to force a Wisdom save against your spell save DC. On a failure, the spell or teleport fails and is wasted. Regain use after a Short or Long Rest.",
+    "action": { "activation": "reaction", "uses": { "max": 1, "per": "short_rest" } }
+  },
+  "ranger:monster-slayer:15:slayers-counter": {
+    "description": "When the target of Slayer's Prey forces you to make a saving throw, use a Reaction to make one weapon attack against it. If the attack hits, your saving throw automatically succeeds in addition to the attack's normal effects.",
+    "action": { "activation": "reaction" }
+  },
+  "rogue:inquisitive:3:ear-for-deceit": {
+    "description": "When making an Insight check to determine whether a creature is lying, treat a d20 roll of 7 or lower as an 8."
+  },
+  "rogue:inquisitive:3:eye-for-detail": {
+    "description": "As a Bonus Action, make a Perception check to spot a hidden creature or object, or an Investigation check to uncover or interpret clues.",
+    "action": { "activation": "bonus_action" }
+  },
+  "rogue:inquisitive:3:insightful-fighting": {
+    "description": "As a Bonus Action, make an Insight check contested by a visible creature's Deception. On success, use Sneak Attack against it without advantage for 1 minute, unless you have disadvantage. The effect ends early if used on another target.",
+    "action": { "activation": "bonus_action" }
+  },
+  "rogue:inquisitive:9:steady-eye": {
+    "description": "Gain advantage on Perception and Investigation checks if you move no more than half your Speed on the same turn."
+  },
+  "rogue:inquisitive:13:unerring-eye": {
+    "description": "As an action while not Blinded or Deafened, sense the presence—but not the nature—of illusions, shapechangers, and magic designed to deceive the senses within 30 feet. Uses equal your Wisdom modifier, minimum 1, restored on a Long Rest.",
+    "action": { "activation": "action", "uses": { "max": 1, "maxAbilityModifier": "wisdom", "minimum": 1, "per": "long_rest" } }
+  },
+  "rogue:inquisitive:17:eye-for-weakness": {
+    "description": "Sneak Attack deals an extra 3d6 damage against the creature currently affected by your Insightful Fighting."
+  },
+  "rogue:mastermind:3:master-of-intrigue": {
+    "description": "Gain proficiency with Disguise Kits, Forgery Kits, one Gaming Set, and two languages. After hearing a creature speak for at least 1 minute, mimic its accent well enough to pass as a native speaker unless a suspicious listener wins an Insight check against your Deception."
+  },
+  "rogue:mastermind:3:master-of-tactics": {
+    "description": "Use Help as a Bonus Action. When helping an ally attack, the target can be within 30 feet instead of 5 feet if it can see or hear you.",
+    "action": { "activation": "bonus_action" }
+  },
+  "rogue:mastermind:9:insightful-manipulator": {
+    "description": "After observing or interacting with a creature outside combat for at least 1 minute, learn whether two chosen traits among its Intelligence, Wisdom, Charisma, and class levels are equal, superior, or inferior to yours. The DM may also reveal a personality or history detail."
+  },
+  "rogue:mastermind:13:misdirection": {
+    "description": "When an attack targets you while a creature within 5 feet provides cover, use a Reaction to make that creature the target instead.",
+    "action": { "activation": "reaction" }
+  },
+  "rogue:mastermind:17:soul-of-deceit": {
+    "description": "Your thoughts cannot be read by telepathy or similar magic unless you allow it. You can present false thoughts by winning Deception against the reader's Insight, and magic cannot compel you to speak truth, though it still reveals whether what you choose to say is truthful."
+  },
+  "rogue:scout:3:skirmisher": {
+    "description": "When an enemy ends its turn within 5 feet of you, use a Reaction to move up to half your Speed without provoking Opportunity Attacks.",
+    "action": { "activation": "reaction" }
+  },
+  "rogue:scout:3:survivalist": {
+    "description": "Gain proficiency and Expertise in Nature and Survival."
+  },
+  "rogue:scout:9:superior-mobility": {
+    "description": "Walking Speed increases by 10 feet. Any Climb or Swim Speed you have also increases by 10 feet."
+  },
+  "rogue:scout:13:ambush-master": {
+    "description": "Gain advantage on Initiative rolls. The first creature you hit during the first round of combat grants advantage on attacks against it to all attackers until the start of your next turn."
+  },
+  "rogue:scout:17:sudden-strike": {
+    "description": "After taking the Attack action, make one additional attack as a Bonus Action. This attack can apply Sneak Attack even if already used this turn, but Sneak Attack cannot damage the same target twice in one turn.",
+    "action": { "activation": "bonus_action" }
+  },
+  "rogue:swashbuckler:3:fancy-footwork": {
+    "description": "A creature you attack with a melee attack cannot make Opportunity Attacks against you for the rest of the current turn, whether the attack hits or misses."
+  },
+  "rogue:swashbuckler:3:rakish-audacity": {
+    "description": "Add your Charisma modifier to Initiative. You can Sneak Attack a target within 5 feet when no other creature is within 5 feet of you and you do not have disadvantage, even without advantage."
+  },
+  "rogue:swashbuckler:9:panache": {
+    "description": "As an action, contest Persuasion against Insight for a creature that can hear and understand you. A hostile target that loses has disadvantage attacking others and cannot make Opportunity Attacks against them for 1 minute, ending early if allies harm it or you separate by over 60 feet. A nonhostile target is Charmed for 1 minute, ending if harmed.",
+    "action": { "activation": "action" }
+  },
+  "rogue:swashbuckler:13:elegant-maneuver": {
+    "description": "As a Bonus Action, gain advantage on the next Acrobatics or Athletics check made during the current turn.",
+    "action": { "activation": "bonus_action" }
+  },
+  "rogue:swashbuckler:17:master-duelist": {
+    "description": "When an attack misses, reroll it with advantage. Regain use after a Short or Long Rest.",
+    "action": { "activation": "free", "uses": { "max": 1, "per": "short_rest" } }
+  },
+  "sorcerer:divine-soul:1:divine-magic": {
+    "description": "Cleric spells count as Sorcerer spells for you and may be chosen whenever Sorcerer spellcasting lets you learn or replace a cantrip or spell. Choose a divine affinity and learn its associated spell; it counts as a Sorcerer spell and not against spells known."
+  },
+  "sorcerer:divine-soul:1:favored-by-the-gods": {
+    "description": "When you miss an attack or fail a saving throw, roll 2d4 and add the total, potentially changing the result. Regain use after a Short or Long Rest.",
+    "action": { "activation": "free", "uses": { "max": 1, "per": "short_rest" } }
+  },
+  "sorcerer:divine-soul:6:empowered-healing": {
+    "description": "Once per turn when you or an ally within 5 feet rolls healing dice for a spell, spend 1 Sorcery Point to reroll any number of those dice once, provided you are not Incapacitated."
+  },
+  "sorcerer:divine-soul:14:otherworldly-wings": {
+    "description": "As a Bonus Action, manifest spectral wings and gain a 30-foot Fly Speed until Incapacitated, dead, or dismissed with another Bonus Action. Their appearance follows your chosen divine affinity.",
+    "action": { "activation": "bonus_action" }
+  },
+  "sorcerer:divine-soul:18:unearthly-recovery": {
+    "description": "As a Bonus Action while below half your Hit Point maximum, regain Hit Points equal to half your maximum. Regain use after a Long Rest.",
+    "action": { "activation": "bonus_action", "uses": { "max": 1, "per": "long_rest" } }
+  },
+  "sorcerer:shadow:1:eyes-of-the-dark": {
+    "description": "Gain Darkvision to 120 feet. At Sorcerer level 3, learn Darkness without it counting against spells known; cast it with 2 Sorcery Points, and when cast that way you can see through it."
+  },
+  "sorcerer:shadow:1:strength-of-the-grave": {
+    "description": "When damage reduces you to 0 Hit Points without killing you outright, make a Charisma save with DC 5 + the damage taken. On success, remain at 1 Hit Point. It cannot trigger from radiant damage or a critical hit. After a success, regain use on a Long Rest.",
+    "action": { "activation": "free", "uses": { "max": 1, "per": "long_rest" } }
+  },
+  "sorcerer:shadow:6:hound-of-ill-omen": {
+    "description": "As a Bonus Action, spend 3 Sorcery Points to summon a modified Dire Wolf within 30 feet of a visible target within 120 feet. It has Temporary Hit Points equal to half your Sorcerer level, uses your Charisma modifier for its attack bonus, phases through creatures and objects, acts only against its target, and gives that target disadvantage on saves against your spells while within 5 feet. It lasts 5 minutes or until it or the target reaches 0 Hit Points.",
+    "action": { "activation": "bonus_action" }
+  },
+  "sorcerer:shadow:14:shadow-walk": {
+    "description": "As a Bonus Action while in dim light or darkness, teleport up to 120 feet to a visible empty space also in dim light or darkness.",
+    "action": { "activation": "bonus_action" }
+  },
+  "sorcerer:shadow:18:umbral-form": {
+    "description": "As a Bonus Action, spend 6 Sorcery Points to transform for 1 minute. Gain resistance to all damage except force and radiant and move through creatures and objects as difficult terrain, taking 5 force damage if ending a turn inside an object. It ends if Incapacitated, dead, or dismissed as a Bonus Action.",
+    "action": { "activation": "bonus_action" }
+  },
+  "sorcerer:storm:1:tempestuous-magic": {
+    "description": "Immediately before or after casting a level 1 or higher spell, use a Bonus Action to fly up to 10 feet without provoking Opportunity Attacks.",
+    "action": { "activation": "bonus_action" }
+  },
+  "sorcerer:storm:1:wind-speaker": {
+    "description": "Speak, read, and write Primordial and its Aquan, Auran, Ignan, and Terran dialects.",
+    "effects": [{ "type": "language_proficiency", "tags": ["Primordial", "Aquan", "Auran", "Ignan", "Terran"] }]
+  },
+  "sorcerer:storm:6:heart-of-the-storm": {
+    "description": "Gain resistance to lightning and thunder damage. When you begin casting a level 1 or higher spell that deals either type, chosen visible creatures within 10 feet take lightning or thunder damage equal to half your Sorcerer level.",
+    "effects": [{ "type": "damage_resistance", "tags": ["lightning", "thunder"] }]
+  },
+  "sorcerer:storm:6:storm-guide": {
+    "description": "As an action, stop rain in a 20-foot-radius sphere centered on you, ending with a Bonus Action. In windy conditions, use a Bonus Action each round to choose the wind's direction within a 100-foot-radius sphere until the end of your next turn.",
+    "action": { "activation": "action" }
+  },
+  "sorcerer:storm:14:storms-fury": {
+    "description": "When hit by a melee attack, use a Reaction to deal lightning damage equal to your Sorcerer level. The attacker makes a Strength save; on a failure it is pushed up to 20 feet away.",
+    "action": { "activation": "reaction" }
+  },
+  "sorcerer:storm:18:wind-soul": {
+    "description": "Gain immunity to lightning and thunder damage and a 60-foot Fly Speed. As an action, reduce your Fly Speed to 30 feet for 1 hour and grant a 30-foot Fly Speed for 1 hour to 3 + your Charisma modifier creatures within 30 feet. Regain this group flight after a Short or Long Rest.",
+    "action": { "activation": "action", "uses": { "max": 1, "per": "short_rest" } }
+  },
+  "warlock:hexblade:1:hex-warrior": {
+    "description": "Gain proficiency with Medium Armor, Shields, and Martial Weapons. After a Long Rest, touch one proficient weapon lacking the Two-Handed property and use Charisma instead of Strength or Dexterity for its attack and damage rolls until your next Long Rest. This also applies to every Pact of the Blade weapon, regardless of type.",
+    "effects": [
+      { "type": "armor_proficiency", "tags": ["medium", "shield"] },
+      { "type": "weapon_proficiency", "tags": ["martial"] }
+    ]
+  },
+  "warlock:hexblade:1:hexblades-curse": {
+    "description": "As a Bonus Action, curse one visible creature within 30 feet for 1 minute. Add your Proficiency Bonus to damage against it, score critical hits on 19 or 20, and when it dies regain Hit Points equal to your Warlock level + Charisma modifier, minimum 1. Regain use after a Short or Long Rest.",
+    "action": { "activation": "bonus_action", "uses": { "max": 1, "per": "short_rest" } }
+  },
+  "warlock:hexblade:6:accursed-specter": {
+    "description": "When you slay a Humanoid, raise its spirit as a Specter until your next Long Rest. It gains Temporary Hit Points equal to half your Warlock level, adds your Charisma modifier to its attack rolls, and obeys your verbal commands. Regain use after a Long Rest.",
+    "action": { "activation": "free", "uses": { "max": 1, "per": "long_rest" } }
+  },
+  "warlock:hexblade:10:armor-of-hexes": {
+    "description": "When the target of Hexblade's Curse hits you with an attack, use a Reaction and roll 1d6. On a 4 or higher, the attack misses instead.",
+    "action": { "activation": "reaction" }
+  },
+  "warlock:hexblade:14:master-of-hexes": {
+    "description": "When the target of Hexblade's Curse dies, transfer the curse to a different visible creature within 30 feet if you are not Incapacitated. You do not regain Hit Points from the former target when transferring it."
+  },
+  "wizard:war-magic:2:arcane-deflection": {
+    "description": "When hit by an attack or failing a saving throw, use a Reaction for +2 AC against that attack or +4 to that save. Afterward, you cannot cast spells other than cantrips until the end of your next turn.",
+    "action": { "activation": "reaction" }
+  },
+  "wizard:war-magic:2:tactical-wit": {
+    "description": "Add your Intelligence modifier to Initiative rolls.",
+    "effects": [{ "type": "initiative_ability_bonus", "ability": "intelligence" }]
+  },
+  "wizard:war-magic:6:power-surge": {
+    "description": "Store Power Surges up to your Intelligence modifier, minimum 1. After a Long Rest, reset to one. Gain one when successfully ending a spell with Counterspell or Dispel Magic; if empty after a Short Rest, gain one. Once per turn when a Wizard spell damages a creature or object, spend one surge to deal extra force damage equal to half your Wizard level to one target."
+  },
+  "wizard:war-magic:10:durable-magic": {
+    "description": "While concentrating on a spell, gain +2 AC and +2 to all saving throws."
+  },
+  "wizard:war-magic:14:deflecting-shroud": {
+    "description": "When using Arcane Deflection, choose up to three visible creatures within 60 feet. Each takes force damage equal to half your Wizard level."
+  }
+}

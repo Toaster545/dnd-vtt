@@ -1,0 +1,47 @@
+{
+  "index": "snillocs-snowball-swarm",
+  "name": "Snilloc's Snowball Swarm",
+  "level": 2,
+  "school": "Evocation",
+  "casting_time": "1 action",
+  "range": "90 feet",
+  "components": [
+    "V",
+    "S",
+    "M"
+  ],
+  "material": "a piece of ice or a small white rock chip",
+  "duration": "Instantaneous",
+  "ritual": false,
+  "concentration": false,
+  "mechanics": {
+    "spell_attacks": [],
+    "saving_throws": [
+      "dexterity"
+    ],
+    "ability_checks": [],
+    "damage_types": [
+      "cold"
+    ],
+    "conditions": [],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [
+      "S"
+    ],
+    "misc_tags": []
+  },
+  "description": "An evocation level 2 spell. Calls for a Dexterity saving throw. Can deal 3d6 cold damage. See Xanathar's Guide to Everything, page 165, for targeting and complete rules.",
+  "higher_levels": "The damage increases by 1d6 for each spell slot level above 2.",
+  "source": {
+    "code": "XGE",
+    "book": "Xanathar's Guide to Everything",
+    "edition": 2017,
+    "page": 165,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

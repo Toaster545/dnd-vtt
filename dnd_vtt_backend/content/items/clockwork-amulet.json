@@ -1,0 +1,21 @@
+{
+  "index": "clockwork-amulet",
+  "name": "Clockwork Amulet",
+  "type": "gear",
+  "category": "Wondrous Item",
+  "damage": null,
+  "damage_type": null,
+  "properties": [],
+  "weight": 0,
+  "cost": "—",
+  "description": "An amulet that can replace one attack roll with a fixed, reliable result once per day.",
+  "rarity": "common",
+  "source": {
+    "code": "XGE",
+    "book": "Xanathar's Guide to Everything",
+    "edition": 2017,
+    "page": 137,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

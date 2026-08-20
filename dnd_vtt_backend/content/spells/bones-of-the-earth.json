@@ -1,0 +1,53 @@
+{
+  "index": "bones-of-the-earth",
+  "name": "Bones of the Earth",
+  "level": 6,
+  "school": "Transmutation",
+  "casting_time": "1 action",
+  "range": "120 feet",
+  "components": [
+    "V",
+    "S"
+  ],
+  "duration": "Instantaneous",
+  "ritual": false,
+  "concentration": false,
+  "mechanics": {
+    "spell_attacks": [],
+    "saving_throws": [
+      "dexterity"
+    ],
+    "ability_checks": [
+      "strength",
+      "dexterity"
+    ],
+    "damage_types": [
+      "bludgeoning"
+    ],
+    "conditions": [
+      "restrained"
+    ],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [
+      "MT"
+    ],
+    "misc_tags": [
+      "DFT",
+      "SGT"
+    ]
+  },
+  "description": "A transmutation level 6 spell. Calls for a Dexterity saving throw. Can deal 6d6 bludgeoning damage. Can impose restrained. See Xanathar's Guide to Everything, page 150, for targeting and complete rules.",
+  "higher_levels": "The spell improves with higher-level slots as described on XGE page 150.",
+  "source": {
+    "code": "XGE",
+    "book": "Xanathar's Guide to Everything",
+    "edition": 2017,
+    "page": 150,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

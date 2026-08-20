@@ -1,0 +1,47 @@
+{
+  "index": "investiture-of-wind",
+  "name": "Investiture of Wind",
+  "level": 6,
+  "school": "Transmutation",
+  "casting_time": "1 action",
+  "range": "Self",
+  "components": [
+    "V",
+    "S"
+  ],
+  "duration": "Concentration, up to 10 minutes",
+  "ritual": false,
+  "concentration": true,
+  "mechanics": {
+    "spell_attacks": [],
+    "saving_throws": [
+      "constitution"
+    ],
+    "ability_checks": [],
+    "damage_types": [
+      "bludgeoning"
+    ],
+    "conditions": [],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [
+      "C"
+    ],
+    "misc_tags": [
+      "FMV",
+      "SGT"
+    ]
+  },
+  "description": "A transmutation level 6 spell. Calls for a Constitution saving throw. Can deal 2d10 bludgeoning damage. See Xanathar's Guide to Everything, page 160, for targeting and complete rules.",
+  "source": {
+    "code": "XGE",
+    "book": "Xanathar's Guide to Everything",
+    "edition": 2017,
+    "page": 160,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

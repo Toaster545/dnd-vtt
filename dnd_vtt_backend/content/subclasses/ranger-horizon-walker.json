@@ -1,0 +1,160 @@
+{
+  "class_index": "ranger",
+  "index": "horizon-walker",
+  "name": "Horizon Walker",
+  "description": "A legacy ranger subclass from Xanathar's Guide to Everything.",
+  "levels": [
+    {
+      "level": 3,
+      "features": [
+        "Horizon Walker Spells",
+        "Detect Portal",
+        "Horizon Walker Magic",
+        "Planar Warrior"
+      ],
+      "grants": [
+        {
+          "type": "spell_grant",
+          "key": "horizon-walker_spells_3",
+          "name": "Horizon Walker Spells",
+          "destination": "known",
+          "spells": [
+            "protection-from-evil-and-good"
+          ],
+          "countsAgainstLimit": false,
+          "classLevel": 3
+        },
+        {
+          "type": "spell_grant",
+          "key": "horizon-walker_spells_5",
+          "name": "Horizon Walker Spells",
+          "destination": "known",
+          "spells": [
+            "misty-step"
+          ],
+          "countsAgainstLimit": false,
+          "classLevel": 5
+        },
+        {
+          "type": "spell_grant",
+          "key": "horizon-walker_spells_9",
+          "name": "Horizon Walker Spells",
+          "destination": "known",
+          "spells": [
+            "haste"
+          ],
+          "countsAgainstLimit": false,
+          "classLevel": 9
+        },
+        {
+          "type": "spell_grant",
+          "key": "horizon-walker_spells_13",
+          "name": "Horizon Walker Spells",
+          "destination": "known",
+          "spells": [
+            "banishment"
+          ],
+          "countsAgainstLimit": false,
+          "classLevel": 13
+        },
+        {
+          "type": "spell_grant",
+          "key": "horizon-walker_spells_17",
+          "name": "Horizon Walker Spells",
+          "destination": "known",
+          "spells": [
+            "teleportation-circle"
+          ],
+          "countsAgainstLimit": false,
+          "classLevel": 17
+        },
+        {
+          "type": "feature",
+          "name": "Detect Portal",
+          "description": "As an action, detect the direction and distance to the nearest planar portal within 1 mile. Regain use after a Short or Long Rest.",
+          "action": {
+            "activation": "action",
+            "uses": {
+              "max": 1,
+              "per": "short_rest"
+            }
+          },
+          "key": "xge_ranger_horizon-walker_3_detect-portal"
+        },
+        {
+          "type": "feature",
+          "name": "Horizon Walker Magic",
+          "description": "Always have the Horizon Walker spells prepared at their listed Ranger levels; they do not count against your prepared-spell limit."
+        },
+        {
+          "type": "feature",
+          "name": "Planar Warrior",
+          "description": "As a Bonus Action, choose a creature within 30 feet. The next weapon hit against it this turn converts all attack damage to force and deals 1d8 additional force damage; the extra damage becomes 2d8 at Ranger level 11.",
+          "action": {
+            "activation": "bonus_action"
+          },
+          "key": "xge_ranger_horizon-walker_3_planar-warrior"
+        }
+      ]
+    },
+    {
+      "level": 7,
+      "features": [
+        "Ethereal Step"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Ethereal Step",
+          "description": "As a Bonus Action, cast Etherealness without a spell slot; it ends at the end of the current turn. Regain use after a Short or Long Rest.",
+          "action": {
+            "activation": "bonus_action",
+            "uses": {
+              "max": 1,
+              "per": "short_rest"
+            }
+          },
+          "key": "xge_ranger_horizon-walker_7_ethereal-step"
+        }
+      ]
+    },
+    {
+      "level": 11,
+      "features": [
+        "Distant Strike"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Distant Strike",
+          "description": "Before each attack during the Attack action, teleport up to 10 feet to a visible empty space. If you attack at least two different creatures with that action, make one additional attack against a third creature."
+        }
+      ]
+    },
+    {
+      "level": 15,
+      "features": [
+        "Spectral Defense"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Spectral Defense",
+          "description": "When an attack hits you, use a Reaction to gain resistance to all of that attack's damage.",
+          "action": {
+            "activation": "reaction"
+          },
+          "key": "xge_ranger_horizon-walker_15_spectral-defense"
+        }
+      ]
+    }
+  ],
+  "source": {
+    "code": "XGE",
+    "book": "Xanathar's Guide to Everything",
+    "edition": 2017,
+    "page": 42,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

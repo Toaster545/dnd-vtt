@@ -1,0 +1,25 @@
+{
+  "index": "wand-of-scowls",
+  "name": "Wand of Scowls",
+  "type": "gear",
+  "category": "Magic Item",
+  "damage": null,
+  "damage_type": null,
+  "properties": [],
+  "weight": 1,
+  "cost": "—",
+  "description": "A charged wand that can force a humanoid’s expression into a scowl.",
+  "rarity": "common",
+  "charges": {
+    "max": 3,
+    "recovery": "dawn"
+  },
+  "source": {
+    "code": "XGE",
+    "book": "Xanathar's Guide to Everything",
+    "edition": 2017,
+    "page": 140,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

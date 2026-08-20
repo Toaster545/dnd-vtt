@@ -1,0 +1,22 @@
+{
+  "index": "talking-doll",
+  "name": "Talking Doll",
+  "type": "gear",
+  "category": "Wondrous Item",
+  "damage": null,
+  "damage_type": null,
+  "properties": [],
+  "weight": 0,
+  "cost": "—",
+  "description": "An attuned doll that speaks recorded phrases when specified conditions occur.",
+  "rarity": "common",
+  "requires_attunement": true,
+  "source": {
+    "code": "XGE",
+    "book": "Xanathar's Guide to Everything",
+    "edition": 2017,
+    "page": 139,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

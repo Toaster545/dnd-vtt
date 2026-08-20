@@ -11,6 +11,7 @@ export interface DndContentSource {
   edition: number;
   description: string;
   default_enabled: boolean;
+  locked?: boolean;
   player_options: boolean;
   requires: string[];
 }
@@ -43,6 +44,7 @@ export interface TraitEffect {
 
 export type EffectCondition =
   | 'wearing_armor'
+  | 'wearing_heavy_armor'
   | 'no_armor'
   | 'no_armor_or_shield'
   | 'no_heavy_armor'
@@ -128,6 +130,12 @@ export type TraitGrant =
         lists?: string[]; schools?: string[]; minLevel?: number; maxLevel?: number;
         exactLevels?: number[]; ritual?: boolean; spellAttack?: boolean; castingTimes?: string[];
       };
+    }
+  // Adds spells to the active class source without creating a second slot pool. This is used
+  // by subclasses such as Divine Soul whose spell choices come from an additional class list.
+  | {
+      type: 'spell_list_expansion'; key: string; name: string;
+      spells?: string[]; list?: string; description?: string;
     };
 
 export type SpellcastingAbility =
@@ -163,6 +171,8 @@ export interface DndFeat {
     spellcasting?: boolean;
     feature?: string;
     classes?: string[];
+    species?: string[];
+    speciesChoices?: Record<string, string[]>;
   };
   // Mechanical grants applied automatically to computed stats. Most General feats give a flat
   // or player-chosen +1 ability (max 20); `abilities.length > 1` means the player picks which.
@@ -319,6 +329,9 @@ export interface DndItem {
   cost: string;
   description: string;
   mastery?: { property: string; description: string };
+  rarity?: string;
+  requires_attunement?: boolean | string;
+  charges?: { max: number; recovery: 'dawn' | 'short_rest' | 'long_rest' };
   source?: DndSourceReference;
 }
 

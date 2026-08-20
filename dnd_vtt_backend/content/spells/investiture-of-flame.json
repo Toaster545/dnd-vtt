@@ -1,0 +1,46 @@
+{
+  "index": "investiture-of-flame",
+  "name": "Investiture of Flame",
+  "level": 6,
+  "school": "Transmutation",
+  "casting_time": "1 action",
+  "range": "Self",
+  "components": [
+    "V",
+    "S"
+  ],
+  "duration": "Concentration, up to 10 minutes",
+  "ritual": false,
+  "concentration": true,
+  "mechanics": {
+    "spell_attacks": [],
+    "saving_throws": [
+      "dexterity"
+    ],
+    "ability_checks": [],
+    "damage_types": [
+      "fire"
+    ],
+    "conditions": [],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [
+      "L"
+    ],
+    "misc_tags": [
+      "LGT"
+    ]
+  },
+  "description": "A transmutation level 6 spell. Calls for a Dexterity saving throw. Can deal 1d10 or 4d8 fire damage. See Xanathar's Guide to Everything, page 159, for targeting and complete rules.",
+  "source": {
+    "code": "XGE",
+    "book": "Xanathar's Guide to Everything",
+    "edition": 2017,
+    "page": 159,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

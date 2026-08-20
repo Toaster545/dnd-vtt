@@ -78,11 +78,44 @@ const providerFiles = (folder: string) =>
           readFileSync(join(contentRoot, folder, file), 'utf8'),
         ) as Record<string, unknown>,
     );
-const classes = providerFiles('classes');
+const baseClasses = providerFiles('classes');
+const externalSubclasses = providerFiles('subclasses');
+const xgeManifest = JSON.parse(
+  readFileSync(
+    join(contentRoot, 'manifests', 'xanathars-guide-to-everything.json'),
+    'utf8',
+  ),
+) as { spell_list_additions: Record<string, string[]> };
+const classes = baseClasses.map((cls) => {
+  const classIndex = String(cls.index);
+  const spellcasting = cls.spellcasting as Record<string, unknown> | undefined;
+  return {
+    ...cls,
+    subclasses: [
+      ...(Array.isArray(cls.subclasses) ? (cls.subclasses as unknown[]) : []),
+      ...externalSubclasses.filter(
+        (subclass) => subclass.class_index === classIndex,
+      ),
+    ],
+    ...(spellcasting
+      ? {
+          spellcasting: {
+            ...spellcasting,
+            spells: [
+              ...new Set([
+                ...((spellcasting.spells as string[]) ?? []),
+                ...(xgeManifest.spell_list_additions[classIndex] ?? []),
+              ]),
+            ],
+          },
+        }
+      : {}),
+  };
+});
 const races = providerFiles('races');
 const backgrounds = providerFiles('backgrounds');
 const feats = providerFiles('feats');
-const spellLists = buildSpellLists(classes);
+const spellLists = buildSpellLists(baseClasses);
 const spellAccess = buildSpellAccess(
   spells as unknown as Record<string, unknown>[],
   classes,
@@ -136,9 +169,15 @@ describe("Player's Handbook 2024 spell content", () => {
     expect(new Set(spells.map((spell) => spell.name)).size).toBe(spells.length);
   });
 
-  it('includes the supplemental Artificer spell outside the PHB manifest', () => {
-    expect(supplementalSpells).toHaveLength(1);
-    expect(supplementalSpells[0]).toMatchObject({
+  it('keeps supplemental books outside the PHB manifest', () => {
+    const artificerSpells = supplementalSpells.filter(
+      (spell) => spell.source.code === 'EFA',
+    );
+    const xanatharSpells = supplementalSpells.filter(
+      (spell) => spell.source.code === 'XGE',
+    );
+    expect(artificerSpells).toHaveLength(1);
+    expect(artificerSpells[0]).toMatchObject({
       index: 'homunculus-servant',
       level: 2,
       ritual: true,
@@ -150,6 +189,13 @@ describe("Player's Handbook 2024 spell content", () => {
         rules_text: 'reference-only',
       },
     });
+    expect(xanatharSpells).toHaveLength(85);
+    expect(xanatharSpells).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ index: 'absorb-elements', level: 1 }),
+        expect.objectContaining({ index: 'crown-of-stars', level: 7 }),
+      ]),
+    );
   });
 
   it('encodes every PHB species and feat that automatically grants spells', () => {
@@ -356,7 +402,9 @@ describe("Player's Handbook 2024 spell content", () => {
       expect(spell.duration).not.toBe('');
       expect(spell.components.length).toBeGreaterThan(0);
       expect(spellAccess.get(spell.index)?.length).toBeGreaterThan(0);
-      expect(spell.source.edition).toBe(2024);
+      expect(spell.source.edition).toBe(
+        spell.source.code === 'XGE' ? 2017 : 2024,
+      );
       expect(spell.source.book).not.toBe('');
       expect(spell.source.code).not.toBe('');
     }

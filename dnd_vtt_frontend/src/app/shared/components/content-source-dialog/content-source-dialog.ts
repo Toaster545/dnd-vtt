@@ -41,7 +41,7 @@ export interface ContentSourceDialogData {
               : unavailable
                 ? 'border-white/5 opacity-50 cursor-not-allowed'
                 : 'border-white/10 hover:border-white/25 cursor-pointer'"
-            [disabled]="unavailable"
+            [disabled]="unavailable || source.locked"
             (click)="toggle(source)"
           >
             <span
@@ -109,7 +109,7 @@ export class ContentSourceDialogComponent {
   }
 
   toggle(source: DndContentSource) {
-    if (source.code === 'XPHB' || this.unavailableInCampaign(source)) return;
+    if (source.locked || this.unavailableInCampaign(source)) return;
     this.selected.update(current => {
       const next = new Set(current);
       if (next.has(source.code)) next.delete(source.code);
@@ -130,6 +130,10 @@ export class ContentSourceDialogComponent {
   }
 
   deselectAll() {
-    this.selected.set(new Set(['XPHB']));
+    this.selected.set(new Set(
+      this.data.sources
+        .filter(source => source.player_options && source.locked)
+        .map(source => source.code),
+    ));
   }
 }

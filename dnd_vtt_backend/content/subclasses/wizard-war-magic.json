@@ -1,0 +1,84 @@
+{
+  "class_index": "wizard",
+  "index": "war-magic",
+  "name": "War Magic",
+  "description": "A legacy wizard subclass from Xanathar's Guide to Everything.",
+  "levels": [
+    {
+      "level": 3,
+      "features": [
+        "Arcane Deflection",
+        "Tactical Wit"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Arcane Deflection",
+          "description": "When hit by an attack or failing a saving throw, use a Reaction for +2 AC against that attack or +4 to that save. Afterward, you cannot cast spells other than cantrips until the end of your next turn.",
+          "action": {
+            "activation": "reaction"
+          },
+          "key": "xge_wizard_war-magic_2_arcane-deflection"
+        },
+        {
+          "type": "feature",
+          "name": "Tactical Wit",
+          "description": "Add your Intelligence modifier to Initiative rolls.",
+          "effects": [
+            {
+              "type": "initiative_ability_bonus",
+              "ability": "intelligence"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "level": 6,
+      "features": [
+        "Power Surge"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Power Surge",
+          "description": "Store Power Surges up to your Intelligence modifier, minimum 1. After a Long Rest, reset to one. Gain one when successfully ending a spell with Counterspell or Dispel Magic; if empty after a Short Rest, gain one. Once per turn when a Wizard spell damages a creature or object, spend one surge to deal extra force damage equal to half your Wizard level to one target."
+        }
+      ]
+    },
+    {
+      "level": 10,
+      "features": [
+        "Durable Magic"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Durable Magic",
+          "description": "While concentrating on a spell, gain +2 AC and +2 to all saving throws."
+        }
+      ]
+    },
+    {
+      "level": 14,
+      "features": [
+        "Deflecting Shroud"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Deflecting Shroud",
+          "description": "When using Arcane Deflection, choose up to three visible creatures within 60 feet. Each takes force damage equal to half your Wizard level."
+        }
+      ]
+    }
+  ],
+  "source": {
+    "code": "XGE",
+    "book": "Xanathar's Guide to Everything",
+    "edition": 2017,
+    "page": 59,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

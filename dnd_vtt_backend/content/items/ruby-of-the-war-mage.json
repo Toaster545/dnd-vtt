@@ -1,0 +1,22 @@
+{
+  "index": "ruby-of-the-war-mage",
+  "name": "Ruby of the War Mage",
+  "type": "gear",
+  "category": "Wondrous Item",
+  "damage": null,
+  "damage_type": null,
+  "properties": [],
+  "weight": 0,
+  "cost": "—",
+  "description": "An attuned ruby that turns a weapon into a spellcasting focus.",
+  "rarity": "common",
+  "requires_attunement": "by a spellcaster",
+  "source": {
+    "code": "XGE",
+    "book": "Xanathar's Guide to Everything",
+    "edition": 2017,
+    "page": 138,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

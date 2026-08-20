@@ -1,0 +1,21 @@
+{
+  "index": "unbreakable-arrow",
+  "name": "Unbreakable Arrow",
+  "type": "gear",
+  "category": "Magic Item",
+  "damage": null,
+  "damage_type": null,
+  "properties": [],
+  "weight": 0,
+  "cost": "—",
+  "description": "An arrow that cannot be broken except while inside an antimagic effect.",
+  "rarity": "common",
+  "source": {
+    "code": "XGE",
+    "book": "Xanathar's Guide to Everything",
+    "edition": 2017,
+    "page": 139,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

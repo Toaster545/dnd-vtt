@@ -1,0 +1,117 @@
+{
+  "class_index": "fighter",
+  "index": "cavalier",
+  "name": "Cavalier",
+  "description": "A legacy fighter subclass from Xanathar's Guide to Everything.",
+  "levels": [
+    {
+      "level": 3,
+      "features": [
+        "Bonus Proficiency",
+        "Born to the Saddle",
+        "Unwavering Mark"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Bonus Proficiency",
+          "description": "Gain proficiency in Animal Handling, History, Insight, Performance, or Persuasion; alternatively, learn one language of your choice."
+        },
+        {
+          "type": "feature",
+          "name": "Born to the Saddle",
+          "description": "You have advantage on saves made to avoid falling from a mount. If you fall no more than 10 feet and are not Incapacitated, land on your feet. Mounting or dismounting costs only 5 feet of movement."
+        },
+        {
+          "type": "feature",
+          "name": "Unwavering Mark",
+          "description": "When you hit a creature with a melee weapon attack, mark it until the end of your next turn. While within 5 feet of you, it has disadvantage on attacks against others. If it damages another creature, you can make a Bonus Action melee weapon attack against it on your next turn with advantage and extra damage equal to half your Fighter level. This special attack has Strength-modifier uses, minimum 1, restored on a Long Rest.",
+          "action": {
+            "activation": "bonus_action",
+            "uses": {
+              "max": 1,
+              "maxAbilityModifier": "strength",
+              "minimum": 1,
+              "per": "long_rest"
+            }
+          },
+          "key": "xge_fighter_cavalier_3_unwavering-mark"
+        }
+      ]
+    },
+    {
+      "level": 7,
+      "features": [
+        "Warding Maneuver"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Warding Maneuver",
+          "description": "When you or a visible creature within 5 feet is hit by an attack while you wield a melee weapon or Shield, use a Reaction to roll 1d8 and add it to the target's AC against that attack. If the attack still hits, the target has resistance to its damage. Uses equal your Constitution modifier, minimum 1, restored on a Long Rest.",
+          "action": {
+            "activation": "reaction",
+            "uses": {
+              "max": 1,
+              "maxAbilityModifier": "constitution",
+              "minimum": 1,
+              "per": "long_rest"
+            }
+          },
+          "key": "xge_fighter_cavalier_7_warding-maneuver"
+        }
+      ]
+    },
+    {
+      "level": 10,
+      "features": [
+        "Hold the Line"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Hold the Line",
+          "description": "A creature provokes an Opportunity Attack from you when it moves at least 5 feet while within your reach. If your Opportunity Attack hits, its Speed becomes 0 for the rest of that turn.",
+          "action": {
+            "activation": "reaction"
+          },
+          "key": "xge_fighter_cavalier_10_hold-the-line"
+        }
+      ]
+    },
+    {
+      "level": 15,
+      "features": [
+        "Ferocious Charger"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Ferocious Charger",
+          "description": "Once per turn, if you move at least 10 feet in a straight line immediately before hitting a creature with an attack, it must succeed on a Strength save (DC 8 + Proficiency Bonus + Strength modifier) or fall Prone."
+        }
+      ]
+    },
+    {
+      "level": 18,
+      "features": [
+        "Vigilant Defender"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Vigilant Defender",
+          "description": "Gain one special Reaction on every creature's turn except your own. It can be used only for an Opportunity Attack, and you cannot use it on the same turn as your normal Reaction."
+        }
+      ]
+    }
+  ],
+  "source": {
+    "code": "XGE",
+    "book": "Xanathar's Guide to Everything",
+    "edition": 2017,
+    "page": 30,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

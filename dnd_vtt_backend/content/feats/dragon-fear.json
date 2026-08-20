@@ -1,0 +1,35 @@
+{
+  "index": "dragon-fear",
+  "name": "Dragon Fear",
+  "description": "Replace a Breath Weapon use with a frightening roar that affects chosen creatures nearby.",
+  "category": "general",
+  "prerequisite": {
+    "level": 4,
+    "species": [
+      "dragonborn"
+    ]
+  },
+  "abilityIncrease": {
+    "abilities": [
+      "strength",
+      "constitution",
+      "charisma"
+    ],
+    "amount": 1
+  },
+  "grants": [
+    {
+      "type": "feature",
+      "name": "Dragon Fear",
+      "description": "Expend Breath Weapon to force chosen creatures within 30 feet to save against being Frightened."
+    }
+  ],
+  "source": {
+    "code": "XGE",
+    "book": "Xanathar's Guide to Everything",
+    "edition": 2017,
+    "page": 74,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

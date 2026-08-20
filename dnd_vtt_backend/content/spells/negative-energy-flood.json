@@ -1,0 +1,49 @@
+{
+  "index": "negative-energy-flood",
+  "name": "Negative Energy Flood",
+  "level": 5,
+  "school": "Necromancy",
+  "casting_time": "1 action",
+  "range": "60 feet",
+  "components": [
+    "V",
+    "M"
+  ],
+  "material": "a broken bone and a square of black silk",
+  "duration": "Instantaneous",
+  "ritual": false,
+  "concentration": false,
+  "mechanics": {
+    "spell_attacks": [],
+    "saving_throws": [
+      "constitution"
+    ],
+    "ability_checks": [],
+    "damage_types": [
+      "necrotic"
+    ],
+    "conditions": [],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [
+      "ST"
+    ],
+    "misc_tags": [
+      "SGT",
+      "SMN",
+      "THP"
+    ]
+  },
+  "description": "A necromancy level 5 spell. Calls for a Constitution saving throw. Can deal 5d12 necrotic damage. See Xanathar's Guide to Everything, page 163, for targeting and complete rules.",
+  "source": {
+    "code": "XGE",
+    "book": "Xanathar's Guide to Everything",
+    "edition": 2017,
+    "page": 163,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

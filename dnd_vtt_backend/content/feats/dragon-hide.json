@@ -1,0 +1,35 @@
+{
+  "index": "dragon-hide",
+  "name": "Dragon Hide",
+  "description": "Your draconic scales harden and your retractable claws become natural weapons.",
+  "category": "general",
+  "prerequisite": {
+    "level": 4,
+    "species": [
+      "dragonborn"
+    ]
+  },
+  "abilityIncrease": {
+    "abilities": [
+      "strength",
+      "constitution",
+      "charisma"
+    ],
+    "amount": 1
+  },
+  "grants": [
+    {
+      "type": "feature",
+      "name": "Dragon Hide",
+      "description": "While unarmored, your scales provide a natural AC formula; your claws deal 1d4 slashing damage."
+    }
+  ],
+  "source": {
+    "code": "XGE",
+    "book": "Xanathar's Guide to Everything",
+    "edition": 2017,
+    "page": 74,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

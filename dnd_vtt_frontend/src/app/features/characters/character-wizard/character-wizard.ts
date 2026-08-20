@@ -669,7 +669,7 @@ export class CharacterWizardComponent implements OnInit, OnDestroy {
       // Restore classes
       const classEntries = (existing.classes ?? (existing.class ? [{ name: existing.class, level: existing.level, subclass: existing.subclass }] : []))
         .map(c => {
-          const cls = this.allClasses.find(cl => cl.name === c.name);
+          const cls = this.classes().find(cl => cl.name === c.name);
           if (!cls) return null;
           return { cls, level: c.level ?? existing.level, subclass: c.subclass ?? '', skills: c.skills ?? [], traits: c.choices ?? {} } as ClassEntry;
         })
@@ -746,7 +746,10 @@ export class CharacterWizardComponent implements OnInit, OnDestroy {
       this.selectedSubrace.set(null);
       this.raceTraits.set({});
     }
-    this.selectedClasses.update(entries => entries.filter(entry => include(entry.cls)));
+    const availableClasses = new Map(this.classes().map(cls => [cls.index, cls]));
+    this.selectedClasses.update(entries => entries
+      .filter(entry => availableClasses.has(entry.cls.index))
+      .map(entry => ({ ...entry, cls: availableClasses.get(entry.cls.index)! })));
     if (this.selectedBackground() && !include(this.selectedBackground()!)) {
       this.selectedBackground.set(null);
       this.backgroundTraits.set({});

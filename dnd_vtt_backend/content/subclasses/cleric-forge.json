@@ -1,0 +1,159 @@
+{
+  "class_index": "cleric",
+  "index": "forge",
+  "name": "Forge Domain",
+  "description": "A legacy cleric subclass from Xanathar's Guide to Everything.",
+  "levels": [
+    {
+      "level": 3,
+      "features": [
+        "Forge Spells",
+        "Blessing of the Forge",
+        "Bonus Proficiency",
+        "Channel Divinity: Artisan's Blessing"
+      ],
+      "grants": [
+        {
+          "type": "spell_grant",
+          "key": "forge_spells_3",
+          "name": "Forge Spells",
+          "destination": "always_prepared",
+          "spells": [
+            "identify",
+            "searing-smite",
+            "heat-metal",
+            "magic-weapon"
+          ],
+          "countsAgainstLimit": false,
+          "classLevel": 3
+        },
+        {
+          "type": "spell_grant",
+          "key": "forge_spells_5",
+          "name": "Forge Spells",
+          "destination": "always_prepared",
+          "spells": [
+            "elemental-weapon",
+            "protection-from-energy"
+          ],
+          "countsAgainstLimit": false,
+          "classLevel": 5
+        },
+        {
+          "type": "spell_grant",
+          "key": "forge_spells_7",
+          "name": "Forge Spells",
+          "destination": "always_prepared",
+          "spells": [
+            "fabricate",
+            "wall-of-fire"
+          ],
+          "countsAgainstLimit": false,
+          "classLevel": 7
+        },
+        {
+          "type": "spell_grant",
+          "key": "forge_spells_9",
+          "name": "Forge Spells",
+          "destination": "always_prepared",
+          "spells": [
+            "animate-objects",
+            "creation"
+          ],
+          "countsAgainstLimit": false,
+          "classLevel": 9
+        },
+        {
+          "type": "feature",
+          "name": "Blessing of the Forge",
+          "description": "At the end of a Long Rest, touch one nonmagical suit of armor or Simple or Martial weapon. Until your next Long Rest or death, it is magical and grants +1 AC if armor, or +1 to attack and damage rolls if a weapon. Only one object can carry the blessing."
+        },
+        {
+          "type": "feature",
+          "name": "Bonus Proficiency",
+          "description": "Gain proficiency with Heavy Armor and Smith's Tools.",
+          "effects": [
+            {
+              "type": "armor_proficiency",
+              "tags": [
+                "heavy"
+              ]
+            },
+            {
+              "type": "tool_proficiency",
+              "tags": [
+                "Smith's Tools"
+              ]
+            }
+          ]
+        },
+        {
+          "type": "feature",
+          "name": "Channel Divinity: Artisan's Blessing",
+          "description": "Expend Channel Divinity during a 1-hour ritual to transform metal worth up to 100 gp into one nonmagical item containing metal. The supplied metal must equal the item's value; you can duplicate a metal-bearing item such as a key while holding the original."
+        }
+      ]
+    },
+    {
+      "level": 6,
+      "features": [
+        "Soul of the Forge",
+        "Divine Strike"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Soul of the Forge",
+          "description": "Gain Fire resistance. While wearing Heavy Armor, gain +1 AC.",
+          "effects": [
+            {
+              "type": "damage_resistance",
+              "tags": [
+                "fire"
+              ]
+            },
+            {
+              "type": "ac_bonus",
+              "value": 1,
+              "condition": "wearing_heavy_armor"
+            }
+          ]
+        },
+        {
+          "type": "feature",
+          "name": "Divine Strike",
+          "description": "Once on each of your turns when a weapon attack hits, deal an extra 1d8 Fire damage. The extra damage becomes 2d8 at Cleric level 14."
+        }
+      ]
+    },
+    {
+      "level": 17,
+      "features": [
+        "Saint of Forge and Fire"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Saint of Forge and Fire",
+          "description": "Gain immunity to Fire damage. While wearing Heavy Armor, gain resistance to nonmagical Bludgeoning, Piercing, and Slashing damage.",
+          "effects": [
+            {
+              "type": "damage_immunity",
+              "tags": [
+                "fire"
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "source": {
+    "code": "XGE",
+    "book": "Xanathar's Guide to Everything",
+    "edition": 2017,
+    "page": 18,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

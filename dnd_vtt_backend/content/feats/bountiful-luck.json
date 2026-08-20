@@ -1,0 +1,31 @@
+{
+  "index": "bountiful-luck",
+  "name": "Bountiful Luck",
+  "description": "Use your reaction when a nearby ally rolls a 1 on a d20 test to let that ally reroll it.",
+  "category": "general",
+  "prerequisite": {
+    "level": 4,
+    "species": [
+      "halfling"
+    ]
+  },
+  "grants": [
+    {
+      "type": "feature",
+      "key": "bountiful-luck",
+      "name": "Bountiful Luck",
+      "description": "Reaction: let an ally within 30 feet reroll a natural 1; you cannot use your own Luck before your next turn.",
+      "action": {
+        "activation": "reaction"
+      }
+    }
+  ],
+  "source": {
+    "code": "XGE",
+    "book": "Xanathar's Guide to Everything",
+    "edition": 2017,
+    "page": 73,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

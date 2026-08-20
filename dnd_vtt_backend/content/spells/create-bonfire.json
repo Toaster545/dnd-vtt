@@ -1,0 +1,48 @@
+{
+  "index": "create-bonfire",
+  "name": "Create Bonfire",
+  "level": 0,
+  "school": "Conjuration",
+  "casting_time": "1 action",
+  "range": "60 feet",
+  "components": [
+    "V",
+    "S"
+  ],
+  "duration": "Concentration, up to 1 minute",
+  "ritual": false,
+  "concentration": true,
+  "mechanics": {
+    "spell_attacks": [],
+    "saving_throws": [
+      "dexterity"
+    ],
+    "ability_checks": [],
+    "damage_types": [
+      "fire"
+    ],
+    "conditions": [],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [
+      "C"
+    ],
+    "misc_tags": [
+      "OBJ",
+      "SCL",
+      "SGT"
+    ]
+  },
+  "description": "A conjuration cantrip. Calls for a Dexterity saving throw. Can deal 1d8 or 2d8 or 3d8 or 4d8 fire damage. See Xanathar's Guide to Everything, page 152, for targeting and complete rules.",
+  "source": {
+    "code": "XGE",
+    "book": "Xanathar's Guide to Everything",
+    "edition": 2017,
+    "page": 152,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

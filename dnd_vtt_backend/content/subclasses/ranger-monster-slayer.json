@@ -1,0 +1,162 @@
+{
+  "class_index": "ranger",
+  "index": "monster-slayer",
+  "name": "Monster Slayer",
+  "description": "A legacy ranger subclass from Xanathar's Guide to Everything.",
+  "levels": [
+    {
+      "level": 3,
+      "features": [
+        "Monster Slayer Spells",
+        "Hunter's Sense",
+        "Monster Slayer Magic",
+        "Slayer's Prey"
+      ],
+      "grants": [
+        {
+          "type": "spell_grant",
+          "key": "monster-slayer_spells_3",
+          "name": "Monster Slayer Spells",
+          "destination": "known",
+          "spells": [
+            "protection-from-evil-and-good"
+          ],
+          "countsAgainstLimit": false,
+          "classLevel": 3
+        },
+        {
+          "type": "spell_grant",
+          "key": "monster-slayer_spells_5",
+          "name": "Monster Slayer Spells",
+          "destination": "known",
+          "spells": [
+            "zone-of-truth"
+          ],
+          "countsAgainstLimit": false,
+          "classLevel": 5
+        },
+        {
+          "type": "spell_grant",
+          "key": "monster-slayer_spells_9",
+          "name": "Monster Slayer Spells",
+          "destination": "known",
+          "spells": [
+            "magic-circle"
+          ],
+          "countsAgainstLimit": false,
+          "classLevel": 9
+        },
+        {
+          "type": "spell_grant",
+          "key": "monster-slayer_spells_13",
+          "name": "Monster Slayer Spells",
+          "destination": "known",
+          "spells": [
+            "banishment"
+          ],
+          "countsAgainstLimit": false,
+          "classLevel": 13
+        },
+        {
+          "type": "spell_grant",
+          "key": "monster-slayer_spells_17",
+          "name": "Monster Slayer Spells",
+          "destination": "known",
+          "spells": [
+            "hold-monster"
+          ],
+          "countsAgainstLimit": false,
+          "classLevel": 17
+        },
+        {
+          "type": "feature",
+          "name": "Hunter's Sense",
+          "description": "As an action, choose a visible creature within 60 feet and learn its damage immunities, resistances, and vulnerabilities. If divination magic conceals it, you learn that it has none. Uses equal your Wisdom modifier, minimum 1, restored on a Long Rest.",
+          "action": {
+            "activation": "action",
+            "uses": {
+              "max": 1,
+              "maxAbilityModifier": "wisdom",
+              "minimum": 1,
+              "per": "long_rest"
+            }
+          },
+          "key": "xge_ranger_monster-slayer_3_hunters-sense"
+        },
+        {
+          "type": "feature",
+          "name": "Monster Slayer Magic",
+          "description": "Always have the Monster Slayer spells prepared at their listed Ranger levels; they do not count against your prepared-spell limit."
+        },
+        {
+          "type": "feature",
+          "name": "Slayer's Prey",
+          "description": "As a Bonus Action, designate one visible creature within 60 feet. The first weapon hit against it on each of your turns deals 1d6 extra damage. The designation ends after a Short or Long Rest or when you designate another creature.",
+          "action": {
+            "activation": "bonus_action"
+          },
+          "key": "xge_ranger_monster-slayer_3_slayers-prey"
+        }
+      ]
+    },
+    {
+      "level": 7,
+      "features": [
+        "Supernatural Defense"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Supernatural Defense",
+          "description": "When the current target of Slayer's Prey forces you to make a saving throw or an ability check to escape its grapple, add 1d6 to the roll."
+        }
+      ]
+    },
+    {
+      "level": 11,
+      "features": [
+        "Magic-User's Nemesis"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Magic-User's Nemesis",
+          "description": "When a visible creature within 60 feet casts a spell or teleports, use a Reaction to force a Wisdom save against your spell save DC. On a failure, the spell or teleport fails and is wasted. Regain use after a Short or Long Rest.",
+          "action": {
+            "activation": "reaction",
+            "uses": {
+              "max": 1,
+              "per": "short_rest"
+            }
+          },
+          "key": "xge_ranger_monster-slayer_11_magic-users-nemesis"
+        }
+      ]
+    },
+    {
+      "level": 15,
+      "features": [
+        "Slayer's Counter"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Slayer's Counter",
+          "description": "When the target of Slayer's Prey forces you to make a saving throw, use a Reaction to make one weapon attack against it. If the attack hits, your saving throw automatically succeeds in addition to the attack's normal effects.",
+          "action": {
+            "activation": "reaction"
+          },
+          "key": "xge_ranger_monster-slayer_15_slayers-counter"
+        }
+      ]
+    }
+  ],
+  "source": {
+    "code": "XGE",
+    "book": "Xanathar's Guide to Everything",
+    "edition": 2017,
+    "page": 43,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

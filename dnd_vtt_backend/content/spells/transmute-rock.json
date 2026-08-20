@@ -1,0 +1,53 @@
+{
+  "index": "transmute-rock",
+  "name": "Transmute Rock",
+  "level": 5,
+  "school": "Transmutation",
+  "casting_time": "1 action",
+  "range": "120 feet",
+  "components": [
+    "V",
+    "S",
+    "M"
+  ],
+  "material": "clay and water",
+  "duration": "Until dispelled",
+  "ritual": false,
+  "concentration": false,
+  "mechanics": {
+    "spell_attacks": [],
+    "saving_throws": [
+      "strength",
+      "dexterity"
+    ],
+    "ability_checks": [
+      "strength"
+    ],
+    "damage_types": [
+      "bludgeoning"
+    ],
+    "conditions": [
+      "restrained"
+    ],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [
+      "C"
+    ],
+    "misc_tags": [
+      "SGT"
+    ]
+  },
+  "description": "A transmutation level 5 spell. Calls for a Strength or Dexterity saving throw. Can deal 4d8 bludgeoning damage. Can impose restrained. See Xanathar's Guide to Everything, page 169, for targeting and complete rules.",
+  "source": {
+    "code": "XGE",
+    "book": "Xanathar's Guide to Everything",
+    "edition": 2017,
+    "page": 169,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

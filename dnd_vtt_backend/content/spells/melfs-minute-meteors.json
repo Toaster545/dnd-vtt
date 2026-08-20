@@ -1,0 +1,49 @@
+{
+  "index": "melfs-minute-meteors",
+  "name": "Melf's Minute Meteors",
+  "level": 3,
+  "school": "Evocation",
+  "casting_time": "1 action",
+  "range": "Self",
+  "components": [
+    "V",
+    "S",
+    "M"
+  ],
+  "material": "niter, sulfur, and pine tar formed into a bead",
+  "duration": "Concentration, up to 10 minutes",
+  "ritual": false,
+  "concentration": true,
+  "mechanics": {
+    "spell_attacks": [],
+    "saving_throws": [
+      "dexterity"
+    ],
+    "ability_checks": [],
+    "damage_types": [
+      "fire"
+    ],
+    "conditions": [],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [
+      "S"
+    ],
+    "misc_tags": [
+      "UBA"
+    ]
+  },
+  "description": "An evocation level 3 spell. Calls for a Dexterity saving throw. Can deal 2d6 fire damage. See Xanathar's Guide to Everything, page 161, for targeting and complete rules.",
+  "higher_levels": "The spell improves with higher-level slots as described on XGE page 161.",
+  "source": {
+    "code": "XGE",
+    "book": "Xanathar's Guide to Everything",
+    "edition": 2017,
+    "page": 161,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

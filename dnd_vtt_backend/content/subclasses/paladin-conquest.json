@@ -1,0 +1,165 @@
+{
+  "class_index": "paladin",
+  "index": "conquest",
+  "name": "Oath of Conquest",
+  "description": "A legacy paladin subclass from Xanathar's Guide to Everything.",
+  "levels": [
+    {
+      "level": 3,
+      "features": [
+        "Conquest Spells",
+        "Channel Divinity",
+        "Conquering Presence",
+        "Guided Strike",
+        "Oath Spells",
+        "Tenets of Conquest"
+      ],
+      "grants": [
+        {
+          "type": "spell_grant",
+          "key": "conquest_spells_3",
+          "name": "Conquest Spells",
+          "destination": "always_prepared",
+          "spells": [
+            "armor-of-agathys",
+            "command"
+          ],
+          "countsAgainstLimit": false,
+          "classLevel": 3
+        },
+        {
+          "type": "spell_grant",
+          "key": "conquest_spells_5",
+          "name": "Conquest Spells",
+          "destination": "always_prepared",
+          "spells": [
+            "hold-person",
+            "spiritual-weapon"
+          ],
+          "countsAgainstLimit": false,
+          "classLevel": 5
+        },
+        {
+          "type": "spell_grant",
+          "key": "conquest_spells_9",
+          "name": "Conquest Spells",
+          "destination": "always_prepared",
+          "spells": [
+            "bestow-curse",
+            "fear"
+          ],
+          "countsAgainstLimit": false,
+          "classLevel": 9
+        },
+        {
+          "type": "spell_grant",
+          "key": "conquest_spells_13",
+          "name": "Conquest Spells",
+          "destination": "always_prepared",
+          "spells": [
+            "dominate-beast",
+            "stoneskin"
+          ],
+          "countsAgainstLimit": false,
+          "classLevel": 13
+        },
+        {
+          "type": "spell_grant",
+          "key": "conquest_spells_17",
+          "name": "Conquest Spells",
+          "destination": "always_prepared",
+          "spells": [
+            "cloudkill",
+            "dominate-person"
+          ],
+          "countsAgainstLimit": false,
+          "classLevel": 17
+        },
+        {
+          "type": "feature",
+          "name": "Channel Divinity",
+          "description": "Gain the Conquering Presence and Guided Strike Channel Divinity options. You can expend one Channel Divinity use to activate either option."
+        },
+        {
+          "type": "feature",
+          "name": "Conquering Presence",
+          "description": "As an action, chosen creatures you can see within 30 feet make a Wisdom save. On a failure, a creature is Frightened of you for 1 minute and repeats the save at the end of each of its turns.",
+          "action": {
+            "activation": "action"
+          },
+          "key": "xge_paladin_conquest_3_conquering-presence"
+        },
+        {
+          "type": "feature",
+          "name": "Guided Strike",
+          "description": "After making an attack roll but before learning whether it hits, expend Channel Divinity to add +10 to the roll."
+        },
+        {
+          "type": "feature",
+          "name": "Oath Spells",
+          "description": "Always have the Oath of Conquest spells prepared at their listed Paladin levels; they do not count against the number of spells you prepare."
+        },
+        {
+          "type": "feature",
+          "name": "Tenets of Conquest",
+          "description": "The oath emphasizes extinguishing resistance, ruling with uncompromising strength, and continually becoming strong enough to retain authority."
+        }
+      ]
+    },
+    {
+      "level": 7,
+      "features": [
+        "Aura of Conquest"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Aura of Conquest",
+          "description": "While conscious, a creature Frightened of you that starts its turn within 10 feet has Speed 0 and takes psychic damage equal to half your Paladin level. The radius becomes 30 feet at Paladin level 18."
+        }
+      ]
+    },
+    {
+      "level": 15,
+      "features": [
+        "Scornful Rebuke"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Scornful Rebuke",
+          "description": "Whenever a creature hits you with an attack while you are not Incapacitated, it takes psychic damage equal to your Charisma modifier, minimum 1."
+        }
+      ]
+    },
+    {
+      "level": 20,
+      "features": [
+        "Invincible Conqueror"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Invincible Conqueror",
+          "description": "As an action, transform for 1 minute: gain resistance to all damage, make one additional attack whenever taking the Attack action, and score critical hits with melee weapon attacks on 19 or 20. Regain use after a Long Rest.",
+          "action": {
+            "activation": "action",
+            "uses": {
+              "max": 1,
+              "per": "long_rest"
+            }
+          },
+          "key": "xge_paladin_conquest_20_invincible-conqueror"
+        }
+      ]
+    }
+  ],
+  "source": {
+    "code": "XGE",
+    "book": "Xanathar's Guide to Everything",
+    "edition": 2017,
+    "page": 37,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

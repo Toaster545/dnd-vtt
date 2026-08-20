@@ -1,0 +1,58 @@
+{
+  "index": "wrath-of-nature",
+  "name": "Wrath of Nature",
+  "level": 5,
+  "school": "Evocation",
+  "casting_time": "1 action",
+  "range": "120 feet",
+  "components": [
+    "V",
+    "S"
+  ],
+  "duration": "Concentration, up to 1 minute",
+  "ritual": false,
+  "concentration": true,
+  "mechanics": {
+    "spell_attacks": [
+      "ranged"
+    ],
+    "saving_throws": [
+      "dexterity",
+      "strength"
+    ],
+    "ability_checks": [
+      "strength"
+    ],
+    "damage_types": [
+      "bludgeoning",
+      "slashing"
+    ],
+    "conditions": [
+      "prone",
+      "restrained"
+    ],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [
+      "C",
+      "ST"
+    ],
+    "misc_tags": [
+      "DFT",
+      "SGT",
+      "UBA"
+    ]
+  },
+  "description": "An evocation level 5 spell. Uses a ranged spell attack. Calls for a Dexterity or Strength saving throw. Can deal 4d6 or 3d8 bludgeoning/slashing damage. Can impose prone, restrained. See Xanathar's Guide to Everything, page 171, for targeting and complete rules.",
+  "source": {
+    "code": "XGE",
+    "book": "Xanathar's Guide to Everything",
+    "edition": 2017,
+    "page": 171,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

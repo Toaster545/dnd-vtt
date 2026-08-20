@@ -291,6 +291,11 @@ interface GrantContext {
   sourceLevel?: number;
 }
 
+interface SpellListExpansionContext {
+  grant: Extract<TraitGrant, { type: 'spell_list_expansion' }>;
+  sourceKey?: string;
+}
+
 interface PendingRequirement {
   key: string;
   source: ActiveSource;
@@ -472,6 +477,45 @@ function optionSpellGrants(
         scope: `${context.scope}:option:${grant.key}:${normalize(option.name).replace(/\s+/g, '-')}`,
         sourceName: option.name,
       }));
+    }
+  }
+  return out;
+}
+
+function optionSpellListExpansions(
+  grants: TraitGrant[],
+  choices: Record<string, string[]>,
+  sourceKey?: string,
+): SpellListExpansionContext[] {
+  const out: SpellListExpansionContext[] = [];
+  for (const grant of grants) {
+    if (grant.type === 'spell_list_expansion') out.push({ grant, sourceKey });
+    if (grant.type !== 'choice') continue;
+    const selected = new Set(choices[grant.key] ?? []);
+    for (const option of grant.options) {
+      if (selected.has(option.name)) {
+        out.push(...optionSpellListExpansions(option.grants ?? [], choices, sourceKey));
+      }
+    }
+  }
+  return out;
+}
+
+function activeSpellListExpansions(
+  input: SpellcastingResolverInput,
+  sources: ActiveSource[],
+): SpellListExpansionContext[] {
+  const out: SpellListExpansionContext[] = [];
+  for (const selection of input.classes) {
+    const choices = selection.choices ?? {};
+    const classSource = sources.find(source => source.definition === selection.cls.spellcasting);
+    for (const level of selection.cls.levels.filter(level => level.level <= selection.level)) {
+      out.push(...optionSpellListExpansions(level.grants ?? [], choices, classSource?.key));
+    }
+    const subclass = selection.cls.subclasses.find(candidate => candidate.name === selection.subclass);
+    const subclassSource = sources.find(source => source.definition === subclass?.spellcasting) ?? classSource;
+    for (const level of subclass?.levels.filter(level => level.level <= selection.level) ?? []) {
+      out.push(...optionSpellListExpansions(level.grants ?? [], choices, subclassSource?.key));
     }
   }
   return out;
@@ -817,6 +861,7 @@ export function resolveSpellcasting(input: SpellcastingResolverInput): Spellcast
   // already a caster — a bonus spell should use the same maths as everything else they cast.
   const primaryCasterSource = sources.find((source) => source.castingAbility) ?? null;
   const grants = activeSpellGrants(input, sources);
+  const listExpansions = activeSpellListExpansions(input, sources);
   const pending: PendingRequirement[] = [];
   const known: ResolvedSpellOrigin[] = [];
   const spellbook: ResolvedSpellOrigin[] = [];
@@ -892,6 +937,17 @@ export function resolveSpellcasting(input: SpellcastingResolverInput): Spellcast
 
   for (const source of sources.filter((candidate) => candidate.definition && candidate.progression !== 'none')) {
     const sourceSpellIndexes = new Set(source.definition?.spells ?? []);
+    for (const expansion of listExpansions.filter(
+      candidate => !candidate.sourceKey || candidate.sourceKey === source.key,
+    )) {
+      for (const spell of expansion.grant.spells ?? []) sourceSpellIndexes.add(spell);
+      if (expansion.grant.list) {
+        const list = Object.entries(input.spellLists).find(
+          ([name]) => normalize(name) === normalize(expansion.grant.list!),
+        )?.[1] ?? [];
+        for (const spell of list) sourceSpellIndexes.add(spell);
+      }
+    }
     const listSpells = input.spells.filter((spell) => sourceSpellIndexes.has(spell.index));
     if (source.cantripLimit > 0) {
       pending.push({

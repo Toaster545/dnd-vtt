@@ -25,6 +25,8 @@ export class ClassStepComponent implements OnInit {
   readonly classes           = input.required<DndClass[]>();
   readonly items             = input<DndItem[]>([]);
   readonly feats             = input<DndFeat[]>([]);
+  readonly species           = input('');
+  readonly speciesChoices    = input<Record<string, string[]>>({});
   readonly selectedClasses   = input<ClassEntry[]>([]);
   readonly characterLevel    = input.required<number>();
   readonly baseAbilityScores = input.required<Record<Ability, number>>();
@@ -625,6 +627,10 @@ export class ClassStepComponent implements OnInit {
     if (p.armorProficiency && !this.hasArmorProficiency(p.armorProficiency)) return false;
     if (p.spellcasting && !this.hasSpellcasting()) return false;
     if (p.classes?.length && !p.classes.some(c => this.currentClassIndices().has(c))) return false;
+    if (p.species?.length && !p.species.includes(this.species())) return false;
+    if (p.speciesChoices && !Object.entries(p.speciesChoices).every(
+      ([key, values]) => values.some(value => (this.speciesChoices()[key] ?? []).includes(value)),
+    )) return false;
     if (p.feature && !this.hasFeature(p.feature)) return false;
     return true;
   }

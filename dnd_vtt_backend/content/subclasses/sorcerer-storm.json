@@ -1,0 +1,121 @@
+{
+  "class_index": "sorcerer",
+  "index": "storm",
+  "name": "Storm Sorcery",
+  "description": "A legacy sorcerer subclass from Xanathar's Guide to Everything.",
+  "levels": [
+    {
+      "level": 3,
+      "features": [
+        "Tempestuous Magic",
+        "Wind Speaker"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Tempestuous Magic",
+          "description": "Immediately before or after casting a level 1 or higher spell, use a Bonus Action to fly up to 10 feet without provoking Opportunity Attacks.",
+          "action": {
+            "activation": "bonus_action"
+          },
+          "key": "xge_sorcerer_storm_1_tempestuous-magic"
+        },
+        {
+          "type": "feature",
+          "name": "Wind Speaker",
+          "description": "Speak, read, and write Primordial and its Aquan, Auran, Ignan, and Terran dialects.",
+          "effects": [
+            {
+              "type": "language_proficiency",
+              "tags": [
+                "Primordial",
+                "Aquan",
+                "Auran",
+                "Ignan",
+                "Terran"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "level": 6,
+      "features": [
+        "Heart of the Storm",
+        "Storm Guide"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Heart of the Storm",
+          "description": "Gain resistance to lightning and thunder damage. When you begin casting a level 1 or higher spell that deals either type, chosen visible creatures within 10 feet take lightning or thunder damage equal to half your Sorcerer level.",
+          "effects": [
+            {
+              "type": "damage_resistance",
+              "tags": [
+                "lightning",
+                "thunder"
+              ]
+            }
+          ]
+        },
+        {
+          "type": "feature",
+          "name": "Storm Guide",
+          "description": "As an action, stop rain in a 20-foot-radius sphere centered on you, ending with a Bonus Action. In windy conditions, use a Bonus Action each round to choose the wind's direction within a 100-foot-radius sphere until the end of your next turn.",
+          "action": {
+            "activation": "action"
+          },
+          "key": "xge_sorcerer_storm_6_storm-guide"
+        }
+      ]
+    },
+    {
+      "level": 14,
+      "features": [
+        "Storm's Fury"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Storm's Fury",
+          "description": "When hit by a melee attack, use a Reaction to deal lightning damage equal to your Sorcerer level. The attacker makes a Strength save; on a failure it is pushed up to 20 feet away.",
+          "action": {
+            "activation": "reaction"
+          },
+          "key": "xge_sorcerer_storm_14_storms-fury"
+        }
+      ]
+    },
+    {
+      "level": 18,
+      "features": [
+        "Wind Soul"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Wind Soul",
+          "description": "Gain immunity to lightning and thunder damage and a 60-foot Fly Speed. As an action, reduce your Fly Speed to 30 feet for 1 hour and grant a 30-foot Fly Speed for 1 hour to 3 + your Charisma modifier creatures within 30 feet. Regain this group flight after a Short or Long Rest.",
+          "action": {
+            "activation": "action",
+            "uses": {
+              "max": 1,
+              "per": "short_rest"
+            }
+          },
+          "key": "xge_sorcerer_storm_18_wind-soul"
+        }
+      ]
+    }
+  ],
+  "source": {
+    "code": "XGE",
+    "book": "Xanathar's Guide to Everything",
+    "edition": 2017,
+    "page": 51,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

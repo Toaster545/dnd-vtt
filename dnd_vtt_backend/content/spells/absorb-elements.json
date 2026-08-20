@@ -1,0 +1,38 @@
+{
+  "index": "absorb-elements",
+  "name": "Absorb Elements",
+  "level": 1,
+  "school": "Abjuration",
+  "casting_time": "1 reaction",
+  "range": "Self",
+  "components": [
+    "S"
+  ],
+  "duration": "1 round",
+  "ritual": false,
+  "concentration": false,
+  "mechanics": {
+    "spell_attacks": [],
+    "saving_throws": [],
+    "ability_checks": [],
+    "damage_types": [],
+    "conditions": [],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [],
+    "misc_tags": []
+  },
+  "description": "An abjuration level 1 spell. See Xanathar's Guide to Everything, page 150, for targeting and complete rules.",
+  "higher_levels": "The effect increases by 1d6 for each spell slot level above 1.",
+  "source": {
+    "code": "XGE",
+    "book": "Xanathar's Guide to Everything",
+    "edition": 2017,
+    "page": 150,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

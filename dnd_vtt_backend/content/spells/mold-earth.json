@@ -1,0 +1,42 @@
+{
+  "index": "mold-earth",
+  "name": "Mold Earth",
+  "level": 0,
+  "school": "Transmutation",
+  "casting_time": "1 action",
+  "range": "30 feet",
+  "components": [
+    "S"
+  ],
+  "duration": "Instantaneous",
+  "ritual": false,
+  "concentration": false,
+  "mechanics": {
+    "spell_attacks": [],
+    "saving_throws": [],
+    "ability_checks": [],
+    "damage_types": [],
+    "conditions": [],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [
+      "C"
+    ],
+    "misc_tags": [
+      "DFT",
+      "SGT"
+    ]
+  },
+  "description": "A transmutation cantrip. See Xanathar's Guide to Everything, page 162, for targeting and complete rules.",
+  "source": {
+    "code": "XGE",
+    "book": "Xanathar's Guide to Everything",
+    "edition": 2017,
+    "page": 162,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

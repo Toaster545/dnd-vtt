@@ -1,0 +1,47 @@
+{
+  "index": "snare",
+  "name": "Snare",
+  "level": 1,
+  "school": "Abjuration",
+  "casting_time": "1 minute",
+  "range": "Touch",
+  "components": [
+    "S",
+    "M"
+  ],
+  "material": "25 feet of rope, which the spell consumes",
+  "duration": "8 hours",
+  "ritual": false,
+  "concentration": false,
+  "mechanics": {
+    "spell_attacks": [],
+    "saving_throws": [
+      "dexterity"
+    ],
+    "ability_checks": [
+      "intelligence"
+    ],
+    "damage_types": [],
+    "conditions": [
+      "restrained"
+    ],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [
+      "ST"
+    ],
+    "misc_tags": []
+  },
+  "description": "An abjuration level 1 spell. Calls for a Dexterity saving throw. Can impose restrained. See Xanathar's Guide to Everything, page 165, for targeting and complete rules.",
+  "source": {
+    "code": "XGE",
+    "book": "Xanathar's Guide to Everything",
+    "edition": 2017,
+    "page": 165,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

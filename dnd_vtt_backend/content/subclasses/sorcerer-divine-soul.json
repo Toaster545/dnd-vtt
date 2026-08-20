@@ -1,0 +1,180 @@
+{
+  "class_index": "sorcerer",
+  "index": "divine-soul",
+  "name": "Divine Soul",
+  "description": "A legacy sorcerer subclass from Xanathar's Guide to Everything.",
+  "levels": [
+    {
+      "level": 3,
+      "features": [
+        "Divine Magic",
+        "Divine Affinity",
+        "Favored by the Gods"
+      ],
+      "grants": [
+        {
+          "type": "spell_list_expansion",
+          "key": "divine_soul_cleric_spells",
+          "name": "Divine Magic",
+          "list": "Cleric",
+          "description": "Cleric spells are eligible as Sorcerer spell choices."
+        },
+        {
+          "type": "choice",
+          "key": "divine_soul_affinity",
+          "name": "Divine Affinity",
+          "choose": 1,
+          "options": [
+            {
+              "name": "Good",
+              "grants": [
+                {
+                  "type": "spell_grant",
+                  "key": "divine_soul_good",
+                  "name": "Good Affinity",
+                  "destination": "known",
+                  "spells": [
+                    "cure-wounds"
+                  ],
+                  "countsAgainstLimit": false
+                }
+              ]
+            },
+            {
+              "name": "Evil",
+              "grants": [
+                {
+                  "type": "spell_grant",
+                  "key": "divine_soul_evil",
+                  "name": "Evil Affinity",
+                  "destination": "known",
+                  "spells": [
+                    "inflict-wounds"
+                  ],
+                  "countsAgainstLimit": false
+                }
+              ]
+            },
+            {
+              "name": "Law",
+              "grants": [
+                {
+                  "type": "spell_grant",
+                  "key": "divine_soul_law",
+                  "name": "Law Affinity",
+                  "destination": "known",
+                  "spells": [
+                    "bless"
+                  ],
+                  "countsAgainstLimit": false
+                }
+              ]
+            },
+            {
+              "name": "Chaos",
+              "grants": [
+                {
+                  "type": "spell_grant",
+                  "key": "divine_soul_chaos",
+                  "name": "Chaos Affinity",
+                  "destination": "known",
+                  "spells": [
+                    "bane"
+                  ],
+                  "countsAgainstLimit": false
+                }
+              ]
+            },
+            {
+              "name": "Neutrality",
+              "grants": [
+                {
+                  "type": "spell_grant",
+                  "key": "divine_soul_neutrality",
+                  "name": "Neutrality Affinity",
+                  "destination": "known",
+                  "spells": [
+                    "protection-from-evil-and-good"
+                  ],
+                  "countsAgainstLimit": false
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "feature",
+          "name": "Favored by the Gods",
+          "description": "When you miss an attack or fail a saving throw, roll 2d4 and add the total, potentially changing the result. Regain use after a Short or Long Rest.",
+          "action": {
+            "activation": "free",
+            "uses": {
+              "max": 1,
+              "per": "short_rest"
+            }
+          },
+          "key": "xge_sorcerer_divine-soul_1_favored-by-the-gods"
+        }
+      ]
+    },
+    {
+      "level": 6,
+      "features": [
+        "Empowered Healing"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Empowered Healing",
+          "description": "Once per turn when you or an ally within 5 feet rolls healing dice for a spell, spend 1 Sorcery Point to reroll any number of those dice once, provided you are not Incapacitated."
+        }
+      ]
+    },
+    {
+      "level": 14,
+      "features": [
+        "Otherworldly Wings"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Otherworldly Wings",
+          "description": "As a Bonus Action, manifest spectral wings and gain a 30-foot Fly Speed until Incapacitated, dead, or dismissed with another Bonus Action. Their appearance follows your chosen divine affinity.",
+          "action": {
+            "activation": "bonus_action"
+          },
+          "key": "xge_sorcerer_divine-soul_14_otherworldly-wings"
+        }
+      ]
+    },
+    {
+      "level": 18,
+      "features": [
+        "Unearthly Recovery"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Unearthly Recovery",
+          "description": "As a Bonus Action while below half your Hit Point maximum, regain Hit Points equal to half your maximum. Regain use after a Long Rest.",
+          "action": {
+            "activation": "bonus_action",
+            "uses": {
+              "max": 1,
+              "per": "long_rest"
+            }
+          },
+          "key": "xge_sorcerer_divine-soul_18_unearthly-recovery"
+        }
+      ]
+    }
+  ],
+  "source": {
+    "code": "XGE",
+    "book": "Xanathar's Guide to Everything",
+    "edition": 2017,
+    "page": 50,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

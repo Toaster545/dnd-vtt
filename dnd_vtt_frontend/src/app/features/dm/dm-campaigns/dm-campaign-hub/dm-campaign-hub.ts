@@ -105,12 +105,12 @@ export class DmCampaignHubComponent implements OnInit {
   }
 
   sourceAllowed(source: DndContentSource): boolean {
-    return this.campaign()?.allowed_sources.includes(source.code) ?? source.code === 'XPHB';
+    return this.campaign()?.allowed_sources.includes(source.code) ?? source.locked === true;
   }
 
   async toggleAllowedSource(source: DndContentSource) {
     const campaign = this.campaign();
-    if (!campaign || source.code === 'XPHB' || this.savingSources()) return;
+    if (!campaign || source.locked || this.savingSources()) return;
     const allowed = new Set(campaign.allowed_sources);
     if (allowed.has(source.code)) allowed.delete(source.code);
     else allowed.add(source.code);

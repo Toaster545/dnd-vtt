@@ -1,0 +1,90 @@
+{
+  "class_index": "rogue",
+  "index": "swashbuckler",
+  "name": "Swashbuckler",
+  "description": "A legacy rogue subclass from Xanathar's Guide to Everything.",
+  "levels": [
+    {
+      "level": 3,
+      "features": [
+        "Fancy Footwork",
+        "Rakish Audacity"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Fancy Footwork",
+          "description": "A creature you attack with a melee attack cannot make Opportunity Attacks against you for the rest of the current turn, whether the attack hits or misses."
+        },
+        {
+          "type": "feature",
+          "name": "Rakish Audacity",
+          "description": "Add your Charisma modifier to Initiative. You can Sneak Attack a target within 5 feet when no other creature is within 5 feet of you and you do not have disadvantage, even without advantage."
+        }
+      ]
+    },
+    {
+      "level": 9,
+      "features": [
+        "Panache"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Panache",
+          "description": "As an action, contest Persuasion against Insight for a creature that can hear and understand you. A hostile target that loses has disadvantage attacking others and cannot make Opportunity Attacks against them for 1 minute, ending early if allies harm it or you separate by over 60 feet. A nonhostile target is Charmed for 1 minute, ending if harmed.",
+          "action": {
+            "activation": "action"
+          },
+          "key": "xge_rogue_swashbuckler_9_panache"
+        }
+      ]
+    },
+    {
+      "level": 13,
+      "features": [
+        "Elegant Maneuver"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Elegant Maneuver",
+          "description": "As a Bonus Action, gain advantage on the next Acrobatics or Athletics check made during the current turn.",
+          "action": {
+            "activation": "bonus_action"
+          },
+          "key": "xge_rogue_swashbuckler_13_elegant-maneuver"
+        }
+      ]
+    },
+    {
+      "level": 17,
+      "features": [
+        "Master Duelist"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Master Duelist",
+          "description": "When an attack misses, reroll it with advantage. Regain use after a Short or Long Rest.",
+          "action": {
+            "activation": "free",
+            "uses": {
+              "max": 1,
+              "per": "short_rest"
+            }
+          },
+          "key": "xge_rogue_swashbuckler_17_master-duelist"
+        }
+      ]
+    }
+  ],
+  "source": {
+    "code": "XGE",
+    "book": "Xanathar's Guide to Everything",
+    "edition": 2017,
+    "page": 48,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

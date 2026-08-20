@@ -1,0 +1,46 @@
+{
+  "index": "shadow-of-moil",
+  "name": "Shadow of Moil",
+  "level": 4,
+  "school": "Necromancy",
+  "casting_time": "1 action",
+  "range": "Self",
+  "components": [
+    "V",
+    "S",
+    "M"
+  ],
+  "material": "an undead eyeball encased in a gem worth at least 150 gp",
+  "duration": "Concentration, up to 1 minute",
+  "ritual": false,
+  "concentration": true,
+  "mechanics": {
+    "spell_attacks": [],
+    "saving_throws": [],
+    "ability_checks": [],
+    "damage_types": [
+      "necrotic"
+    ],
+    "conditions": [],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [
+      "S"
+    ],
+    "misc_tags": [
+      "OBS"
+    ]
+  },
+  "description": "A necromancy level 4 spell. Can deal 2d8 necrotic damage. See Xanathar's Guide to Everything, page 164, for targeting and complete rules.",
+  "source": {
+    "code": "XGE",
+    "book": "Xanathar's Guide to Everything",
+    "edition": 2017,
+    "page": 164,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

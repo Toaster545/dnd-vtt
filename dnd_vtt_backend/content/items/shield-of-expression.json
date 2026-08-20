@@ -1,0 +1,21 @@
+{
+  "index": "shield-of-expression",
+  "name": "Shield of Expression",
+  "type": "gear",
+  "category": "Magic Item",
+  "damage": null,
+  "damage_type": null,
+  "properties": [],
+  "weight": 6,
+  "cost": "—",
+  "description": "A shield whose face can display a chosen facial expression.",
+  "rarity": "common",
+  "source": {
+    "code": "XGE",
+    "book": "Xanathar's Guide to Everything",
+    "edition": 2017,
+    "page": 139,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

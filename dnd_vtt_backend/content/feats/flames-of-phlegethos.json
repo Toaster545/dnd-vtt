@@ -1,0 +1,27 @@
+{
+  "index": "flames-of-phlegethos",
+  "name": "Flames of Phlegethos",
+  "description": "Improve fire spell damage and surround yourself with retaliatory flames after casting fire magic.",
+  "category": "general",
+  "prerequisite": {
+    "level": 4,
+    "species": [
+      "tiefling"
+    ]
+  },
+  "abilityIncrease": {
+    "abilities": [
+      "intelligence",
+      "charisma"
+    ],
+    "amount": 1
+  },
+  "source": {
+    "code": "XGE",
+    "book": "Xanathar's Guide to Everything",
+    "edition": 2017,
+    "page": 74,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

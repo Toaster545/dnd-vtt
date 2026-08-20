@@ -1,0 +1,47 @@
+{
+  "index": "catnap",
+  "name": "Catnap",
+  "level": 3,
+  "school": "Enchantment",
+  "casting_time": "1 action",
+  "range": "30 feet",
+  "components": [
+    "S",
+    "M"
+  ],
+  "material": "a pinch of sand",
+  "duration": "10 minutes",
+  "ritual": false,
+  "concentration": false,
+  "mechanics": {
+    "spell_attacks": [],
+    "saving_throws": [],
+    "ability_checks": [],
+    "damage_types": [],
+    "conditions": [
+      "unconscious"
+    ],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [
+      "MT"
+    ],
+    "misc_tags": [
+      "SCT",
+      "SGT"
+    ]
+  },
+  "description": "An enchantment level 3 spell. Can impose unconscious. See Xanathar's Guide to Everything, page 151, for targeting and complete rules.",
+  "higher_levels": "The spell improves with higher-level slots as described on XGE page 151.",
+  "source": {
+    "code": "XGE",
+    "book": "Xanathar's Guide to Everything",
+    "edition": 2017,
+    "page": 151,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

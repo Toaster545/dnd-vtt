@@ -1,0 +1,46 @@
+{
+  "index": "gust",
+  "name": "Gust",
+  "level": 0,
+  "school": "Transmutation",
+  "casting_time": "1 action",
+  "range": "30 feet",
+  "components": [
+    "V",
+    "S"
+  ],
+  "duration": "Instantaneous",
+  "ritual": false,
+  "concentration": false,
+  "mechanics": {
+    "spell_attacks": [],
+    "saving_throws": [
+      "strength"
+    ],
+    "ability_checks": [],
+    "damage_types": [],
+    "conditions": [],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [
+      "ST"
+    ],
+    "misc_tags": [
+      "FMV",
+      "OBJ",
+      "SGT"
+    ]
+  },
+  "description": "A transmutation cantrip. Calls for a Strength saving throw. See Xanathar's Guide to Everything, page 157, for targeting and complete rules.",
+  "source": {
+    "code": "XGE",
+    "book": "Xanathar's Guide to Everything",
+    "edition": 2017,
+    "page": 157,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

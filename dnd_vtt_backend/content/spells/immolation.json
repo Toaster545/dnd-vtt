@@ -1,0 +1,46 @@
+{
+  "index": "immolation",
+  "name": "Immolation",
+  "level": 5,
+  "school": "Evocation",
+  "casting_time": "1 action",
+  "range": "90 feet",
+  "components": [
+    "V"
+  ],
+  "duration": "Concentration, up to 1 minute",
+  "ritual": false,
+  "concentration": true,
+  "mechanics": {
+    "spell_attacks": [],
+    "saving_throws": [
+      "dexterity"
+    ],
+    "ability_checks": [],
+    "damage_types": [
+      "fire"
+    ],
+    "conditions": [],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [
+      "ST"
+    ],
+    "misc_tags": [
+      "LGT",
+      "SGT"
+    ]
+  },
+  "description": "An evocation level 5 spell. Calls for a Dexterity saving throw. Can deal 8d6 or 4d6 fire damage. See Xanathar's Guide to Everything, page 158, for targeting and complete rules.",
+  "source": {
+    "code": "XGE",
+    "book": "Xanathar's Guide to Everything",
+    "edition": 2017,
+    "page": 158,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

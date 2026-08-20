@@ -1,0 +1,85 @@
+{
+  "class_index": "barbarian",
+  "index": "ancestral-guardian",
+  "name": "Path of the Ancestral Guardian",
+  "description": "A legacy barbarian subclass from Xanathar's Guide to Everything.",
+  "levels": [
+    {
+      "level": 3,
+      "features": [
+        "Ancestral Guardian Spells",
+        "Ancestral Protectors"
+      ],
+      "grants": [
+        {
+          "type": "spell_grant",
+          "key": "ancestral-guardian_spells_10",
+          "name": "Ancestral Guardian Spells",
+          "destination": "known",
+          "spells": [
+            "augury",
+            "clairvoyance"
+          ],
+          "countsAgainstLimit": false,
+          "classLevel": 10
+        },
+        {
+          "type": "feature",
+          "name": "Ancestral Protectors",
+          "description": "While raging, the first creature you hit on your turn is hindered by ancestral spirits until your next turn: it has disadvantage on attacks against anyone other than you, and a different creature it hits has resistance to that attack's damage. The effect ends if your Rage ends."
+        }
+      ]
+    },
+    {
+      "level": 6,
+      "features": [
+        "Spirit Shield"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Spirit Shield",
+          "description": "While raging, when another creature you can see within 30 feet takes damage, use your reaction to reduce that damage by 2d6. The reduction becomes 3d6 at Barbarian level 10 and 4d6 at level 14.",
+          "action": {
+            "activation": "reaction"
+          },
+          "key": "xge_barbarian_ancestral-guardian_6_spirit-shield"
+        }
+      ]
+    },
+    {
+      "level": 10,
+      "features": [
+        "Consult the Spirits"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Consult the Spirits",
+          "description": "Cast Augury or Clairvoyance without a spell slot or material components, using Wisdom as the spellcasting ability. Clairvoyance summons an invisible ancestral spirit instead of a sensor. Regain this shared use after a Short or Long Rest."
+        }
+      ]
+    },
+    {
+      "level": 14,
+      "features": [
+        "Vengeful Ancestors"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Vengeful Ancestors",
+          "description": "Whenever Spirit Shield reduces damage from an attack, the attacker takes Force damage equal to the amount prevented."
+        }
+      ]
+    }
+  ],
+  "source": {
+    "code": "XGE",
+    "book": "Xanathar's Guide to Everything",
+    "edition": 2017,
+    "page": 9,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

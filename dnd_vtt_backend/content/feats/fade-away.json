@@ -1,0 +1,42 @@
+{
+  "index": "fade-away",
+  "name": "Fade Away",
+  "description": "Turn invisible briefly as a reaction after taking damage.",
+  "category": "general",
+  "prerequisite": {
+    "level": 4,
+    "species": [
+      "gnome"
+    ]
+  },
+  "abilityIncrease": {
+    "abilities": [
+      "dexterity",
+      "intelligence"
+    ],
+    "amount": 1
+  },
+  "grants": [
+    {
+      "type": "feature",
+      "key": "fade-away",
+      "name": "Fade Away",
+      "description": "Reaction after taking damage: become Invisible until the end of your next turn or until you attack, deal damage, or cast a spell.",
+      "action": {
+        "activation": "reaction",
+        "uses": {
+          "max": 1,
+          "per": "short_rest"
+        }
+      }
+    }
+  ],
+  "source": {
+    "code": "XGE",
+    "book": "Xanathar's Guide to Everything",
+    "edition": 2017,
+    "page": 74,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

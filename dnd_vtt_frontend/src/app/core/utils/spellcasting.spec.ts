@@ -154,6 +154,36 @@ describe('resolveSpellcasting', () => {
     ]);
   });
 
+  it('adds a selected subclass spell-list expansion to its class source', () => {
+    const sorcerer = classContent('sorcerer', 'Sorcerer', {
+      key: 'class:sorcerer', list: 'Sorcerer', ability: 'charisma',
+      mode: 'known', progression: 'full',
+    }, 3, {
+      spells_known: 1,
+      spell_slots: { '1': 4, '2': 2 },
+    });
+    sorcerer.subclasses = [{
+      index: 'divine-soul', name: 'Divine Soul',
+      levels: [{
+        level: 3, features: ['Divine Magic'], grants: [{
+          type: 'spell_list_expansion', key: 'divine_magic', name: 'Divine Magic', list: 'Cleric',
+        }],
+      }],
+    }];
+
+    const result = resolveSpellcasting({
+      characterLevel: 3,
+      abilityScores: scores,
+      spells,
+      classes: [{ cls: sorcerer, level: 3, subclass: 'Divine Soul' }],
+      spellChoices: { 'class:sorcerer:known': ['cure-wounds'] },
+    });
+
+    const knownRequirement = result.requirements.find(requirement => requirement.kind === 'known');
+    expect(knownRequirement?.eligibleSpellIndices).toContain('cure-wounds');
+    expect(knownRequirement?.invalidSelectedSpellIndices).toEqual([]);
+  });
+
   it('activates option grants and resolves a choice-based racial casting ability', () => {
     const forestGrants: TraitGrant[] = [
       {

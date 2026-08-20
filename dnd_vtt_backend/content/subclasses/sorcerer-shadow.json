@@ -1,0 +1,106 @@
+{
+  "class_index": "sorcerer",
+  "index": "shadow",
+  "name": "Shadow Magic",
+  "description": "A legacy sorcerer subclass from Xanathar's Guide to Everything.",
+  "levels": [
+    {
+      "level": 3,
+      "features": [
+        "Shadow Spells",
+        "Eyes of the Dark",
+        "Strength of the Grave"
+      ],
+      "grants": [
+        {
+          "type": "spell_grant",
+          "key": "shadow_spells_3",
+          "name": "Shadow Spells",
+          "destination": "known",
+          "spells": [
+            "darkness"
+          ],
+          "countsAgainstLimit": false,
+          "classLevel": 3
+        },
+        {
+          "type": "feature",
+          "name": "Eyes of the Dark",
+          "description": "Gain Darkvision to 120 feet. At Sorcerer level 3, learn Darkness without it counting against spells known; cast it with 2 Sorcery Points, and when cast that way you can see through it."
+        },
+        {
+          "type": "feature",
+          "name": "Strength of the Grave",
+          "description": "When damage reduces you to 0 Hit Points without killing you outright, make a Charisma save with DC 5 + the damage taken. On success, remain at 1 Hit Point. It cannot trigger from radiant damage or a critical hit. After a success, regain use on a Long Rest.",
+          "action": {
+            "activation": "free",
+            "uses": {
+              "max": 1,
+              "per": "long_rest"
+            }
+          },
+          "key": "xge_sorcerer_shadow_1_strength-of-the-grave"
+        }
+      ]
+    },
+    {
+      "level": 6,
+      "features": [
+        "Hound of Ill Omen"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Hound of Ill Omen",
+          "description": "As a Bonus Action, spend 3 Sorcery Points to summon a modified Dire Wolf within 30 feet of a visible target within 120 feet. It has Temporary Hit Points equal to half your Sorcerer level, uses your Charisma modifier for its attack bonus, phases through creatures and objects, acts only against its target, and gives that target disadvantage on saves against your spells while within 5 feet. It lasts 5 minutes or until it or the target reaches 0 Hit Points.",
+          "action": {
+            "activation": "bonus_action"
+          },
+          "key": "xge_sorcerer_shadow_6_hound-of-ill-omen"
+        }
+      ]
+    },
+    {
+      "level": 14,
+      "features": [
+        "Shadow Walk"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Shadow Walk",
+          "description": "As a Bonus Action while in dim light or darkness, teleport up to 120 feet to a visible empty space also in dim light or darkness.",
+          "action": {
+            "activation": "bonus_action"
+          },
+          "key": "xge_sorcerer_shadow_14_shadow-walk"
+        }
+      ]
+    },
+    {
+      "level": 18,
+      "features": [
+        "Umbral Form"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Umbral Form",
+          "description": "As a Bonus Action, spend 6 Sorcery Points to transform for 1 minute. Gain resistance to all damage except force and radiant and move through creatures and objects as difficult terrain, taking 5 force damage if ending a turn inside an object. It ends if Incapacitated, dead, or dismissed as a Bonus Action.",
+          "action": {
+            "activation": "bonus_action"
+          },
+          "key": "xge_sorcerer_shadow_18_umbral-form"
+        }
+      ]
+    }
+  ],
+  "source": {
+    "code": "XGE",
+    "book": "Xanathar's Guide to Everything",
+    "edition": 2017,
+    "page": 50,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

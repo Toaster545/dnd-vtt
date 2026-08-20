@@ -25,6 +25,14 @@ const CONTENT_PATH = join(process.cwd(), 'content');
 
 export type CustomContentKind = 'monsters' | 'items' | 'spells';
 
+interface ExternalSubclass extends Record<string, unknown> {
+  class_index: string;
+}
+
+interface ContentManifest extends Record<string, unknown> {
+  spell_list_additions?: Record<string, string[]>;
+}
+
 const CUSTOM_TABLE: Record<CustomContentKind, string> = {
   monsters: 'custom_monsters',
   items: 'custom_items',
@@ -101,11 +109,74 @@ export class ContentService {
     return normalized as T;
   }
 
-  getClasses() {
-    return this.loadAll('classes');
+  getClasses(): Record<string, unknown>[] {
+    const key = 'derived:classes';
+    if (this.cache.has(key)) {
+      return this.cache.get(key) as Record<string, unknown>[];
+    }
+
+    const subclasses = this.loadAll<ExternalSubclass>('subclasses');
+    const additions = this.loadAll<ContentManifest>('manifests').reduce(
+      (result, manifest) => {
+        for (const [classIndex, spells] of Object.entries(
+          manifest.spell_list_additions ?? {},
+        )) {
+          const current = result.get(classIndex) ?? new Set<string>();
+          spells.forEach((spell) => current.add(spell));
+          result.set(classIndex, current);
+        }
+        return result;
+      },
+      new Map<string, Set<string>>(),
+    );
+
+    const classes = this.loadAll<Record<string, unknown>>('classes').map(
+      (entry) => {
+        const classIndex = typeof entry.index === 'string' ? entry.index : '';
+        const embedded: unknown[] = Array.isArray(entry.subclasses)
+          ? (entry.subclasses as unknown[])
+          : [];
+        const external = subclasses
+          .filter((subclass) => subclass.class_index === classIndex)
+          .map((subclass) =>
+            Object.fromEntries(
+              Object.entries(subclass).filter(([key]) => key !== 'class_index'),
+            ),
+          );
+        const spellcasting =
+          entry.spellcasting && typeof entry.spellcasting === 'object'
+            ? (entry.spellcasting as Record<string, unknown>)
+            : undefined;
+        const baseSpells = Array.isArray(spellcasting?.spells)
+          ? spellcasting.spells.filter(
+              (spell): spell is string => typeof spell === 'string',
+            )
+          : [];
+        const extraSpells = [...(additions.get(classIndex) ?? [])];
+
+        return {
+          ...entry,
+          subclasses: [...embedded, ...external],
+          ...(spellcasting
+            ? {
+                spellcasting: {
+                  ...spellcasting,
+                  spells: [...new Set([...baseSpells, ...extraSpells])].sort(),
+                },
+              }
+            : {}),
+        };
+      },
+    );
+    this.cache.set(key, classes);
+    return classes;
   }
-  getClass(index: string) {
-    return this.loadOne('classes', index);
+  getClass(index: string): Record<string, unknown> {
+    const entry = this.getClasses().find(
+      (candidate) => candidate.index === index,
+    );
+    if (!entry) throw new NotFoundException(`classes/${index} not found`);
+    return entry;
   }
   getRaces() {
     return this.loadAll('races');
@@ -127,7 +198,7 @@ export class ContentService {
   }
 
   getSpellLists() {
-    return buildSpellLists(this.loadAll<Record<string, unknown>>('classes'));
+    return buildSpellLists(this.getClasses());
   }
 
   // ── Monsters / items / spells: static SRD content merged with DM-authored custom content ──
@@ -191,7 +262,7 @@ export class ContentService {
     }
     const registry = buildSpellAccess(
       this.loadAll<Record<string, unknown>>('spells'),
-      this.loadAll<Record<string, unknown>>('classes'),
+      this.getClasses(),
       this.loadAll<Record<string, unknown>>('races'),
       this.loadAll<Record<string, unknown>>('backgrounds'),
       this.loadAll<Record<string, unknown>>('feats'),

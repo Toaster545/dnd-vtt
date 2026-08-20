@@ -1,0 +1,164 @@
+{
+  "class_index": "fighter",
+  "index": "arcane-archer",
+  "name": "Arcane Archer",
+  "description": "A legacy fighter subclass from Xanathar's Guide to Everything.",
+  "levels": [
+    {
+      "level": 3,
+      "features": [
+        "Arcane Archer Cantrip",
+        "Arcane Archer Lore",
+        "Arcane Shot",
+        "Arcane Shot Options"
+      ],
+      "grants": [
+        {
+          "type": "choice",
+          "key": "arcane_archer_cantrip",
+          "name": "Arcane Archer Cantrip",
+          "choose": 1,
+          "options": [
+            {
+              "name": "Prestidigitation",
+              "grants": [
+                {
+                  "type": "spell_grant",
+                  "key": "arcane_archer_prestidigitation",
+                  "name": "Arcane Archer Lore",
+                  "destination": "known",
+                  "spells": [
+                    "prestidigitation"
+                  ],
+                  "countsAgainstLimit": false,
+                  "ability": "intelligence"
+                }
+              ]
+            },
+            {
+              "name": "Druidcraft",
+              "grants": [
+                {
+                  "type": "spell_grant",
+                  "key": "arcane_archer_druidcraft",
+                  "name": "Arcane Archer Lore",
+                  "destination": "known",
+                  "spells": [
+                    "druidcraft"
+                  ],
+                  "countsAgainstLimit": false,
+                  "ability": "intelligence"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "feature",
+          "name": "Arcane Archer Lore",
+          "description": "Gain proficiency in Arcana or Nature, and learn either Druidcraft or Prestidigitation. Intelligence is your spellcasting ability for the chosen cantrip."
+        },
+        {
+          "type": "feature",
+          "name": "Arcane Shot",
+          "description": "Learn two Arcane Shot options. Once per turn when you fire an arrow from a Shortbow or Longbow as part of the Attack action, apply one known option to that arrow. Unless an option says otherwise, decide after the arrow hits. Your save DC is 8 + Proficiency Bonus + Intelligence modifier. You have two uses, restored on a Short or Long Rest.",
+          "action": {
+            "activation": "free",
+            "uses": {
+              "max": 2,
+              "per": "short_rest"
+            }
+          },
+          "key": "xge_fighter_arcane-archer_3_arcane-shot"
+        },
+        {
+          "type": "feature",
+          "name": "Arcane Shot Options",
+          "description": "Choose from Banishing Arrow, Beguiling Arrow, Bursting Arrow, Enfeebling Arrow, Grasping Arrow, Piercing Arrow, Seeking Arrow, and Shadow Arrow. Each option modifies one arrow with its listed damage, target, and saving-throw effect; you cannot apply more than one option to an arrow."
+        }
+      ]
+    },
+    {
+      "level": 7,
+      "features": [
+        "Additional Arcane Shot Option",
+        "Curving Shot",
+        "Magic Arrow"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Additional Arcane Shot Option",
+          "description": "Learn one additional Arcane Shot option."
+        },
+        {
+          "type": "feature",
+          "name": "Curving Shot",
+          "description": "When a magic-arrow attack misses, use a Bonus Action to reroll the attack against a different target within 60 feet of the original target.",
+          "action": {
+            "activation": "bonus_action"
+          },
+          "key": "xge_fighter_arcane-archer_7_curving-shot"
+        },
+        {
+          "type": "feature",
+          "name": "Magic Arrow",
+          "description": "Arrows fired from your Shortbow or Longbow count as magical for overcoming resistance and immunity to nonmagical attacks and damage."
+        }
+      ]
+    },
+    {
+      "level": 10,
+      "features": [
+        "Additional Arcane Shot Option"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Additional Arcane Shot Option",
+          "description": "Learn one additional Arcane Shot option."
+        }
+      ]
+    },
+    {
+      "level": 15,
+      "features": [
+        "Additional Arcane Shot Option",
+        "Ever-Ready Shot"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Additional Arcane Shot Option",
+          "description": "Learn one additional Arcane Shot option."
+        },
+        {
+          "type": "feature",
+          "name": "Ever-Ready Shot",
+          "description": "When you roll Initiative with no Arcane Shot uses remaining, regain one use."
+        }
+      ]
+    },
+    {
+      "level": 18,
+      "features": [
+        "Additional Arcane Shot Option"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Additional Arcane Shot Option",
+          "description": "Learn one additional Arcane Shot option. The damage of every Arcane Shot option also increases by 2d6."
+        }
+      ]
+    }
+  ],
+  "source": {
+    "code": "XGE",
+    "book": "Xanathar's Guide to Everything",
+    "edition": 2017,
+    "page": 28,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

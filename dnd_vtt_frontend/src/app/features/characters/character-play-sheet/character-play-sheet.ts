@@ -19,6 +19,7 @@ import {
 import { adjustCurrency, CURRENCY_ORDER } from '../../../core/utils/currency';
 import { resolveCharacterFeatPicks } from '../../../core/utils/character-effects';
 import { resolveBackgroundOriginFeat } from '../../../core/utils/background-origin-feat';
+import { characterContentEnabled } from '../../../core/utils/content-sources';
 import {
   describeSpellUpcast, isSpellAttack, isSavingThrowSpell, resolveSpellAttackDamage,
   resolveSpellcasting, ResolvedSpellOrigin, ResolvedSpellSlotPool, ResolvedSpellCategory,
@@ -481,32 +482,41 @@ export class CharacterPlaySheetComponent {
       : (char.class ? [{ name: char.class, level: char.level, subclass: char.subclass, choices: {} as Record<string, string[]> }] : []);
 
     const campaignId = char.campaign_id ?? undefined;
-    const [race, bg, items, spells, spellLists, feats] = await Promise.all([
+    const [race, bg, items, spells, spellLists, feats, sources] = await Promise.all([
       char.race ? this.content.getRace(toIndex(char.race)).catch(() => null) : Promise.resolve(null),
       char.background ? this.content.getBackground(toIndex(char.background)).catch(() => null) : Promise.resolve(null),
       this.content.getItems(campaignId),
       this.content.getSpells(campaignId),
       this.content.getSpellLists(),
       this.content.getFeats(),
+      this.content.getSources(),
     ]);
 
     const classDataList = await Promise.all(classEntries.map(c => this.content.getClass(toIndex(c.name)).catch(() => null)));
+
+    const enabledSources = new Set(char.enabled_sources ?? sources
+      .filter(source => source.player_options && (source.default_enabled || source.locked))
+      .map(source => source.code));
+    const include = <T extends { source?: { code: string } }>(entry: T) =>
+      characterContentEnabled(entry, enabledSources, sources);
 
     const resolved: ResolvedClass[] = classEntries
       .map((c, i) => {
         const data = classDataList[i];
         if (!data) return null;
-        const subclass = c.subclass ? data.subclasses.find(s => s.name === c.subclass) ?? null : null;
+        const subclass = c.subclass
+          ? data.subclasses.find(s => s.name === c.subclass && include(s)) ?? null
+          : null;
         return { name: c.name, data, level: c.level, subclassName: c.subclass ?? '', subclass, choices: c.choices ?? {} };
       })
       .filter((c): c is ResolvedClass => c !== null);
 
     this.raceData.set(race);
     this.bgData.set(bg);
-    this.itemsAll.set(items);
-    this.spellsAll.set(spells);
+    this.itemsAll.set(items.filter(include));
+    this.spellsAll.set(spells.filter(include));
     this.spellLists.set(spellLists);
-    this.featsAll.set(feats);
+    this.featsAll.set(feats.filter(include));
     this.resolvedClasses.set(resolved);
     this.loading.set(false);
   }

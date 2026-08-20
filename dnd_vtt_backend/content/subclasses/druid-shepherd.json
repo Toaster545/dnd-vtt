@@ -1,0 +1,98 @@
+{
+  "class_index": "druid",
+  "index": "shepherd",
+  "name": "Circle of the Shepherd",
+  "description": "A legacy druid subclass from Xanathar's Guide to Everything.",
+  "levels": [
+    {
+      "level": 3,
+      "features": [
+        "Speech of the Woods",
+        "Spirit Totem"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Speech of the Woods",
+          "description": "Speak, read, and write Sylvan. Beasts understand your speech, and you can interpret their noises and movements well enough to exchange simple recent information; this does not make them friendly.",
+          "effects": [
+            {
+              "type": "language_proficiency",
+              "tags": [
+                "Sylvan"
+              ]
+            }
+          ]
+        },
+        {
+          "type": "feature",
+          "name": "Spirit Totem",
+          "description": "As a Bonus Action, summon a Bear, Hawk, or Unicorn spirit at a visible point within 60 feet for 1 minute, creating a 30-foot aura; move it 60 feet with another Bonus Action. Bear grants 5 + Druid level Temporary Hit Points on arrival and Strength advantage; Hawk grants Perception advantage and can use your reaction to grant an attack advantage; Unicorn grants detection advantage and heals chosen creatures in the aura for your Druid level when your slotted spell restores Hit Points. Regain use after a Short or Long Rest.",
+          "action": {
+            "activation": "bonus_action",
+            "uses": {
+              "max": 1,
+              "per": "short_rest"
+            }
+          },
+          "key": "xge_druid_shepherd_2_spirit-totem"
+        }
+      ]
+    },
+    {
+      "level": 6,
+      "features": [
+        "Mighty Summoner"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Mighty Summoner",
+          "description": "Beasts and Fey summoned or created by your spells gain 2 extra Hit Points per Hit Die, and their natural-weapon damage counts as magical against resistance and immunity."
+        }
+      ]
+    },
+    {
+      "level": 10,
+      "features": [
+        "Guardian Spirit"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Guardian Spirit",
+          "description": "A Beast or Fey summoned or created by your spell regains Hit Points equal to half your Druid level whenever it ends its turn inside your Spirit Totem aura."
+        }
+      ]
+    },
+    {
+      "level": 14,
+      "features": [
+        "Faithful Summons"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Faithful Summons",
+          "description": "When unwillingly reduced to 0 Hit Points or Incapacitated, immediately gain a 9th-level Conjure Animals effect without Concentration: four chosen Beasts of CR 2 or lower appear within 20 feet for 1 hour and defend you. Regain use after a Long Rest.",
+          "action": {
+            "activation": "free",
+            "uses": {
+              "max": 1,
+              "per": "long_rest"
+            }
+          },
+          "key": "xge_druid_shepherd_14_faithful-summons"
+        }
+      ]
+    }
+  ],
+  "source": {
+    "code": "XGE",
+    "book": "Xanathar's Guide to Everything",
+    "edition": 2017,
+    "page": 23,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

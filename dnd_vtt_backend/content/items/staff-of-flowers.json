@@ -1,0 +1,25 @@
+{
+  "index": "staff-of-flowers",
+  "name": "Staff of Flowers",
+  "type": "gear",
+  "category": "Staff",
+  "damage": null,
+  "damage_type": null,
+  "properties": [],
+  "weight": 4,
+  "cost": "—",
+  "description": "A charged staff that causes a harmless flower to grow from nearby earth.",
+  "rarity": "common",
+  "charges": {
+    "max": 10,
+    "recovery": "dawn"
+  },
+  "source": {
+    "code": "XGE",
+    "book": "Xanathar's Guide to Everything",
+    "edition": 2017,
+    "page": 139,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

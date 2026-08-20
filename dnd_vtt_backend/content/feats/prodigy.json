@@ -1,0 +1,39 @@
+{
+  "index": "prodigy",
+  "name": "Prodigy",
+  "description": "Gain one skill, one tool, one language, and Expertise in a proficient skill.",
+  "category": "general",
+  "prerequisite": {
+    "level": 4,
+    "species": [
+      "human"
+    ]
+  },
+  "grants": [
+    {
+      "type": "skill_choice",
+      "key": "prodigy_skill",
+      "name": "Prodigy Skill",
+      "choose": 1
+    },
+    {
+      "type": "expertise_choice",
+      "key": "prodigy_expertise",
+      "name": "Prodigy Expertise",
+      "choose": 1
+    },
+    {
+      "type": "feature",
+      "name": "Prodigy Tool and Language",
+      "description": "Choose one tool proficiency and one language."
+    }
+  ],
+  "source": {
+    "code": "XGE",
+    "book": "Xanathar's Guide to Everything",
+    "edition": 2017,
+    "page": 75,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

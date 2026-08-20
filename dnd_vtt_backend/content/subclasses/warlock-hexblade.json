@@ -1,0 +1,160 @@
+{
+  "class_index": "warlock",
+  "index": "hexblade",
+  "name": "The Hexblade",
+  "description": "A legacy warlock subclass from Xanathar's Guide to Everything.",
+  "levels": [
+    {
+      "level": 3,
+      "features": [
+        "Hexblade Spells",
+        "Hex Warrior",
+        "Hexblade's Curse"
+      ],
+      "grants": [
+        {
+          "type": "spell_grant",
+          "key": "hexblade_spells_3",
+          "name": "Hexblade Spells",
+          "destination": "always_prepared",
+          "spells": [
+            "shield",
+            "wrathful-smite",
+            "blur",
+            "shining-smite"
+          ],
+          "countsAgainstLimit": false,
+          "classLevel": 3
+        },
+        {
+          "type": "spell_grant",
+          "key": "hexblade_spells_5",
+          "name": "Hexblade Spells",
+          "destination": "always_prepared",
+          "spells": [
+            "blink",
+            "elemental-weapon"
+          ],
+          "countsAgainstLimit": false,
+          "classLevel": 5
+        },
+        {
+          "type": "spell_grant",
+          "key": "hexblade_spells_7",
+          "name": "Hexblade Spells",
+          "destination": "always_prepared",
+          "spells": [
+            "phantasmal-killer",
+            "staggering-smite"
+          ],
+          "countsAgainstLimit": false,
+          "classLevel": 7
+        },
+        {
+          "type": "spell_grant",
+          "key": "hexblade_spells_9",
+          "name": "Hexblade Spells",
+          "destination": "always_prepared",
+          "spells": [
+            "banishing-smite",
+            "cone-of-cold"
+          ],
+          "countsAgainstLimit": false,
+          "classLevel": 9
+        },
+        {
+          "type": "feature",
+          "name": "Hex Warrior",
+          "description": "Gain proficiency with Medium Armor, Shields, and Martial Weapons. After a Long Rest, touch one proficient weapon lacking the Two-Handed property and use Charisma instead of Strength or Dexterity for its attack and damage rolls until your next Long Rest. This also applies to every Pact of the Blade weapon, regardless of type.",
+          "effects": [
+            {
+              "type": "armor_proficiency",
+              "tags": [
+                "medium",
+                "shield"
+              ]
+            },
+            {
+              "type": "weapon_proficiency",
+              "tags": [
+                "martial"
+              ]
+            }
+          ]
+        },
+        {
+          "type": "feature",
+          "name": "Hexblade's Curse",
+          "description": "As a Bonus Action, curse one visible creature within 30 feet for 1 minute. Add your Proficiency Bonus to damage against it, score critical hits on 19 or 20, and when it dies regain Hit Points equal to your Warlock level + Charisma modifier, minimum 1. Regain use after a Short or Long Rest.",
+          "action": {
+            "activation": "bonus_action",
+            "uses": {
+              "max": 1,
+              "per": "short_rest"
+            }
+          },
+          "key": "xge_warlock_hexblade_1_hexblades-curse"
+        }
+      ]
+    },
+    {
+      "level": 6,
+      "features": [
+        "Accursed Specter"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Accursed Specter",
+          "description": "When you slay a Humanoid, raise its spirit as a Specter until your next Long Rest. It gains Temporary Hit Points equal to half your Warlock level, adds your Charisma modifier to its attack rolls, and obeys your verbal commands. Regain use after a Long Rest.",
+          "action": {
+            "activation": "free",
+            "uses": {
+              "max": 1,
+              "per": "long_rest"
+            }
+          },
+          "key": "xge_warlock_hexblade_6_accursed-specter"
+        }
+      ]
+    },
+    {
+      "level": 10,
+      "features": [
+        "Armor of Hexes"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Armor of Hexes",
+          "description": "When the target of Hexblade's Curse hits you with an attack, use a Reaction and roll 1d6. On a 4 or higher, the attack misses instead.",
+          "action": {
+            "activation": "reaction"
+          },
+          "key": "xge_warlock_hexblade_10_armor-of-hexes"
+        }
+      ]
+    },
+    {
+      "level": 14,
+      "features": [
+        "Master of Hexes"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Master of Hexes",
+          "description": "When the target of Hexblade's Curse dies, transfer the curse to a different visible creature within 30 feet if you are not Incapacitated. You do not regain Hit Points from the former target when transferring it."
+        }
+      ]
+    }
+  ],
+  "source": {
+    "code": "XGE",
+    "book": "Xanathar's Guide to Everything",
+    "edition": 2017,
+    "page": 55,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

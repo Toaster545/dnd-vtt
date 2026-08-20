@@ -1,0 +1,21 @@
+{
+  "index": "perfume-of-bewitching",
+  "name": "Perfume of Bewitching",
+  "type": "gear",
+  "category": "Wondrous Item",
+  "damage": null,
+  "damage_type": null,
+  "properties": [],
+  "weight": 0,
+  "cost": "—",
+  "description": "A consumable perfume that briefly improves social influence over nearby humanoids.",
+  "rarity": "common",
+  "source": {
+    "code": "XGE",
+    "book": "Xanathar's Guide to Everything",
+    "edition": 2017,
+    "page": 138,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

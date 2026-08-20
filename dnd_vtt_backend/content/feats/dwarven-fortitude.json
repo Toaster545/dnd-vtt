@@ -1,0 +1,33 @@
+{
+  "index": "dwarven-fortitude",
+  "name": "Dwarven Fortitude",
+  "description": "When you Dodge, you can spend one Hit Die to recover Hit Points.",
+  "category": "general",
+  "prerequisite": {
+    "level": 4,
+    "species": [
+      "dwarf"
+    ]
+  },
+  "abilityIncrease": {
+    "abilities": [
+      "constitution"
+    ],
+    "amount": 1
+  },
+  "grants": [
+    {
+      "type": "feature",
+      "name": "Dwarven Fortitude",
+      "description": "After taking the Dodge action, spend a Hit Die, roll it, and heal using the normal Hit Die modifier."
+    }
+  ],
+  "source": {
+    "code": "XGE",
+    "book": "Xanathar's Guide to Everything",
+    "edition": 2017,
+    "page": 74,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

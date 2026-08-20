@@ -1,0 +1,46 @@
+{
+  "index": "ceremony",
+  "name": "Ceremony",
+  "level": 1,
+  "school": "Abjuration",
+  "casting_time": "1 hour",
+  "range": "Touch",
+  "components": [
+    "V",
+    "S",
+    "M"
+  ],
+  "material": "25 gp worth of powdered silver, which the spell consumes",
+  "duration": "Instantaneous",
+  "ritual": true,
+  "concentration": false,
+  "mechanics": {
+    "spell_attacks": [],
+    "saving_throws": [],
+    "ability_checks": [],
+    "damage_types": [],
+    "conditions": [],
+    "affects_creature_types": [
+      "humanoid"
+    ],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [
+      "ST"
+    ],
+    "misc_tags": [
+      "MAC"
+    ]
+  },
+  "description": "An abjuration level 1 spell. See Xanathar's Guide to Everything, page 151, for targeting and complete rules.",
+  "source": {
+    "code": "XGE",
+    "book": "Xanathar's Guide to Everything",
+    "edition": 2017,
+    "page": 151,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}
