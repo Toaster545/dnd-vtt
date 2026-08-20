@@ -1,0 +1,22 @@
+{
+  "index": "masquerade-tattoo",
+  "name": "Masquerade Tattoo",
+  "type": "gear",
+  "category": "Wondrous Item",
+  "damage": null,
+  "damage_type": null,
+  "properties": [],
+  "weight": 0,
+  "cost": "Magic item",
+  "description": "A tattoo that changes its appearance and can cast Disguise Self once per day.",
+  "rarity": "common",
+  "requires_attunement": true,
+  "source": {
+    "code": "TCE",
+    "book": "Tasha's Cauldron of Everything",
+    "edition": 2020,
+    "page": 131,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

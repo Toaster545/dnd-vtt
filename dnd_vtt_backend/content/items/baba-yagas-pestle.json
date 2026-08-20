@@ -1,0 +1,27 @@
+{
+  "index": "baba-yagas-pestle",
+  "name": "Baba Yaga's Pestle",
+  "type": "gear",
+  "category": "Magic Weapon",
+  "damage": null,
+  "damage_type": null,
+  "properties": [],
+  "weight": 4,
+  "cost": "Magic item",
+  "description": "The weapon component of Baba Yaga’s artifact; it functions as a powerful magic quarterstaff while held.",
+  "rarity": "artifact",
+  "requires_attunement": true,
+  "magic_bonus": 3,
+  "charges": {
+    "max": 12,
+    "recovery": "dawn"
+  },
+  "source": {
+    "code": "TCE",
+    "book": "Tasha's Cauldron of Everything",
+    "edition": 2020,
+    "page": 121,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

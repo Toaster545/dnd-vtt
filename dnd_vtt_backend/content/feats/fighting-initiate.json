@@ -1,0 +1,26 @@
+{
+  "index": "fighting-initiate",
+  "name": "Fighting Initiate",
+  "description": "Learn one Fighting Style available in the campaign and replace it whenever you gain a level.",
+  "category": "general",
+  "prerequisite": {
+    "level": 4
+  },
+  "grants": [
+    {
+      "type": "feat_pick",
+      "key": "fighting_initiate_style",
+      "name": "Fighting Initiate Style",
+      "choose": 1,
+      "category": "fighting_style"
+    }
+  ],
+  "source": {
+    "code": "TCE",
+    "book": "Tasha's Cauldron of Everything",
+    "edition": 2020,
+    "page": 80,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

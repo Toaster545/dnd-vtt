@@ -1,0 +1,105 @@
+{
+  "class_index": "paladin",
+  "index": "watchers",
+  "name": "Oath of the Watchers",
+  "description": "A paladin subclass that adds the Watchers tradition from Tasha's Cauldron of Everything.",
+  "levels": [
+    {
+      "level": 3,
+      "features": [
+        "Watchers Spells",
+        "Tenets of the Watchers",
+        "Abjure the Extraplanar",
+        "Watcher's Will"
+      ],
+      "grants": [
+        {
+          "type": "spell_grant",
+          "key": "watchers_spells_3",
+          "name": "Watchers Spells",
+          "destination": "always_prepared",
+          "spells": [
+            "alarm",
+            "detect-magic"
+          ],
+          "countsAgainstLimit": false,
+          "classLevel": 3
+        },
+        {
+          "type": "feature",
+          "name": "Tenets of the Watchers",
+          "description": "The oath emphasizes vigilance, loyalty, discipline, and defending the mortal world from extraplanar threats."
+        },
+        {
+          "type": "feature",
+          "name": "Abjure the Extraplanar",
+          "description": "As an Action using Channel Divinity, force nearby Aberrations, Celestials, Elementals, Fey, and Fiends to make a Wisdom save or become Turned for 1 minute."
+        },
+        {
+          "type": "feature",
+          "name": "Watcher's Will",
+          "description": "As an Action using Channel Divinity, grant chosen creatures within 30 feet Advantage on Intelligence, Wisdom, and Charisma saving throws for 1 minute."
+        }
+      ]
+    },
+    {
+      "level": 7,
+      "features": [
+        "Aura of the Sentinel"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Aura of the Sentinel",
+          "description": "You and allies in your Aura of Protection add your Proficiency Bonus to Initiative rolls."
+        }
+      ]
+    },
+    {
+      "level": 15,
+      "features": [
+        "Vigilant Rebuke"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Vigilant Rebuke",
+          "description": "When you or a creature within 30 feet succeeds on an Intelligence, Wisdom, or Charisma save, use your Reaction to deal Force damage equal to 2d8 plus your Charisma modifier to the creature that caused the save.",
+          "action": {
+            "activation": "reaction"
+          },
+          "key": "tce_paladin_watchers_vigilant-rebuke"
+        }
+      ]
+    },
+    {
+      "level": 20,
+      "features": [
+        "Mortal Bulwark"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Mortal Bulwark",
+          "description": "As a Bonus Action for 1 minute, gain Truesight to 120 feet and Advantage on attacks against extraplanar creatures; a hit can also banish its target until your next turn. Once per Long Rest.",
+          "action": {
+            "activation": "bonus_action",
+            "uses": {
+              "max": 1,
+              "per": "long_rest"
+            }
+          },
+          "key": "tce_paladin_watchers_mortal-bulwark"
+        }
+      ]
+    }
+  ],
+  "source": {
+    "code": "TCE",
+    "book": "Tasha's Cauldron of Everything",
+    "edition": 2020,
+    "page": 54,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

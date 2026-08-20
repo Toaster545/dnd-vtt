@@ -1,0 +1,118 @@
+{
+  "class_index": "druid",
+  "index": "wildfire",
+  "name": "Circle of Wildfire",
+  "description": "A druid subclass that adds the Wildfire tradition from Tasha's Cauldron of Everything.",
+  "levels": [
+    {
+      "level": 3,
+      "features": [
+        "Wildfire Spirit",
+        "Wildfire Spells",
+        "Circle Spells",
+        "Summon Wildfire Spirit"
+      ],
+      "grants": [
+        {
+          "type": "companion_grant",
+          "key": "wildfire_companion",
+          "name": "Wildfire Spirit",
+          "monsterIndex": "wildfire-spirit",
+          "description": "Use the shared Wildfire Spirit stat block."
+        },
+        {
+          "type": "spell_grant",
+          "key": "wildfire_spells_3",
+          "name": "Wildfire Spells",
+          "destination": "always_prepared",
+          "spells": [
+            "burning-hands",
+            "cure-wounds",
+            "flaming-sphere",
+            "scorching-ray"
+          ],
+          "countsAgainstLimit": false,
+          "classLevel": 3
+        },
+        {
+          "type": "feature",
+          "name": "Circle Spells",
+          "description": "Always prepare the Circle of Wildfire spells as your Druid level increases."
+        },
+        {
+          "type": "feature",
+          "name": "Summon Wildfire Spirit",
+          "description": "As an Action, expend Wild Shape to summon a Wildfire Spirit for 1 hour. Its arrival can deal 2d6 Fire damage nearby, and you command its actions with a Bonus Action.",
+          "action": {
+            "activation": "action"
+          },
+          "key": "tce_druid_wildfire_summon-wildfire-spirit"
+        }
+      ]
+    },
+    {
+      "level": 6,
+      "features": [
+        "Enhanced Bond"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Enhanced Bond",
+          "description": "While your Wildfire Spirit is present, one damage or healing roll of a Fire or restorative spell gains 1d8, and eligible spells can originate from the spirit's space."
+        }
+      ]
+    },
+    {
+      "level": 10,
+      "features": [
+        "Cauterizing Flames"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Cauterizing Flames",
+          "description": "When a Small or larger creature dies within 30 feet, use your Reaction to create a spectral flame. A creature entering it can take 2d10 plus Wisdom Fire damage or regain that many Hit Points. Uses equal your Proficiency Bonus per Long Rest.",
+          "action": {
+            "activation": "reaction",
+            "uses": {
+              "max": 2,
+              "maxProficiencyBonus": true,
+              "per": "long_rest"
+            }
+          },
+          "key": "tce_druid_wildfire_cauterizing-flames"
+        }
+      ]
+    },
+    {
+      "level": 14,
+      "features": [
+        "Blazing Revival"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Blazing Revival",
+          "description": "When you drop to 0 Hit Points while your Wildfire Spirit is within 120 feet, dismiss the spirit and regain half your maximum Hit Points. Once per Long Rest.",
+          "action": {
+            "activation": "free",
+            "uses": {
+              "max": 1,
+              "per": "long_rest"
+            }
+          },
+          "key": "tce_druid_wildfire_blazing-revival"
+        }
+      ]
+    }
+  ],
+  "source": {
+    "code": "TCE",
+    "book": "Tasha's Cauldron of Everything",
+    "edition": 2020,
+    "page": 39,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

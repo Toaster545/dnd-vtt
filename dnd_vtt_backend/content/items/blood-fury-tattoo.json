@@ -1,0 +1,26 @@
+{
+  "index": "blood-fury-tattoo",
+  "name": "Blood Fury Tattoo",
+  "type": "gear",
+  "category": "Wondrous Item",
+  "damage": null,
+  "damage_type": null,
+  "properties": [],
+  "weight": 0,
+  "cost": "Magic item",
+  "description": "A legendary tattoo whose charges empower weapon hits with Necrotic damage and healing or retaliate against a creature that damages you.",
+  "rarity": "legendary",
+  "requires_attunement": true,
+  "charges": {
+    "max": 10,
+    "recovery": "dawn"
+  },
+  "source": {
+    "code": "TCE",
+    "book": "Tasha's Cauldron of Everything",
+    "edition": 2020,
+    "page": 122,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

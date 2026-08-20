@@ -1,0 +1,23 @@
+{
+  "index": "1-all-purpose-tool",
+  "name": "+1 All-Purpose Tool",
+  "type": "gear",
+  "category": "Wondrous Item",
+  "damage": null,
+  "damage_type": null,
+  "properties": [],
+  "weight": 0,
+  "cost": "Magic item",
+  "description": "An Artificer focus that grants its listed bonus to spell attacks and save DCs, transforms into artisan tools, and temporarily provides an Artificer cantrip.",
+  "rarity": "uncommon",
+  "requires_attunement": "by an artificer",
+  "magic_bonus": 1,
+  "source": {
+    "code": "TCE",
+    "book": "Tasha's Cauldron of Everything",
+    "edition": 2020,
+    "page": 119,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

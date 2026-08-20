@@ -1,0 +1,22 @@
+{
+  "index": "elemental-essence-shard-fire",
+  "name": "Elemental Essence Shard (Fire)",
+  "type": "gear",
+  "category": "Wondrous Item",
+  "damage": null,
+  "damage_type": null,
+  "properties": [],
+  "weight": 1,
+  "cost": "Magic item",
+  "description": "A Sorcerer focus that triggers an elemental benefit whenever you apply Metamagic to a spell. This variant channels Fire.",
+  "rarity": "rare",
+  "requires_attunement": "by a sorcerer",
+  "source": {
+    "code": "TCE",
+    "book": "Tasha's Cauldron of Everything",
+    "edition": 2020,
+    "page": 127,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

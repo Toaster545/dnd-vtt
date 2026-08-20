@@ -1,0 +1,111 @@
+{
+  "class_index": "cleric",
+  "index": "twilight",
+  "name": "Twilight Domain",
+  "description": "A cleric subclass that adds the Twilight tradition from Tasha's Cauldron of Everything.",
+  "levels": [
+    {
+      "level": 3,
+      "features": [
+        "Twilight Spells",
+        "Bonus Proficiencies",
+        "Eyes of Night",
+        "Vigilant Blessing",
+        "Channel Divinity: Twilight Sanctuary"
+      ],
+      "grants": [
+        {
+          "type": "spell_grant",
+          "key": "twilight_spells_3",
+          "name": "Twilight Spells",
+          "destination": "always_prepared",
+          "spells": [
+            "faerie-fire",
+            "sleep",
+            "moonbeam",
+            "see-invisibility"
+          ],
+          "countsAgainstLimit": false,
+          "classLevel": 3
+        },
+        {
+          "type": "feature",
+          "name": "Bonus Proficiencies",
+          "description": "Gain proficiency with Martial Weapons and Heavy Armor.",
+          "effects": [
+            {
+              "type": "armor_proficiency",
+              "tags": [
+                "heavy"
+              ]
+            },
+            {
+              "type": "weapon_proficiency",
+              "tags": [
+                "martial"
+              ]
+            }
+          ]
+        },
+        {
+          "type": "feature",
+          "name": "Eyes of Night",
+          "description": "Gain Darkvision out to 300 feet. As an Action, share that range with willing creatures up to your Wisdom modifier for 1 hour; restore the shared use on a Long Rest or by expending a spell slot."
+        },
+        {
+          "type": "feature",
+          "name": "Vigilant Blessing",
+          "description": "As an Action, give one creature Advantage on its next Initiative roll. The blessing ends after that roll or when you bless another creature."
+        },
+        {
+          "type": "feature",
+          "name": "Channel Divinity: Twilight Sanctuary",
+          "description": "As an Action, create a 30-foot sphere of twilight for 1 minute. At the end of each ally's turn in it, grant temporary Hit Points equal to 1d6 plus Cleric level or end one Charmed or Frightened effect on that ally."
+        }
+      ]
+    },
+    {
+      "level": 6,
+      "features": [
+        "Steps of Night"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Steps of Night",
+          "description": "While in Dim Light or Darkness, use a Bonus Action to gain a Fly Speed equal to your Speed for 1 minute. Uses equal your Proficiency Bonus per Long Rest.",
+          "action": {
+            "activation": "bonus_action",
+            "uses": {
+              "max": 2,
+              "maxProficiencyBonus": true,
+              "per": "long_rest"
+            }
+          },
+          "key": "tce_cleric_twilight_steps-of-night"
+        }
+      ]
+    },
+    {
+      "level": 17,
+      "features": [
+        "Twilight Shroud"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Twilight Shroud",
+          "description": "You and allies inside your Twilight Sanctuary gain Half Cover."
+        }
+      ]
+    }
+  ],
+  "source": {
+    "code": "TCE",
+    "book": "Tasha's Cauldron of Everything",
+    "edition": 2020,
+    "page": 34,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

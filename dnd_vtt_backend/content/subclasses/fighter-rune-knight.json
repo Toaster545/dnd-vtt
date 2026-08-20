@@ -1,0 +1,151 @@
+{
+  "class_index": "fighter",
+  "index": "rune-knight",
+  "name": "Rune Knight",
+  "description": "A fighter subclass that adds the Rune Knight tradition from Tasha's Cauldron of Everything.",
+  "levels": [
+    {
+      "level": 3,
+      "features": [
+        "Rune Carver",
+        "Bonus Proficiencies",
+        "Giant's Might"
+      ],
+      "grants": [
+        {
+          "type": "choice",
+          "key": "rune_carver",
+          "name": "Rune Carver",
+          "choose": 2,
+          "chooseByLevel": {
+            "3": 2,
+            "7": 3,
+            "10": 4,
+            "15": 5
+          },
+          "description": "Choose runes known. Each rune grants a passive benefit and can be invoked once per Long Rest.",
+          "options": [
+            {
+              "name": "Cloud Rune",
+              "description": "Gain Advantage on Sleight of Hand and Deception. Invoke it as a Reaction to redirect a nearby attack to a different target."
+            },
+            {
+              "name": "Fire Rune",
+              "description": "Double proficiency with proficient tools. On a hit, invoke it to deal Fire damage and restrain the target with fiery shackles."
+            },
+            {
+              "name": "Frost Rune",
+              "description": "Gain Advantage on Animal Handling and Intimidation. Invoke it for a 10-minute bonus to Strength and Constitution checks and saves."
+            },
+            {
+              "name": "Stone Rune",
+              "description": "Gain Advantage on Insight and 120-foot Darkvision. Invoke it as a Reaction to charm and incapacitate a nearby creature."
+            },
+            {
+              "name": "Hill Rune",
+              "description": "Gain Advantage on saves against Poison and Resistance to Poison damage. Invoke it to gain Resistance to physical weapon damage for 1 minute.",
+              "prerequisite": {
+                "level": 7
+              }
+            },
+            {
+              "name": "Storm Rune",
+              "description": "Gain Advantage on Arcana and immunity to surprise. Invoke it for 1 minute to use Reactions to grant Advantage or Disadvantage on nearby d20 rolls.",
+              "prerequisite": {
+                "level": 7
+              }
+            }
+          ]
+        },
+        {
+          "type": "feature",
+          "name": "Bonus Proficiencies",
+          "description": "Gain proficiency with Smith's Tools and learn Giant."
+        },
+        {
+          "type": "feature",
+          "name": "Giant's Might",
+          "description": "As a Bonus Action for 1 minute, become Large if space permits, gain Advantage on Strength checks and saves, and add 1d6 damage to one weapon or unarmed hit per turn. Uses equal your Proficiency Bonus per Long Rest.",
+          "action": {
+            "activation": "bonus_action",
+            "uses": {
+              "max": 2,
+              "maxProficiencyBonus": true,
+              "per": "long_rest"
+            }
+          },
+          "key": "tce_fighter_rune-knight_giants-might"
+        }
+      ]
+    },
+    {
+      "level": 7,
+      "features": [
+        "Runic Shield"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Runic Shield",
+          "description": "When a creature you can see within 60 feet is hit by an attack, use your Reaction to force the attacker to reroll the d20. Uses equal your Proficiency Bonus per Long Rest.",
+          "action": {
+            "activation": "reaction",
+            "uses": {
+              "max": 2,
+              "maxProficiencyBonus": true,
+              "per": "long_rest"
+            }
+          },
+          "key": "tce_fighter_rune-knight_runic-shield"
+        }
+      ]
+    },
+    {
+      "level": 10,
+      "features": [
+        "Great Stature"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Great Stature",
+          "description": "Your height permanently increases, and Giant's Might adds 1d8 damage instead of 1d6."
+        }
+      ]
+    },
+    {
+      "level": 15,
+      "features": [
+        "Master of Runes"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Master of Runes",
+          "description": "Each rune can be invoked once per Short or Long Rest instead of once per Long Rest."
+        }
+      ]
+    },
+    {
+      "level": 18,
+      "features": [
+        "Runic Juggernaut"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Runic Juggernaut",
+          "description": "Giant's Might can make you Huge, increases your reach by 5 feet, and adds 1d10 damage instead of 1d8."
+        }
+      ]
+    }
+  ],
+  "source": {
+    "code": "TCE",
+    "book": "Tasha's Cauldron of Everything",
+    "edition": 2020,
+    "page": 44,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

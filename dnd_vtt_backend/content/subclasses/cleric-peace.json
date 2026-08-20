@@ -1,0 +1,91 @@
+{
+  "class_index": "cleric",
+  "index": "peace",
+  "name": "Peace Domain",
+  "description": "A cleric subclass that adds the Peace tradition from Tasha's Cauldron of Everything.",
+  "levels": [
+    {
+      "level": 3,
+      "features": [
+        "Peace Spells",
+        "Emboldening Bond",
+        "Implement of Peace",
+        "Channel Divinity: Balm of Peace"
+      ],
+      "grants": [
+        {
+          "type": "spell_grant",
+          "key": "peace_spells_3",
+          "name": "Peace Spells",
+          "destination": "always_prepared",
+          "spells": [
+            "heroism",
+            "sanctuary",
+            "aid",
+            "warding-bond"
+          ],
+          "countsAgainstLimit": false,
+          "classLevel": 3
+        },
+        {
+          "type": "feature",
+          "name": "Emboldening Bond",
+          "description": "As an Action, bond a number of willing creatures equal to your Proficiency Bonus for 10 minutes. Once per turn, a bonded creature near another bonded creature can add 1d4 to an attack roll, ability check, or saving throw. Uses equal your Proficiency Bonus per Long Rest.",
+          "action": {
+            "activation": "action",
+            "uses": {
+              "max": 2,
+              "maxProficiencyBonus": true,
+              "per": "long_rest"
+            }
+          },
+          "key": "tce_cleric_peace_emboldening-bond"
+        },
+        {
+          "type": "feature",
+          "name": "Implement of Peace",
+          "description": "Gain proficiency in Insight, Performance, or Persuasion."
+        },
+        {
+          "type": "feature",
+          "name": "Channel Divinity: Balm of Peace",
+          "description": "As an Action, move up to your Speed without provoking Opportunity Attacks. The first time you move within 5 feet of a creature during this movement, you can restore 2d6 plus your Wisdom modifier Hit Points to it."
+        }
+      ]
+    },
+    {
+      "level": 6,
+      "features": [
+        "Protective Bond"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Protective Bond",
+          "description": "When a bonded creature is about to take damage, another bonded creature within 30 feet can use its Reaction to teleport adjacent and take all of that damage instead."
+        }
+      ]
+    },
+    {
+      "level": 17,
+      "features": [
+        "Expansive Bond"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Expansive Bond",
+          "description": "Your bond's protective teleport works at 60 feet, and a creature that takes damage through Protective Bond has Resistance to that damage."
+        }
+      ]
+    }
+  ],
+  "source": {
+    "code": "TCE",
+    "book": "Tasha's Cauldron of Everything",
+    "edition": 2020,
+    "page": 32,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

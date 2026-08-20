@@ -1,0 +1,45 @@
+{
+  "index": "tashas-caustic-brew",
+  "name": "Tasha's Caustic Brew",
+  "level": 1,
+  "school": "Evocation",
+  "casting_time": "1 action",
+  "range": "30 feet",
+  "components": [
+    "V",
+    "S",
+    "M"
+  ],
+  "material": "a bit of rotten food",
+  "duration": "Concentration, up to 1 minute",
+  "ritual": false,
+  "concentration": true,
+  "mechanics": {
+    "spell_attacks": [],
+    "saving_throws": [
+      "dexterity"
+    ],
+    "ability_checks": [],
+    "damage_types": [
+      "acid"
+    ],
+    "conditions": [],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [],
+    "misc_tags": []
+  },
+  "description": "Spray acid in a 30-foot line. Creatures that fail a Dexterity save take recurring Acid damage until they or another creature spend an Action to remove the acid.",
+  "higher_levels": "The recurring Acid damage increases by 2d4 for each slot level above 1.",
+  "source": {
+    "code": "TCE",
+    "book": "Tasha's Cauldron of Everything",
+    "edition": 2020,
+    "page": 115,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

@@ -1,0 +1,91 @@
+{
+  "class_index": "rogue",
+  "index": "phantom",
+  "name": "Phantom",
+  "description": "A rogue subclass that adds the Phantom tradition from Tasha's Cauldron of Everything.",
+  "levels": [
+    {
+      "level": 3,
+      "features": [
+        "Wails from the Grave",
+        "Whispers of the Dead"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Wails from the Grave",
+          "description": "After dealing Sneak Attack damage, choose another creature within 30 feet; it takes Necrotic damage equal to half the Sneak Attack dice. Uses equal your Proficiency Bonus per Long Rest.",
+          "action": {
+            "activation": "free",
+            "uses": {
+              "max": 2,
+              "maxProficiencyBonus": true,
+              "per": "long_rest"
+            }
+          },
+          "key": "tce_rogue_phantom_wails-from-the-grave"
+        },
+        {
+          "type": "feature",
+          "name": "Whispers of the Dead",
+          "description": "After a Short or Long Rest, gain one skill or tool proficiency of your choice until you use this feature again."
+        }
+      ]
+    },
+    {
+      "level": 9,
+      "features": [
+        "Tokens of the Departed"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Tokens of the Departed",
+          "description": "When a creature dies nearby, use your Reaction to capture a soul trinket, up to your Proficiency Bonus at once. A trinket improves death and Constitution saves and can fuel Wails from the Grave or a question to the spirit."
+        }
+      ]
+    },
+    {
+      "level": 13,
+      "features": [
+        "Ghost Walk"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Ghost Walk",
+          "description": "As a Bonus Action, become spectral for 10 minutes, gaining a 10-foot Fly Speed and Hover while attacks against you have Disadvantage. Once per Long Rest, or destroy a soul trinket to repeat it.",
+          "action": {
+            "activation": "bonus_action",
+            "uses": {
+              "max": 1,
+              "per": "long_rest"
+            }
+          },
+          "key": "tce_rogue_phantom_ghost-walk"
+        }
+      ]
+    },
+    {
+      "level": 17,
+      "features": [
+        "Death's Friend"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Death's Friend",
+          "description": "Wails from the Grave also damages the original Sneak Attack target, and you gain one soul trinket whenever you finish a Long Rest without one."
+        }
+      ]
+    }
+  ],
+  "source": {
+    "code": "TCE",
+    "book": "Tasha's Cauldron of Everything",
+    "edition": 2020,
+    "page": 62,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

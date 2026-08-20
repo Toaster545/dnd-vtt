@@ -1,0 +1,84 @@
+{
+  "index": "construct-spirit",
+  "name": "Construct Spirit",
+  "size": "M",
+  "type": "construct",
+  "alignment": "U",
+  "armor_class": 10,
+  "hit_points": 0,
+  "hit_points_formula": "Special",
+  "hit_dice": "Special",
+  "speed": {
+    "walk": 30
+  },
+  "ability_scores": {
+    "strength": 18,
+    "dexterity": 10,
+    "constitution": 18,
+    "intelligence": 14,
+    "wisdom": 11,
+    "charisma": 5
+  },
+  "saving_throws": {},
+  "skills": {},
+  "damage_vulnerabilities": [],
+  "damage_resistances": [
+    "poison"
+  ],
+  "damage_immunities": [],
+  "condition_immunities": [
+    "charmed",
+    "exhaustion",
+    "frightened",
+    "incapacitated",
+    "paralyzed",
+    "petrified",
+    "poisoned"
+  ],
+  "senses": {
+    "passive_perception": 10,
+    "darkvision": 60
+  },
+  "languages": [
+    "understands the languages you speak"
+  ],
+  "challenge_rating": "Special",
+  "xp": 0,
+  "traits": [
+    {
+      "name": "Heated Body (Metal Only)",
+      "description": "damage dice 1d10. See Tasha's Cauldron of Everything, page 111, for targeting and additional effects."
+    },
+    {
+      "name": "Stony Lethargy (Stone Only)",
+      "description": "A structured stony lethargy (stone only) rule from Tasha's Cauldron of Everything, page 111."
+    }
+  ],
+  "actions": [
+    {
+      "name": "Multiattack",
+      "description": "A structured multiattack rule from Tasha's Cauldron of Everything, page 111."
+    },
+    {
+      "name": "Slam",
+      "description": "damage dice 1d8 + 4 + summonSpellLevel. See Tasha's Cauldron of Everything, page 111, for targeting and additional effects."
+    }
+  ],
+  "reactions": [
+    {
+      "name": "Berserk Lashing (Clay Only)",
+      "description": "A structured berserk lashing (clay only) rule from Tasha's Cauldron of Everything, page 111."
+    }
+  ],
+  "legendary_actions": [],
+  "description": "A creature, companion, or summoned spirit stat block from Tasha's Cauldron of Everything.",
+  "rules_text": "reference-only",
+  "source": {
+    "code": "TCE",
+    "book": "Tasha's Cauldron of Everything",
+    "edition": 2020,
+    "page": 111,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

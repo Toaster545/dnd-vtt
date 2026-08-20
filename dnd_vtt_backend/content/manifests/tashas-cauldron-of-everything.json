@@ -1,0 +1,1426 @@
+{
+  "source": {
+    "code": "TCE",
+    "name": "Tasha's Cauldron of Everything",
+    "edition": 2020,
+    "rules_text": "reference-only"
+  },
+  "compatibility": {
+    "rules_origin": "2014 legacy content",
+    "host_rules": "2024 core classes",
+    "subclass_levels": "Legacy subclass features are grouped into the nearest 2024 subclass milestone.",
+    "duplicate_policy": "PHB 2024 and Eberron: Forge of the Artificer versions remain authoritative when content was reprinted.",
+    "spell_aliases": {
+      "branding-smite": "shining-smite"
+    }
+  },
+  "counts": {
+    "published_phb_class_subclasses": 26,
+    "imported_subclasses": 18,
+    "phb_2024_subclass_reprints": 8,
+    "artificer_subclasses_supplied_by_efa": 4,
+    "published_spells": 21,
+    "imported_spells": 12,
+    "phb_2024_spell_reprints": 9,
+    "published_feats": 15,
+    "imported_feats": 5,
+    "phb_2024_feat_reprints": 10,
+    "published_magic_items": 47,
+    "selectable_magic_item_variants": 84,
+    "creatures": 20,
+    "imported_creatures": 18,
+    "creatures_supplied_by_efa": 2,
+    "optional_feature_entries": 47
+  },
+  "catalog": {
+    "subclasses": [
+      {
+        "class_index": "barbarian",
+        "index": "beast",
+        "name": "Path of the Beast"
+      },
+      {
+        "class_index": "barbarian",
+        "index": "wild-magic",
+        "name": "Path of Wild Magic"
+      },
+      {
+        "class_index": "bard",
+        "index": "creation",
+        "name": "College of Creation"
+      },
+      {
+        "class_index": "bard",
+        "index": "eloquence",
+        "name": "College of Eloquence"
+      },
+      {
+        "class_index": "cleric",
+        "index": "order",
+        "name": "Order Domain"
+      },
+      {
+        "class_index": "cleric",
+        "index": "peace",
+        "name": "Peace Domain"
+      },
+      {
+        "class_index": "cleric",
+        "index": "twilight",
+        "name": "Twilight Domain"
+      },
+      {
+        "class_index": "druid",
+        "index": "spores",
+        "name": "Circle of Spores"
+      },
+      {
+        "class_index": "druid",
+        "index": "wildfire",
+        "name": "Circle of Wildfire"
+      },
+      {
+        "class_index": "fighter",
+        "index": "rune-knight",
+        "name": "Rune Knight"
+      },
+      {
+        "class_index": "monk",
+        "index": "astral-self",
+        "name": "Way of the Astral Self"
+      },
+      {
+        "class_index": "paladin",
+        "index": "watchers",
+        "name": "Oath of the Watchers"
+      },
+      {
+        "class_index": "ranger",
+        "index": "swarmkeeper",
+        "name": "Swarmkeeper"
+      },
+      {
+        "class_index": "rogue",
+        "index": "phantom",
+        "name": "Phantom"
+      },
+      {
+        "class_index": "warlock",
+        "index": "fathomless",
+        "name": "The Fathomless"
+      },
+      {
+        "class_index": "warlock",
+        "index": "genie",
+        "name": "The Genie"
+      },
+      {
+        "class_index": "wizard",
+        "index": "bladesinging",
+        "name": "Bladesinging"
+      },
+      {
+        "class_index": "wizard",
+        "index": "scribes",
+        "name": "Order of Scribes"
+      }
+    ],
+    "feats": [
+      {
+        "index": "artificer-initiate",
+        "name": "Artificer Initiate"
+      },
+      {
+        "index": "eldritch-adept",
+        "name": "Eldritch Adept"
+      },
+      {
+        "index": "fighting-initiate",
+        "name": "Fighting Initiate"
+      },
+      {
+        "index": "gunner",
+        "name": "Gunner"
+      },
+      {
+        "index": "metamagic-adept",
+        "name": "Metamagic Adept"
+      }
+    ],
+    "spells": [
+      {
+        "index": "blade-of-disaster",
+        "name": "Blade of Disaster"
+      },
+      {
+        "index": "booming-blade",
+        "name": "Booming Blade"
+      },
+      {
+        "index": "dream-of-the-blue-veil",
+        "name": "Dream of the Blue Veil"
+      },
+      {
+        "index": "green-flame-blade",
+        "name": "Green-Flame Blade"
+      },
+      {
+        "index": "intellect-fortress",
+        "name": "Intellect Fortress"
+      },
+      {
+        "index": "lightning-lure",
+        "name": "Lightning Lure"
+      },
+      {
+        "index": "spirit-shroud",
+        "name": "Spirit Shroud"
+      },
+      {
+        "index": "summon-shadowspawn",
+        "name": "Summon Shadowspawn"
+      },
+      {
+        "index": "sword-burst",
+        "name": "Sword Burst"
+      },
+      {
+        "index": "tashas-caustic-brew",
+        "name": "Tasha's Caustic Brew"
+      },
+      {
+        "index": "tashas-mind-whip",
+        "name": "Tasha's Mind Whip"
+      },
+      {
+        "index": "tashas-otherworldly-guise",
+        "name": "Tasha's Otherworldly Guise"
+      }
+    ],
+    "magic_item_variants": [
+      {
+        "index": "1-all-purpose-tool",
+        "name": "+1 All-Purpose Tool"
+      },
+      {
+        "index": "1-amulet-of-the-devout",
+        "name": "+1 Amulet of the Devout"
+      },
+      {
+        "index": "1-arcane-grimoire",
+        "name": "+1 Arcane Grimoire"
+      },
+      {
+        "index": "1-bloodwell-vial",
+        "name": "+1 Bloodwell Vial"
+      },
+      {
+        "index": "1-moon-sickle",
+        "name": "+1 Moon Sickle"
+      },
+      {
+        "index": "1-rhythm-makers-drum",
+        "name": "+1 Rhythm-Maker's Drum"
+      },
+      {
+        "index": "2-all-purpose-tool",
+        "name": "+2 All-Purpose Tool"
+      },
+      {
+        "index": "2-amulet-of-the-devout",
+        "name": "+2 Amulet of the Devout"
+      },
+      {
+        "index": "2-arcane-grimoire",
+        "name": "+2 Arcane Grimoire"
+      },
+      {
+        "index": "2-bloodwell-vial",
+        "name": "+2 Bloodwell Vial"
+      },
+      {
+        "index": "2-moon-sickle",
+        "name": "+2 Moon Sickle"
+      },
+      {
+        "index": "2-rhythm-makers-drum",
+        "name": "+2 Rhythm-Maker's Drum"
+      },
+      {
+        "index": "3-all-purpose-tool",
+        "name": "+3 All-Purpose Tool"
+      },
+      {
+        "index": "3-amulet-of-the-devout",
+        "name": "+3 Amulet of the Devout"
+      },
+      {
+        "index": "3-arcane-grimoire",
+        "name": "+3 Arcane Grimoire"
+      },
+      {
+        "index": "3-bloodwell-vial",
+        "name": "+3 Bloodwell Vial"
+      },
+      {
+        "index": "3-moon-sickle",
+        "name": "+3 Moon Sickle"
+      },
+      {
+        "index": "3-rhythm-makers-drum",
+        "name": "+3 Rhythm-Maker's Drum"
+      },
+      {
+        "index": "acid-absorbing-tattoo",
+        "name": "Acid Absorbing Tattoo"
+      },
+      {
+        "index": "alchemical-compendium",
+        "name": "Alchemical Compendium"
+      },
+      {
+        "index": "astral-shard",
+        "name": "Astral Shard"
+      },
+      {
+        "index": "astromancy-archive",
+        "name": "Astromancy Archive"
+      },
+      {
+        "index": "atlas-of-endless-horizons",
+        "name": "Atlas of Endless Horizons"
+      },
+      {
+        "index": "baba-yagas-mortar-and-pestle",
+        "name": "Baba Yaga's Mortar and Pestle"
+      },
+      {
+        "index": "baba-yagas-pestle",
+        "name": "Baba Yaga's Pestle"
+      },
+      {
+        "index": "barrier-tattoo-large",
+        "name": "Barrier Tattoo (Large)"
+      },
+      {
+        "index": "barrier-tattoo-medium",
+        "name": "Barrier Tattoo (Medium)"
+      },
+      {
+        "index": "barrier-tattoo-small",
+        "name": "Barrier Tattoo (Small)"
+      },
+      {
+        "index": "bell-branch",
+        "name": "Bell Branch"
+      },
+      {
+        "index": "blood-fury-tattoo",
+        "name": "Blood Fury Tattoo"
+      },
+      {
+        "index": "cauldron-of-rebirth",
+        "name": "Cauldron of Rebirth"
+      },
+      {
+        "index": "coiling-grasp-tattoo",
+        "name": "Coiling Grasp Tattoo"
+      },
+      {
+        "index": "cold-absorbing-tattoo",
+        "name": "Cold Absorbing Tattoo"
+      },
+      {
+        "index": "crook-of-rao",
+        "name": "Crook of Rao"
+      },
+      {
+        "index": "crystalline-chronicle",
+        "name": "Crystalline Chronicle"
+      },
+      {
+        "index": "demonomicon-of-iggwilv",
+        "name": "Demonomicon of Iggwilv"
+      },
+      {
+        "index": "devotees-censer",
+        "name": "Devotee's Censer"
+      },
+      {
+        "index": "duplicitous-manuscript",
+        "name": "Duplicitous Manuscript"
+      },
+      {
+        "index": "eldritch-claw-tattoo",
+        "name": "Eldritch Claw Tattoo"
+      },
+      {
+        "index": "elemental-essence-shard",
+        "name": "Elemental Essence Shard"
+      },
+      {
+        "index": "elemental-essence-shard-air",
+        "name": "Elemental Essence Shard (Air)"
+      },
+      {
+        "index": "elemental-essence-shard-earth",
+        "name": "Elemental Essence Shard (Earth)"
+      },
+      {
+        "index": "elemental-essence-shard-fire",
+        "name": "Elemental Essence Shard (Fire)"
+      },
+      {
+        "index": "elemental-essence-shard-water",
+        "name": "Elemental Essence Shard (Water)"
+      },
+      {
+        "index": "far-realm-shard",
+        "name": "Far Realm Shard"
+      },
+      {
+        "index": "feywild-shard",
+        "name": "Feywild Shard"
+      },
+      {
+        "index": "fire-absorbing-tattoo",
+        "name": "Fire Absorbing Tattoo"
+      },
+      {
+        "index": "force-absorbing-tattoo",
+        "name": "Force Absorbing Tattoo"
+      },
+      {
+        "index": "fulminating-treatise",
+        "name": "Fulminating Treatise"
+      },
+      {
+        "index": "ghost-step-tattoo",
+        "name": "Ghost Step Tattoo"
+      },
+      {
+        "index": "guardian-emblem",
+        "name": "Guardian Emblem"
+      },
+      {
+        "index": "heart-weavers-primer",
+        "name": "Heart Weaver's Primer"
+      },
+      {
+        "index": "illuminators-tattoo",
+        "name": "Illuminator's Tattoo"
+      },
+      {
+        "index": "libram-of-souls-and-flesh",
+        "name": "Libram of Souls and Flesh"
+      },
+      {
+        "index": "lifewell-tattoo",
+        "name": "Lifewell Tattoo"
+      },
+      {
+        "index": "lightning-absorbing-tattoo",
+        "name": "Lightning Absorbing Tattoo"
+      },
+      {
+        "index": "lubas-tarokka-of-souls",
+        "name": "Luba's Tarokka of Souls"
+      },
+      {
+        "index": "lyre-of-building",
+        "name": "Lyre of Building"
+      },
+      {
+        "index": "masquerade-tattoo",
+        "name": "Masquerade Tattoo"
+      },
+      {
+        "index": "mighty-servant-of-leuk-o",
+        "name": "Mighty Servant of Leuk-o"
+      },
+      {
+        "index": "natures-mantle",
+        "name": "Nature's Mantle"
+      },
+      {
+        "index": "necrotic-absorbing-tattoo",
+        "name": "Necrotic Absorbing Tattoo"
+      },
+      {
+        "index": "outer-essence-shard",
+        "name": "Outer Essence Shard"
+      },
+      {
+        "index": "outer-essence-shard-chaotic",
+        "name": "Outer Essence Shard (Chaotic)"
+      },
+      {
+        "index": "outer-essence-shard-evil",
+        "name": "Outer Essence Shard (Evil)"
+      },
+      {
+        "index": "outer-essence-shard-good",
+        "name": "Outer Essence Shard (Good)"
+      },
+      {
+        "index": "outer-essence-shard-lawful",
+        "name": "Outer Essence Shard (Lawful)"
+      },
+      {
+        "index": "planecallers-codex",
+        "name": "Planecaller's Codex"
+      },
+      {
+        "index": "poison-absorbing-tattoo",
+        "name": "Poison Absorbing Tattoo"
+      },
+      {
+        "index": "prosthetic-limb",
+        "name": "Prosthetic Limb"
+      },
+      {
+        "index": "protective-verses",
+        "name": "Protective Verses"
+      },
+      {
+        "index": "psychic-absorbing-tattoo",
+        "name": "Psychic Absorbing Tattoo"
+      },
+      {
+        "index": "radiant-absorbing-tattoo",
+        "name": "Radiant Absorbing Tattoo"
+      },
+      {
+        "index": "revelers-concertina",
+        "name": "Reveler's Concertina"
+      },
+      {
+        "index": "shadowfell-brand-tattoo",
+        "name": "Shadowfell Brand Tattoo"
+      },
+      {
+        "index": "shadowfell-shard",
+        "name": "Shadowfell Shard"
+      },
+      {
+        "index": "spellwrought-tattoo-1st-level",
+        "name": "Spellwrought Tattoo (1st Level)"
+      },
+      {
+        "index": "spellwrought-tattoo-2nd-level",
+        "name": "Spellwrought Tattoo (2nd Level)"
+      },
+      {
+        "index": "spellwrought-tattoo-3rd-level",
+        "name": "Spellwrought Tattoo (3rd Level)"
+      },
+      {
+        "index": "spellwrought-tattoo-4th-level",
+        "name": "Spellwrought Tattoo (4th Level)"
+      },
+      {
+        "index": "spellwrought-tattoo-5th-level",
+        "name": "Spellwrought Tattoo (5th Level)"
+      },
+      {
+        "index": "spellwrought-tattoo-cantrip",
+        "name": "Spellwrought Tattoo (Cantrip)"
+      },
+      {
+        "index": "teeth-of-dahlver-nar",
+        "name": "Teeth of Dahlver-Nar"
+      },
+      {
+        "index": "thunder-absorbing-tattoo",
+        "name": "Thunder Absorbing Tattoo"
+      }
+    ],
+    "creatures": [
+      {
+        "index": "aberrant-spirit",
+        "name": "Aberrant Spirit"
+      },
+      {
+        "index": "adult-red-dracolich",
+        "name": "Adult Red Dracolich"
+      },
+      {
+        "index": "beast-of-the-land",
+        "name": "Beast of the Land"
+      },
+      {
+        "index": "beast-of-the-sea",
+        "name": "Beast of the Sea"
+      },
+      {
+        "index": "beast-of-the-sky",
+        "name": "Beast of the Sky"
+      },
+      {
+        "index": "bestial-spirit",
+        "name": "Bestial Spirit"
+      },
+      {
+        "index": "celestial-spirit",
+        "name": "Celestial Spirit"
+      },
+      {
+        "index": "construct-spirit",
+        "name": "Construct Spirit"
+      },
+      {
+        "index": "dancing-item",
+        "name": "Dancing Item"
+      },
+      {
+        "index": "elemental-spirit",
+        "name": "Elemental Spirit"
+      },
+      {
+        "index": "fey-spirit",
+        "name": "Fey Spirit"
+      },
+      {
+        "index": "fiendish-spirit",
+        "name": "Fiendish Spirit"
+      },
+      {
+        "index": "juvenile-mimic",
+        "name": "Juvenile Mimic"
+      },
+      {
+        "index": "mighty-servant-of-leuk-o",
+        "name": "Mighty Servant of Leuk-o"
+      },
+      {
+        "index": "reflection",
+        "name": "Reflection"
+      },
+      {
+        "index": "shadow-spirit",
+        "name": "Shadow Spirit"
+      },
+      {
+        "index": "undead-spirit",
+        "name": "Undead Spirit"
+      },
+      {
+        "index": "wildfire-spirit",
+        "name": "Wildfire Spirit"
+      }
+    ],
+    "optional_features": [
+      {
+        "index": "ambush",
+        "name": "Ambush",
+        "description": "Add your Superiority Die to a Stealth check or to an initiative roll.",
+        "feature_types": [
+          "MV:B"
+        ],
+        "page": 42,
+        "status": "supplied_by_host_2024"
+      },
+      {
+        "index": "arcane-propulsion-armor",
+        "name": "Arcane Propulsion Armor",
+        "description": "Turn an attuned suit of armor into a powered prosthetic that cannot be removed against your will, increases Speed, and provides force-powered gauntlet weapons.",
+        "feature_types": [
+          "AI"
+        ],
+        "page": 20,
+        "status": "legacy_reference"
+      },
+      {
+        "index": "armor-of-magical-strength",
+        "name": "Armor of Magical Strength",
+        "description": "Add charges to armor that can apply Intelligence to a Strength check or save and can prevent the wearer from being knocked Prone.",
+        "feature_types": [
+          "AI"
+        ],
+        "page": 20,
+        "status": "legacy_reference"
+      },
+      {
+        "index": "bait-and-switch",
+        "name": "Bait and Switch",
+        "description": "Swap places with a willing creature within 5 ft.; add the die to your AC or theirs until the start of your next turn.",
+        "feature_types": [
+          "MV:B"
+        ],
+        "page": 42,
+        "status": "supplied_by_host_2024"
+      },
+      {
+        "index": "blessed-warrior",
+        "name": "Blessed Warrior",
+        "description": "You learn two Cleric cantrips of your choice (Guidance and Sacred Flame recommended). They count as Paladin spells for you, and Charisma is your spellcasting ability for them. Whenever you gain a Paladin level, you can replace one of these cantrips with another Cleric cantrip.",
+        "feature_types": [
+          "FS:P"
+        ],
+        "page": 52,
+        "status": "supplied_by_host_2024"
+      },
+      {
+        "index": "blind-fighting",
+        "name": "Blind Fighting",
+        "description": "Blindsight 10 ft.; can fight normally while blinded or in darkness within that range.",
+        "feature_types": [
+          "FS:F",
+          "FS:P",
+          "FS:R"
+        ],
+        "page": 41,
+        "status": "supplied_by_host_2024"
+      },
+      {
+        "index": "bond-of-the-talisman",
+        "name": "Bond of the Talisman",
+        "description": "While another creature wears your Pact Talisman, either of you can teleport to the other as an Action a limited number of times.",
+        "feature_types": [
+          "EI"
+        ],
+        "page": 70,
+        "status": "legacy_reference"
+      },
+      {
+        "index": "boots-of-the-winding-path",
+        "name": "Boots of the Winding Path",
+        "description": "As a Bonus Action, teleport up to 15 feet to an unoccupied space you occupied earlier this turn.",
+        "feature_types": [
+          "AI"
+        ],
+        "page": 21,
+        "status": "supplied_by_host_2024"
+      },
+      {
+        "index": "brace",
+        "name": "Brace",
+        "description": "When a creature enters your melee reach, expend a Superiority Die and use your Reaction to attack it, adding the die to the damage on a hit.",
+        "feature_types": [
+          "MV:B"
+        ],
+        "page": 42,
+        "status": "legacy_reference"
+      },
+      {
+        "index": "cloud-rune",
+        "name": "Cloud Rune",
+        "description": "Gain Advantage on Sleight of Hand and Deception. Invoke it as a Reaction to redirect a nearby attack to a different target.",
+        "feature_types": [
+          "RN"
+        ],
+        "page": 44,
+        "status": "implemented_by_tce_subclass"
+      },
+      {
+        "index": "commanding-presence",
+        "name": "Commanding Presence",
+        "description": "Add your Superiority Die to a Charisma (Intimidation, Performance, or Persuasion) check.",
+        "feature_types": [
+          "MV:B"
+        ],
+        "page": 42,
+        "status": "supplied_by_host_2024"
+      },
+      {
+        "index": "druidic-warrior",
+        "name": "Druidic Warrior",
+        "description": "You learn two Druid cantrips of your choice (Guidance and Starry Wisp recommended). They count as Ranger spells for you, and Wisdom is your spellcasting ability for them. Whenever you gain a Ranger level, you can replace one of these cantrips with another Druid cantrip.",
+        "feature_types": [
+          "FS:R"
+        ],
+        "page": 57,
+        "status": "supplied_by_host_2024"
+      },
+      {
+        "index": "eldritch-mind",
+        "name": "Eldritch Mind",
+        "description": "Gain advantage on Constitution saves made to maintain Concentration.",
+        "feature_types": [
+          "EI"
+        ],
+        "page": 71,
+        "status": "supplied_by_host_2024"
+      },
+      {
+        "index": "enhanced-arcane-focus",
+        "name": "Enhanced Arcane Focus",
+        "description": "Improve a spellcasting focus with a bonus to spell attacks and the ability to ignore Half Cover; the bonus increases at higher Artificer levels.",
+        "feature_types": [
+          "AI"
+        ],
+        "page": 21,
+        "status": "legacy_reference"
+      },
+      {
+        "index": "enhanced-defense",
+        "name": "Enhanced Defense",
+        "description": "Improve armor or a shield with an AC bonus that increases at higher Artificer levels.",
+        "feature_types": [
+          "AI"
+        ],
+        "page": 21,
+        "status": "legacy_reference"
+      },
+      {
+        "index": "enhanced-weapon",
+        "name": "Enhanced Weapon",
+        "description": "Improve a weapon with a bonus to attack and damage rolls that increases at higher Artificer levels.",
+        "feature_types": [
+          "AI"
+        ],
+        "page": 21,
+        "status": "legacy_reference"
+      },
+      {
+        "index": "far-scribe",
+        "name": "Far Scribe",
+        "description": "Record names in your Book of Shadows and cast Sending without a spell slot or components, targeting a creature whose name is recorded.",
+        "feature_types": [
+          "EI"
+        ],
+        "page": 71,
+        "status": "legacy_reference"
+      },
+      {
+        "index": "fire-rune",
+        "name": "Fire Rune",
+        "description": "Double proficiency with proficient tools. On a hit, invoke it to deal Fire damage and restrain the target with fiery shackles.",
+        "feature_types": [
+          "RN"
+        ],
+        "page": 44,
+        "status": "implemented_by_tce_subclass"
+      },
+      {
+        "index": "frost-rune",
+        "name": "Frost Rune",
+        "description": "Gain Advantage on Animal Handling and Intimidation. Invoke it for a 10-minute bonus to Strength and Constitution checks and saves.",
+        "feature_types": [
+          "RN"
+        ],
+        "page": 45,
+        "status": "implemented_by_tce_subclass"
+      },
+      {
+        "index": "gift-of-the-protectors",
+        "name": "Gift of the Protectors",
+        "description": "Your Book of Shadows can hold protective names; once per long rest, a named creature that would drop to 0 hit points drops to 1 instead.",
+        "feature_types": [
+          "EI"
+        ],
+        "page": 71,
+        "status": "supplied_by_host_2024"
+      },
+      {
+        "index": "grappling-strike",
+        "name": "Grappling Strike",
+        "description": "After hitting with a melee attack, expend a Superiority Die and use a Bonus Action to grapple the target, adding the die to the Athletics check.",
+        "feature_types": [
+          "MV:B"
+        ],
+        "page": 42,
+        "status": "legacy_reference"
+      },
+      {
+        "index": "helm-of-awareness",
+        "name": "Helm of Awareness",
+        "description": "While worn, this helm grants Advantage on Initiative rolls.",
+        "feature_types": [
+          "AI"
+        ],
+        "page": 21,
+        "status": "supplied_by_host_2024"
+      },
+      {
+        "index": "hill-rune",
+        "name": "Hill Rune",
+        "description": "Gain Advantage on saves against Poison and Resistance to Poison damage. Invoke it to gain Resistance to physical weapon damage for 1 minute.",
+        "feature_types": [
+          "RN"
+        ],
+        "page": 45,
+        "status": "implemented_by_tce_subclass"
+      },
+      {
+        "index": "homunculus-servant",
+        "name": "Homunculus Servant",
+        "description": "Create a Homunculus Servant companion whose defenses, Hit Points, attacks, and checks scale with your Artificer statistics.",
+        "feature_types": [
+          "AI"
+        ],
+        "page": 21,
+        "status": "legacy_reference"
+      },
+      {
+        "index": "interception",
+        "name": "Interception",
+        "description": "Reaction: reduce damage to a nearby creature by 1d10 + proficiency bonus when you're wielding a weapon or shield.",
+        "feature_types": [
+          "FS:F",
+          "FS:P"
+        ],
+        "page": 41,
+        "status": "supplied_by_host_2024"
+      },
+      {
+        "index": "investment-of-the-chain-master",
+        "name": "Investment of the Chain Master",
+        "description": "Empower your familiar with flight or swimming, your spell-save DC, magical damage, bonus-action attacks, and damage resistance.",
+        "feature_types": [
+          "EI"
+        ],
+        "page": 71,
+        "status": "supplied_by_host_2024"
+      },
+      {
+        "index": "mind-sharpener",
+        "name": "Mind Sharpener",
+        "description": "A robe or suit of armor attachment with charges that can turn a failed Constitution save to maintain Concentration into a success.",
+        "feature_types": [
+          "AI"
+        ],
+        "page": 22,
+        "status": "supplied_by_host_2024"
+      },
+      {
+        "index": "pact-of-the-talisman",
+        "name": "Pact of the Talisman",
+        "description": "Give the talisman’s wearer a d4 bonus after a failed ability check, with uses tied to Proficiency Bonus.",
+        "feature_types": [
+          "PB"
+        ],
+        "page": 71,
+        "status": "legacy_reference"
+      },
+      {
+        "index": "protection-of-the-talisman",
+        "name": "Protection of the Talisman",
+        "description": "When the talisman’s wearer fails a saving throw, add 1d4 to the roll a limited number of times per Long Rest.",
+        "feature_types": [
+          "EI"
+        ],
+        "page": 71,
+        "status": "legacy_reference"
+      },
+      {
+        "index": "quick-toss",
+        "name": "Quick Toss",
+        "description": "As a Bonus Action, expend a Superiority Die to draw and throw a weapon, adding the die to the attack’s damage on a hit.",
+        "feature_types": [
+          "MV:B"
+        ],
+        "page": 42,
+        "status": "legacy_reference"
+      },
+      {
+        "index": "radiant-weapon",
+        "name": "Radiant Weapon",
+        "description": "Improve a weapon with an attack and damage bonus, adjustable light, and charges that can Blind a creature after it hits the wielder.",
+        "feature_types": [
+          "AI"
+        ],
+        "page": 22,
+        "status": "legacy_reference"
+      },
+      {
+        "index": "rebuke-of-the-talisman",
+        "name": "Rebuke of the Talisman",
+        "description": "When the talisman’s wearer is hit nearby, use your Reaction to deal Psychic damage to the attacker and push it away.",
+        "feature_types": [
+          "EI"
+        ],
+        "page": 71,
+        "status": "legacy_reference"
+      },
+      {
+        "index": "repeating-shot",
+        "name": "Repeating Shot",
+        "description": "A +1 ranged weapon that ignores Loading and produces its own magical ammunition.",
+        "feature_types": [
+          "AI"
+        ],
+        "page": 22,
+        "status": "supplied_by_host_2024"
+      },
+      {
+        "index": "replicate-magic-item",
+        "name": "Replicate Magic Item",
+        "description": "After a Long Rest with Tinker's Tools in hand, create two different temporary magic items based on plans you know. The limit rises to three items at level 6, four at 10, five at 14, and six at 18. You can immediately attune to a created item; created Wands and Weapons can be Artificer spellcasting focuses.",
+        "feature_types": [
+          "AI"
+        ],
+        "page": 22,
+        "status": "supplied_by_host_2024"
+      },
+      {
+        "index": "repulsion-shield",
+        "name": "Repulsion Shield",
+        "description": "A +1 shield with charges that can push a melee attacker away after it hits the wielder.",
+        "feature_types": [
+          "AI"
+        ],
+        "page": 23,
+        "status": "supplied_by_host_2024"
+      },
+      {
+        "index": "resistant-armor",
+        "name": "Resistant Armor",
+        "description": "Infuse armor to grant its wearer Resistance to one selected damage type.",
+        "feature_types": [
+          "AI"
+        ],
+        "page": 23,
+        "status": "legacy_reference"
+      },
+      {
+        "index": "returning-weapon",
+        "name": "Returning Weapon",
+        "description": "A +1 thrown weapon that returns to the wielder after a ranged attack.",
+        "feature_types": [
+          "AI"
+        ],
+        "page": 23,
+        "status": "supplied_by_host_2024"
+      },
+      {
+        "index": "seeking-spell",
+        "name": "Seeking Spell",
+        "description": "If a spell attack misses, spend 1 Sorcery Point to reroll the d20 and use the new roll. You can combine this option with another Metamagic option.",
+        "feature_types": [
+          "MM"
+        ],
+        "page": 66,
+        "status": "supplied_by_host_2024"
+      },
+      {
+        "index": "spell-refueling-ring",
+        "name": "Spell-Refueling Ring",
+        "description": "Once per dawn as a Bonus Action, recover one expended spell slot of level 3 or lower.",
+        "feature_types": [
+          "AI"
+        ],
+        "page": 23,
+        "status": "supplied_by_host_2024"
+      },
+      {
+        "index": "stone-rune",
+        "name": "Stone Rune",
+        "description": "Gain Advantage on Insight and 120-foot Darkvision. Invoke it as a Reaction to charm and incapacitate a nearby creature.",
+        "feature_types": [
+          "RN"
+        ],
+        "page": 45,
+        "status": "implemented_by_tce_subclass"
+      },
+      {
+        "index": "storm-rune",
+        "name": "Storm Rune",
+        "description": "Gain Advantage on Arcana and immunity to surprise. Invoke it for 1 minute to use Reactions to grant Advantage or Disadvantage on nearby d20 rolls.",
+        "feature_types": [
+          "RN"
+        ],
+        "page": 45,
+        "status": "implemented_by_tce_subclass"
+      },
+      {
+        "index": "superior-technique",
+        "name": "Superior Technique",
+        "description": "Learn one Battle Master maneuver and gain one d6 Superiority Die that returns on a Short or Long Rest.",
+        "feature_types": [
+          "FS:F"
+        ],
+        "page": 41,
+        "status": "legacy_reference"
+      },
+      {
+        "index": "tactical-assessment",
+        "name": "Tactical Assessment",
+        "description": "Add your Superiority Die to an Intelligence (History or Investigation) check or a Wisdom (Insight) check.",
+        "feature_types": [
+          "MV:B"
+        ],
+        "page": 42,
+        "status": "supplied_by_host_2024"
+      },
+      {
+        "index": "thrown-weapon-fighting",
+        "name": "Thrown Weapon Fighting",
+        "description": "+2 bonus to damage rolls with thrown weapons; draw a thrown weapon as part of the attack.",
+        "feature_types": [
+          "FS:F",
+          "FS:R"
+        ],
+        "page": 42,
+        "status": "supplied_by_host_2024"
+      },
+      {
+        "index": "transmuted-spell",
+        "name": "Transmuted Spell",
+        "description": "Spend 1 Sorcery Point when a spell deals Acid, Cold, Fire, Lightning, Poison, or Thunder damage to replace that type with another one from the list.",
+        "feature_types": [
+          "MM"
+        ],
+        "page": 66,
+        "status": "supplied_by_host_2024"
+      },
+      {
+        "index": "unarmed-fighting",
+        "name": "Unarmed Fighting",
+        "description": "Unarmed strikes deal 1d6 (or 1d8 if empty-handed) damage; bonus action grapple damage.",
+        "feature_types": [
+          "FS:F"
+        ],
+        "page": 42,
+        "status": "supplied_by_host_2024"
+      },
+      {
+        "index": "undying-servitude",
+        "name": "Undying Servitude",
+        "description": "Cast Animate Dead once without a spell slot each Long Rest.",
+        "feature_types": [
+          "EI"
+        ],
+        "page": 71,
+        "status": "legacy_reference"
+      }
+    ]
+  },
+  "supplied_by_phb_2024": {
+    "subclasses": [
+      {
+        "class_index": "druid",
+        "index": "stars",
+        "name": "Circle of Stars"
+      },
+      {
+        "class_index": "fighter",
+        "index": "psi-warrior",
+        "name": "Psi Warrior"
+      },
+      {
+        "class_index": "monk",
+        "index": "mercy",
+        "name": "Way of Mercy"
+      },
+      {
+        "class_index": "paladin",
+        "index": "glory",
+        "name": "Oath of Glory"
+      },
+      {
+        "class_index": "ranger",
+        "index": "fey-wanderer",
+        "name": "Fey Wanderer"
+      },
+      {
+        "class_index": "rogue",
+        "index": "soulknife",
+        "name": "Soulknife"
+      },
+      {
+        "class_index": "sorcerer",
+        "index": "aberrant-mind",
+        "name": "Aberrant Mind"
+      },
+      {
+        "class_index": "sorcerer",
+        "index": "clockwork-soul",
+        "name": "Clockwork Soul"
+      }
+    ],
+    "feats": [
+      {
+        "index": "chef",
+        "name": "Chef"
+      },
+      {
+        "index": "crusher",
+        "name": "Crusher"
+      },
+      {
+        "index": "fey-touched",
+        "name": "Fey Touched"
+      },
+      {
+        "index": "piercer",
+        "name": "Piercer"
+      },
+      {
+        "index": "poisoner",
+        "name": "Poisoner"
+      },
+      {
+        "index": "shadow-touched",
+        "name": "Shadow Touched"
+      },
+      {
+        "index": "skill-expert",
+        "name": "Skill Expert"
+      },
+      {
+        "index": "slasher",
+        "name": "Slasher"
+      },
+      {
+        "index": "telekinetic",
+        "name": "Telekinetic"
+      },
+      {
+        "index": "telepathic",
+        "name": "Telepathic"
+      }
+    ],
+    "spells": [
+      {
+        "index": "mind-sliver",
+        "name": "Mind Sliver"
+      },
+      {
+        "index": "summon-aberration",
+        "name": "Summon Aberration"
+      },
+      {
+        "index": "summon-beast",
+        "name": "Summon Beast"
+      },
+      {
+        "index": "summon-celestial",
+        "name": "Summon Celestial"
+      },
+      {
+        "index": "summon-construct",
+        "name": "Summon Construct"
+      },
+      {
+        "index": "summon-elemental",
+        "name": "Summon Elemental"
+      },
+      {
+        "index": "summon-fey",
+        "name": "Summon Fey"
+      },
+      {
+        "index": "summon-fiend",
+        "name": "Summon Fiend"
+      },
+      {
+        "index": "summon-undead",
+        "name": "Summon Undead"
+      }
+    ]
+  },
+  "supplied_by_eberron_forge_of_the_artificer": {
+    "subclasses": [
+      {
+        "class_index": "artificer",
+        "index": "alchemist",
+        "name": "Alchemist"
+      },
+      {
+        "class_index": "artificer",
+        "index": "armorer",
+        "name": "Armorer"
+      },
+      {
+        "class_index": "artificer",
+        "index": "artillerist",
+        "name": "Artillerist"
+      },
+      {
+        "class_index": "artificer",
+        "index": "battle-smith",
+        "name": "Battle Smith"
+      }
+    ],
+    "creatures": [
+      {
+        "index": "homunculus-servant",
+        "name": "Homunculus Servant"
+      },
+      {
+        "index": "steel-defender",
+        "name": "Steel Defender"
+      }
+    ]
+  },
+  "spell_list_additions": {
+    "bard": [
+      "aid",
+      "antipathy-sympathy",
+      "color-spray",
+      "command",
+      "dream-of-the-blue-veil",
+      "enlarge-reduce",
+      "heroes-feast",
+      "intellect-fortress",
+      "mass-healing-word",
+      "mirror-image",
+      "phantasmal-killer",
+      "prismatic-spray",
+      "prismatic-wall",
+      "rarys-telepathic-bond",
+      "slow"
+    ],
+    "ranger": [
+      "aid",
+      "dominate-beast",
+      "elemental-weapon",
+      "enhance-ability",
+      "entangle",
+      "greater-restoration",
+      "gust-of-wind",
+      "magic-weapon",
+      "meld-into-stone",
+      "revivify",
+      "searing-smite",
+      "summon-beast",
+      "summon-elemental",
+      "summon-fey"
+    ],
+    "druid": [
+      "augury",
+      "aura-of-vitality",
+      "cone-of-cold",
+      "continual-flame",
+      "divination",
+      "elemental-weapon",
+      "enlarge-reduce",
+      "fire-shield",
+      "flesh-to-stone",
+      "incendiary-cloud",
+      "protection-from-evil-and-good",
+      "revivify",
+      "summon-beast",
+      "summon-elemental",
+      "summon-fey",
+      "symbol"
+    ],
+    "wizard": [
+      "augury",
+      "blade-of-disaster",
+      "booming-blade",
+      "divination",
+      "dream-of-the-blue-veil",
+      "enhance-ability",
+      "green-flame-blade",
+      "intellect-fortress",
+      "lightning-lure",
+      "mind-sliver",
+      "speak-with-dead",
+      "spirit-shroud",
+      "summon-aberration",
+      "summon-construct",
+      "summon-elemental",
+      "summon-fey",
+      "summon-fiend",
+      "summon-shadowspawn",
+      "summon-undead",
+      "sword-burst",
+      "tashas-caustic-brew",
+      "tashas-mind-whip",
+      "tashas-otherworldly-guise"
+    ],
+    "cleric": [
+      "aura-of-life",
+      "aura-of-purity",
+      "aura-of-vitality",
+      "power-word-heal",
+      "spirit-shroud",
+      "summon-celestial",
+      "sunbeam",
+      "sunburst"
+    ],
+    "sorcerer": [
+      "bigbys-hand",
+      "blade-of-disaster",
+      "booming-blade",
+      "demiplane",
+      "dream-of-the-blue-veil",
+      "fire-shield",
+      "flame-blade",
+      "flaming-sphere",
+      "flesh-to-stone",
+      "grease",
+      "green-flame-blade",
+      "intellect-fortress",
+      "lightning-lure",
+      "magic-weapon",
+      "mind-sliver",
+      "otilukes-freezing-sphere",
+      "sword-burst",
+      "tashas-caustic-brew",
+      "tashas-mind-whip",
+      "tashas-otherworldly-guise",
+      "vampiric-touch"
+    ],
+    "warlock": [
+      "blade-of-disaster",
+      "booming-blade",
+      "dream-of-the-blue-veil",
+      "gate",
+      "green-flame-blade",
+      "intellect-fortress",
+      "lightning-lure",
+      "mind-sliver",
+      "mislead",
+      "planar-binding",
+      "spirit-shroud",
+      "summon-aberration",
+      "summon-fey",
+      "summon-fiend",
+      "summon-shadowspawn",
+      "summon-undead",
+      "sword-burst",
+      "tashas-otherworldly-guise",
+      "teleportation-circle",
+      "weird"
+    ],
+    "paladin": [
+      "gentle-repose",
+      "prayer-of-healing",
+      "spirit-shroud",
+      "summon-celestial",
+      "warding-bond"
+    ]
+  },
+  "implementation": {
+    "structured": [
+      "source gating",
+      "subclass selection",
+      "subclass feature mechanics and actions",
+      "subclass spell grants and expansions",
+      "feat prerequisites and choices",
+      "class spell-list additions",
+      "spell metadata and scaling",
+      "magic-item variants",
+      "summoned creature and companion stat blocks"
+    ],
+    "host_2024_equivalents": [
+      "optional class-feature replacements",
+      "fighting styles",
+      "metamagic options",
+      "eldritch invocations",
+      "Battle Master maneuvers",
+      "Artificer infusions"
+    ],
+    "optional_feature_policy": "Every legacy optional feature is inventoried with a rules summary and an implementation status. Reprinted 2024/Eberron options are not duplicated into class progressions.",
+    "descriptive_reference": [
+      "bespoke spell automation",
+      "complex magic-item activations",
+      "summoned-creature bespoke traits"
+    ]
+  },
+  "non_catalog_book_systems": [
+    "customizing your origin",
+    "changing a skill or subclass",
+    "group patrons",
+    "session zero guidance",
+    "sidekick classes",
+    "parleying with monsters",
+    "supernatural regions",
+    "magical phenomena",
+    "natural hazards",
+    "puzzles"
+  ]
+}

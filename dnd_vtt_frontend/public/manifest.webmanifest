@@ -1,7 +1,7 @@
 {
-  "name": "D&D VTT",
-  "short_name": "D&D VTT",
-  "description": "Mobile player companion for the D&D virtual tabletop",
+  "name": "NatOne",
+  "short_name": "NatOne",
+  "description": "NatOne virtual tabletop companion",
   "start_url": "/home/dashboard",
   "scope": "/",
   "display": "standalone",
@@ -9,10 +9,16 @@
   "theme_color": "#b9913f",
   "icons": [
     {
-      "src": "/icons/dnd-vtt.svg",
-      "sizes": "any",
-      "type": "image/svg+xml",
-      "purpose": "any maskable"
+      "src": "/icons/natone-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/natone-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
     }
   ]
 }

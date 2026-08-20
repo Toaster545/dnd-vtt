@@ -1,0 +1,84 @@
+{
+  "index": "elemental-spirit",
+  "name": "Elemental Spirit",
+  "size": "M",
+  "type": "elemental",
+  "alignment": "U",
+  "armor_class": 10,
+  "hit_points": 0,
+  "hit_points_formula": "Special",
+  "hit_dice": "Special",
+  "speed": {
+    "walk": 40,
+    "fly": 40,
+    "burrow": 40,
+    "swim": 40
+  },
+  "ability_scores": {
+    "strength": 18,
+    "dexterity": 15,
+    "constitution": 17,
+    "intelligence": 4,
+    "wisdom": 10,
+    "charisma": 16
+  },
+  "saving_throws": {},
+  "skills": {},
+  "damage_vulnerabilities": [],
+  "damage_resistances": [
+    "lightning",
+    "thunder",
+    "piercing",
+    "slashing",
+    "acid"
+  ],
+  "damage_immunities": [
+    "poison",
+    "fire"
+  ],
+  "condition_immunities": [
+    "exhaustion",
+    "paralyzed",
+    "petrified",
+    "poisoned",
+    "unconscious"
+  ],
+  "senses": {
+    "passive_perception": 10,
+    "darkvision": 60
+  },
+  "languages": [
+    "Primordial",
+    "understands the languages you speak"
+  ],
+  "challenge_rating": "Special",
+  "xp": 0,
+  "traits": [
+    {
+      "name": "Amorphous Form (Air, Fire, and Water Only)",
+      "description": "A structured amorphous form (air, fire, and water only) rule from Tasha's Cauldron of Everything, page 111."
+    }
+  ],
+  "actions": [
+    {
+      "name": "Multiattack",
+      "description": "A structured multiattack rule from Tasha's Cauldron of Everything, page 111."
+    },
+    {
+      "name": "Slam",
+      "description": "damage dice 1d10 + 4 + summonSpellLevel. See Tasha's Cauldron of Everything, page 111, for targeting and additional effects."
+    }
+  ],
+  "reactions": [],
+  "legendary_actions": [],
+  "description": "A creature, companion, or summoned spirit stat block from Tasha's Cauldron of Everything.",
+  "rules_text": "reference-only",
+  "source": {
+    "code": "TCE",
+    "book": "Tasha's Cauldron of Everything",
+    "edition": 2020,
+    "page": 111,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

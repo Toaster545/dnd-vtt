@@ -1,0 +1,22 @@
+{
+  "index": "lyre-of-building",
+  "name": "Lyre of Building",
+  "type": "gear",
+  "category": "Wondrous Item",
+  "damage": null,
+  "damage_type": null,
+  "properties": [],
+  "weight": 2,
+  "cost": "Magic item",
+  "description": "A magical instrument that protects structures, constructs objects, and can repair damaged buildings.",
+  "rarity": "rare",
+  "requires_attunement": "by a bard",
+  "source": {
+    "code": "TCE",
+    "book": "Tasha's Cauldron of Everything",
+    "edition": 2020,
+    "page": 131,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "index": "ghost-step-tattoo",
+  "name": "Ghost Step Tattoo",
+  "type": "gear",
+  "category": "Wondrous Item",
+  "damage": null,
+  "damage_type": null,
+  "properties": [],
+  "weight": 0,
+  "cost": "Magic item",
+  "description": "A tattoo that can make you briefly incorporeal, granting damage resistance and movement through creatures and objects.",
+  "rarity": "very rare",
+  "requires_attunement": true,
+  "charges": {
+    "max": 3,
+    "recovery": "dawn"
+  },
+  "source": {
+    "code": "TCE",
+    "book": "Tasha's Cauldron of Everything",
+    "edition": 2020,
+    "page": 128,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

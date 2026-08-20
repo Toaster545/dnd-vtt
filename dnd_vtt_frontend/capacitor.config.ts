@@ -2,7 +2,7 @@ import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
   appId: 'ca.mathomelab.dndvtt',
-  appName: 'D&D VTT',
+  appName: 'NatOne',
   webDir: 'dist/dnd-app/browser',
   server: {
     androidScheme: 'https',

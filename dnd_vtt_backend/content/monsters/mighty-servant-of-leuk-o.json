@@ -1,0 +1,113 @@
+{
+  "index": "mighty-servant-of-leuk-o",
+  "name": "Mighty Servant of Leuk-o",
+  "size": "H",
+  "type": "construct",
+  "alignment": "U",
+  "armor_class": 22,
+  "hit_points": 310,
+  "hit_points_formula": "27d12 + 135",
+  "hit_dice": "27d12 + 135",
+  "speed": {
+    "walk": 60
+  },
+  "ability_scores": {
+    "strength": 30,
+    "dexterity": 14,
+    "constitution": 20,
+    "intelligence": 1,
+    "wisdom": 14,
+    "charisma": 10
+  },
+  "saving_throws": {
+    "wis": "+9",
+    "cha": "+7"
+  },
+  "skills": {
+    "perception": "+9"
+  },
+  "damage_vulnerabilities": [],
+  "damage_resistances": [
+    "piercing",
+    "slashing"
+  ],
+  "damage_immunities": [
+    "acid",
+    "bludgeoning",
+    "cold",
+    "fire",
+    "lightning",
+    "necrotic",
+    "poison",
+    "psychic",
+    "radiant"
+  ],
+  "condition_immunities": [
+    "blinded",
+    "charmed",
+    "deafened",
+    "exhaustion",
+    "frightened",
+    "grappled",
+    "incapacitated",
+    "paralyzed",
+    "petrified",
+    "poisoned",
+    "restrained",
+    "stunned",
+    "unconscious"
+  ],
+  "senses": {
+    "passive_perception": 19,
+    "blindsight": 120
+  },
+  "languages": [
+    "understands the languages of creatures attuned to it but can't speak"
+  ],
+  "challenge_rating": "Special",
+  "xp": 0,
+  "traits": [
+    {
+      "name": "Immutable Existence",
+      "description": "A structured immutable existence rule from Tasha's Cauldron of Everything, page 131."
+    },
+    {
+      "name": "Magic Resistance",
+      "description": "A structured magic resistance rule from Tasha's Cauldron of Everything, page 131."
+    },
+    {
+      "name": "Regeneration",
+      "description": "A structured regeneration rule from Tasha's Cauldron of Everything, page 131."
+    },
+    {
+      "name": "Standing Leap",
+      "description": "A structured standing leap rule from Tasha's Cauldron of Everything, page 131."
+    },
+    {
+      "name": "Unusual Nature",
+      "description": "A structured unusual nature rule from Tasha's Cauldron of Everything, page 131."
+    }
+  ],
+  "actions": [
+    {
+      "name": "Destructive Fist",
+      "description": "+17 to hit; damage dice 4d12 + 10. See Tasha's Cauldron of Everything, page 131, for targeting and additional effects."
+    },
+    {
+      "name": "Crushing Leap",
+      "description": "damage dice 4d12; save DC 25. See Tasha's Cauldron of Everything, page 131, for targeting and additional effects."
+    }
+  ],
+  "reactions": [],
+  "legendary_actions": [],
+  "description": "A creature, companion, or summoned spirit stat block from Tasha's Cauldron of Everything.",
+  "rules_text": "reference-only",
+  "source": {
+    "code": "TCE",
+    "book": "Tasha's Cauldron of Everything",
+    "edition": 2020,
+    "page": 131,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

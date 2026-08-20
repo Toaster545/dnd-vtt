@@ -1,0 +1,47 @@
+{
+  "index": "lightning-lure",
+  "name": "Lightning Lure",
+  "level": 0,
+  "school": "Evocation",
+  "casting_time": "1 action",
+  "range": "15 feet",
+  "components": [
+    "V"
+  ],
+  "duration": "Instantaneous",
+  "ritual": false,
+  "concentration": false,
+  "mechanics": {
+    "spell_attacks": [],
+    "saving_throws": [
+      "strength"
+    ],
+    "ability_checks": [],
+    "damage_types": [
+      "lightning"
+    ],
+    "conditions": [],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [
+      "ST"
+    ],
+    "misc_tags": [
+      "FMV",
+      "SCL",
+      "SGT"
+    ]
+  },
+  "description": "Force a creature within 15 feet to make a Strength save. On a failure, pull it up to 10 feet toward you and deal Lightning damage if it ends within 5 feet.",
+  "source": {
+    "code": "TCE",
+    "book": "Tasha's Cauldron of Everything",
+    "edition": 2020,
+    "page": 107,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

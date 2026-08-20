@@ -1,0 +1,23 @@
+{
+  "index": "1-arcane-grimoire",
+  "name": "+1 Arcane Grimoire",
+  "type": "gear",
+  "category": "Wondrous Item",
+  "damage": null,
+  "damage_type": null,
+  "properties": [],
+  "weight": 3,
+  "cost": "Magic item",
+  "description": "A Wizard spellbook and focus that grants its listed bonus to spell attacks and save DCs and improves Arcane Recovery.",
+  "rarity": "uncommon",
+  "requires_attunement": "by a wizard",
+  "magic_bonus": 1,
+  "source": {
+    "code": "TCE",
+    "book": "Tasha's Cauldron of Everything",
+    "edition": 2020,
+    "page": 120,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

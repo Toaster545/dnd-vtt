@@ -1,0 +1,21 @@
+{
+  "index": "prosthetic-limb",
+  "name": "Prosthetic Limb",
+  "type": "gear",
+  "category": "Wondrous Item",
+  "damage": null,
+  "damage_type": null,
+  "properties": [],
+  "weight": 0,
+  "cost": "Magic item",
+  "description": "A magical replacement limb that attaches to a creature and functions like the body part it replaces.",
+  "rarity": "common",
+  "source": {
+    "code": "TCE",
+    "book": "Tasha's Cauldron of Everything",
+    "edition": 2020,
+    "page": 134,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

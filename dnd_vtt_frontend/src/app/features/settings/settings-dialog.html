@@ -102,6 +102,35 @@
         </div>
       </div>
 
+      <div class="card">
+        <div class="card-header border-b border-white/10 flex items-center gap-2">
+          <img src="/icons/natone-192.png" alt="" class="w-8 h-8 object-contain" />
+          <h3 class="font-brand text-parchment m-0">NatOne App</h3>
+        </div>
+        <div class="card-body flex flex-col sm:flex-row sm:items-center gap-3">
+          <div class="flex-1">
+            <p class="text-parchment text-sm m-0">Install NatOne on this device for quicker access and an app-like experience.</p>
+            @if (!pwa.installAvailable() && !pwa.installed()) {
+              <p class="text-slate text-xs mt-1 mb-0">If installation is supported, use your browser menu and choose Install App or Add to Home Screen.</p>
+            }
+          </div>
+          @if (pwa.installed()) {
+            <span class="toolbar-badge flex-shrink-0">Installed</span>
+          } @else {
+            <button
+              type="button"
+              class="btn-outline flex-shrink-0"
+              [disabled]="!pwa.installAvailable()"
+              [matTooltip]="pwa.installAvailable() ? 'Install NatOne' : 'Use your browser installation menu'"
+              (click)="installNatOne()"
+            >
+              <mat-icon>install_mobile</mat-icon>
+              Install NatOne
+            </button>
+          }
+        </div>
+      </div>
+
       @if (auth.isAdmin()) {
         <div class="card border-gold/30">
           <div class="card-header border-b border-white/10 flex items-center gap-2">

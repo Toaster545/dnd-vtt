@@ -1,0 +1,111 @@
+{
+  "class_index": "druid",
+  "index": "spores",
+  "name": "Circle of Spores",
+  "description": "A druid subclass that adds the Spores tradition from Tasha's Cauldron of Everything.",
+  "levels": [
+    {
+      "level": 3,
+      "features": [
+        "Spores Spells",
+        "Circle Spells",
+        "Halo of Spores",
+        "Symbiotic Entity"
+      ],
+      "grants": [
+        {
+          "type": "spell_grant",
+          "key": "spores_spells_3",
+          "name": "Spores Spells",
+          "destination": "always_prepared",
+          "spells": [
+            "blindness-deafness",
+            "gentle-repose"
+          ],
+          "countsAgainstLimit": false,
+          "classLevel": 3
+        },
+        {
+          "type": "feature",
+          "name": "Circle Spells",
+          "description": "Gain Chill Touch and always prepare the Circle of Spores spells as your Druid level increases."
+        },
+        {
+          "type": "feature",
+          "name": "Halo of Spores",
+          "description": "When a creature you can see moves within 10 feet or starts its turn there, use your Reaction to force a Constitution save; it takes Necrotic damage on a failure. The damage die scales with Druid level.",
+          "action": {
+            "activation": "reaction"
+          },
+          "key": "tce_druid_spores_halo-of-spores"
+        },
+        {
+          "type": "feature",
+          "name": "Symbiotic Entity",
+          "description": "As an Action, expend Wild Shape to gain 4 temporary Hit Points per Druid level for 10 minutes. While they remain, double Halo of Spores damage and add 1d6 Necrotic damage to your melee weapon hits."
+        }
+      ]
+    },
+    {
+      "level": 6,
+      "features": [
+        "Fungal Infestation"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Fungal Infestation",
+          "description": "When a Small or Medium Beast or Humanoid dies within 10 feet, use your Reaction to animate it as a 1-HP Zombie for 1 hour. Uses equal your Wisdom modifier per Long Rest.",
+          "action": {
+            "activation": "reaction",
+            "uses": {
+              "max": 1,
+              "maxAbilityModifier": "wisdom",
+              "minimum": 1,
+              "per": "long_rest"
+            }
+          },
+          "key": "tce_druid_spores_fungal-infestation"
+        }
+      ]
+    },
+    {
+      "level": 10,
+      "features": [
+        "Spreading Spores"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Spreading Spores",
+          "description": "While Symbiotic Entity is active, use a Bonus Action to create a 10-foot cube of spores within 30 feet for 1 minute. Creatures entering or starting there take your Halo of Spores damage on a failed save.",
+          "action": {
+            "activation": "bonus_action"
+          },
+          "key": "tce_druid_spores_spreading-spores"
+        }
+      ]
+    },
+    {
+      "level": 14,
+      "features": [
+        "Fungal Body"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Fungal Body",
+          "description": "You cannot be Blinded, Deafened, Frightened, or Poisoned, and critical hits against you become normal hits unless you are Incapacitated."
+        }
+      ]
+    }
+  ],
+  "source": {
+    "code": "TCE",
+    "book": "Tasha's Cauldron of Everything",
+    "edition": 2020,
+    "page": 36,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

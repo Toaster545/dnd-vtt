@@ -1,0 +1,27 @@
+{
+  "index": "baba-yagas-mortar-and-pestle",
+  "name": "Baba Yaga's Mortar and Pestle",
+  "type": "gear",
+  "category": "Wondrous Item",
+  "damage": null,
+  "damage_type": null,
+  "properties": [],
+  "weight": 0,
+  "cost": "Magic item",
+  "description": "An artifact mortar and pestle that creates ingredients, summons spectral tools, grinds magical paste, and travels through the air or between destinations.",
+  "rarity": "artifact",
+  "requires_attunement": true,
+  "magic_bonus": 3,
+  "charges": {
+    "max": 12,
+    "recovery": "dawn"
+  },
+  "source": {
+    "code": "TCE",
+    "book": "Tasha's Cauldron of Everything",
+    "edition": 2020,
+    "page": 121,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

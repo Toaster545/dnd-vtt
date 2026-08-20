@@ -1,0 +1,22 @@
+{
+  "index": "outer-essence-shard-lawful",
+  "name": "Outer Essence Shard (Lawful)",
+  "type": "gear",
+  "category": "Wondrous Item",
+  "damage": null,
+  "damage_type": null,
+  "properties": [],
+  "weight": 1,
+  "cost": "Magic item",
+  "description": "A Sorcerer focus that triggers a planar-alignment benefit whenever you apply Metamagic to a spell. This variant channels Lawful essence.",
+  "rarity": "rare",
+  "requires_attunement": "by a sorcerer",
+  "source": {
+    "code": "TCE",
+    "book": "Tasha's Cauldron of Everything",
+    "edition": 2020,
+    "page": 133,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

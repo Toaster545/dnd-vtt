@@ -1,0 +1,47 @@
+{
+  "index": "tashas-mind-whip",
+  "name": "Tasha's Mind Whip",
+  "level": 2,
+  "school": "Enchantment",
+  "casting_time": "1 action",
+  "range": "90 feet",
+  "components": [
+    "V"
+  ],
+  "duration": "1 round",
+  "ritual": false,
+  "concentration": false,
+  "mechanics": {
+    "spell_attacks": [],
+    "saving_throws": [
+      "intelligence"
+    ],
+    "ability_checks": [],
+    "damage_types": [
+      "psychic"
+    ],
+    "conditions": [],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [
+      "ST"
+    ],
+    "misc_tags": [
+      "SCT",
+      "SGT"
+    ]
+  },
+  "description": "Assault a creature with Psychic damage and, on a failed Intelligence save, prevent Reactions and limit its next turn to only one movement, Action, or Bonus Action.",
+  "higher_levels": "Target one additional creature for each slot level above 2.",
+  "source": {
+    "code": "TCE",
+    "book": "Tasha's Cauldron of Everything",
+    "edition": 2020,
+    "page": 115,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

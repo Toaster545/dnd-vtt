@@ -1,0 +1,135 @@
+{
+  "class_index": "warlock",
+  "index": "fathomless",
+  "name": "The Fathomless",
+  "description": "A warlock subclass that adds the Fathomless tradition from Tasha's Cauldron of Everything.",
+  "levels": [
+    {
+      "level": 3,
+      "features": [
+        "Fathomless Spells",
+        "Fathomless Expanded Spells",
+        "Gift of the Sea",
+        "Tentacle of the Deeps"
+      ],
+      "grants": [
+        {
+          "type": "spell_grant",
+          "key": "fathomless_spells_10",
+          "name": "Fathomless Spells",
+          "destination": "known",
+          "spells": [
+            "evards-black-tentacles"
+          ],
+          "countsAgainstLimit": false,
+          "classLevel": 10
+        },
+        {
+          "type": "spell_list_expansion",
+          "key": "fathomless_expanded_3",
+          "name": "Fathomless Expanded Spells",
+          "spells": [
+            "create-or-destroy-water",
+            "thunderwave",
+            "gust-of-wind",
+            "silence",
+            "lightning-bolt",
+            "sleet-storm"
+          ]
+        },
+        {
+          "type": "feature",
+          "name": "Gift of the Sea",
+          "description": "Gain a 40-foot Swim Speed and the ability to breathe underwater."
+        },
+        {
+          "type": "feature",
+          "name": "Tentacle of the Deeps",
+          "description": "As a Bonus Action, summon a spectral tentacle within 60 feet for 1 minute and make a melee spell attack through it for 1d8 Cold damage, reducing the target's Speed by 10 feet. Move and attack with it using later Bonus Actions. Uses equal your Proficiency Bonus per Long Rest.",
+          "action": {
+            "activation": "bonus_action",
+            "uses": {
+              "max": 2,
+              "maxProficiencyBonus": true,
+              "per": "long_rest"
+            }
+          },
+          "key": "tce_warlock_fathomless_tentacle-of-the-deeps"
+        }
+      ]
+    },
+    {
+      "level": 6,
+      "features": [
+        "Guardian Coil",
+        "Oceanic Soul"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Guardian Coil",
+          "description": "When you or a nearby creature takes damage, use your Reaction through the tentacle to reduce that damage by 1d8, scaling to 2d8 and 3d8 at higher Warlock levels.",
+          "action": {
+            "activation": "reaction"
+          },
+          "key": "tce_warlock_fathomless_guardian-coil"
+        },
+        {
+          "type": "feature",
+          "name": "Oceanic Soul",
+          "description": "Gain Resistance to Cold damage. While submerged, creatures also submerged can understand your speech."
+        }
+      ]
+    },
+    {
+      "level": 10,
+      "features": [
+        "Grasping Tentacles"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Grasping Tentacles",
+          "description": "Learn Evard's Black Tentacles. Cast it once per Long Rest without a slot; when you cast it, gain temporary Hit Points equal to Warlock level and damage cannot break your Concentration.",
+          "action": {
+            "activation": "action",
+            "uses": {
+              "max": 1,
+              "per": "long_rest"
+            }
+          },
+          "key": "tce_warlock_fathomless_grasping-tentacles"
+        }
+      ]
+    },
+    {
+      "level": 14,
+      "features": [
+        "Fathomless Plunge"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Fathomless Plunge",
+          "description": "As an Action, teleport yourself and up to five willing creatures within 30 feet to a body of water you have seen within 1 mile or to another body of water on the same plane. Once per Short or Long Rest.",
+          "action": {
+            "activation": "action",
+            "uses": {
+              "max": 1,
+              "per": "short_rest"
+            }
+          },
+          "key": "tce_warlock_fathomless_fathomless-plunge"
+        }
+      ]
+    }
+  ],
+  "source": {
+    "code": "TCE",
+    "book": "Tasha's Cauldron of Everything",
+    "edition": 2020,
+    "page": 72,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

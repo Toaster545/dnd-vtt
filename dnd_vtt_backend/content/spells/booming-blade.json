@@ -1,0 +1,48 @@
+{
+  "index": "booming-blade",
+  "name": "Booming Blade",
+  "level": 0,
+  "school": "Evocation",
+  "casting_time": "1 action",
+  "range": "5 feet",
+  "components": [
+    "S",
+    "M"
+  ],
+  "material": "a melee weapon worth at least 1 sp",
+  "duration": "1 round",
+  "ritual": false,
+  "concentration": false,
+  "mechanics": {
+    "spell_attacks": [
+      "melee"
+    ],
+    "saving_throws": [],
+    "ability_checks": [],
+    "damage_types": [
+      "thunder"
+    ],
+    "conditions": [],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [
+      "ST"
+    ],
+    "misc_tags": [
+      "AAD",
+      "SCL"
+    ]
+  },
+  "description": "Make a melee weapon attack as part of the spell. On a hit, the target suffers the weapon attack and is wrapped in booming energy that deals Thunder damage if it willingly moves before your next turn.",
+  "source": {
+    "code": "TCE",
+    "book": "Tasha's Cauldron of Everything",
+    "edition": 2020,
+    "page": 106,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

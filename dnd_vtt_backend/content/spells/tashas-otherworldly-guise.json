@@ -1,0 +1,45 @@
+{
+  "index": "tashas-otherworldly-guise",
+  "name": "Tasha's Otherworldly Guise",
+  "level": 6,
+  "school": "Transmutation",
+  "casting_time": "1 bonus action",
+  "range": "Self",
+  "components": [
+    "V",
+    "S",
+    "M"
+  ],
+  "material": "an object engraved with a symbol of the Outer Planes, worth at least 500 gp",
+  "duration": "Concentration, up to 1 minute",
+  "ritual": false,
+  "concentration": true,
+  "mechanics": {
+    "spell_attacks": [],
+    "saving_throws": [],
+    "ability_checks": [],
+    "damage_types": [],
+    "conditions": [],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [
+      "charmed",
+      "poisoned"
+    ],
+    "area_tags": [],
+    "misc_tags": [
+      "MAC"
+    ]
+  },
+  "description": "Assume an upper- or lower-planar form, gaining damage and condition immunities, flight, an AC formula, magical weapon attacks using your spellcasting ability, and Extra Attack.",
+  "source": {
+    "code": "TCE",
+    "book": "Tasha's Cauldron of Everything",
+    "edition": 2020,
+    "page": 116,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

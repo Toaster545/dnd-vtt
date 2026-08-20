@@ -1,0 +1,92 @@
+{
+  "class_index": "monk",
+  "index": "astral-self",
+  "name": "Way of the Astral Self",
+  "description": "A monk subclass that adds the Astral Self tradition from Tasha's Cauldron of Everything.",
+  "levels": [
+    {
+      "level": 3,
+      "features": [
+        "Arms of the Astral Self",
+        "Forms of Your Astral Self"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Arms of the Astral Self",
+          "description": "As a Bonus Action, spend 1 Focus Point to manifest spectral arms for 10 minutes. Their unarmed strikes have extra reach, can use Wisdom, and deal Force damage; their arrival can damage nearby creatures.",
+          "action": {
+            "activation": "bonus_action"
+          },
+          "key": "tce_monk_astral-self_arms-of-the-astral-self"
+        },
+        {
+          "type": "feature",
+          "name": "Forms of Your Astral Self",
+          "description": "Choose the appearance of your astral form; this is cosmetic and does not change its mechanics."
+        }
+      ]
+    },
+    {
+      "level": 6,
+      "features": [
+        "Visage of the Astral Self"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Visage of the Astral Self",
+          "description": "As a Bonus Action, spend 1 Focus Point to manifest an astral visage for 10 minutes, gaining 120-foot Darkvision, improved Insight and Intimidation, and the ability to project or focus your voice.",
+          "action": {
+            "activation": "bonus_action"
+          },
+          "key": "tce_monk_astral-self_visage-of-the-astral-self"
+        }
+      ]
+    },
+    {
+      "level": 11,
+      "features": [
+        "Body of the Astral Self"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Body of the Astral Self",
+          "description": "While your astral arms and visage are active, use your Reaction to reduce elemental damage, and once per turn add one Martial Arts die to damage from the astral arms."
+        }
+      ]
+    },
+    {
+      "level": 17,
+      "features": [
+        "Awakened Astral Self"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Awakened Astral Self",
+          "description": "As a Bonus Action, spend 5 Focus Points to manifest the complete astral self for 10 minutes. While active, gain +2 AC and make one additional astral-arm attack when using Extra Attack.",
+          "action": {
+            "activation": "bonus_action"
+          },
+          "effects": [
+            {
+              "type": "ac_bonus",
+              "value": 2
+            }
+          ],
+          "key": "tce_monk_astral-self_awakened-astral-self"
+        }
+      ]
+    }
+  ],
+  "source": {
+    "code": "TCE",
+    "book": "Tasha's Cauldron of Everything",
+    "edition": 2020,
+    "page": 50,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

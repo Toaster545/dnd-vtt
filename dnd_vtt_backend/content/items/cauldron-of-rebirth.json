@@ -1,0 +1,22 @@
+{
+  "index": "cauldron-of-rebirth",
+  "name": "Cauldron of Rebirth",
+  "type": "gear",
+  "category": "Wondrous Item",
+  "damage": null,
+  "damage_type": null,
+  "properties": [],
+  "weight": 0,
+  "cost": "Magic item",
+  "description": "A Druid focus that improves restorative magic, brews healing potions, and can return a recently dead creature to life.",
+  "rarity": "very rare",
+  "requires_attunement": "by a druid or warlock",
+  "source": {
+    "code": "TCE",
+    "book": "Tasha's Cauldron of Everything",
+    "edition": 2020,
+    "page": 122,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

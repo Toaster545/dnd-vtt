@@ -1,0 +1,96 @@
+{
+  "class_index": "barbarian",
+  "index": "wild-magic",
+  "name": "Path of Wild Magic",
+  "description": "A barbarian subclass that adds the Wild Magic tradition from Tasha's Cauldron of Everything.",
+  "levels": [
+    {
+      "level": 3,
+      "features": [
+        "Magic Awareness",
+        "Wild Surge"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Magic Awareness",
+          "description": "As an Action, learn the location of spells and magic items within 60 feet that are not behind total cover, including each spell's school. Uses equal your Proficiency Bonus per Long Rest.",
+          "action": {
+            "activation": "action",
+            "uses": {
+              "max": 2,
+              "maxProficiencyBonus": true,
+              "per": "long_rest"
+            }
+          },
+          "key": "tce_barbarian_wild-magic_magic-awareness"
+        },
+        {
+          "type": "feature",
+          "name": "Wild Surge",
+          "description": "Whenever you enter Rage, roll on the Wild Magic table and apply that magical effect. If an effect calls for a save, it uses Constitution and your Proficiency Bonus."
+        }
+      ]
+    },
+    {
+      "level": 6,
+      "features": [
+        "Bolstering Magic"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Bolstering Magic",
+          "description": "As an Action, touch a creature to grant either a 10-minute 1d3 bonus to attacks and ability checks or restore one expended spell slot whose level is no higher than a d3 roll. Uses equal your Proficiency Bonus per Long Rest.",
+          "action": {
+            "activation": "action",
+            "uses": {
+              "max": 2,
+              "maxProficiencyBonus": true,
+              "per": "long_rest"
+            }
+          },
+          "key": "tce_barbarian_wild-magic_bolstering-magic"
+        }
+      ]
+    },
+    {
+      "level": 10,
+      "features": [
+        "Unstable Backlash"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Unstable Backlash",
+          "description": "While raging, use your Reaction after taking damage or failing a saving throw to replace your current Wild Surge effect with a new roll.",
+          "action": {
+            "activation": "reaction"
+          },
+          "key": "tce_barbarian_wild-magic_unstable-backlash"
+        }
+      ]
+    },
+    {
+      "level": 14,
+      "features": [
+        "Controlled Surge"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Controlled Surge",
+          "description": "When you roll on the Wild Magic table, roll twice and choose which result takes effect. Matching results let you choose any result on the table."
+        }
+      ]
+    }
+  ],
+  "source": {
+    "code": "TCE",
+    "book": "Tasha's Cauldron of Everything",
+    "edition": 2020,
+    "page": 25,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

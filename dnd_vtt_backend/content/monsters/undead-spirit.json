@@ -1,0 +1,86 @@
+{
+  "index": "undead-spirit",
+  "name": "Undead Spirit",
+  "size": "M",
+  "type": "undead",
+  "alignment": "U",
+  "armor_class": 10,
+  "hit_points": 0,
+  "hit_points_formula": "Special",
+  "hit_dice": "Special",
+  "speed": {
+    "walk": 30,
+    "fly": 40
+  },
+  "ability_scores": {
+    "strength": 12,
+    "dexterity": 16,
+    "constitution": 15,
+    "intelligence": 4,
+    "wisdom": 10,
+    "charisma": 9
+  },
+  "saving_throws": {},
+  "skills": {},
+  "damage_vulnerabilities": [],
+  "damage_resistances": [],
+  "damage_immunities": [
+    "necrotic",
+    "poison"
+  ],
+  "condition_immunities": [
+    "exhaustion",
+    "frightened",
+    "paralyzed",
+    "poisoned"
+  ],
+  "senses": {
+    "passive_perception": 10,
+    "darkvision": 60
+  },
+  "languages": [
+    "understands the languages you speak"
+  ],
+  "challenge_rating": "Special",
+  "xp": 0,
+  "traits": [
+    {
+      "name": "Incorporeal Passage (Ghostly Only)",
+      "description": "damage dice 1d10. See Tasha's Cauldron of Everything, page 114, for targeting and additional effects."
+    },
+    {
+      "name": "Festering Aura (Putrid Only)",
+      "description": "A structured festering aura (putrid only) rule from Tasha's Cauldron of Everything, page 114."
+    }
+  ],
+  "actions": [
+    {
+      "name": "Multiattack",
+      "description": "A structured multiattack rule from Tasha's Cauldron of Everything, page 114."
+    },
+    {
+      "name": "Deathly Touch (Ghostly Only)",
+      "description": "damage dice 1d8 + 3 + summonSpellLevel. See Tasha's Cauldron of Everything, page 114, for targeting and additional effects."
+    },
+    {
+      "name": "Grave Bolt (Skeletal Only)",
+      "description": "damage dice 2d4 + 3 + summonSpellLevel. See Tasha's Cauldron of Everything, page 114, for targeting and additional effects."
+    },
+    {
+      "name": "Rotting Claw (Putrid Only)",
+      "description": "damage dice 1d6 + 3 + summonSpellLevel. See Tasha's Cauldron of Everything, page 114, for targeting and additional effects."
+    }
+  ],
+  "reactions": [],
+  "legendary_actions": [],
+  "description": "A creature, companion, or summoned spirit stat block from Tasha's Cauldron of Everything.",
+  "rules_text": "reference-only",
+  "source": {
+    "code": "TCE",
+    "book": "Tasha's Cauldron of Everything",
+    "edition": 2020,
+    "page": 114,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

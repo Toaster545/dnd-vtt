@@ -1,0 +1,85 @@
+{
+  "class_index": "bard",
+  "index": "creation",
+  "name": "College of Creation",
+  "description": "A bard subclass that adds the Creation tradition from Tasha's Cauldron of Everything.",
+  "levels": [
+    {
+      "level": 3,
+      "features": [
+        "Dancing Item",
+        "Mote of Potential",
+        "Performance of Creation"
+      ],
+      "grants": [
+        {
+          "type": "companion_grant",
+          "key": "creation_companion",
+          "name": "Dancing Item",
+          "monsterIndex": "dancing-item",
+          "description": "Use the shared Dancing Item stat block."
+        },
+        {
+          "type": "feature",
+          "name": "Mote of Potential",
+          "description": "A creature holding one of your Bardic Inspiration dice gains an additional effect when it uses the die: an attack creates extra Thunder damage, a save grants temporary Hit Points, or an ability check can apply the die to nearby creatures."
+        },
+        {
+          "type": "feature",
+          "name": "Performance of Creation",
+          "description": "As an Action, create one nonmagical item in an empty space nearby. Its maximum value scales with Bard level, its size is limited, and it lasts for a number of hours equal to your Proficiency Bonus. Once per Long Rest, or expend a spell slot to repeat it.",
+          "action": {
+            "activation": "action",
+            "uses": {
+              "max": 1,
+              "per": "long_rest"
+            }
+          },
+          "key": "tce_bard_creation_performance-of-creation"
+        }
+      ]
+    },
+    {
+      "level": 6,
+      "features": [
+        "Animating Performance"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Animating Performance",
+          "description": "As an Action, animate a Large or smaller nonmagical item as a Dancing Item companion for 1 hour. Command it with a Bonus Action. Once per Long Rest, or expend a spell slot of level 3 or higher to repeat it.",
+          "action": {
+            "activation": "action",
+            "uses": {
+              "max": 1,
+              "per": "long_rest"
+            }
+          },
+          "key": "tce_bard_creation_animating-performance"
+        }
+      ]
+    },
+    {
+      "level": 14,
+      "features": [
+        "Creative Crescendo"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Creative Crescendo",
+          "description": "Performance of Creation is no longer limited by gp value and can make several items at once, with only one allowed to be Huge. Creating beyond the limit dismisses an earlier item."
+        }
+      ]
+    }
+  ],
+  "source": {
+    "code": "TCE",
+    "book": "Tasha's Cauldron of Everything",
+    "edition": 2020,
+    "page": 28,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

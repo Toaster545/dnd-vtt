@@ -1,0 +1,66 @@
+{
+  "index": "artificer-initiate",
+  "name": "Artificer Initiate",
+  "description": "Learn one Artificer cantrip and one level 1 Artificer spell, gain an artisan tool proficiency, and use that tool as a spellcasting focus for the granted spells.",
+  "category": "general",
+  "prerequisite": {
+    "level": 4
+  },
+  "grants": [
+    {
+      "type": "spell_grant",
+      "key": "artificer_initiate_cantrip",
+      "name": "Artificer Initiate Cantrip",
+      "destination": "known",
+      "choose": 1,
+      "countsAgainstLimit": false,
+      "sourceKey": "artificer-initiate",
+      "sourceName": "Artificer Initiate",
+      "ability": "intelligence",
+      "filter": {
+        "lists": [
+          "Artificer"
+        ],
+        "exactLevels": [
+          0
+        ]
+      }
+    },
+    {
+      "type": "spell_grant",
+      "key": "artificer_initiate_spell",
+      "name": "Artificer Initiate Spell",
+      "destination": "always_prepared",
+      "choose": 1,
+      "countsAgainstLimit": false,
+      "sourceKey": "artificer-initiate",
+      "sourceName": "Artificer Initiate",
+      "ability": "intelligence",
+      "filter": {
+        "lists": [
+          "Artificer"
+        ],
+        "exactLevels": [
+          1
+        ]
+      },
+      "freeCast": {
+        "uses": 1,
+        "recovery": "long_rest"
+      }
+    },
+    {
+      "type": "feature",
+      "name": "Artisan Tool Training",
+      "description": "Gain proficiency with one type of artisan tool and use it as a spellcasting focus for this feat’s spells."
+    }
+  ],
+  "source": {
+    "code": "TCE",
+    "book": "Tasha's Cauldron of Everything",
+    "edition": 2020,
+    "page": 79,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

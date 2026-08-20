@@ -1,0 +1,100 @@
+{
+  "class_index": "cleric",
+  "index": "order",
+  "name": "Order Domain",
+  "description": "A cleric subclass that adds the Order tradition from Tasha's Cauldron of Everything.",
+  "levels": [
+    {
+      "level": 3,
+      "features": [
+        "Order Spells",
+        "Bonus Proficiencies",
+        "Voice of Authority",
+        "Channel Divinity: Order's Demand"
+      ],
+      "grants": [
+        {
+          "type": "spell_grant",
+          "key": "order_spells_3",
+          "name": "Order Spells",
+          "destination": "always_prepared",
+          "spells": [
+            "command",
+            "heroism",
+            "hold-person",
+            "zone-of-truth"
+          ],
+          "countsAgainstLimit": false,
+          "classLevel": 3
+        },
+        {
+          "type": "feature",
+          "name": "Bonus Proficiencies",
+          "description": "Gain Heavy Armor proficiency and proficiency in either Intimidation or Persuasion.",
+          "effects": [
+            {
+              "type": "armor_proficiency",
+              "tags": [
+                "heavy"
+              ]
+            }
+          ]
+        },
+        {
+          "type": "feature",
+          "name": "Voice of Authority",
+          "description": "When you affect an ally with a spell using a spell slot, that ally can use its Reaction immediately after the spell to make one weapon attack against a target you can see."
+        },
+        {
+          "type": "feature",
+          "name": "Channel Divinity: Order's Demand",
+          "description": "As an Action, present your Holy Symbol. Chosen creatures within 30 feet make a Wisdom save; a failure Charms them until the end of your next turn and makes them drop what they are holding."
+        }
+      ]
+    },
+    {
+      "level": 6,
+      "features": [
+        "Embodiment of the Law"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Embodiment of the Law",
+          "description": "When you cast an Enchantment spell with a one-action casting time, you can make it a Bonus Action. Uses equal your Wisdom modifier per Long Rest.",
+          "action": {
+            "activation": "bonus_action",
+            "uses": {
+              "max": 1,
+              "maxAbilityModifier": "wisdom",
+              "minimum": 1,
+              "per": "long_rest"
+            }
+          },
+          "key": "tce_cleric_order_embodiment-of-the-law"
+        }
+      ]
+    },
+    {
+      "level": 17,
+      "features": [
+        "Order's Wrath"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Order's Wrath",
+          "description": "Once per turn when your Divine Strike damages a creature, mark it until your next turn. The next weapon hit against it by an ally deals an extra 2d8 Psychic damage."
+        }
+      ]
+    }
+  ],
+  "source": {
+    "code": "TCE",
+    "book": "Tasha's Cauldron of Everything",
+    "edition": 2020,
+    "page": 31,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

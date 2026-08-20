@@ -1,0 +1,22 @@
+{
+  "index": "feywild-shard",
+  "name": "Feywild Shard",
+  "type": "gear",
+  "category": "Wondrous Item",
+  "damage": null,
+  "damage_type": null,
+  "properties": [],
+  "weight": 1,
+  "cost": "Magic item",
+  "description": "A Sorcerer focus that can trigger a Wild Magic Surge when you use Metamagic.",
+  "rarity": "uncommon",
+  "requires_attunement": "by a sorcerer",
+  "source": {
+    "code": "TCE",
+    "book": "Tasha's Cauldron of Everything",
+    "edition": 2020,
+    "page": 127,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

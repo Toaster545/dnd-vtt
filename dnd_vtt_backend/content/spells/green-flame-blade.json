@@ -1,0 +1,50 @@
+{
+  "index": "green-flame-blade",
+  "name": "Green-Flame Blade",
+  "level": 0,
+  "school": "Evocation",
+  "casting_time": "1 action",
+  "range": "5 feet",
+  "components": [
+    "S",
+    "M"
+  ],
+  "material": "a melee weapon worth at least 1 sp",
+  "duration": "Instantaneous",
+  "ritual": false,
+  "concentration": false,
+  "mechanics": {
+    "spell_attacks": [
+      "melee"
+    ],
+    "saving_throws": [],
+    "ability_checks": [],
+    "damage_types": [
+      "fire"
+    ],
+    "conditions": [],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [
+      "MT",
+      "ST"
+    ],
+    "misc_tags": [
+      "AAD",
+      "SCL",
+      "SGT"
+    ]
+  },
+  "description": "Make a melee weapon attack as part of the spell. On a hit, green fire leaps to a second creature within 5 feet, dealing Fire damage that scales with your level.",
+  "source": {
+    "code": "TCE",
+    "book": "Tasha's Cauldron of Everything",
+    "edition": 2020,
+    "page": 107,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

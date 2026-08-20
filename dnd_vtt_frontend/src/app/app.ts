@@ -16,14 +16,10 @@ import { NativeLifecycleService } from './core/services/native-lifecycle.service
     } @else if (pwa.reconnecting()) {
       <div class="connection-banner" role="status">Reconnected — refreshing live state…</div>
     }
-    @if (pwa.installAvailable()) {
-      <button class="install-prompt" type="button" (click)="pwa.install()">Install D&amp;D VTT</button>
-    }
     <router-outlet />
   `,
   styles: [`
     .connection-banner { position: fixed; z-index: 10000; inset: 0 0 auto; padding: .5rem 1rem; text-align: center; background: #7f1d1d; color: white; }
-    .install-prompt { position: fixed; z-index: 9999; right: 1rem; bottom: calc(5.5rem + env(safe-area-inset-bottom)); min-height: 44px; border: 1px solid #b9913f; border-radius: .5rem; padding: .5rem .9rem; background: #111218; color: #f1e5c8; }
   `],
 })
 export class App {

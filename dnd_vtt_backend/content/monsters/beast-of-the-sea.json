@@ -1,0 +1,66 @@
+{
+  "index": "beast-of-the-sea",
+  "name": "Beast of the Sea",
+  "size": "M",
+  "type": "beast",
+  "alignment": "U",
+  "armor_class": 10,
+  "hit_points": 0,
+  "hit_points_formula": "Special",
+  "hit_dice": "Special",
+  "speed": {
+    "walk": 5,
+    "swim": 60
+  },
+  "ability_scores": {
+    "strength": 14,
+    "dexterity": 14,
+    "constitution": 15,
+    "intelligence": 8,
+    "wisdom": 14,
+    "charisma": 11
+  },
+  "saving_throws": {},
+  "skills": {},
+  "damage_vulnerabilities": [],
+  "damage_resistances": [],
+  "damage_immunities": [],
+  "condition_immunities": [],
+  "senses": {
+    "passive_perception": 12,
+    "darkvision": 60
+  },
+  "languages": [
+    "understands the languages you speak"
+  ],
+  "challenge_rating": "Special",
+  "xp": 0,
+  "traits": [
+    {
+      "name": "Amphibious",
+      "description": "A structured amphibious rule from Tasha's Cauldron of Everything, page 61."
+    },
+    {
+      "name": "Primal Bond",
+      "description": "A structured primal bond rule from Tasha's Cauldron of Everything, page 61."
+    }
+  ],
+  "actions": [
+    {
+      "name": "Binding Strike",
+      "description": "damage dice 1d6 + 2 + PB. See Tasha's Cauldron of Everything, page 61, for targeting and additional effects."
+    }
+  ],
+  "reactions": [],
+  "legendary_actions": [],
+  "description": "A creature, companion, or summoned spirit stat block from Tasha's Cauldron of Everything.",
+  "rules_text": "reference-only",
+  "source": {
+    "code": "TCE",
+    "book": "Tasha's Cauldron of Everything",
+    "edition": 2020,
+    "page": 61,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

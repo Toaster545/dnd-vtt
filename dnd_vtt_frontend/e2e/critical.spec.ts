@@ -3,7 +3,7 @@ import { expect, test } from '@playwright/test';
 test('manifest is installable and excludes authenticated API caching', async ({ request }) => {
   const manifest = await request.get('/manifest.webmanifest');
   expect(manifest.ok()).toBeTruthy();
-  expect(await manifest.json()).toMatchObject({ name: 'D&D VTT', start_url: '/home/dashboard', display: 'standalone' });
+  expect(await manifest.json()).toMatchObject({ name: 'NatOne', start_url: '/home/dashboard', display: 'standalone' });
   const worker = await request.get('/ngsw.json');
   expect(worker.ok()).toBeTruthy();
   const workerConfig = await worker.json() as { dataGroups?: unknown[] };

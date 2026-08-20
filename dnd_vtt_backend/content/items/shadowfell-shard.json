@@ -1,0 +1,22 @@
+{
+  "index": "shadowfell-shard",
+  "name": "Shadowfell Shard",
+  "type": "gear",
+  "category": "Wondrous Item",
+  "damage": null,
+  "damage_type": null,
+  "properties": [],
+  "weight": 1,
+  "cost": "Magic item",
+  "description": "A Sorcerer focus that can impose Disadvantage on one ability’s checks after you use Metamagic.",
+  "rarity": "rare",
+  "requires_attunement": "by a sorcerer",
+  "source": {
+    "code": "TCE",
+    "book": "Tasha's Cauldron of Everything",
+    "edition": 2020,
+    "page": 135,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

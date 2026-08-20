@@ -1,0 +1,22 @@
+{
+  "index": "lifewell-tattoo",
+  "name": "Lifewell Tattoo",
+  "type": "gear",
+  "category": "Wondrous Item",
+  "damage": null,
+  "damage_type": null,
+  "properties": [],
+  "weight": 0,
+  "cost": "Magic item",
+  "description": "A tattoo that grants Resistance to Necrotic damage and can leave you at 1 Hit Point instead of 0 once per day.",
+  "rarity": "very rare",
+  "requires_attunement": true,
+  "source": {
+    "code": "TCE",
+    "book": "Tasha's Cauldron of Everything",
+    "edition": 2020,
+    "page": 129,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

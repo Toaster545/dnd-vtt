@@ -1,0 +1,22 @@
+{
+  "index": "mighty-servant-of-leuk-o",
+  "name": "Mighty Servant of Leuk-o",
+  "type": "gear",
+  "category": "Wondrous Item",
+  "damage": null,
+  "damage_type": null,
+  "properties": [],
+  "weight": 0,
+  "cost": "Magic item",
+  "description": "An artifact war machine that can be piloted from within and has formidable movement, defenses, and destructive attacks.",
+  "rarity": "artifact",
+  "requires_attunement": true,
+  "source": {
+    "code": "TCE",
+    "book": "Tasha's Cauldron of Everything",
+    "edition": 2020,
+    "page": 131,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "index": "coiling-grasp-tattoo",
+  "name": "Coiling Grasp Tattoo",
+  "type": "gear",
+  "category": "Wondrous Item",
+  "damage": null,
+  "damage_type": null,
+  "properties": [],
+  "weight": 0,
+  "cost": "Magic item",
+  "description": "A tattoo that projects an inky tendril to grapple and damage a creature within 15 feet.",
+  "rarity": "uncommon",
+  "requires_attunement": true,
+  "source": {
+    "code": "TCE",
+    "book": "Tasha's Cauldron of Everything",
+    "edition": 2020,
+    "page": 123,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

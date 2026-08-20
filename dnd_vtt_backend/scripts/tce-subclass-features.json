@@ -1,0 +1,332 @@
+{
+  "barbarian:beast:form-of-the-beast": {
+    "description": "When you enter Rage, manifest a Bite, Claws, or Tail natural weapon until the Rage ends. It uses Strength, counts as a simple melee weapon, and gains the option's healing, extra-attack, or defensive benefit."
+  },
+  "barbarian:beast:bestial-soul": {
+    "description": "Your Form of the Beast weapons count as magical. After a rest, choose a swimming adaptation, a climbing adaptation, or an enhanced jump until your next rest."
+  },
+  "barbarian:beast:infectious-fury": {
+    "description": "Once per turn when a Form of the Beast weapon hits, force a Wisdom save. On a failure, the target either takes 2d12 Psychic damage or uses its Reaction to attack a creature you choose. Uses equal your Proficiency Bonus per Long Rest.",
+    "action": { "activation": "free", "uses": { "max": 2, "maxProficiencyBonus": true, "per": "long_rest" } }
+  },
+  "barbarian:beast:call-the-hunt": {
+    "description": "When you enter Rage, empower willing creatures nearby. You gain temporary Hit Points for each participant, and each empowered ally can add 1d6 damage to one hit per turn while your Rage lasts. Once per Long Rest."
+  },
+  "barbarian:wild-magic:magic-awareness": {
+    "description": "As an Action, learn the location of spells and magic items within 60 feet that are not behind total cover, including each spell's school. Uses equal your Proficiency Bonus per Long Rest.",
+    "action": { "activation": "action", "uses": { "max": 2, "maxProficiencyBonus": true, "per": "long_rest" } }
+  },
+  "barbarian:wild-magic:wild-surge": {
+    "description": "Whenever you enter Rage, roll on the Wild Magic table and apply that magical effect. If an effect calls for a save, it uses Constitution and your Proficiency Bonus."
+  },
+  "barbarian:wild-magic:bolstering-magic": {
+    "description": "As an Action, touch a creature to grant either a 10-minute 1d3 bonus to attacks and ability checks or restore one expended spell slot whose level is no higher than a d3 roll. Uses equal your Proficiency Bonus per Long Rest.",
+    "action": { "activation": "action", "uses": { "max": 2, "maxProficiencyBonus": true, "per": "long_rest" } }
+  },
+  "barbarian:wild-magic:unstable-backlash": {
+    "description": "While raging, use your Reaction after taking damage or failing a saving throw to replace your current Wild Surge effect with a new roll.",
+    "action": { "activation": "reaction" }
+  },
+  "barbarian:wild-magic:controlled-surge": {
+    "description": "When you roll on the Wild Magic table, roll twice and choose which result takes effect. Matching results let you choose any result on the table."
+  },
+  "bard:creation:mote-of-potential": {
+    "description": "A creature holding one of your Bardic Inspiration dice gains an additional effect when it uses the die: an attack creates extra Thunder damage, a save grants temporary Hit Points, or an ability check can apply the die to nearby creatures."
+  },
+  "bard:creation:performance-of-creation": {
+    "description": "As an Action, create one nonmagical item in an empty space nearby. Its maximum value scales with Bard level, its size is limited, and it lasts for a number of hours equal to your Proficiency Bonus. Once per Long Rest, or expend a spell slot to repeat it.",
+    "action": { "activation": "action", "uses": { "max": 1, "per": "long_rest" } }
+  },
+  "bard:creation:animating-performance": {
+    "description": "As an Action, animate a Large or smaller nonmagical item as a Dancing Item companion for 1 hour. Command it with a Bonus Action. Once per Long Rest, or expend a spell slot of level 3 or higher to repeat it.",
+    "action": { "activation": "action", "uses": { "max": 1, "per": "long_rest" } }
+  },
+  "bard:creation:creative-crescendo": {
+    "description": "Performance of Creation is no longer limited by gp value and can make several items at once, with only one allowed to be Huge. Creating beyond the limit dismisses an earlier item."
+  },
+  "bard:eloquence:silver-tongue": {
+    "description": "When a Deception or Persuasion d20 roll is 9 or lower, treat the roll as a 10."
+  },
+  "bard:eloquence:unsettling-words": {
+    "description": "As a Bonus Action, expend Bardic Inspiration and choose a creature within 60 feet. Subtract the die from the next saving throw it makes before your next turn.",
+    "action": { "activation": "bonus_action" }
+  },
+  "bard:eloquence:unfailing-inspiration": {
+    "description": "When a creature adds your Bardic Inspiration die to a d20 roll and still fails, the die is not expended."
+  },
+  "bard:eloquence:universal-speech": {
+    "description": "As an Action, choose nearby creatures up to your Charisma modifier; for 1 hour they can understand your speech. Once per Long Rest, or expend Bardic Inspiration to repeat it.",
+    "action": { "activation": "action", "uses": { "max": 1, "per": "long_rest" } }
+  },
+  "bard:eloquence:infectious-inspiration": {
+    "description": "When a creature succeeds after using your Bardic Inspiration, use your Reaction to give another nearby creature Bardic Inspiration without expending a die. Uses equal your Charisma modifier per Long Rest.",
+    "action": { "activation": "reaction", "uses": { "max": 1, "maxAbilityModifier": "charisma", "minimum": 1, "per": "long_rest" } }
+  },
+  "cleric:order:bonus-proficiencies": {
+    "description": "Gain Heavy Armor proficiency and proficiency in either Intimidation or Persuasion.",
+    "effects": [{ "type": "armor_proficiency", "tags": ["heavy"] }]
+  },
+  "cleric:order:voice-of-authority": {
+    "description": "When you affect an ally with a spell using a spell slot, that ally can use its Reaction immediately after the spell to make one weapon attack against a target you can see."
+  },
+  "cleric:order:channel-divinity-orders-demand": {
+    "description": "As an Action, present your Holy Symbol. Chosen creatures within 30 feet make a Wisdom save; a failure Charms them until the end of your next turn and makes them drop what they are holding."
+  },
+  "cleric:order:embodiment-of-the-law": {
+    "description": "When you cast an Enchantment spell with a one-action casting time, you can make it a Bonus Action. Uses equal your Wisdom modifier per Long Rest.",
+    "action": { "activation": "bonus_action", "uses": { "max": 1, "maxAbilityModifier": "wisdom", "minimum": 1, "per": "long_rest" } }
+  },
+  "cleric:order:orders-wrath": {
+    "description": "Once per turn when your Divine Strike damages a creature, mark it until your next turn. The next weapon hit against it by an ally deals an extra 2d8 Psychic damage."
+  },
+  "cleric:peace:emboldening-bond": {
+    "description": "As an Action, bond a number of willing creatures equal to your Proficiency Bonus for 10 minutes. Once per turn, a bonded creature near another bonded creature can add 1d4 to an attack roll, ability check, or saving throw. Uses equal your Proficiency Bonus per Long Rest.",
+    "action": { "activation": "action", "uses": { "max": 2, "maxProficiencyBonus": true, "per": "long_rest" } }
+  },
+  "cleric:peace:implement-of-peace": {
+    "description": "Gain proficiency in Insight, Performance, or Persuasion."
+  },
+  "cleric:peace:channel-divinity-balm-of-peace": {
+    "description": "As an Action, move up to your Speed without provoking Opportunity Attacks. The first time you move within 5 feet of a creature during this movement, you can restore 2d6 plus your Wisdom modifier Hit Points to it."
+  },
+  "cleric:peace:protective-bond": {
+    "description": "When a bonded creature is about to take damage, another bonded creature within 30 feet can use its Reaction to teleport adjacent and take all of that damage instead."
+  },
+  "cleric:peace:expansive-bond": {
+    "description": "Your bond's protective teleport works at 60 feet, and a creature that takes damage through Protective Bond has Resistance to that damage."
+  },
+  "cleric:twilight:bonus-proficiencies": {
+    "description": "Gain proficiency with Martial Weapons and Heavy Armor.",
+    "effects": [{ "type": "armor_proficiency", "tags": ["heavy"] }, { "type": "weapon_proficiency", "tags": ["martial"] }]
+  },
+  "cleric:twilight:eyes-of-night": {
+    "description": "Gain Darkvision out to 300 feet. As an Action, share that range with willing creatures up to your Wisdom modifier for 1 hour; restore the shared use on a Long Rest or by expending a spell slot."
+  },
+  "cleric:twilight:vigilant-blessing": {
+    "description": "As an Action, give one creature Advantage on its next Initiative roll. The blessing ends after that roll or when you bless another creature."
+  },
+  "cleric:twilight:channel-divinity-twilight-sanctuary": {
+    "description": "As an Action, create a 30-foot sphere of twilight for 1 minute. At the end of each ally's turn in it, grant temporary Hit Points equal to 1d6 plus Cleric level or end one Charmed or Frightened effect on that ally."
+  },
+  "cleric:twilight:steps-of-night": {
+    "description": "While in Dim Light or Darkness, use a Bonus Action to gain a Fly Speed equal to your Speed for 1 minute. Uses equal your Proficiency Bonus per Long Rest.",
+    "action": { "activation": "bonus_action", "uses": { "max": 2, "maxProficiencyBonus": true, "per": "long_rest" } }
+  },
+  "cleric:twilight:twilight-shroud": {
+    "description": "You and allies inside your Twilight Sanctuary gain Half Cover."
+  },
+  "druid:spores:circle-spells": {
+    "description": "Gain Chill Touch and always prepare the Circle of Spores spells as your Druid level increases."
+  },
+  "druid:spores:halo-of-spores": {
+    "description": "When a creature you can see moves within 10 feet or starts its turn there, use your Reaction to force a Constitution save; it takes Necrotic damage on a failure. The damage die scales with Druid level.",
+    "action": { "activation": "reaction" }
+  },
+  "druid:spores:symbiotic-entity": {
+    "description": "As an Action, expend Wild Shape to gain 4 temporary Hit Points per Druid level for 10 minutes. While they remain, double Halo of Spores damage and add 1d6 Necrotic damage to your melee weapon hits."
+  },
+  "druid:spores:fungal-infestation": {
+    "description": "When a Small or Medium Beast or Humanoid dies within 10 feet, use your Reaction to animate it as a 1-HP Zombie for 1 hour. Uses equal your Wisdom modifier per Long Rest.",
+    "action": { "activation": "reaction", "uses": { "max": 1, "maxAbilityModifier": "wisdom", "minimum": 1, "per": "long_rest" } }
+  },
+  "druid:spores:spreading-spores": {
+    "description": "While Symbiotic Entity is active, use a Bonus Action to create a 10-foot cube of spores within 30 feet for 1 minute. Creatures entering or starting there take your Halo of Spores damage on a failed save.",
+    "action": { "activation": "bonus_action" }
+  },
+  "druid:spores:fungal-body": {
+    "description": "You cannot be Blinded, Deafened, Frightened, or Poisoned, and critical hits against you become normal hits unless you are Incapacitated."
+  },
+  "druid:wildfire:circle-spells": {
+    "description": "Always prepare the Circle of Wildfire spells as your Druid level increases."
+  },
+  "druid:wildfire:summon-wildfire-spirit": {
+    "description": "As an Action, expend Wild Shape to summon a Wildfire Spirit for 1 hour. Its arrival can deal 2d6 Fire damage nearby, and you command its actions with a Bonus Action.",
+    "action": { "activation": "action" }
+  },
+  "druid:wildfire:enhanced-bond": {
+    "description": "While your Wildfire Spirit is present, one damage or healing roll of a Fire or restorative spell gains 1d8, and eligible spells can originate from the spirit's space."
+  },
+  "druid:wildfire:cauterizing-flames": {
+    "description": "When a Small or larger creature dies within 30 feet, use your Reaction to create a spectral flame. A creature entering it can take 2d10 plus Wisdom Fire damage or regain that many Hit Points. Uses equal your Proficiency Bonus per Long Rest.",
+    "action": { "activation": "reaction", "uses": { "max": 2, "maxProficiencyBonus": true, "per": "long_rest" } }
+  },
+  "druid:wildfire:blazing-revival": {
+    "description": "When you drop to 0 Hit Points while your Wildfire Spirit is within 120 feet, dismiss the spirit and regain half your maximum Hit Points. Once per Long Rest.",
+    "action": { "activation": "free", "uses": { "max": 1, "per": "long_rest" } }
+  },
+  "fighter:rune-knight:bonus-proficiencies": {
+    "description": "Gain proficiency with Smith's Tools and learn Giant."
+  },
+  "fighter:rune-knight:giants-might": {
+    "description": "As a Bonus Action for 1 minute, become Large if space permits, gain Advantage on Strength checks and saves, and add 1d6 damage to one weapon or unarmed hit per turn. Uses equal your Proficiency Bonus per Long Rest.",
+    "action": { "activation": "bonus_action", "uses": { "max": 2, "maxProficiencyBonus": true, "per": "long_rest" } }
+  },
+  "fighter:rune-knight:runic-shield": {
+    "description": "When a creature you can see within 60 feet is hit by an attack, use your Reaction to force the attacker to reroll the d20. Uses equal your Proficiency Bonus per Long Rest.",
+    "action": { "activation": "reaction", "uses": { "max": 2, "maxProficiencyBonus": true, "per": "long_rest" } }
+  },
+  "fighter:rune-knight:great-stature": {
+    "description": "Your height permanently increases, and Giant's Might adds 1d8 damage instead of 1d6."
+  },
+  "fighter:rune-knight:master-of-runes": {
+    "description": "Each rune can be invoked once per Short or Long Rest instead of once per Long Rest."
+  },
+  "fighter:rune-knight:runic-juggernaut": {
+    "description": "Giant's Might can make you Huge, increases your reach by 5 feet, and adds 1d10 damage instead of 1d8."
+  },
+  "monk:astral-self:arms-of-the-astral-self": {
+    "description": "As a Bonus Action, spend 1 Focus Point to manifest spectral arms for 10 minutes. Their unarmed strikes have extra reach, can use Wisdom, and deal Force damage; their arrival can damage nearby creatures.",
+    "action": { "activation": "bonus_action" }
+  },
+  "monk:astral-self:forms-of-your-astral-self": {
+    "description": "Choose the appearance of your astral form; this is cosmetic and does not change its mechanics."
+  },
+  "monk:astral-self:visage-of-the-astral-self": {
+    "description": "As a Bonus Action, spend 1 Focus Point to manifest an astral visage for 10 minutes, gaining 120-foot Darkvision, improved Insight and Intimidation, and the ability to project or focus your voice.",
+    "action": { "activation": "bonus_action" }
+  },
+  "monk:astral-self:body-of-the-astral-self": {
+    "description": "While your astral arms and visage are active, use your Reaction to reduce elemental damage, and once per turn add one Martial Arts die to damage from the astral arms."
+  },
+  "monk:astral-self:awakened-astral-self": {
+    "description": "As a Bonus Action, spend 5 Focus Points to manifest the complete astral self for 10 minutes. While active, gain +2 AC and make one additional astral-arm attack when using Extra Attack.",
+    "action": { "activation": "bonus_action" },
+    "effects": [{ "type": "ac_bonus", "value": 2 }]
+  },
+  "paladin:watchers:tenets-of-the-watchers": {
+    "description": "The oath emphasizes vigilance, loyalty, discipline, and defending the mortal world from extraplanar threats."
+  },
+  "paladin:watchers:abjure-the-extraplanar": {
+    "description": "As an Action using Channel Divinity, force nearby Aberrations, Celestials, Elementals, Fey, and Fiends to make a Wisdom save or become Turned for 1 minute."
+  },
+  "paladin:watchers:watchers-will": {
+    "description": "As an Action using Channel Divinity, grant chosen creatures within 30 feet Advantage on Intelligence, Wisdom, and Charisma saving throws for 1 minute."
+  },
+  "paladin:watchers:aura-of-the-sentinel": {
+    "description": "You and allies in your Aura of Protection add your Proficiency Bonus to Initiative rolls."
+  },
+  "paladin:watchers:vigilant-rebuke": {
+    "description": "When you or a creature within 30 feet succeeds on an Intelligence, Wisdom, or Charisma save, use your Reaction to deal Force damage equal to 2d8 plus your Charisma modifier to the creature that caused the save.",
+    "action": { "activation": "reaction" }
+  },
+  "paladin:watchers:mortal-bulwark": {
+    "description": "As a Bonus Action for 1 minute, gain Truesight to 120 feet and Advantage on attacks against extraplanar creatures; a hit can also banish its target until your next turn. Once per Long Rest.",
+    "action": { "activation": "bonus_action", "uses": { "max": 1, "per": "long_rest" } }
+  },
+  "ranger:swarmkeeper:gathered-swarm": {
+    "description": "Once per turn after you hit, your swarm either deals 1d6 Piercing damage, moves the target up to 15 feet after a Strength save, or moves you 5 feet without provoking Opportunity Attacks."
+  },
+  "ranger:swarmkeeper:swarmkeeper-magic": {
+    "description": "Learn Mage Hand and additional Swarmkeeper spells as your Ranger level increases. Your Mage Hand appears as part of your swarm."
+  },
+  "ranger:swarmkeeper:writhing-tide": {
+    "description": "As a Bonus Action, gain a 10-foot Fly Speed and Hover for 1 minute. Uses equal your Proficiency Bonus per Long Rest.",
+    "action": { "activation": "bonus_action", "uses": { "max": 2, "maxProficiencyBonus": true, "per": "long_rest" } }
+  },
+  "ranger:swarmkeeper:mighty-swarm": {
+    "description": "Gathered Swarm's damage becomes 1d8; its forced movement can knock the target Prone, and its self-movement grants Half Cover until your next turn."
+  },
+  "ranger:swarmkeeper:swarming-dispersal": {
+    "description": "When you take damage, use your Reaction to gain Resistance to that damage and teleport up to 30 feet. Uses equal your Proficiency Bonus per Long Rest.",
+    "action": { "activation": "reaction", "uses": { "max": 2, "maxProficiencyBonus": true, "per": "long_rest" } }
+  },
+  "rogue:phantom:wails-from-the-grave": {
+    "description": "After dealing Sneak Attack damage, choose another creature within 30 feet; it takes Necrotic damage equal to half the Sneak Attack dice. Uses equal your Proficiency Bonus per Long Rest.",
+    "action": { "activation": "free", "uses": { "max": 2, "maxProficiencyBonus": true, "per": "long_rest" } }
+  },
+  "rogue:phantom:whispers-of-the-dead": {
+    "description": "After a Short or Long Rest, gain one skill or tool proficiency of your choice until you use this feature again."
+  },
+  "rogue:phantom:tokens-of-the-departed": {
+    "description": "When a creature dies nearby, use your Reaction to capture a soul trinket, up to your Proficiency Bonus at once. A trinket improves death and Constitution saves and can fuel Wails from the Grave or a question to the spirit."
+  },
+  "rogue:phantom:ghost-walk": {
+    "description": "As a Bonus Action, become spectral for 10 minutes, gaining a 10-foot Fly Speed and Hover while attacks against you have Disadvantage. Once per Long Rest, or destroy a soul trinket to repeat it.",
+    "action": { "activation": "bonus_action", "uses": { "max": 1, "per": "long_rest" } }
+  },
+  "rogue:phantom:deaths-friend": {
+    "description": "Wails from the Grave also damages the original Sneak Attack target, and you gain one soul trinket whenever you finish a Long Rest without one."
+  },
+  "warlock:fathomless:gift-of-the-sea": {
+    "description": "Gain a 40-foot Swim Speed and the ability to breathe underwater."
+  },
+  "warlock:fathomless:tentacle-of-the-deeps": {
+    "description": "As a Bonus Action, summon a spectral tentacle within 60 feet for 1 minute and make a melee spell attack through it for 1d8 Cold damage, reducing the target's Speed by 10 feet. Move and attack with it using later Bonus Actions. Uses equal your Proficiency Bonus per Long Rest.",
+    "action": { "activation": "bonus_action", "uses": { "max": 2, "maxProficiencyBonus": true, "per": "long_rest" } }
+  },
+  "warlock:fathomless:guardian-coil": {
+    "description": "When you or a nearby creature takes damage, use your Reaction through the tentacle to reduce that damage by 1d8, scaling to 2d8 and 3d8 at higher Warlock levels.",
+    "action": { "activation": "reaction" }
+  },
+  "warlock:fathomless:oceanic-soul": {
+    "description": "Gain Resistance to Cold damage. While submerged, creatures also submerged can understand your speech."
+  },
+  "warlock:fathomless:grasping-tentacles": {
+    "description": "Learn Evard's Black Tentacles. Cast it once per Long Rest without a slot; when you cast it, gain temporary Hit Points equal to Warlock level and damage cannot break your Concentration.",
+    "action": { "activation": "action", "uses": { "max": 1, "per": "long_rest" } }
+  },
+  "warlock:fathomless:fathomless-plunge": {
+    "description": "As an Action, teleport yourself and up to five willing creatures within 30 feet to a body of water you have seen within 1 mile or to another body of water on the same plane. Once per Short or Long Rest.",
+    "action": { "activation": "action", "uses": { "max": 1, "per": "short_rest" } }
+  },
+  "warlock:genie:genies-vessel": {
+    "description": "Choose a Dao, Djinni, Efreeti, or Marid patron and a Tiny vessel. The choice determines your bonus damage type and expanded spell list."
+  },
+  "warlock:genie:bottled-respite": {
+    "description": "As an Action, enter your vessel's extradimensional space for up to twice your Proficiency Bonus in hours. You can hear outside and leave as a Bonus Action. Once per Long Rest.",
+    "action": { "activation": "action", "uses": { "max": 1, "per": "long_rest" } }
+  },
+  "warlock:genie:genies-wrath": {
+    "description": "Once during each of your turns when you hit with an attack, deal extra patron-associated damage equal to your Proficiency Bonus."
+  },
+  "warlock:genie:elemental-gift": {
+    "description": "Gain Resistance to your patron's associated damage. As a Bonus Action, gain a 30-foot Fly Speed for 10 minutes; uses equal your Proficiency Bonus per Long Rest.",
+    "action": { "activation": "bonus_action", "uses": { "max": 2, "maxProficiencyBonus": true, "per": "long_rest" } }
+  },
+  "warlock:genie:sanctuary-vessel": {
+    "description": "When you enter your vessel, bring up to five willing creatures. Anyone who spends a Short Rest inside adds your Proficiency Bonus to Hit Points restored by Hit Dice."
+  },
+  "warlock:genie:limited-wish": {
+    "description": "As an Action, reproduce the effect of one spell of level 6 or lower with a one-action casting time, ignoring its components. After use, it recharges in 1d4 Long Rests.",
+    "action": { "activation": "action", "uses": { "max": 1, "per": "long_rest" } }
+  },
+  "wizard:bladesinging:bladesinger-styles": {
+    "description": "Choose the visual style and tradition of your Bladesong; this choice has no mechanical effect."
+  },
+  "wizard:bladesinging:bladesong": {
+    "description": "As a Bonus Action for 1 minute while not using Medium or Heavy Armor or a Shield, add Intelligence to AC and Concentration saves, gain 10 feet of Speed, and gain Advantage on Acrobatics. Uses equal your Proficiency Bonus per Long Rest.",
+    "action": { "activation": "bonus_action", "uses": { "max": 2, "maxProficiencyBonus": true, "per": "long_rest" } }
+  },
+  "wizard:bladesinging:training-in-war-and-song-bladesinging": {
+    "description": "Gain Light Armor proficiency, proficiency with one one-handed melee weapon, and proficiency in Performance.",
+    "effects": [{ "type": "armor_proficiency", "tags": ["light"] }]
+  },
+  "wizard:bladesinging:extra-attack": {
+    "description": "Attack twice when you take the Attack action, and you can replace one attack with a cantrip."
+  },
+  "wizard:bladesinging:song-of-defense": {
+    "description": "While Bladesong is active, use your Reaction and expend a spell slot to reduce incoming damage by five times the slot's level.",
+    "action": { "activation": "reaction" }
+  },
+  "wizard:bladesinging:song-of-victory": {
+    "description": "While Bladesong is active, add your Intelligence modifier to melee weapon damage rolls."
+  },
+  "wizard:scribes:awakened-spellbook": {
+    "description": "Your spellbook becomes an Arcane Focus. When casting a Wizard spell with a slot, you can replace its damage type with one found in another spell of that level in the book; you can also cast Wizard rituals using their normal casting time."
+  },
+  "wizard:scribes:wizardly-quill": {
+    "description": "As a Bonus Action, create a magic quill that needs no ink, copies spells into your spellbook in two minutes per spell level, and can erase its own writing.",
+    "action": { "activation": "bonus_action" }
+  },
+  "wizard:scribes:manifest-mind": {
+    "description": "As a Bonus Action, manifest your spellbook's spectral mind within 60 feet. You perceive and cast Wizard spells from its space, with a limited number of remote casts per Long Rest.",
+    "action": { "activation": "bonus_action" }
+  },
+  "wizard:scribes:master-scrivener": {
+    "description": "After a Long Rest, create one temporary spell scroll containing a level 1 or 2 Wizard spell from your book. Only you can use it, and it casts one level higher."
+  },
+  "wizard:scribes:one-with-the-word": {
+    "description": "Gain Advantage on Arcana checks while holding your awakened spellbook. Use your Reaction to prevent all damage to yourself, temporarily losing spells from the book whose combined levels equal a 3d6 roll. Once per Long Rest.",
+    "action": { "activation": "reaction", "uses": { "max": 1, "per": "long_rest" } }
+  }
+}

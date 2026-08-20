@@ -1,0 +1,47 @@
+{
+  "index": "blade-of-disaster",
+  "name": "Blade of Disaster",
+  "level": 9,
+  "school": "Conjuration",
+  "casting_time": "1 bonus action",
+  "range": "60 feet",
+  "components": [
+    "V",
+    "S"
+  ],
+  "duration": "Concentration, up to 1 minute",
+  "ritual": false,
+  "concentration": true,
+  "mechanics": {
+    "spell_attacks": [
+      "melee"
+    ],
+    "saving_throws": [],
+    "ability_checks": [],
+    "damage_types": [
+      "force"
+    ],
+    "conditions": [],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [
+      "MT"
+    ],
+    "misc_tags": [
+      "SGT",
+      "UBA"
+    ]
+  },
+  "description": "Create a planar blade and make two melee spell attacks with it immediately and on later Bonus Actions. Each hit deals 4d12 Force damage; rolls of 18–20 are critical hits that deal three times the normal damage dice.",
+  "source": {
+    "code": "TCE",
+    "book": "Tasha's Cauldron of Everything",
+    "edition": 2020,
+    "page": 106,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

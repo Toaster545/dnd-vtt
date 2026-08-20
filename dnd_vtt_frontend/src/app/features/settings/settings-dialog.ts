@@ -11,6 +11,7 @@ import { UserAdminService } from '../../core/services/user-admin.service';
 import { UserProfile, UserRole } from '../../core/models/user.model';
 import { getErrorMessage } from '../../core/utils/error-message';
 import { ConfirmService } from '../../shared/confirm.service';
+import { PwaService } from '../../core/services/pwa.service';
 
 interface UserEditForm {
   username: string;
@@ -40,6 +41,7 @@ export class SettingsDialogComponent implements OnInit {
   uiScaleOptions = UI_SCALE_OPTIONS;
   colorScheme = inject(ColorSchemeService);
   colorSchemeOptions = COLOR_SCHEME_OPTIONS;
+  pwa = inject(PwaService);
 
   users = signal<UserProfile[]>([]);
   usersLoading = signal(false);
@@ -113,5 +115,9 @@ export class SettingsDialogComponent implements OnInit {
   formatDate(iso?: string): string {
     if (!iso) return '';
     return new Date(iso).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
+  }
+
+  installNatOne() {
+    void this.pwa.install();
   }
 }
