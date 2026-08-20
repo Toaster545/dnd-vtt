@@ -78,27 +78,31 @@
         {
           "type": "feature",
           "name": "Channel Divinity",
-          "description": "Channel Divinity is a Oath of Conquest feature. See Xanathar's Guide to Everything, page 37, for complete rules."
+          "description": "Gain the Conquering Presence and Guided Strike Channel Divinity options. You can expend one Channel Divinity use to activate either option."
         },
         {
           "type": "feature",
           "name": "Conquering Presence",
-          "description": "Conquering Presence is a Oath of Conquest feature. See Xanathar's Guide to Everything, page 37, for complete rules."
+          "description": "As an action, chosen creatures you can see within 30 feet make a Wisdom save. On a failure, a creature is Frightened of you for 1 minute and repeats the save at the end of each of its turns.",
+          "action": {
+            "activation": "action"
+          },
+          "key": "xge_paladin_conquest_3_conquering-presence"
         },
         {
           "type": "feature",
           "name": "Guided Strike",
-          "description": "Guided Strike is a Oath of Conquest feature. See Xanathar's Guide to Everything, page 37, for complete rules."
+          "description": "After making an attack roll but before learning whether it hits, expend Channel Divinity to add +10 to the roll."
         },
         {
           "type": "feature",
           "name": "Oath Spells",
-          "description": "Oath Spells is a Oath of Conquest feature. See Xanathar's Guide to Everything, page 37, for complete rules."
+          "description": "Always have the Oath of Conquest spells prepared at their listed Paladin levels; they do not count against the number of spells you prepare."
         },
         {
           "type": "feature",
           "name": "Tenets of Conquest",
-          "description": "Tenets of Conquest is a Oath of Conquest feature. See Xanathar's Guide to Everything, page 37, for complete rules."
+          "description": "The oath emphasizes extinguishing resistance, ruling with uncompromising strength, and continually becoming strong enough to retain authority."
         }
       ]
     },
@@ -111,7 +115,7 @@
         {
           "type": "feature",
           "name": "Aura of Conquest",
-          "description": "Aura of Conquest is a Oath of Conquest feature. See Xanathar's Guide to Everything, page 37, for complete rules."
+          "description": "While conscious, a creature Frightened of you that starts its turn within 10 feet has Speed 0 and takes psychic damage equal to half your Paladin level. The radius becomes 30 feet at Paladin level 18."
         }
       ]
     },
@@ -124,7 +128,7 @@
         {
           "type": "feature",
           "name": "Scornful Rebuke",
-          "description": "Scornful Rebuke is a Oath of Conquest feature. See Xanathar's Guide to Everything, page 37, for complete rules."
+          "description": "Whenever a creature hits you with an attack while you are not Incapacitated, it takes psychic damage equal to your Charisma modifier, minimum 1."
         }
       ]
     },
@@ -137,7 +141,15 @@
         {
           "type": "feature",
           "name": "Invincible Conqueror",
-          "description": "Invincible Conqueror is a Oath of Conquest feature. See Xanathar's Guide to Everything, page 37, for complete rules."
+          "description": "As an action, transform for 1 minute: gain resistance to all damage, make one additional attack whenever taking the Attack action, and score critical hits with melee weapon attacks on 19 or 20. Regain use after a Long Rest.",
+          "action": {
+            "activation": "action",
+            "uses": {
+              "max": 1,
+              "per": "long_rest"
+            }
+          },
+          "key": "xge_paladin_conquest_20_invincible-conqueror"
         }
       ]
     }

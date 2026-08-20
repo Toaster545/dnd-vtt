@@ -18,6 +18,9 @@ const rawSpells = read('spells-xge.json').spell.filter(spell => spell.source ===
 const rawSpellSources = read('spell-sources.json');
 const rawFeats = read('feats.json').feat.filter(feat => feat.source === 'XGE');
 const rawItems = read('items.json').item.filter(item => item.source === 'XGE');
+const authoredSubclassFeatures = JSON.parse(
+  readFileSync(resolve('scripts', 'xge-subclass-features.json'), 'utf8'),
+);
 
 const slug = (value) => value.toLowerCase()
   .replace(/[’']/g, '')
@@ -157,8 +160,17 @@ for (const spell of importedSpells) {
 }
 
 const spellListAdditions = {};
+const spellClassVariants = (spellName) => {
+  const authoredRows = rawSpellSources.XGE?.[spellName]?.classVariant;
+  if (Array.isArray(authoredRows)) return authoredRows;
+
+  const generatedGroups = rawSpellSources.xge?.[spellName.toLowerCase()]?.classVariant ?? {};
+  return Object.values(generatedGroups).flatMap(group =>
+    Object.keys(group).map(name => ({ name })),
+  );
+};
 for (const spell of importedSpells) {
-  const classes = rawSpellSources.XGE?.[spell.name]?.classVariant ?? [];
+  const classes = spellClassVariants(spell.name);
   for (const entry of classes) {
     const classIndex = slug(entry.name);
     (spellListAdditions[classIndex] ??= []).push(slug(spell.name));
@@ -400,6 +412,7 @@ const additionalSpellGrants = (classIndex, subclass) => {
 
 const importedSubclasses = [];
 const reprintedSubclasses = [];
+const usedSubclassFeatureKeys = new Set();
 for (const classIndex of classIndexes) {
   const data = rawClasses[classIndex];
   for (const subclass of data.subclass.filter(entry => entry.source === 'XGE')) {
@@ -413,12 +426,16 @@ for (const classIndex of classIndexes) {
     const levelMap = new Map(subclassMilestones[classIndex].map(level => [level, []]));
     for (const entry of features) {
       if (entry.name === subclass.name || entry.name === subclass.shortName) continue;
+      const featureKey = `${classIndex}:${index}:${entry.level}:${slug(entry.name)}`;
+      const authored = authoredSubclassFeatures[featureKey];
+      if (!authored) throw new Error(`Missing authored subclass feature: ${featureKey}`);
+      usedSubclassFeatureKeys.add(featureKey);
       const targetLevel = nearestMilestone(classIndex, entry.level);
       const grants = levelMap.get(targetLevel);
       if (!grants.some(grant => grant.name === entry.name)) {
         grants.push({
-          type: 'feature', name: entry.name,
-          description: `${entry.name} is a ${subclass.name} feature. See Xanathar's Guide to Everything, page ${entry.page}, for complete rules.`,
+          type: 'feature', name: entry.name, ...authored,
+          ...(authored.action ? { key: `xge_${classIndex}_${index}_${entry.level}_${slug(entry.name)}` } : {}),
         });
       }
     }
@@ -442,6 +459,11 @@ for (const classIndex of classIndexes) {
     importedSubclasses.push(output);
     write('subclasses', `${classIndex}-${index}`, output);
   }
+}
+const unusedSubclassFeatureKeys = Object.keys(authoredSubclassFeatures)
+  .filter(key => !usedSubclassFeatureKeys.has(key));
+if (unusedSubclassFeatureKeys.length) {
+  throw new Error(`Unused authored subclass features: ${unusedSubclassFeatureKeys.join(', ')}`);
 }
 assertCount('published XGE subclasses', importedSubclasses.length + reprintedSubclasses.length, 31);
 assertCount('new XGE subclasses', importedSubclasses.length, 27);
@@ -470,8 +492,8 @@ write('manifests', 'xanathars-guide-to-everything', {
   },
   spell_list_additions: spellListAdditions,
   implementation: {
-    structured: ['source gating', 'subclass selection', 'subclass spell grants', 'racial feat prerequisites', 'feat spell grants', 'class spell-list membership', 'spell metadata', 'magic-item catalog metadata'],
-    descriptive_reference: ['bespoke subclass feature resolution', 'bespoke spell effects', 'common magic-item activation details'],
+    structured: ['source gating', 'subclass selection', 'subclass feature mechanics and actions', 'subclass spell grants', 'racial feat prerequisites', 'feat spell grants', 'class spell-list membership', 'spell metadata', 'magic-item catalog metadata'],
+    descriptive_reference: ['bespoke spell effects', 'common magic-item activation details'],
   },
   non_catalog_book_systems: [
     'tool proficiency guidance', 'spellcasting edge-case guidance', 'encounter building guidance',

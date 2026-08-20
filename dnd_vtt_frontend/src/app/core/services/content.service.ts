@@ -44,6 +44,7 @@ export interface TraitEffect {
 
 export type EffectCondition =
   | 'wearing_armor'
+  | 'wearing_heavy_armor'
   | 'no_armor'
   | 'no_armor_or_shield'
   | 'no_heavy_armor'

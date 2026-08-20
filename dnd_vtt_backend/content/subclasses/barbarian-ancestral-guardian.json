@@ -26,7 +26,7 @@
         {
           "type": "feature",
           "name": "Ancestral Protectors",
-          "description": "Ancestral Protectors is a Path of the Ancestral Guardian feature. See Xanathar's Guide to Everything, page 9, for complete rules."
+          "description": "While raging, the first creature you hit on your turn is hindered by ancestral spirits until your next turn: it has disadvantage on attacks against anyone other than you, and a different creature it hits has resistance to that attack's damage. The effect ends if your Rage ends."
         }
       ]
     },
@@ -39,7 +39,11 @@
         {
           "type": "feature",
           "name": "Spirit Shield",
-          "description": "Spirit Shield is a Path of the Ancestral Guardian feature. See Xanathar's Guide to Everything, page 9, for complete rules."
+          "description": "While raging, when another creature you can see within 30 feet takes damage, use your reaction to reduce that damage by 2d6. The reduction becomes 3d6 at Barbarian level 10 and 4d6 at level 14.",
+          "action": {
+            "activation": "reaction"
+          },
+          "key": "xge_barbarian_ancestral-guardian_6_spirit-shield"
         }
       ]
     },
@@ -52,7 +56,7 @@
         {
           "type": "feature",
           "name": "Consult the Spirits",
-          "description": "Consult the Spirits is a Path of the Ancestral Guardian feature. See Xanathar's Guide to Everything, page 9, for complete rules."
+          "description": "Cast Augury or Clairvoyance without a spell slot or material components, using Wisdom as the spellcasting ability. Clairvoyance summons an invisible ancestral spirit instead of a sensor. Regain this shared use after a Short or Long Rest."
         }
       ]
     },
@@ -65,7 +69,7 @@
         {
           "type": "feature",
           "name": "Vengeful Ancestors",
-          "description": "Vengeful Ancestors is a Path of the Ancestral Guardian feature. See Xanathar's Guide to Everything, page 9, for complete rules."
+          "description": "Whenever Spirit Shield reduces damage from an attack, the attacker takes Force damage equal to the amount prevented."
         }
       ]
     }

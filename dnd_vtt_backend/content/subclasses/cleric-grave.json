@@ -77,17 +77,27 @@
         {
           "type": "feature",
           "name": "Circle of Mortality",
-          "description": "Circle of Mortality is a Grave Domain feature. See Xanathar's Guide to Everything, page 19, for complete rules."
+          "description": "When a spell restores Hit Points to a creature at 0 Hit Points, use the maximum result for every healing die. Learn Spare the Dying without counting against cantrips; for you it has 30-foot range and casts as a Bonus Action."
         },
         {
           "type": "feature",
           "name": "Eyes of the Grave",
-          "description": "Eyes of the Grave is a Grave Domain feature. See Xanathar's Guide to Everything, page 19, for complete rules."
+          "description": "As an action, until your next turn ends, sense the location of Undead within 60 feet unless behind Total Cover or protected from Divination; this reveals neither identity nor abilities. Uses equal your Wisdom modifier, minimum 1, restored on a Long Rest.",
+          "action": {
+            "activation": "action",
+            "uses": {
+              "max": 1,
+              "maxAbilityModifier": "wisdom",
+              "minimum": 1,
+              "per": "long_rest"
+            }
+          },
+          "key": "xge_cleric_grave_1_eyes-of-the-grave"
         },
         {
           "type": "feature",
           "name": "Channel Divinity: Path to the Grave",
-          "description": "Channel Divinity: Path to the Grave is a Grave Domain feature. See Xanathar's Guide to Everything, page 19, for complete rules."
+          "description": "As an action, expend Channel Divinity to curse one visible creature within 30 feet until your next turn ends. The next attack that hits it treats it as vulnerable to all damage from that attack, then the curse ends."
         }
       ]
     },
@@ -101,12 +111,22 @@
         {
           "type": "feature",
           "name": "Sentinel at Death's Door",
-          "description": "Sentinel at Death's Door is a Grave Domain feature. See Xanathar's Guide to Everything, page 19, for complete rules."
+          "description": "When you or a creature you can see within 30 feet suffers a critical hit, use your reaction to turn it into a normal hit and cancel critical-hit triggers. Uses equal your Wisdom modifier, minimum 1, restored on a Long Rest.",
+          "action": {
+            "activation": "reaction",
+            "uses": {
+              "max": 1,
+              "maxAbilityModifier": "wisdom",
+              "minimum": 1,
+              "per": "long_rest"
+            }
+          },
+          "key": "xge_cleric_grave_6_sentinel-at-deaths-door"
         },
         {
           "type": "feature",
           "name": "Potent Spellcasting",
-          "description": "Potent Spellcasting is a Grave Domain feature. See Xanathar's Guide to Everything, page 19, for complete rules."
+          "description": "Add your Wisdom modifier to the damage of every Cleric cantrip you cast."
         }
       ]
     },
@@ -119,7 +139,7 @@
         {
           "type": "feature",
           "name": "Keeper of Souls",
-          "description": "Keeper of Souls is a Grave Domain feature. See Xanathar's Guide to Everything, page 19, for complete rules."
+          "description": "Once per round when an enemy you can see dies within 60 feet and you are not Incapacitated, you or one chosen creature within 60 feet regains Hit Points equal to that enemy's Hit Dice."
         }
       ]
     }

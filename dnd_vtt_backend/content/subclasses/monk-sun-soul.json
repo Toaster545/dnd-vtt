@@ -25,7 +25,11 @@
         {
           "type": "feature",
           "name": "Radiant Sun Bolt",
-          "description": "Radiant Sun Bolt is a Way of the Sun Soul feature. See Xanathar's Guide to Everything, page 35, for complete rules."
+          "description": "Gain a 30-foot ranged spell attack using Dexterity, Proficiency Bonus, and your Martial Arts die; it deals radiant damage. It can replace attacks in the Attack action. After attacking with it, spend 1 Focus Point to make two more as a Bonus Action.",
+          "action": {
+            "activation": "action"
+          },
+          "key": "xge_monk_sun-soul_3_radiant-sun-bolt"
         }
       ]
     },
@@ -38,7 +42,11 @@
         {
           "type": "feature",
           "name": "Searing Arc Strike",
-          "description": "Searing Arc Strike is a Way of the Sun Soul feature. See Xanathar's Guide to Everything, page 35, for complete rules."
+          "description": "Immediately after the Attack action, spend 2 Focus Points to cast Burning Hands as a Bonus Action. Spend additional points to increase its slot level by one per point, with total points limited to half your Monk level.",
+          "action": {
+            "activation": "bonus_action"
+          },
+          "key": "xge_monk_sun-soul_6_searing-arc-strike"
         }
       ]
     },
@@ -51,7 +59,11 @@
         {
           "type": "feature",
           "name": "Searing Sunburst",
-          "description": "Searing Sunburst is a Way of the Sun Soul feature. See Xanathar's Guide to Everything, page 35, for complete rules."
+          "description": "As an action, create a 20-foot-radius burst at a visible point within 150 feet. Creatures in it that are not behind opaque total cover make a Constitution save, taking 2d6 radiant damage on a failure and none on a success. Spend up to 3 Focus Points to add 2d6 damage per point.",
+          "action": {
+            "activation": "action"
+          },
+          "key": "xge_monk_sun-soul_11_searing-sunburst"
         }
       ]
     },
@@ -64,7 +76,11 @@
         {
           "type": "feature",
           "name": "Sun Shield",
-          "description": "Sun Shield is a Way of the Sun Soul feature. See Xanathar's Guide to Everything, page 35, for complete rules."
+          "description": "Emit bright light for 30 feet and dim light for 30 more; extinguish or restore it as a Bonus Action. While shining, when a creature hits you with a melee attack, use a Reaction to deal radiant damage equal to 5 + your Wisdom modifier.",
+          "action": {
+            "activation": "reaction"
+          },
+          "key": "xge_monk_sun-soul_17_sun-shield"
         }
       ]
     }

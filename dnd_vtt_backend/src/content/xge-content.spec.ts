@@ -8,6 +8,20 @@ interface SourcedEntry {
   source?: { code: string };
 }
 
+interface FeatureGrant {
+  type: string;
+  name?: string;
+  description?: string;
+  key?: string;
+  action?: unknown;
+  effects?: { type: string; tags?: string[]; condition?: string }[];
+}
+
+interface SubclassEntry extends SourcedEntry {
+  class_index: string;
+  levels?: { grants?: FeatureGrant[] }[];
+}
+
 const contentRoot = join(process.cwd(), 'content');
 const readFolder = <T>(folder: string): T[] =>
   readdirSync(join(contentRoot, folder))
@@ -44,9 +58,7 @@ describe("Xanathar's Guide to Everything content", () => {
   const spells = readFolder<SourcedEntry>('spells');
   const feats = readFolder<SourcedEntry>('feats');
   const items = readFolder<SourcedEntry>('items');
-  const subclasses = readFolder<SourcedEntry & { class_index: string }>(
-    'subclasses',
-  );
+  const subclasses = readFolder<SubclassEntry>('subclasses');
   const xgeSpells = spells.filter((entry) => entry.source?.code === 'XGE');
   const xgeFeats = feats.filter((entry) => entry.source?.code === 'XGE');
   const xgeItems = items.filter((entry) => entry.source?.code === 'XGE');
@@ -84,6 +96,51 @@ describe("Xanathar's Guide to Everything content", () => {
       .flatMap(fixedSpellReferences)
       .filter((index) => !indexes.has(index));
     expect(missing).toEqual([]);
+  });
+
+  it('gives every subclass feature authored mechanics and stable action keys', () => {
+    const features = xgeSubclasses
+      .flatMap((subclass) =>
+        (subclass.levels ?? []).flatMap((level) => level.grants ?? []),
+      )
+      .filter((grant) => grant.type === 'feature');
+
+    expect(features.length).toBeGreaterThan(100);
+    for (const feature of features) {
+      expect(feature.description).toBeTruthy();
+      expect(feature.description).not.toContain('for complete rules');
+      expect(feature.description).not.toContain('is a ');
+      if (feature.action) expect(feature.key).toMatch(/^xge_/);
+    }
+
+    const forge = xgeSubclasses.find(
+      (subclass) =>
+        subclass.class_index === 'cleric' && subclass.index === 'forge',
+    );
+    const forgeFeatures = (forge?.levels ?? []).flatMap(
+      (level) => level.grants ?? [],
+    );
+    expect(
+      forgeFeatures.find((grant) => grant.name === 'Bonus Proficiency'),
+    ).toMatchObject({
+      description: "Gain proficiency with Heavy Armor and Smith's Tools.",
+      effects: [
+        { type: 'armor_proficiency', tags: ['heavy'] },
+        { type: 'tool_proficiency', tags: ["Smith's Tools"] },
+      ],
+    });
+    const soulOfTheForge = forgeFeatures.find(
+      (grant) => grant.name === 'Soul of the Forge',
+    );
+    expect(soulOfTheForge?.effects).toContainEqual({
+      type: 'damage_resistance',
+      tags: ['fire'],
+    });
+    expect(soulOfTheForge?.effects).toContainEqual({
+      type: 'ac_bonus',
+      value: 1,
+      condition: 'wearing_heavy_armor',
+    });
   });
 
   it('uses stable unique indexes and reference-only source metadata', () => {

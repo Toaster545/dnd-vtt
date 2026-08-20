@@ -78,27 +78,35 @@
         {
           "type": "feature",
           "name": "Channel Divinity",
-          "description": "Channel Divinity is a Oath of Redemption feature. See Xanathar's Guide to Everything, page 38, for complete rules."
+          "description": "Gain the Emissary of Peace and Rebuke the Violent Channel Divinity options. You can expend one Channel Divinity use to activate either option."
         },
         {
           "type": "feature",
           "name": "Emissary of Peace",
-          "description": "Emissary of Peace is a Oath of Redemption feature. See Xanathar's Guide to Everything, page 38, for complete rules."
+          "description": "As a Bonus Action, expend Channel Divinity to gain +5 to Persuasion checks for 10 minutes.",
+          "action": {
+            "activation": "bonus_action"
+          },
+          "key": "xge_paladin_redemption_3_emissary-of-peace"
         },
         {
           "type": "feature",
           "name": "Oath Spells",
-          "description": "Oath Spells is a Oath of Redemption feature. See Xanathar's Guide to Everything, page 38, for complete rules."
+          "description": "Always have the Oath of Redemption spells prepared at their listed Paladin levels; they do not count against the number of spells you prepare."
         },
         {
           "type": "feature",
           "name": "Rebuke the Violent",
-          "description": "Rebuke the Violent is a Oath of Redemption feature. See Xanathar's Guide to Everything, page 38, for complete rules."
+          "description": "Immediately after an attacker within 30 feet damages a creature other than you, use a Reaction and expend Channel Divinity. The attacker makes a Wisdom save, taking radiant damage equal to the damage it just dealt on a failure or half as much on a success.",
+          "action": {
+            "activation": "reaction"
+          },
+          "key": "xge_paladin_redemption_3_rebuke-the-violent"
         },
         {
           "type": "feature",
           "name": "Tenets of Redemption",
-          "description": "Tenets of Redemption is a Oath of Redemption feature. See Xanathar's Guide to Everything, page 38, for complete rules."
+          "description": "The oath centers on peace, innocence, patience, and wisdom, using violence only when other paths cannot preserve life."
         }
       ]
     },
@@ -111,7 +119,11 @@
         {
           "type": "feature",
           "name": "Aura of the Guardian",
-          "description": "Aura of the Guardian is a Oath of Redemption feature. See Xanathar's Guide to Everything, page 38, for complete rules."
+          "description": "When a creature within 10 feet takes damage, use a Reaction to take that damage instead. It cannot be reduced or prevented. The range becomes 30 feet at Paladin level 18.",
+          "action": {
+            "activation": "reaction"
+          },
+          "key": "xge_paladin_redemption_7_aura-of-the-guardian"
         }
       ]
     },
@@ -124,7 +136,7 @@
         {
           "type": "feature",
           "name": "Protective Spirit",
-          "description": "Protective Spirit is a Oath of Redemption feature. See Xanathar's Guide to Everything, page 38, for complete rules."
+          "description": "At the end of your turn while below half your Hit Point maximum and not Incapacitated, regain 1d6 + half your Paladin level Hit Points."
         }
       ]
     },
@@ -137,7 +149,7 @@
         {
           "type": "feature",
           "name": "Emissary of Redemption",
-          "description": "Emissary of Redemption is a Oath of Redemption feature. See Xanathar's Guide to Everything, page 38, for complete rules."
+          "description": "Gain resistance to all damage dealt by other creatures. When a creature hits you, it takes radiant damage equal to half the damage you take. These benefits stop against a creature until your next Long Rest if you attack it, damage it, or cast a spell on it."
         }
       ]
     }

@@ -14,12 +14,20 @@
         {
           "type": "feature",
           "name": "Bonus Proficiency",
-          "description": "Bonus Proficiency is a Samurai feature. See Xanathar's Guide to Everything, page 31, for complete rules."
+          "description": "Gain proficiency in History, Insight, Performance, or Persuasion; alternatively, learn one language of your choice."
         },
         {
           "type": "feature",
           "name": "Fighting Spirit",
-          "description": "Fighting Spirit is a Samurai feature. See Xanathar's Guide to Everything, page 31, for complete rules."
+          "description": "As a Bonus Action, gain advantage on weapon attacks until the end of the current turn and gain 5 Temporary Hit Points. The Temporary Hit Points increase to 10 at Fighter level 10 and 15 at level 15. Three uses are restored on a Long Rest.",
+          "action": {
+            "activation": "bonus_action",
+            "uses": {
+              "max": 3,
+              "per": "long_rest"
+            }
+          },
+          "key": "xge_fighter_samurai_3_fighting-spirit"
         }
       ]
     },
@@ -32,7 +40,7 @@
         {
           "type": "feature",
           "name": "Elegant Courtier",
-          "description": "Elegant Courtier is a Samurai feature. See Xanathar's Guide to Everything, page 31, for complete rules."
+          "description": "Add your Wisdom modifier to Persuasion checks. Gain proficiency in Wisdom saves; if already proficient, choose Intelligence or Charisma saves instead."
         }
       ]
     },
@@ -45,7 +53,7 @@
         {
           "type": "feature",
           "name": "Tireless Spirit",
-          "description": "Tireless Spirit is a Samurai feature. See Xanathar's Guide to Everything, page 31, for complete rules."
+          "description": "When you roll Initiative with no Fighting Spirit uses remaining, regain one use."
         }
       ]
     },
@@ -58,7 +66,7 @@
         {
           "type": "feature",
           "name": "Rapid Strike",
-          "description": "Rapid Strike is a Samurai feature. See Xanathar's Guide to Everything, page 31, for complete rules."
+          "description": "Once per turn when you take the Attack action and have advantage on one attack, forgo advantage on that roll to make one additional weapon attack against the same target as part of the action."
         }
       ]
     },
@@ -71,7 +79,15 @@
         {
           "type": "feature",
           "name": "Strength before Death",
-          "description": "Strength before Death is a Samurai feature. See Xanathar's Guide to Everything, page 31, for complete rules."
+          "description": "When damage reduces you to 0 Hit Points without killing you outright, use a Reaction to delay falling Unconscious and immediately take an extra turn. Damage and failed Death Saves apply normally; after that turn, you fall Unconscious if still at 0 Hit Points. Regain use after a Long Rest.",
+          "action": {
+            "activation": "reaction",
+            "uses": {
+              "max": 1,
+              "per": "long_rest"
+            }
+          },
+          "key": "xge_fighter_samurai_18_strength-before-death"
         }
       ]
     }

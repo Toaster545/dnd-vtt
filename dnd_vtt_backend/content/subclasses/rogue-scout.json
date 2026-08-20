@@ -14,12 +14,16 @@
         {
           "type": "feature",
           "name": "Skirmisher",
-          "description": "Skirmisher is a Scout feature. See Xanathar's Guide to Everything, page 47, for complete rules."
+          "description": "When an enemy ends its turn within 5 feet of you, use a Reaction to move up to half your Speed without provoking Opportunity Attacks.",
+          "action": {
+            "activation": "reaction"
+          },
+          "key": "xge_rogue_scout_3_skirmisher"
         },
         {
           "type": "feature",
           "name": "Survivalist",
-          "description": "Survivalist is a Scout feature. See Xanathar's Guide to Everything, page 47, for complete rules."
+          "description": "Gain proficiency and Expertise in Nature and Survival."
         }
       ]
     },
@@ -32,7 +36,7 @@
         {
           "type": "feature",
           "name": "Superior Mobility",
-          "description": "Superior Mobility is a Scout feature. See Xanathar's Guide to Everything, page 47, for complete rules."
+          "description": "Walking Speed increases by 10 feet. Any Climb or Swim Speed you have also increases by 10 feet."
         }
       ]
     },
@@ -45,7 +49,7 @@
         {
           "type": "feature",
           "name": "Ambush Master",
-          "description": "Ambush Master is a Scout feature. See Xanathar's Guide to Everything, page 47, for complete rules."
+          "description": "Gain advantage on Initiative rolls. The first creature you hit during the first round of combat grants advantage on attacks against it to all attackers until the start of your next turn."
         }
       ]
     },
@@ -58,7 +62,11 @@
         {
           "type": "feature",
           "name": "Sudden Strike",
-          "description": "Sudden Strike is a Scout feature. See Xanathar's Guide to Everything, page 47, for complete rules."
+          "description": "After taking the Attack action, make one additional attack as a Bonus Action. This attack can apply Sneak Attack even if already used this turn, but Sneak Attack cannot damage the same target twice in one turn.",
+          "action": {
+            "activation": "bonus_action"
+          },
+          "key": "xge_rogue_scout_17_sudden-strike"
         }
       ]
     }

@@ -14,12 +14,12 @@
         {
           "type": "feature",
           "name": "Fancy Footwork",
-          "description": "Fancy Footwork is a Swashbuckler feature. See Xanathar's Guide to Everything, page 48, for complete rules."
+          "description": "A creature you attack with a melee attack cannot make Opportunity Attacks against you for the rest of the current turn, whether the attack hits or misses."
         },
         {
           "type": "feature",
           "name": "Rakish Audacity",
-          "description": "Rakish Audacity is a Swashbuckler feature. See Xanathar's Guide to Everything, page 48, for complete rules."
+          "description": "Add your Charisma modifier to Initiative. You can Sneak Attack a target within 5 feet when no other creature is within 5 feet of you and you do not have disadvantage, even without advantage."
         }
       ]
     },
@@ -32,7 +32,11 @@
         {
           "type": "feature",
           "name": "Panache",
-          "description": "Panache is a Swashbuckler feature. See Xanathar's Guide to Everything, page 48, for complete rules."
+          "description": "As an action, contest Persuasion against Insight for a creature that can hear and understand you. A hostile target that loses has disadvantage attacking others and cannot make Opportunity Attacks against them for 1 minute, ending early if allies harm it or you separate by over 60 feet. A nonhostile target is Charmed for 1 minute, ending if harmed.",
+          "action": {
+            "activation": "action"
+          },
+          "key": "xge_rogue_swashbuckler_9_panache"
         }
       ]
     },
@@ -45,7 +49,11 @@
         {
           "type": "feature",
           "name": "Elegant Maneuver",
-          "description": "Elegant Maneuver is a Swashbuckler feature. See Xanathar's Guide to Everything, page 48, for complete rules."
+          "description": "As a Bonus Action, gain advantage on the next Acrobatics or Athletics check made during the current turn.",
+          "action": {
+            "activation": "bonus_action"
+          },
+          "key": "xge_rogue_swashbuckler_13_elegant-maneuver"
         }
       ]
     },
@@ -58,7 +66,15 @@
         {
           "type": "feature",
           "name": "Master Duelist",
-          "description": "Master Duelist is a Swashbuckler feature. See Xanathar's Guide to Everything, page 48, for complete rules."
+          "description": "When an attack misses, reroll it with advantage. Regain use after a Short or Long Rest.",
+          "action": {
+            "activation": "free",
+            "uses": {
+              "max": 1,
+              "per": "short_rest"
+            }
+          },
+          "key": "xge_rogue_swashbuckler_17_master-duelist"
         }
       ]
     }

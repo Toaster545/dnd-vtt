@@ -26,12 +26,20 @@
         {
           "type": "feature",
           "name": "Eyes of the Dark",
-          "description": "Eyes of the Dark is a Shadow Magic feature. See Xanathar's Guide to Everything, page 50, for complete rules."
+          "description": "Gain Darkvision to 120 feet. At Sorcerer level 3, learn Darkness without it counting against spells known; cast it with 2 Sorcery Points, and when cast that way you can see through it."
         },
         {
           "type": "feature",
           "name": "Strength of the Grave",
-          "description": "Strength of the Grave is a Shadow Magic feature. See Xanathar's Guide to Everything, page 50, for complete rules."
+          "description": "When damage reduces you to 0 Hit Points without killing you outright, make a Charisma save with DC 5 + the damage taken. On success, remain at 1 Hit Point. It cannot trigger from radiant damage or a critical hit. After a success, regain use on a Long Rest.",
+          "action": {
+            "activation": "free",
+            "uses": {
+              "max": 1,
+              "per": "long_rest"
+            }
+          },
+          "key": "xge_sorcerer_shadow_1_strength-of-the-grave"
         }
       ]
     },
@@ -44,7 +52,11 @@
         {
           "type": "feature",
           "name": "Hound of Ill Omen",
-          "description": "Hound of Ill Omen is a Shadow Magic feature. See Xanathar's Guide to Everything, page 50, for complete rules."
+          "description": "As a Bonus Action, spend 3 Sorcery Points to summon a modified Dire Wolf within 30 feet of a visible target within 120 feet. It has Temporary Hit Points equal to half your Sorcerer level, uses your Charisma modifier for its attack bonus, phases through creatures and objects, acts only against its target, and gives that target disadvantage on saves against your spells while within 5 feet. It lasts 5 minutes or until it or the target reaches 0 Hit Points.",
+          "action": {
+            "activation": "bonus_action"
+          },
+          "key": "xge_sorcerer_shadow_6_hound-of-ill-omen"
         }
       ]
     },
@@ -57,7 +69,11 @@
         {
           "type": "feature",
           "name": "Shadow Walk",
-          "description": "Shadow Walk is a Shadow Magic feature. See Xanathar's Guide to Everything, page 50, for complete rules."
+          "description": "As a Bonus Action while in dim light or darkness, teleport up to 120 feet to a visible empty space also in dim light or darkness.",
+          "action": {
+            "activation": "bonus_action"
+          },
+          "key": "xge_sorcerer_shadow_14_shadow-walk"
         }
       ]
     },
@@ -70,7 +86,11 @@
         {
           "type": "feature",
           "name": "Umbral Form",
-          "description": "Umbral Form is a Shadow Magic feature. See Xanathar's Guide to Everything, page 50, for complete rules."
+          "description": "As a Bonus Action, spend 6 Sorcery Points to transform for 1 minute. Gain resistance to all damage except force and radiant and move through creatures and objects as difficult terrain, taking 5 force damage if ending a turn inside an object. It ends if Incapacitated, dead, or dismissed as a Bonus Action.",
+          "action": {
+            "activation": "bonus_action"
+          },
+          "key": "xge_sorcerer_shadow_18_umbral-form"
         }
       ]
     }

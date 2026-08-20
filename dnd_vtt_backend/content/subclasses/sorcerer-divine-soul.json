@@ -105,7 +105,15 @@
         {
           "type": "feature",
           "name": "Favored by the Gods",
-          "description": "Favored by the Gods is a Divine Soul feature. See Xanathar's Guide to Everything, page 50, for complete rules."
+          "description": "When you miss an attack or fail a saving throw, roll 2d4 and add the total, potentially changing the result. Regain use after a Short or Long Rest.",
+          "action": {
+            "activation": "free",
+            "uses": {
+              "max": 1,
+              "per": "short_rest"
+            }
+          },
+          "key": "xge_sorcerer_divine-soul_1_favored-by-the-gods"
         }
       ]
     },
@@ -118,7 +126,7 @@
         {
           "type": "feature",
           "name": "Empowered Healing",
-          "description": "Empowered Healing is a Divine Soul feature. See Xanathar's Guide to Everything, page 50, for complete rules."
+          "description": "Once per turn when you or an ally within 5 feet rolls healing dice for a spell, spend 1 Sorcery Point to reroll any number of those dice once, provided you are not Incapacitated."
         }
       ]
     },
@@ -131,7 +139,11 @@
         {
           "type": "feature",
           "name": "Otherworldly Wings",
-          "description": "Otherworldly Wings is a Divine Soul feature. See Xanathar's Guide to Everything, page 50, for complete rules."
+          "description": "As a Bonus Action, manifest spectral wings and gain a 30-foot Fly Speed until Incapacitated, dead, or dismissed with another Bonus Action. Their appearance follows your chosen divine affinity.",
+          "action": {
+            "activation": "bonus_action"
+          },
+          "key": "xge_sorcerer_divine-soul_14_otherworldly-wings"
         }
       ]
     },
@@ -144,7 +156,15 @@
         {
           "type": "feature",
           "name": "Unearthly Recovery",
-          "description": "Unearthly Recovery is a Divine Soul feature. See Xanathar's Guide to Everything, page 50, for complete rules."
+          "description": "As a Bonus Action while below half your Hit Point maximum, regain Hit Points equal to half your maximum. Regain use after a Long Rest.",
+          "action": {
+            "activation": "bonus_action",
+            "uses": {
+              "max": 1,
+              "per": "long_rest"
+            }
+          },
+          "key": "xge_sorcerer_divine-soul_18_unearthly-recovery"
         }
       ]
     }

@@ -18,32 +18,46 @@
         {
           "type": "feature",
           "name": "Defensive Flourish",
-          "description": "Defensive Flourish is a College of Swords feature. See Xanathar's Guide to Everything, page 15, for complete rules."
+          "description": "After a weapon hit made as part of the Attack action, expend and roll Bardic Inspiration. Add the roll to the hit's damage and to your AC until your next turn begins."
         },
         {
           "type": "feature",
           "name": "Mobile Flourish",
-          "description": "Mobile Flourish is a College of Swords feature. See Xanathar's Guide to Everything, page 15, for complete rules."
+          "description": "After a weapon hit made as part of the Attack action, expend and roll Bardic Inspiration. Add the roll to the hit's damage, push the target 5 feet plus the number rolled, then optionally use your reaction to move up to your Speed into a space within 5 feet of it."
         },
         {
           "type": "feature",
           "name": "Slashing Flourish",
-          "description": "Slashing Flourish is a College of Swords feature. See Xanathar's Guide to Everything, page 15, for complete rules."
+          "description": "After a weapon hit made as part of the Attack action, expend and roll Bardic Inspiration. The target and each other chosen creature within 5 feet of you take extra damage equal to the roll."
         },
         {
           "type": "feature",
           "name": "Blade Flourish",
-          "description": "Blade Flourish is a College of Swords feature. See Xanathar's Guide to Everything, page 15, for complete rules."
+          "description": "When you take the Attack action, your Speed increases by 10 feet for that turn. Once per turn, a weapon hit from that action can use Defensive, Mobile, or Slashing Flourish."
         },
         {
           "type": "feature",
           "name": "Bonus Proficiencies",
-          "description": "Bonus Proficiencies is a College of Swords feature. See Xanathar's Guide to Everything, page 15, for complete rules."
+          "description": "Gain proficiency with Medium Armor and Scimitars. A Simple or Martial melee weapon with which you are proficient can serve as a spellcasting focus for your Bard spells.",
+          "effects": [
+            {
+              "type": "armor_proficiency",
+              "tags": [
+                "medium"
+              ]
+            },
+            {
+              "type": "weapon_proficiency",
+              "tags": [
+                "scimitar"
+              ]
+            }
+          ]
         },
         {
           "type": "feature",
           "name": "Fighting Style",
-          "description": "Fighting Style is a College of Swords feature. See Xanathar's Guide to Everything, page 15, for complete rules."
+          "description": "Choose the Dueling or Two-Weapon Fighting style. You cannot select a Fighting Style option more than once."
         }
       ]
     },
@@ -56,7 +70,7 @@
         {
           "type": "feature",
           "name": "Extra Attack",
-          "description": "Extra Attack is a College of Swords feature. See Xanathar's Guide to Everything, page 15, for complete rules."
+          "description": "You can attack twice whenever you take the Attack action on your turn."
         }
       ]
     },
@@ -69,7 +83,7 @@
         {
           "type": "feature",
           "name": "Master's Flourish",
-          "description": "Master's Flourish is a College of Swords feature. See Xanathar's Guide to Everything, page 15, for complete rules."
+          "description": "When you use a Blade Flourish, you can roll a d6 for the flourish instead of expending Bardic Inspiration."
         }
       ]
     }

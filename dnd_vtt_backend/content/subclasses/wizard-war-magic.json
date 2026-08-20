@@ -14,12 +14,22 @@
         {
           "type": "feature",
           "name": "Arcane Deflection",
-          "description": "Arcane Deflection is a War Magic feature. See Xanathar's Guide to Everything, page 59, for complete rules."
+          "description": "When hit by an attack or failing a saving throw, use a Reaction for +2 AC against that attack or +4 to that save. Afterward, you cannot cast spells other than cantrips until the end of your next turn.",
+          "action": {
+            "activation": "reaction"
+          },
+          "key": "xge_wizard_war-magic_2_arcane-deflection"
         },
         {
           "type": "feature",
           "name": "Tactical Wit",
-          "description": "Tactical Wit is a War Magic feature. See Xanathar's Guide to Everything, page 59, for complete rules."
+          "description": "Add your Intelligence modifier to Initiative rolls.",
+          "effects": [
+            {
+              "type": "initiative_ability_bonus",
+              "ability": "intelligence"
+            }
+          ]
         }
       ]
     },
@@ -32,7 +42,7 @@
         {
           "type": "feature",
           "name": "Power Surge",
-          "description": "Power Surge is a War Magic feature. See Xanathar's Guide to Everything, page 59, for complete rules."
+          "description": "Store Power Surges up to your Intelligence modifier, minimum 1. After a Long Rest, reset to one. Gain one when successfully ending a spell with Counterspell or Dispel Magic; if empty after a Short Rest, gain one. Once per turn when a Wizard spell damages a creature or object, spend one surge to deal extra force damage equal to half your Wizard level to one target."
         }
       ]
     },
@@ -45,7 +55,7 @@
         {
           "type": "feature",
           "name": "Durable Magic",
-          "description": "Durable Magic is a War Magic feature. See Xanathar's Guide to Everything, page 59, for complete rules."
+          "description": "While concentrating on a spell, gain +2 AC and +2 to all saving throws."
         }
       ]
     },
@@ -58,7 +68,7 @@
         {
           "type": "feature",
           "name": "Deflecting Shroud",
-          "description": "Deflecting Shroud is a War Magic feature. See Xanathar's Guide to Everything, page 59, for complete rules."
+          "description": "When using Arcane Deflection, choose up to three visible creatures within 60 feet. Each takes force damage equal to half your Wizard level."
         }
       ]
     }

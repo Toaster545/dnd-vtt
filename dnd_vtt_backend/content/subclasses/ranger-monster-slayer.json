@@ -71,17 +71,31 @@
         {
           "type": "feature",
           "name": "Hunter's Sense",
-          "description": "Hunter's Sense is a Monster Slayer feature. See Xanathar's Guide to Everything, page 43, for complete rules."
+          "description": "As an action, choose a visible creature within 60 feet and learn its damage immunities, resistances, and vulnerabilities. If divination magic conceals it, you learn that it has none. Uses equal your Wisdom modifier, minimum 1, restored on a Long Rest.",
+          "action": {
+            "activation": "action",
+            "uses": {
+              "max": 1,
+              "maxAbilityModifier": "wisdom",
+              "minimum": 1,
+              "per": "long_rest"
+            }
+          },
+          "key": "xge_ranger_monster-slayer_3_hunters-sense"
         },
         {
           "type": "feature",
           "name": "Monster Slayer Magic",
-          "description": "Monster Slayer Magic is a Monster Slayer feature. See Xanathar's Guide to Everything, page 43, for complete rules."
+          "description": "Always have the Monster Slayer spells prepared at their listed Ranger levels; they do not count against your prepared-spell limit."
         },
         {
           "type": "feature",
           "name": "Slayer's Prey",
-          "description": "Slayer's Prey is a Monster Slayer feature. See Xanathar's Guide to Everything, page 43, for complete rules."
+          "description": "As a Bonus Action, designate one visible creature within 60 feet. The first weapon hit against it on each of your turns deals 1d6 extra damage. The designation ends after a Short or Long Rest or when you designate another creature.",
+          "action": {
+            "activation": "bonus_action"
+          },
+          "key": "xge_ranger_monster-slayer_3_slayers-prey"
         }
       ]
     },
@@ -94,7 +108,7 @@
         {
           "type": "feature",
           "name": "Supernatural Defense",
-          "description": "Supernatural Defense is a Monster Slayer feature. See Xanathar's Guide to Everything, page 43, for complete rules."
+          "description": "When the current target of Slayer's Prey forces you to make a saving throw or an ability check to escape its grapple, add 1d6 to the roll."
         }
       ]
     },
@@ -107,7 +121,15 @@
         {
           "type": "feature",
           "name": "Magic-User's Nemesis",
-          "description": "Magic-User's Nemesis is a Monster Slayer feature. See Xanathar's Guide to Everything, page 43, for complete rules."
+          "description": "When a visible creature within 60 feet casts a spell or teleports, use a Reaction to force a Wisdom save against your spell save DC. On a failure, the spell or teleport fails and is wasted. Regain use after a Short or Long Rest.",
+          "action": {
+            "activation": "reaction",
+            "uses": {
+              "max": 1,
+              "per": "short_rest"
+            }
+          },
+          "key": "xge_ranger_monster-slayer_11_magic-users-nemesis"
         }
       ]
     },
@@ -120,7 +142,11 @@
         {
           "type": "feature",
           "name": "Slayer's Counter",
-          "description": "Slayer's Counter is a Monster Slayer feature. See Xanathar's Guide to Everything, page 43, for complete rules."
+          "description": "When the target of Slayer's Prey forces you to make a saving throw, use a Reaction to make one weapon attack against it. If the attack hits, your saving throw automatically succeeds in addition to the attack's normal effects.",
+          "action": {
+            "activation": "reaction"
+          },
+          "key": "xge_ranger_monster-slayer_15_slayers-counter"
         }
       ]
     }

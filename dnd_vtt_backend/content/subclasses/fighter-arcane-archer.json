@@ -56,17 +56,25 @@
         {
           "type": "feature",
           "name": "Arcane Archer Lore",
-          "description": "Arcane Archer Lore is a Arcane Archer feature. See Xanathar's Guide to Everything, page 28, for complete rules."
+          "description": "Gain proficiency in Arcana or Nature, and learn either Druidcraft or Prestidigitation. Intelligence is your spellcasting ability for the chosen cantrip."
         },
         {
           "type": "feature",
           "name": "Arcane Shot",
-          "description": "Arcane Shot is a Arcane Archer feature. See Xanathar's Guide to Everything, page 28, for complete rules."
+          "description": "Learn two Arcane Shot options. Once per turn when you fire an arrow from a Shortbow or Longbow as part of the Attack action, apply one known option to that arrow. Unless an option says otherwise, decide after the arrow hits. Your save DC is 8 + Proficiency Bonus + Intelligence modifier. You have two uses, restored on a Short or Long Rest.",
+          "action": {
+            "activation": "free",
+            "uses": {
+              "max": 2,
+              "per": "short_rest"
+            }
+          },
+          "key": "xge_fighter_arcane-archer_3_arcane-shot"
         },
         {
           "type": "feature",
           "name": "Arcane Shot Options",
-          "description": "Arcane Shot Options is a Arcane Archer feature. See Xanathar's Guide to Everything, page 28, for complete rules."
+          "description": "Choose from Banishing Arrow, Beguiling Arrow, Bursting Arrow, Enfeebling Arrow, Grasping Arrow, Piercing Arrow, Seeking Arrow, and Shadow Arrow. Each option modifies one arrow with its listed damage, target, and saving-throw effect; you cannot apply more than one option to an arrow."
         }
       ]
     },
@@ -81,17 +89,21 @@
         {
           "type": "feature",
           "name": "Additional Arcane Shot Option",
-          "description": "Additional Arcane Shot Option is a Arcane Archer feature. See Xanathar's Guide to Everything, page 28, for complete rules."
+          "description": "Learn one additional Arcane Shot option."
         },
         {
           "type": "feature",
           "name": "Curving Shot",
-          "description": "Curving Shot is a Arcane Archer feature. See Xanathar's Guide to Everything, page 28, for complete rules."
+          "description": "When a magic-arrow attack misses, use a Bonus Action to reroll the attack against a different target within 60 feet of the original target.",
+          "action": {
+            "activation": "bonus_action"
+          },
+          "key": "xge_fighter_arcane-archer_7_curving-shot"
         },
         {
           "type": "feature",
           "name": "Magic Arrow",
-          "description": "Magic Arrow is a Arcane Archer feature. See Xanathar's Guide to Everything, page 28, for complete rules."
+          "description": "Arrows fired from your Shortbow or Longbow count as magical for overcoming resistance and immunity to nonmagical attacks and damage."
         }
       ]
     },
@@ -104,7 +116,7 @@
         {
           "type": "feature",
           "name": "Additional Arcane Shot Option",
-          "description": "Additional Arcane Shot Option is a Arcane Archer feature. See Xanathar's Guide to Everything, page 28, for complete rules."
+          "description": "Learn one additional Arcane Shot option."
         }
       ]
     },
@@ -118,12 +130,12 @@
         {
           "type": "feature",
           "name": "Additional Arcane Shot Option",
-          "description": "Additional Arcane Shot Option is a Arcane Archer feature. See Xanathar's Guide to Everything, page 28, for complete rules."
+          "description": "Learn one additional Arcane Shot option."
         },
         {
           "type": "feature",
           "name": "Ever-Ready Shot",
-          "description": "Ever-Ready Shot is a Arcane Archer feature. See Xanathar's Guide to Everything, page 28, for complete rules."
+          "description": "When you roll Initiative with no Arcane Shot uses remaining, regain one use."
         }
       ]
     },
@@ -136,7 +148,7 @@
         {
           "type": "feature",
           "name": "Additional Arcane Shot Option",
-          "description": "Additional Arcane Shot Option is a Arcane Archer feature. See Xanathar's Guide to Everything, page 28, for complete rules."
+          "description": "Learn one additional Arcane Shot option. The damage of every Arcane Shot option also increases by 2d6."
         }
       ]
     }

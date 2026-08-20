@@ -45,6 +45,24 @@ describe('no_armor_or_shield equipment condition', () => {
   });
 });
 
+describe('wearing_heavy_armor equipment condition', () => {
+  const lightArmor = {
+    index: 'leather-armor', type: 'armor', category: 'Light Armor', properties: [],
+  } as unknown as DndItem;
+  const heavyArmor = {
+    index: 'plate-armor', type: 'armor', category: 'Heavy Armor', properties: [],
+  } as unknown as DndItem;
+  const equipped = (itemIndex: string): EquipmentEntry[] => [
+    { itemIndex, name: itemIndex, quantity: 1, equipped: true },
+  ];
+
+  it('is active only while heavy armor is equipped', () => {
+    expect(evaluateCondition('wearing_heavy_armor', [], [lightArmor, heavyArmor])).toBe(false);
+    expect(evaluateCondition('wearing_heavy_armor', equipped(lightArmor.index), [lightArmor, heavyArmor])).toBe(false);
+    expect(evaluateCondition('wearing_heavy_armor', equipped(heavyArmor.index), [lightArmor, heavyArmor])).toBe(true);
+  });
+});
+
 describe('resolveLanguageProficiencies', () => {
   it('combines race and class languages while keeping Common exactly once', () => {
     const effects: TraitEffect[] = [

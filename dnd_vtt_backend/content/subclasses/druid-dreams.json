@@ -13,7 +13,11 @@
         {
           "type": "feature",
           "name": "Balm of the Summer Court",
-          "description": "Balm of the Summer Court is a Circle of Dreams feature. See Xanathar's Guide to Everything, page 22, for complete rules."
+          "description": "Gain a pool of d6s equal to your Druid level, restored on a Long Rest. As a Bonus Action, choose a creature within 120 feet and spend up to half your Druid level in dice; it regains the total rolled and gains 1 Temporary Hit Point per die.",
+          "action": {
+            "activation": "bonus_action"
+          },
+          "key": "xge_druid_dreams_2_balm-of-the-summer-court"
         }
       ]
     },
@@ -26,7 +30,7 @@
         {
           "type": "feature",
           "name": "Hearth of Moonlight and Shadow",
-          "description": "Hearth of Moonlight and Shadow is a Circle of Dreams feature. See Xanathar's Guide to Everything, page 22, for complete rules."
+          "description": "At the start of a Short or Long Rest, create an invisible 30-foot-radius sphere around a touched point. Inside it, you and allies gain +5 to Stealth and Perception, and open-flame light cannot be seen outside. It ends with the rest or when you leave."
         }
       ]
     },
@@ -39,7 +43,17 @@
         {
           "type": "feature",
           "name": "Hidden Paths",
-          "description": "Hidden Paths is a Circle of Dreams feature. See Xanathar's Guide to Everything, page 22, for complete rules."
+          "description": "As a Bonus Action, teleport yourself up to 60 feet to a visible empty space, or as an action teleport a willing creature you touch up to 30 feet. Uses equal your Wisdom modifier, minimum 1, restored on a Long Rest.",
+          "action": {
+            "activation": "bonus_action",
+            "uses": {
+              "max": 1,
+              "maxAbilityModifier": "wisdom",
+              "minimum": 1,
+              "per": "long_rest"
+            }
+          },
+          "key": "xge_druid_dreams_10_hidden-paths"
         }
       ]
     },
@@ -52,7 +66,7 @@
         {
           "type": "feature",
           "name": "Walker in Dreams",
-          "description": "Walker in Dreams is a Circle of Dreams feature. See Xanathar's Guide to Everything, page 22, for complete rules."
+          "description": "After a Short Rest, cast Dream as its messenger, Scrying, or Teleportation Circle without a slot or material components. This circle leads to your most recent Long Rest location on the same plane. Regain use after a Long Rest."
         }
       ]
     }

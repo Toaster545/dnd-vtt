@@ -14,12 +14,20 @@
         {
           "type": "feature",
           "name": "Bonus Proficiencies",
-          "description": "Bonus Proficiencies is a Way of the Drunken Master feature. See Xanathar's Guide to Everything, page 33, for complete rules."
+          "description": "Gain proficiency in Performance and Brewer's Supplies.",
+          "effects": [
+            {
+              "type": "tool_proficiency",
+              "tags": [
+                "Brewer's Supplies"
+              ]
+            }
+          ]
         },
         {
           "type": "feature",
           "name": "Drunken Technique",
-          "description": "Drunken Technique is a Way of the Drunken Master feature. See Xanathar's Guide to Everything, page 33, for complete rules."
+          "description": "After using Flurry of Blows, gain the benefits of Disengage and increase your Speed by 10 feet until the end of the current turn."
         }
       ]
     },
@@ -34,17 +42,21 @@
         {
           "type": "feature",
           "name": "Leap to Your Feet",
-          "description": "Leap to Your Feet is a Way of the Drunken Master feature. See Xanathar's Guide to Everything, page 34, for complete rules."
+          "description": "Standing from Prone costs 5 feet of movement instead of half your Speed."
         },
         {
           "type": "feature",
           "name": "Redirect Attack",
-          "description": "Redirect Attack is a Way of the Drunken Master feature. See Xanathar's Guide to Everything, page 34, for complete rules."
+          "description": "When a creature misses you with a melee attack, use a Reaction and spend 1 Focus Point to make that attack hit a different creature of your choice within 5 feet of the attacker, other than the attacker.",
+          "action": {
+            "activation": "reaction"
+          },
+          "key": "xge_monk_drunken-master_6_redirect-attack"
         },
         {
           "type": "feature",
           "name": "Tipsy Sway",
-          "description": "Tipsy Sway is a Way of the Drunken Master feature. See Xanathar's Guide to Everything, page 33, for complete rules."
+          "description": "You gain Leap to Your Feet and Redirect Attack."
         }
       ]
     },
@@ -57,7 +69,7 @@
         {
           "type": "feature",
           "name": "Drunkard's Luck",
-          "description": "Drunkard's Luck is a Way of the Drunken Master feature. See Xanathar's Guide to Everything, page 33, for complete rules."
+          "description": "When an ability check, attack roll, or saving throw has disadvantage, spend 2 Focus Points to cancel that disadvantage for the roll."
         }
       ]
     },
@@ -70,7 +82,7 @@
         {
           "type": "feature",
           "name": "Intoxicated Frenzy",
-          "description": "Intoxicated Frenzy is a Way of the Drunken Master feature. See Xanathar's Guide to Everything, page 33, for complete rules."
+          "description": "When using Flurry of Blows, make up to three additional attacks, for as many as five Flurry attacks total. Every Flurry attack that turn must target a different creature."
         }
       ]
     }

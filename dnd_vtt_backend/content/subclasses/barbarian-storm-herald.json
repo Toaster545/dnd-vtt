@@ -16,22 +16,26 @@
         {
           "type": "feature",
           "name": "Desert",
-          "description": "Desert is a Path of the Storm Herald feature. See Xanathar's Guide to Everything, page 10, for complete rules."
+          "description": "When the Desert aura activates, every other creature in it takes Fire damage: 2 at Barbarian level 3, 3 at level 5, 4 at level 10, 5 at level 15, and 6 at level 20."
         },
         {
           "type": "feature",
           "name": "Sea",
-          "description": "Sea is a Path of the Storm Herald feature. See Xanathar's Guide to Everything, page 10, for complete rules."
+          "description": "When the Sea aura activates, choose one other creature in it. A failed Dexterity save deals 1d6 Lightning damage, or half on a success. Damage becomes 2d6 at Barbarian level 10, 3d6 at 15, and 4d6 at 20."
         },
         {
           "type": "feature",
           "name": "Tundra",
-          "description": "Tundra is a Path of the Storm Herald feature. See Xanathar's Guide to Everything, page 10, for complete rules."
+          "description": "When the Tundra aura activates, chosen creatures in it gain Temporary Hit Points: 2 at Barbarian level 3, 3 at level 5, 4 at level 10, 5 at level 15, and 6 at level 20."
         },
         {
           "type": "feature",
           "name": "Storm Aura",
-          "description": "Storm Aura is a Path of the Storm Herald feature. See Xanathar's Guide to Everything, page 10, for complete rules."
+          "description": "Choose Desert, Sea, or Tundra when you gain this feature, changing it whenever you gain a Barbarian level. While raging, the 10-foot aura activates when Rage begins and again when you use a Bonus Action. Its save DC is 8 + Proficiency Bonus + Constitution modifier.",
+          "action": {
+            "activation": "bonus_action"
+          },
+          "key": "xge_barbarian_storm-herald_3_storm-aura"
         }
       ]
     },
@@ -47,22 +51,22 @@
         {
           "type": "feature",
           "name": "Desert",
-          "description": "Desert is a Path of the Storm Herald feature. See Xanathar's Guide to Everything, page 10, for complete rules."
+          "description": "Gain Fire resistance and ignore extreme heat. As an action, ignite an unattended flammable object you touch."
         },
         {
           "type": "feature",
           "name": "Sea",
-          "description": "Sea is a Path of the Storm Herald feature. See Xanathar's Guide to Everything, page 10, for complete rules."
+          "description": "Gain Lightning resistance, the ability to breathe underwater, and a 30-foot Swim Speed."
         },
         {
           "type": "feature",
           "name": "Tundra",
-          "description": "Tundra is a Path of the Storm Herald feature. See Xanathar's Guide to Everything, page 10, for complete rules."
+          "description": "Gain Cold resistance and ignore extreme cold. As an action, freeze a creature-free 5-foot cube of water you touch for 1 minute."
         },
         {
           "type": "feature",
           "name": "Storm Soul",
-          "description": "Storm Soul is a Path of the Storm Herald feature. See Xanathar's Guide to Everything, page 10, for complete rules."
+          "description": "Your chosen Storm Aura environment grants its Desert, Sea, or Tundra benefit even while the aura is inactive."
         }
       ]
     },
@@ -75,7 +79,7 @@
         {
           "type": "feature",
           "name": "Shielding Storm",
-          "description": "Shielding Storm is a Path of the Storm Herald feature. See Xanathar's Guide to Everything, page 10, for complete rules."
+          "description": "Chosen creatures inside your Storm Aura share the damage resistance granted by your Storm Soul."
         }
       ]
     },
@@ -91,22 +95,30 @@
         {
           "type": "feature",
           "name": "Desert",
-          "description": "Desert is a Path of the Storm Herald feature. See Xanathar's Guide to Everything, page 10, for complete rules."
+          "description": "Immediately after a creature in your aura hits you, use your reaction to force a Dexterity save; on a failure it takes Fire damage equal to half your Barbarian level.",
+          "action": {
+            "activation": "reaction"
+          },
+          "key": "xge_barbarian_storm-herald_14_desert"
         },
         {
           "type": "feature",
           "name": "Sea",
-          "description": "Sea is a Path of the Storm Herald feature. See Xanathar's Guide to Everything, page 10, for complete rules."
+          "description": "When you hit a creature in your aura, use your reaction to force a Strength save; on a failure it falls Prone.",
+          "action": {
+            "activation": "reaction"
+          },
+          "key": "xge_barbarian_storm-herald_14_sea"
         },
         {
           "type": "feature",
           "name": "Tundra",
-          "description": "Tundra is a Path of the Storm Herald feature. See Xanathar's Guide to Everything, page 10, for complete rules."
+          "description": "Whenever your Storm Aura activates, choose one creature you can see in it. On a failed Strength save, its Speed becomes 0 until your next turn begins."
         },
         {
           "type": "feature",
           "name": "Raging Storm",
-          "description": "Raging Storm is a Path of the Storm Herald feature. See Xanathar's Guide to Everything, page 10, for complete rules."
+          "description": "Your chosen environment upgrades Storm Aura: Desert retaliates against attackers, Sea can knock a struck target Prone, and Tundra can reduce one target's Speed to 0."
         }
       ]
     }

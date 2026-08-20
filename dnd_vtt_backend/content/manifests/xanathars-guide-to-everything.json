@@ -1053,6 +1053,7 @@
     "structured": [
       "source gating",
       "subclass selection",
+      "subclass feature mechanics and actions",
       "subclass spell grants",
       "racial feat prerequisites",
       "feat spell grants",
@@ -1061,7 +1062,6 @@
       "magic-item catalog metadata"
     ],
     "descriptive_reference": [
-      "bespoke subclass feature resolution",
       "bespoke spell effects",
       "common magic-item activation details"
     ]

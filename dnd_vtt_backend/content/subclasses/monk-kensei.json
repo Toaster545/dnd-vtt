@@ -15,17 +15,21 @@
         {
           "type": "feature",
           "name": "Agile Parry",
-          "description": "Agile Parry is a Way of the Kensei feature. See Xanathar's Guide to Everything, page 34, for complete rules."
+          "description": "If you make an Unarmed Strike during the Attack action while holding a melee Kensei weapon, gain +2 AC until the start of your next turn while the weapon remains in hand."
         },
         {
           "type": "feature",
           "name": "Kensei's Shot",
-          "description": "Kensei's Shot is a Way of the Kensei feature. See Xanathar's Guide to Everything, page 34, for complete rules."
+          "description": "As a Bonus Action, ranged attacks with a Kensei weapon deal an extra 1d4 damage of the weapon's type until the end of the current turn.",
+          "action": {
+            "activation": "bonus_action"
+          },
+          "key": "xge_monk_kensei_3_kenseis-shot"
         },
         {
           "type": "feature",
           "name": "Path of the Kensei",
-          "description": "Path of the Kensei is a Way of the Kensei feature. See Xanathar's Guide to Everything, page 34, for complete rules."
+          "description": "Choose one melee and one ranged simple or martial weapon lacking the Heavy and Special properties; the Longbow is allowed. Gain proficiency with them and treat them as Monk weapons. Choose one additional eligible weapon at Monk levels 6, 11, and 17. Also gain proficiency with Calligrapher's Supplies or Painter's Supplies."
         }
       ]
     },
@@ -38,7 +42,7 @@
         {
           "type": "feature",
           "name": "One with the Blade",
-          "description": "One with the Blade is a Way of the Kensei feature. See Xanathar's Guide to Everything, page 34, for complete rules."
+          "description": "Kensei-weapon attacks count as magical against resistance and immunity. Once per turn when you hit with one, spend 1 Focus Point to add one Martial Arts die to the weapon's damage."
         }
       ]
     },
@@ -51,7 +55,11 @@
         {
           "type": "feature",
           "name": "Sharpen the Blade",
-          "description": "Sharpen the Blade is a Way of the Kensei feature. See Xanathar's Guide to Everything, page 34, for complete rules."
+          "description": "As a Bonus Action, spend up to 3 Focus Points to touch one Kensei weapon. For 1 minute, it gains an attack and damage bonus equal to the points spent. This has no effect on a magic weapon that already grants such a bonus.",
+          "action": {
+            "activation": "bonus_action"
+          },
+          "key": "xge_monk_kensei_11_sharpen-the-blade"
         }
       ]
     },
@@ -64,7 +72,7 @@
         {
           "type": "feature",
           "name": "Unerring Accuracy",
-          "description": "Unerring Accuracy is a Way of the Kensei feature. See Xanathar's Guide to Everything, page 34, for complete rules."
+          "description": "Once on each of your turns, reroll a missed attack made with a Monk weapon."
         }
       ]
     }
