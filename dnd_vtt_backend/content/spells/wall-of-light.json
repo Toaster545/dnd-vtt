@@ -1,0 +1,55 @@
+{
+  "index": "wall-of-light",
+  "name": "Wall of Light",
+  "level": 5,
+  "school": "Evocation",
+  "casting_time": "1 action",
+  "range": "120 feet",
+  "components": [
+    "V",
+    "S",
+    "M"
+  ],
+  "material": "a hand mirror",
+  "duration": "Concentration, up to 10 minutes",
+  "ritual": false,
+  "concentration": true,
+  "mechanics": {
+    "spell_attacks": [
+      "ranged"
+    ],
+    "saving_throws": [
+      "constitution"
+    ],
+    "ability_checks": [],
+    "damage_types": [
+      "radiant"
+    ],
+    "conditions": [
+      "blinded"
+    ],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [
+      "ST",
+      "W"
+    ],
+    "misc_tags": [
+      "LGT",
+      "SGT"
+    ]
+  },
+  "description": "An evocation level 5 spell. Uses a ranged spell attack. Calls for a Constitution saving throw. Can deal 4d8 radiant damage. Can impose blinded. See Xanathar's Guide to Everything, page 170, for targeting and complete rules.",
+  "higher_levels": "The damage increases by 1d8 for each spell slot level above 5.",
+  "source": {
+    "code": "XGE",
+    "book": "Xanathar's Guide to Everything",
+    "edition": 2017,
+    "page": 170,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

@@ -1,0 +1,74 @@
+{
+  "class_index": "druid",
+  "index": "shepherd",
+  "name": "Circle of the Shepherd",
+  "description": "A legacy druid subclass from Xanathar's Guide to Everything.",
+  "levels": [
+    {
+      "level": 3,
+      "features": [
+        "Speech of the Woods",
+        "Spirit Totem"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Speech of the Woods",
+          "description": "Speech of the Woods is a Circle of the Shepherd feature. See Xanathar's Guide to Everything, page 23, for complete rules."
+        },
+        {
+          "type": "feature",
+          "name": "Spirit Totem",
+          "description": "Spirit Totem is a Circle of the Shepherd feature. See Xanathar's Guide to Everything, page 23, for complete rules."
+        }
+      ]
+    },
+    {
+      "level": 6,
+      "features": [
+        "Mighty Summoner"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Mighty Summoner",
+          "description": "Mighty Summoner is a Circle of the Shepherd feature. See Xanathar's Guide to Everything, page 23, for complete rules."
+        }
+      ]
+    },
+    {
+      "level": 10,
+      "features": [
+        "Guardian Spirit"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Guardian Spirit",
+          "description": "Guardian Spirit is a Circle of the Shepherd feature. See Xanathar's Guide to Everything, page 23, for complete rules."
+        }
+      ]
+    },
+    {
+      "level": 14,
+      "features": [
+        "Faithful Summons"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Faithful Summons",
+          "description": "Faithful Summons is a Circle of the Shepherd feature. See Xanathar's Guide to Everything, page 23, for complete rules."
+        }
+      ]
+    }
+  ],
+  "source": {
+    "code": "XGE",
+    "book": "Xanathar's Guide to Everything",
+    "edition": 2017,
+    "page": 23,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

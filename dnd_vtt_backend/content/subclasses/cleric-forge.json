@@ -1,0 +1,124 @@
+{
+  "class_index": "cleric",
+  "index": "forge",
+  "name": "Forge Domain",
+  "description": "A legacy cleric subclass from Xanathar's Guide to Everything.",
+  "levels": [
+    {
+      "level": 3,
+      "features": [
+        "Forge Spells",
+        "Blessing of the Forge",
+        "Bonus Proficiency",
+        "Channel Divinity: Artisan's Blessing"
+      ],
+      "grants": [
+        {
+          "type": "spell_grant",
+          "key": "forge_spells_3",
+          "name": "Forge Spells",
+          "destination": "always_prepared",
+          "spells": [
+            "identify",
+            "searing-smite",
+            "heat-metal",
+            "magic-weapon"
+          ],
+          "countsAgainstLimit": false,
+          "classLevel": 3
+        },
+        {
+          "type": "spell_grant",
+          "key": "forge_spells_5",
+          "name": "Forge Spells",
+          "destination": "always_prepared",
+          "spells": [
+            "elemental-weapon",
+            "protection-from-energy"
+          ],
+          "countsAgainstLimit": false,
+          "classLevel": 5
+        },
+        {
+          "type": "spell_grant",
+          "key": "forge_spells_7",
+          "name": "Forge Spells",
+          "destination": "always_prepared",
+          "spells": [
+            "fabricate",
+            "wall-of-fire"
+          ],
+          "countsAgainstLimit": false,
+          "classLevel": 7
+        },
+        {
+          "type": "spell_grant",
+          "key": "forge_spells_9",
+          "name": "Forge Spells",
+          "destination": "always_prepared",
+          "spells": [
+            "animate-objects",
+            "creation"
+          ],
+          "countsAgainstLimit": false,
+          "classLevel": 9
+        },
+        {
+          "type": "feature",
+          "name": "Blessing of the Forge",
+          "description": "Blessing of the Forge is a Forge Domain feature. See Xanathar's Guide to Everything, page 18, for complete rules."
+        },
+        {
+          "type": "feature",
+          "name": "Bonus Proficiency",
+          "description": "Bonus Proficiency is a Forge Domain feature. See Xanathar's Guide to Everything, page 18, for complete rules."
+        },
+        {
+          "type": "feature",
+          "name": "Channel Divinity: Artisan's Blessing",
+          "description": "Channel Divinity: Artisan's Blessing is a Forge Domain feature. See Xanathar's Guide to Everything, page 18, for complete rules."
+        }
+      ]
+    },
+    {
+      "level": 6,
+      "features": [
+        "Soul of the Forge",
+        "Divine Strike"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Soul of the Forge",
+          "description": "Soul of the Forge is a Forge Domain feature. See Xanathar's Guide to Everything, page 18, for complete rules."
+        },
+        {
+          "type": "feature",
+          "name": "Divine Strike",
+          "description": "Divine Strike is a Forge Domain feature. See Xanathar's Guide to Everything, page 18, for complete rules."
+        }
+      ]
+    },
+    {
+      "level": 17,
+      "features": [
+        "Saint of Forge and Fire"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Saint of Forge and Fire",
+          "description": "Saint of Forge and Fire is a Forge Domain feature. See Xanathar's Guide to Everything, page 18, for complete rules."
+        }
+      ]
+    }
+  ],
+  "source": {
+    "code": "XGE",
+    "book": "Xanathar's Guide to Everything",
+    "edition": 2017,
+    "page": 18,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

@@ -1,0 +1,47 @@
+{
+  "index": "aganazzars-scorcher",
+  "name": "Aganazzar's Scorcher",
+  "level": 2,
+  "school": "Evocation",
+  "casting_time": "1 action",
+  "range": "30 feet",
+  "components": [
+    "V",
+    "S",
+    "M"
+  ],
+  "material": "a red dragon's scale",
+  "duration": "Instantaneous",
+  "ritual": false,
+  "concentration": false,
+  "mechanics": {
+    "spell_attacks": [],
+    "saving_throws": [
+      "dexterity"
+    ],
+    "ability_checks": [],
+    "damage_types": [
+      "fire"
+    ],
+    "conditions": [],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [
+      "L"
+    ],
+    "misc_tags": []
+  },
+  "description": "An evocation level 2 spell. Calls for a Dexterity saving throw. Can deal 3d8 fire damage. See Xanathar's Guide to Everything, page 150, for targeting and complete rules.",
+  "higher_levels": "The damage increases by 1d8 for each spell slot level above 2.",
+  "source": {
+    "code": "XGE",
+    "book": "Xanathar's Guide to Everything",
+    "edition": 2017,
+    "page": 150,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

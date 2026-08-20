@@ -1,0 +1,86 @@
+{
+  "class_index": "sorcerer",
+  "index": "shadow",
+  "name": "Shadow Magic",
+  "description": "A legacy sorcerer subclass from Xanathar's Guide to Everything.",
+  "levels": [
+    {
+      "level": 3,
+      "features": [
+        "Shadow Spells",
+        "Eyes of the Dark",
+        "Strength of the Grave"
+      ],
+      "grants": [
+        {
+          "type": "spell_grant",
+          "key": "shadow_spells_3",
+          "name": "Shadow Spells",
+          "destination": "known",
+          "spells": [
+            "darkness"
+          ],
+          "countsAgainstLimit": false,
+          "classLevel": 3
+        },
+        {
+          "type": "feature",
+          "name": "Eyes of the Dark",
+          "description": "Eyes of the Dark is a Shadow Magic feature. See Xanathar's Guide to Everything, page 50, for complete rules."
+        },
+        {
+          "type": "feature",
+          "name": "Strength of the Grave",
+          "description": "Strength of the Grave is a Shadow Magic feature. See Xanathar's Guide to Everything, page 50, for complete rules."
+        }
+      ]
+    },
+    {
+      "level": 6,
+      "features": [
+        "Hound of Ill Omen"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Hound of Ill Omen",
+          "description": "Hound of Ill Omen is a Shadow Magic feature. See Xanathar's Guide to Everything, page 50, for complete rules."
+        }
+      ]
+    },
+    {
+      "level": 14,
+      "features": [
+        "Shadow Walk"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Shadow Walk",
+          "description": "Shadow Walk is a Shadow Magic feature. See Xanathar's Guide to Everything, page 50, for complete rules."
+        }
+      ]
+    },
+    {
+      "level": 18,
+      "features": [
+        "Umbral Form"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Umbral Form",
+          "description": "Umbral Form is a Shadow Magic feature. See Xanathar's Guide to Everything, page 50, for complete rules."
+        }
+      ]
+    }
+  ],
+  "source": {
+    "code": "XGE",
+    "book": "Xanathar's Guide to Everything",
+    "edition": 2017,
+    "page": 50,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

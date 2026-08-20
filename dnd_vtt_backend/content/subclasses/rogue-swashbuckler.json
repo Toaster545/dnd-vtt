@@ -1,0 +1,74 @@
+{
+  "class_index": "rogue",
+  "index": "swashbuckler",
+  "name": "Swashbuckler",
+  "description": "A legacy rogue subclass from Xanathar's Guide to Everything.",
+  "levels": [
+    {
+      "level": 3,
+      "features": [
+        "Fancy Footwork",
+        "Rakish Audacity"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Fancy Footwork",
+          "description": "Fancy Footwork is a Swashbuckler feature. See Xanathar's Guide to Everything, page 48, for complete rules."
+        },
+        {
+          "type": "feature",
+          "name": "Rakish Audacity",
+          "description": "Rakish Audacity is a Swashbuckler feature. See Xanathar's Guide to Everything, page 48, for complete rules."
+        }
+      ]
+    },
+    {
+      "level": 9,
+      "features": [
+        "Panache"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Panache",
+          "description": "Panache is a Swashbuckler feature. See Xanathar's Guide to Everything, page 48, for complete rules."
+        }
+      ]
+    },
+    {
+      "level": 13,
+      "features": [
+        "Elegant Maneuver"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Elegant Maneuver",
+          "description": "Elegant Maneuver is a Swashbuckler feature. See Xanathar's Guide to Everything, page 48, for complete rules."
+        }
+      ]
+    },
+    {
+      "level": 17,
+      "features": [
+        "Master Duelist"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Master Duelist",
+          "description": "Master Duelist is a Swashbuckler feature. See Xanathar's Guide to Everything, page 48, for complete rules."
+        }
+      ]
+    }
+  ],
+  "source": {
+    "code": "XGE",
+    "book": "Xanathar's Guide to Everything",
+    "edition": 2017,
+    "page": 48,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

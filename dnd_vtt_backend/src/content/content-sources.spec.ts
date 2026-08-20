@@ -9,6 +9,7 @@ describe('content sources', () => {
   it('defaults to PHB and includes required dependencies', () => {
     expect(normalizePlayerSources(undefined)).toEqual(DEFAULT_PLAYER_SOURCES);
     expect(normalizePlayerSources(['EFA'])).toEqual(['XPHB', 'EFA']);
+    expect(normalizePlayerSources(['XGE'])).toEqual(['XPHB', 'XGE']);
   });
 
   it('ignores non-player and unknown sources in character policies', () => {
@@ -20,5 +21,6 @@ describe('content sources', () => {
   it('reports enabled sources that a campaign disallows', () => {
     expect(disallowedSources(['XPHB', 'EFA'], ['XPHB'])).toEqual(['EFA']);
     expect(sourceReference('EFA').book).toBe('Eberron: Forge of the Artificer');
+    expect(sourceReference('XGE').book).toBe("Xanathar's Guide to Everything");
   });
 });

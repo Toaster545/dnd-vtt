@@ -1,0 +1,52 @@
+{
+  "index": "storm-sphere",
+  "name": "Storm Sphere",
+  "level": 4,
+  "school": "Evocation",
+  "casting_time": "1 action",
+  "range": "150 feet",
+  "components": [
+    "V",
+    "S"
+  ],
+  "duration": "Concentration, up to 1 minute",
+  "ritual": false,
+  "concentration": true,
+  "mechanics": {
+    "spell_attacks": [
+      "ranged"
+    ],
+    "saving_throws": [
+      "strength"
+    ],
+    "ability_checks": [],
+    "damage_types": [
+      "bludgeoning",
+      "lightning"
+    ],
+    "conditions": [],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [
+      "S",
+      "ST"
+    ],
+    "misc_tags": [
+      "DFT",
+      "UBA"
+    ]
+  },
+  "description": "An evocation level 4 spell. Uses a ranged spell attack. Calls for a Strength saving throw. Can deal 2d6 or 4d6 bludgeoning/lightning damage. See Xanathar's Guide to Everything, page 166, for targeting and complete rules.",
+  "higher_levels": "The damage increases by 1d6 for each spell slot level above 4.",
+  "source": {
+    "code": "XGE",
+    "book": "Xanathar's Guide to Everything",
+    "edition": 2017,
+    "page": 166,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

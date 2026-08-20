@@ -1,0 +1,49 @@
+{
+  "index": "watery-sphere",
+  "name": "Watery Sphere",
+  "level": 4,
+  "school": "Conjuration",
+  "casting_time": "1 action",
+  "range": "90 feet",
+  "components": [
+    "V",
+    "S",
+    "M"
+  ],
+  "material": "a droplet of water",
+  "duration": "Concentration, up to 1 minute",
+  "ritual": false,
+  "concentration": true,
+  "mechanics": {
+    "spell_attacks": [],
+    "saving_throws": [
+      "strength"
+    ],
+    "ability_checks": [],
+    "damage_types": [],
+    "conditions": [
+      "prone",
+      "restrained"
+    ],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [
+      "S"
+    ],
+    "misc_tags": [
+      "SGT"
+    ]
+  },
+  "description": "A conjuration level 4 spell. Calls for a Strength saving throw. Can impose prone, restrained. See Xanathar's Guide to Everything, page 170, for targeting and complete rules.",
+  "source": {
+    "code": "XGE",
+    "book": "Xanathar's Guide to Everything",
+    "edition": 2017,
+    "page": 170,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

@@ -1,0 +1,44 @@
+{
+  "index": "guardian-of-nature",
+  "name": "Guardian of Nature",
+  "level": 4,
+  "school": "Transmutation",
+  "casting_time": "1 bonus action",
+  "range": "Self",
+  "components": [
+    "V"
+  ],
+  "duration": "Concentration, up to 1 minute",
+  "ritual": false,
+  "concentration": true,
+  "mechanics": {
+    "spell_attacks": [],
+    "saving_throws": [],
+    "ability_checks": [],
+    "damage_types": [
+      "force"
+    ],
+    "conditions": [],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [],
+    "misc_tags": [
+      "AAD",
+      "ADV",
+      "DFT",
+      "THP"
+    ]
+  },
+  "description": "A transmutation level 4 spell. Can deal 1d6 force damage. See Xanathar's Guide to Everything, page 157, for targeting and complete rules.",
+  "source": {
+    "code": "XGE",
+    "book": "Xanathar's Guide to Everything",
+    "edition": 2017,
+    "page": 157,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

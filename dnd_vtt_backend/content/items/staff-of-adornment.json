@@ -1,0 +1,21 @@
+{
+  "index": "staff-of-adornment",
+  "name": "Staff of Adornment",
+  "type": "gear",
+  "category": "Staff",
+  "damage": null,
+  "damage_type": null,
+  "properties": [],
+  "weight": 4,
+  "cost": "—",
+  "description": "A staff that can suspend small objects above it for display.",
+  "rarity": "common",
+  "source": {
+    "code": "XGE",
+    "book": "Xanathar's Guide to Everything",
+    "edition": 2017,
+    "page": 139,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

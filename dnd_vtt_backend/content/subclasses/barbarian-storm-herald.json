@@ -1,0 +1,122 @@
+{
+  "class_index": "barbarian",
+  "index": "storm-herald",
+  "name": "Path of the Storm Herald",
+  "description": "A legacy barbarian subclass from Xanathar's Guide to Everything.",
+  "levels": [
+    {
+      "level": 3,
+      "features": [
+        "Desert",
+        "Sea",
+        "Tundra",
+        "Storm Aura"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Desert",
+          "description": "Desert is a Path of the Storm Herald feature. See Xanathar's Guide to Everything, page 10, for complete rules."
+        },
+        {
+          "type": "feature",
+          "name": "Sea",
+          "description": "Sea is a Path of the Storm Herald feature. See Xanathar's Guide to Everything, page 10, for complete rules."
+        },
+        {
+          "type": "feature",
+          "name": "Tundra",
+          "description": "Tundra is a Path of the Storm Herald feature. See Xanathar's Guide to Everything, page 10, for complete rules."
+        },
+        {
+          "type": "feature",
+          "name": "Storm Aura",
+          "description": "Storm Aura is a Path of the Storm Herald feature. See Xanathar's Guide to Everything, page 10, for complete rules."
+        }
+      ]
+    },
+    {
+      "level": 6,
+      "features": [
+        "Desert",
+        "Sea",
+        "Tundra",
+        "Storm Soul"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Desert",
+          "description": "Desert is a Path of the Storm Herald feature. See Xanathar's Guide to Everything, page 10, for complete rules."
+        },
+        {
+          "type": "feature",
+          "name": "Sea",
+          "description": "Sea is a Path of the Storm Herald feature. See Xanathar's Guide to Everything, page 10, for complete rules."
+        },
+        {
+          "type": "feature",
+          "name": "Tundra",
+          "description": "Tundra is a Path of the Storm Herald feature. See Xanathar's Guide to Everything, page 10, for complete rules."
+        },
+        {
+          "type": "feature",
+          "name": "Storm Soul",
+          "description": "Storm Soul is a Path of the Storm Herald feature. See Xanathar's Guide to Everything, page 10, for complete rules."
+        }
+      ]
+    },
+    {
+      "level": 10,
+      "features": [
+        "Shielding Storm"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Shielding Storm",
+          "description": "Shielding Storm is a Path of the Storm Herald feature. See Xanathar's Guide to Everything, page 10, for complete rules."
+        }
+      ]
+    },
+    {
+      "level": 14,
+      "features": [
+        "Desert",
+        "Sea",
+        "Tundra",
+        "Raging Storm"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Desert",
+          "description": "Desert is a Path of the Storm Herald feature. See Xanathar's Guide to Everything, page 10, for complete rules."
+        },
+        {
+          "type": "feature",
+          "name": "Sea",
+          "description": "Sea is a Path of the Storm Herald feature. See Xanathar's Guide to Everything, page 10, for complete rules."
+        },
+        {
+          "type": "feature",
+          "name": "Tundra",
+          "description": "Tundra is a Path of the Storm Herald feature. See Xanathar's Guide to Everything, page 10, for complete rules."
+        },
+        {
+          "type": "feature",
+          "name": "Raging Storm",
+          "description": "Raging Storm is a Path of the Storm Herald feature. See Xanathar's Guide to Everything, page 10, for complete rules."
+        }
+      ]
+    }
+  ],
+  "source": {
+    "code": "XGE",
+    "book": "Xanathar's Guide to Everything",
+    "edition": 2017,
+    "page": 10,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

@@ -66,6 +66,11 @@ export class CampaignsComponent implements OnInit {
     this.campaigns.set(campaigns);
     this.characters.set(characters);
     this.sources.set(sources);
+    this.allowedSources.set(new Set(
+      sources
+        .filter(source => source.player_options && (source.default_enabled || source.locked))
+        .map(source => source.code),
+    ));
     this.loading.set(false);
   }
 
@@ -90,7 +95,7 @@ export class CampaignsComponent implements OnInit {
   }
 
   toggleAllowedSource(source: DndContentSource) {
-    if (source.code === 'XPHB') return;
+    if (source.locked) return;
     const next = new Set(this.allowedSources());
     if (next.has(source.code)) next.delete(source.code);
     else next.add(source.code);
@@ -139,7 +144,11 @@ export class CampaignsComponent implements OnInit {
       );
       this.newName        = '';
       this.newDescription = '';
-      this.allowedSources.set(new Set(['XPHB']));
+      this.allowedSources.set(new Set(
+        this.sources()
+          .filter(source => source.player_options && (source.default_enabled || source.locked))
+          .map(source => source.code),
+      ));
       this.showForm.set(false);
       await this.load();
     } finally { this.saving.set(false); }

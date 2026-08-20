@@ -1,0 +1,61 @@
+{
+  "index": "drow-high-magic",
+  "name": "Drow High Magic",
+  "description": "Learn additional drow magic, including at-will detection and two leveled spells.",
+  "category": "general",
+  "prerequisite": {
+    "level": 4,
+    "species": [
+      "elf"
+    ],
+    "speciesChoices": {
+      "elven_lineage": [
+        "Drow"
+      ]
+    }
+  },
+  "grants": [
+    {
+      "type": "spell_grant",
+      "key": "drow_high_magic_detect",
+      "name": "Drow High Magic",
+      "destination": "known",
+      "spells": [
+        "detect-magic"
+      ],
+      "countsAgainstLimit": false,
+      "sourceKey": "drow-high-magic",
+      "sourceName": "Drow High Magic",
+      "ability": "charisma",
+      "freeCast": {
+        "atWill": true
+      }
+    },
+    {
+      "type": "spell_grant",
+      "key": "drow_high_magic_spells",
+      "name": "Drow High Magic",
+      "destination": "known",
+      "spells": [
+        "levitate",
+        "dispel-magic"
+      ],
+      "countsAgainstLimit": false,
+      "sourceKey": "drow-high-magic",
+      "sourceName": "Drow High Magic",
+      "ability": "charisma",
+      "freeCast": {
+        "uses": 1,
+        "recovery": "long_rest"
+      }
+    }
+  ],
+  "source": {
+    "code": "XGE",
+    "book": "Xanathar's Guide to Everything",
+    "edition": 2017,
+    "page": 74,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

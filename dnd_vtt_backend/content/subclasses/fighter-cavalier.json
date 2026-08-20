@@ -1,0 +1,93 @@
+{
+  "class_index": "fighter",
+  "index": "cavalier",
+  "name": "Cavalier",
+  "description": "A legacy fighter subclass from Xanathar's Guide to Everything.",
+  "levels": [
+    {
+      "level": 3,
+      "features": [
+        "Bonus Proficiency",
+        "Born to the Saddle",
+        "Unwavering Mark"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Bonus Proficiency",
+          "description": "Bonus Proficiency is a Cavalier feature. See Xanathar's Guide to Everything, page 30, for complete rules."
+        },
+        {
+          "type": "feature",
+          "name": "Born to the Saddle",
+          "description": "Born to the Saddle is a Cavalier feature. See Xanathar's Guide to Everything, page 30, for complete rules."
+        },
+        {
+          "type": "feature",
+          "name": "Unwavering Mark",
+          "description": "Unwavering Mark is a Cavalier feature. See Xanathar's Guide to Everything, page 30, for complete rules."
+        }
+      ]
+    },
+    {
+      "level": 7,
+      "features": [
+        "Warding Maneuver"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Warding Maneuver",
+          "description": "Warding Maneuver is a Cavalier feature. See Xanathar's Guide to Everything, page 30, for complete rules."
+        }
+      ]
+    },
+    {
+      "level": 10,
+      "features": [
+        "Hold the Line"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Hold the Line",
+          "description": "Hold the Line is a Cavalier feature. See Xanathar's Guide to Everything, page 30, for complete rules."
+        }
+      ]
+    },
+    {
+      "level": 15,
+      "features": [
+        "Ferocious Charger"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Ferocious Charger",
+          "description": "Ferocious Charger is a Cavalier feature. See Xanathar's Guide to Everything, page 30, for complete rules."
+        }
+      ]
+    },
+    {
+      "level": 18,
+      "features": [
+        "Vigilant Defender"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Vigilant Defender",
+          "description": "Vigilant Defender is a Cavalier feature. See Xanathar's Guide to Everything, page 30, for complete rules."
+        }
+      ]
+    }
+  ],
+  "source": {
+    "code": "XGE",
+    "book": "Xanathar's Guide to Everything",
+    "edition": 2017,
+    "page": 30,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

@@ -1,0 +1,48 @@
+{
+  "index": "pyrotechnics",
+  "name": "Pyrotechnics",
+  "level": 2,
+  "school": "Transmutation",
+  "casting_time": "1 action",
+  "range": "60 feet",
+  "components": [
+    "V",
+    "S"
+  ],
+  "duration": "Instantaneous",
+  "ritual": false,
+  "concentration": false,
+  "mechanics": {
+    "spell_attacks": [],
+    "saving_throws": [
+      "constitution"
+    ],
+    "ability_checks": [],
+    "damage_types": [],
+    "conditions": [
+      "blinded"
+    ],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [
+      "C",
+      "S"
+    ],
+    "misc_tags": [
+      "OBS",
+      "SGT"
+    ]
+  },
+  "description": "A transmutation level 2 spell. Calls for a Constitution saving throw. Can impose blinded. See Xanathar's Guide to Everything, page 163, for targeting and complete rules.",
+  "source": {
+    "code": "XGE",
+    "book": "Xanathar's Guide to Everything",
+    "edition": 2017,
+    "page": 163,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

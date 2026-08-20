@@ -1,0 +1,136 @@
+{
+  "class_index": "ranger",
+  "index": "monster-slayer",
+  "name": "Monster Slayer",
+  "description": "A legacy ranger subclass from Xanathar's Guide to Everything.",
+  "levels": [
+    {
+      "level": 3,
+      "features": [
+        "Monster Slayer Spells",
+        "Hunter's Sense",
+        "Monster Slayer Magic",
+        "Slayer's Prey"
+      ],
+      "grants": [
+        {
+          "type": "spell_grant",
+          "key": "monster-slayer_spells_3",
+          "name": "Monster Slayer Spells",
+          "destination": "known",
+          "spells": [
+            "protection-from-evil-and-good"
+          ],
+          "countsAgainstLimit": false,
+          "classLevel": 3
+        },
+        {
+          "type": "spell_grant",
+          "key": "monster-slayer_spells_5",
+          "name": "Monster Slayer Spells",
+          "destination": "known",
+          "spells": [
+            "zone-of-truth"
+          ],
+          "countsAgainstLimit": false,
+          "classLevel": 5
+        },
+        {
+          "type": "spell_grant",
+          "key": "monster-slayer_spells_9",
+          "name": "Monster Slayer Spells",
+          "destination": "known",
+          "spells": [
+            "magic-circle"
+          ],
+          "countsAgainstLimit": false,
+          "classLevel": 9
+        },
+        {
+          "type": "spell_grant",
+          "key": "monster-slayer_spells_13",
+          "name": "Monster Slayer Spells",
+          "destination": "known",
+          "spells": [
+            "banishment"
+          ],
+          "countsAgainstLimit": false,
+          "classLevel": 13
+        },
+        {
+          "type": "spell_grant",
+          "key": "monster-slayer_spells_17",
+          "name": "Monster Slayer Spells",
+          "destination": "known",
+          "spells": [
+            "hold-monster"
+          ],
+          "countsAgainstLimit": false,
+          "classLevel": 17
+        },
+        {
+          "type": "feature",
+          "name": "Hunter's Sense",
+          "description": "Hunter's Sense is a Monster Slayer feature. See Xanathar's Guide to Everything, page 43, for complete rules."
+        },
+        {
+          "type": "feature",
+          "name": "Monster Slayer Magic",
+          "description": "Monster Slayer Magic is a Monster Slayer feature. See Xanathar's Guide to Everything, page 43, for complete rules."
+        },
+        {
+          "type": "feature",
+          "name": "Slayer's Prey",
+          "description": "Slayer's Prey is a Monster Slayer feature. See Xanathar's Guide to Everything, page 43, for complete rules."
+        }
+      ]
+    },
+    {
+      "level": 7,
+      "features": [
+        "Supernatural Defense"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Supernatural Defense",
+          "description": "Supernatural Defense is a Monster Slayer feature. See Xanathar's Guide to Everything, page 43, for complete rules."
+        }
+      ]
+    },
+    {
+      "level": 11,
+      "features": [
+        "Magic-User's Nemesis"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Magic-User's Nemesis",
+          "description": "Magic-User's Nemesis is a Monster Slayer feature. See Xanathar's Guide to Everything, page 43, for complete rules."
+        }
+      ]
+    },
+    {
+      "level": 15,
+      "features": [
+        "Slayer's Counter"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Slayer's Counter",
+          "description": "Slayer's Counter is a Monster Slayer feature. See Xanathar's Guide to Everything, page 43, for complete rules."
+        }
+      ]
+    }
+  ],
+  "source": {
+    "code": "XGE",
+    "book": "Xanathar's Guide to Everything",
+    "edition": 2017,
+    "page": 43,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

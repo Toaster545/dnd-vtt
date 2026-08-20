@@ -1,9 +1,35 @@
 import { TestBed } from '@angular/core/testing';
 import { describe, expect, it } from 'vitest';
-import { DndClass, TraitGrant } from '../../../../../core/services/content.service';
+import { DndClass, DndFeat, TraitGrant } from '../../../../../core/services/content.service';
 import { ClassStepComponent } from './class-step';
 
 describe('ClassStepComponent skill choices', () => {
+  it('enforces species lineage prerequisites for legacy racial feats', async () => {
+    await TestBed.configureTestingModule({ imports: [ClassStepComponent] }).compileComponents();
+    const fixture = TestBed.createComponent(ClassStepComponent);
+    fixture.componentRef.setInput('classes', []);
+    fixture.componentRef.setInput('characterLevel', 4);
+    fixture.componentRef.setInput('baseAbilityScores', {
+      strength: 10, dexterity: 10, constitution: 10,
+      intelligence: 10, wisdom: 10, charisma: 10,
+    });
+    fixture.componentRef.setInput('species', 'elf');
+    fixture.componentRef.setInput('speciesChoices', { elven_lineage: ['Drow'] });
+    fixture.detectChanges();
+
+    const drowFeat = {
+      index: 'drow-high-magic', name: 'Drow High Magic', description: '', category: 'general',
+      prerequisite: { level: 4, species: ['elf'], speciesChoices: { elven_lineage: ['Drow'] } },
+    } satisfies DndFeat;
+    const woodFeat = {
+      ...drowFeat, index: 'wood-elf-magic', name: 'Wood Elf Magic',
+      prerequisite: { level: 4, species: ['elf'], speciesChoices: { elven_lineage: ['Wood Elf'] } },
+    } satisfies DndFeat;
+
+    expect(fixture.componentInstance.qualifiesForFeat(drowFeat)).toBe(true);
+    expect(fixture.componentInstance.qualifiesForFeat(woodFeat)).toBe(false);
+  });
+
   it('does not allow a skill proficiency already granted by another character source', async () => {
     await TestBed.configureTestingModule({ imports: [ClassStepComponent] }).compileComponents();
     const fixture = TestBed.createComponent(ClassStepComponent);

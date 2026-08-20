@@ -1,0 +1,26 @@
+{
+  "index": "infernal-constitution",
+  "name": "Infernal Constitution",
+  "description": "Gain resistance to cold and poison damage and advantage against being Poisoned.",
+  "category": "general",
+  "prerequisite": {
+    "level": 4,
+    "species": [
+      "tiefling"
+    ]
+  },
+  "abilityIncrease": {
+    "abilities": [
+      "constitution"
+    ],
+    "amount": 1
+  },
+  "source": {
+    "code": "XGE",
+    "book": "Xanathar's Guide to Everything",
+    "edition": 2017,
+    "page": 75,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

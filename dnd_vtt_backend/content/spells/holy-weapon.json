@@ -1,0 +1,51 @@
+{
+  "index": "holy-weapon",
+  "name": "Holy Weapon",
+  "level": 5,
+  "school": "Evocation",
+  "casting_time": "1 bonus action",
+  "range": "Touch",
+  "components": [
+    "V",
+    "S"
+  ],
+  "duration": "Concentration, up to 1 hour",
+  "ritual": false,
+  "concentration": true,
+  "mechanics": {
+    "spell_attacks": [],
+    "saving_throws": [
+      "constitution"
+    ],
+    "ability_checks": [],
+    "damage_types": [
+      "radiant"
+    ],
+    "conditions": [
+      "blinded"
+    ],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [
+      "MT"
+    ],
+    "misc_tags": [
+      "AAD",
+      "LGT",
+      "SGT",
+      "UBA"
+    ]
+  },
+  "description": "An evocation level 5 spell. Calls for a Constitution saving throw. Can deal 2d8 or 4d8 radiant damage. Can impose blinded. See Xanathar's Guide to Everything, page 157, for targeting and complete rules.",
+  "source": {
+    "code": "XGE",
+    "book": "Xanathar's Guide to Everything",
+    "edition": 2017,
+    "page": 157,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

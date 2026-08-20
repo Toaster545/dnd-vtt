@@ -1,0 +1,61 @@
+{
+  "class_index": "bard",
+  "index": "whispers",
+  "name": "College of Whispers",
+  "description": "A legacy bard subclass from Xanathar's Guide to Everything.",
+  "levels": [
+    {
+      "level": 3,
+      "features": [
+        "Psychic Blades",
+        "Words of Terror"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Psychic Blades",
+          "description": "Psychic Blades is a College of Whispers feature. See Xanathar's Guide to Everything, page 16, for complete rules."
+        },
+        {
+          "type": "feature",
+          "name": "Words of Terror",
+          "description": "Words of Terror is a College of Whispers feature. See Xanathar's Guide to Everything, page 16, for complete rules."
+        }
+      ]
+    },
+    {
+      "level": 6,
+      "features": [
+        "Mantle of Whispers"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Mantle of Whispers",
+          "description": "Mantle of Whispers is a College of Whispers feature. See Xanathar's Guide to Everything, page 16, for complete rules."
+        }
+      ]
+    },
+    {
+      "level": 14,
+      "features": [
+        "Shadow Lore"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Shadow Lore",
+          "description": "Shadow Lore is a College of Whispers feature. See Xanathar's Guide to Everything, page 16, for complete rules."
+        }
+      ]
+    }
+  ],
+  "source": {
+    "code": "XGE",
+    "book": "Xanathar's Guide to Everything",
+    "edition": 2017,
+    "page": 16,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

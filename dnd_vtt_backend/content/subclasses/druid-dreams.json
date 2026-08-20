@@ -1,0 +1,68 @@
+{
+  "class_index": "druid",
+  "index": "dreams",
+  "name": "Circle of Dreams",
+  "description": "A legacy druid subclass from Xanathar's Guide to Everything.",
+  "levels": [
+    {
+      "level": 3,
+      "features": [
+        "Balm of the Summer Court"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Balm of the Summer Court",
+          "description": "Balm of the Summer Court is a Circle of Dreams feature. See Xanathar's Guide to Everything, page 22, for complete rules."
+        }
+      ]
+    },
+    {
+      "level": 6,
+      "features": [
+        "Hearth of Moonlight and Shadow"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Hearth of Moonlight and Shadow",
+          "description": "Hearth of Moonlight and Shadow is a Circle of Dreams feature. See Xanathar's Guide to Everything, page 22, for complete rules."
+        }
+      ]
+    },
+    {
+      "level": 10,
+      "features": [
+        "Hidden Paths"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Hidden Paths",
+          "description": "Hidden Paths is a Circle of Dreams feature. See Xanathar's Guide to Everything, page 22, for complete rules."
+        }
+      ]
+    },
+    {
+      "level": 14,
+      "features": [
+        "Walker in Dreams"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Walker in Dreams",
+          "description": "Walker in Dreams is a Circle of Dreams feature. See Xanathar's Guide to Everything, page 22, for complete rules."
+        }
+      ]
+    }
+  ],
+  "source": {
+    "code": "XGE",
+    "book": "Xanathar's Guide to Everything",
+    "edition": 2017,
+    "page": 22,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

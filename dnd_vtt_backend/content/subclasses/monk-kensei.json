@@ -1,0 +1,80 @@
+{
+  "class_index": "monk",
+  "index": "kensei",
+  "name": "Way of the Kensei",
+  "description": "A legacy monk subclass from Xanathar's Guide to Everything.",
+  "levels": [
+    {
+      "level": 3,
+      "features": [
+        "Agile Parry",
+        "Kensei's Shot",
+        "Path of the Kensei"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Agile Parry",
+          "description": "Agile Parry is a Way of the Kensei feature. See Xanathar's Guide to Everything, page 34, for complete rules."
+        },
+        {
+          "type": "feature",
+          "name": "Kensei's Shot",
+          "description": "Kensei's Shot is a Way of the Kensei feature. See Xanathar's Guide to Everything, page 34, for complete rules."
+        },
+        {
+          "type": "feature",
+          "name": "Path of the Kensei",
+          "description": "Path of the Kensei is a Way of the Kensei feature. See Xanathar's Guide to Everything, page 34, for complete rules."
+        }
+      ]
+    },
+    {
+      "level": 6,
+      "features": [
+        "One with the Blade"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "One with the Blade",
+          "description": "One with the Blade is a Way of the Kensei feature. See Xanathar's Guide to Everything, page 34, for complete rules."
+        }
+      ]
+    },
+    {
+      "level": 11,
+      "features": [
+        "Sharpen the Blade"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Sharpen the Blade",
+          "description": "Sharpen the Blade is a Way of the Kensei feature. See Xanathar's Guide to Everything, page 34, for complete rules."
+        }
+      ]
+    },
+    {
+      "level": 17,
+      "features": [
+        "Unerring Accuracy"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Unerring Accuracy",
+          "description": "Unerring Accuracy is a Way of the Kensei feature. See Xanathar's Guide to Everything, page 34, for complete rules."
+        }
+      ]
+    }
+  ],
+  "source": {
+    "code": "XGE",
+    "book": "Xanathar's Guide to Everything",
+    "edition": 2017,
+    "page": 34,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

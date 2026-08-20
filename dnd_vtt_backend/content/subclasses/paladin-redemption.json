@@ -1,0 +1,153 @@
+{
+  "class_index": "paladin",
+  "index": "redemption",
+  "name": "Oath of Redemption",
+  "description": "A legacy paladin subclass from Xanathar's Guide to Everything.",
+  "levels": [
+    {
+      "level": 3,
+      "features": [
+        "Redemption Spells",
+        "Channel Divinity",
+        "Emissary of Peace",
+        "Oath Spells",
+        "Rebuke the Violent",
+        "Tenets of Redemption"
+      ],
+      "grants": [
+        {
+          "type": "spell_grant",
+          "key": "redemption_spells_3",
+          "name": "Redemption Spells",
+          "destination": "always_prepared",
+          "spells": [
+            "sanctuary",
+            "sleep"
+          ],
+          "countsAgainstLimit": false,
+          "classLevel": 3
+        },
+        {
+          "type": "spell_grant",
+          "key": "redemption_spells_5",
+          "name": "Redemption Spells",
+          "destination": "always_prepared",
+          "spells": [
+            "calm-emotions",
+            "hold-person"
+          ],
+          "countsAgainstLimit": false,
+          "classLevel": 5
+        },
+        {
+          "type": "spell_grant",
+          "key": "redemption_spells_9",
+          "name": "Redemption Spells",
+          "destination": "always_prepared",
+          "spells": [
+            "counterspell",
+            "hypnotic-pattern"
+          ],
+          "countsAgainstLimit": false,
+          "classLevel": 9
+        },
+        {
+          "type": "spell_grant",
+          "key": "redemption_spells_13",
+          "name": "Redemption Spells",
+          "destination": "always_prepared",
+          "spells": [
+            "otilukes-resilient-sphere",
+            "stoneskin"
+          ],
+          "countsAgainstLimit": false,
+          "classLevel": 13
+        },
+        {
+          "type": "spell_grant",
+          "key": "redemption_spells_17",
+          "name": "Redemption Spells",
+          "destination": "always_prepared",
+          "spells": [
+            "hold-monster",
+            "wall-of-force"
+          ],
+          "countsAgainstLimit": false,
+          "classLevel": 17
+        },
+        {
+          "type": "feature",
+          "name": "Channel Divinity",
+          "description": "Channel Divinity is a Oath of Redemption feature. See Xanathar's Guide to Everything, page 38, for complete rules."
+        },
+        {
+          "type": "feature",
+          "name": "Emissary of Peace",
+          "description": "Emissary of Peace is a Oath of Redemption feature. See Xanathar's Guide to Everything, page 38, for complete rules."
+        },
+        {
+          "type": "feature",
+          "name": "Oath Spells",
+          "description": "Oath Spells is a Oath of Redemption feature. See Xanathar's Guide to Everything, page 38, for complete rules."
+        },
+        {
+          "type": "feature",
+          "name": "Rebuke the Violent",
+          "description": "Rebuke the Violent is a Oath of Redemption feature. See Xanathar's Guide to Everything, page 38, for complete rules."
+        },
+        {
+          "type": "feature",
+          "name": "Tenets of Redemption",
+          "description": "Tenets of Redemption is a Oath of Redemption feature. See Xanathar's Guide to Everything, page 38, for complete rules."
+        }
+      ]
+    },
+    {
+      "level": 7,
+      "features": [
+        "Aura of the Guardian"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Aura of the Guardian",
+          "description": "Aura of the Guardian is a Oath of Redemption feature. See Xanathar's Guide to Everything, page 38, for complete rules."
+        }
+      ]
+    },
+    {
+      "level": 15,
+      "features": [
+        "Protective Spirit"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Protective Spirit",
+          "description": "Protective Spirit is a Oath of Redemption feature. See Xanathar's Guide to Everything, page 38, for complete rules."
+        }
+      ]
+    },
+    {
+      "level": 20,
+      "features": [
+        "Emissary of Redemption"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Emissary of Redemption",
+          "description": "Emissary of Redemption is a Oath of Redemption feature. See Xanathar's Guide to Everything, page 38, for complete rules."
+        }
+      ]
+    }
+  ],
+  "source": {
+    "code": "XGE",
+    "book": "Xanathar's Guide to Everything",
+    "edition": 2017,
+    "page": 38,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

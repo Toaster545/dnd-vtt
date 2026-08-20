@@ -1,0 +1,125 @@
+{
+  "class_index": "warlock",
+  "index": "hexblade",
+  "name": "The Hexblade",
+  "description": "A legacy warlock subclass from Xanathar's Guide to Everything.",
+  "levels": [
+    {
+      "level": 3,
+      "features": [
+        "Hexblade Spells",
+        "Hex Warrior",
+        "Hexblade's Curse"
+      ],
+      "grants": [
+        {
+          "type": "spell_grant",
+          "key": "hexblade_spells_3",
+          "name": "Hexblade Spells",
+          "destination": "always_prepared",
+          "spells": [
+            "shield",
+            "wrathful-smite",
+            "blur",
+            "shining-smite"
+          ],
+          "countsAgainstLimit": false,
+          "classLevel": 3
+        },
+        {
+          "type": "spell_grant",
+          "key": "hexblade_spells_5",
+          "name": "Hexblade Spells",
+          "destination": "always_prepared",
+          "spells": [
+            "blink",
+            "elemental-weapon"
+          ],
+          "countsAgainstLimit": false,
+          "classLevel": 5
+        },
+        {
+          "type": "spell_grant",
+          "key": "hexblade_spells_7",
+          "name": "Hexblade Spells",
+          "destination": "always_prepared",
+          "spells": [
+            "phantasmal-killer",
+            "staggering-smite"
+          ],
+          "countsAgainstLimit": false,
+          "classLevel": 7
+        },
+        {
+          "type": "spell_grant",
+          "key": "hexblade_spells_9",
+          "name": "Hexblade Spells",
+          "destination": "always_prepared",
+          "spells": [
+            "banishing-smite",
+            "cone-of-cold"
+          ],
+          "countsAgainstLimit": false,
+          "classLevel": 9
+        },
+        {
+          "type": "feature",
+          "name": "Hex Warrior",
+          "description": "Hex Warrior is a The Hexblade feature. See Xanathar's Guide to Everything, page 55, for complete rules."
+        },
+        {
+          "type": "feature",
+          "name": "Hexblade's Curse",
+          "description": "Hexblade's Curse is a The Hexblade feature. See Xanathar's Guide to Everything, page 55, for complete rules."
+        }
+      ]
+    },
+    {
+      "level": 6,
+      "features": [
+        "Accursed Specter"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Accursed Specter",
+          "description": "Accursed Specter is a The Hexblade feature. See Xanathar's Guide to Everything, page 55, for complete rules."
+        }
+      ]
+    },
+    {
+      "level": 10,
+      "features": [
+        "Armor of Hexes"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Armor of Hexes",
+          "description": "Armor of Hexes is a The Hexblade feature. See Xanathar's Guide to Everything, page 55, for complete rules."
+        }
+      ]
+    },
+    {
+      "level": 14,
+      "features": [
+        "Master of Hexes"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Master of Hexes",
+          "description": "Master of Hexes is a The Hexblade feature. See Xanathar's Guide to Everything, page 55, for complete rules."
+        }
+      ]
+    }
+  ],
+  "source": {
+    "code": "XGE",
+    "book": "Xanathar's Guide to Everything",
+    "edition": 2017,
+    "page": 55,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

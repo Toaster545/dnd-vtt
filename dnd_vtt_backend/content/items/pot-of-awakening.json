@@ -1,0 +1,21 @@
+{
+  "index": "pot-of-awakening",
+  "name": "Pot of Awakening",
+  "type": "gear",
+  "category": "Wondrous Item",
+  "damage": null,
+  "damage_type": null,
+  "properties": [],
+  "weight": 0,
+  "cost": "—",
+  "description": "A pot that can eventually awaken an ordinary shrub planted in it.",
+  "rarity": "common",
+  "source": {
+    "code": "XGE",
+    "book": "Xanathar's Guide to Everything",
+    "edition": 2017,
+    "page": 138,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

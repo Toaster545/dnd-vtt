@@ -1,0 +1,80 @@
+{
+  "class_index": "sorcerer",
+  "index": "storm",
+  "name": "Storm Sorcery",
+  "description": "A legacy sorcerer subclass from Xanathar's Guide to Everything.",
+  "levels": [
+    {
+      "level": 3,
+      "features": [
+        "Tempestuous Magic",
+        "Wind Speaker"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Tempestuous Magic",
+          "description": "Tempestuous Magic is a Storm Sorcery feature. See Xanathar's Guide to Everything, page 51, for complete rules."
+        },
+        {
+          "type": "feature",
+          "name": "Wind Speaker",
+          "description": "Wind Speaker is a Storm Sorcery feature. See Xanathar's Guide to Everything, page 51, for complete rules."
+        }
+      ]
+    },
+    {
+      "level": 6,
+      "features": [
+        "Heart of the Storm",
+        "Storm Guide"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Heart of the Storm",
+          "description": "Heart of the Storm is a Storm Sorcery feature. See Xanathar's Guide to Everything, page 51, for complete rules."
+        },
+        {
+          "type": "feature",
+          "name": "Storm Guide",
+          "description": "Storm Guide is a Storm Sorcery feature. See Xanathar's Guide to Everything, page 51, for complete rules."
+        }
+      ]
+    },
+    {
+      "level": 14,
+      "features": [
+        "Storm's Fury"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Storm's Fury",
+          "description": "Storm's Fury is a Storm Sorcery feature. See Xanathar's Guide to Everything, page 51, for complete rules."
+        }
+      ]
+    },
+    {
+      "level": 18,
+      "features": [
+        "Wind Soul"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Wind Soul",
+          "description": "Wind Soul is a Storm Sorcery feature. See Xanathar's Guide to Everything, page 51, for complete rules."
+        }
+      ]
+    }
+  ],
+  "source": {
+    "code": "XGE",
+    "book": "Xanathar's Guide to Everything",
+    "edition": 2017,
+    "page": 51,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

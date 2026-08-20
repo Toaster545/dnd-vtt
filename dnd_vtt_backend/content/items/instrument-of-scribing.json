@@ -1,0 +1,26 @@
+{
+  "index": "instrument-of-scribing",
+  "name": "Instrument of Scribing",
+  "type": "gear",
+  "category": "Wondrous Item",
+  "damage": null,
+  "damage_type": null,
+  "properties": [],
+  "weight": 0,
+  "cost": "—",
+  "description": "A charged instrument that writes a short luminous message while played.",
+  "rarity": "common",
+  "requires_attunement": true,
+  "charges": {
+    "max": 3,
+    "recovery": "dawn"
+  },
+  "source": {
+    "code": "XGE",
+    "book": "Xanathar's Guide to Everything",
+    "edition": 2017,
+    "page": 138,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

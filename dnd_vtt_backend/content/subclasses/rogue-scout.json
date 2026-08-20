@@ -1,0 +1,74 @@
+{
+  "class_index": "rogue",
+  "index": "scout",
+  "name": "Scout",
+  "description": "A legacy rogue subclass from Xanathar's Guide to Everything.",
+  "levels": [
+    {
+      "level": 3,
+      "features": [
+        "Skirmisher",
+        "Survivalist"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Skirmisher",
+          "description": "Skirmisher is a Scout feature. See Xanathar's Guide to Everything, page 47, for complete rules."
+        },
+        {
+          "type": "feature",
+          "name": "Survivalist",
+          "description": "Survivalist is a Scout feature. See Xanathar's Guide to Everything, page 47, for complete rules."
+        }
+      ]
+    },
+    {
+      "level": 9,
+      "features": [
+        "Superior Mobility"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Superior Mobility",
+          "description": "Superior Mobility is a Scout feature. See Xanathar's Guide to Everything, page 47, for complete rules."
+        }
+      ]
+    },
+    {
+      "level": 13,
+      "features": [
+        "Ambush Master"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Ambush Master",
+          "description": "Ambush Master is a Scout feature. See Xanathar's Guide to Everything, page 47, for complete rules."
+        }
+      ]
+    },
+    {
+      "level": 17,
+      "features": [
+        "Sudden Strike"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Sudden Strike",
+          "description": "Sudden Strike is a Scout feature. See Xanathar's Guide to Everything, page 47, for complete rules."
+        }
+      ]
+    }
+  ],
+  "source": {
+    "code": "XGE",
+    "book": "Xanathar's Guide to Everything",
+    "edition": 2017,
+    "page": 47,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

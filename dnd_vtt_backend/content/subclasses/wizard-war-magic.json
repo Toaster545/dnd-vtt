@@ -1,0 +1,74 @@
+{
+  "class_index": "wizard",
+  "index": "war-magic",
+  "name": "War Magic",
+  "description": "A legacy wizard subclass from Xanathar's Guide to Everything.",
+  "levels": [
+    {
+      "level": 3,
+      "features": [
+        "Arcane Deflection",
+        "Tactical Wit"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Arcane Deflection",
+          "description": "Arcane Deflection is a War Magic feature. See Xanathar's Guide to Everything, page 59, for complete rules."
+        },
+        {
+          "type": "feature",
+          "name": "Tactical Wit",
+          "description": "Tactical Wit is a War Magic feature. See Xanathar's Guide to Everything, page 59, for complete rules."
+        }
+      ]
+    },
+    {
+      "level": 6,
+      "features": [
+        "Power Surge"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Power Surge",
+          "description": "Power Surge is a War Magic feature. See Xanathar's Guide to Everything, page 59, for complete rules."
+        }
+      ]
+    },
+    {
+      "level": 10,
+      "features": [
+        "Durable Magic"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Durable Magic",
+          "description": "Durable Magic is a War Magic feature. See Xanathar's Guide to Everything, page 59, for complete rules."
+        }
+      ]
+    },
+    {
+      "level": 14,
+      "features": [
+        "Deflecting Shroud"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Deflecting Shroud",
+          "description": "Deflecting Shroud is a War Magic feature. See Xanathar's Guide to Everything, page 59, for complete rules."
+        }
+      ]
+    }
+  ],
+  "source": {
+    "code": "XGE",
+    "book": "Xanathar's Guide to Everything",
+    "edition": 2017,
+    "page": 59,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

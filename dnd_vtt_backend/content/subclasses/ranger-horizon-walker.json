@@ -1,0 +1,136 @@
+{
+  "class_index": "ranger",
+  "index": "horizon-walker",
+  "name": "Horizon Walker",
+  "description": "A legacy ranger subclass from Xanathar's Guide to Everything.",
+  "levels": [
+    {
+      "level": 3,
+      "features": [
+        "Horizon Walker Spells",
+        "Detect Portal",
+        "Horizon Walker Magic",
+        "Planar Warrior"
+      ],
+      "grants": [
+        {
+          "type": "spell_grant",
+          "key": "horizon-walker_spells_3",
+          "name": "Horizon Walker Spells",
+          "destination": "known",
+          "spells": [
+            "protection-from-evil-and-good"
+          ],
+          "countsAgainstLimit": false,
+          "classLevel": 3
+        },
+        {
+          "type": "spell_grant",
+          "key": "horizon-walker_spells_5",
+          "name": "Horizon Walker Spells",
+          "destination": "known",
+          "spells": [
+            "misty-step"
+          ],
+          "countsAgainstLimit": false,
+          "classLevel": 5
+        },
+        {
+          "type": "spell_grant",
+          "key": "horizon-walker_spells_9",
+          "name": "Horizon Walker Spells",
+          "destination": "known",
+          "spells": [
+            "haste"
+          ],
+          "countsAgainstLimit": false,
+          "classLevel": 9
+        },
+        {
+          "type": "spell_grant",
+          "key": "horizon-walker_spells_13",
+          "name": "Horizon Walker Spells",
+          "destination": "known",
+          "spells": [
+            "banishment"
+          ],
+          "countsAgainstLimit": false,
+          "classLevel": 13
+        },
+        {
+          "type": "spell_grant",
+          "key": "horizon-walker_spells_17",
+          "name": "Horizon Walker Spells",
+          "destination": "known",
+          "spells": [
+            "teleportation-circle"
+          ],
+          "countsAgainstLimit": false,
+          "classLevel": 17
+        },
+        {
+          "type": "feature",
+          "name": "Detect Portal",
+          "description": "Detect Portal is a Horizon Walker feature. See Xanathar's Guide to Everything, page 42, for complete rules."
+        },
+        {
+          "type": "feature",
+          "name": "Horizon Walker Magic",
+          "description": "Horizon Walker Magic is a Horizon Walker feature. See Xanathar's Guide to Everything, page 42, for complete rules."
+        },
+        {
+          "type": "feature",
+          "name": "Planar Warrior",
+          "description": "Planar Warrior is a Horizon Walker feature. See Xanathar's Guide to Everything, page 42, for complete rules."
+        }
+      ]
+    },
+    {
+      "level": 7,
+      "features": [
+        "Ethereal Step"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Ethereal Step",
+          "description": "Ethereal Step is a Horizon Walker feature. See Xanathar's Guide to Everything, page 42, for complete rules."
+        }
+      ]
+    },
+    {
+      "level": 11,
+      "features": [
+        "Distant Strike"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Distant Strike",
+          "description": "Distant Strike is a Horizon Walker feature. See Xanathar's Guide to Everything, page 42, for complete rules."
+        }
+      ]
+    },
+    {
+      "level": 15,
+      "features": [
+        "Spectral Defense"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Spectral Defense",
+          "description": "Spectral Defense is a Horizon Walker feature. See Xanathar's Guide to Everything, page 42, for complete rules."
+        }
+      ]
+    }
+  ],
+  "source": {
+    "code": "XGE",
+    "book": "Xanathar's Guide to Everything",
+    "edition": 2017,
+    "page": 42,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

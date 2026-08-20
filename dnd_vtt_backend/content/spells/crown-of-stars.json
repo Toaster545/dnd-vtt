@@ -1,0 +1,49 @@
+{
+  "index": "crown-of-stars",
+  "name": "Crown of Stars",
+  "level": 7,
+  "school": "Evocation",
+  "casting_time": "1 action",
+  "range": "Self",
+  "components": [
+    "V",
+    "S"
+  ],
+  "duration": "1 hour",
+  "ritual": false,
+  "concentration": false,
+  "mechanics": {
+    "spell_attacks": [
+      "ranged"
+    ],
+    "saving_throws": [],
+    "ability_checks": [],
+    "damage_types": [
+      "radiant"
+    ],
+    "conditions": [],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [
+      "ST"
+    ],
+    "misc_tags": [
+      "LGT",
+      "OBJ",
+      "UBA"
+    ]
+  },
+  "description": "An evocation level 7 spell. Uses a ranged spell attack. Can deal 4d12 radiant damage. See Xanathar's Guide to Everything, page 152, for targeting and complete rules.",
+  "higher_levels": "The spell improves with higher-level slots as described on XGE page 152.",
+  "source": {
+    "code": "XGE",
+    "book": "Xanathar's Guide to Everything",
+    "edition": 2017,
+    "page": 152,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

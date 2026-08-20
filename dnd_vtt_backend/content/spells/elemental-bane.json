@@ -1,0 +1,52 @@
+{
+  "index": "elemental-bane",
+  "name": "Elemental Bane",
+  "level": 4,
+  "school": "Transmutation",
+  "casting_time": "1 action",
+  "range": "90 feet",
+  "components": [
+    "V",
+    "S"
+  ],
+  "duration": "Concentration, up to 1 minute",
+  "ritual": false,
+  "concentration": true,
+  "mechanics": {
+    "spell_attacks": [],
+    "saving_throws": [
+      "constitution"
+    ],
+    "ability_checks": [],
+    "damage_types": [
+      "acid",
+      "cold",
+      "fire",
+      "lightning",
+      "thunder"
+    ],
+    "conditions": [],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [
+      "ST"
+    ],
+    "misc_tags": [
+      "SCT",
+      "SGT"
+    ]
+  },
+  "description": "A transmutation level 4 spell. Calls for a Constitution saving throw. Can deal 2d6 acid/cold/fire/lightning/thunder damage. See Xanathar's Guide to Everything, page 155, for targeting and complete rules.",
+  "higher_levels": "The spell improves with higher-level slots as described on XGE page 155.",
+  "source": {
+    "code": "XGE",
+    "book": "Xanathar's Guide to Everything",
+    "edition": 2017,
+    "page": 155,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "index": "squat-nimbleness",
+  "name": "Squat Nimbleness",
+  "description": "Become faster and more adept at Athletics or Acrobatics, with an easier time escaping grapples.",
+  "category": "general",
+  "prerequisite": {
+    "level": 4,
+    "species": [
+      "dwarf",
+      "gnome",
+      "halfling"
+    ]
+  },
+  "abilityIncrease": {
+    "abilities": [
+      "strength",
+      "dexterity"
+    ],
+    "amount": 1
+  },
+  "grants": [
+    {
+      "type": "skill_choice",
+      "key": "squat_nimbleness_skill",
+      "name": "Squat Nimbleness Skill",
+      "choose": 1,
+      "skills": [
+        "Athletics",
+        "Acrobatics"
+      ]
+    }
+  ],
+  "source": {
+    "code": "XGE",
+    "book": "Xanathar's Guide to Everything",
+    "edition": 2017,
+    "page": 75,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

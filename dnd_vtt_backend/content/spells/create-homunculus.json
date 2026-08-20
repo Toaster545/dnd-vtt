@@ -1,0 +1,42 @@
+{
+  "index": "create-homunculus",
+  "name": "Create Homunculus",
+  "level": 6,
+  "school": "Transmutation",
+  "casting_time": "1 hour",
+  "range": "Touch",
+  "components": [
+    "V",
+    "S",
+    "M"
+  ],
+  "material": "clay, ash, and mandrake root, all of which the spell consumes, and a jewel-encrusted dagger worth at least 1,000 gp",
+  "duration": "Instantaneous",
+  "ritual": false,
+  "concentration": false,
+  "mechanics": {
+    "spell_attacks": [],
+    "saving_throws": [],
+    "ability_checks": [],
+    "damage_types": [],
+    "conditions": [],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [],
+    "misc_tags": [
+      "PRM"
+    ]
+  },
+  "description": "A transmutation level 6 spell. See Xanathar's Guide to Everything, page 152, for targeting and complete rules.",
+  "source": {
+    "code": "XGE",
+    "book": "Xanathar's Guide to Everything",
+    "edition": 2017,
+    "page": 152,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

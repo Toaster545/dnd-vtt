@@ -1,0 +1,46 @@
+{
+  "index": "catapult",
+  "name": "Catapult",
+  "level": 1,
+  "school": "Transmutation",
+  "casting_time": "1 action",
+  "range": "60 feet",
+  "components": [
+    "S"
+  ],
+  "duration": "Instantaneous",
+  "ritual": false,
+  "concentration": false,
+  "mechanics": {
+    "spell_attacks": [],
+    "saving_throws": [
+      "dexterity"
+    ],
+    "ability_checks": [],
+    "damage_types": [
+      "bludgeoning"
+    ],
+    "conditions": [],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [
+      "ST"
+    ],
+    "misc_tags": [
+      "OBJ"
+    ]
+  },
+  "description": "A transmutation level 1 spell. Calls for a Dexterity saving throw. Can deal 3d8 bludgeoning damage. See Xanathar's Guide to Everything, page 150, for targeting and complete rules.",
+  "higher_levels": "The damage increases by 1d8 for each spell slot level above 1.",
+  "source": {
+    "code": "XGE",
+    "book": "Xanathar's Guide to Everything",
+    "edition": 2017,
+    "page": 150,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

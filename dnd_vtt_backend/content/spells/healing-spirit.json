@@ -1,0 +1,58 @@
+{
+  "index": "healing-spirit",
+  "name": "Healing Spirit",
+  "level": 2,
+  "school": "Conjuration",
+  "casting_time": "1 bonus action",
+  "range": "60 feet",
+  "components": [
+    "V",
+    "S"
+  ],
+  "duration": "Concentration, up to 1 minute",
+  "ritual": false,
+  "concentration": true,
+  "mechanics": {
+    "spell_attacks": [],
+    "saving_throws": [],
+    "ability_checks": [],
+    "damage_types": [],
+    "conditions": [],
+    "affects_creature_types": [
+      "aberration",
+      "beast",
+      "celestial",
+      "dragon",
+      "elemental",
+      "fey",
+      "fiend",
+      "giant",
+      "humanoid",
+      "monstrosity",
+      "ooze",
+      "plant"
+    ],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [
+      "C"
+    ],
+    "misc_tags": [
+      "HL",
+      "SGT",
+      "UBA"
+    ]
+  },
+  "description": "A conjuration level 2 spell. Can restore 1d6 Hit Points. See Xanathar's Guide to Everything, page 157, for targeting and complete rules.",
+  "higher_levels": "The healing increases by 1d6 for each spell slot level above 2.",
+  "source": {
+    "code": "XGE",
+    "book": "Xanathar's Guide to Everything",
+    "edition": 2017,
+    "page": 157,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

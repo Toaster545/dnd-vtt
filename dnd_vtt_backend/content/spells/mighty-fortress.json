@@ -1,0 +1,44 @@
+{
+  "index": "mighty-fortress",
+  "name": "Mighty Fortress",
+  "level": 8,
+  "school": "Conjuration",
+  "casting_time": "1 minute",
+  "range": "1 miles",
+  "components": [
+    "V",
+    "S",
+    "M"
+  ],
+  "material": "a diamond worth at least 500 gp, which the spell consumes",
+  "duration": "Instantaneous",
+  "ritual": false,
+  "concentration": false,
+  "mechanics": {
+    "spell_attacks": [],
+    "saving_throws": [],
+    "ability_checks": [],
+    "damage_types": [],
+    "conditions": [],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [],
+    "misc_tags": [
+      "PIR",
+      "PRM",
+      "SGT"
+    ]
+  },
+  "description": "A conjuration level 8 spell. See Xanathar's Guide to Everything, page 161, for targeting and complete rules.",
+  "source": {
+    "code": "XGE",
+    "book": "Xanathar's Guide to Everything",
+    "edition": 2017,
+    "page": 161,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

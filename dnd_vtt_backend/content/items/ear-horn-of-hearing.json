@@ -1,0 +1,21 @@
+{
+  "index": "ear-horn-of-hearing",
+  "name": "Ear Horn of Hearing",
+  "type": "gear",
+  "category": "Wondrous Item",
+  "damage": null,
+  "damage_type": null,
+  "properties": [],
+  "weight": 0,
+  "cost": "—",
+  "description": "An ear horn that suppresses the Deafened condition while held in place.",
+  "rarity": "common",
+  "source": {
+    "code": "XGE",
+    "book": "Xanathar's Guide to Everything",
+    "edition": 2017,
+    "page": 137,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

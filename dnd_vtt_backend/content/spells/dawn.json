@@ -1,0 +1,49 @@
+{
+  "index": "dawn",
+  "name": "Dawn",
+  "level": 5,
+  "school": "Evocation",
+  "casting_time": "1 action",
+  "range": "60 feet",
+  "components": [
+    "V",
+    "S",
+    "M"
+  ],
+  "material": "a sunburst pendant worth at least 100 gp",
+  "duration": "Concentration, up to 1 minute",
+  "ritual": false,
+  "concentration": true,
+  "mechanics": {
+    "spell_attacks": [],
+    "saving_throws": [
+      "constitution"
+    ],
+    "ability_checks": [],
+    "damage_types": [
+      "radiant"
+    ],
+    "conditions": [],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [
+      "Y"
+    ],
+    "misc_tags": [
+      "LGTS",
+      "UBA"
+    ]
+  },
+  "description": "An evocation level 5 spell. Calls for a Constitution saving throw. Can deal 4d10 radiant damage. See Xanathar's Guide to Everything, page 153, for targeting and complete rules.",
+  "source": {
+    "code": "XGE",
+    "book": "Xanathar's Guide to Everything",
+    "edition": 2017,
+    "page": 153,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

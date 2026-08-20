@@ -1,0 +1,46 @@
+{
+  "index": "wall-of-sand",
+  "name": "Wall of Sand",
+  "level": 3,
+  "school": "Evocation",
+  "casting_time": "1 action",
+  "range": "90 feet",
+  "components": [
+    "V",
+    "S",
+    "M"
+  ],
+  "material": "a handful of sand",
+  "duration": "Concentration, up to 10 minutes",
+  "ritual": false,
+  "concentration": true,
+  "mechanics": {
+    "spell_attacks": [],
+    "saving_throws": [],
+    "ability_checks": [],
+    "damage_types": [],
+    "conditions": [
+      "blinded"
+    ],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [
+      "W"
+    ],
+    "misc_tags": [
+      "SGT"
+    ]
+  },
+  "description": "An evocation level 3 spell. Can impose blinded. See Xanathar's Guide to Everything, page 170, for targeting and complete rules.",
+  "source": {
+    "code": "XGE",
+    "book": "Xanathar's Guide to Everything",
+    "edition": 2017,
+    "page": 170,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

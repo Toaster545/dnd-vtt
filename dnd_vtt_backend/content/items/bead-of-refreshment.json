@@ -1,0 +1,21 @@
+{
+  "index": "bead-of-refreshment",
+  "name": "Bead of Refreshment",
+  "type": "gear",
+  "category": "Wondrous Item",
+  "damage": null,
+  "damage_type": null,
+  "properties": [],
+  "weight": 0,
+  "cost": "—",
+  "description": "A consumable bead that turns a small amount of ordinary liquid into fresh drinking water.",
+  "rarity": "common",
+  "source": {
+    "code": "XGE",
+    "book": "Xanathar's Guide to Everything",
+    "edition": 2017,
+    "page": 136,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

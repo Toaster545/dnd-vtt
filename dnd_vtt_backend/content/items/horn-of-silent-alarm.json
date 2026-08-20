@@ -1,0 +1,25 @@
+{
+  "index": "horn-of-silent-alarm",
+  "name": "Horn of Silent Alarm",
+  "type": "gear",
+  "category": "Wondrous Item",
+  "damage": null,
+  "damage_type": null,
+  "properties": [],
+  "weight": 0,
+  "cost": "—",
+  "description": "A charged horn that silently alerts one creature within range.",
+  "rarity": "common",
+  "charges": {
+    "max": 4,
+    "recovery": "dawn"
+  },
+  "source": {
+    "code": "XGE",
+    "book": "Xanathar's Guide to Everything",
+    "edition": 2017,
+    "page": 137,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

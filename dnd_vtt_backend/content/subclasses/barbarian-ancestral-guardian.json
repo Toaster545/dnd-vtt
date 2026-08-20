@@ -1,0 +1,81 @@
+{
+  "class_index": "barbarian",
+  "index": "ancestral-guardian",
+  "name": "Path of the Ancestral Guardian",
+  "description": "A legacy barbarian subclass from Xanathar's Guide to Everything.",
+  "levels": [
+    {
+      "level": 3,
+      "features": [
+        "Ancestral Guardian Spells",
+        "Ancestral Protectors"
+      ],
+      "grants": [
+        {
+          "type": "spell_grant",
+          "key": "ancestral-guardian_spells_10",
+          "name": "Ancestral Guardian Spells",
+          "destination": "known",
+          "spells": [
+            "augury",
+            "clairvoyance"
+          ],
+          "countsAgainstLimit": false,
+          "classLevel": 10
+        },
+        {
+          "type": "feature",
+          "name": "Ancestral Protectors",
+          "description": "Ancestral Protectors is a Path of the Ancestral Guardian feature. See Xanathar's Guide to Everything, page 9, for complete rules."
+        }
+      ]
+    },
+    {
+      "level": 6,
+      "features": [
+        "Spirit Shield"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Spirit Shield",
+          "description": "Spirit Shield is a Path of the Ancestral Guardian feature. See Xanathar's Guide to Everything, page 9, for complete rules."
+        }
+      ]
+    },
+    {
+      "level": 10,
+      "features": [
+        "Consult the Spirits"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Consult the Spirits",
+          "description": "Consult the Spirits is a Path of the Ancestral Guardian feature. See Xanathar's Guide to Everything, page 9, for complete rules."
+        }
+      ]
+    },
+    {
+      "level": 14,
+      "features": [
+        "Vengeful Ancestors"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Vengeful Ancestors",
+          "description": "Vengeful Ancestors is a Path of the Ancestral Guardian feature. See Xanathar's Guide to Everything, page 9, for complete rules."
+        }
+      ]
+    }
+  ],
+  "source": {
+    "code": "XGE",
+    "book": "Xanathar's Guide to Everything",
+    "edition": 2017,
+    "page": 9,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

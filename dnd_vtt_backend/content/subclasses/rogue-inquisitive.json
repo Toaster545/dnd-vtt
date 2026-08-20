@@ -1,0 +1,80 @@
+{
+  "class_index": "rogue",
+  "index": "inquisitive",
+  "name": "Inquisitive",
+  "description": "A legacy rogue subclass from Xanathar's Guide to Everything.",
+  "levels": [
+    {
+      "level": 3,
+      "features": [
+        "Ear for Deceit",
+        "Eye for Detail",
+        "Insightful Fighting"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Ear for Deceit",
+          "description": "Ear for Deceit is a Inquisitive feature. See Xanathar's Guide to Everything, page 45, for complete rules."
+        },
+        {
+          "type": "feature",
+          "name": "Eye for Detail",
+          "description": "Eye for Detail is a Inquisitive feature. See Xanathar's Guide to Everything, page 45, for complete rules."
+        },
+        {
+          "type": "feature",
+          "name": "Insightful Fighting",
+          "description": "Insightful Fighting is a Inquisitive feature. See Xanathar's Guide to Everything, page 45, for complete rules."
+        }
+      ]
+    },
+    {
+      "level": 9,
+      "features": [
+        "Steady Eye"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Steady Eye",
+          "description": "Steady Eye is a Inquisitive feature. See Xanathar's Guide to Everything, page 45, for complete rules."
+        }
+      ]
+    },
+    {
+      "level": 13,
+      "features": [
+        "Unerring Eye"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Unerring Eye",
+          "description": "Unerring Eye is a Inquisitive feature. See Xanathar's Guide to Everything, page 45, for complete rules."
+        }
+      ]
+    },
+    {
+      "level": 17,
+      "features": [
+        "Eye for Weakness"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Eye for Weakness",
+          "description": "Eye for Weakness is a Inquisitive feature. See Xanathar's Guide to Everything, page 45, for complete rules."
+        }
+      ]
+    }
+  ],
+  "source": {
+    "code": "XGE",
+    "book": "Xanathar's Guide to Everything",
+    "edition": 2017,
+    "page": 45,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

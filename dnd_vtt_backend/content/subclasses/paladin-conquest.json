@@ -1,0 +1,153 @@
+{
+  "class_index": "paladin",
+  "index": "conquest",
+  "name": "Oath of Conquest",
+  "description": "A legacy paladin subclass from Xanathar's Guide to Everything.",
+  "levels": [
+    {
+      "level": 3,
+      "features": [
+        "Conquest Spells",
+        "Channel Divinity",
+        "Conquering Presence",
+        "Guided Strike",
+        "Oath Spells",
+        "Tenets of Conquest"
+      ],
+      "grants": [
+        {
+          "type": "spell_grant",
+          "key": "conquest_spells_3",
+          "name": "Conquest Spells",
+          "destination": "always_prepared",
+          "spells": [
+            "armor-of-agathys",
+            "command"
+          ],
+          "countsAgainstLimit": false,
+          "classLevel": 3
+        },
+        {
+          "type": "spell_grant",
+          "key": "conquest_spells_5",
+          "name": "Conquest Spells",
+          "destination": "always_prepared",
+          "spells": [
+            "hold-person",
+            "spiritual-weapon"
+          ],
+          "countsAgainstLimit": false,
+          "classLevel": 5
+        },
+        {
+          "type": "spell_grant",
+          "key": "conquest_spells_9",
+          "name": "Conquest Spells",
+          "destination": "always_prepared",
+          "spells": [
+            "bestow-curse",
+            "fear"
+          ],
+          "countsAgainstLimit": false,
+          "classLevel": 9
+        },
+        {
+          "type": "spell_grant",
+          "key": "conquest_spells_13",
+          "name": "Conquest Spells",
+          "destination": "always_prepared",
+          "spells": [
+            "dominate-beast",
+            "stoneskin"
+          ],
+          "countsAgainstLimit": false,
+          "classLevel": 13
+        },
+        {
+          "type": "spell_grant",
+          "key": "conquest_spells_17",
+          "name": "Conquest Spells",
+          "destination": "always_prepared",
+          "spells": [
+            "cloudkill",
+            "dominate-person"
+          ],
+          "countsAgainstLimit": false,
+          "classLevel": 17
+        },
+        {
+          "type": "feature",
+          "name": "Channel Divinity",
+          "description": "Channel Divinity is a Oath of Conquest feature. See Xanathar's Guide to Everything, page 37, for complete rules."
+        },
+        {
+          "type": "feature",
+          "name": "Conquering Presence",
+          "description": "Conquering Presence is a Oath of Conquest feature. See Xanathar's Guide to Everything, page 37, for complete rules."
+        },
+        {
+          "type": "feature",
+          "name": "Guided Strike",
+          "description": "Guided Strike is a Oath of Conquest feature. See Xanathar's Guide to Everything, page 37, for complete rules."
+        },
+        {
+          "type": "feature",
+          "name": "Oath Spells",
+          "description": "Oath Spells is a Oath of Conquest feature. See Xanathar's Guide to Everything, page 37, for complete rules."
+        },
+        {
+          "type": "feature",
+          "name": "Tenets of Conquest",
+          "description": "Tenets of Conquest is a Oath of Conquest feature. See Xanathar's Guide to Everything, page 37, for complete rules."
+        }
+      ]
+    },
+    {
+      "level": 7,
+      "features": [
+        "Aura of Conquest"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Aura of Conquest",
+          "description": "Aura of Conquest is a Oath of Conquest feature. See Xanathar's Guide to Everything, page 37, for complete rules."
+        }
+      ]
+    },
+    {
+      "level": 15,
+      "features": [
+        "Scornful Rebuke"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Scornful Rebuke",
+          "description": "Scornful Rebuke is a Oath of Conquest feature. See Xanathar's Guide to Everything, page 37, for complete rules."
+        }
+      ]
+    },
+    {
+      "level": 20,
+      "features": [
+        "Invincible Conqueror"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Invincible Conqueror",
+          "description": "Invincible Conqueror is a Oath of Conquest feature. See Xanathar's Guide to Everything, page 37, for complete rules."
+        }
+      ]
+    }
+  ],
+  "source": {
+    "code": "XGE",
+    "book": "Xanathar's Guide to Everything",
+    "edition": 2017,
+    "page": 37,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

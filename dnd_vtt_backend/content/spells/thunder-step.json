@@ -1,0 +1,47 @@
+{
+  "index": "thunder-step",
+  "name": "Thunder Step",
+  "level": 3,
+  "school": "Conjuration",
+  "casting_time": "1 action",
+  "range": "90 feet",
+  "components": [
+    "V"
+  ],
+  "duration": "Instantaneous",
+  "ritual": false,
+  "concentration": false,
+  "mechanics": {
+    "spell_attacks": [],
+    "saving_throws": [
+      "constitution"
+    ],
+    "ability_checks": [],
+    "damage_types": [
+      "thunder"
+    ],
+    "conditions": [],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [
+      "S"
+    ],
+    "misc_tags": [
+      "SGT",
+      "TP"
+    ]
+  },
+  "description": "A conjuration level 3 spell. Calls for a Constitution saving throw. Can deal 3d10 thunder damage. See Xanathar's Guide to Everything, page 168, for targeting and complete rules.",
+  "higher_levels": "The damage increases by 1d10 for each spell slot level above 3.",
+  "source": {
+    "code": "XGE",
+    "book": "Xanathar's Guide to Everything",
+    "edition": 2017,
+    "page": 168,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

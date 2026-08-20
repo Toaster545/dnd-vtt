@@ -1,0 +1,80 @@
+{
+  "class_index": "monk",
+  "index": "sun-soul",
+  "name": "Way of the Sun Soul",
+  "description": "A legacy monk subclass from Xanathar's Guide to Everything.",
+  "levels": [
+    {
+      "level": 3,
+      "features": [
+        "Sun Soul Spells",
+        "Radiant Sun Bolt"
+      ],
+      "grants": [
+        {
+          "type": "spell_grant",
+          "key": "sun-soul_spells_6",
+          "name": "Sun Soul Spells",
+          "destination": "known",
+          "spells": [
+            "burning-hands"
+          ],
+          "countsAgainstLimit": false,
+          "classLevel": 6
+        },
+        {
+          "type": "feature",
+          "name": "Radiant Sun Bolt",
+          "description": "Radiant Sun Bolt is a Way of the Sun Soul feature. See Xanathar's Guide to Everything, page 35, for complete rules."
+        }
+      ]
+    },
+    {
+      "level": 6,
+      "features": [
+        "Searing Arc Strike"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Searing Arc Strike",
+          "description": "Searing Arc Strike is a Way of the Sun Soul feature. See Xanathar's Guide to Everything, page 35, for complete rules."
+        }
+      ]
+    },
+    {
+      "level": 11,
+      "features": [
+        "Searing Sunburst"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Searing Sunburst",
+          "description": "Searing Sunburst is a Way of the Sun Soul feature. See Xanathar's Guide to Everything, page 35, for complete rules."
+        }
+      ]
+    },
+    {
+      "level": 17,
+      "features": [
+        "Sun Shield"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Sun Shield",
+          "description": "Sun Shield is a Way of the Sun Soul feature. See Xanathar's Guide to Everything, page 35, for complete rules."
+        }
+      ]
+    }
+  ],
+  "source": {
+    "code": "XGE",
+    "book": "Xanathar's Guide to Everything",
+    "edition": 2017,
+    "page": 35,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

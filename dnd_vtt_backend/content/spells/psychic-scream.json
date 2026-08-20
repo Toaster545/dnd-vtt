@@ -1,0 +1,47 @@
+{
+  "index": "psychic-scream",
+  "name": "Psychic Scream",
+  "level": 9,
+  "school": "Enchantment",
+  "casting_time": "1 action",
+  "range": "90 feet",
+  "components": [
+    "S"
+  ],
+  "duration": "Instantaneous",
+  "ritual": false,
+  "concentration": false,
+  "mechanics": {
+    "spell_attacks": [],
+    "saving_throws": [
+      "intelligence"
+    ],
+    "ability_checks": [],
+    "damage_types": [
+      "psychic"
+    ],
+    "conditions": [
+      "stunned"
+    ],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [
+      "MT"
+    ],
+    "misc_tags": [
+      "SGT"
+    ]
+  },
+  "description": "An enchantment level 9 spell. Calls for a Intelligence saving throw. Can deal 14d6 psychic damage. Can impose stunned. See Xanathar's Guide to Everything, page 163, for targeting and complete rules.",
+  "source": {
+    "code": "XGE",
+    "book": "Xanathar's Guide to Everything",
+    "edition": 2017,
+    "page": 163,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

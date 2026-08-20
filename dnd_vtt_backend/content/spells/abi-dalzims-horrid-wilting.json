@@ -1,0 +1,59 @@
+{
+  "index": "abi-dalzims-horrid-wilting",
+  "name": "Abi-Dalzim's Horrid Wilting",
+  "level": 8,
+  "school": "Necromancy",
+  "casting_time": "1 action",
+  "range": "150 feet",
+  "components": [
+    "V",
+    "S",
+    "M"
+  ],
+  "material": "a bit of sponge",
+  "duration": "Instantaneous",
+  "ritual": false,
+  "concentration": false,
+  "mechanics": {
+    "spell_attacks": [],
+    "saving_throws": [
+      "constitution"
+    ],
+    "ability_checks": [],
+    "damage_types": [
+      "necrotic"
+    ],
+    "conditions": [],
+    "affects_creature_types": [
+      "aberration",
+      "beast",
+      "celestial",
+      "dragon",
+      "elemental",
+      "fey",
+      "fiend",
+      "giant",
+      "humanoid",
+      "monstrosity",
+      "ooze",
+      "plant"
+    ],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [
+      "C"
+    ],
+    "misc_tags": []
+  },
+  "description": "A necromancy level 8 spell. Calls for a Constitution saving throw. Can deal 12d8 necrotic damage. See Xanathar's Guide to Everything, page 150, for targeting and complete rules.",
+  "source": {
+    "code": "XGE",
+    "book": "Xanathar's Guide to Everything",
+    "edition": 2017,
+    "page": 150,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

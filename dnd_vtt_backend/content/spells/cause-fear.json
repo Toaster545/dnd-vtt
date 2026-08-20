@@ -1,0 +1,60 @@
+{
+  "index": "cause-fear",
+  "name": "Cause Fear",
+  "level": 1,
+  "school": "Necromancy",
+  "casting_time": "1 action",
+  "range": "60 feet",
+  "components": [
+    "V"
+  ],
+  "duration": "Concentration, up to 1 minute",
+  "ritual": false,
+  "concentration": true,
+  "mechanics": {
+    "spell_attacks": [],
+    "saving_throws": [
+      "wisdom"
+    ],
+    "ability_checks": [],
+    "damage_types": [],
+    "conditions": [
+      "frightened"
+    ],
+    "affects_creature_types": [
+      "aberration",
+      "beast",
+      "celestial",
+      "dragon",
+      "elemental",
+      "fey",
+      "fiend",
+      "giant",
+      "humanoid",
+      "monstrosity",
+      "ooze",
+      "plant"
+    ],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [
+      "ST"
+    ],
+    "misc_tags": [
+      "SCT",
+      "SGT"
+    ]
+  },
+  "description": "A necromancy level 1 spell. Calls for a Wisdom saving throw. Can impose frightened. See Xanathar's Guide to Everything, page 151, for targeting and complete rules.",
+  "higher_levels": "The spell improves with higher-level slots as described on XGE page 151.",
+  "source": {
+    "code": "XGE",
+    "book": "Xanathar's Guide to Everything",
+    "edition": 2017,
+    "page": 151,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

@@ -1,0 +1,45 @@
+{
+  "index": "primal-savagery",
+  "name": "Primal Savagery",
+  "level": 0,
+  "school": "Transmutation",
+  "casting_time": "1 action",
+  "range": "Self",
+  "components": [
+    "S"
+  ],
+  "duration": "Instantaneous",
+  "ritual": false,
+  "concentration": false,
+  "mechanics": {
+    "spell_attacks": [
+      "melee"
+    ],
+    "saving_throws": [],
+    "ability_checks": [],
+    "damage_types": [
+      "acid"
+    ],
+    "conditions": [],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [
+      "ST"
+    ],
+    "misc_tags": [
+      "SCL"
+    ]
+  },
+  "description": "A transmutation cantrip. Uses a melee spell attack. Can deal 1d10 or 2d10 or 3d10 or 4d10 acid damage. See Xanathar's Guide to Everything, page 163, for targeting and complete rules.",
+  "source": {
+    "code": "XGE",
+    "book": "Xanathar's Guide to Everything",
+    "edition": 2017,
+    "page": 163,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

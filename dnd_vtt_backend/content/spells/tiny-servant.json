@@ -1,0 +1,43 @@
+{
+  "index": "tiny-servant",
+  "name": "Tiny Servant",
+  "level": 3,
+  "school": "Transmutation",
+  "casting_time": "1 minute",
+  "range": "Touch",
+  "components": [
+    "V",
+    "S"
+  ],
+  "duration": "8 hours",
+  "ritual": false,
+  "concentration": false,
+  "mechanics": {
+    "spell_attacks": [],
+    "saving_throws": [],
+    "ability_checks": [],
+    "damage_types": [],
+    "conditions": [],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [],
+    "misc_tags": [
+      "OBJ",
+      "SMN",
+      "UBA"
+    ]
+  },
+  "description": "A transmutation level 3 spell. See Xanathar's Guide to Everything, page 168, for targeting and complete rules.",
+  "higher_levels": "The spell improves with higher-level slots as described on XGE page 168.",
+  "source": {
+    "code": "XGE",
+    "book": "Xanathar's Guide to Everything",
+    "edition": 2017,
+    "page": 168,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

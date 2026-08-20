@@ -1,0 +1,48 @@
+{
+  "index": "enervation",
+  "name": "Enervation",
+  "level": 5,
+  "school": "Necromancy",
+  "casting_time": "1 action",
+  "range": "60 feet",
+  "components": [
+    "V",
+    "S"
+  ],
+  "duration": "Concentration, up to 1 minute",
+  "ritual": false,
+  "concentration": true,
+  "mechanics": {
+    "spell_attacks": [],
+    "saving_throws": [
+      "dexterity"
+    ],
+    "ability_checks": [],
+    "damage_types": [
+      "necrotic"
+    ],
+    "conditions": [],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [
+      "ST"
+    ],
+    "misc_tags": [
+      "HL",
+      "SGT"
+    ]
+  },
+  "description": "A necromancy level 5 spell. Calls for a Dexterity saving throw. Can deal 2d8 or 4d8 necrotic damage. See Xanathar's Guide to Everything, page 155, for targeting and complete rules.",
+  "higher_levels": "The damage increases by 1d8 for each spell slot level above 5.",
+  "source": {
+    "code": "XGE",
+    "book": "Xanathar's Guide to Everything",
+    "edition": 2017,
+    "page": 155,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

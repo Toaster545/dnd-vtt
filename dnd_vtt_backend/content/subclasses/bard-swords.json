@@ -1,0 +1,85 @@
+{
+  "class_index": "bard",
+  "index": "swords",
+  "name": "College of Swords",
+  "description": "A legacy bard subclass from Xanathar's Guide to Everything.",
+  "levels": [
+    {
+      "level": 3,
+      "features": [
+        "Defensive Flourish",
+        "Mobile Flourish",
+        "Slashing Flourish",
+        "Blade Flourish",
+        "Bonus Proficiencies",
+        "Fighting Style"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Defensive Flourish",
+          "description": "Defensive Flourish is a College of Swords feature. See Xanathar's Guide to Everything, page 15, for complete rules."
+        },
+        {
+          "type": "feature",
+          "name": "Mobile Flourish",
+          "description": "Mobile Flourish is a College of Swords feature. See Xanathar's Guide to Everything, page 15, for complete rules."
+        },
+        {
+          "type": "feature",
+          "name": "Slashing Flourish",
+          "description": "Slashing Flourish is a College of Swords feature. See Xanathar's Guide to Everything, page 15, for complete rules."
+        },
+        {
+          "type": "feature",
+          "name": "Blade Flourish",
+          "description": "Blade Flourish is a College of Swords feature. See Xanathar's Guide to Everything, page 15, for complete rules."
+        },
+        {
+          "type": "feature",
+          "name": "Bonus Proficiencies",
+          "description": "Bonus Proficiencies is a College of Swords feature. See Xanathar's Guide to Everything, page 15, for complete rules."
+        },
+        {
+          "type": "feature",
+          "name": "Fighting Style",
+          "description": "Fighting Style is a College of Swords feature. See Xanathar's Guide to Everything, page 15, for complete rules."
+        }
+      ]
+    },
+    {
+      "level": 6,
+      "features": [
+        "Extra Attack"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Extra Attack",
+          "description": "Extra Attack is a College of Swords feature. See Xanathar's Guide to Everything, page 15, for complete rules."
+        }
+      ]
+    },
+    {
+      "level": 14,
+      "features": [
+        "Master's Flourish"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Master's Flourish",
+          "description": "Master's Flourish is a College of Swords feature. See Xanathar's Guide to Everything, page 15, for complete rules."
+        }
+      ]
+    }
+  ],
+  "source": {
+    "code": "XGE",
+    "book": "Xanathar's Guide to Everything",
+    "edition": 2017,
+    "page": 15,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

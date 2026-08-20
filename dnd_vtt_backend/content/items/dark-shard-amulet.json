@@ -1,0 +1,22 @@
+{
+  "index": "dark-shard-amulet",
+  "name": "Dark Shard Amulet",
+  "type": "gear",
+  "category": "Wondrous Item",
+  "damage": null,
+  "damage_type": null,
+  "properties": [],
+  "weight": 0,
+  "cost": "—",
+  "description": "A Warlock focus that can temporarily provide an unknown Warlock cantrip after a successful check.",
+  "rarity": "common",
+  "requires_attunement": "by a warlock",
+  "source": {
+    "code": "XGE",
+    "book": "Xanathar's Guide to Everything",
+    "edition": 2017,
+    "page": 137,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

@@ -1,0 +1,51 @@
+{
+  "index": "fey-teleportation",
+  "name": "Fey Teleportation",
+  "description": "Learn Sylvan and gain a short-rest use of Misty Step.",
+  "category": "general",
+  "prerequisite": {
+    "level": 4,
+    "species": [
+      "elf"
+    ],
+    "speciesChoices": {
+      "elven_lineage": [
+        "High Elf"
+      ]
+    }
+  },
+  "abilityIncrease": {
+    "abilities": [
+      "intelligence",
+      "charisma"
+    ],
+    "amount": 1
+  },
+  "grants": [
+    {
+      "type": "spell_grant",
+      "key": "fey_teleportation",
+      "name": "Fey Teleportation",
+      "destination": "known",
+      "spells": [
+        "misty-step"
+      ],
+      "countsAgainstLimit": false,
+      "sourceKey": "fey-teleportation",
+      "sourceName": "Fey Teleportation",
+      "ability": "intelligence",
+      "freeCast": {
+        "uses": 1,
+        "recovery": "short_rest"
+      }
+    }
+  ],
+  "source": {
+    "code": "XGE",
+    "book": "Xanathar's Guide to Everything",
+    "edition": 2017,
+    "page": 74,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

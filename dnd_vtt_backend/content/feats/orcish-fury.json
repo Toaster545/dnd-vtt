@@ -1,0 +1,27 @@
+{
+  "index": "orcish-fury",
+  "name": "Orcish Fury",
+  "description": "Add an extra weapon damage die once per rest and strike back after using your survival trait.",
+  "category": "general",
+  "prerequisite": {
+    "level": 4,
+    "species": [
+      "orc"
+    ]
+  },
+  "abilityIncrease": {
+    "abilities": [
+      "strength",
+      "constitution"
+    ],
+    "amount": 1
+  },
+  "source": {
+    "code": "XGE",
+    "book": "Xanathar's Guide to Everything",
+    "edition": 2017,
+    "page": 75,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

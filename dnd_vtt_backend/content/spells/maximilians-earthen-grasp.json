@@ -1,0 +1,52 @@
+{
+  "index": "maximilians-earthen-grasp",
+  "name": "Maximilian's Earthen Grasp",
+  "level": 2,
+  "school": "Transmutation",
+  "casting_time": "1 action",
+  "range": "30 feet",
+  "components": [
+    "V",
+    "S",
+    "M"
+  ],
+  "material": "a miniature hand sculpted from clay",
+  "duration": "Concentration, up to 1 minute",
+  "ritual": false,
+  "concentration": true,
+  "mechanics": {
+    "spell_attacks": [],
+    "saving_throws": [
+      "strength"
+    ],
+    "ability_checks": [
+      "strength"
+    ],
+    "damage_types": [
+      "bludgeoning"
+    ],
+    "conditions": [
+      "restrained"
+    ],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [
+      "ST"
+    ],
+    "misc_tags": [
+      "SGT"
+    ]
+  },
+  "description": "A transmutation level 2 spell. Calls for a Strength saving throw. Can deal 2d6 bludgeoning damage. Can impose restrained. See Xanathar's Guide to Everything, page 161, for targeting and complete rules.",
+  "source": {
+    "code": "XGE",
+    "book": "Xanathar's Guide to Everything",
+    "edition": 2017,
+    "page": 161,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

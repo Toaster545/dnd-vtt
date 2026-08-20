@@ -1,0 +1,21 @@
+{
+  "index": "orb-of-direction",
+  "name": "Orb of Direction",
+  "type": "gear",
+  "category": "Wondrous Item",
+  "damage": null,
+  "damage_type": null,
+  "properties": [],
+  "weight": 3,
+  "cost": "—",
+  "description": "An orb that identifies the direction of north.",
+  "rarity": "common",
+  "source": {
+    "code": "XGE",
+    "book": "Xanathar's Guide to Everything",
+    "edition": 2017,
+    "page": 138,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

@@ -1,0 +1,58 @@
+{
+  "index": "wood-elf-magic",
+  "name": "Wood Elf Magic",
+  "description": "Learn Druidcraft and gain one daily use each of Longstrider and Pass without Trace.",
+  "category": "general",
+  "prerequisite": {
+    "level": 4,
+    "species": [
+      "elf"
+    ],
+    "speciesChoices": {
+      "elven_lineage": [
+        "Wood Elf"
+      ]
+    }
+  },
+  "grants": [
+    {
+      "type": "spell_grant",
+      "key": "wood_elf_magic_cantrip",
+      "name": "Wood Elf Magic",
+      "destination": "known",
+      "spells": [
+        "druidcraft"
+      ],
+      "countsAgainstLimit": false,
+      "sourceKey": "wood-elf-magic",
+      "sourceName": "Wood Elf Magic",
+      "ability": "wisdom"
+    },
+    {
+      "type": "spell_grant",
+      "key": "wood_elf_magic_spells",
+      "name": "Wood Elf Magic",
+      "destination": "known",
+      "spells": [
+        "longstrider",
+        "pass-without-trace"
+      ],
+      "countsAgainstLimit": false,
+      "sourceKey": "wood-elf-magic",
+      "sourceName": "Wood Elf Magic",
+      "ability": "wisdom",
+      "freeCast": {
+        "uses": 1,
+        "recovery": "long_rest"
+      }
+    }
+  ],
+  "source": {
+    "code": "XGE",
+    "book": "Xanathar's Guide to Everything",
+    "edition": 2017,
+    "page": 75,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

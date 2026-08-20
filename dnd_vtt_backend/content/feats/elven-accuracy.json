@@ -1,0 +1,29 @@
+{
+  "index": "elven-accuracy",
+  "name": "Elven Accuracy",
+  "description": "When attacking with advantage using Dexterity, Intelligence, Wisdom, or Charisma, reroll one die once.",
+  "category": "general",
+  "prerequisite": {
+    "level": 4,
+    "species": [
+      "elf"
+    ]
+  },
+  "abilityIncrease": {
+    "abilities": [
+      "dexterity",
+      "intelligence",
+      "wisdom",
+      "charisma"
+    ],
+    "amount": 1
+  },
+  "source": {
+    "code": "XGE",
+    "book": "Xanathar's Guide to Everything",
+    "edition": 2017,
+    "page": 74,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

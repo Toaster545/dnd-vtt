@@ -71,6 +71,8 @@
           [classes]="classes()"
           [items]="items()"
           [feats]="feats()"
+          [species]="selectedRace()?.index ?? ''"
+          [speciesChoices]="raceTraits()"
           [selectedClasses]="selectedClasses()"
           [characterLevel]="level()"
           [baseAbilityScores]="scoresBeforeClassASI()"

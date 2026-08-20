@@ -1,0 +1,135 @@
+{
+  "class_index": "cleric",
+  "index": "grave",
+  "name": "Grave Domain",
+  "description": "A legacy cleric subclass from Xanathar's Guide to Everything.",
+  "levels": [
+    {
+      "level": 3,
+      "features": [
+        "Grave Spells",
+        "Circle of Mortality",
+        "Eyes of the Grave",
+        "Channel Divinity: Path to the Grave"
+      ],
+      "grants": [
+        {
+          "type": "spell_grant",
+          "key": "grave_spells_3",
+          "name": "Grave Spells",
+          "destination": "always_prepared",
+          "spells": [
+            "bane",
+            "false-life",
+            "gentle-repose",
+            "ray-of-enfeeblement"
+          ],
+          "countsAgainstLimit": false,
+          "classLevel": 3
+        },
+        {
+          "type": "spell_grant",
+          "key": "grave_spells_5",
+          "name": "Grave Spells",
+          "destination": "always_prepared",
+          "spells": [
+            "revivify",
+            "vampiric-touch"
+          ],
+          "countsAgainstLimit": false,
+          "classLevel": 5
+        },
+        {
+          "type": "spell_grant",
+          "key": "grave_spells_7",
+          "name": "Grave Spells",
+          "destination": "always_prepared",
+          "spells": [
+            "blight",
+            "death-ward"
+          ],
+          "countsAgainstLimit": false,
+          "classLevel": 7
+        },
+        {
+          "type": "spell_grant",
+          "key": "grave_spells_9",
+          "name": "Grave Spells",
+          "destination": "always_prepared",
+          "spells": [
+            "antilife-shell",
+            "raise-dead"
+          ],
+          "countsAgainstLimit": false,
+          "classLevel": 9
+        },
+        {
+          "type": "spell_grant",
+          "key": "grave_spells_3",
+          "name": "Grave Spells",
+          "destination": "known",
+          "spells": [
+            "spare-the-dying"
+          ],
+          "countsAgainstLimit": false,
+          "classLevel": 3
+        },
+        {
+          "type": "feature",
+          "name": "Circle of Mortality",
+          "description": "Circle of Mortality is a Grave Domain feature. See Xanathar's Guide to Everything, page 19, for complete rules."
+        },
+        {
+          "type": "feature",
+          "name": "Eyes of the Grave",
+          "description": "Eyes of the Grave is a Grave Domain feature. See Xanathar's Guide to Everything, page 19, for complete rules."
+        },
+        {
+          "type": "feature",
+          "name": "Channel Divinity: Path to the Grave",
+          "description": "Channel Divinity: Path to the Grave is a Grave Domain feature. See Xanathar's Guide to Everything, page 19, for complete rules."
+        }
+      ]
+    },
+    {
+      "level": 6,
+      "features": [
+        "Sentinel at Death's Door",
+        "Potent Spellcasting"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Sentinel at Death's Door",
+          "description": "Sentinel at Death's Door is a Grave Domain feature. See Xanathar's Guide to Everything, page 19, for complete rules."
+        },
+        {
+          "type": "feature",
+          "name": "Potent Spellcasting",
+          "description": "Potent Spellcasting is a Grave Domain feature. See Xanathar's Guide to Everything, page 19, for complete rules."
+        }
+      ]
+    },
+    {
+      "level": 17,
+      "features": [
+        "Keeper of Souls"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Keeper of Souls",
+          "description": "Keeper of Souls is a Grave Domain feature. See Xanathar's Guide to Everything, page 19, for complete rules."
+        }
+      ]
+    }
+  ],
+  "source": {
+    "code": "XGE",
+    "book": "Xanathar's Guide to Everything",
+    "edition": 2017,
+    "page": 19,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

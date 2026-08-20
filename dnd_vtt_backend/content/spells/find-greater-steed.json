@@ -1,0 +1,41 @@
+{
+  "index": "find-greater-steed",
+  "name": "Find Greater Steed",
+  "level": 4,
+  "school": "Conjuration",
+  "casting_time": "10 minutes",
+  "range": "30 feet",
+  "components": [
+    "V",
+    "S"
+  ],
+  "duration": "Instantaneous",
+  "ritual": false,
+  "concentration": false,
+  "mechanics": {
+    "spell_attacks": [],
+    "saving_throws": [],
+    "ability_checks": [],
+    "damage_types": [],
+    "conditions": [],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [],
+    "misc_tags": [
+      "PRM",
+      "SMN"
+    ]
+  },
+  "description": "A conjuration level 4 spell. See Xanathar's Guide to Everything, page 156, for targeting and complete rules.",
+  "source": {
+    "code": "XGE",
+    "book": "Xanathar's Guide to Everything",
+    "edition": 2017,
+    "page": 156,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

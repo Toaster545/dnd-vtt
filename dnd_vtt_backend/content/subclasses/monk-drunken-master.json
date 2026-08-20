@@ -1,0 +1,86 @@
+{
+  "class_index": "monk",
+  "index": "drunken-master",
+  "name": "Way of the Drunken Master",
+  "description": "A legacy monk subclass from Xanathar's Guide to Everything.",
+  "levels": [
+    {
+      "level": 3,
+      "features": [
+        "Bonus Proficiencies",
+        "Drunken Technique"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Bonus Proficiencies",
+          "description": "Bonus Proficiencies is a Way of the Drunken Master feature. See Xanathar's Guide to Everything, page 33, for complete rules."
+        },
+        {
+          "type": "feature",
+          "name": "Drunken Technique",
+          "description": "Drunken Technique is a Way of the Drunken Master feature. See Xanathar's Guide to Everything, page 33, for complete rules."
+        }
+      ]
+    },
+    {
+      "level": 6,
+      "features": [
+        "Leap to Your Feet",
+        "Redirect Attack",
+        "Tipsy Sway"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Leap to Your Feet",
+          "description": "Leap to Your Feet is a Way of the Drunken Master feature. See Xanathar's Guide to Everything, page 34, for complete rules."
+        },
+        {
+          "type": "feature",
+          "name": "Redirect Attack",
+          "description": "Redirect Attack is a Way of the Drunken Master feature. See Xanathar's Guide to Everything, page 34, for complete rules."
+        },
+        {
+          "type": "feature",
+          "name": "Tipsy Sway",
+          "description": "Tipsy Sway is a Way of the Drunken Master feature. See Xanathar's Guide to Everything, page 33, for complete rules."
+        }
+      ]
+    },
+    {
+      "level": 11,
+      "features": [
+        "Drunkard's Luck"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Drunkard's Luck",
+          "description": "Drunkard's Luck is a Way of the Drunken Master feature. See Xanathar's Guide to Everything, page 33, for complete rules."
+        }
+      ]
+    },
+    {
+      "level": 17,
+      "features": [
+        "Intoxicated Frenzy"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Intoxicated Frenzy",
+          "description": "Intoxicated Frenzy is a Way of the Drunken Master feature. See Xanathar's Guide to Everything, page 33, for complete rules."
+        }
+      ]
+    }
+  ],
+  "source": {
+    "code": "XGE",
+    "book": "Xanathar's Guide to Everything",
+    "edition": 2017,
+    "page": 33,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

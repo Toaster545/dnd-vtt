@@ -1,0 +1,50 @@
+{
+  "index": "erupting-earth",
+  "name": "Erupting Earth",
+  "level": 3,
+  "school": "Transmutation",
+  "casting_time": "1 action",
+  "range": "120 feet",
+  "components": [
+    "V",
+    "S",
+    "M"
+  ],
+  "material": "a piece of obsidian",
+  "duration": "Instantaneous",
+  "ritual": false,
+  "concentration": false,
+  "mechanics": {
+    "spell_attacks": [],
+    "saving_throws": [
+      "dexterity"
+    ],
+    "ability_checks": [],
+    "damage_types": [
+      "bludgeoning"
+    ],
+    "conditions": [],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [
+      "C"
+    ],
+    "misc_tags": [
+      "DFT",
+      "SGT"
+    ]
+  },
+  "description": "A transmutation level 3 spell. Calls for a Dexterity saving throw. Can deal 3d12 bludgeoning damage. See Xanathar's Guide to Everything, page 155, for targeting and complete rules.",
+  "higher_levels": "The damage increases by 1d12 for each spell slot level above 3.",
+  "source": {
+    "code": "XGE",
+    "book": "Xanathar's Guide to Everything",
+    "edition": 2017,
+    "page": 155,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

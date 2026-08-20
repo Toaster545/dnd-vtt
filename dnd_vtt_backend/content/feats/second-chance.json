@@ -1,0 +1,43 @@
+{
+  "index": "second-chance",
+  "name": "Second Chance",
+  "description": "Use your reaction to force an attacker who hits you to reroll the attack.",
+  "category": "general",
+  "prerequisite": {
+    "level": 4,
+    "species": [
+      "halfling"
+    ]
+  },
+  "abilityIncrease": {
+    "abilities": [
+      "dexterity",
+      "constitution",
+      "charisma"
+    ],
+    "amount": 1
+  },
+  "grants": [
+    {
+      "type": "feature",
+      "key": "second-chance",
+      "name": "Second Chance",
+      "description": "Reaction when a creature hits you: force the attack roll to be rerolled.",
+      "action": {
+        "activation": "reaction",
+        "uses": {
+          "max": 1,
+          "per": "short_rest"
+        }
+      }
+    }
+  ],
+  "source": {
+    "code": "XGE",
+    "book": "Xanathar's Guide to Everything",
+    "edition": 2017,
+    "page": 75,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

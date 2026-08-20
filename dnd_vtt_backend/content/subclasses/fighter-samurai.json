@@ -1,0 +1,87 @@
+{
+  "class_index": "fighter",
+  "index": "samurai",
+  "name": "Samurai",
+  "description": "A legacy fighter subclass from Xanathar's Guide to Everything.",
+  "levels": [
+    {
+      "level": 3,
+      "features": [
+        "Bonus Proficiency",
+        "Fighting Spirit"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Bonus Proficiency",
+          "description": "Bonus Proficiency is a Samurai feature. See Xanathar's Guide to Everything, page 31, for complete rules."
+        },
+        {
+          "type": "feature",
+          "name": "Fighting Spirit",
+          "description": "Fighting Spirit is a Samurai feature. See Xanathar's Guide to Everything, page 31, for complete rules."
+        }
+      ]
+    },
+    {
+      "level": 7,
+      "features": [
+        "Elegant Courtier"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Elegant Courtier",
+          "description": "Elegant Courtier is a Samurai feature. See Xanathar's Guide to Everything, page 31, for complete rules."
+        }
+      ]
+    },
+    {
+      "level": 10,
+      "features": [
+        "Tireless Spirit"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Tireless Spirit",
+          "description": "Tireless Spirit is a Samurai feature. See Xanathar's Guide to Everything, page 31, for complete rules."
+        }
+      ]
+    },
+    {
+      "level": 15,
+      "features": [
+        "Rapid Strike"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Rapid Strike",
+          "description": "Rapid Strike is a Samurai feature. See Xanathar's Guide to Everything, page 31, for complete rules."
+        }
+      ]
+    },
+    {
+      "level": 18,
+      "features": [
+        "Strength before Death"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Strength before Death",
+          "description": "Strength before Death is a Samurai feature. See Xanathar's Guide to Everything, page 31, for complete rules."
+        }
+      ]
+    }
+  ],
+  "source": {
+    "code": "XGE",
+    "book": "Xanathar's Guide to Everything",
+    "edition": 2017,
+    "page": 31,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

@@ -1,0 +1,48 @@
+{
+  "index": "druid-grove",
+  "name": "Druid Grove",
+  "level": 6,
+  "school": "Abjuration",
+  "casting_time": "10 minutes",
+  "range": "Touch",
+  "components": [
+    "V",
+    "S",
+    "M"
+  ],
+  "material": "mistletoe, which the spell consumes, that was harvested with a golden sickle under the light of a full moon",
+  "duration": "24 hours",
+  "ritual": false,
+  "concentration": false,
+  "mechanics": {
+    "spell_attacks": [],
+    "saving_throws": [],
+    "ability_checks": [],
+    "damage_types": [],
+    "conditions": [],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [
+      "C",
+      "Q"
+    ],
+    "misc_tags": [
+      "OBS",
+      "PIR",
+      "PRM",
+      "SMN"
+    ]
+  },
+  "description": "An abjuration level 6 spell. See Xanathar's Guide to Everything, page 154, for targeting and complete rules.",
+  "source": {
+    "code": "XGE",
+    "book": "Xanathar's Guide to Everything",
+    "edition": 2017,
+    "page": 154,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

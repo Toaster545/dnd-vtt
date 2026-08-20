@@ -1,0 +1,160 @@
+{
+  "class_index": "sorcerer",
+  "index": "divine-soul",
+  "name": "Divine Soul",
+  "description": "A legacy sorcerer subclass from Xanathar's Guide to Everything.",
+  "levels": [
+    {
+      "level": 3,
+      "features": [
+        "Divine Magic",
+        "Divine Affinity",
+        "Favored by the Gods"
+      ],
+      "grants": [
+        {
+          "type": "spell_list_expansion",
+          "key": "divine_soul_cleric_spells",
+          "name": "Divine Magic",
+          "list": "Cleric",
+          "description": "Cleric spells are eligible as Sorcerer spell choices."
+        },
+        {
+          "type": "choice",
+          "key": "divine_soul_affinity",
+          "name": "Divine Affinity",
+          "choose": 1,
+          "options": [
+            {
+              "name": "Good",
+              "grants": [
+                {
+                  "type": "spell_grant",
+                  "key": "divine_soul_good",
+                  "name": "Good Affinity",
+                  "destination": "known",
+                  "spells": [
+                    "cure-wounds"
+                  ],
+                  "countsAgainstLimit": false
+                }
+              ]
+            },
+            {
+              "name": "Evil",
+              "grants": [
+                {
+                  "type": "spell_grant",
+                  "key": "divine_soul_evil",
+                  "name": "Evil Affinity",
+                  "destination": "known",
+                  "spells": [
+                    "inflict-wounds"
+                  ],
+                  "countsAgainstLimit": false
+                }
+              ]
+            },
+            {
+              "name": "Law",
+              "grants": [
+                {
+                  "type": "spell_grant",
+                  "key": "divine_soul_law",
+                  "name": "Law Affinity",
+                  "destination": "known",
+                  "spells": [
+                    "bless"
+                  ],
+                  "countsAgainstLimit": false
+                }
+              ]
+            },
+            {
+              "name": "Chaos",
+              "grants": [
+                {
+                  "type": "spell_grant",
+                  "key": "divine_soul_chaos",
+                  "name": "Chaos Affinity",
+                  "destination": "known",
+                  "spells": [
+                    "bane"
+                  ],
+                  "countsAgainstLimit": false
+                }
+              ]
+            },
+            {
+              "name": "Neutrality",
+              "grants": [
+                {
+                  "type": "spell_grant",
+                  "key": "divine_soul_neutrality",
+                  "name": "Neutrality Affinity",
+                  "destination": "known",
+                  "spells": [
+                    "protection-from-evil-and-good"
+                  ],
+                  "countsAgainstLimit": false
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "feature",
+          "name": "Favored by the Gods",
+          "description": "Favored by the Gods is a Divine Soul feature. See Xanathar's Guide to Everything, page 50, for complete rules."
+        }
+      ]
+    },
+    {
+      "level": 6,
+      "features": [
+        "Empowered Healing"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Empowered Healing",
+          "description": "Empowered Healing is a Divine Soul feature. See Xanathar's Guide to Everything, page 50, for complete rules."
+        }
+      ]
+    },
+    {
+      "level": 14,
+      "features": [
+        "Otherworldly Wings"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Otherworldly Wings",
+          "description": "Otherworldly Wings is a Divine Soul feature. See Xanathar's Guide to Everything, page 50, for complete rules."
+        }
+      ]
+    },
+    {
+      "level": 18,
+      "features": [
+        "Unearthly Recovery"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Unearthly Recovery",
+          "description": "Unearthly Recovery is a Divine Soul feature. See Xanathar's Guide to Everything, page 50, for complete rules."
+        }
+      ]
+    }
+  ],
+  "source": {
+    "code": "XGE",
+    "book": "Xanathar's Guide to Everything",
+    "edition": 2017,
+    "page": 50,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

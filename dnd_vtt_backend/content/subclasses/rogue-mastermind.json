@@ -1,0 +1,74 @@
+{
+  "class_index": "rogue",
+  "index": "mastermind",
+  "name": "Mastermind",
+  "description": "A legacy rogue subclass from Xanathar's Guide to Everything.",
+  "levels": [
+    {
+      "level": 3,
+      "features": [
+        "Master of Intrigue",
+        "Master of Tactics"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Master of Intrigue",
+          "description": "Master of Intrigue is a Mastermind feature. See Xanathar's Guide to Everything, page 46, for complete rules."
+        },
+        {
+          "type": "feature",
+          "name": "Master of Tactics",
+          "description": "Master of Tactics is a Mastermind feature. See Xanathar's Guide to Everything, page 46, for complete rules."
+        }
+      ]
+    },
+    {
+      "level": 9,
+      "features": [
+        "Insightful Manipulator"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Insightful Manipulator",
+          "description": "Insightful Manipulator is a Mastermind feature. See Xanathar's Guide to Everything, page 46, for complete rules."
+        }
+      ]
+    },
+    {
+      "level": 13,
+      "features": [
+        "Misdirection"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Misdirection",
+          "description": "Misdirection is a Mastermind feature. See Xanathar's Guide to Everything, page 46, for complete rules."
+        }
+      ]
+    },
+    {
+      "level": 17,
+      "features": [
+        "Soul of Deceit"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Soul of Deceit",
+          "description": "Soul of Deceit is a Mastermind feature. See Xanathar's Guide to Everything, page 46, for complete rules."
+        }
+      ]
+    }
+  ],
+  "source": {
+    "code": "XGE",
+    "book": "Xanathar's Guide to Everything",
+    "edition": 2017,
+    "page": 46,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}
