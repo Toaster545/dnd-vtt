@@ -19,6 +19,7 @@ export interface ContentSourceReference {
 export const PHB_SOURCE_CODE = 'XPHB';
 export const EBERRON_SOURCE_CODE = 'EFA';
 export const XANATHAR_SOURCE_CODE = 'XGE';
+export const TASHA_SOURCE_CODE = 'TCE';
 export const MONSTER_MANUAL_SOURCE_CODE = 'XMM';
 export const HOMEBREW_SOURCE_CODE = 'HOMEBREW';
 
@@ -53,6 +54,18 @@ export const CONTENT_SOURCES: ContentSourceDefinition[] = [
     edition: 2017,
     description:
       "Adds legacy subclasses, racial feats, spells, and common magic items from Xanathar's Guide to Everything.",
+    default_enabled: false,
+    locked: false,
+    player_options: true,
+    requires: [PHB_SOURCE_CODE],
+  },
+  {
+    code: TASHA_SOURCE_CODE,
+    name: "Tasha's Cauldron of Everything",
+    short_name: "Tasha's Cauldron",
+    edition: 2020,
+    description:
+      "Adds legacy subclasses, feats, spells, magic items, and summonable creatures from Tasha's Cauldron of Everything.",
     default_enabled: false,
     locked: false,
     player_options: true,

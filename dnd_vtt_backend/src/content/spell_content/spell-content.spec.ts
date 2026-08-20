@@ -80,12 +80,22 @@ const providerFiles = (folder: string) =>
     );
 const baseClasses = providerFiles('classes');
 const externalSubclasses = providerFiles('subclasses');
-const xgeManifest = JSON.parse(
-  readFileSync(
-    join(contentRoot, 'manifests', 'xanathars-guide-to-everything.json'),
-    'utf8',
-  ),
-) as { spell_list_additions: Record<string, string[]> };
+const spellListManifests = providerFiles('manifests') as {
+  spell_list_additions?: Record<string, string[]>;
+}[];
+const spellListAdditions = spellListManifests.reduce(
+  (result, manifest) => {
+    for (const [classIndex, additions] of Object.entries(
+      manifest.spell_list_additions ?? {},
+    )) {
+      const current = result[classIndex] ?? new Set<string>();
+      additions.forEach((spell) => current.add(spell));
+      result[classIndex] = current;
+    }
+    return result;
+  },
+  {} as Record<string, Set<string>>,
+);
 const classes = baseClasses.map((cls) => {
   const classIndex = String(cls.index);
   const spellcasting = cls.spellcasting as Record<string, unknown> | undefined;
@@ -104,7 +114,7 @@ const classes = baseClasses.map((cls) => {
             spells: [
               ...new Set([
                 ...((spellcasting.spells as string[]) ?? []),
-                ...(xgeManifest.spell_list_additions[classIndex] ?? []),
+                ...(spellListAdditions[classIndex] ?? []),
               ]),
             ],
           },
@@ -403,7 +413,11 @@ describe("Player's Handbook 2024 spell content", () => {
       expect(spell.components.length).toBeGreaterThan(0);
       expect(spellAccess.get(spell.index)?.length).toBeGreaterThan(0);
       expect(spell.source.edition).toBe(
-        spell.source.code === 'XGE' ? 2017 : 2024,
+        spell.source.code === 'XGE'
+          ? 2017
+          : spell.source.code === 'TCE'
+            ? 2020
+            : 2024,
       );
       expect(spell.source.book).not.toBe('');
       expect(spell.source.code).not.toBe('');

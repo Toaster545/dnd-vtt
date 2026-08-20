@@ -1,0 +1,22 @@
+{
+  "index": "acid-absorbing-tattoo",
+  "name": "Acid Absorbing Tattoo",
+  "type": "gear",
+  "category": "Wondrous Item",
+  "damage": null,
+  "damage_type": null,
+  "properties": [],
+  "weight": 0,
+  "cost": "Magic item",
+  "description": "A tattoo that grants Resistance to Acid damage and can absorb one instance of that damage each day, converting it into healing.",
+  "rarity": "very rare",
+  "requires_attunement": true,
+  "source": {
+    "code": "TCE",
+    "book": "Tasha's Cauldron of Everything",
+    "edition": 2020,
+    "page": 119,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

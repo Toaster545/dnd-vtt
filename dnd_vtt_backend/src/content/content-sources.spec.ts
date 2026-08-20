@@ -10,6 +10,7 @@ describe('content sources', () => {
     expect(normalizePlayerSources(undefined)).toEqual(DEFAULT_PLAYER_SOURCES);
     expect(normalizePlayerSources(['EFA'])).toEqual(['XPHB', 'EFA']);
     expect(normalizePlayerSources(['XGE'])).toEqual(['XPHB', 'XGE']);
+    expect(normalizePlayerSources(['TCE'])).toEqual(['XPHB', 'TCE']);
   });
 
   it('ignores non-player and unknown sources in character policies', () => {
@@ -22,5 +23,6 @@ describe('content sources', () => {
     expect(disallowedSources(['XPHB', 'EFA'], ['XPHB'])).toEqual(['EFA']);
     expect(sourceReference('EFA').book).toBe('Eberron: Forge of the Artificer');
     expect(sourceReference('XGE').book).toBe("Xanathar's Guide to Everything");
+    expect(sourceReference('TCE').book).toBe("Tasha's Cauldron of Everything");
   });
 });

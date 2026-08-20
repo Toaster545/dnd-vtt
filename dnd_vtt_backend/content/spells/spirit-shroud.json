@@ -1,0 +1,46 @@
+{
+  "index": "spirit-shroud",
+  "name": "Spirit Shroud",
+  "level": 3,
+  "school": "Necromancy",
+  "casting_time": "1 bonus action",
+  "range": "Self",
+  "components": [
+    "V",
+    "S"
+  ],
+  "duration": "Concentration, up to 1 minute",
+  "ritual": false,
+  "concentration": true,
+  "mechanics": {
+    "spell_attacks": [],
+    "saving_throws": [],
+    "ability_checks": [],
+    "damage_types": [
+      "radiant",
+      "necrotic",
+      "cold"
+    ],
+    "conditions": [],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [],
+    "misc_tags": [
+      "AAD",
+      "SGT"
+    ]
+  },
+  "description": "Spirits surround you, adding Cold, Necrotic, or Radiant damage to attacks against nearby targets, preventing those targets from regaining Hit Points, and reducing their Speed.",
+  "higher_levels": "The extra damage increases by 1d8 for every two slot levels above 3.",
+  "source": {
+    "code": "TCE",
+    "book": "Tasha's Cauldron of Everything",
+    "edition": 2020,
+    "page": 108,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

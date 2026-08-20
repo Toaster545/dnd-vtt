@@ -1,0 +1,101 @@
+{
+  "class_index": "wizard",
+  "index": "bladesinging",
+  "name": "Bladesinging",
+  "description": "A wizard subclass that adds the Bladesinging tradition from Tasha's Cauldron of Everything.",
+  "levels": [
+    {
+      "level": 3,
+      "features": [
+        "Bladesinger Styles",
+        "Bladesong",
+        "Training in War and Song (Bladesinging)"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Bladesinger Styles",
+          "description": "Choose the visual style and tradition of your Bladesong; this choice has no mechanical effect."
+        },
+        {
+          "type": "feature",
+          "name": "Bladesong",
+          "description": "As a Bonus Action for 1 minute while not using Medium or Heavy Armor or a Shield, add Intelligence to AC and Concentration saves, gain 10 feet of Speed, and gain Advantage on Acrobatics. Uses equal your Proficiency Bonus per Long Rest.",
+          "action": {
+            "activation": "bonus_action",
+            "uses": {
+              "max": 2,
+              "maxProficiencyBonus": true,
+              "per": "long_rest"
+            }
+          },
+          "key": "tce_wizard_bladesinging_bladesong"
+        },
+        {
+          "type": "feature",
+          "name": "Training in War and Song (Bladesinging)",
+          "description": "Gain Light Armor proficiency, proficiency with one one-handed melee weapon, and proficiency in Performance.",
+          "effects": [
+            {
+              "type": "armor_proficiency",
+              "tags": [
+                "light"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "level": 6,
+      "features": [
+        "Extra Attack"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Extra Attack",
+          "description": "Attack twice when you take the Attack action, and you can replace one attack with a cantrip."
+        }
+      ]
+    },
+    {
+      "level": 10,
+      "features": [
+        "Song of Defense"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Song of Defense",
+          "description": "While Bladesong is active, use your Reaction and expend a spell slot to reduce incoming damage by five times the slot's level.",
+          "action": {
+            "activation": "reaction"
+          },
+          "key": "tce_wizard_bladesinging_song-of-defense"
+        }
+      ]
+    },
+    {
+      "level": 14,
+      "features": [
+        "Song of Victory"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Song of Victory",
+          "description": "While Bladesong is active, add your Intelligence modifier to melee weapon damage rolls."
+        }
+      ]
+    }
+  ],
+  "source": {
+    "code": "TCE",
+    "book": "Tasha's Cauldron of Everything",
+    "edition": 2020,
+    "page": 76,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

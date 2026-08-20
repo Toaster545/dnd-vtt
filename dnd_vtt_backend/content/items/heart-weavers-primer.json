@@ -1,0 +1,26 @@
+{
+  "index": "heart-weavers-primer",
+  "name": "Heart Weaver's Primer",
+  "type": "gear",
+  "category": "Wondrous Item",
+  "damage": null,
+  "damage_type": null,
+  "properties": [],
+  "weight": 3,
+  "cost": "Magic item",
+  "description": "An enchantment spellbook and focus whose charges cast charms and can impose Disadvantage on a save against one of your Enchantment spells.",
+  "rarity": "rare",
+  "requires_attunement": "by a wizard",
+  "charges": {
+    "max": 3,
+    "recovery": "dawn"
+  },
+  "source": {
+    "code": "TCE",
+    "book": "Tasha's Cauldron of Everything",
+    "edition": 2020,
+    "page": 128,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

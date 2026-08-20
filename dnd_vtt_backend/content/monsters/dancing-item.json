@@ -1,0 +1,74 @@
+{
+  "index": "dancing-item",
+  "name": "Dancing Item",
+  "size": "L",
+  "type": "construct",
+  "alignment": "U",
+  "armor_class": 16,
+  "hit_points": 0,
+  "hit_points_formula": "Special",
+  "hit_dice": "Special",
+  "speed": {
+    "walk": 30,
+    "fly": 30
+  },
+  "ability_scores": {
+    "strength": 18,
+    "dexterity": 14,
+    "constitution": 16,
+    "intelligence": 4,
+    "wisdom": 10,
+    "charisma": 6
+  },
+  "saving_throws": {},
+  "skills": {},
+  "damage_vulnerabilities": [],
+  "damage_resistances": [],
+  "damage_immunities": [
+    "poison",
+    "psychic"
+  ],
+  "condition_immunities": [
+    "charmed",
+    "exhaustion",
+    "poisoned",
+    "frightened"
+  ],
+  "senses": {
+    "passive_perception": 10,
+    "darkvision": 60
+  },
+  "languages": [
+    "understands the languages you speak"
+  ],
+  "challenge_rating": "Special",
+  "xp": 0,
+  "traits": [
+    {
+      "name": "Immutable Form",
+      "description": "A structured immutable form rule from Tasha's Cauldron of Everything, page 29."
+    },
+    {
+      "name": "Irrepressible Dance",
+      "description": "A structured irrepressible dance rule from Tasha's Cauldron of Everything, page 29."
+    }
+  ],
+  "actions": [
+    {
+      "name": "Force-Empowered Slam",
+      "description": "damage dice 1d10 + PB. See Tasha's Cauldron of Everything, page 29, for targeting and additional effects."
+    }
+  ],
+  "reactions": [],
+  "legendary_actions": [],
+  "description": "A creature, companion, or summoned spirit stat block from Tasha's Cauldron of Everything.",
+  "rules_text": "reference-only",
+  "source": {
+    "code": "TCE",
+    "book": "Tasha's Cauldron of Everything",
+    "edition": 2020,
+    "page": 29,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

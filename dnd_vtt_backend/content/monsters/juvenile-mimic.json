@@ -1,0 +1,78 @@
+{
+  "index": "juvenile-mimic",
+  "name": "Juvenile Mimic",
+  "size": "T",
+  "type": "monstrosity",
+  "alignment": "U",
+  "armor_class": 11,
+  "hit_points": 7,
+  "hit_points_formula": "2d4 + 2",
+  "hit_dice": "2d4 + 2",
+  "speed": {
+    "walk": 10,
+    "climb": 10
+  },
+  "ability_scores": {
+    "strength": 1,
+    "dexterity": 12,
+    "constitution": 13,
+    "intelligence": 10,
+    "wisdom": 13,
+    "charisma": 10
+  },
+  "saving_throws": {},
+  "skills": {
+    "stealth": "+3"
+  },
+  "damage_vulnerabilities": [],
+  "damage_resistances": [],
+  "damage_immunities": [
+    "acid"
+  ],
+  "condition_immunities": [
+    "prone"
+  ],
+  "senses": {
+    "passive_perception": 11,
+    "darkvision": 60
+  },
+  "languages": [
+    "Common",
+    "Undercommon",
+    "telepathy 120 ft."
+  ],
+  "challenge_rating": "0",
+  "xp": 0,
+  "traits": [
+    {
+      "name": "False Appearance (Object Form Only)",
+      "description": "A structured false appearance (object form only) rule from Tasha's Cauldron of Everything, page 167."
+    },
+    {
+      "name": "Spider Climb",
+      "description": "A structured spider climb rule from Tasha's Cauldron of Everything, page 167."
+    }
+  ],
+  "actions": [
+    {
+      "name": "Bite",
+      "description": "+3 to hit; damage dice 1d4. See Tasha's Cauldron of Everything, page 167, for targeting and additional effects."
+    },
+    {
+      "name": "Shape-Shift",
+      "description": "A structured shape-shift rule from Tasha's Cauldron of Everything, page 167."
+    }
+  ],
+  "reactions": [],
+  "legendary_actions": [],
+  "description": "A creature, companion, or summoned spirit stat block from Tasha's Cauldron of Everything.",
+  "rules_text": "reference-only",
+  "source": {
+    "code": "TCE",
+    "book": "Tasha's Cauldron of Everything",
+    "edition": 2020,
+    "page": 167,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

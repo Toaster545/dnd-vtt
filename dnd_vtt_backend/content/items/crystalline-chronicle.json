@@ -1,0 +1,26 @@
+{
+  "index": "crystalline-chronicle",
+  "name": "Crystalline Chronicle",
+  "type": "gear",
+  "category": "Wondrous Item",
+  "damage": null,
+  "damage_type": null,
+  "properties": [],
+  "weight": 3,
+  "cost": "Magic item",
+  "description": "A Sorcerer focus that grants several Psionic spells and spends charges to alter spells without Sorcery Point costs.",
+  "rarity": "very rare",
+  "requires_attunement": "by a wizard",
+  "charges": {
+    "max": 3,
+    "recovery": "dawn"
+  },
+  "source": {
+    "code": "TCE",
+    "book": "Tasha's Cauldron of Everything",
+    "edition": 2020,
+    "page": 124,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

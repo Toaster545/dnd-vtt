@@ -1,0 +1,26 @@
+{
+  "index": "libram-of-souls-and-flesh",
+  "name": "Libram of Souls and Flesh",
+  "type": "gear",
+  "category": "Wondrous Item",
+  "damage": null,
+  "damage_type": null,
+  "properties": [],
+  "weight": 3,
+  "cost": "Magic item",
+  "description": "A necromancy spellbook and focus that can make you appear undead and grants access to several Necromancy spells.",
+  "rarity": "rare",
+  "requires_attunement": "by a wizard",
+  "charges": {
+    "max": 3,
+    "recovery": "dawn"
+  },
+  "source": {
+    "code": "TCE",
+    "book": "Tasha's Cauldron of Everything",
+    "edition": 2020,
+    "page": 129,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

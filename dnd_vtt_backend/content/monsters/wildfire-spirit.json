@@ -1,0 +1,69 @@
+{
+  "index": "wildfire-spirit",
+  "name": "Wildfire Spirit",
+  "size": "S",
+  "type": "elemental",
+  "alignment": "U",
+  "armor_class": 13,
+  "hit_points": 0,
+  "hit_points_formula": "Special",
+  "hit_dice": "Special",
+  "speed": {
+    "walk": 30,
+    "fly": 30
+  },
+  "ability_scores": {
+    "strength": 10,
+    "dexterity": 14,
+    "constitution": 14,
+    "intelligence": 13,
+    "wisdom": 15,
+    "charisma": 11
+  },
+  "saving_throws": {},
+  "skills": {},
+  "damage_vulnerabilities": [],
+  "damage_resistances": [],
+  "damage_immunities": [
+    "fire"
+  ],
+  "condition_immunities": [
+    "charmed",
+    "frightened",
+    "grappled",
+    "prone",
+    "restrained"
+  ],
+  "senses": {
+    "passive_perception": 12,
+    "darkvision": 60
+  },
+  "languages": [
+    "understands the languages you speak"
+  ],
+  "challenge_rating": "Special",
+  "xp": 0,
+  "traits": [],
+  "actions": [
+    {
+      "name": "Flame Seed",
+      "description": "damage dice 1d6 + PB. See Tasha's Cauldron of Everything, page 40, for targeting and additional effects."
+    },
+    {
+      "name": "Fiery Teleportation",
+      "description": "damage dice 1d6 + PB. See Tasha's Cauldron of Everything, page 40, for targeting and additional effects."
+    }
+  ],
+  "reactions": [],
+  "legendary_actions": [],
+  "description": "A creature, companion, or summoned spirit stat block from Tasha's Cauldron of Everything.",
+  "rules_text": "reference-only",
+  "source": {
+    "code": "TCE",
+    "book": "Tasha's Cauldron of Everything",
+    "edition": 2020,
+    "page": 40,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

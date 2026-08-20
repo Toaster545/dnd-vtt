@@ -1,0 +1,35 @@
+{
+  "index": "gunner",
+  "name": "Gunner",
+  "description": "Gain firearm proficiency, ignore the Loading property, and make ranged attacks within 5 feet without Disadvantage.",
+  "category": "general",
+  "prerequisite": {
+    "level": 4,
+    "abilities": [
+      "dexterity"
+    ],
+    "min": 13
+  },
+  "abilityIncrease": {
+    "abilities": [
+      "dexterity"
+    ],
+    "amount": 1
+  },
+  "effects": [
+    {
+      "type": "weapon_proficiency",
+      "tags": [
+        "firearm"
+      ]
+    }
+  ],
+  "source": {
+    "code": "TCE",
+    "book": "Tasha's Cauldron of Everything",
+    "edition": 2020,
+    "page": 80,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

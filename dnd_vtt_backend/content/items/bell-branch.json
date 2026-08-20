@@ -1,0 +1,26 @@
+{
+  "index": "bell-branch",
+  "name": "Bell Branch",
+  "type": "gear",
+  "category": "Wondrous Item",
+  "damage": null,
+  "damage_type": null,
+  "properties": [],
+  "weight": 0,
+  "cost": "Magic item",
+  "description": "A Druid focus whose charges cast Protection from Evil and Good and can suppress nearby extraplanar creatures.",
+  "rarity": "rare",
+  "requires_attunement": "by a druid or warlock",
+  "charges": {
+    "max": 3,
+    "recovery": "dawn"
+  },
+  "source": {
+    "code": "TCE",
+    "book": "Tasha's Cauldron of Everything",
+    "edition": 2020,
+    "page": 122,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

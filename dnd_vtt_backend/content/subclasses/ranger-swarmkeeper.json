@@ -1,0 +1,105 @@
+{
+  "class_index": "ranger",
+  "index": "swarmkeeper",
+  "name": "Swarmkeeper",
+  "description": "A ranger subclass that adds the Swarmkeeper tradition from Tasha's Cauldron of Everything.",
+  "levels": [
+    {
+      "level": 3,
+      "features": [
+        "Swarmkeeper Spells",
+        "Gathered Swarm",
+        "Swarmkeeper Magic"
+      ],
+      "grants": [
+        {
+          "type": "spell_grant",
+          "key": "swarmkeeper_spells_3",
+          "name": "Swarmkeeper Spells",
+          "destination": "known",
+          "spells": [
+            "mage-hand",
+            "faerie-fire"
+          ],
+          "countsAgainstLimit": false,
+          "classLevel": 3
+        },
+        {
+          "type": "feature",
+          "name": "Gathered Swarm",
+          "description": "Once per turn after you hit, your swarm either deals 1d6 Piercing damage, moves the target up to 15 feet after a Strength save, or moves you 5 feet without provoking Opportunity Attacks."
+        },
+        {
+          "type": "feature",
+          "name": "Swarmkeeper Magic",
+          "description": "Learn Mage Hand and additional Swarmkeeper spells as your Ranger level increases. Your Mage Hand appears as part of your swarm."
+        }
+      ]
+    },
+    {
+      "level": 7,
+      "features": [
+        "Writhing Tide"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Writhing Tide",
+          "description": "As a Bonus Action, gain a 10-foot Fly Speed and Hover for 1 minute. Uses equal your Proficiency Bonus per Long Rest.",
+          "action": {
+            "activation": "bonus_action",
+            "uses": {
+              "max": 2,
+              "maxProficiencyBonus": true,
+              "per": "long_rest"
+            }
+          },
+          "key": "tce_ranger_swarmkeeper_writhing-tide"
+        }
+      ]
+    },
+    {
+      "level": 11,
+      "features": [
+        "Mighty Swarm"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Mighty Swarm",
+          "description": "Gathered Swarm's damage becomes 1d8; its forced movement can knock the target Prone, and its self-movement grants Half Cover until your next turn."
+        }
+      ]
+    },
+    {
+      "level": 15,
+      "features": [
+        "Swarming Dispersal"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Swarming Dispersal",
+          "description": "When you take damage, use your Reaction to gain Resistance to that damage and teleport up to 30 feet. Uses equal your Proficiency Bonus per Long Rest.",
+          "action": {
+            "activation": "reaction",
+            "uses": {
+              "max": 2,
+              "maxProficiencyBonus": true,
+              "per": "long_rest"
+            }
+          },
+          "key": "tce_ranger_swarmkeeper_swarming-dispersal"
+        }
+      ]
+    }
+  ],
+  "source": {
+    "code": "TCE",
+    "book": "Tasha's Cauldron of Everything",
+    "edition": 2020,
+    "page": 59,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

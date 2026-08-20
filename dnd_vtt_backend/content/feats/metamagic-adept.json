@@ -1,0 +1,80 @@
+{
+  "index": "metamagic-adept",
+  "name": "Metamagic Adept",
+  "description": "Learn two Metamagic options and gain 2 Sorcery Points that can be spent only on Metamagic and return on a Long Rest.",
+  "category": "general",
+  "prerequisite": {
+    "level": 4
+  },
+  "grants": [
+    {
+      "type": "choice",
+      "key": "metamagic_adept_options",
+      "name": "Metamagic Adept Options",
+      "choose": 2,
+      "options": [
+        {
+          "name": "Careful Spell",
+          "description": "Spend 1 Sorcery Point when casting a spell that forces a save. Choose up to your Charisma modifier in creatures (minimum one); they automatically succeed, and take no damage if a success would normally deal half."
+        },
+        {
+          "name": "Distant Spell",
+          "description": "Spend 1 Sorcery Point when casting a spell with a range of at least 5 feet to double its range, or change a range of Touch to 30 feet."
+        },
+        {
+          "name": "Empowered Spell",
+          "description": "Spend 1 Sorcery Point when rolling spell damage to reroll up to your Charisma modifier in damage dice (minimum one), using the new rolls. You can combine this option with another Metamagic option."
+        },
+        {
+          "name": "Extended Spell",
+          "description": "Spend 1 Sorcery Point on a spell lasting at least 1 minute to double its duration, to a maximum of 24 hours. You also have Advantage on Constitution saves made to maintain Concentration on it."
+        },
+        {
+          "name": "Heightened Spell",
+          "description": "Spend 2 Sorcery Points when casting a spell that forces at least one creature to make a save. One target has Disadvantage on every saving throw against that spell."
+        },
+        {
+          "name": "Quickened Spell",
+          "description": "Spend 2 Sorcery Points to change a spell's casting time from an action to a Bonus Action. You can't do so if you already cast a level 1+ spell that turn, and after doing so you can't cast another level 1+ spell that turn."
+        },
+        {
+          "name": "Seeking Spell",
+          "description": "If a spell attack misses, spend 1 Sorcery Point to reroll the d20 and use the new roll. You can combine this option with another Metamagic option."
+        },
+        {
+          "name": "Subtle Spell",
+          "description": "Spend 1 Sorcery Point to cast without Verbal, Somatic, or Material components, except a Material component that is consumed or has a cost specified in the spell."
+        },
+        {
+          "name": "Transmuted Spell",
+          "description": "Spend 1 Sorcery Point when a spell deals Acid, Cold, Fire, Lightning, Poison, or Thunder damage to replace that type with another one from the list."
+        },
+        {
+          "name": "Twinned Spell",
+          "description": "When casting a spell such as Charm Person that can target one additional creature at a higher level, spend 1 Sorcery Point to increase the spell's effective level by 1 for that targeting benefit."
+        }
+      ]
+    },
+    {
+      "type": "feature",
+      "key": "metamagic_adept_points",
+      "name": "Metamagic Adept Sorcery Points",
+      "description": "You have 2 Sorcery Points usable only for Metamagic; both return on a Long Rest.",
+      "action": {
+        "activation": "free",
+        "uses": {
+          "max": 2,
+          "per": "long_rest"
+        }
+      }
+    }
+  ],
+  "source": {
+    "code": "TCE",
+    "book": "Tasha's Cauldron of Everything",
+    "edition": 2020,
+    "page": 80,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

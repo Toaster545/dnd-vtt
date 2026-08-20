@@ -1,0 +1,243 @@
+{
+  "class_index": "warlock",
+  "index": "genie",
+  "name": "The Genie",
+  "description": "A warlock subclass that adds the Genie tradition from Tasha's Cauldron of Everything.",
+  "levels": [
+    {
+      "level": 3,
+      "features": [
+        "Genie Kind",
+        "Bottled Respite",
+        "Genie's Wrath",
+        "Genie's Vessel"
+      ],
+      "grants": [
+        {
+          "type": "choice",
+          "key": "genie_kind",
+          "name": "Genie Kind",
+          "choose": 1,
+          "description": "Choose the kind of genie who serves as your patron.",
+          "options": [
+            {
+              "name": "Dao",
+              "description": "Your patron is a Dao; Genie's Wrath and Elemental Gift use Bludgeoning damage.",
+              "effects": [
+                {
+                  "type": "damage_resistance",
+                  "tags": [
+                    "bludgeoning"
+                  ]
+                }
+              ],
+              "grants": [
+                {
+                  "type": "spell_list_expansion",
+                  "key": "genie_dao_spells",
+                  "name": "Dao Expanded Spells",
+                  "spells": [
+                    "wish",
+                    "detect-evil-and-good",
+                    "sanctuary",
+                    "phantasmal-force",
+                    "spike-growth",
+                    "create-food-and-water",
+                    "meld-into-stone",
+                    "phantasmal-killer",
+                    "stone-shape",
+                    "creation",
+                    "wall-of-stone"
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "Djinni",
+              "description": "Your patron is a Djinni; Genie's Wrath and Elemental Gift use Thunder damage.",
+              "effects": [
+                {
+                  "type": "damage_resistance",
+                  "tags": [
+                    "thunder"
+                  ]
+                }
+              ],
+              "grants": [
+                {
+                  "type": "spell_list_expansion",
+                  "key": "genie_djinni_spells",
+                  "name": "Djinni Expanded Spells",
+                  "spells": [
+                    "wish",
+                    "detect-evil-and-good",
+                    "thunderwave",
+                    "phantasmal-force",
+                    "gust-of-wind",
+                    "create-food-and-water",
+                    "wind-wall",
+                    "phantasmal-killer",
+                    "greater-invisibility",
+                    "creation",
+                    "seeming"
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "Efreeti",
+              "description": "Your patron is a Efreeti; Genie's Wrath and Elemental Gift use Fire damage.",
+              "effects": [
+                {
+                  "type": "damage_resistance",
+                  "tags": [
+                    "fire"
+                  ]
+                }
+              ],
+              "grants": [
+                {
+                  "type": "spell_list_expansion",
+                  "key": "genie_efreeti_spells",
+                  "name": "Efreeti Expanded Spells",
+                  "spells": [
+                    "wish",
+                    "detect-evil-and-good",
+                    "burning-hands",
+                    "phantasmal-force",
+                    "scorching-ray",
+                    "create-food-and-water",
+                    "fireball",
+                    "phantasmal-killer",
+                    "fire-shield",
+                    "creation",
+                    "flame-strike"
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "Marid",
+              "description": "Your patron is a Marid; Genie's Wrath and Elemental Gift use Cold damage.",
+              "effects": [
+                {
+                  "type": "damage_resistance",
+                  "tags": [
+                    "cold"
+                  ]
+                }
+              ],
+              "grants": [
+                {
+                  "type": "spell_list_expansion",
+                  "key": "genie_marid_spells",
+                  "name": "Marid Expanded Spells",
+                  "spells": [
+                    "wish",
+                    "detect-evil-and-good",
+                    "fog-cloud",
+                    "phantasmal-force",
+                    "blur",
+                    "create-food-and-water",
+                    "sleet-storm",
+                    "phantasmal-killer",
+                    "control-water",
+                    "creation",
+                    "cone-of-cold"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "feature",
+          "name": "Bottled Respite",
+          "description": "As an Action, enter your vessel's extradimensional space for up to twice your Proficiency Bonus in hours. You can hear outside and leave as a Bonus Action. Once per Long Rest.",
+          "action": {
+            "activation": "action",
+            "uses": {
+              "max": 1,
+              "per": "long_rest"
+            }
+          },
+          "key": "tce_warlock_genie_bottled-respite"
+        },
+        {
+          "type": "feature",
+          "name": "Genie's Wrath",
+          "description": "Once during each of your turns when you hit with an attack, deal extra patron-associated damage equal to your Proficiency Bonus."
+        },
+        {
+          "type": "feature",
+          "name": "Genie's Vessel",
+          "description": "Choose a Dao, Djinni, Efreeti, or Marid patron and a Tiny vessel. The choice determines your bonus damage type and expanded spell list."
+        }
+      ]
+    },
+    {
+      "level": 6,
+      "features": [
+        "Elemental Gift"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Elemental Gift",
+          "description": "Gain Resistance to your patron's associated damage. As a Bonus Action, gain a 30-foot Fly Speed for 10 minutes; uses equal your Proficiency Bonus per Long Rest.",
+          "action": {
+            "activation": "bonus_action",
+            "uses": {
+              "max": 2,
+              "maxProficiencyBonus": true,
+              "per": "long_rest"
+            }
+          },
+          "key": "tce_warlock_genie_elemental-gift"
+        }
+      ]
+    },
+    {
+      "level": 10,
+      "features": [
+        "Sanctuary Vessel"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Sanctuary Vessel",
+          "description": "When you enter your vessel, bring up to five willing creatures. Anyone who spends a Short Rest inside adds your Proficiency Bonus to Hit Points restored by Hit Dice."
+        }
+      ]
+    },
+    {
+      "level": 14,
+      "features": [
+        "Limited Wish"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Limited Wish",
+          "description": "As an Action, reproduce the effect of one spell of level 6 or lower with a one-action casting time, ignoring its components. After use, it recharges in 1d4 Long Rests.",
+          "action": {
+            "activation": "action",
+            "uses": {
+              "max": 1,
+              "per": "long_rest"
+            }
+          },
+          "key": "tce_warlock_genie_limited-wish"
+        }
+      ]
+    }
+  ],
+  "source": {
+    "code": "TCE",
+    "book": "Tasha's Cauldron of Everything",
+    "edition": 2020,
+    "page": 73,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

@@ -1,0 +1,90 @@
+{
+  "class_index": "wizard",
+  "index": "scribes",
+  "name": "Order of Scribes",
+  "description": "A wizard subclass that adds the Scribes tradition from Tasha's Cauldron of Everything.",
+  "levels": [
+    {
+      "level": 3,
+      "features": [
+        "Awakened Spellbook",
+        "Wizardly Quill"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Awakened Spellbook",
+          "description": "Your spellbook becomes an Arcane Focus. When casting a Wizard spell with a slot, you can replace its damage type with one found in another spell of that level in the book; you can also cast Wizard rituals using their normal casting time."
+        },
+        {
+          "type": "feature",
+          "name": "Wizardly Quill",
+          "description": "As a Bonus Action, create a magic quill that needs no ink, copies spells into your spellbook in two minutes per spell level, and can erase its own writing.",
+          "action": {
+            "activation": "bonus_action"
+          },
+          "key": "tce_wizard_scribes_wizardly-quill"
+        }
+      ]
+    },
+    {
+      "level": 6,
+      "features": [
+        "Manifest Mind"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Manifest Mind",
+          "description": "As a Bonus Action, manifest your spellbook's spectral mind within 60 feet. You perceive and cast Wizard spells from its space, with a limited number of remote casts per Long Rest.",
+          "action": {
+            "activation": "bonus_action"
+          },
+          "key": "tce_wizard_scribes_manifest-mind"
+        }
+      ]
+    },
+    {
+      "level": 10,
+      "features": [
+        "Master Scrivener"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Master Scrivener",
+          "description": "After a Long Rest, create one temporary spell scroll containing a level 1 or 2 Wizard spell from your book. Only you can use it, and it casts one level higher."
+        }
+      ]
+    },
+    {
+      "level": 14,
+      "features": [
+        "One with the Word"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "One with the Word",
+          "description": "Gain Advantage on Arcana checks while holding your awakened spellbook. Use your Reaction to prevent all damage to yourself, temporarily losing spells from the book whose combined levels equal a 3d6 roll. Once per Long Rest.",
+          "action": {
+            "activation": "reaction",
+            "uses": {
+              "max": 1,
+              "per": "long_rest"
+            }
+          },
+          "key": "tce_wizard_scribes_one-with-the-word"
+        }
+      ]
+    }
+  ],
+  "source": {
+    "code": "TCE",
+    "book": "Tasha's Cauldron of Everything",
+    "edition": 2020,
+    "page": 77,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

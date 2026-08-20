@@ -1,0 +1,22 @@
+{
+  "index": "shadowfell-brand-tattoo",
+  "name": "Shadowfell Brand Tattoo",
+  "type": "gear",
+  "category": "Wondrous Item",
+  "damage": null,
+  "damage_type": null,
+  "properties": [],
+  "weight": 0,
+  "cost": "Magic item",
+  "description": "A tattoo that grants Darkvision, improves Stealth, and can halve damage from one attack each day.",
+  "rarity": "rare",
+  "requires_attunement": true,
+  "source": {
+    "code": "TCE",
+    "book": "Tasha's Cauldron of Everything",
+    "edition": 2020,
+    "page": 134,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

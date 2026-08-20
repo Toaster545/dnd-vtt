@@ -1,0 +1,44 @@
+{
+  "index": "summon-shadowspawn",
+  "name": "Summon Shadowspawn",
+  "level": 3,
+  "school": "Conjuration",
+  "casting_time": "1 action",
+  "range": "90 feet",
+  "components": [
+    "V",
+    "S",
+    "M"
+  ],
+  "material": "tears inside a gem worth at least 300 gp",
+  "duration": "Concentration, up to 1 hour",
+  "ritual": false,
+  "concentration": true,
+  "mechanics": {
+    "spell_attacks": [],
+    "saving_throws": [],
+    "ability_checks": [],
+    "damage_types": [],
+    "conditions": [],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [],
+    "misc_tags": [
+      "SGT",
+      "SMN"
+    ]
+  },
+  "description": "Summon a shadow spirit in one of three emotional forms. It obeys your commands and uses the shared Shadow Spirit stat block, with statistics that scale with the spell slot.",
+  "higher_levels": "Higher slots increase the spirit’s AC, Hit Points, attack modifier, and damage.",
+  "source": {
+    "code": "TCE",
+    "book": "Tasha's Cauldron of Everything",
+    "edition": 2020,
+    "page": 113,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

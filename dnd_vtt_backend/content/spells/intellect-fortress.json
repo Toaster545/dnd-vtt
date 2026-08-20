@@ -1,0 +1,42 @@
+{
+  "index": "intellect-fortress",
+  "name": "Intellect Fortress",
+  "level": 3,
+  "school": "Abjuration",
+  "casting_time": "1 action",
+  "range": "30 feet",
+  "components": [
+    "V"
+  ],
+  "duration": "Concentration, up to 1 hour",
+  "ritual": false,
+  "concentration": true,
+  "mechanics": {
+    "spell_attacks": [],
+    "saving_throws": [],
+    "ability_checks": [],
+    "damage_types": [],
+    "conditions": [],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [],
+    "misc_tags": [
+      "ADV",
+      "SCT",
+      "SGT"
+    ]
+  },
+  "description": "Protect a creature with Resistance to Psychic damage and Advantage on Intelligence, Wisdom, and Charisma saving throws.",
+  "higher_levels": "Target one additional creature for each slot level above 3.",
+  "source": {
+    "code": "TCE",
+    "book": "Tasha's Cauldron of Everything",
+    "edition": 2020,
+    "page": 107,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

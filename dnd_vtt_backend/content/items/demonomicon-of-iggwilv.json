@@ -1,0 +1,26 @@
+{
+  "index": "demonomicon-of-iggwilv",
+  "name": "Demonomicon of Iggwilv",
+  "type": "gear",
+  "category": "Wondrous Item",
+  "damage": null,
+  "damage_type": null,
+  "properties": [],
+  "weight": 0,
+  "cost": "Magic item",
+  "description": "An artifact tome that grants occult knowledge, stores fiends, and can imprison extraplanar creatures within its pages.",
+  "rarity": "artifact",
+  "requires_attunement": true,
+  "charges": {
+    "max": 8,
+    "recovery": "dawn"
+  },
+  "source": {
+    "code": "TCE",
+    "book": "Tasha's Cauldron of Everything",
+    "edition": 2020,
+    "page": 125,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

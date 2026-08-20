@@ -1,0 +1,77 @@
+{
+  "class_index": "barbarian",
+  "index": "beast",
+  "name": "Path of the Beast",
+  "description": "A barbarian subclass that adds the Beast tradition from Tasha's Cauldron of Everything.",
+  "levels": [
+    {
+      "level": 3,
+      "features": [
+        "Form of the Beast"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Form of the Beast",
+          "description": "When you enter Rage, manifest a Bite, Claws, or Tail natural weapon until the Rage ends. It uses Strength, counts as a simple melee weapon, and gains the option's healing, extra-attack, or defensive benefit."
+        }
+      ]
+    },
+    {
+      "level": 6,
+      "features": [
+        "Bestial Soul"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Bestial Soul",
+          "description": "Your Form of the Beast weapons count as magical. After a rest, choose a swimming adaptation, a climbing adaptation, or an enhanced jump until your next rest."
+        }
+      ]
+    },
+    {
+      "level": 10,
+      "features": [
+        "Infectious Fury"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Infectious Fury",
+          "description": "Once per turn when a Form of the Beast weapon hits, force a Wisdom save. On a failure, the target either takes 2d12 Psychic damage or uses its Reaction to attack a creature you choose. Uses equal your Proficiency Bonus per Long Rest.",
+          "action": {
+            "activation": "free",
+            "uses": {
+              "max": 2,
+              "maxProficiencyBonus": true,
+              "per": "long_rest"
+            }
+          },
+          "key": "tce_barbarian_beast_infectious-fury"
+        }
+      ]
+    },
+    {
+      "level": 14,
+      "features": [
+        "Call the Hunt"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Call the Hunt",
+          "description": "When you enter Rage, empower willing creatures nearby. You gain temporary Hit Points for each participant, and each empowered ally can add 1d6 damage to one hit per turn while your Rage lasts. Once per Long Rest."
+        }
+      ]
+    }
+  ],
+  "source": {
+    "code": "TCE",
+    "book": "Tasha's Cauldron of Everything",
+    "edition": 2020,
+    "page": 24,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

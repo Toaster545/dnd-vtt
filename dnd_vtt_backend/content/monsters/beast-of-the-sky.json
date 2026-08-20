@@ -1,0 +1,66 @@
+{
+  "index": "beast-of-the-sky",
+  "name": "Beast of the Sky",
+  "size": "S",
+  "type": "beast",
+  "alignment": "N",
+  "armor_class": 10,
+  "hit_points": 0,
+  "hit_points_formula": "Special",
+  "hit_dice": "Special",
+  "speed": {
+    "walk": 10,
+    "fly": 60
+  },
+  "ability_scores": {
+    "strength": 6,
+    "dexterity": 16,
+    "constitution": 13,
+    "intelligence": 8,
+    "wisdom": 14,
+    "charisma": 11
+  },
+  "saving_throws": {},
+  "skills": {},
+  "damage_vulnerabilities": [],
+  "damage_resistances": [],
+  "damage_immunities": [],
+  "condition_immunities": [],
+  "senses": {
+    "passive_perception": 12,
+    "darkvision": 60
+  },
+  "languages": [
+    "understands the languages you speak"
+  ],
+  "challenge_rating": "Special",
+  "xp": 0,
+  "traits": [
+    {
+      "name": "Flyby",
+      "description": "A structured flyby rule from Tasha's Cauldron of Everything, page 61."
+    },
+    {
+      "name": "Primal Bond",
+      "description": "A structured primal bond rule from Tasha's Cauldron of Everything, page 61."
+    }
+  ],
+  "actions": [
+    {
+      "name": "Shred",
+      "description": "damage dice 1d4 + 3 + PB. See Tasha's Cauldron of Everything, page 61, for targeting and additional effects."
+    }
+  ],
+  "reactions": [],
+  "legendary_actions": [],
+  "description": "A creature, companion, or summoned spirit stat block from Tasha's Cauldron of Everything.",
+  "rules_text": "reference-only",
+  "source": {
+    "code": "TCE",
+    "book": "Tasha's Cauldron of Everything",
+    "edition": 2020,
+    "page": 61,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

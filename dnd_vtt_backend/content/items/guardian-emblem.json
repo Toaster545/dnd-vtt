@@ -1,0 +1,26 @@
+{
+  "index": "guardian-emblem",
+  "name": "Guardian Emblem",
+  "type": "gear",
+  "category": "Wondrous Item",
+  "damage": null,
+  "damage_type": null,
+  "properties": [],
+  "weight": 0,
+  "cost": "Magic item",
+  "description": "An emblem attached to armor or a shield that can turn a nearby critical hit into a normal hit.",
+  "rarity": "uncommon",
+  "requires_attunement": "by a cleric or paladin",
+  "charges": {
+    "max": 3,
+    "recovery": "dawn"
+  },
+  "source": {
+    "code": "TCE",
+    "book": "Tasha's Cauldron of Everything",
+    "edition": 2020,
+    "page": 128,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

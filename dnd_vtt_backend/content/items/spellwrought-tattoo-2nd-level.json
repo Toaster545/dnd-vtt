@@ -1,0 +1,21 @@
+{
+  "index": "spellwrought-tattoo-2nd-level",
+  "name": "Spellwrought Tattoo (2nd Level)",
+  "type": "gear",
+  "category": "Wondrous Item",
+  "damage": null,
+  "damage_type": null,
+  "properties": [],
+  "weight": 0,
+  "cost": "Magic item",
+  "description": "A consumable tattoo containing one spell of the listed level; the bearer can cast it once without material components.",
+  "rarity": "uncommon",
+  "source": {
+    "code": "TCE",
+    "book": "Tasha's Cauldron of Everything",
+    "edition": 2020,
+    "page": 135,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

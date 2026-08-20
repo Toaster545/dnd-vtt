@@ -1,0 +1,23 @@
+{
+  "index": "3-bloodwell-vial",
+  "name": "+3 Bloodwell Vial",
+  "type": "gear",
+  "category": "Wondrous Item",
+  "damage": null,
+  "damage_type": null,
+  "properties": [],
+  "weight": 0,
+  "cost": "Magic item",
+  "description": "A Sorcerer focus that grants its listed bonus to spell attacks and save DCs and restores Sorcery Points when Hit Dice are spent.",
+  "rarity": "very rare",
+  "requires_attunement": "by a sorcerer",
+  "magic_bonus": 3,
+  "source": {
+    "code": "TCE",
+    "book": "Tasha's Cauldron of Everything",
+    "edition": 2020,
+    "page": 122,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

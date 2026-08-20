@@ -1,0 +1,22 @@
+{
+  "index": "natures-mantle",
+  "name": "Nature's Mantle",
+  "type": "gear",
+  "category": "Wondrous Item",
+  "damage": null,
+  "damage_type": null,
+  "properties": [],
+  "weight": 2,
+  "cost": "Magic item",
+  "description": "A Druid or Ranger focus that can hide its wearer as a Bonus Action while lightly obscured.",
+  "rarity": "uncommon",
+  "requires_attunement": "by a druid or ranger",
+  "source": {
+    "code": "TCE",
+    "book": "Tasha's Cauldron of Everything",
+    "edition": 2020,
+    "page": 133,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

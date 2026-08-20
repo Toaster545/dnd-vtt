@@ -1,0 +1,45 @@
+{
+  "index": "sword-burst",
+  "name": "Sword Burst",
+  "level": 0,
+  "school": "Conjuration",
+  "casting_time": "1 action",
+  "range": "5 feet",
+  "components": [
+    "V"
+  ],
+  "duration": "Instantaneous",
+  "ritual": false,
+  "concentration": false,
+  "mechanics": {
+    "spell_attacks": [],
+    "saving_throws": [
+      "dexterity"
+    ],
+    "ability_checks": [],
+    "damage_types": [
+      "force"
+    ],
+    "conditions": [],
+    "affects_creature_types": [],
+    "grants_damage_immunities": [],
+    "grants_damage_resistances": [],
+    "grants_damage_vulnerabilities": [],
+    "grants_condition_immunities": [],
+    "area_tags": [
+      "S"
+    ],
+    "misc_tags": [
+      "SCL"
+    ]
+  },
+  "description": "Creatures other than you within 5 feet make Dexterity saves, taking Force damage on a failure.",
+  "source": {
+    "code": "TCE",
+    "book": "Tasha's Cauldron of Everything",
+    "edition": 2020,
+    "page": 115,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

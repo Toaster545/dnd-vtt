@@ -1,0 +1,22 @@
+{
+  "index": "devotees-censer",
+  "name": "Devotee's Censer",
+  "type": "gear",
+  "category": "Magic Weapon",
+  "damage": null,
+  "damage_type": null,
+  "properties": [],
+  "weight": 2,
+  "cost": "Magic item",
+  "description": "A magic flail that deals extra Radiant damage and can release a healing cloud once per day.",
+  "rarity": "rare",
+  "requires_attunement": "by a cleric or paladin",
+  "source": {
+    "code": "TCE",
+    "book": "Tasha's Cauldron of Everything",
+    "edition": 2020,
+    "page": 126,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

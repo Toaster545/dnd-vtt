@@ -1,0 +1,22 @@
+{
+  "index": "lubas-tarokka-of-souls",
+  "name": "Luba's Tarokka of Souls",
+  "type": "gear",
+  "category": "Wondrous Item",
+  "damage": null,
+  "damage_type": null,
+  "properties": [],
+  "weight": 0,
+  "cost": "Magic item",
+  "description": "An artifact deck that manipulates spirits, grants divinatory magic, and carries a dangerous curse.",
+  "rarity": "artifact",
+  "requires_attunement": true,
+  "source": {
+    "code": "TCE",
+    "book": "Tasha's Cauldron of Everything",
+    "edition": 2020,
+    "page": 129,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

@@ -13,6 +13,11 @@ export class PwaService {
   private updates = inject(SwUpdate, { optional: true });
   readonly online = signal(navigator.onLine);
   readonly installAvailable = signal(false);
+  readonly installed = signal(
+    Capacitor.isNativePlatform()
+      || (typeof window.matchMedia === 'function' && window.matchMedia('(display-mode: standalone)').matches)
+      || (navigator as Navigator & { standalone?: boolean }).standalone === true,
+  );
   readonly reconnecting = signal(false);
   private installEvent?: InstallPromptEvent;
 
@@ -28,6 +33,11 @@ export class PwaService {
       this.installEvent = event as InstallPromptEvent;
       this.installAvailable.set(true);
     });
+    window.addEventListener('appinstalled', () => {
+      this.installEvent = undefined;
+      this.installAvailable.set(false);
+      this.installed.set(true);
+    });
     if (Capacitor.isNativePlatform()) {
       void Network.addListener('networkStatusChange', ({ connected }) => {
         this.online.set(connected);
@@ -35,7 +45,7 @@ export class PwaService {
     }
     if (this.updates?.isEnabled) {
       this.updates.versionUpdates.subscribe((event) => {
-        if (event.type === 'VERSION_READY' && window.confirm('A new D&D VTT version is ready. Reload now?')) {
+        if (event.type === 'VERSION_READY' && window.confirm('A new NatOne version is ready. Reload now?')) {
           void this.updates?.activateUpdate().then(() => document.location.reload());
         }
       });
@@ -45,7 +55,8 @@ export class PwaService {
   async install(): Promise<void> {
     if (!this.installEvent) return;
     await this.installEvent.prompt();
-    await this.installEvent.userChoice;
+    const choice = await this.installEvent.userChoice;
+    if (choice.outcome === 'accepted') this.installed.set(true);
     this.installEvent = undefined;
     this.installAvailable.set(false);
   }

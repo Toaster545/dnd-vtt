@@ -1,0 +1,89 @@
+{
+  "class_index": "bard",
+  "index": "eloquence",
+  "name": "College of Eloquence",
+  "description": "A bard subclass that adds the Eloquence tradition from Tasha's Cauldron of Everything.",
+  "levels": [
+    {
+      "level": 3,
+      "features": [
+        "Silver Tongue",
+        "Unsettling Words"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Silver Tongue",
+          "description": "When a Deception or Persuasion d20 roll is 9 or lower, treat the roll as a 10."
+        },
+        {
+          "type": "feature",
+          "name": "Unsettling Words",
+          "description": "As a Bonus Action, expend Bardic Inspiration and choose a creature within 60 feet. Subtract the die from the next saving throw it makes before your next turn.",
+          "action": {
+            "activation": "bonus_action"
+          },
+          "key": "tce_bard_eloquence_unsettling-words"
+        }
+      ]
+    },
+    {
+      "level": 6,
+      "features": [
+        "Unfailing Inspiration",
+        "Universal Speech"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Unfailing Inspiration",
+          "description": "When a creature adds your Bardic Inspiration die to a d20 roll and still fails, the die is not expended."
+        },
+        {
+          "type": "feature",
+          "name": "Universal Speech",
+          "description": "As an Action, choose nearby creatures up to your Charisma modifier; for 1 hour they can understand your speech. Once per Long Rest, or expend Bardic Inspiration to repeat it.",
+          "action": {
+            "activation": "action",
+            "uses": {
+              "max": 1,
+              "per": "long_rest"
+            }
+          },
+          "key": "tce_bard_eloquence_universal-speech"
+        }
+      ]
+    },
+    {
+      "level": 14,
+      "features": [
+        "Infectious Inspiration"
+      ],
+      "grants": [
+        {
+          "type": "feature",
+          "name": "Infectious Inspiration",
+          "description": "When a creature succeeds after using your Bardic Inspiration, use your Reaction to give another nearby creature Bardic Inspiration without expending a die. Uses equal your Charisma modifier per Long Rest.",
+          "action": {
+            "activation": "reaction",
+            "uses": {
+              "max": 1,
+              "maxAbilityModifier": "charisma",
+              "minimum": 1,
+              "per": "long_rest"
+            }
+          },
+          "key": "tce_bard_eloquence_infectious-inspiration"
+        }
+      ]
+    }
+  ],
+  "source": {
+    "code": "TCE",
+    "book": "Tasha's Cauldron of Everything",
+    "edition": 2020,
+    "page": 29,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

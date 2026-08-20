@@ -25,6 +25,7 @@ const sources: DndContentSource[] = [
   source('XPHB', "Player's Handbook", true, true),
   source('EFA', 'Eberron: Forge of the Artificer', true, false),
   source('XGE', "Xanathar's Guide to Everything", true, false),
+  source('TCE', "Tasha's Cauldron of Everything", true, false),
   source('XMM', 'Monster Manual', false, false),
   source('HOMEBREW', 'Homebrew', false, false),
 ];
@@ -35,7 +36,7 @@ describe('content source gates', () => {
     expect(characterContentEnabled({ source: { code: 'HOMEBREW' } }, new Set(), sources)).toBe(true);
   });
 
-  it.each(['EFA', 'XGE'])('only includes optional %s character content when selected', (code) => {
+  it.each(['EFA', 'XGE', 'TCE'])('only includes optional %s character content when selected', (code) => {
     expect(characterContentEnabled({ source: { code } }, new Set(), sources)).toBe(false);
     expect(characterContentEnabled({ source: { code } }, new Set([code]), sources)).toBe(true);
   });
@@ -46,5 +47,7 @@ describe('content source gates', () => {
     expect(campaignContentEnabled({ source: { code: 'EFA' } }, new Set(), sources)).toBe(false);
     expect(campaignContentEnabled({ source: { code: 'EFA' } }, new Set(['EFA']), sources)).toBe(true);
     expect(campaignContentEnabled({ source: { code: 'XGE' } }, new Set(), sources)).toBe(false);
+    expect(campaignContentEnabled({ source: { code: 'TCE' } }, new Set(), sources)).toBe(false);
+    expect(campaignContentEnabled({ source: { code: 'TCE' } }, new Set(['TCE']), sources)).toBe(true);
   });
 });

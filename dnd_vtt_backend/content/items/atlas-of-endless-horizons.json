@@ -1,0 +1,26 @@
+{
+  "index": "atlas-of-endless-horizons",
+  "name": "Atlas of Endless Horizons",
+  "type": "gear",
+  "category": "Wondrous Item",
+  "damage": null,
+  "damage_type": null,
+  "properties": [],
+  "weight": 3,
+  "cost": "Magic item",
+  "description": "A conjuration spellbook and focus whose charges cast teleportation magic and can move you away from an attack.",
+  "rarity": "rare",
+  "requires_attunement": "by a wizard",
+  "charges": {
+    "max": 3,
+    "recovery": "dawn"
+  },
+  "source": {
+    "code": "TCE",
+    "book": "Tasha's Cauldron of Everything",
+    "edition": 2020,
+    "page": 120,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

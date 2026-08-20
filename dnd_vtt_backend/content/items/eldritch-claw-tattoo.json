@@ -1,0 +1,23 @@
+{
+  "index": "eldritch-claw-tattoo",
+  "name": "Eldritch Claw Tattoo",
+  "type": "gear",
+  "category": "Wondrous Item",
+  "damage": null,
+  "damage_type": null,
+  "properties": [],
+  "weight": 0,
+  "cost": "Magic item",
+  "description": "A tattoo that makes unarmed strikes magical and can extend their reach while adding Force damage.",
+  "rarity": "uncommon",
+  "requires_attunement": true,
+  "magic_bonus": 1,
+  "source": {
+    "code": "TCE",
+    "book": "Tasha's Cauldron of Everything",
+    "edition": 2020,
+    "page": 126,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

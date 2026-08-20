@@ -1,0 +1,77 @@
+{
+  "index": "shadow-spirit",
+  "name": "Shadow Spirit",
+  "size": "M",
+  "type": "monstrosity",
+  "alignment": "U",
+  "armor_class": 10,
+  "hit_points": 0,
+  "hit_points_formula": "Special",
+  "hit_dice": "Special",
+  "speed": {
+    "walk": 40
+  },
+  "ability_scores": {
+    "strength": 13,
+    "dexterity": 16,
+    "constitution": 15,
+    "intelligence": 4,
+    "wisdom": 10,
+    "charisma": 16
+  },
+  "saving_throws": {},
+  "skills": {},
+  "damage_vulnerabilities": [],
+  "damage_resistances": [
+    "necrotic"
+  ],
+  "damage_immunities": [],
+  "condition_immunities": [
+    "frightened"
+  ],
+  "senses": {
+    "passive_perception": 10,
+    "darkvision": 120
+  },
+  "languages": [
+    "understands the languages you speak"
+  ],
+  "challenge_rating": "Special",
+  "xp": 0,
+  "traits": [
+    {
+      "name": "Terror Frenzy (Fury Only)",
+      "description": "A structured terror frenzy (fury only) rule from Tasha's Cauldron of Everything, page 114."
+    },
+    {
+      "name": "Weight of Sorrow (Despair Only)",
+      "description": "A structured weight of sorrow (despair only) rule from Tasha's Cauldron of Everything, page 114."
+    }
+  ],
+  "actions": [
+    {
+      "name": "Multiattack",
+      "description": "A structured multiattack rule from Tasha's Cauldron of Everything, page 114."
+    },
+    {
+      "name": "Chilling Rend",
+      "description": "damage dice 1d12 + 3 + summonSpellLevel. See Tasha's Cauldron of Everything, page 114, for targeting and additional effects."
+    },
+    {
+      "name": "Dreadful Scream (1/Day)",
+      "description": "A structured dreadful scream (1/day) rule from Tasha's Cauldron of Everything, page 114."
+    }
+  ],
+  "reactions": [],
+  "legendary_actions": [],
+  "description": "A creature, companion, or summoned spirit stat block from Tasha's Cauldron of Everything.",
+  "rules_text": "reference-only",
+  "source": {
+    "code": "TCE",
+    "book": "Tasha's Cauldron of Everything",
+    "edition": 2020,
+    "page": 114,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}
