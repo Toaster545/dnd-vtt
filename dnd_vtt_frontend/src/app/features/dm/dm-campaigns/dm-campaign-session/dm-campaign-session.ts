@@ -279,6 +279,7 @@ export class DmCampaignSessionComponent implements OnInit, OnDestroy {
   }
 
   async startEdit(encounter: Encounter, event: Event) {
+    event.preventDefault();
     event.stopPropagation();
     this.resetForm();
     this.editingId.set(encounter.id!);
@@ -500,6 +501,7 @@ export class DmCampaignSessionComponent implements OnInit, OnDestroy {
   }
 
   async deleteEncounter(id: string, event: Event) {
+    event.preventDefault();
     event.stopPropagation();
     const enc = this.encounters().find(e => e.id === id);
     if (!await this.confirm.confirm(`Delete "${enc?.name ?? 'this encounter'}"? This cannot be undone.`, 'Delete Encounter')) return;
@@ -508,6 +510,7 @@ export class DmCampaignSessionComponent implements OnInit, OnDestroy {
   }
 
   async toggleVisibility(encounter: Encounter, event: Event) {
+    event.preventDefault();
     event.stopPropagation();
     await this.encounterService.setVisibility(encounter.id!, !encounter.visible_to_players);
     this.encounters.set(await this.encounterService.getBySession(this.sessionId));

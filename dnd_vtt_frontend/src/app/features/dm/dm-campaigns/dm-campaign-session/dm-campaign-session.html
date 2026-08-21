@@ -175,22 +175,24 @@
         <ul class="divide-y divide-white/8">
           @for (encounter of encounters(); track encounter.id) {
             <li>
-              <a
-                [routerLink]="['/home/campaigns/manage', campaignId, 'sessions', sessionId, 'encounters', encounter.id]"
-                class="flex items-center py-3 px-2 -mx-2 gap-3 rounded cursor-pointer no-underline hover:bg-white/5 transition-colors"
-              >
-                <div class="flex-1 min-w-0">
-                  <p class="text-parchment font-medium truncate m-0">
-                    {{ encounter.name }}
-                    <span class="text-xs text-coal border border-white/10 rounded px-1.5 py-0.5 ml-1">{{ encounter.status }}</span>
-                  </p>
-                  <p class="text-slate text-xs m-0 mt-0.5">
-                    {{ encounter.monsters.length }} monster type{{ encounter.monsters.length === 1 ? '' : 's' }}
-                    · {{ encounter.character_ids.length }} character{{ encounter.character_ids.length === 1 ? '' : 's' }}
-                    @if (encounter.map_id) { · map attached }
-                    · {{ formatDate(encounter.created_at) }}
-                  </p>
-                </div>
+              <div class="flex items-center py-3 px-2 -mx-2 gap-3 rounded hover:bg-white/5 transition-colors">
+                <a
+                  [routerLink]="['/home/campaigns/manage', campaignId, 'sessions', sessionId, 'encounters', encounter.id]"
+                  class="flex flex-1 min-w-0 items-center gap-3 cursor-pointer no-underline"
+                >
+                  <div class="flex-1 min-w-0">
+                    <p class="text-parchment font-medium truncate m-0">
+                      {{ encounter.name }}
+                      <span class="text-xs text-coal border border-white/10 rounded px-1.5 py-0.5 ml-1">{{ encounter.status }}</span>
+                    </p>
+                    <p class="text-slate text-xs m-0 mt-0.5">
+                      {{ encounter.monsters.length }} monster type{{ encounter.monsters.length === 1 ? '' : 's' }}
+                      · {{ encounter.character_ids.length }} character{{ encounter.character_ids.length === 1 ? '' : 's' }}
+                      @if (encounter.map_id) { · map attached }
+                      · {{ formatDate(encounter.created_at) }}
+                    </p>
+                  </div>
+                </a>
                 <button class="btn-icon"
                         [class]="encounter.visible_to_players ? 'text-gold' : 'text-slate hover:text-parchment'"
                         (click)="toggleVisibility(encounter, $event)"
@@ -208,7 +210,7 @@
                   <mat-icon>delete</mat-icon>
                 </button>
                 <mat-icon class="text-slate">chevron_right</mat-icon>
-              </a>
+              </div>
             </li>
           } @empty {
             <p class="text-slate text-sm py-4">No encounters yet.</p>

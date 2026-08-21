@@ -129,6 +129,10 @@ html:fullscreen .hide-in-fullscreen {
   .toolbar-title {
     @apply font-brand text-lg text-parchment tracking-wide;
   }
+  .toolbar-title.active {
+    @apply text-gold-bright;
+    text-shadow: 0 0 18px color-mix(in srgb, var(--dnd-gold) 35%, transparent);
+  }
   .toolbar-badge {
     @apply text-xs font-bold px-2 py-0.5 rounded bg-gold-container text-gold-bright uppercase tracking-wider flex-shrink-0;
   }

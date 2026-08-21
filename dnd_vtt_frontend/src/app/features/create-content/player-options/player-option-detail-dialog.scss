@@ -1,0 +1,28 @@
+:host {
+  .detail-kind { @apply rounded-full border border-gold/30 bg-gold/10 px-2 py-0.5 text-[10px] uppercase tracking-wider text-gold; }
+  .detail-grid {
+    @apply grid grid-cols-2 gap-px overflow-hidden rounded-lg border border-white/10 bg-white/10;
+    > div { @apply bg-elevated px-3 py-2.5; }
+  }
+  .detail-label { @apply m-0 text-[9px] uppercase tracking-wider text-coal; }
+  .detail-value { @apply m-0 mt-1 text-xs text-parchment; }
+  .detail-description {
+    @apply mt-4 rounded-lg border border-white/10 bg-black/10 p-4;
+    h3 { @apply mb-2 mt-0 text-[10px] uppercase tracking-widest text-gold; }
+    p { @apply m-0 whitespace-pre-wrap text-sm leading-relaxed text-slate; }
+  }
+  .detail-heading { @apply mb-2 mt-5 border-b border-gold/20 pb-2 font-brand text-sm text-gold; }
+  .detail-line { @apply mb-0 mt-3 text-sm leading-relaxed text-slate; }
+  .detail-line strong { @apply text-parchment; }
+  .detail-prose { @apply mb-0 mt-3 whitespace-pre-wrap text-sm leading-relaxed text-slate; }
+  .detail-feature {
+    @apply mt-3 rounded-lg border border-white/10 bg-black/10 px-3 py-2.5 text-sm text-slate;
+    > strong { @apply text-parchment; }
+    p { @apply mb-0 mt-1 whitespace-pre-wrap leading-relaxed; }
+  }
+  .detail-collapsible {
+    @apply mt-2 rounded-lg border border-white/10 bg-black/10 px-3 py-2.5;
+    summary { @apply cursor-pointer font-medium text-parchment; }
+    summary span { @apply ml-1 text-[10px] font-normal uppercase tracking-wide text-coal; }
+  }
+}

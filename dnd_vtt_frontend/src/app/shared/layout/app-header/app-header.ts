@@ -16,7 +16,7 @@ import { AuthService } from '../../../core/services/auth.service';
 export class AppHeaderComponent {
   auth = inject(AuthService);
 
-  activeTab = input<'characters' | 'campaigns' | 'content-library' | null>(null);
+  activeTab = input<'dashboard' | 'characters' | 'campaigns' | 'content-library' | null>(null);
 
   selectCharacters     = output<void>();
   selectCampaigns      = output<void>();

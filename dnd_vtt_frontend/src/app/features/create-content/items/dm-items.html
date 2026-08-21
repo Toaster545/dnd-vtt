@@ -1,13 +1,24 @@
+@if (detailItem(); as item) {
+  <app-content-detail-dialog [item]="item" (closed)="closeDetails()" />
+}
+
 @if (showForm()) {
   <app-item-form class="flex flex-col flex-1 min-h-0"
     [item]="editingItem()" [duplicateFrom]="duplicatingItem()" (saved)="onSaved()" (cancelled)="onCancelled()" />
 } @else {
   <div class="flex-1 overflow-auto p-6">
-    <div class="flex items-center mb-5 gap-3">
-      <h2 class="font-brand text-lg text-parchment m-0 flex-1">Equipement</h2>
-      <select class="field-input w-52" [ngModel]="sourceFilter()" (ngModelChange)="sourceFilter.set($event)" name="sourceFilter">
-        <option value="all">All sources</option>
-        @for (source of sources(); track source.code) { <option [value]="source.code">{{ source.short_name }}</option> }
+    <div class="flex flex-wrap items-center mb-5 gap-3">
+      <h2 class="font-brand text-lg text-parchment m-0 flex-1">Equipment</h2>
+      <app-content-source-filter
+        [sources]="sources()"
+        [selected]="sourceFilters()"
+        (selectedChange)="setSourceFilters($event)"
+      />
+      <select class="field-input w-40" [ngModel]="sort()" (ngModelChange)="sort.set($event)" name="sort">
+        <option value="name-asc">Name A–Z</option>
+        <option value="name-desc">Name Z–A</option>
+        <option value="type-asc">Type A–Z</option>
+        <option value="source-asc">Source A–Z</option>
       </select>
       <input class="field-input w-56" [ngModel]="search()" (ngModelChange)="onSearchChange($event)" placeholder="Search items…" name="search" />
       <button class="btn-primary" (click)="openCreate()">
@@ -57,7 +68,7 @@
         } @else {
           <ul class="divide-y divide-white/8">
             @for (i of filteredOfficial(); track i.index) {
-              <li class="flex items-center p-3 gap-3">
+              <li class="flex items-center p-3 gap-3 cursor-pointer hover:bg-white/5" (click)="openDetails(i)">
                 <div class="flex-1 min-w-0">
                   <p class="text-parchment font-medium truncate m-0">{{ i.name }}</p>
                   <p class="text-slate text-xs m-0 mt-0.5">{{ i.type }} · {{ i.category }}</p>

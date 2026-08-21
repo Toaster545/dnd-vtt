@@ -12,7 +12,7 @@ import { MainLayoutComponent } from '../../shared/layout/main-layout/main-layout
 import { AppHeaderComponent } from '../../shared/layout/app-header/app-header';
 import { SettingsDialogComponent } from '../settings/settings-dialog';
 
-type Tab = 'characters' | 'campaigns' | 'content-library';
+type Tab = 'dashboard' | 'characters' | 'campaigns' | 'content-library';
 
 // Single nav shell for every logged-in user, replacing the old dm-shell/player-shell split — DM
 // vs player was never really a property of the account, just of whether a given campaign's dm_id
@@ -32,7 +32,7 @@ export class ShellComponent implements OnInit, OnDestroy {
   private encounterService = inject(EncounterService);
   private dialog           = inject(MatDialog);
   auth = inject(AuthService);
-  activeTab = signal<Tab>('characters');
+  activeTab = signal<Tab>('dashboard');
 
   // The moment a DM starts an encounter in any campaign this user has joined (not one they own —
   // they'd already be the one starting it), a dismissible banner appears, a shortcut on top of the
@@ -73,13 +73,14 @@ export class ShellComponent implements OnInit, OnDestroy {
   }
 
   private syncActiveTabFromUrl(url: string) {
-    if (url.startsWith('/home/content-library')) this.activeTab.set('content-library');
+    if (url.startsWith('/home/dashboard')) this.activeTab.set('dashboard');
+    else if (url.startsWith('/home/content-library')) this.activeTab.set('content-library');
     else if (url.startsWith('/home/campaigns')) this.activeTab.set('campaigns');
     else this.activeTab.set('characters');
   }
 
   selectCharacters() {
-    void this.router.navigate(['/home']);
+    void this.router.navigate(['/home/characters']);
   }
 
   goToCampaigns() {

@@ -5,13 +5,31 @@
       <mat-icon class="text-lg">arrow_back</mat-icon>
       Back to home
     </a>
+    <p class="mb-1 mt-4 px-3 text-[9px] uppercase tracking-widest text-coal">Character Options</p>
+    <button class="nav-item" [class.active]="activeSection() === 'species'" (click)="activeSection.set('species')">
+      <mat-icon class="text-lg">groups</mat-icon>
+      Species
+    </button>
+    <button class="nav-item" [class.active]="activeSection() === 'classes'" (click)="activeSection.set('classes')">
+      <mat-icon class="text-lg">shield</mat-icon>
+      Classes
+    </button>
+    <button class="nav-item" [class.active]="activeSection() === 'backgrounds'" (click)="activeSection.set('backgrounds')">
+      <mat-icon class="text-lg">history_edu</mat-icon>
+      Backgrounds
+    </button>
+    <button class="nav-item" [class.active]="activeSection() === 'feats'" (click)="activeSection.set('feats')">
+      <mat-icon class="text-lg">workspace_premium</mat-icon>
+      Feats
+    </button>
+    <p class="mb-1 mt-4 px-3 text-[9px] uppercase tracking-widest text-coal">Game Content</p>
     <button class="nav-item" [class.active]="activeSection() === 'monsters'" (click)="activeSection.set('monsters')">
       <mat-icon class="text-lg">pets</mat-icon>
       Monsters
     </button>
     <button class="nav-item" [class.active]="activeSection() === 'equipement'" (click)="activeSection.set('equipement')">
       <mat-icon class="text-lg">backpack</mat-icon>
-      Equipement
+      Equipment
     </button>
     <button class="nav-item" [class.active]="activeSection() === 'spells'" (click)="activeSection.set('spells')">
       <mat-icon class="text-lg">auto_fix_high</mat-icon>
@@ -22,6 +40,10 @@
   <!-- Content -->
   <div class="flex-1 overflow-hidden flex flex-col">
     @switch (activeSection()) {
+      @case ('species') { <app-player-option-library kind="species" class="flex flex-col flex-1 min-h-0" /> }
+      @case ('classes') { <app-player-option-library kind="classes" class="flex flex-col flex-1 min-h-0" /> }
+      @case ('backgrounds') { <app-player-option-library kind="backgrounds" class="flex flex-col flex-1 min-h-0" /> }
+      @case ('feats') { <app-player-option-library kind="feats" class="flex flex-col flex-1 min-h-0" /> }
       @case ('monsters') { <app-dm-monsters class="flex flex-col flex-1 min-h-0" /> }
       @case ('equipement') { <app-dm-items class="flex flex-col flex-1 min-h-0" /> }
       @case ('spells') { <app-dm-spells class="flex flex-col flex-1 min-h-0" /> }

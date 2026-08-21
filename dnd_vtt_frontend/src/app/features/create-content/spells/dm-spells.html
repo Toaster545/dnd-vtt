@@ -1,17 +1,29 @@
+@if (detailSpell(); as spell) {
+  <app-content-detail-dialog [spell]="spell" (closed)="closeDetails()" />
+}
+
 @if (showForm()) {
   <app-spell-form class="flex flex-col flex-1 min-h-0"
     [spell]="editingSpell()" [duplicateFrom]="duplicatingSpell()" (saved)="onSaved()" (cancelled)="onCancelled()" />
 } @else {
   <div class="flex-1 overflow-auto p-6">
-    <div class="flex items-center mb-5 gap-3">
+    <div class="flex flex-wrap items-center mb-5 gap-3">
       <h2 class="font-brand text-lg text-parchment m-0 flex-1">Spells</h2>
-      <select class="field-input w-52" [ngModel]="sourceFilter()" (ngModelChange)="sourceFilter.set($event)" name="sourceFilter">
-        <option value="all">All sources</option>
-        @for (source of sources(); track source.code) { <option [value]="source.code">{{ source.short_name }}</option> }
-      </select>
+      <app-content-source-filter
+        [sources]="sources()"
+        [selected]="sourceFilters()"
+        (selectedChange)="setSourceFilters($event)"
+      />
       <select class="field-input w-52" [ngModel]="accessFilter()" (ngModelChange)="accessFilter.set($event)" name="accessFilter">
         <option value="all">All spell access</option>
         @for (option of accessOptions(); track option.key) { <option [value]="option.key">{{ option.label }}</option> }
+      </select>
+      <select class="field-input w-40" [ngModel]="sort()" (ngModelChange)="sort.set($event)" name="sort">
+        <option value="name-asc">Name A–Z</option>
+        <option value="name-desc">Name Z–A</option>
+        <option value="level-asc">Level low–high</option>
+        <option value="level-desc">Level high–low</option>
+        <option value="source-asc">Source A–Z</option>
       </select>
       <input class="field-input w-56" [ngModel]="search()" (ngModelChange)="onSearchChange($event)" placeholder="Search spells…" name="search" />
       <button class="btn-primary" (click)="openCreate()">
@@ -61,7 +73,7 @@
         } @else {
           <ul class="divide-y divide-white/8">
             @for (s of filteredOfficial(); track s.index) {
-              <li class="flex items-center p-3 gap-3">
+              <li class="flex items-center p-3 gap-3 cursor-pointer hover:bg-white/5" (click)="openDetails(s)">
                 <div class="flex-1 min-w-0">
                   <p class="text-parchment font-medium truncate m-0">{{ s.name }}</p>
                   <p class="text-slate text-xs m-0 mt-0.5">{{ s.level === 0 ? 'Cantrip' : 'Level ' + s.level }} · {{ s.school }}</p>

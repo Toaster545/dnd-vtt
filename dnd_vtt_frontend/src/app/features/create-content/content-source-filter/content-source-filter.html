@@ -1,0 +1,40 @@
+<div class="relative">
+  <button
+    class="field-input flex h-full min-w-40 items-center justify-between gap-2 text-left"
+    type="button"
+    (click)="open.set(!open())"
+    [attr.aria-expanded]="open()"
+  >
+    <span>{{ label() }}</span>
+    <mat-icon class="text-lg text-slate">{{ open() ? 'expand_less' : 'expand_more' }}</mat-icon>
+  </button>
+
+  @if (open()) {
+    <button
+      class="fixed inset-0 z-30 cursor-default border-0 bg-transparent p-0"
+      type="button"
+      aria-label="Close source filters"
+      (click)="open.set(false)"
+    ></button>
+    <div class="absolute right-0 top-full z-40 mt-2 w-64 rounded-lg border border-gold/30 bg-elevated p-3 shadow-2xl">
+      <div class="mb-2 flex items-center justify-between gap-3">
+        <span class="text-[10px] font-semibold uppercase tracking-widest text-gold">Book sources</span>
+        @if (selected().length) {
+          <button class="text-[10px] text-slate hover:text-gold" type="button" (click)="clear()">Clear</button>
+        }
+      </div>
+      <div class="flex max-h-64 flex-col gap-1 overflow-y-auto">
+        @for (source of sources(); track source.code) {
+          <label class="flex cursor-pointer items-center gap-2 rounded px-2 py-1.5 text-xs text-parchment hover:bg-white/5">
+            <input
+              type="checkbox"
+              [checked]="isSelected(source.code)"
+              (change)="toggle(source.code, $any($event.target).checked)"
+            />
+            <span class="min-w-0 flex-1 truncate">{{ source.short_name }}</span>
+          </label>
+        }
+      </div>
+    </div>
+  }
+</div>
