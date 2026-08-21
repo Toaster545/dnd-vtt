@@ -1,117 +1,224 @@
-  <div class="p-4 sm:p-6 overflow-y-auto flex-1 min-h-0">
-    <div class="max-w-3xl mx-auto flex flex-col gap-5">
+<div class="flex-1 min-h-0 overflow-y-auto p-4 sm:p-6">
+  <div class="mx-auto flex max-w-5xl flex-col gap-6">
+    <header class="flex items-center gap-4 border-b border-gold/20 pb-5">
+      <img
+        src="/icons/natone-192.png"
+        alt="NatOne"
+        class="h-14 w-14 shrink-0 object-contain sm:h-16 sm:w-16"
+      />
+      <div class="min-w-0">
+        <div class="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+          <h1 class="font-brand m-0 text-2xl text-parchment sm:text-3xl">NatOne</h1>
+          <span class="text-xs font-semibold uppercase tracking-[0.18em] text-gold">Dashboard</span>
+        </div>
+        <p class="m-0 mt-1 text-xs text-slate sm:text-sm">
+          Continue your game or take care of what needs attention.
+        </p>
+      </div>
+    </header>
 
-      <h2 class="font-brand text-lg text-parchment m-0">Dashboard</h2>
+    @if (loading()) {
+      <div class="mt-10 flex justify-center"><span class="spinner-lg"></span></div>
+    } @else {
+      @if (!hasAnyCharacters() && !hasAnyCampaigns()) {
+        <div class="card card-body text-center">
+          <p class="font-brand m-0 mb-2 text-lg text-parchment">Welcome to NatOne</p>
+          <p class="m-0 text-sm text-slate">Create a character, create a campaign, or join an existing adventure to get started.</p>
+        </div>
+      }
 
-      @if (loading()) {
-        <div class="flex justify-center mt-10"><span class="spinner-lg"></span></div>
-      } @else {
-
-        @if (!hasAnyCharacters() && !hasAnyCampaigns()) {
-          <div class="card card-body text-center">
-            <p class="font-brand text-lg text-parchment m-0 mb-2">Welcome!</p>
-            <p class="text-slate text-sm m-0 mb-4">
-              You don't have any characters or campaigns yet — create a character or join a
-              campaign to get started.
-            </p>
-            <div class="flex justify-center gap-3">
-              <button class="btn-primary" (click)="goToCharacters()">
-                <mat-icon>badge</mat-icon> Create a Character
-              </button>
-              <button class="btn-outline" (click)="goToCampaigns()">
-                <mat-icon>groups</mat-icon> Join a Campaign
-              </button>
-            </div>
+      @if (latestCampaign() || latestCharacter()) {
+        <section>
+          <div class="mb-3 flex items-center gap-2">
+            <mat-icon class="dashboard-icon text-gold">play_circle</mat-icon>
+            <h3 class="font-brand m-0 text-sm text-parchment">Continue Playing</h3>
           </div>
-        }
-
-        @if (levelUpAlerts().length) {
-          <div class="flex flex-col gap-2">
-            @for (alert of levelUpAlerts(); track alert.character.id) {
-              <div class="card card-body flex items-center gap-3 border-gold/30 bg-gold/5">
-                <mat-icon class="text-gold">military_tech</mat-icon>
-                <div class="flex-1 min-w-0">
-                  @if (alert.character.edit_unlocked) {
-                    <p class="text-parchment text-sm m-0">
-                      <strong>{{ alert.character.name }}</strong> leveled up to
-                      <strong>{{ alert.character.level }}</strong> in
-                      <span class="text-gold">{{ alert.character.campaign_name }}</span> — update your sheet.
-                    </p>
-                  } @else {
-                    <p class="text-parchment text-sm m-0">
-                      <strong>{{ alert.character.name }}</strong> leveled up to
-                      <strong>{{ alert.character.level }}</strong> in
-                      <span class="text-gold">{{ alert.character.campaign_name }}</span>, but your DM
-                      hasn't unlocked editing yet.
-                    </p>
-                  }
+          <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            @if (latestCampaign(); as campaign) {
+              <article class="card overflow-hidden">
+                <div class="relative flex min-h-28 flex-col justify-end bg-elevated bg-cover bg-center p-4"
+                  [style.background-image]="campaign.background_url ? 'linear-gradient(to bottom, rgba(13,14,22,0.25), rgba(13,14,22,0.92)), url(' + campaign.background_url + ')' : null">
+                  <div class="flex items-center gap-2">
+                    <p class="font-brand m-0 text-lg text-parchment">{{ campaign.name }}</p>
+                    @if (campaign.is_owner) { <span class="toolbar-badge text-[10px]">DM</span> }
+                  </div>
+                  @if (campaign.description) { <p class="m-0 mt-1 truncate text-xs text-slate">{{ campaign.description }}</p> }
                 </div>
-                @if (alert.character.edit_unlocked) {
-                  <button class="btn-primary text-sm px-3 py-1.5" (click)="goToCharacters()">Update</button>
-                }
+                <div class="card-body flex items-center gap-2 pt-3">
+                  <button class="btn-primary flex-1" [routerLink]="campaignLink(campaign)">Resume <mat-icon class="dashboard-icon">chevron_right</mat-icon></button>
+                  <button class="btn-icon" type="button" (click)="toggleCampaignPin(campaign, $event)" [matTooltip]="isCampaignPinned(campaign) ? 'Unpin campaign' : 'Pin campaign'">
+                    <mat-icon class="dashboard-icon" [class.text-gold]="isCampaignPinned(campaign)">{{ isCampaignPinned(campaign) ? 'star' : 'star_outline' }}</mat-icon>
+                  </button>
+                </div>
+              </article>
+            }
+
+            @if (latestCharacter(); as character) {
+              <article class="card">
+                <div class="card-header flex items-center gap-2">
+                  <img [src]="portraitFor(character)" class="h-10 w-10 flex-shrink-0 rounded-full" alt="" />
+                  <h3 class="font-brand m-0 flex-1 text-sm text-parchment">Continue Character</h3>
+                  <button class="btn-icon" type="button" (click)="toggleCharacterPin(character, $event)" [matTooltip]="isCharacterPinned(character) ? 'Unpin character' : 'Pin character'">
+                    <mat-icon class="dashboard-icon" [class.text-gold]="isCharacterPinned(character)">{{ isCharacterPinned(character) ? 'star' : 'star_outline' }}</mat-icon>
+                  </button>
+                </div>
+                <div class="card-body pt-2">
+                  <p class="font-brand m-0 text-lg text-parchment">{{ character.name }}</p>
+                  <p class="m-0 mt-1 text-xs text-slate">
+                    {{ character.race || '—' }} · {{ classLabel(character) || '—' }} · Level {{ character.level }}
+                    @if (character.campaign_name) { · <span class="text-gold">{{ character.campaign_name }}</span> }
+                  </p>
+                  <div class="mb-3 mt-2 flex items-center gap-1.5">
+                    <span class="rounded border border-white/10 px-2 py-0.5 text-xs text-slate">HP {{ character.current_hp }}/{{ character.max_hp }}</span>
+                    <span class="rounded border border-white/10 px-2 py-0.5 text-xs text-slate">AC {{ character.armor_class }}</span>
+                  </div>
+                  <button class="btn-primary w-full" [routerLink]="characterLink(character)">Resume <mat-icon class="dashboard-icon">chevron_right</mat-icon></button>
+                </div>
+              </article>
+            }
+          </div>
+        </section>
+      }
+
+      @if (attentionCount()) {
+        <section>
+          <div class="mb-3 flex items-center gap-2">
+            <mat-icon class="dashboard-icon text-gold">notifications</mat-icon>
+            <h3 class="font-brand m-0 text-sm text-parchment">Needs Attention</h3>
+            <span class="rounded-full border border-gold/30 bg-gold/10 px-2 py-0.5 text-[10px] text-gold">{{ attentionCount() }}</span>
+          </div>
+          <div class="flex flex-col gap-2">
+            @for (character of draftCharacters(); track character.id) {
+              <div class="card card-body flex items-center gap-3 border-gold/25 bg-gold/5">
+                <img [src]="portraitFor(character)" class="h-9 w-9 flex-shrink-0 rounded-full" alt="" />
+                <div class="min-w-0 flex-1">
+                  <p class="m-0 text-sm text-parchment"><strong>{{ character.name || 'Unnamed Character' }}</strong> is still being created.</p>
+                  <p class="m-0 mt-0.5 text-xs text-slate">Continue from the last saved character-creation step.</p>
+                </div>
+                <button class="btn-outline px-3 py-1.5 text-sm" [routerLink]="draftLink(character)">Continue</button>
+              </div>
+            }
+            @for (alert of levelUpAlerts(); track alert.character.id) {
+              <div class="card card-body flex items-center gap-3 border-gold/25 bg-gold/5">
+                <img [src]="portraitFor(alert.character)" class="h-9 w-9 flex-shrink-0 rounded-full" alt="" />
+                <div class="min-w-0 flex-1">
+                  <p class="m-0 text-sm text-parchment">
+                    <strong>{{ alert.character.name }}</strong> reached level <strong>{{ alert.character.level }}</strong> in <span class="text-gold">{{ alert.character.campaign_name }}</span>.
+                  </p>
+                  <p class="m-0 mt-0.5 text-xs text-slate">{{ alert.character.edit_unlocked ? 'Update the character sheet to apply the new level.' : 'Your DM has not unlocked editing yet.' }}</p>
+                </div>
+                @if (alert.character.edit_unlocked) { <button class="btn-outline px-3 py-1.5 text-sm" (click)="goToCharacters()">Update</button> }
               </div>
             }
           </div>
-        }
-
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
-
-          @if (latestCampaign(); as campaign) {
-            <div class="card overflow-hidden">
-              <div class="card-header flex items-center gap-2">
-                <mat-icon class="text-slate text-base">groups</mat-icon>
-                <h3 class="font-brand text-sm text-parchment m-0">Continue Campaign</h3>
-              </div>
-              <div
-                class="relative bg-cover bg-center bg-elevated min-h-24 flex flex-col justify-end p-4"
-                [style.background-image]="campaign.background_url ? 'linear-gradient(to bottom, rgba(13,14,22,0.25), rgba(13,14,22,0.92)), url(' + campaign.background_url + ')' : null"
-              >
-                <div class="flex items-center gap-2">
-                  <p class="text-parchment font-brand text-lg m-0">{{ campaign.name }}</p>
-                  @if (campaign.is_owner) { <span class="toolbar-badge text-[10px]">DM</span> }
-                </div>
-                @if (campaign.description) {
-                  <p class="text-slate text-xs m-0 mt-1 truncate">{{ campaign.description }}</p>
-                }
-              </div>
-              <div class="card-body pt-3">
-                <button class="btn-primary w-full" [routerLink]="campaignLink(campaign)">
-                  Resume <mat-icon class="text-base">chevron_right</mat-icon>
-                </button>
-              </div>
-            </div>
-          }
-
-          @if (latestCharacter(); as character) {
-            <div class="card">
-              <div class="card-header flex items-center gap-2">
-                <mat-icon class="text-slate text-base">badge</mat-icon>
-                <h3 class="font-brand text-sm text-parchment m-0">Continue Character</h3>
-              </div>
-              <div class="card-body">
-                <p class="text-parchment font-brand text-lg m-0">{{ character.name }}</p>
-                <p class="text-slate text-xs m-0 mt-1">
-                  {{ character.race || '—' }} · {{ classLabel(character) || '—' }} · Lv {{ character.level }}
-                  @if (character.campaign_name) {
-                    · <span class="text-gold">{{ character.campaign_name }}</span>
-                  }
-                </p>
-                <div class="flex items-center gap-1.5 mt-2 mb-3">
-                  <span class="text-xs text-slate border border-white/10 rounded px-2 py-0.5">
-                    HP {{ character.current_hp }}/{{ character.max_hp }}
-                  </span>
-                  <span class="text-xs text-slate border border-white/10 rounded px-2 py-0.5">
-                    AC {{ character.armor_class }}
-                  </span>
-                </div>
-                <button class="btn-primary w-full" [routerLink]="characterLink(character)">
-                  Resume <mat-icon class="text-base">chevron_right</mat-icon>
-                </button>
-              </div>
-            </div>
-          }
-
-        </div>
+        </section>
       }
-    </div>
+
+      <section>
+        <div class="mb-3 flex items-center gap-2">
+          <mat-icon class="dashboard-icon text-gold">star</mat-icon>
+          <h3 class="font-brand m-0 text-sm text-parchment">Pinned Favorites</h3>
+        </div>
+        @if (!pinnedCharacters().length && !pinnedCampaigns().length) {
+          <div class="card card-body flex items-center gap-3">
+            <mat-icon class="dashboard-icon text-slate">star_outline</mat-icon>
+            <p class="m-0 text-sm text-slate">Pin a recent character or campaign to keep it within easy reach.</p>
+          </div>
+        } @else {
+          <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            @for (character of pinnedCharacters(); track character.id) {
+              <article class="card card-body flex items-center gap-3">
+                <img [src]="portraitFor(character)" class="h-9 w-9 flex-shrink-0 rounded-full" alt="" />
+                <a class="min-w-0 flex-1 no-underline" [routerLink]="characterLink(character)">
+                  <p class="m-0 truncate text-sm font-medium text-parchment">{{ character.name }}</p>
+                  <p class="m-0 mt-0.5 truncate text-xs text-slate">Level {{ character.level }} · {{ classLabel(character) }}</p>
+                </a>
+                <button class="btn-icon" type="button" (click)="toggleCharacterPin(character, $event)" matTooltip="Unpin character"><mat-icon class="dashboard-icon text-gold">star</mat-icon></button>
+              </article>
+            }
+            @for (campaign of pinnedCampaigns(); track campaign.id) {
+              <article class="card card-body flex items-center gap-3">
+                <mat-icon class="dashboard-icon text-gold">groups</mat-icon>
+                <a class="min-w-0 flex-1 no-underline" [routerLink]="campaignLink(campaign)">
+                  <p class="m-0 truncate text-sm font-medium text-parchment">{{ campaign.name }}</p>
+                  <p class="m-0 mt-0.5 text-xs text-slate">{{ campaign.is_owner ? 'Dungeon Master' : 'Player' }}</p>
+                </a>
+                <button class="btn-icon" type="button" (click)="toggleCampaignPin(campaign, $event)" matTooltip="Unpin campaign"><mat-icon class="dashboard-icon text-gold">star</mat-icon></button>
+              </article>
+            }
+          </div>
+        }
+      </section>
+
+      <section class="grid grid-cols-1 gap-5 lg:grid-cols-2">
+        <div>
+          <div class="mb-3 flex items-center gap-2">
+            <mat-icon class="dashboard-icon text-slate">badge</mat-icon>
+            <h3 class="font-brand m-0 flex-1 text-sm text-parchment">Recent Characters</h3>
+            <button class="text-xs text-gold hover:text-gold-bright" type="button" (click)="goToCharacters()">View all</button>
+          </div>
+          <div class="flex flex-col gap-2">
+            @for (character of recentCharacters(); track character.id) {
+              <article class="card card-body flex items-center gap-3 py-3">
+                <img [src]="portraitFor(character)" class="h-9 w-9 flex-shrink-0 rounded-full" alt="" />
+                <a class="min-w-0 flex-1 no-underline" [routerLink]="characterLink(character)">
+                  <p class="m-0 truncate text-sm font-medium text-parchment">{{ character.name }}</p>
+                  <p class="m-0 mt-0.5 truncate text-xs text-slate">{{ character.race }} · {{ classLabel(character) }} · Level {{ character.level }} @if (character.creation_status === 'draft') { · <span class="text-gold">Draft</span> }</p>
+                </a>
+                <span class="rounded border border-white/10 px-2 py-0.5 text-[10px] text-slate">HP {{ character.current_hp }}/{{ character.max_hp }}</span>
+                <button class="btn-icon" type="button" (click)="toggleCharacterPin(character, $event)" [matTooltip]="isCharacterPinned(character) ? 'Unpin character' : 'Pin character'">
+                  <mat-icon class="dashboard-icon" [class.text-gold]="isCharacterPinned(character)">{{ isCharacterPinned(character) ? 'star' : 'star_outline' }}</mat-icon>
+                </button>
+              </article>
+            } @empty { <div class="card card-body text-sm text-slate">No characters yet.</div> }
+          </div>
+        </div>
+
+        <div>
+          <div class="mb-3 flex items-center gap-2">
+            <mat-icon class="dashboard-icon text-slate">groups</mat-icon>
+            <h3 class="font-brand m-0 flex-1 text-sm text-parchment">Recent Campaigns</h3>
+            <button class="text-xs text-gold hover:text-gold-bright" type="button" (click)="goToCampaigns()">View all</button>
+          </div>
+          <div class="flex flex-col gap-2">
+            @for (campaign of recentCampaigns(); track campaign.id) {
+              <article class="card card-body flex items-center gap-3 py-3">
+                <a class="min-w-0 flex-1 no-underline" [routerLink]="campaignLink(campaign)">
+                  <div class="flex items-center gap-2">
+                    <p class="m-0 truncate text-sm font-medium text-parchment">{{ campaign.name }}</p>
+                    @if (campaign.is_owner) { <span class="toolbar-badge text-[9px]">DM</span> }
+                  </div>
+                  <p class="m-0 mt-0.5 truncate text-xs text-slate">{{ campaign.description || (campaign.is_owner ? 'Your campaign' : 'Joined campaign') }}</p>
+                </a>
+                <button class="btn-icon" type="button" (click)="toggleCampaignPin(campaign, $event)" [matTooltip]="isCampaignPinned(campaign) ? 'Unpin campaign' : 'Pin campaign'">
+                  <mat-icon class="dashboard-icon" [class.text-gold]="isCampaignPinned(campaign)">{{ isCampaignPinned(campaign) ? 'star' : 'star_outline' }}</mat-icon>
+                </button>
+              </article>
+            } @empty { <div class="card card-body text-sm text-slate">No campaigns yet.</div> }
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <div class="mb-3 flex items-center gap-2">
+          <mat-icon class="dashboard-icon text-slate">bolt</mat-icon>
+          <h3 class="font-brand m-0 text-sm text-parchment">Quick Actions</h3>
+        </div>
+        <div class="grid grid-cols-1 gap-3 sm:grid-cols-3">
+          <button class="card card-body flex items-center gap-3 text-left hover:border-gold/30" type="button" (click)="goToNewCharacter()">
+            <mat-icon class="dashboard-icon text-gold">person_add</mat-icon>
+            <span><strong class="block text-sm text-parchment">New Character</strong><small class="text-xs text-slate">Start character creation</small></span>
+          </button>
+          <button class="card card-body flex items-center gap-3 text-left hover:border-gold/30" type="button" (click)="goToCampaignAction('create')">
+            <mat-icon class="dashboard-icon text-gold">add_circle</mat-icon>
+            <span><strong class="block text-sm text-parchment">Create Campaign</strong><small class="text-xs text-slate">Begin a new adventure</small></span>
+          </button>
+          <button class="card card-body flex items-center gap-3 text-left hover:border-gold/30" type="button" (click)="goToCampaignAction('join')">
+            <mat-icon class="dashboard-icon text-gold">group_add</mat-icon>
+            <span><strong class="block text-sm text-parchment">Join Campaign</strong><small class="text-xs text-slate">Use a campaign code</small></span>
+          </button>
+        </div>
+      </section>
+    }
   </div>
+</div>
