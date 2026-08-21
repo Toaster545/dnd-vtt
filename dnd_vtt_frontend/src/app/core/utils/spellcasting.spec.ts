@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import type { AbilityScores } from '../models/character.model';
 import type { DndClass, DndFeat, DndRace, DndSpell, SpellcastingDefinition, TraitGrant } from '../services/content.service';
 import {
-  describeSpellUpcast, isSpellAttack, resolveSpellAttackDamage,
+  describeSpellUpcast, isSpellAttack, isSpellAttackAction, resolveSpellAttackDamage,
   resolveSpellAttackNote, resolveSpellcasting as resolveSpellcastingImpl,
 } from './spellcasting';
 import type { SpellcastingResolverInput } from './spellcasting';
@@ -679,5 +679,33 @@ describe('spell action summaries', () => {
 
     expect(resolveSpellAttackDamage(fireBolt, 5)).toBe('2d10');
     expect(isSpellAttack(minorIllusion)).toBe(false);
+  });
+
+  it('only puts attack rolls and no-save rolled damage in Actions', () => {
+    const attackRoll = {
+      index: 'poison-spray',
+      description: 'Make a ranged spell attack. On a hit, the target takes 1d12 Poison damage.',
+      mechanics: { spell_attacks: ['ranged'], saving_throws: [], damage_types: ['poison'] },
+    } as unknown as DndSpell;
+    const saveDamage = {
+      index: 'dissonant-whispers',
+      description: 'The target takes 3d6 Psychic damage on a failed save.',
+      mechanics: { spell_attacks: [], saving_throws: ['wisdom'], damage_types: ['psychic'] },
+    } as unknown as DndSpell;
+    const noSaveDamage = {
+      index: 'magic-missile',
+      description: 'Each dart deals 1d4 + 1 Force damage.',
+      mechanics: { spell_attacks: [], saving_throws: [], damage_types: ['force'] },
+    } as unknown as DndSpell;
+    const utility = {
+      index: 'detect-magic',
+      description: 'You sense the presence of magical effects.',
+      mechanics: { spell_attacks: [], saving_throws: [], damage_types: [] },
+    } as unknown as DndSpell;
+
+    expect(isSpellAttackAction(attackRoll)).toBe(true);
+    expect(isSpellAttackAction(saveDamage)).toBe(false);
+    expect(isSpellAttackAction(noSaveDamage)).toBe(true);
+    expect(isSpellAttackAction(utility)).toBe(false);
   });
 });

@@ -338,6 +338,65 @@ describe('CharacterStatsService', () => {
     ]);
   });
 
+  it('always exposes a proficient Strength-based Unarmed Strike', () => {
+    const character: Character = {
+      ...defaultCharacter(),
+      name: 'Brawler', level: 5,
+      ability_scores: {
+        strength: 14, dexterity: 10, constitution: 10,
+        intelligence: 10, wisdom: 10, charisma: 10,
+      },
+    };
+
+    const stats = new CharacterStatsService().compute(character, null, null);
+
+    expect(stats.unarmed_attack).toMatchObject({
+      name: 'Unarmed Strike', distance: '5 ft. reach', attack_bonus: 5,
+      damage_dice: '1', damage_bonus: 2, damage_type: 'bludgeoning',
+    });
+  });
+
+  it('adds a conjured pact weapon using Charisma and automatic proficiency', () => {
+    const warlock = {
+      index: 'warlock', name: 'Warlock', hit_die: 8,
+      saving_throws: ['wisdom', 'charisma'], weapon_proficiencies: ['Simple Weapons'],
+      levels: [], subclasses: [],
+    } as unknown as DndClass;
+    const longsword: DndItem = {
+      index: 'custom:swirling-katana', name: 'Swirling Katana', type: 'weapon', category: 'Martial Melee',
+      damage: '1d8', damage_type: 'slashing', properties: ['Versatile (1d10)'],
+      weight: 3, cost: '15 GP', description: '',
+    };
+    const character: Character = {
+      ...defaultCharacter(),
+      name: 'Bladebound', class: 'Warlock', level: 3,
+      ability_scores: {
+        strength: 8, dexterity: 12, constitution: 14,
+        intelligence: 10, wisdom: 10, charisma: 18,
+      },
+      classes: [{
+        name: 'Warlock', level: 3,
+        choices: { eldritch_invocations: ['Pact of the Blade'] },
+      }],
+      pact_weapon: {
+        itemIndex: 'custom:swirling-katana', name: 'Swirling Katana', mode: 'conjured',
+        createdAt: '2026-01-01T00:00:00.000Z',
+      },
+    };
+
+    const stats = new CharacterStatsService().compute(
+      character, warlock, null, [], [{
+        data: warlock, level: 3, choices: { eldritch_invocations: ['Pact of the Blade'] },
+      }], [longsword],
+    );
+
+    expect(stats.weapon_attacks).toEqual([expect.objectContaining({
+      itemIndex: 'custom:swirling-katana', attack_bonus: 6, damage_dice: '1d8',
+      versatile_damage_dice: '1d10', damage_bonus: 4,
+      damage_type: 'slashing / necrotic / psychic / radiant', is_pact_weapon: true,
+    })]);
+  });
+
   it('adds an ability-based Aura of Protection bonus to every saving throw', () => {
     const character: Character = {
       ...defaultCharacter(),

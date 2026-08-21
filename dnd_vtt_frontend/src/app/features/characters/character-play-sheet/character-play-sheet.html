@@ -31,6 +31,16 @@
             <div class="text-[10px] text-slate uppercase tracking-widest mb-0.5">Temp HP</div>
             <div class="font-brand text-2xl leading-none text-parchment">{{ char.temp_hp || 0 }}</div>
           </div>
+          <button
+            class="sheet-stat sheet-stat-inspiration text-center border-0 bg-transparent cursor-pointer p-0"
+            type="button"
+            [disabled]="persisting()"
+            (click)="toggleHeroicInspiration()"
+            [matTooltip]="char.heroic_inspiration ? 'Spend Heroic Inspiration' : 'Mark Heroic Inspiration available'"
+          >
+            <div class="text-[10px] text-slate uppercase tracking-widest mb-0.5">Inspiration</div>
+            <mat-icon class="text-2xl leading-none" [class]="char.heroic_inspiration ? 'text-gold' : 'text-coal'">{{ char.heroic_inspiration ? 'star' : 'star_border' }}</mat-icon>
+          </button>
           <div class="sheet-stat sheet-stat-conditions text-center conditions-summary">
             <div class="text-[10px] text-slate uppercase tracking-widest mb-0.5">Conditions</div>
             <div class="text-xs text-parchment max-w-40 truncate">{{ char.conditions?.length ? char.conditions.join(', ') : 'None' }}</div>
@@ -269,22 +279,37 @@
 
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-5 items-start">
 
-              <!-- ATTACKS & SAVES: weapons + spells that make an attack roll or force a saving throw -->
+              <!-- ATTACKS: weapons, spell attacks, and no-save spells with rolled damage -->
               @if (stats(); as s) {
-                @if (s.weapon_attacks.length || spellAttacks().length || spellSaves().length) {
+                @if (s.unarmed_attack || s.weapon_attacks.length || spellAttacks().length) {
                   <div>
-                    <h4 class="font-brand text-gold text-xs uppercase tracking-widest m-0 pb-1.5 mb-2 border-b border-gold/25">Attacks &amp; Saves</h4>
+                    <h4 class="font-brand text-gold text-xs uppercase tracking-widest m-0 pb-1.5 mb-2 border-b border-gold/25">Attacks</h4>
                     <div class="flex flex-col gap-1.5">
+                      <div class="flex items-center justify-between px-3 py-2 rounded border border-white/10 text-sm gap-3">
+                        <div class="min-w-0">
+                          <span class="text-parchment font-medium">{{ s.unarmed_attack.name }}</span>
+                          <span class="text-coal text-xs"> · {{ s.unarmed_attack.distance }}</span>
+                        </div>
+                        <div class="flex flex-col items-end flex-shrink-0 text-xs leading-tight">
+                          <span class="text-slate">Attack <span class="font-brand text-gold text-sm">{{ fmt(s.unarmed_attack.attack_bonus) }}</span></span>
+                          <span class="text-slate">{{ s.unarmed_attack.damage_dice }}{{ fmt(s.unarmed_attack.damage_bonus) }} <span class="text-coal">{{ s.unarmed_attack.damage_type }}</span></span>
+                        </div>
+                      </div>
                       @for (w of s.weapon_attacks; track w.itemIndex) {
                         <div class="flex items-center justify-between px-3 py-2 rounded border border-white/10 text-sm gap-3">
                           <div class="min-w-0">
                             <span class="text-parchment font-medium">{{ w.name }}</span>
+                            @if (w.is_pact_weapon) { <span class="text-gold text-xs"> · Pact Weapon</span> }
                             @if (w.mastery) { <span class="text-coal text-xs"> · {{ w.mastery.property }}</span> }
                             @if (w.distance) { <span class="text-coal text-xs"> · {{ w.distance }}</span> }
                           </div>
                           <div class="flex flex-col items-end flex-shrink-0 text-xs leading-tight">
                             <span class="text-slate">Attack <span class="font-brand text-gold text-sm">{{ fmt(w.attack_bonus) }}</span></span>
-                            <span class="text-slate">{{ w.damage_dice }}{{ fmt(w.damage_bonus) }} <span class="text-coal">{{ w.damage_type }}</span></span>
+                            <span class="text-slate">
+                              {{ w.damage_dice }}{{ fmt(w.damage_bonus) }}
+                              @if (w.versatile_damage_dice) { <span> ({{ w.versatile_damage_dice }}{{ fmt(w.damage_bonus) }})</span> }
+                              <span class="text-coal">{{ w.damage_type }}</span>
+                            </span>
                           </div>
                         </div>
                       }
@@ -296,17 +321,6 @@
                           <div class="flex flex-col items-end flex-shrink-0 text-xs leading-tight">
                             @if (attack.origin.spellAttackBonus !== null) { <span class="text-slate">Attack <span class="font-brand text-gold text-sm">{{ fmt(attack.origin.spellAttackBonus) }}</span></span> }
                             @if (spellDamageFormula(attack.spell, attack.origin); as damage) { <span class="text-slate">{{ damage }} @if (spellDamageType(attack.spell)) { <span class="text-coal">{{ spellDamageType(attack.spell) }}</span> }</span> }
-                          </div>
-                        </div>
-                      }
-                      @for (save of spellSaves(); track save.origin.sourceKey + ':' + save.spell.index) {
-                        <div class="flex items-center justify-between px-3 py-2 rounded border border-white/10 text-sm gap-3">
-                          <div class="min-w-0">
-                            <span class="text-parchment font-medium">{{ save.spell.name }}</span><span class="text-coal text-xs"> · {{ save.spell.level === 0 ? 'Cantrip' : 'Level ' + save.spell.level }} ({{ save.origin.sourceName }}) · {{ save.spell.range }}</span>
-                          </div>
-                          <div class="flex flex-col items-end flex-shrink-0 text-xs leading-tight">
-                            @if (save.origin.spellSaveDc !== null) { <span class="text-slate">{{ spellSaveAbilities(save.spell) }} Save <span class="font-brand text-gold text-sm">DC {{ save.origin.spellSaveDc }}</span></span> }
-                            @if (spellDamageFormula(save.spell, save.origin); as damage) { <span class="text-slate">{{ damage }} @if (spellDamageType(save.spell)) { <span class="text-coal">{{ spellDamageType(save.spell) }}</span> }</span> }
                           </div>
                         </div>
                       }
@@ -510,6 +524,39 @@
               }
             </div>
 
+            @if (hasPactBlade()) {
+              <section class="rounded-lg border border-gold/25 bg-gold/5 p-3">
+                <div class="flex flex-wrap items-start justify-between gap-3">
+                  <div>
+                    <h4 class="font-brand text-gold text-sm m-0">Pact Weapon</h4>
+                    @if (char.pact_weapon; as pactWeapon) {
+                      <p class="text-sm text-parchment mt-1 mb-0">
+                        {{ pactWeapon.name }}
+                        <span class="text-xs text-slate"> · {{ pactWeapon.mode === 'conjured' ? 'Conjured' : 'Bonded' }}</span>
+                      </p>
+                      <p class="text-xs text-slate mt-1 mb-0">Uses Charisma for attacks and damage. On a hit, choose its normal, Necrotic, Psychic, or Radiant damage type.</p>
+                    } @else {
+                      <p class="text-xs text-slate mt-1 mb-0">Conjure a Simple or Martial melee weapon. You can also bond a carried melee weapon below.</p>
+                    }
+                  </div>
+                  @if (char.pact_weapon) {
+                    <button class="btn-outline text-xs" [disabled]="pactWeaponBusy()" (click)="updatePactWeapon('dismiss')">Dismiss</button>
+                  }
+                </div>
+                <div class="flex flex-col sm:flex-row gap-2 mt-3">
+                  <select class="field-input flex-1" [ngModel]="pactWeaponSelection()" (ngModelChange)="pactWeaponSelection.set($event)" name="pactWeaponSelection">
+                    @for (weapon of pactWeaponOptions(); track weapon.index) {
+                      <option [value]="weapon.index">{{ weapon.name }} · {{ weapon.damage }} {{ weapon.damage_type }}</option>
+                    }
+                  </select>
+                  <button class="btn-primary text-sm" [disabled]="pactWeaponBusy() || !pactWeaponSelection()" (click)="updatePactWeapon('conjure')">
+                    {{ char.pact_weapon ? 'Conjure Instead' : 'Conjure Weapon' }}
+                  </button>
+                </div>
+                @if (pactWeaponError()) { <p class="text-xs text-danger mt-2 mb-0">{{ pactWeaponError() }}</p> }
+              </section>
+            }
+
             @if (replicationLimit() > 0) {
               <section class="rounded-lg border border-gold/25 bg-gold/5 p-3">
                 <div class="flex items-center justify-between gap-3 mb-2">
@@ -570,6 +617,13 @@
                       }
                     </div>
                     <div class="flex items-center gap-1.5 flex-shrink-0">
+                      @if (hasPactBlade() && row.item?.type === 'weapon' && row.item?.category?.includes('Melee')) {
+                        <button
+                          class="btn-outline text-xs"
+                          [disabled]="pactWeaponBusy() || char.pact_weapon?.itemIndex === row.entry.itemIndex"
+                          (click)="updatePactWeapon('bond', row.entry.itemIndex)"
+                        >{{ char.pact_weapon?.itemIndex === row.entry.itemIndex ? 'Pact Weapon' : 'Bond' }}</button>
+                      }
                       <button
                         class="text-xs px-2.5 py-1 rounded border transition-all"
                         [class]="row.entry.equipped ? 'border-gold/60 bg-gold/10 text-parchment' : 'border-white/15 text-slate hover:border-white/30'"

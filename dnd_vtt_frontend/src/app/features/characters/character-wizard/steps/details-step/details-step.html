@@ -9,25 +9,36 @@
     </div>
   </div>
 
-  <div class="card w-48 flex-shrink-0">
+  <div class="card w-64 flex-shrink-0">
     <div class="p-4">
       <h3 class="font-brand text-sm text-parchment mb-3 m-0">Derived Stats</h3>
       <div class="grid grid-cols-2 gap-2 text-center">
-        <div class="bg-elevated rounded p-2">
-          <p class="text-xl font-bold text-gold m-0">{{ maxHP() }}</p>
-          <p class="text-xs text-slate m-0 mt-0.5">Max HP</p>
+        <div class="bg-elevated rounded p-2 col-span-2">
+          <button class="w-full border-0 bg-transparent cursor-pointer p-0" type="button" (click)="editingMaxHp.set(!editingMaxHp())" title="Set Max HP">
+            <p class="text-xl font-bold text-gold m-0">{{ maxHP() }}</p>
+            <p class="text-xs text-slate m-0 mt-0.5">Max HP@if (maxHpOverridden()) { <span class="text-gold"> · Manual</span> }</p>
+          </button>
+          @if (editingMaxHp()) {
+            <div class="mt-2 border-t border-white/10 pt-2">
+              <label class="text-[10px] text-slate uppercase tracking-wide">Rolled or custom total</label>
+              <input class="field-input mt-1 text-center" type="number" min="1" [ngModel]="maxHP()" (ngModelChange)="setMaxHp($event)" name="maxHpOverride" />
+              <button class="btn-ghost text-xs w-full justify-center mt-1" type="button" (click)="maxHpChanged.emit(null)">Use automatic ({{ suggestedMaxHP() }})</button>
+            </div>
+          }
         </div>
-        <div class="bg-elevated rounded p-2">
-          <p class="text-xl font-bold text-gold m-0">{{ armorClass() }}</p>
-          <p class="text-xs text-slate m-0 mt-0.5">AC</p>
-        </div>
-        <div class="bg-elevated rounded p-2">
-          <p class="text-xl font-bold text-gold m-0">{{ speed() }}</p>
-          <p class="text-xs text-slate m-0 mt-0.5">Speed</p>
-        </div>
-        <div class="bg-elevated rounded p-2">
-          <p class="text-xl font-bold text-gold m-0">+{{ profBonus() }}</p>
-          <p class="text-xs text-slate m-0 mt-0.5">Prof</p>
+        <div class="grid grid-cols-3 gap-2 col-span-2">
+          <div class="bg-elevated rounded p-2">
+            <p class="text-xl font-bold text-gold m-0">{{ armorClass() }}</p>
+            <p class="text-xs text-slate m-0 mt-0.5">AC</p>
+          </div>
+          <div class="bg-elevated rounded p-2">
+            <p class="text-xl font-bold text-gold m-0">{{ speed() }}</p>
+            <p class="text-xs text-slate m-0 mt-0.5">Speed</p>
+          </div>
+          <div class="bg-elevated rounded p-2">
+            <p class="text-xl font-bold text-gold m-0">+{{ profBonus() }}</p>
+            <p class="text-xs text-slate m-0 mt-0.5">Prof</p>
+          </div>
         </div>
       </div>
       @if (selectedRace() || selectedClass() || selectedBackground()) {

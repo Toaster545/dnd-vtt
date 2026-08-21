@@ -33,6 +33,7 @@ function lastTouched(c: Character): number {
   imports: [RouterLink, MatIconModule, MatTooltipModule],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.scss',
+  host: { class: 'flex flex-col flex-1 min-h-0 overflow-hidden' },
 })
 export class DashboardComponent implements OnInit {
   private characterService = inject(CharacterService);
@@ -125,7 +126,9 @@ export class DashboardComponent implements OnInit {
       const stats = this.statsService.compute(
         char, classData, raceData, feats, classesForFeats, items, backgroundData,
       );
-      if (stats.suggested_max_hp !== char.max_hp) alerts.push({ character: char });
+      if (!char.max_hp_overridden && stats.suggested_max_hp !== char.max_hp) {
+        alerts.push({ character: char });
+      }
     }
     return alerts;
   }

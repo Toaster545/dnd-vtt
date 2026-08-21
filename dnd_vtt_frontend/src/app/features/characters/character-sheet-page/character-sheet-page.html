@@ -8,6 +8,10 @@
         <button class="btn-icon" (click)="openCampaign()" matTooltip="Open campaign">
           <mat-icon>groups</mat-icon>
         </button>
+      } @else {
+        <button class="btn-icon" (click)="editCharacter()" matTooltip="Edit character">
+          <mat-icon>edit</mat-icon>
+        </button>
       }
     </div>
   </app-character-play-sheet>

@@ -152,6 +152,8 @@ export class CharacterWizardComponent implements OnInit, OnDestroy {
   level         = signal(1);
   alignment     = signal('True Neutral');
   currentHp     = signal<number | null>(null);
+  maxHpOverride = signal<number | null>(null);
+  heroicInspiration = signal(false);
   saving        = signal(false);
   saveStatus    = signal<'idle' | 'saving' | 'saved'>('idle');
 
@@ -253,7 +255,7 @@ export class CharacterWizardComponent implements OnInit, OnDestroy {
   });
 
   profBonus  = computed(() => Math.ceil(this.level() / 4) + 1);
-  maxHP      = computed(() => {
+  suggestedMaxHP = computed(() => {
     const cls = this.primaryClass();
     if (!cls) return 10;
     const conMod = abilityModifier(this.finalScores().constitution);
@@ -261,6 +263,7 @@ export class CharacterWizardComponent implements OnInit, OnDestroy {
     const perLevelBonus = this.selectedEffects('hp_bonus_per_level').reduce((sum, e) => sum + (e.value ?? 0), 0);
     return averageHpFormula(this.level(), cls.hit_die, conMod, perLevelBonus);
   });
+  maxHP = computed(() => this.maxHpOverride() ?? this.suggestedMaxHP());
   // Scans every chosen class option and feat for a structured `effects` entry of the given
   // type. Conditioned effects (e.g. Defense's ac_bonus "while wearing armor") are excluded —
   // those are evaluated live from equipped gear by CharacterStatsService instead.
@@ -543,9 +546,11 @@ export class CharacterWizardComponent implements OnInit, OnDestroy {
       alignment: this.alignment(),
       ability_scores: { ...this.finalScores() },
       max_hp: hp,
+      max_hp_overridden: this.maxHpOverride() !== null,
       // Clamped to the (possibly just-lowered) max — e.g. leveling a character down elsewhere
       // shrinks max_hp on the next wizard save, and current_hp shouldn't end up exceeding it.
       current_hp: Math.min((this.currentHp() ?? hp) + hpGain, hp),
+      heroic_inspiration: this.heroicInspiration(),
       armor_class: this.armorClass(),
       speed: this.speed(),
       skills: this.skillsRecord(),
@@ -606,6 +611,8 @@ export class CharacterWizardComponent implements OnInit, OnDestroy {
       this.classEquipChoices(); this.backgroundEquipChoices();
       this.enabledSources();
       this.currentHp();
+      this.maxHpOverride();
+      this.heroicInspiration();
       const step = this.activeStep();
 
       if (!this.initialized) return;
@@ -668,6 +675,7 @@ export class CharacterWizardComponent implements OnInit, OnDestroy {
       const race = this.allRaces.find(r => r.name === existing.race) ?? null;
       const bg   = this.allBackgrounds.find(b => b.name === existing.background) ?? null;
       this.selectedRace.set(race);
+      this.heroicInspiration.set(existing.heroic_inspiration ?? (race?.index === 'human'));
       this.selectedBackground.set(bg);
       if (existing.subrace && race) {
         this.selectedSubrace.set(race.subraces.find(s => s.name === existing.subrace) ?? null);
@@ -715,6 +723,12 @@ export class CharacterWizardComponent implements OnInit, OnDestroy {
           ...acc, [ab]: scores[ab] ? scores[ab] - bonus[ab] : null,
         }), {} as Record<Ability, number | null>));
       }
+      const suggestedHp = this.suggestedMaxHP();
+      this.maxHpOverride.set(
+        existing.max_hp_overridden || existing.max_hp !== suggestedHp
+          ? existing.max_hp
+          : null,
+      );
       this.spellChoices.set(existing.spell_choices ?? this.migrateLegacySpells(existing.spells ?? []));
     }
 
@@ -803,6 +817,9 @@ export class CharacterWizardComponent implements OnInit, OnDestroy {
   }
 
   onRaceChosen(choice: RaceChoice) {
+    if (choice.race.index === 'human' && this.selectedRace()?.index !== 'human') {
+      this.heroicInspiration.set(true);
+    }
     this.selectedRace.set(choice.race);
     this.selectedSubrace.set(choice.subrace);
     this.raceTraits.set(choice.traits);

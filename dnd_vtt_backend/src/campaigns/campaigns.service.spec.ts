@@ -180,6 +180,49 @@ describe('CampaignsService', () => {
       expect(second.members).toHaveLength(1);
     });
 
+    it('lets a player leave while preserving both characters', async () => {
+      const campaign = await campaigns.create(dmId, { name: 'Test' });
+      const playerId = await insertProfile(db);
+      const source = await characters.create(playerId, {
+        name: 'Aria',
+        level: 2,
+      });
+      const joined = await campaigns.join(asPlayer(playerId), {
+        joinCode: campaign.join_code as string,
+        characterId: source.id,
+      } as JoinCampaignDto);
+      const campaignCharacterId = joined.members[0].character_id as string;
+
+      const result = await campaigns.leave(campaign.id as string, playerId);
+
+      expect(result).toEqual({ left: true, characterId: campaignCharacterId });
+      const membership = await db.execute(
+        `SELECT status FROM campaign_members WHERE campaign_id = ? AND user_id = ?`,
+        [campaign.id, playerId],
+      );
+      expect(membership.rows[0]?.status).toBe('removed');
+      const standaloneCharacters = await characters.findAllForUser(playerId);
+      expect(
+        standaloneCharacters.map((character) => character.id).sort(),
+      ).toEqual([source.id, campaignCharacterId].sort());
+      expect(
+        standaloneCharacters.find(
+          (character) => character.id === campaignCharacterId,
+        )?.campaign_id,
+      ).toBeNull();
+      await expect(
+        campaigns.findOne(campaign.id as string, asPlayer(playerId)),
+      ).rejects.toThrow(ForbiddenException);
+    });
+
+    it('does not let the campaign owner leave their own campaign', async () => {
+      const campaign = await campaigns.create(dmId, { name: 'Test' });
+
+      await expect(
+        campaigns.leave(campaign.id as string, dmId),
+      ).rejects.toThrow(BadRequestException);
+    });
+
     it('rejects joining with a character owned by someone else', async () => {
       const campaign = await campaigns.create(dmId, {
         name: 'Test',

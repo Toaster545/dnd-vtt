@@ -14,9 +14,19 @@ export interface WeaponAttack {
   distance: string;
   attack_bonus: number;
   damage_dice: string;
+  versatile_damage_dice?: string;
   damage_bonus: number;
   damage_type: string | null;
+  is_pact_weapon?: boolean;
   mastery?: { property: string; description: string };
+}
+
+function versatileDamageDice(weapon: DndItem): string | undefined {
+  for (const property of weapon.properties) {
+    const match = property.match(/^Versatile\s*\(\s*(\d+d\d+)\s*\)/i);
+    if (match) return match[1];
+  }
+  return undefined;
 }
 
 export interface ComputedStats {
@@ -38,6 +48,7 @@ export interface ComputedStats {
   // Defense's "+1 while wearing armor"). Not `char.armor_class` — that stored field is only
   // used by the separate player-facing character sheet's manual editor.
   computed_ac: number;
+  unarmed_attack: WeaponAttack;
   weapon_attacks: WeaponAttack[];
 }
 
@@ -176,11 +187,35 @@ export class CharacterStatsService {
     const passive_investigation = 10 + (skill_bonuses['Investigation'] ?? mods.intelligence);
     const passive_insight = 10 + (skill_bonuses['Insight'] ?? mods.wisdom);
 
-    const weapon_attacks: WeaponAttack[] = equippedItems(equipment, items)
+    const unarmed_attack: WeaponAttack = {
+      itemIndex: 'unarmed-strike',
+      name: 'Unarmed Strike',
+      distance: '5 ft. reach',
+      attack_bonus: mods.strength + prof,
+      damage_dice: '1',
+      damage_bonus: mods.strength,
+      damage_type: 'bludgeoning',
+    };
+
+    const hasPactOfTheBlade = classesForFeats.some(({ data, choices }) =>
+      data.index === 'warlock'
+      && Object.values(choices).some(selection => selection.includes('Pact of the Blade')));
+    const pactState = hasPactOfTheBlade ? char.pact_weapon : undefined;
+    const bondedWeaponIsCarried = pactState?.mode !== 'bonded'
+      || char.equipment.some(entry => entry.itemIndex === pactState.itemIndex);
+    const pactWeaponIndex = pactState && bondedWeaponIsCarried ? pactState.itemIndex : undefined;
+    const attackWeapons = equippedItems(equipment, items);
+    const pactWeapon = pactWeaponIndex ? items.find(item => item.index === pactWeaponIndex) : undefined;
+    if (pactWeapon && !attackWeapons.some(item => item.index === pactWeapon.index)) {
+      attackWeapons.push(pactWeapon);
+    }
+
+    const weapon_attacks: WeaponAttack[] = attackWeapons
       .filter(it => it.type === 'weapon')
       .map(weapon => {
-        const abilityMod = weaponAbilityMod(weapon, mods);
-        const proficient = isProficientWithWeapon(weapon, classesForFeats, feats, raceForFeats);
+        const isPactWeapon = weapon.index === pactWeaponIndex;
+        const abilityMod = isPactWeapon ? mods.charisma : weaponAbilityMod(weapon, mods);
+        const proficient = isPactWeapon || isProficientWithWeapon(weapon, classesForFeats, feats, raceForFeats);
         const isRanged = weapon.category.includes('Ranged');
         const isThrown = weapon.properties.some(p => p.startsWith('Thrown'));
 
@@ -203,8 +238,12 @@ export class CharacterStatsService {
           distance: weaponDistance(weapon),
           attack_bonus: abilityMod + (proficient ? prof : 0) + rangedAttackBonus,
           damage_dice: weapon.damage ?? '',
+          versatile_damage_dice: versatileDamageDice(weapon),
           damage_bonus: abilityMod + meleeDamageBonus + thrownDamageBonus,
-          damage_type: weapon.damage_type ?? null,
+          damage_type: isPactWeapon
+            ? [weapon.damage_type, 'necrotic', 'psychic', 'radiant'].filter(Boolean).join(' / ')
+            : weapon.damage_type ?? null,
+          is_pact_weapon: isPactWeapon,
           mastery: weapon.mastery,
         };
       });
@@ -237,6 +276,7 @@ export class CharacterStatsService {
       saving_throw_bonuses,
       skill_bonuses,
       computed_ac,
+      unarmed_attack,
       weapon_attacks,
       passive_perception,
       passive_investigation,
