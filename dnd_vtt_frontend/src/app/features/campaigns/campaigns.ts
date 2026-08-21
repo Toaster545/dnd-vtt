@@ -1,6 +1,6 @@
 import { Component, inject, signal, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { CampaignService } from '../../core/services/campaign.service';
@@ -29,6 +29,7 @@ export class CampaignsComponent implements OnInit {
   private characterService = inject(CharacterService);
   private contentService   = inject(ContentService);
   private confirm          = inject(ConfirmService);
+  private route            = inject(ActivatedRoute);
 
   campaigns  = signal<Campaign[]>([]);
   characters = signal<Character[]>([]);
@@ -55,7 +56,11 @@ export class CampaignsComponent implements OnInit {
 
   uploadingBackgroundId = signal<string | null>(null);
 
-  async ngOnInit() { await this.load(); }
+  async ngOnInit() {
+    await this.load();
+    const action = this.route.snapshot.queryParamMap.get('action');
+    if (action === 'create' || action === 'join') this.openForm(action);
+  }
 
   private async load() {
     const [campaigns, characters, sources] = await Promise.all([

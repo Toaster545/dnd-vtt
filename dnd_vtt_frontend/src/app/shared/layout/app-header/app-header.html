@@ -1,6 +1,7 @@
 <header class="app-toolbar">
   <button
     class="toolbar-title bg-transparent border-0 p-0 cursor-pointer hover:text-gold-bright transition-colors"
+    [class.active]="activeTab() === 'dashboard'"
     (click)="selectDashboard.emit()"
     matTooltip="Dashboard"
   >NatOne</button>

@@ -5,10 +5,14 @@ import { SpellService } from '../../../core/services/spell.service';
 import { ContentService, DndContentSource, DndSpell } from '../../../core/services/content.service';
 import { ConfirmService } from '../../../shared/confirm.service';
 import { SpellFormComponent } from './spell-form/spell-form';
+import { ContentDetailDialogComponent } from '../content-detail-dialog/content-detail-dialog';
+import { ContentSourceFilterComponent } from '../content-source-filter/content-source-filter';
+
+type SpellSort = 'name-asc' | 'name-desc' | 'source-asc' | 'level-asc' | 'level-desc';
 
 @Component({
   selector: 'app-dm-spells',
-  imports: [SpellFormComponent, MatIconModule, FormsModule],
+  imports: [SpellFormComponent, ContentDetailDialogComponent, ContentSourceFilterComponent, MatIconModule, FormsModule],
   templateUrl: './dm-spells.html',
 })
 export class DmSpellsComponent implements OnInit {
@@ -23,11 +27,13 @@ export class DmSpellsComponent implements OnInit {
   showForm       = signal(false);
   editingSpell   = signal<DndSpell | null>(null);
   duplicatingSpell = signal<DndSpell | null>(null);
+  detailSpell = signal<DndSpell | null>(null);
 
   search = signal('');
-  sourceFilter = signal('all');
+  sourceFilters = signal<string[]>([]);
+  sort = signal<SpellSort>('name-asc');
   accessFilter = signal('all');
-  officialExpanded = signal(false);
+  officialExpanded = signal(true);
 
   filteredSpells   = computed(() => this.filter(this.spells(), 'HOMEBREW'));
   filteredOfficial = computed(() => this.filter(this.officialSpells(), 'XPHB'));
@@ -49,14 +55,26 @@ export class DmSpellsComponent implements OnInit {
 
   private filter(list: DndSpell[], fallbackSource: string): DndSpell[] {
     const q = this.search().trim().toLowerCase();
-    const source = this.sourceFilter();
+    const sources = this.sourceFilters();
     const access = this.accessFilter();
-    return list.filter(spell =>
+    const filtered = list.filter(spell =>
       (!q || spell.name.toLowerCase().includes(q)) &&
-      (source === 'all' || (spell.source?.code ?? fallbackSource) === source) &&
+      (sources.length === 0 || sources.includes(spell.source?.code ?? fallbackSource)) &&
       (access === 'all' || (spell.access ?? []).some(entry => `${entry.kind}:${entry.provider_index}` === access)),
     );
+    return filtered.sort((a, b) => {
+      const byName = a.name.localeCompare(b.name);
+      switch (this.sort()) {
+        case 'name-desc': return -byName;
+        case 'source-asc': return (a.source?.book ?? fallbackSource).localeCompare(b.source?.book ?? fallbackSource) || byName;
+        case 'level-asc': return a.level - b.level || byName;
+        case 'level-desc': return b.level - a.level || byName;
+        default: return byName;
+      }
+    });
   }
+
+  setSourceFilters(codes: string[]) { this.sourceFilters.set(codes); }
 
   onSearchChange(v: string) {
     this.search.set(v);
@@ -94,6 +112,8 @@ export class DmSpellsComponent implements OnInit {
     this.duplicatingSpell.set(null);
     this.showForm.set(true);
   }
+  openDetails(spell: DndSpell) { this.detailSpell.set(spell); }
+  closeDetails() { this.detailSpell.set(null); }
   openDuplicate(spell: DndSpell, event: Event) {
     event.stopPropagation();
     this.editingSpell.set(null);

@@ -29,6 +29,11 @@ export class RecentActivityService {
     return this.mostRecentKey(CAMPAIGN_VIEWED_KEY);
   }
 
+  sortCampaignsByRecentlyViewed<T extends { id: string }>(items: T[]): T[] {
+    const views = this.read(CAMPAIGN_VIEWED_KEY);
+    return [...items].sort((a, b) => (views[b.id] ?? 0) - (views[a.id] ?? 0));
+  }
+
   private mark(key: string, id: string): void {
     const views = this.read(key);
     views[id] = Date.now();
@@ -36,7 +41,14 @@ export class RecentActivityService {
   }
 
   private read(key: string): Record<string, number> {
-    return JSON.parse(localStorage.getItem(key) ?? '{}');
+    try {
+      const value = JSON.parse(localStorage.getItem(key) ?? '{}') as unknown;
+      return value && typeof value === 'object' && !Array.isArray(value)
+        ? value as Record<string, number>
+        : {};
+    } catch {
+      return {};
+    }
   }
 
   private mostRecentKey(key: string): string | null {

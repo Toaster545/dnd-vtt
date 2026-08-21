@@ -1,0 +1,99 @@
+<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/65 p-4 backdrop-blur-sm" (click)="close()">
+  <section class="flex max-h-[85vh] w-full max-w-2xl flex-col overflow-hidden rounded-xl border border-gold/35 bg-elevated shadow-2xl" role="dialog" aria-modal="true" [attr.aria-label]="entry().name + ' details'" (click)="$event.stopPropagation()">
+    <header class="z-10 flex flex-shrink-0 items-start gap-4 border-b border-white/10 bg-elevated/95 px-5 py-4 backdrop-blur-sm">
+      <div class="min-w-0 flex-1">
+        <div class="mb-1 flex flex-wrap items-center gap-2">
+          @if (race()) { <span class="detail-kind">Species</span> }
+          @if (characterClass()) { <span class="detail-kind">Class</span> }
+          @if (background()) { <span class="detail-kind">Background</span> }
+          @if (feat(); as value) { <span class="detail-kind">{{ featCategory(value.category) }} Feat</span> }
+        </div>
+        <h2 class="font-brand m-0 text-xl text-parchment">{{ entry().name }}</h2>
+        <p class="m-0 mt-1 text-[10px] uppercase tracking-wider text-coal">{{ sourceLabel(entry()) }}</p>
+      </div>
+      <button class="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded border border-white/10 text-slate hover:border-gold/40 hover:text-gold" type="button" (click)="close()" aria-label="Close details"><mat-icon class="text-lg">close</mat-icon></button>
+    </header>
+
+    <div class="flex-1 overflow-y-auto p-5 text-sm text-parchment">
+      @if (race(); as value) {
+        <div class="detail-grid sm:grid-cols-4">
+          <div><p class="detail-label">Creature Type</p><p class="detail-value">{{ value.creature_type }}</p></div>
+          <div><p class="detail-label">Size</p><p class="detail-value">{{ value.size_options?.join(' or ') || value.size }}</p></div>
+          <div><p class="detail-label">Speed</p><p class="detail-value">{{ value.speed }} ft.</p></div>
+          <div><p class="detail-label">Darkvision</p><p class="detail-value">{{ value.darkvision_ft ? value.darkvision_ft + ' ft.' : 'None' }}</p></div>
+        </div>
+        @if (value.description) { <div class="detail-description"><h3>Description</h3><p>{{ value.description }}</p></div> }
+        @if (value.languages.length) { <p class="detail-line"><strong>Languages:</strong> {{ value.languages.join(', ') }}</p> }
+        @if (value.traits.length) { <h3 class="detail-heading">Traits</h3> }
+        @for (trait of value.traits; track $index) { <p class="detail-prose">{{ trait }}</p> }
+        @for (grant of value.grants ?? []; track grant.type + ':' + grant.name) { <div class="detail-feature"><strong>{{ grant.name }}</strong><p>{{ grantDetail(grant) }}</p></div> }
+        @if (value.subraces.length) {
+          <h3 class="detail-heading">Lineages</h3>
+          @for (subrace of value.subraces; track subrace.index) {
+            <details class="detail-collapsible"><summary>{{ subrace.name }}</summary>
+              @if (subrace.description) { <p class="detail-prose">{{ subrace.description }}</p> }
+              @for (trait of subrace.traits; track $index) { <p class="detail-prose">{{ trait }}</p> }
+              @for (grant of subrace.grants ?? []; track grant.type + ':' + grant.name) { <div class="detail-feature"><strong>{{ grant.name }}</strong><p>{{ grantDetail(grant) }}</p></div> }
+            </details>
+          }
+        }
+      } @else if (characterClass(); as value) {
+        <div class="detail-grid sm:grid-cols-4">
+          <div><p class="detail-label">Hit Die</p><p class="detail-value">d{{ value.hit_die }}</p></div>
+          <div><p class="detail-label">Primary Ability</p><p class="detail-value">{{ value.primary_abilities?.join(' or ') || 'Varies' }}</p></div>
+          <div><p class="detail-label">Saving Throws</p><p class="detail-value">{{ value.saving_throws.join(', ') }}</p></div>
+          <div><p class="detail-label">Subclass Level</p><p class="detail-value">{{ value.subclass_level }}</p></div>
+        </div>
+        @if (value.description) { <div class="detail-description"><h3>Description</h3><p>{{ value.description }}</p></div> }
+        <p class="detail-line"><strong>Armor Training:</strong> {{ value.armor_training.join(', ') || 'None' }}</p>
+        <p class="detail-line"><strong>Weapons:</strong> {{ value.weapon_proficiencies.join(', ') || 'None' }}</p>
+        <p class="detail-line"><strong>Tools:</strong> {{ value.tool_proficiencies.join(', ') || 'None' }}</p>
+        <p class="detail-line"><strong>Skills:</strong> Choose {{ value.skill_choices.count }} from {{ value.skill_choices.from.join(', ') }}</p>
+        @if (equipmentSummary(value.starting_equipment).length) { <h3 class="detail-heading">Starting Equipment</h3> }
+        @for (line of equipmentSummary(value.starting_equipment); track line) { <p class="detail-prose">{{ line }}</p> }
+        @if (value.subclasses.length) {
+          <h3 class="detail-heading">Subclasses</h3>
+          @for (subclass of value.subclasses; track subclass.index) {
+            <details class="detail-collapsible"><summary>{{ subclass.name }} <span>{{ subclass.source?.book || value.source?.book }}</span></summary>
+              @if (subclass.description) { <p class="detail-prose">{{ subclass.description }}</p> }
+              @for (level of subclass.levels; track level.level) {
+                @if (level.features.length || level.grants?.length) { <div class="detail-feature"><strong>Level {{ level.level }}</strong>
+                  @for (feature of level.features; track $index) { <p>{{ feature }}</p> }
+                  @for (grant of level.grants ?? []; track grant.type + ':' + grant.name) { <p><strong>{{ grant.name }}.</strong> {{ grantDetail(grant) }}</p> }
+                </div> }
+              }
+            </details>
+          }
+        }
+        <h3 class="detail-heading">Class Levels</h3>
+        @for (level of value.levels; track level.level) {
+          @if (level.features.length || level.grants?.length) { <details class="detail-collapsible"><summary>Level {{ level.level }}</summary>
+            @for (feature of level.features; track $index) { <p class="detail-prose">{{ feature }}</p> }
+            @for (grant of level.grants ?? []; track grant.type + ':' + grant.name) { <div class="detail-feature"><strong>{{ grant.name }}</strong><p>{{ grantDetail(grant) }}</p></div> }
+          </details> }
+        }
+      } @else if (background(); as value) {
+        @if (value.description) { <div class="detail-description mt-0"><h3>Description</h3><p>{{ value.description }}</p></div> }
+        <div class="detail-grid mt-4 sm:grid-cols-3">
+          <div><p class="detail-label">Skills</p><p class="detail-value">{{ value.skill_proficiencies.join(', ') || 'None' }}</p></div>
+          <div><p class="detail-label">Tools</p><p class="detail-value">{{ value.tool_proficiencies.join(', ') || 'None' }}</p></div>
+          <div><p class="detail-label">Languages</p><p class="detail-value">{{ value.languages || 'None' }}</p></div>
+        </div>
+        @if (value.feature) { <div class="detail-description"><h3>Feature</h3><p>{{ value.feature }}</p></div> }
+        @for (grant of value.grants ?? []; track grant.type + ':' + grant.name) { <div class="detail-feature"><strong>{{ grant.name }}</strong><p>{{ grantDetail(grant) }}</p></div> }
+        @if (equipmentSummary(value.starting_equipment).length) { <h3 class="detail-heading">Starting Equipment</h3> }
+        @for (line of equipmentSummary(value.starting_equipment); track line) { <p class="detail-prose">{{ line }}</p> }
+      } @else if (feat(); as value) {
+        <div class="detail-grid sm:grid-cols-3">
+          <div><p class="detail-label">Category</p><p class="detail-value">{{ featCategory(value.category) }}</p></div>
+          <div><p class="detail-label">Prerequisite</p><p class="detail-value">{{ prerequisiteText(value) }}</p></div>
+          <div><p class="detail-label">Repeatable</p><p class="detail-value">{{ value.repeatable ? 'Yes' : 'No' }}</p></div>
+        </div>
+        <div class="detail-description"><h3>Description</h3><p>{{ value.description || 'No description available.' }}</p></div>
+        @if (value.abilityIncrease) { <p class="detail-line"><strong>Ability Increase:</strong> +{{ value.abilityIncrease.amount }} to {{ value.abilityIncrease.abilities.join(' or ') }} (maximum {{ value.abilityIncrease.maximum ?? 20 }})</p> }
+        @for (grant of value.grants ?? []; track grant.type + ':' + grant.name) { <div class="detail-feature"><strong>{{ grant.name }}</strong><p>{{ grantDetail(grant) }}</p></div> }
+        @if (value.tags?.length) { <p class="detail-line"><strong>Tags:</strong> {{ value.tags!.join(', ') }}</p> }
+      }
+    </div>
+  </section>
+</div>

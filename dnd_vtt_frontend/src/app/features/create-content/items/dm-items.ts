@@ -5,10 +5,14 @@ import { ItemService } from '../../../core/services/item.service';
 import { ContentService, DndContentSource, DndItem } from '../../../core/services/content.service';
 import { ConfirmService } from '../../../shared/confirm.service';
 import { ItemFormComponent } from './item-form/item-form';
+import { ContentDetailDialogComponent } from '../content-detail-dialog/content-detail-dialog';
+import { ContentSourceFilterComponent } from '../content-source-filter/content-source-filter';
+
+type ItemSort = 'name-asc' | 'name-desc' | 'source-asc' | 'type-asc';
 
 @Component({
   selector: 'app-dm-items',
-  imports: [ItemFormComponent, MatIconModule, FormsModule],
+  imports: [ItemFormComponent, ContentDetailDialogComponent, ContentSourceFilterComponent, MatIconModule, FormsModule],
   templateUrl: './dm-items.html',
 })
 export class DmItemsComponent implements OnInit {
@@ -23,10 +27,12 @@ export class DmItemsComponent implements OnInit {
   showForm       = signal(false);
   editingItem    = signal<DndItem | null>(null);
   duplicatingItem = signal<DndItem | null>(null);
+  detailItem = signal<DndItem | null>(null);
 
   search = signal('');
-  sourceFilter = signal('all');
-  officialExpanded = signal(false);
+  sourceFilters = signal<string[]>([]);
+  sort = signal<ItemSort>('name-asc');
+  officialExpanded = signal(true);
 
   filteredItems    = computed(() => this.filter(this.items(), 'HOMEBREW'));
   filteredOfficial = computed(() => this.filter(this.officialItems(), 'XPHB'));
@@ -35,12 +41,23 @@ export class DmItemsComponent implements OnInit {
 
   private filter(list: DndItem[], fallbackSource: string): DndItem[] {
     const q = this.search().trim().toLowerCase();
-    const source = this.sourceFilter();
-    return list.filter(item =>
+    const sources = this.sourceFilters();
+    const filtered = list.filter(item =>
       (!q || item.name.toLowerCase().includes(q)) &&
-      (source === 'all' || (item.source?.code ?? fallbackSource) === source),
+      (sources.length === 0 || sources.includes(item.source?.code ?? fallbackSource)),
     );
+    return filtered.sort((a, b) => {
+      const byName = a.name.localeCompare(b.name);
+      switch (this.sort()) {
+        case 'name-desc': return -byName;
+        case 'source-asc': return (a.source?.book ?? fallbackSource).localeCompare(b.source?.book ?? fallbackSource) || byName;
+        case 'type-asc': return a.type.localeCompare(b.type) || a.category.localeCompare(b.category) || byName;
+        default: return byName;
+      }
+    });
   }
+
+  setSourceFilters(codes: string[]) { this.sourceFilters.set(codes); }
 
   onSearchChange(v: string) {
     this.search.set(v);
@@ -72,6 +89,8 @@ export class DmItemsComponent implements OnInit {
     this.duplicatingItem.set(null);
     this.showForm.set(true);
   }
+  openDetails(item: DndItem) { this.detailItem.set(item); }
+  closeDetails() { this.detailItem.set(null); }
   openDuplicate(item: DndItem, event: Event) {
     event.stopPropagation();
     this.editingItem.set(null);

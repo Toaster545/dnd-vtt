@@ -1,0 +1,56 @@
+@if (selected(); as entry) {
+  <app-player-option-detail-dialog [entry]="entry" (closed)="closeDetails()" />
+}
+
+<div class="flex-1 overflow-auto p-6">
+  <div class="mb-5 flex flex-wrap items-center gap-3">
+    <h2 class="font-brand m-0 flex-1 text-lg text-parchment">{{ title() }}</h2>
+    <app-content-source-filter
+      [sources]="availableSources()"
+      [selected]="sourceFilters()"
+      (selectedChange)="setSourceFilters($event)"
+    />
+    <select class="field-input w-40" [ngModel]="sort()" (ngModelChange)="sort.set($event)" name="sort">
+      <option value="name-asc">Name A–Z</option>
+      <option value="name-desc">Name Z–A</option>
+      <option value="source-asc">Source A–Z</option>
+    </select>
+    <input
+      class="field-input w-56"
+      [ngModel]="search()"
+      (ngModelChange)="search.set($event); expanded.set(true)"
+      [placeholder]="'Search ' + title().toLowerCase() + '…'"
+      name="search"
+    />
+  </div>
+
+  @if (loading()) {
+    <div class="flex items-center justify-center py-10"><span class="spinner-lg"></span></div>
+  } @else {
+    <button class="mb-2 flex w-full items-center gap-1.5 text-left" type="button" (click)="expanded.set(!expanded())">
+      <mat-icon class="text-base text-slate">{{ expanded() ? 'expand_more' : 'chevron_right' }}</mat-icon>
+      <h3 class="m-0 text-xs font-semibold uppercase tracking-wide text-slate">Published Content · {{ filteredEntries().length }}</h3>
+    </button>
+    @if (expanded()) {
+      @if (filteredEntries().length === 0) {
+        <p class="text-sm text-slate">No matches.</p>
+      } @else {
+        <ul class="divide-y divide-white/8">
+          @for (entry of filteredEntries(); track entry.index) {
+            <li class="flex cursor-pointer items-center gap-3 p-3 hover:bg-white/5" (click)="openDetails(entry)">
+              <div class="min-w-0 flex-1">
+                <p class="m-0 truncate font-medium text-parchment">{{ entry.name }}</p>
+                <p class="m-0 mt-0.5 text-xs text-slate">{{ subtitle(entry) }}</p>
+                <p class="m-0 mt-0.5 text-[10px] text-coal">{{ sourceLabel(entry) }}</p>
+              </div>
+              @if (featCategory(entry); as category) {
+                <span class="rounded border border-white/10 px-2 py-0.5 text-xs text-slate">{{ category }}</span>
+              }
+              <mat-icon class="text-slate">chevron_right</mat-icon>
+            </li>
+          }
+        </ul>
+      }
+    }
+  }
+</div>

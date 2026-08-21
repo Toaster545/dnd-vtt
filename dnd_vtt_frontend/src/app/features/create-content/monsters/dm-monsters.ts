@@ -5,10 +5,14 @@ import { MonsterService } from '../../../core/services/monster.service';
 import { ContentService, DndContentSource, DndMonster } from '../../../core/services/content.service';
 import { ConfirmService } from '../../../shared/confirm.service';
 import { MonsterFormComponent } from './monster-form/monster-form';
+import { ContentDetailDialogComponent } from '../content-detail-dialog/content-detail-dialog';
+import { ContentSourceFilterComponent } from '../content-source-filter/content-source-filter';
+
+type MonsterSort = 'name-asc' | 'name-desc' | 'source-asc' | 'cr-asc' | 'cr-desc';
 
 @Component({
   selector: 'app-dm-monsters',
-  imports: [MonsterFormComponent, MatIconModule, FormsModule],
+  imports: [MonsterFormComponent, ContentDetailDialogComponent, ContentSourceFilterComponent, MatIconModule, FormsModule],
   templateUrl: './dm-monsters.html',
 })
 export class DmMonstersComponent implements OnInit {
@@ -23,10 +27,12 @@ export class DmMonstersComponent implements OnInit {
   showForm        = signal(false);
   editingMonster  = signal<DndMonster | null>(null);
   duplicatingMonster = signal<DndMonster | null>(null);
+  detailMonster = signal<DndMonster | null>(null);
 
   search = signal('');
-  sourceFilter = signal('all');
-  officialExpanded = signal(false);
+  sourceFilters = signal<string[]>([]);
+  sort = signal<MonsterSort>('name-asc');
+  officialExpanded = signal(true);
 
   filteredMonsters = computed(() => this.filter(this.monsters(), 'HOMEBREW'));
   filteredOfficial = computed(() => this.filter(this.officialMonsters(), 'XPHB'));
@@ -35,11 +41,28 @@ export class DmMonstersComponent implements OnInit {
 
   private filter(list: DndMonster[], fallbackSource: string): DndMonster[] {
     const q = this.search().trim().toLowerCase();
-    const source = this.sourceFilter();
-    return list.filter(monster =>
+    const sources = this.sourceFilters();
+    const filtered = list.filter(monster =>
       (!q || monster.name.toLowerCase().includes(q)) &&
-      (source === 'all' || (monster.source?.code ?? fallbackSource) === source),
+      (sources.length === 0 || sources.includes(monster.source?.code ?? fallbackSource)),
     );
+    return filtered.sort((a, b) => {
+      const byName = a.name.localeCompare(b.name);
+      switch (this.sort()) {
+        case 'name-desc': return -byName;
+        case 'source-asc': return (a.source?.book ?? fallbackSource).localeCompare(b.source?.book ?? fallbackSource) || byName;
+        case 'cr-asc': return this.challengeRating(a.challenge_rating) - this.challengeRating(b.challenge_rating) || byName;
+        case 'cr-desc': return this.challengeRating(b.challenge_rating) - this.challengeRating(a.challenge_rating) || byName;
+        default: return byName;
+      }
+    });
+  }
+
+  setSourceFilters(codes: string[]) { this.sourceFilters.set(codes); }
+
+  private challengeRating(value: string): number {
+    const [numerator, denominator] = String(value).split('/').map(Number);
+    return denominator ? numerator / denominator : numerator || 0;
   }
 
   onSearchChange(v: string) {
@@ -72,6 +95,8 @@ export class DmMonstersComponent implements OnInit {
     this.duplicatingMonster.set(null);
     this.showForm.set(true);
   }
+  openDetails(monster: DndMonster) { this.detailMonster.set(monster); }
+  closeDetails() { this.detailMonster.set(null); }
   openDuplicate(monster: DndMonster, event: Event) {
     event.stopPropagation();
     this.editingMonster.set(null);

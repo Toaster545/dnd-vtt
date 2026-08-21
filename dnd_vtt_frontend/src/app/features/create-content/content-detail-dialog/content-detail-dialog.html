@@ -1,0 +1,169 @@
+<div
+  class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm"
+  role="presentation"
+  (click)="close()"
+>
+  <section
+    class="flex max-h-[85vh] w-full max-w-2xl flex-col overflow-hidden rounded-xl border border-gold/35 bg-elevated shadow-2xl"
+    role="dialog"
+    aria-modal="true"
+    aria-label="Content details"
+    (click)="$event.stopPropagation()"
+  >
+    <header class="z-10 flex flex-shrink-0 items-start gap-4 border-b border-white/10 bg-elevated/95 px-5 py-4 backdrop-blur-sm">
+      <div class="min-w-0 flex-1">
+        @if (spell(); as value) {
+          <div class="mb-1 flex flex-wrap items-center gap-2">
+            <span class="rounded-full border border-gold/30 bg-gold/10 px-2 py-0.5 text-[10px] uppercase tracking-wider text-gold">{{ value.level === 0 ? 'Cantrip' : 'Level ' + value.level }}</span>
+            <span class="rounded-full border border-white/10 px-2 py-0.5 text-[10px] uppercase tracking-wider text-slate">{{ value.school }}</span>
+            @if (value.concentration) { <span class="text-[10px] uppercase tracking-wider text-slate">Concentration</span> }
+            @if (value.ritual) { <span class="text-[10px] uppercase tracking-wider text-slate">Ritual</span> }
+          </div>
+          <h2 class="font-brand m-0 text-xl text-parchment">{{ value.name }}</h2>
+          <p class="m-0 mt-1 text-[10px] uppercase tracking-wider text-coal">{{ value.source.book }}</p>
+        } @else if (monster(); as value) {
+          <div class="mb-1 flex flex-wrap items-center gap-2">
+            <span class="rounded-full border border-gold/30 bg-gold/10 px-2 py-0.5 text-[10px] uppercase tracking-wider text-gold">CR {{ value.challenge_rating }}</span>
+            <span class="rounded-full border border-white/10 px-2 py-0.5 text-[10px] uppercase tracking-wider text-slate">{{ value.size }} {{ value.type }}</span>
+            <span class="text-[10px] uppercase tracking-wider text-slate">{{ value.alignment }}</span>
+          </div>
+          <h2 class="font-brand m-0 text-xl text-parchment">{{ value.name }}</h2>
+          <p class="m-0 mt-1 text-[10px] uppercase tracking-wider text-coal">{{ value.source?.book || 'Published Content' }}</p>
+        } @else if (item(); as value) {
+          <div class="mb-1 flex flex-wrap items-center gap-2">
+            <span class="rounded-full border border-gold/30 bg-gold/10 px-2 py-0.5 text-[10px] uppercase tracking-wider text-gold">{{ value.type }}</span>
+            <span class="rounded-full border border-white/10 px-2 py-0.5 text-[10px] uppercase tracking-wider text-slate">{{ value.category }}</span>
+            @if (value.rarity) { <span class="text-[10px] uppercase tracking-wider text-slate">{{ value.rarity }}</span> }
+          </div>
+          <h2 class="font-brand m-0 text-xl text-parchment">{{ value.name }}</h2>
+          <p class="m-0 mt-1 text-[10px] uppercase tracking-wider text-coal">{{ value.source?.book || 'Published Content' }}</p>
+        }
+      </div>
+      <button
+        class="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded border border-white/10 text-slate hover:border-gold/40 hover:text-gold"
+        type="button"
+        (click)="close()"
+        aria-label="Close details"
+      >
+        <mat-icon class="text-lg">close</mat-icon>
+      </button>
+    </header>
+
+    <div class="flex-1 overflow-y-auto p-5 text-sm text-parchment">
+      @if (spell(); as value) {
+        <div class="mb-5 grid grid-cols-2 gap-px overflow-hidden rounded-lg border border-white/10 bg-white/10 sm:grid-cols-4 [&>div]:bg-elevated [&>div]:px-3 [&>div]:py-2.5">
+          <div><p class="field-label m-0">Casting Time</p><p class="m-0 mt-1">{{ value.casting_time }}</p></div>
+          <div><p class="field-label m-0">Range</p><p class="m-0 mt-1">{{ value.range }}</p></div>
+          <div><p class="field-label m-0">Components</p><p class="m-0 mt-1">{{ value.components.join(', ') || 'None' }}</p></div>
+          <div><p class="field-label m-0">Duration</p><p class="m-0 mt-1">{{ value.duration }}</p></div>
+        </div>
+        @if (value.material) {
+          <p class="mb-4 mt-0 text-xs text-slate"><span class="font-semibold text-parchment">Material:</span> {{ value.material }}</p>
+        }
+        <div class="rounded-lg border border-white/10 bg-black/10 p-4">
+          <h3 class="mb-2 mt-0 text-[10px] uppercase tracking-widest text-gold">Description</h3>
+          <p class="m-0 whitespace-pre-wrap text-sm leading-relaxed text-slate">{{ value.description || 'No description available.' }}</p>
+        </div>
+        @if (value.higher_levels) {
+          <div class="mt-3 rounded-lg border-l-2 border-gold/50 bg-gold/5 px-4 py-3">
+            <h3 class="m-0 mb-2 text-xs font-semibold text-parchment">At Higher Levels</h3>
+            <p class="m-0 whitespace-pre-wrap text-xs leading-relaxed text-slate">{{ value.higher_levels }}</p>
+          </div>
+        }
+        @if (value.cantrip_upgrade) {
+          <div class="mt-3 rounded-lg border-l-2 border-gold/50 bg-gold/5 px-4 py-3">
+            <h3 class="m-0 mb-2 text-xs font-semibold text-parchment">Cantrip Upgrade</h3>
+            <p class="m-0 whitespace-pre-wrap text-xs leading-relaxed text-slate">{{ value.cantrip_upgrade }}</p>
+          </div>
+        }
+        <div class="mt-5 flex flex-wrap gap-2">
+          @if (value.ritual) { <span class="rounded border border-gold/25 px-2 py-1 text-xs text-slate">Ritual</span> }
+          @if (value.concentration) { <span class="rounded border border-gold/25 px-2 py-1 text-xs text-slate">Concentration</span> }
+          @for (access of value.access; track access.kind + ':' + access.provider_index) {
+            <span class="rounded border border-gold/25 px-2 py-1 text-xs text-slate">{{ access.provider_name }}</span>
+          }
+        </div>
+      } @else if (monster(); as value) {
+        <div class="grid grid-cols-2 gap-px overflow-hidden rounded-lg border border-white/10 bg-white/10 sm:grid-cols-5 [&>div]:bg-elevated [&>div]:px-3 [&>div]:py-2.5">
+          <div><p class="field-label m-0">Armor Class</p><p class="m-0 mt-1">{{ value.armor_class }}{{ value.armor_class_desc ? ' (' + value.armor_class_desc + ')' : '' }}</p></div>
+          <div><p class="field-label m-0">Hit Points</p><p class="m-0 mt-1">{{ value.hit_points }}{{ value.hit_points_formula ? ' (' + value.hit_points_formula + ')' : '' }}</p></div>
+          <div><p class="field-label m-0">Speed</p><p class="m-0 mt-1">{{ speedText(value) || '—' }}</p></div>
+          <div><p class="field-label m-0">Challenge</p><p class="m-0 mt-1">CR {{ value.challenge_rating }}</p></div>
+          <div><p class="field-label m-0">XP</p><p class="m-0 mt-1">{{ value.xp }}</p></div>
+        </div>
+        <div class="mt-4 grid grid-cols-3 gap-px overflow-hidden rounded-lg border border-white/10 bg-white/10 sm:grid-cols-6 [&>div]:bg-elevated [&>div]:px-2 [&>div]:py-2.5">
+          <div class="text-center"><p class="field-label m-0">STR</p><p class="m-0 mt-1">{{ value.ability_scores.strength }} ({{ modifier(value.ability_scores.strength) }})</p></div>
+          <div class="text-center"><p class="field-label m-0">DEX</p><p class="m-0 mt-1">{{ value.ability_scores.dexterity }} ({{ modifier(value.ability_scores.dexterity) }})</p></div>
+          <div class="text-center"><p class="field-label m-0">CON</p><p class="m-0 mt-1">{{ value.ability_scores.constitution }} ({{ modifier(value.ability_scores.constitution) }})</p></div>
+          <div class="text-center"><p class="field-label m-0">INT</p><p class="m-0 mt-1">{{ value.ability_scores.intelligence }} ({{ modifier(value.ability_scores.intelligence) }})</p></div>
+          <div class="text-center"><p class="field-label m-0">WIS</p><p class="m-0 mt-1">{{ value.ability_scores.wisdom }} ({{ modifier(value.ability_scores.wisdom) }})</p></div>
+          <div class="text-center"><p class="field-label m-0">CHA</p><p class="m-0 mt-1">{{ value.ability_scores.charisma }} ({{ modifier(value.ability_scores.charisma) }})</p></div>
+        </div>
+        @if (value.description) {
+          <div class="mt-4 rounded-lg border border-white/10 bg-black/10 p-4">
+            <h3 class="mb-2 mt-0 text-[10px] uppercase tracking-widest text-gold">Description</h3>
+            <p class="m-0 whitespace-pre-wrap text-sm leading-relaxed text-slate">{{ value.description }}</p>
+          </div>
+        }
+        @if (value.damage_vulnerabilities?.length) { <p class="mt-4 mb-0"><span class="font-semibold text-gold">Vulnerabilities:</span> {{ value.damage_vulnerabilities!.join(', ') }}</p> }
+        @if (value.damage_resistances?.length) { <p class="mt-2 mb-0"><span class="font-semibold text-gold">Resistances:</span> {{ value.damage_resistances!.join(', ') }}</p> }
+        @if (value.damage_immunities?.length) { <p class="mt-2 mb-0"><span class="font-semibold text-gold">Immunities:</span> {{ value.damage_immunities!.join(', ') }}</p> }
+        @if (value.condition_immunities?.length) { <p class="mt-2 mb-0"><span class="font-semibold text-gold">Condition Immunities:</span> {{ value.condition_immunities!.join(', ') }}</p> }
+        @if (value.languages.length) { <p class="mt-2 mb-0"><span class="font-semibold text-gold">Languages:</span> {{ value.languages.join(', ') }}</p> }
+        @if (value.traits?.length) {
+          <h3 class="font-brand mt-5 mb-2 border-b border-gold/20 pb-2 text-sm text-gold">Traits</h3>
+          @for (trait of value.traits; track trait.name) {
+            <p class="mt-3 mb-0 whitespace-pre-wrap leading-relaxed"><span class="font-semibold">{{ trait.name }}.</span> {{ trait.description }}</p>
+          }
+        }
+        @if (value.actions.length) {
+          <h3 class="font-brand mt-5 mb-2 border-b border-gold/20 pb-2 text-sm text-gold">Actions</h3>
+          @for (action of value.actions; track action.name) {
+            <p class="mt-3 mb-0 whitespace-pre-wrap leading-relaxed"><span class="font-semibold">{{ action.name }}.</span> {{ action.description }}</p>
+          }
+        }
+        @if (value.reactions?.length) {
+          <h3 class="font-brand mt-5 mb-2 border-b border-gold/20 pb-2 text-sm text-gold">Reactions</h3>
+          @for (reaction of value.reactions; track reaction.name) {
+            <p class="mt-3 mb-0 whitespace-pre-wrap leading-relaxed"><span class="font-semibold">{{ reaction.name }}.</span> {{ reaction.description }}</p>
+          }
+        }
+        @if (value.legendary_actions?.length) {
+          <h3 class="font-brand mt-5 mb-2 border-b border-gold/20 pb-2 text-sm text-gold">Legendary Actions</h3>
+          @for (action of value.legendary_actions; track action.name) {
+            <p class="mt-3 mb-0 whitespace-pre-wrap leading-relaxed"><span class="font-semibold">{{ action.name }}.</span> {{ action.description }}</p>
+          }
+        }
+      } @else if (item(); as value) {
+        <div class="grid grid-cols-2 gap-px overflow-hidden rounded-lg border border-white/10 bg-white/10 sm:grid-cols-4 [&>div]:bg-elevated [&>div]:px-3 [&>div]:py-2.5">
+          <div><p class="field-label m-0">Cost</p><p class="m-0 mt-1">{{ value.cost || '—' }}</p></div>
+          <div><p class="field-label m-0">Weight</p><p class="m-0 mt-1">{{ value.weight }} lb.</p></div>
+          <div><p class="field-label m-0">Rarity</p><p class="m-0 mt-1">{{ value.rarity || '—' }}</p></div>
+          <div><p class="field-label m-0">Attunement</p><p class="m-0 mt-1">{{ attunementText(value) }}</p></div>
+          @if (value.damage) { <div><p class="field-label m-0">Damage</p><p class="m-0 mt-1">{{ value.damage }} {{ value.damage_type || '' }}</p></div> }
+          @if (value.armor_class) { <div><p class="field-label m-0">Armor Class</p><p class="m-0 mt-1">{{ value.armor_class }}</p></div> }
+          @if (value.charges) { <div><p class="field-label m-0">Charges</p><p class="m-0 mt-1">{{ value.charges.max }} · {{ value.charges.recovery.replace('_', ' ') }}</p></div> }
+        </div>
+        <div class="mt-4 rounded-lg border border-white/10 bg-black/10 p-4">
+          <h3 class="mb-2 mt-0 text-[10px] uppercase tracking-widest text-gold">Description</h3>
+          <p class="m-0 whitespace-pre-wrap text-sm leading-relaxed text-slate">{{ value.description || 'No description available.' }}</p>
+        </div>
+        @if (value.properties.length) {
+          <p class="mt-4 mb-0"><span class="font-semibold text-gold">Properties:</span> {{ value.properties.join(', ') }}</p>
+        }
+        @if (value.mastery) {
+          <div class="mt-5 border-t border-gold/20 pt-4">
+            <h3 class="font-brand m-0 mb-2 text-sm text-gold">Mastery: {{ value.mastery.property }}</h3>
+            <p class="m-0 whitespace-pre-wrap leading-relaxed">{{ value.mastery.description }}</p>
+          </div>
+        }
+        @if (value.actions?.length) {
+          <h3 class="font-brand mt-5 mb-2 border-b border-gold/20 pb-2 text-sm text-gold">Actions</h3>
+          @for (action of value.actions; track action.key) {
+            <p class="mt-3 mb-0 whitespace-pre-wrap leading-relaxed"><span class="font-semibold">{{ action.name }}.</span> {{ action.description || 'No description available.' }}</p>
+          }
+        }
+      }
+    </div>
+  </section>
+</div>

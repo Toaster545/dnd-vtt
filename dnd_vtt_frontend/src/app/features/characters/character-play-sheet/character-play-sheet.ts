@@ -727,12 +727,13 @@ export class CharacterPlaySheetComponent {
 
       this.persisting.set(true);
       try {
-        const withResources = await this.characterService.saveCharacter({
+        await this.characterService.saveCharacter({
           ...char,
           resource_uses: this.actionsService.rest(char.resource_uses ?? {}, this.actions(), type),
         });
+        await this.characterService.restoreSpellcasting(char.id, type);
         const healedResult = await this.characterService.restoreHitPoints(char.id, type);
-        this.localChar.set({ ...healedResult, resource_uses: withResources.resource_uses });
+        this.localChar.set(healedResult);
         this.saved.emit(this.localChar()!);
         this.castNotice.set(type === 'long_rest' ? 'Long Rest complete.' : 'Short Rest complete. Pact Magic and short-rest free casts restored.');
       } finally {
@@ -767,12 +768,13 @@ export class CharacterPlaySheetComponent {
       this.persisting.set(true);
       this.shortRestBusy.set(true);
       try {
-        const withResources = await this.characterService.saveCharacter({
+        await this.characterService.saveCharacter({
           ...char,
           resource_uses: this.actionsService.rest(char.resource_uses ?? {}, this.actions(), 'short_rest'),
         });
+        await this.characterService.restoreSpellcasting(char.id, 'short_rest');
         const healedResult = await this.characterService.restoreHitPoints(char.id, 'short_rest', hitDiceUsed, healed);
-        this.localChar.set({ ...healedResult, resource_uses: withResources.resource_uses });
+        this.localChar.set(healedResult);
         this.saved.emit(this.localChar()!);
         this.castNotice.set('Short Rest complete. Pact Magic and short-rest free casts restored.');
         this.showShortRestDialog.set(false);
