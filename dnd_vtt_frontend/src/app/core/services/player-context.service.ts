@@ -28,6 +28,7 @@ export class PlayerContextService {
 
   async selectCharacter(id: string): Promise<PlayerBootstrap> { localStorage.setItem(CHARACTER_KEY, id); return this.load(); }
   async selectCampaign(id: string): Promise<PlayerBootstrap> { localStorage.setItem(CAMPAIGN_KEY, id); return this.load(); }
+  async clearCampaign(): Promise<PlayerBootstrap> { localStorage.removeItem(CAMPAIGN_KEY); return this.load(); }
 
   private persistValidated(key: string, id: string | null): void {
     if (id) localStorage.setItem(key, id); else localStorage.removeItem(key);

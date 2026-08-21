@@ -172,7 +172,7 @@ export class DmCampaignSessionComponent implements OnInit, OnDestroy {
         const stats = this.statsService.compute(
           char, classData, raceData, feats, classesForFeats, items, backgroundData,
         );
-        return [member.character_id, stats.suggested_max_hp] as const;
+        return [member.character_id, char.max_hp_overridden ? char.max_hp : stats.suggested_max_hp] as const;
       } catch {
         return null;
       }

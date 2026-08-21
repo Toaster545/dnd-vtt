@@ -55,6 +55,13 @@ export interface EquipmentEntry {
   equipped: boolean;
 }
 
+export interface PactWeaponState {
+  itemIndex: string;
+  name: string;
+  mode: 'conjured' | 'bonded';
+  createdAt: string;
+}
+
 export interface SpellEntry {
   spellIndex: string;
   name: string;
@@ -125,11 +132,13 @@ export interface Character {
 
   // HP — max_hp stored so players can override auto-calc (rolled HP, feats, etc.)
   max_hp: number;
+  max_hp_overridden?: boolean;
   current_hp: number;
   temp_hp: number;
   hit_dice_used: number;
   death_saves: DeathSaves;
   conditions: string[];
+  heroic_inspiration?: boolean;
 
   // AC and speed stored — too many modifiers to purely compute
   armor_class: number;
@@ -148,6 +157,7 @@ export interface Character {
 
   // Inventory
   equipment: EquipmentEntry[];
+  pact_weapon?: PactWeaponState | null;
   replicated_items?: {
     itemIndex: string;
     planName: string;
@@ -207,9 +217,9 @@ export function defaultCharacter(): Omit<Character, 'name'> {
     enabled_sources: ['XPHB'],
     race: '', class: '', level: 1, background: '', languages: ['Common'], alignment: 'True Neutral',
     ability_scores: { strength: 10, dexterity: 10, constitution: 10, intelligence: 10, wisdom: 10, charisma: 10 },
-    max_hp: 10, current_hp: 10, temp_hp: 0, hit_dice_used: 0,
+    max_hp: 10, max_hp_overridden: false, current_hp: 10, temp_hp: 0, hit_dice_used: 0,
     death_saves: { successes: 0, failures: 0 },
-    conditions: [],
+    conditions: [], heroic_inspiration: false,
     armor_class: 10, speed: 30,
     skills: {}, expertise: {},
     equipment: [],

@@ -13,6 +13,7 @@ import { PartyListComponent } from '../../../../shared/components/party-list/par
 import { CharacterWizardComponent } from '../../../characters/character-wizard/character-wizard';
 import { CharacterPlaySheetComponent } from '../../../characters/character-play-sheet/character-play-sheet';
 import { PlayerContextService } from '../../../../core/services/player-context.service';
+import { ConfirmService } from '../../../../shared/confirm.service';
 
 @Component({
   selector: 'app-player-campaign-hub',
@@ -34,12 +35,15 @@ export class PlayerCampaignHubComponent implements OnInit {
   private characterService = inject(CharacterService);
   private recentActivity   = inject(RecentActivityService);
   private playerContext    = inject(PlayerContextService);
+  private confirm          = inject(ConfirmService);
   auth                     = inject(AuthService);
 
   campaignId = this.route.snapshot.paramMap.get('campaignId')!;
 
   campaign = signal<CampaignHub | null>(null);
   loading  = signal(true);
+  leaving  = signal(false);
+  leaveError = signal('');
 
   editingCharacter = signal<Character | null>(null);
   showWizard       = signal(false);
@@ -60,6 +64,32 @@ export class PlayerCampaignHubComponent implements OnInit {
 
   backToList() {
     void this.router.navigate(['/home/campaigns']);
+  }
+
+  async leaveCampaign() {
+    if (this.leaving()) return;
+    const confirmed = await this.confirm.confirm(
+      'Leave this campaign? Your campaign character will be kept as a standalone character, and your original character will remain unchanged.',
+      'Leave campaign',
+      'Leave',
+    );
+    if (!confirmed) return;
+
+    this.leaving.set(true);
+    this.leaveError.set('');
+    try {
+      await this.campaignService.leave(this.campaignId);
+      await this.playerContext.clearCampaign();
+      await this.router.navigate(['/home/campaigns']);
+    } catch (error: unknown) {
+      const response = error as { error?: { message?: string | string[] } };
+      const message = response.error?.message;
+      this.leaveError.set(
+        Array.isArray(message) ? message.join(' ') : message ?? 'Could not leave this campaign.',
+      );
+    } finally {
+      this.leaving.set(false);
+    }
   }
 
   // The DM grants this per member (see DmCampaignHubComponent.toggleEditAccess) — otherwise a

@@ -161,6 +161,7 @@ const PLAYER_EDITABLE_FIELDS = [
   'spell_slot_uses',
   'spell_free_cast_uses',
   'active_concentration',
+  'heroic_inspiration',
   'equipment',
   'spells',
   // Not itself an independent player choice — the frontend recomputes this from whatever's
@@ -415,6 +416,20 @@ export class CharactersService {
     const data = this.normalizeCharacterAvatar(
       this.normalizeCharacterSources(rest, cls),
     );
+    // Pact weapons are runtime state managed by updatePactWeapon. Preserve the authoritative
+    // value instead of accepting one from a broad character PUT.
+    if (existing.pact_weapon !== undefined)
+      data.pact_weapon = existing.pact_weapon;
+    else delete data.pact_weapon;
+    const pactWeapon = data.pact_weapon as Record<string, unknown> | undefined;
+    if (
+      pactWeapon?.mode === 'bonded' &&
+      !recordArray(data.equipment).some(
+        (entry) => entry.itemIndex === pactWeapon.itemIndex,
+      )
+    ) {
+      delete data.pact_weapon;
+    }
     if (existing.campaign_id) {
       await this.assertCampaignSources(
         existing.campaign_id as string,
@@ -769,6 +784,68 @@ export class CharactersService {
     });
   }
 
+  async updatePactWeapon(
+    id: string,
+    user: RequestUser,
+    body: Record<string, unknown>,
+  ) {
+    return this.withCharacterLock(id, async () => {
+      const character = (await this.findOneReadable(id, user)) as Record<
+        string,
+        unknown
+      >;
+      const data = this.characterData(character);
+      const action = this.requiredString(body.action, 'action');
+      if (!['conjure', 'bond', 'dismiss'].includes(action)) {
+        throw new BadRequestException(
+          'action must be conjure, bond, or dismiss.',
+        );
+      }
+      if (action === 'dismiss') {
+        delete data.pact_weapon;
+        await this.writeCharacterData(id, data);
+        return this.findOneReadable(id, user);
+      }
+      if (!this.hasPactOfTheBlade(character)) {
+        throw new ForbiddenException(
+          'This character does not have Pact of the Blade.',
+        );
+      }
+
+      const itemIndex = this.requiredString(body.itemIndex, 'itemIndex');
+      const item = await this.content.getItem(itemIndex);
+      const type = typeof item.type === 'string' ? item.type.toLowerCase() : '';
+      const category =
+        typeof item.category === 'string' ? item.category.toLowerCase() : '';
+      if (
+        type !== 'weapon' ||
+        !category.includes('melee') ||
+        (!category.startsWith('simple') && !category.startsWith('martial'))
+      ) {
+        throw new BadRequestException(
+          'A pact weapon must be a Simple or Martial melee weapon.',
+        );
+      }
+      if (action === 'bond') {
+        const equipment = recordArray(data.equipment);
+        if (!equipment.some((entry) => entry.itemIndex === itemIndex)) {
+          throw new BadRequestException(
+            "The weapon must be in this character's inventory before it can be bonded.",
+          );
+        }
+      }
+
+      data.pact_weapon = {
+        itemIndex,
+        name: typeof item.name === 'string' ? item.name : itemIndex,
+        mode: action === 'bond' ? 'bonded' : 'conjured',
+        createdAt: new Date().toISOString(),
+      };
+      await this.writeCharacterData(id, data);
+      return this.findOneReadable(id, user);
+    });
+  }
+
   // DM-only counterpart to grantItem — removes an item (or, with `quantity`, part of a stack)
   // from a party member's campaign-copy equipment. `quantity` omitted (or >= what's on hand)
   // removes the whole stack; anything less just decrements it.
@@ -821,6 +898,15 @@ export class CharactersService {
         };
       }
       data.equipment = equipment;
+      const pactWeapon = data.pact_weapon as
+        Record<string, unknown> | undefined;
+      if (
+        pactWeapon?.mode === 'bonded' &&
+        pactWeapon.itemIndex === itemIndex &&
+        !equipment.some((entry) => entry.itemIndex === itemIndex)
+      ) {
+        delete data.pact_weapon;
+      }
       await this.writeCharacterData(id, data);
       return this.findOneReadable(id, user);
     });
@@ -998,6 +1084,9 @@ export class CharactersService {
 
       if (type === 'long_rest') {
         data.current_hp = data.max_hp;
+        if (String(character.race).toLowerCase() === 'human') {
+          data.heroic_inspiration = true;
+        }
         const recoveredDice = Math.trunc(totalHitDice / 2);
         data.hit_dice_used = Math.max(
           0,
@@ -1081,6 +1170,21 @@ export class CharactersService {
     if (typeof value !== 'string' || !value.trim())
       throw new BadRequestException(`${field} is required.`);
     return value;
+  }
+
+  private hasPactOfTheBlade(character: Record<string, unknown>): boolean {
+    return recordArray(character.classes).some((entry) => {
+      if (String(entry.name).toLowerCase() !== 'warlock') return false;
+      const choices =
+        entry.choices &&
+        typeof entry.choices === 'object' &&
+        !Array.isArray(entry.choices)
+          ? (entry.choices as Record<string, unknown>)
+          : {};
+      return Object.values(choices).some((selection) =>
+        stringArray(selection).includes('Pact of the Blade'),
+      );
+    });
   }
 
   private numberRecord(value: unknown): Record<string, number> {

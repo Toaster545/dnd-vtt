@@ -137,6 +137,8 @@
         <app-details-step
           [alignment]="alignment()"
           [maxHP]="maxHP()"
+          [suggestedMaxHP]="suggestedMaxHP()"
+          [maxHpOverridden]="maxHpOverride() !== null"
           [armorClass]="armorClass()"
           [speed]="speed()"
           [profBonus]="profBonus()"
@@ -144,6 +146,7 @@
           [selectedClass]="primaryClass()"
           [selectedBackground]="selectedBackground()"
           (alignmentChanged)="alignment.set($event)"
+          (maxHpChanged)="maxHpOverride.set($event)"
         />
       }
     </div>

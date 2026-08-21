@@ -138,6 +138,14 @@ export class CharacterService {
     );
   }
 
+  async updatePactWeapon(
+    id: string, action: 'conjure' | 'bond' | 'dismiss', itemIndex?: string,
+  ): Promise<Character> {
+    return firstValueFrom(
+      this.http.post<Character>(`${API}/characters/${id}/pact-weapon`, { action, itemIndex })
+    );
+  }
+
   // DM-only counterpart to grantItem for spells: adds a spell to `granted_spells`, independent
   // of the character's class/race/feat spellcasting progression. `sourceName` labels it in the
   // Spells tab (defaults to "DM Gift" on the backend when omitted).

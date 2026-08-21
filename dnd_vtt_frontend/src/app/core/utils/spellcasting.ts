@@ -216,6 +216,16 @@ export function isSavingThrowSpell(spell: DndSpell): boolean {
   return !!spell.mechanics?.saving_throws?.length;
 }
 
+// The Actions tab is a quick attack reference, not a second spell list. Attack-roll spells
+// belong there even when they also have a secondary save. Save-only spells stay in Spells,
+// including damaging ones such as Dissonant Whispers. A no-save spell may still qualify when
+// it deals rolled damage (for example, Magic Missile).
+export function isSpellAttackAction(spell: DndSpell): boolean {
+  if (isSpellAttack(spell)) return true;
+  if (isSavingThrowSpell(spell) || !spell.mechanics?.damage_types?.length) return false;
+  return resolveSpellAttackDamage(spell, 20) !== null;
+}
+
 export function resolveSpellAttackDamage(
   spell: DndSpell,
   characterLevel: number,

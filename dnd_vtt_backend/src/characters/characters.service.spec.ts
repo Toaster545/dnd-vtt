@@ -226,6 +226,7 @@ describe('CharactersService', () => {
       const updated = await service.update(created.id as string, owner, {
         name: 'Renamed',
         current_hp: 5,
+        heroic_inspiration: true,
         spell_slot_uses: {
           spellcasting: { '1': 1 },
           'pact:class:warlock': { '2': 2 },
@@ -236,6 +237,7 @@ describe('CharactersService', () => {
       const blob = updated as unknown as Record<string, unknown>;
       // Whitelisted field (current_hp) goes through...
       expect(blob.current_hp).toBe(5);
+      expect(blob.heroic_inspiration).toBe(true);
       expect(blob.spell_slot_uses).toEqual({
         spellcasting: { '1': 1 },
         'pact:class:warlock': { '2': 2 },
@@ -264,6 +266,31 @@ describe('CharactersService', () => {
       });
 
       expect(updated.name).toBe('DM Renamed');
+    });
+  });
+
+  describe('rest resources', () => {
+    it('restores Heroic Inspiration to Humans on a long rest', async () => {
+      const created = await service.create(ownerId, {
+        name: 'Resourceful Hero',
+        race: 'Human',
+        class: 'Fighter',
+        level: 2,
+        classes: [{ name: 'Fighter', level: 2, choices: {} }],
+        max_hp: 20,
+        current_hp: 4,
+        hit_dice_used: 2,
+        heroic_inspiration: false,
+      });
+
+      const rested = await service.restoreLife(created.id as string, owner, {
+        type: 'long_rest',
+      });
+      expect(rested).toMatchObject({
+        current_hp: 20,
+        hit_dice_used: 1,
+        heroic_inspiration: true,
+      });
     });
   });
 
@@ -561,6 +588,114 @@ describe('CharactersService', () => {
           action: 'create',
         }),
       ).rejects.toThrow(ConflictException);
+    });
+  });
+
+  describe('updatePactWeapon', () => {
+    function makeWarlock(withPact = true) {
+      return service.create(ownerId, {
+        name: 'Bladebound',
+        class: 'Warlock',
+        level: 3,
+        classes: [
+          {
+            name: 'Warlock',
+            level: 3,
+            choices: {
+              eldritch_invocations: withPact
+                ? ['Pact of the Blade']
+                : ['Pact of the Chain'],
+            },
+          },
+        ],
+        equipment: [
+          { itemIndex: 'dagger', name: 'Dagger', quantity: 1, equipped: false },
+        ],
+      });
+    }
+
+    it('conjures, replaces, bonds, and dismisses one pact weapon', async () => {
+      const created = await makeWarlock();
+      const conjured = (await service.updatePactWeapon(
+        created.id as string,
+        owner,
+        {
+          action: 'conjure',
+          itemIndex: 'longsword',
+        },
+      )) as unknown as { pact_weapon: Record<string, unknown> };
+      expect(conjured.pact_weapon).toMatchObject({
+        itemIndex: 'longsword',
+        name: 'Longsword',
+        mode: 'conjured',
+      });
+
+      const afterBroadUpdate = (await service.update(
+        created.id as string,
+        owner,
+        {
+          name: 'Bladebound',
+          class: 'Warlock',
+          level: 3,
+          classes: created.classes,
+          equipment: created.equipment,
+          pact_weapon: {
+            itemIndex: 'greataxe',
+            name: 'Forged Client State',
+            mode: 'conjured',
+          },
+        },
+      )) as unknown as { pact_weapon: Record<string, unknown> };
+      expect(afterBroadUpdate.pact_weapon).toMatchObject({
+        itemIndex: 'longsword',
+        name: 'Longsword',
+      });
+
+      const bonded = (await service.updatePactWeapon(
+        created.id as string,
+        owner,
+        {
+          action: 'bond',
+          itemIndex: 'dagger',
+        },
+      )) as unknown as { pact_weapon: Record<string, unknown> };
+      expect(bonded.pact_weapon).toMatchObject({
+        itemIndex: 'dagger',
+        mode: 'bonded',
+      });
+
+      const dismissed = (await service.updatePactWeapon(
+        created.id as string,
+        owner,
+        {
+          action: 'dismiss',
+        },
+      )) as unknown as { pact_weapon?: unknown };
+      expect(dismissed.pact_weapon).toBeUndefined();
+    });
+
+    it('rejects characters without the invocation and ineligible weapons', async () => {
+      const withoutPact = await makeWarlock(false);
+      await expect(
+        service.updatePactWeapon(withoutPact.id as string, owner, {
+          action: 'conjure',
+          itemIndex: 'longsword',
+        }),
+      ).rejects.toThrow(ForbiddenException);
+
+      const withPact = await makeWarlock();
+      await expect(
+        service.updatePactWeapon(withPact.id as string, owner, {
+          action: 'conjure',
+          itemIndex: 'longbow',
+        }),
+      ).rejects.toThrow(BadRequestException);
+      await expect(
+        service.updatePactWeapon(withPact.id as string, owner, {
+          action: 'bond',
+          itemIndex: 'longsword',
+        }),
+      ).rejects.toThrow(BadRequestException);
     });
   });
 

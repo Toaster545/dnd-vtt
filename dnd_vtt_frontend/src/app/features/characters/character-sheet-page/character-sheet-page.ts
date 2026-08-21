@@ -53,6 +53,13 @@ export class CharacterSheetPageComponent implements OnInit {
     void this.router.navigate(['/home/characters']);
   }
 
+  editCharacter() {
+    const character = this.character();
+    if (character && !character.campaign_id) {
+      void this.router.navigate(['/home/characters', character.id, 'edit']);
+    }
+  }
+
   openCampaign() {
     const campaignId = this.character()?.campaign_id;
     if (campaignId) void this.router.navigate(['/home/campaigns', campaignId]);

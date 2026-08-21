@@ -24,7 +24,14 @@
         <h2 class="font-brand text-lg text-parchment m-0">{{ c.name }}</h2>
         @if (c.description) { <p class="text-slate text-sm m-0 mt-0.5">{{ c.description }}</p> }
       </div>
+      @if (c.dm_id !== auth.profile()?.id) {
+        <button class="btn-outline text-xs text-danger" [disabled]="leaving()" (click)="leaveCampaign()">
+          <mat-icon class="text-base">logout</mat-icon>
+          {{ leaving() ? 'Leaving…' : 'Leave Campaign' }}
+        </button>
+      }
     </div>
+    @if (leaveError()) { <p class="text-danger text-sm -mt-3 mb-5">{{ leaveError() }}</p> }
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
       <div class="lg:col-span-2">

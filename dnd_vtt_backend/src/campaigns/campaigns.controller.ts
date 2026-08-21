@@ -112,6 +112,11 @@ export class CampaignsController {
     return this.campaigns.setPartyLevel(id, user.id, dto.level);
   }
 
+  @Delete(':id/members/me')
+  leave(@Param('id') id: string, @CurrentUser() user: RequestUser) {
+    return this.campaigns.leave(id, user.id);
+  }
+
   @Delete(':id/members/:userId')
   removeMember(
     @Param('id') id: string,

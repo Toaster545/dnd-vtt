@@ -8,6 +8,7 @@ import {
   DndContentSource, Subclass, TraitGrant,
 } from '../../../core/services/content.service';
 import { ItemFormComponent } from '../../create-content/items/item-form/item-form';
+import { ItemService } from '../../../core/services/item.service';
 import {
   CharacterService, SpellCastCommand,
 } from '../../../core/services/character.service';
@@ -22,7 +23,7 @@ import { reachableGrants, resolveCharacterFeatPicks } from '../../../core/utils/
 import { characterContentEnabled } from '../../../core/utils/content-sources';
 import { resolveBackgroundOriginFeat } from '../../../core/utils/background-origin-feat';
 import {
-  describeSpellUpcast, isSpellAttack, isSavingThrowSpell, resolveSpellAttackDamage,
+  describeSpellUpcast, isSpellAttackAction, resolveSpellAttackDamage,
   resolveSpellcasting, ResolvedSpellOrigin, ResolvedSpellSlotPool, ResolvedSpellCategory,
   SpellUpcastEffect,
 } from '../../../core/utils/spellcasting';
@@ -99,6 +100,7 @@ type Tab = 'stats' | 'actions' | 'inventory' | 'spells';
 })
 export class CharacterPlaySheetComponent {
   private content        = inject(ContentService);
+  private itemService    = inject(ItemService);
   private characterService = inject(CharacterService);
   private statsService    = inject(CharacterStatsService);
   private actionsService  = inject(CharacterActionsService);
@@ -139,6 +141,9 @@ export class CharacterPlaySheetComponent {
   grantItemNotice        = signal('');
   replicateItemBusy      = signal(false);
   replicateItemError     = signal('');
+  pactWeaponSelection    = signal('');
+  pactWeaponBusy         = signal(false);
+  pactWeaponError        = signal('');
 
   showGrantSpellDialog = signal(false);
   grantSpellSearch     = signal('');
@@ -279,6 +284,12 @@ export class CharacterPlaySheetComponent {
     return char.equipment.map(e => ({ entry: e, item: items.find(it => it.index === e.itemIndex) ?? null }));
   });
 
+  pactWeaponOptions = computed(() => this.itemsAll()
+    .filter(item => item.type === 'weapon'
+      && item.category.includes('Melee')
+      && (item.category.startsWith('Simple') || item.category.startsWith('Martial')))
+    .sort((a, b) => a.name.localeCompare(b.name)));
+
   replicationLimit = computed(() => {
     const artificer = this.resolvedClasses().find(resolved => resolved.data.index === 'artificer');
     const level = artificer?.data.levels.find(entry => entry.level === artificer.level);
@@ -417,21 +428,18 @@ export class CharacterPlaySheetComponent {
     }
     return rolls.sort((a, b) => a.spell.name.localeCompare(b.spell.name) || a.origin.sourceName.localeCompare(b.origin.sourceName));
   }
-  // Spells that make a spell attack roll against the target.
-  spellAttacks = computed<DisplaySpellRoll[]>(() => this.spellRollsMatching(isSpellAttack));
-  // Spells that force the target to make a saving throw, rather than the caster rolling an attack.
-  spellSaves = computed<DisplaySpellRoll[]>(() =>
-    this.spellRollsMatching(spell => isSavingThrowSpell(spell) && !isSpellAttack(spell)));
+  // Attack-roll spells and no-save spells with rolled damage. Save-only spells remain in Spells.
+  spellAttacks = computed<DisplaySpellRoll[]>(() => this.spellRollsMatching(isSpellAttackAction));
   bonusActionSpells = computed(() => this.castableSpells()
     .filter(row => this.castingTimeKind(row.spell) === 'bonus_action'));
   reactionSpells = computed(() => this.castableSpells()
     .filter(row => this.castingTimeKind(row.spell) === 'reaction'));
+  hasPactBlade = computed(() => this.resolvedClasses().some(rc =>
+    rc.data.index === 'warlock'
+    && Object.values(rc.choices).some(selected => selected.includes('Pact of the Blade'))));
   bonusActionFeatures = computed<DisplayFeature[]>(() => {
     const out: DisplayFeature[] = [];
-    const hasPactBlade = this.resolvedClasses().some(rc =>
-      rc.data.index === 'warlock'
-      && Object.values(rc.choices).some(selected => selected.includes('Pact of the Blade')));
-    if (hasPactBlade) {
+    if (this.hasPactBlade()) {
       out.push(
         { source: 'Warlock', name: 'Pact of the Blade: Conjure', detail: 'Conjure a Simple or Martial melee weapon in your hand and bond with it.' },
         { source: 'Warlock', name: 'Pact of the Blade: Bond', detail: 'Touch a magic weapon and form your pact bond with it.' },
@@ -564,10 +572,16 @@ export class CharacterPlaySheetComponent {
       : (char.class ? [{ name: char.class, level: char.level, subclass: char.subclass, choices: {} as Record<string, string[]> }] : []);
 
     const campaignId = char.campaign_id ?? undefined;
+    // A campaign exposes the campaign DM's custom library. A standalone character has no
+    // campaign through which to resolve that library, so include the current user's own items.
+    const itemsPromise = campaignId
+      ? this.content.getItems(campaignId)
+      : Promise.all([this.content.getItems(), this.itemService.getMine()])
+          .then(([official, custom]) => [...official, ...custom]);
     const [race, bg, items, spells, spellLists, feats, monsters, sources] = await Promise.all([
       char.race ? this.content.getRace(toIndex(char.race)).catch(() => null) : Promise.resolve(null),
       char.background ? this.content.getBackground(toIndex(char.background)).catch(() => null) : Promise.resolve(null),
-      this.content.getItems(campaignId),
+      itemsPromise,
       this.content.getSpells(campaignId),
       this.content.getSpellLists(),
       this.content.getFeats(),
@@ -603,6 +617,7 @@ export class CharacterPlaySheetComponent {
     this.spellLists.set(spellLists);
     this.featsAll.set(feats.filter(include));
     this.resolvedClasses.set(resolved);
+    this.pactWeaponSelection.set(char.pact_weapon?.itemIndex ?? this.pactWeaponOptions()[0]?.index ?? '');
     this.loading.set(false);
   }
 
@@ -667,12 +682,6 @@ export class CharacterPlaySheetComponent {
     return spell.mechanics.damage_types.join('/');
   }
 
-  spellSaveAbilities(spell: DndSpell): string {
-    return spell.mechanics.saving_throws
-      .map(ability => this.abilityShort[ability as keyof typeof this.abilityShort] ?? ability)
-      .join('/');
-  }
-
   private hasClassChoice(className: string, choice: string): boolean {
     return this.resolvedClasses().some(rc =>
       rc.name === className && Object.values(rc.choices).some(selected => selected.includes(choice)));
@@ -699,6 +708,12 @@ export class CharacterPlaySheetComponent {
     const next = Math.max(0, Math.min(char.max_hp, char.current_hp + delta));
     if (next === char.current_hp) return;
     this.persist({ ...char, current_hp: next });
+  }
+
+  toggleHeroicInspiration() {
+    const char = this.localChar();
+    if (!char || this.persisting()) return;
+    this.persist({ ...char, heroic_inspiration: !char.heroic_inspiration });
   }
 
   // Actions
@@ -809,6 +824,30 @@ export class CharacterPlaySheetComponent {
       this.replicateItemError.set(Array.isArray(message) ? message.join(' ') : message ?? 'Could not update the replicated item.');
     } finally {
       this.replicateItemBusy.set(false);
+    }
+  }
+
+  async updatePactWeapon(action: 'conjure' | 'bond' | 'dismiss', itemIndex?: string) {
+    const char = this.localChar();
+    if (!char?.id || this.pactWeaponBusy()) return;
+    const selected = itemIndex ?? this.pactWeaponSelection();
+    if (action !== 'dismiss' && !selected) {
+      this.pactWeaponError.set('Choose a melee weapon first.');
+      return;
+    }
+    this.pactWeaponBusy.set(true);
+    this.pactWeaponError.set('');
+    try {
+      const result = await this.characterService.updatePactWeapon(char.id, action, selected || undefined);
+      this.localChar.set(result);
+      this.pactWeaponSelection.set(result.pact_weapon?.itemIndex ?? this.pactWeaponOptions()[0]?.index ?? '');
+      this.saved.emit(result);
+    } catch (error) {
+      const response = error as { error?: { message?: string | string[] } };
+      const message = response.error?.message;
+      this.pactWeaponError.set(Array.isArray(message) ? message.join(' ') : message ?? 'Could not update the pact weapon.');
+    } finally {
+      this.pactWeaponBusy.set(false);
     }
   }
 

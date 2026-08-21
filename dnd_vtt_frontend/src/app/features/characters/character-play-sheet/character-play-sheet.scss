@@ -1,4 +1,16 @@
 :host { display: block; height: 100%; }
+
+.sheet-stat.sheet-stat-inspiration > mat-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  overflow: visible;
+  line-height: 1.5rem;
+  vertical-align: middle;
+}
+
 @media (max-width: 1023px) {
   .sheet-header {
     display: grid;
@@ -36,7 +48,7 @@
     display: grid;
     grid-template-columns: repeat(6, minmax(0, 1fr));
     grid-template-areas:
-      'ac temp initiative proficiency conditions conditions'
+      'ac temp inspiration initiative proficiency conditions'
       'hp hp hp hp rest rest';
     align-items: center;
     width: 100%;
@@ -78,6 +90,11 @@
 
   .sheet-stat-ac { grid-area: ac; }
   .sheet-stat-temp-hp { grid-area: temp; }
+  .sheet-stat-inspiration { grid-area: inspiration; }
+
+  .sheet-stat.sheet-stat-inspiration > mat-icon {
+    font-size: 1.15rem;
+  }
   .sheet-stat-initiative { grid-area: initiative; }
   .sheet-stat-proficiency { grid-area: proficiency; }
 

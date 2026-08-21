@@ -69,6 +69,12 @@ export class CampaignService {
     return firstValueFrom(this.http.delete<void>(`${API}/campaigns/${campaignId}/members/${userId}`));
   }
 
+  leave(campaignId: string): Promise<{ left: true; characterId: string }> {
+    return firstValueFrom(
+      this.http.delete<{ left: true; characterId: string }>(`${API}/campaigns/${campaignId}/members/me`),
+    );
+  }
+
   setMemberEditAccess(campaignId: string, userId: string, unlocked: boolean): Promise<{ edit_unlocked: boolean }> {
     return firstValueFrom(
       this.http.patch<{ edit_unlocked: boolean }>(

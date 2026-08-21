@@ -426,25 +426,45 @@ export class CampaignsService {
   async removeMember(campaignId: string, dmId: string, userId: string) {
     const campaign = await this.getCampaignRow(campaignId);
     if (campaign.dm_id !== dmId) throw new ForbiddenException();
+    await this.detachMember(campaignId, userId);
+    return { removed: true };
+  }
+
+  async leave(campaignId: string, userId: string) {
+    const campaign = await this.getCampaignRow(campaignId);
+    if (campaign.dm_id === userId) {
+      throw new BadRequestException(
+        'A campaign owner cannot leave their own campaign.',
+      );
+    }
+    const characterId = await this.detachMember(campaignId, userId);
+    if (!characterId) {
+      throw new NotFoundException('Active campaign membership not found.');
+    }
+    return { left: true as const, characterId };
+  }
+
+  private async detachMember(campaignId: string, userId: string) {
     const membership = await this.db.execute(
       `SELECT character_id FROM campaign_members WHERE campaign_id = ? AND user_id = ? AND status = 'active'`,
       [campaignId, userId],
     );
     const characterId = membership.rows[0]?.character_id as string | undefined;
-    await this.db.execute(
-      `UPDATE campaign_members SET status = 'removed' WHERE campaign_id = ? AND user_id = ? AND status = 'active'`,
-      [campaignId, userId],
-    );
+    if (!characterId) return undefined;
     // Detach the campaign copy so it goes back to being a normal, fully player-editable character
     // instead of sitting orphaned with a campaign_id the player can no longer access (see
     // CharactersService.update, which DM-locks a character purely based on campaign_id being set).
-    if (characterId) {
-      await this.db.execute(
-        `UPDATE characters SET campaign_id = NULL, updated_at = ? WHERE id = ?`,
-        [new Date().toISOString(), characterId],
-      );
-    }
-    return { removed: true };
+    await this.db.executeMany([
+      {
+        sql: `UPDATE campaign_members SET status = 'removed' WHERE campaign_id = ? AND user_id = ? AND status = 'active'`,
+        args: [campaignId, userId],
+      },
+      {
+        sql: `UPDATE characters SET campaign_id = NULL, updated_at = ? WHERE id = ? AND user_id = ? AND campaign_id = ?`,
+        args: [new Date().toISOString(), characterId, userId, campaignId],
+      },
+    ]);
+    return characterId;
   }
 
   // Grants (or revokes) a player full edit access to their own campaign copy — normally only the
