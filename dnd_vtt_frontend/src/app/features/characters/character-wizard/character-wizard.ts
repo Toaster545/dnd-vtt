@@ -30,7 +30,6 @@ import { BackgroundStepComponent, BackgroundChoice } from './steps/background-st
 import { AbilitiesStepComponent } from './steps/abilities-step/abilities-step';
 import { EquipmentStepComponent } from './steps/equipment-step/equipment-step';
 import { SpellsStepComponent } from './steps/spells-step/spells-step';
-import { DetailsStepComponent } from './steps/details-step/details-step';
 import { CharacterPreviewComponent } from './character-preview/character-preview';
 import { SwipeTabsDirective } from '../../../shared/directives/swipe-tabs.directive';
 import {
