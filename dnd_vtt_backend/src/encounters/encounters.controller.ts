@@ -26,9 +26,12 @@ export class EncountersController {
   @Get()
   findAll(
     @Query('sessionId') sessionId: string | undefined,
+    @Query('activeCampaignId') activeCampaignId: string | undefined,
     @CurrentUser() user: RequestUser,
   ) {
     if (sessionId) return this.encounters.findBySession(sessionId, user);
+    if (activeCampaignId)
+      return this.encounters.findActiveForCampaign(activeCampaignId, user.id);
     return this.encounters.findAllForUser(user.id);
   }
 

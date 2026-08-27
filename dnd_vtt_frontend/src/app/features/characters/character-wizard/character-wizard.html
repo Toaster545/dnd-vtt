@@ -65,7 +65,7 @@
 
     <!-- Step content + live preview -->
     <div class="wizard-main flex-1 flex min-h-0">
-    <div class="wizard-step-pane w-[50%] min-w-0 overflow-y-auto p-6">
+    <div class="wizard-step-pane w-[50%] min-w-0 overflow-y-auto p-6" appSwipeTabs (swipeLeft)="next()" (swipeRight)="prev()">
       @if (activeStep() === 0) {
         <app-class-step
           [classes]="classes()"
@@ -131,22 +131,6 @@
           [spells]="spells()"
           [resolution]="spellResolution()"
           (spellToggled)="toggleSpell($event)"
-        />
-      }
-      @if (activeStep() === 6) {
-        <app-details-step
-          [alignment]="alignment()"
-          [maxHP]="maxHP()"
-          [suggestedMaxHP]="suggestedMaxHP()"
-          [maxHpOverridden]="maxHpOverride() !== null"
-          [armorClass]="armorClass()"
-          [speed]="speed()"
-          [profBonus]="profBonus()"
-          [selectedRace]="selectedRace()"
-          [selectedClass]="primaryClass()"
-          [selectedBackground]="selectedBackground()"
-          (alignmentChanged)="alignment.set($event)"
-          (maxHpChanged)="maxHpOverride.set($event)"
         />
       }
     </div>

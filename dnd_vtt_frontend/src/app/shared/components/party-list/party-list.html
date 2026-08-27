@@ -3,7 +3,7 @@
     <li class="flex items-center py-2.5 gap-2"
         [class.cursor-pointer]="clickableRows()"
         (click)="onRowClick(member)">
-      <img [src]="portraitFor(member)" class="w-8 h-8 rounded-full flex-shrink-0" alt="" />
+      <img [src]="portraitFor(member)" class="w-9 h-9 rounded-full flex-shrink-0" alt="" />
       <div class="flex-1 min-w-0">
         <p class="text-parchment text-sm font-medium truncate m-0">{{ member.character_name }}</p>
         <p class="text-slate text-xs m-0">
@@ -20,6 +20,8 @@
         <mat-icon class="text-danger text-base flex-shrink-0"
                   [matTooltip]="member.source_incompatibility_reason || 'Character uses a disallowed source'">warning</mat-icon>
       }
+      <!-- HP/AC hidden for now — party list AC could drift from the character sheet's live
+           value (see character-wizard.ts armorClass); re-enable once that's fully trusted.
       @if (maxHpFor(member) != null) {
         <span class="text-xs text-slate border border-white/10 rounded px-2 py-0.5 flex-shrink-0">
           HP {{ currentHpFor(member) }}/{{ maxHpFor(member) }}
@@ -30,6 +32,7 @@
           AC {{ member.character_armor_class }}
         </span>
       }
+      -->
 
       @if (showSelfControls() && isMe(member)) {
         <button class="btn-icon flex-shrink-0"

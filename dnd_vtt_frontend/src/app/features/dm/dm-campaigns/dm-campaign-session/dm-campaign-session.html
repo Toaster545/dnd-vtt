@@ -171,11 +171,25 @@
         }
       </div>
 
+      @if (actionError()) {
+        <p class="text-danger text-xs mb-2">{{ actionError() }}</p>
+      }
+
+      @if (activeEncounter(); as active) {
+        @if (active.session_id !== sessionId) {
+          <p class="text-gold text-xs mb-2 flex items-center gap-1">
+            <mat-icon class="text-sm">bolt</mat-icon>
+            "{{ active.name }}" is active in another session — stop it before starting one here.
+          </p>
+        }
+      }
+
       @if (!loading()) {
         <ul class="divide-y divide-white/8">
-          @for (encounter of encounters(); track encounter.id) {
+          @for (encounter of sortedEncounters(); track encounter.id) {
             <li>
-              <div class="flex items-center py-3 px-2 -mx-2 gap-3 rounded hover:bg-white/5 transition-colors">
+              <div class="flex items-center py-3 px-2 -mx-2 gap-3 rounded hover:bg-white/5 transition-colors"
+                   [class.bg-gold/5]="encounter.status === 'active'">
                 <a
                   [routerLink]="['/home/campaigns/manage', campaignId, 'sessions', sessionId, 'encounters', encounter.id]"
                   class="flex flex-1 min-w-0 items-center gap-3 cursor-pointer no-underline"
@@ -183,7 +197,10 @@
                   <div class="flex-1 min-w-0">
                     <p class="text-parchment font-medium truncate m-0">
                       {{ encounter.name }}
-                      <span class="text-xs text-coal border border-white/10 rounded px-1.5 py-0.5 ml-1">{{ encounter.status }}</span>
+                      <span class="text-xs border rounded px-1.5 py-0.5 ml-1"
+                            [class]="encounter.status === 'active' ? 'text-gold border-gold/40' : 'text-coal border-white/10'">
+                        {{ encounter.status }}
+                      </span>
                     </p>
                     <p class="text-slate text-xs m-0 mt-0.5">
                       {{ encounter.monsters.length }} monster type{{ encounter.monsters.length === 1 ? '' : 's' }}
@@ -193,6 +210,23 @@
                     </p>
                   </div>
                 </a>
+                @if (encounter.status === 'active') {
+                  <button class="btn-outline text-xs px-2 py-1"
+                          [disabled]="busyEncounterId() === encounter.id"
+                          (click)="stopEncounter(encounter, $event)"
+                          matTooltip="Stop encounter">
+                    @if (busyEncounterId() === encounter.id) { <span class="spinner-sm"></span> } @else { Stop }
+                  </button>
+                } @else {
+                  <button class="btn-outline text-xs px-2 py-1"
+                          [disabled]="startDisabled(encounter)"
+                          (click)="startEncounter(encounter, $event)"
+                          [matTooltip]="activeEncounter() && activeEncounter()!.id !== encounter.id
+                            ? 'Stop the active encounter before starting another'
+                            : 'Start encounter'">
+                    @if (busyEncounterId() === encounter.id) { <span class="spinner-sm"></span> } @else { Start }
+                  </button>
+                }
                 <button class="btn-icon"
                         [class]="encounter.visible_to_players ? 'text-gold' : 'text-slate hover:text-parchment'"
                         (click)="toggleVisibility(encounter, $event)"

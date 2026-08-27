@@ -30,6 +30,15 @@ export class EncounterService {
     return firstValueFrom(this.http.get<Encounter>(`${API}/encounters/${id}`));
   }
 
+  // The encounter (if any) currently `active` anywhere in the campaign — a campaign only ever has
+  // one, enforced server-side by start(). Used by the session hub to grey out "Start" on every
+  // other encounter before the DM even tries.
+  getActiveForCampaign(campaignId: string): Promise<Encounter | null> {
+    return firstValueFrom(
+      this.http.get<Encounter | null>(`${API}/encounters`, { params: { activeCampaignId: campaignId } }),
+    );
+  }
+
   create(encounter: Partial<Encounter>): Promise<Encounter> {
     return firstValueFrom(this.http.post<Encounter>(`${API}/encounters`, encounter));
   }
