@@ -146,7 +146,7 @@
       </button>
     </div>
 
-    <div class="sheet-body flex-1 overflow-y-auto p-6">
+    <div class="sheet-body flex-1 overflow-y-auto p-6" appSwipeTabs (swipeLeft)="swipeTab(1)" (swipeRight)="swipeTab(-1)">
       @switch (activeTab()) {
 
         <!-- STATS -->

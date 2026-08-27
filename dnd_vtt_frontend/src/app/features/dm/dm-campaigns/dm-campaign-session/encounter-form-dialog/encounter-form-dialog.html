@@ -1,0 +1,140 @@
+<h2 mat-dialog-title class="font-brand text-parchment">{{ editingId() ? 'Edit Encounter' : 'New Encounter' }}</h2>
+<mat-dialog-content class="!py-2" style="width: min(1200px, 95vw);">
+  <form id="encounter-form" (ngSubmit)="save()" class="flex flex-col gap-4">
+    <div class="field">
+      <label class="field-label">Encounter name</label>
+      <input class="field-input" [(ngModel)]="name" name="name" required autofocus />
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <!-- Left: map -->
+      <div class="field">
+        <label class="field-label">
+          {{ existingMap() ? 'Replace map' : 'Map (optional)' }} — PNG, JPEG, WebP, or DungeonDraft (.dd2vtt) export
+        </label>
+
+        @if (existingMap() && !mapFile()) {
+          <div class="flex items-center gap-3 mb-2 px-3 py-2 rounded border border-white/10">
+            <mat-icon class="text-slate">map</mat-icon>
+            <div class="min-w-0 flex-1">
+              <p class="text-parchment text-sm m-0 truncate">{{ existingMap()!.name }}</p>
+              <p class="text-coal text-xs m-0">{{ existingMap()!.grid_size }} px/cell · current map</p>
+            </div>
+            <button type="button" class="btn-icon shrink-0" (click)="clearMapSelection()" matTooltip="Remove map">
+              <mat-icon class="text-base">close</mat-icon>
+            </button>
+          </div>
+        }
+
+        @if (campaignMaps().length) {
+          <div class="mb-2">
+            <label class="field-label">Choose an uploaded map</label>
+            <select class="field-input" [ngModel]="existingMap()?.id ?? ''"
+                    (ngModelChange)="onExistingMapSelect($event)" [ngModelOptions]="{ standalone: true }">
+              <option value="">— none —</option>
+              @for (map of campaignMaps(); track map.id) {
+                <option [value]="map.id">{{ map.name }} — {{ map.grid_size }}px/cell</option>
+              }
+            </select>
+          </div>
+        }
+
+        <p class="text-xs text-slate mb-1">…or upload a new one</p>
+        <input class="field-input" type="file" accept=".dd2vtt,image/png,image/jpeg,image/webp"
+               [disabled]="parsingFile()" (change)="onFileChange($event)" />
+
+        @if (parsingFile()) {
+          <p class="text-slate text-xs mt-1"><span class="spinner-sm"></span> Processing map file…</p>
+        }
+
+        @if (uploadError()) {
+          <p class="text-danger text-xs mt-1">{{ uploadError() }}</p>
+        }
+
+        @if (mapKind() === 'image') {
+          <div class="field mt-2">
+            <label class="field-label">Vertical Grid Squares</label>
+            <input class="field-input" type="number" min="1" max="200"
+                   [(ngModel)]="verticalSquares" name="verticalSquares" (ngModelChange)="recomputeImageGrid()" />
+            <p class="text-xs text-slate mt-1 mb-0">
+              How many grid squares tall the map is — the pixel grid size is worked out from the image.
+            </p>
+          </div>
+        }
+
+        @if (imagePreviewUrl()) {
+          <p class="text-xs text-coal mt-2">
+            {{ mapCols() }} × {{ mapRows() }} cells · {{ pixelsPerGrid() }} px/cell
+            @if (mapKind() === 'dd2vtt') { (from file) }
+            @else if (mapKind() === 'image') { (computed) }
+          </p>
+        }
+        <div #previewContainer class="w-full h-80 mt-2 rounded border border-white/10 bg-black/20"></div>
+      </div>
+
+      <!-- Right: characters (top) + monsters (search + scrollable list) -->
+      <div class="flex flex-col gap-4 min-w-0">
+        <div class="field">
+          <label class="field-label">Characters</label>
+          <div class="flex flex-col gap-1 max-h-48 overflow-y-auto pr-1">
+            @for (character of data.characters; track character.id) {
+              <button type="button"
+                class="flex items-center gap-2 px-3 py-1.5 rounded border text-left text-sm w-full cursor-pointer"
+                [class]="isCharacterSelected(character.id!) ? 'border-gold/50 bg-gold/5' : 'border-white/10 hover:border-white/30'"
+                (click)="toggleCharacter(character.id!)"
+                style="font-family: inherit;"
+              >
+                <span class="w-4 h-4 rounded-full border flex items-center justify-center shrink-0 text-[9px]"
+                  [class]="isCharacterSelected(character.id!) ? 'bg-gold border-gold text-canvas font-bold' : 'border-slate/50 text-transparent'">●</span>
+                <span class="text-parchment">{{ character.name }}</span>
+                <span class="text-coal text-xs">Level {{ character.level }} {{ character.class }}</span>
+              </button>
+            } @empty {
+              <p class="text-slate text-sm">No characters yet — create one under the Characters tab first.</p>
+            }
+          </div>
+        </div>
+
+        <div class="field flex-1 min-h-0 flex flex-col">
+          <label class="field-label">Monsters</label>
+          <input
+            class="field-input mb-2"
+            type="text"
+            placeholder="Search monsters…"
+            [(ngModel)]="monsterSearchQuery"
+            [ngModelOptions]="{ standalone: true }"
+          />
+          <div class="flex flex-col gap-1 max-h-56 overflow-y-auto pr-1">
+            @for (monster of filteredMonsters(); track monster.index) {
+              <button type="button"
+                class="flex items-center gap-2 px-3 py-1.5 rounded border text-left text-sm w-full cursor-pointer"
+                [class]="isMonsterSelected(monster.index) ? 'border-gold/50 bg-gold/5' : 'border-white/10 hover:border-white/30'"
+                (click)="toggleMonster(monster.index)"
+                style="font-family: inherit;"
+              >
+                <span class="w-4 h-4 rounded-full border flex items-center justify-center shrink-0 text-[9px]"
+                  [class]="isMonsterSelected(monster.index) ? 'bg-gold border-gold text-canvas font-bold' : 'border-slate/50 text-transparent'">●</span>
+                <span class="text-parchment">{{ monster.name }}</span>
+                <span class="text-coal text-xs">CR {{ monster.challenge_rating }}</span>
+              </button>
+            } @empty {
+              <p class="text-slate text-sm">No monsters match your search.</p>
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="field">
+      <label class="field-label">Recap / summary (shown to players once revealed)</label>
+      <textarea class="field-input" [(ngModel)]="summary" name="summary" rows="3"
+                 placeholder="What happened in this encounter…"></textarea>
+    </div>
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions align="end" class="!px-6 !pb-5 gap-2">
+  <button class="btn-ghost" type="button" (click)="cancel()">Cancel</button>
+  <button class="btn-primary" type="submit" form="encounter-form" [disabled]="!name.trim() || saving()">
+    @if (saving()) { <span class="spinner-sm"></span> } @else { {{ editingId() ? 'Save Changes' : 'Create Encounter' }} }
+  </button>
+</mat-dialog-actions>

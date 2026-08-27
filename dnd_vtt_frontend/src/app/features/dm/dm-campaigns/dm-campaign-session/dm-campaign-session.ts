@@ -1,6 +1,7 @@
 import { Component, ElementRef, ViewChild, inject, signal, computed, effect, OnInit, OnDestroy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { HttpErrorResponse } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -83,6 +84,23 @@ export class DmCampaignSessionComponent implements OnInit, OnDestroy {
   saving    = signal(false);
   editingId = signal<string | null>(null);
 
+  // The encounter (if any) currently active anywhere in the campaign — a campaign only ever has
+  // one, enforced server-side. Drives both the "Start" disabled state on every other encounter and
+  // the cross-session banner below.
+  activeEncounter  = signal<Encounter | null>(null);
+  // id of the encounter whose start/stop request is currently in flight, if any.
+  busyEncounterId  = signal<string | null>(null);
+  actionError      = signal<string | null>(null);
+
+  // Active encounter first (so a just-started one jumps to the top of the list), otherwise the
+  // backend's created_at DESC order.
+  sortedEncounters = computed(() => {
+    const list = this.encounters();
+    const active = list.filter(e => e.status === 'active');
+    const rest = list.filter(e => e.status !== 'active');
+    return [...active, ...rest];
+  });
+
   name = '';
   summary = '';
   existingMap = signal<BattleMap | null>(null);
@@ -124,13 +142,14 @@ export class DmCampaignSessionComponent implements OnInit, OnDestroy {
   }
 
   async ngOnInit() {
-    const [session, encounters, monsters, characters, campaign, sources] = await Promise.all([
+    const [session, encounters, monsters, characters, campaign, sources, activeEncounter] = await Promise.all([
       this.sessionService.getById(this.sessionId),
       this.encounterService.getBySession(this.sessionId),
       this.content.getMonsters(this.campaignId),
       this.characterService.getMyCharacters(),
       this.campaignService.getById(this.campaignId),
       this.content.getSources(),
+      this.encounterService.getActiveForCampaign(this.campaignId),
     ]);
     this.session.set(session);
     this.encounters.set(encounters);
@@ -138,6 +157,7 @@ export class DmCampaignSessionComponent implements OnInit, OnDestroy {
     this.monsters.set(monsters.filter(monster => campaignContentEnabled(monster, allowed, sources)));
     this.characters.set(characters);
     this.members.set(campaign.members);
+    this.activeEncounter.set(activeEncounter);
     this.loading.set(false);
     void this.loadMemberMaxHp(campaign.members);
   }
@@ -507,6 +527,52 @@ export class DmCampaignSessionComponent implements OnInit, OnDestroy {
     if (!await this.confirm.confirm(`Delete "${enc?.name ?? 'this encounter'}"? This cannot be undone.`, 'Delete Encounter')) return;
     await this.encounterService.remove(id);
     this.encounters.set(await this.encounterService.getBySession(this.sessionId));
+  }
+
+  // Whether "Start" should be greyed out for this encounter — either something else in this
+  // campaign is already active, or some row's start/stop request is in flight.
+  startDisabled(encounter: Encounter): boolean {
+    const active = this.activeEncounter();
+    if (this.busyEncounterId()) return true;
+    return !!active && active.id !== encounter.id;
+  }
+
+  async startEncounter(encounter: Encounter, event: Event) {
+    event.preventDefault();
+    event.stopPropagation();
+    if (!encounter.id || this.startDisabled(encounter)) return;
+    this.actionError.set(null);
+    this.busyEncounterId.set(encounter.id);
+    try {
+      const started = await this.encounterService.start(encounter.id);
+      this.activeEncounter.set(started);
+      this.encounters.set(await this.encounterService.getBySession(this.sessionId));
+    } catch (e) {
+      this.actionError.set(
+        e instanceof HttpErrorResponse ? (e.error?.message ?? e.message) : 'Could not start this encounter.',
+      );
+    } finally {
+      this.busyEncounterId.set(null);
+    }
+  }
+
+  async stopEncounter(encounter: Encounter, event: Event) {
+    event.preventDefault();
+    event.stopPropagation();
+    if (!encounter.id || this.busyEncounterId()) return;
+    this.actionError.set(null);
+    this.busyEncounterId.set(encounter.id);
+    try {
+      await this.encounterService.stop(encounter.id);
+      this.activeEncounter.set(null);
+      this.encounters.set(await this.encounterService.getBySession(this.sessionId));
+    } catch (e) {
+      this.actionError.set(
+        e instanceof HttpErrorResponse ? (e.error?.message ?? e.message) : 'Could not stop this encounter.',
+      );
+    } finally {
+      this.busyEncounterId.set(null);
+    }
   }
 
   async toggleVisibility(encounter: Encounter, event: Event) {

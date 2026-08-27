@@ -28,6 +28,7 @@ import {
   SpellUpcastEffect,
 } from '../../../core/utils/spellcasting';
 import { ConfirmService } from '../../../shared/confirm.service';
+import { SwipeTabsDirective } from '../../../shared/directives/swipe-tabs.directive';
 
 function toIndex(name: string): string {
   return name.toLowerCase().replace(/\s+/g, '-');
@@ -91,10 +92,11 @@ interface SpellFilters {
 interface DescriptionSegment { text: string; bold: boolean }
 
 type Tab = 'stats' | 'actions' | 'inventory' | 'spells';
+const TAB_ORDER: Tab[] = ['stats', 'actions', 'inventory', 'spells'];
 
 @Component({
   selector: 'app-character-play-sheet',
-  imports: [FormsModule, MatIconModule, MatTooltipModule, NgTemplateOutlet, ItemFormComponent],
+  imports: [FormsModule, MatIconModule, MatTooltipModule, NgTemplateOutlet, ItemFormComponent, SwipeTabsDirective],
   templateUrl: './character-play-sheet.html',
   styleUrl: './character-play-sheet.scss',
 })
@@ -119,6 +121,13 @@ export class CharacterPlaySheetComponent {
   readonly skillAbility  = SKILLS;
 
   activeTab   = signal<Tab>('stats');
+  // Swipe left/right (touch only, see appSwipeTabs) steps through the tabs in display order;
+  // clamped rather than wrapping so a swipe past either end is simply a no-op.
+  swipeTab(dir: 1 | -1) {
+    const idx = TAB_ORDER.indexOf(this.activeTab());
+    const next = Math.min(TAB_ORDER.length - 1, Math.max(0, idx + dir));
+    this.activeTab.set(TAB_ORDER[next]);
+  }
   loading     = signal(true);
   persisting  = signal(false);
   spellFiltersOpen = signal(false);

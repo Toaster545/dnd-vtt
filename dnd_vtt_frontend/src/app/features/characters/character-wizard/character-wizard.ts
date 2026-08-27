@@ -4,7 +4,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { ContentService, DndContentSource, DndRace, DndClass, DndBackground, DndItem, DndSpell, DndFeat, TraitEffect, TraitGrant } from '../../../core/services/content.service';
-import { ClassChoiceSource, averageHpFormula, collectFeatEffects, collectTraitEffects, reachableGrants, resolveCharacterFeatPicks, resolveLanguageProficiencies, unarmoredDefenseBonus } from '../../../core/utils/character-effects';
+import { ClassChoiceSource, activeEffects, averageHpFormula, baseArmorClass, collectFeatEffects, collectTraitEffects, reachableGrants, resolveCharacterFeatPicks, resolveLanguageProficiencies, unarmoredDefenseBonus } from '../../../core/utils/character-effects';
 import { isStructuredEquipment, resolveStartingEquipment } from '../../../core/utils/starting-equipment';
 import { resolveBackgroundSkills } from '../../../core/utils/background-skills';
 import { resolveBackgroundOriginFeat } from '../../../core/utils/background-origin-feat';
@@ -32,6 +32,7 @@ import { EquipmentStepComponent } from './steps/equipment-step/equipment-step';
 import { SpellsStepComponent } from './steps/spells-step/spells-step';
 import { DetailsStepComponent } from './steps/details-step/details-step';
 import { CharacterPreviewComponent } from './character-preview/character-preview';
+import { SwipeTabsDirective } from '../../../shared/directives/swipe-tabs.directive';
 import {
   areAbilityAssignmentsComplete,
   areClassSelectionsComplete,
@@ -40,7 +41,7 @@ import {
   isRaceSelectionComplete,
 } from './wizard-completion';
 
-const STEPS = ['Class', 'Race', 'Background', 'Ability Scores', 'Equipment', 'Spells', 'Details'];
+const STEPS = ['Class', 'Race', 'Background', 'Ability Scores', 'Equipment', 'Spells'];
 const ACTIVE_DRAFT_KEY = 'character.active-draft-id';
 const ACTIVE_DRAFT_STEP_KEY = 'character.active-draft-step';
 
@@ -56,8 +57,8 @@ const ACTIVE_DRAFT_STEP_KEY = 'character.active-draft-step';
     AbilitiesStepComponent,
     EquipmentStepComponent,
     SpellsStepComponent,
-    DetailsStepComponent,
     CharacterPreviewComponent,
+    SwipeTabsDirective,
   ],
   templateUrl: './character-wizard.html',
   styleUrl: './character-wizard.scss',
@@ -265,8 +266,10 @@ export class CharacterWizardComponent implements OnInit, OnDestroy {
   });
   maxHP = computed(() => this.maxHpOverride() ?? this.suggestedMaxHP());
   // Scans every chosen class option and feat for a structured `effects` entry of the given
-  // type. Conditioned effects (e.g. Defense's ac_bonus "while wearing armor") are excluded —
-  // those are evaluated live from equipped gear by CharacterStatsService instead.
+  // type. Conditioned effects (e.g. Defense's ac_bonus "while wearing armor") are excluded by
+  // default — callers that care whether the condition currently holds (armorClass, speed) pass
+  // includeConditional and filter the result through activeEffects/unarmoredDefenseBonus
+  // themselves, the same way CharacterStatsService does for the play sheet.
   private selectedEffects(type: string, includeConditional = false): TraitEffect[] {
     const race = this.selectedRace();
     const backgroundFeat = resolveBackgroundOriginFeat(this.selectedBackground(), this.feats());
@@ -280,12 +283,17 @@ export class CharacterWizardComponent implements OnInit, OnDestroy {
   }
 
   armorClass = computed(() => {
-    const bonus = this.selectedEffects('ac_bonus').reduce((sum, e) => sum + (e.value ?? 0), 0);
+    const equipment = this.resolvedEquipment();
+    const items = this.items();
+    const bonus = activeEffects(this.selectedEffects('ac_bonus', true), equipment, items)
+      .reduce((sum, e) => sum + (e.value ?? 0), 0);
     const modifiers = Object.fromEntries(
       ABILITIES.map(ability => [ability, abilityModifier(this.finalScores()[ability])]),
     );
-    const unarmored = unarmoredDefenseBonus(this.selectedEffects('unarmored_defense', true), modifiers);
-    return 10 + abilityModifier(this.finalScores().dexterity) + bonus + unarmored;
+    const unarmored = unarmoredDefenseBonus(
+      activeEffects(this.selectedEffects('unarmored_defense', true), equipment, items), modifiers,
+    );
+    return baseArmorClass(equipment, items, abilityModifier(this.finalScores().dexterity)) + bonus + unarmored;
   });
   speed      = computed(() => {
     const base = this.selectedRace()?.speed ?? 30;
@@ -408,6 +416,28 @@ export class CharacterWizardComponent implements OnInit, OnDestroy {
     return isStructuredEquipment(equip) ? resolveStartingEquipment(equip, this.backgroundEquipChoices()) : { items: [], gold: 0 };
   });
 
+  // The full equipment list as it stands right now, `equipped` flags carried over from a
+  // previously-saved character — shared by draftCharacter (the persisted array) and armorClass
+  // (so AC reflects what's actually equipped, not an unarmored assumption) so the two can't drift.
+  private resolvedEquipment = computed(() => {
+    const existing = this.existingCharacter();
+    const priorEquipment = new Map((existing?.equipment ?? []).map(e => [e.itemIndex, e]));
+    const itemName = (index: string) => this.items().find(it => it.index === index)?.name ?? index;
+    const structuredEquipment = [...this.resolvedClassEquipment().items, ...this.resolvedBackgroundEquipment().items]
+      .map(r => ({
+        itemIndex: r.itemIndex, name: itemName(r.itemIndex), quantity: r.quantity,
+        equipped: priorEquipment.get(r.itemIndex)?.equipped ?? false,
+      }));
+    const freeEquipment = this.items()
+      .filter(it => this.selectedItemIndices().has(it.index))
+      .map(it => ({
+        itemIndex: it.index, name: it.name,
+        quantity: priorEquipment.get(it.index)?.quantity ?? 1,
+        equipped: priorEquipment.get(it.index)?.equipped ?? false,
+      }));
+    return [...structuredEquipment, ...freeEquipment];
+  });
+
   // Only `gp` is ever populated today — nothing in starting equipment grants cp/sp/ep/pp — but
   // shown as a full breakdown (matching the play sheet's own currency display) since a manual
   // override or a future "buy gear with leftover gold" flow could put value in the others.
@@ -483,21 +513,7 @@ export class CharacterWizardComponent implements OnInit, OnDestroy {
     const primary  = classes[0];
     const existing = this.existingCharacter();
 
-    const priorEquipment = new Map((existing?.equipment ?? []).map(e => [e.itemIndex, e]));
-    const itemName = (index: string) => this.items().find(it => it.index === index)?.name ?? index;
-    const structuredEquipment = [...this.resolvedClassEquipment().items, ...this.resolvedBackgroundEquipment().items]
-      .map(r => ({
-        itemIndex: r.itemIndex, name: itemName(r.itemIndex), quantity: r.quantity,
-        equipped: priorEquipment.get(r.itemIndex)?.equipped ?? false,
-      }));
-    const freeEquipment = this.items()
-      .filter(it => this.selectedItemIndices().has(it.index))
-      .map(it => ({
-        itemIndex: it.index, name: it.name,
-        quantity: priorEquipment.get(it.index)?.quantity ?? 1,
-        equipped: priorEquipment.get(it.index)?.equipped ?? false,
-      }));
-    const equipment = [...structuredEquipment, ...freeEquipment];
+    const equipment = this.resolvedEquipment();
 
     const catalog = new Map(this.spells().map(spell => [spell.index, spell]));
     const resolved = this.spellResolution();
@@ -556,7 +572,7 @@ export class CharacterWizardComponent implements OnInit, OnDestroy {
       skills: this.skillsRecord(),
       expertise: this.expertiseRecord(),
       equipment,
-      currency: existing?.currency ?? this.startingCurrency(),
+      currency: existing && existing.creation_status !== 'draft' ? existing.currency : this.startingCurrency(),
       spells,
       spell_choices: this.spellChoices(),
       enabled_sources: [...this.enabledSources()],

@@ -52,6 +52,28 @@ export class EncountersService {
     return result.rows.map((r) => this.deserialize(r));
   }
 
+  // The currently-active encounter anywhere in a campaign, regardless of which session it belongs
+  // to — mirrors the one-active-encounter-per-campaign rule enforced in start() below, so the
+  // session hub can grey out "Start" on every other encounter before the DM even tries.
+  async findActiveForCampaign(campaignId: string, dmId: string) {
+    const campaign = await this.db.execute(
+      'SELECT dm_id FROM campaigns WHERE id = ?',
+      [campaignId],
+    );
+    const campaignRow = campaign.rows[0];
+    if (!campaignRow) throw new NotFoundException('Campaign not found');
+    if (campaignRow.dm_id !== dmId) throw new ForbiddenException();
+
+    const result = await this.db.execute(
+      `SELECT e.* FROM encounters e
+       JOIN sessions s ON s.id = e.session_id
+       WHERE s.campaign_id = ? AND e.status = 'active' LIMIT 1`,
+      [campaignId],
+    );
+    const row = result.rows[0];
+    return row ? this.deserialize(row) : null;
+  }
+
   private async assertActiveMember(campaignId: string, userId: string) {
     const membership = await this.db.execute(
       `SELECT id FROM campaign_members WHERE campaign_id = ? AND user_id = ? AND status = 'active'`,
