@@ -155,6 +155,18 @@ export class CharactersController {
     return this.characters.restoreLife(id, user, body);
   }
 
+  // Self-serve Level-Up: a player applies the choices for a level the DM granted them (HP,
+  // features, ASI/feat, spells) even on a DM-locked campaign copy. One-shot per level bump —
+  // see CharactersService.applyLevelUp.
+  @Post(':id/level-up')
+  applyLevelUp(
+    @Param('id') id: string,
+    @CurrentUser() user: RequestUser,
+    @Body() body: Record<string, unknown>,
+  ) {
+    return this.characters.applyLevelUp(id, user, body);
+  }
+
   @Patch(':id/concentration')
   endConcentration(@Param('id') id: string, @CurrentUser() user: RequestUser) {
     return this.characters.endConcentration(id, user);

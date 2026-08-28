@@ -7,7 +7,6 @@ import { EncounterService } from '../../../../core/services/encounter.service';
 import { CharacterService } from '../../../../core/services/character.service';
 import { CampaignService } from '../../../../core/services/campaign.service';
 import { SessionService } from '../../../../core/services/session.service';
-import { BattleMapService } from '../../../../core/services/battle-map.service';
 import { ContentService } from '../../../../core/services/content.service';
 import { AuthService } from '../../../../core/services/auth.service';
 import { BackgroundService } from '../../../../core/services/background.service';
@@ -15,7 +14,7 @@ import { Encounter, PresentPlayer } from '../../../../core/models/encounter.mode
 import { Character } from '../../../../core/models/character.model';
 import { PortraitSource } from '../../../../core/models/avatar.model';
 import { portraitSource } from '../../../../core/utils/avatar';
-import { BattleMap, CampaignMember, MapToken } from '../../../../core/models/campaign.model';
+import { CampaignMember, MapToken } from '../../../../core/models/campaign.model';
 import { Session } from '../../../../core/models/session.model';
 import { BattleMapComponent } from '../../../battle-map/battle-map';
 import { CharacterPlaySheetComponent } from '../../../characters/character-play-sheet/character-play-sheet';
@@ -56,7 +55,6 @@ export class PlayerCampaignSessionComponent implements OnInit, OnDestroy {
   private characterService = inject(CharacterService);
   private campaignService  = inject(CampaignService);
   private sessionService   = inject(SessionService);
-  private mapService       = inject(BattleMapService);
   private contentService   = inject(ContentService);
   private background       = inject(BackgroundService);
   auth                     = inject(AuthService);
@@ -70,7 +68,6 @@ export class PlayerCampaignSessionComponent implements OnInit, OnDestroy {
 
   session    = signal<Session | null>(null);
   encounters = signal<Encounter[]>([]);
-  recapMaps  = signal<Record<string, BattleMap>>({});
   members    = signal<CampaignMember[]>([]);
   loading    = signal(true);
   joiningId  = signal<string | null>(null);
@@ -138,7 +135,11 @@ export class PlayerCampaignSessionComponent implements OnInit, OnDestroy {
     });
     this.route.queryParamMap.subscribe(params => {
       this.pendingAutojoinId = params.get('autojoin');
-      this.maybeAutojoin();
+      // On a fresh navigation loadSession() runs maybeAutojoin() itself once its data lands, so
+      // only act here when we're NOT loading — that's the case where the session page was already
+      // open (clicking the shell's "went live" banner for the very session you're viewing doesn't
+      // change the route params, so paramMap never re-fires and loadSession never re-runs).
+      if (this.pendingAutojoinId && !this.loading()) void this.maybeAutojoin();
     });
   }
 
@@ -163,22 +164,35 @@ export class PlayerCampaignSessionComponent implements OnInit, OnDestroy {
     this.encounters.set(encounters);
     this.members.set(hub.members);
     this.loading.set(false);
-    void this.loadRecapMaps(encounters);
 
     const stored = this.loadStoredRejoin();
     const stillActive = stored && encounters.find(e => e.id === stored.encounterId && e.status === 'active');
     if (stillActive) {
       await this.join(stillActive);
     } else {
-      this.maybeAutojoin();
+      void this.maybeAutojoin();
     }
   }
 
-  // Runs after every load and every query-param change — whichever comes last actually finds a
-  // matching, still-active encounter to join.
-  private maybeAutojoin() {
-    if (!this.pendingAutojoinId || this.activeEncounter()) return;
-    const target = this.encounters().find(e => e.id === this.pendingAutojoinId && e.status === 'active');
+  // Joins the encounter named by ?autojoin= (set by the shell's "went live" banner). Called both
+  // at the end of loadSession() and straight off the query-param change. The local encounter list
+  // can be stale — the player may have been sitting on this session page when the DM hit Start, so
+  // it still shows the encounter as 'draft' — so if the target isn't present as active, refetch
+  // once before giving up.
+  private async maybeAutojoin() {
+    if (!this.pendingAutojoinId || this.activeEncounter() || this.joiningId()) return;
+    const isTarget = (e: Encounter) => e.id === this.pendingAutojoinId && e.status === 'active';
+    let target = this.encounters().find(isTarget);
+    if (!target) {
+      try {
+        const fresh = await this.encounterService.getBySession(this.sessionId);
+        this.encounters.set(fresh);
+        target = fresh.find(isTarget);
+      } catch {
+        return;
+      }
+      if (this.activeEncounter() || this.joiningId()) return; // a parallel call already took it
+    }
     if (target) {
       this.pendingAutojoinId = null;
       void this.join(target);
@@ -226,6 +240,10 @@ export class PlayerCampaignSessionComponent implements OnInit, OnDestroy {
     this.sheetCharacter.set(await this.characterService.getCharacter(member.character_id));
   }
 
+  levelUpMyCharacter(member: CampaignMember) {
+    void this.router.navigate(['/home/characters', member.character_id, 'level-up']);
+  }
+
   // The play sheet's (saved) emits the updated character after every persist — keep the sheet in
   // sync and refresh the Party roster's HP/AC badges to match, but stay on the sheet (unlike the
   // wizard's onWizardSaved, which navigates back to the session hub).
@@ -246,14 +264,6 @@ export class PlayerCampaignSessionComponent implements OnInit, OnDestroy {
       return;
     }
     this.sheetCharacter.set(null);
-  }
-
-  private async loadRecapMaps(encounters: Encounter[]) {
-    const withMaps = encounters.filter(e => e.status !== 'active' && e.map_id);
-    const maps = await Promise.all(withMaps.map(e => this.mapService.getMap(e.map_id!).catch(() => null)));
-    const next: Record<string, BattleMap> = {};
-    withMaps.forEach((e, i) => { const m = maps[i]; if (m) next[e.id!] = m; });
-    this.recapMaps.set(next);
   }
 
   async join(encounter: Encounter) {
@@ -341,10 +351,6 @@ export class PlayerCampaignSessionComponent implements OnInit, OnDestroy {
       portraitSeed: character.portrait_seed,
       avatarRecipe: character.avatar_recipe,
     });
-  }
-
-  mapFor(encounter: Encounter): BattleMap | undefined {
-    return encounter.id ? this.recapMaps()[encounter.id] : undefined;
   }
 
   notesExpanded(encounterId: string): boolean {

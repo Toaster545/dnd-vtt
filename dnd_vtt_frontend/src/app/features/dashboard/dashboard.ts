@@ -12,6 +12,7 @@ import { Character } from '../../core/models/character.model';
 import { Campaign } from '../../core/models/campaign.model';
 import { AuthService } from '../../core/services/auth.service';
 import { portraitDataUri, portraitSource } from '../../core/utils/avatar';
+import { levelUpPending } from '../../core/utils/level-up';
 
 type DashboardCharacter = Character & { campaign_name?: string; edit_unlocked?: boolean };
 type CampaignCopy = DashboardCharacter & { campaign_name: string; edit_unlocked: boolean };
@@ -126,7 +127,7 @@ export class DashboardComponent implements OnInit {
       const stats = this.statsService.compute(
         char, classData, raceData, feats, classesForFeats, items, backgroundData,
       );
-      if (!char.max_hp_overridden && stats.suggested_max_hp !== char.max_hp) {
+      if (levelUpPending(char, stats.suggested_max_hp)) {
         alerts.push({ character: char });
       }
     }

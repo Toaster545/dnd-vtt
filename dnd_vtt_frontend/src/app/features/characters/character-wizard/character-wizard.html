@@ -25,14 +25,30 @@
       </div>
       <div class="wizard-level-field field w-20">
         <label class="field-label">Level</label>
-        <input class="field-input py-1 text-sm" type="number" [ngModel]="level()" (ngModelChange)="level.set(+$event)" min="1" max="20" name="level" />
+        <input class="field-input py-1 text-sm" type="number" [ngModel]="level()" (ngModelChange)="level.set(+$event)"
+          min="1" max="20" name="level" [readonly]="levelUp()" [class.opacity-60]="levelUp()" />
+      </div>
+      <div class="wizard-maxhp-field field w-40">
+        <label class="field-label">Max HP</label>
+        <div class="flex items-center gap-2">
+          <input class="field-input py-1 text-sm w-16" type="number" min="1" name="maxHp"
+            [ngModel]="maxHP()" (ngModelChange)="setMaxHpOverride($event)" />
+          @if (maxHpOverride() !== null && maxHpOverride() !== suggestedMaxHP()) {
+            <button type="button" class="text-[11px] text-gold hover:underline whitespace-nowrap"
+              (click)="maxHpOverride.set(null)" matTooltip="Reset to the average">
+              avg {{ suggestedMaxHP() }}
+            </button>
+          } @else {
+            <span class="text-[11px] text-slate whitespace-nowrap">avg {{ suggestedMaxHP() }}</span>
+          }
+        </div>
       </div>
       <button class="wizard-sources-button btn-outline text-sm gap-1.5 ml-auto" (click)="openSourcesDialog()" matTooltip="Choose character content sources">
         <mat-icon class="text-base">auto_stories</mat-icon>
         Sources
         <span class="toolbar-badge text-[10px]">{{ enabledSources().size }}</span>
       </button>
-      @if (isEditing()) {
+      @if (isEditing() && !levelUp()) {
         <button class="wizard-sheet-button btn-outline text-sm gap-1.5" (click)="openSheet()" matTooltip="View the play sheet for this character">
           <mat-icon class="text-base">badge</mat-icon>
           View Sheet
@@ -40,23 +56,30 @@
       }
     </div>
 
+    @if (levelUp()) {
+      <div class="flex items-center gap-2 px-6 py-2 bg-gold/10 border-b border-gold/25 flex-shrink-0 text-sm text-gold">
+        <mat-icon class="text-base">trending_up</mat-icon>
+        Level-Up — record the choices for level {{ level() }}. Earlier levels are locked.
+      </div>
+    }
+
     <!-- Step tabs -->
     <div class="wizard-tabs flex border-b border-white/10 overflow-x-auto flex-shrink-0 bg-black/40">
-      @for (label of steps; track $index) {
+      @for (stepIndex of visibleStepIndices(); track stepIndex; let position = $index) {
         <button
           class="flex items-center gap-2 px-5 py-3.5 text-sm font-medium whitespace-nowrap border-b-2 transition-colors border-0 cursor-pointer"
-          [class]="activeStep() === $index
+          [class]="activeStep() === stepIndex
             ? 'border-gold text-gold'
             : 'border-transparent text-slate hover:text-parchment'"
-          (click)="activeStep.set($index)"
+          (click)="activeStep.set(stepIndex)"
           style="background: transparent; font-family: inherit;"
         >
           <span class="flex items-center justify-center w-5 h-5 rounded-full text-xs font-bold flex-shrink-0"
-            [class]="activeStep() === $index ? 'bg-gold text-on-accent' : 'bg-white/10 text-slate'">
-            {{ $index + 1 }}
+            [class]="activeStep() === stepIndex ? 'bg-gold text-on-accent' : 'bg-white/10 text-slate'">
+            {{ position + 1 }}
           </span>
-          <span class="wizard-step-label">{{ label }}</span>
-          @if (stepNeedsAttention($index)) {
+          <span class="wizard-step-label">{{ steps[stepIndex] }}</span>
+          @if (stepNeedsAttention(stepIndex)) {
             <span class="text-gold text-sm font-bold leading-none" title="Choices remaining" aria-label="Choices remaining">*</span>
           }
         </button>
@@ -75,6 +98,7 @@
           [speciesChoices]="raceTraits()"
           [selectedClasses]="selectedClasses()"
           [characterLevel]="level()"
+          [minEditableLevel]="levelUpBaseline()"
           [baseAbilityScores]="scoresBeforeClassASI()"
           [proficientSkills]="proficientSkillNames()"
           [unavailableSkills]="classUnavailableSkills()"
@@ -148,15 +172,16 @@
         <span class="text-xs">
           @if (saveStatus() === 'saving') { <span class="text-slate">Saving…</span> }
           @if (saveStatus() === 'saved')  { <span class="text-success">Saved ✓</span> }
+          @if (saveError())               { <span class="text-danger">{{ saveError() }}</span> }
         </span>
       </div>
       <div class="flex gap-2">
-        <button class="btn-outline" [disabled]="activeStep() === 0" (click)="prev()">
+        <button class="btn-outline" [disabled]="activeStep() === visibleStepIndices()[0]" (click)="prev()">
           ← Previous
         </button>
         @if (isLastStep()) {
           <button class="btn-primary" [disabled]="saving()" (click)="finish()">
-            @if (saving()) { <span class="spinner-sm"></span> } @else { Done }
+            @if (saving()) { <span class="spinner-sm"></span> } @else { {{ levelUp() ? 'Apply Level-Up' : 'Done' }} }
           </button>
         } @else {
           <button class="btn-primary" (click)="next()">

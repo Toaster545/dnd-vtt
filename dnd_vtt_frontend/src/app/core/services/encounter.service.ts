@@ -2,7 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { firstValueFrom, Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import { Encounter, EncounterStartedEvent, PresentPlayer } from '../models/encounter.model';
+import { Encounter, EncounterStartedEvent, PartyLeveledEvent, PresentPlayer } from '../models/encounter.model';
 import { AvatarRecipeV1 } from '../models/avatar.model';
 import { SocketService } from './socket.service';
 
@@ -151,6 +151,21 @@ export class EncounterService {
 
       return () => {
         socket.off('encounter_started', handleStart);
+      };
+    });
+  }
+
+  // Fires when the DM levels a party up — same "filter to your campaigns, then surface a banner"
+  // pattern as watchEncounterStarted (see ShellComponent).
+  watchPartyLeveled(): Observable<PartyLeveledEvent> {
+    return new Observable(observer => {
+      const socket = this.socketService.socket;
+      const handleLeveled = (event: PartyLeveledEvent) => observer.next(event);
+      this.socketService.connect();
+      socket.on('party_leveled', handleLeveled);
+
+      return () => {
+        socket.off('party_leveled', handleLeveled);
       };
     });
   }

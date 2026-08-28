@@ -62,6 +62,18 @@ export class CharactersComponent implements OnInit {
     void this.router.navigate(['/home/characters', c.id, 'edit']);
   }
 
+  openLevelUp(c: CharacterListItem) {
+    void this.router.navigate(['/home/characters', c.id, 'level-up']);
+  }
+
+  // Cheap marker-only check for the list (no stats recompute here) — the DM granted a level the
+  // player applied through the self-serve flow at least once, and hasn't applied this one yet.
+  // Legacy copies with no `applied_level` don't light up here but still do on the dashboard and
+  // the play sheet, which have live HP stats.
+  levelUpPendingFor(c: CharacterListItem): boolean {
+    return c.applied_level != null && c.applied_level < c.level;
+  }
+
   openCreate() {
     void this.router.navigate(['/home/characters/new']);
   }

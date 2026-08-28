@@ -20,6 +20,7 @@ import {
   sourceName,
 } from '../content/content-sources';
 import { parseAvatarRecipe } from '../common/avatar-recipe';
+import { EncounterPresenceGateway } from '../encounters/encounter-presence.gateway';
 
 function stringArray(value: unknown): string[] {
   return Array.isArray(value)
@@ -38,7 +39,10 @@ function recordArray(value: unknown): Record<string, unknown>[] {
 
 @Injectable()
 export class CampaignsService {
-  constructor(private db: DatabaseService) {}
+  constructor(
+    private db: DatabaseService,
+    private presence: EncounterPresenceGateway,
+  ) {}
 
   async create(dmId: string, dto: CreateCampaignDto) {
     const id = randomUUID();
@@ -350,6 +354,18 @@ export class CampaignsService {
     const campaignLevel =
       (partyLevelResult.rows[0]?.level as number | null) ?? source.level;
 
+    // Mark how far the copy's build actually goes. If it's being levelled up to meet the party,
+    // the levels above the source character's own are unfilled — applied_level below the copy's
+    // level is the "a level-up is pending" signal the player then acts on.
+    const copyData = this.db.parseJson<Record<string, unknown>>(
+      source.data as string,
+      {},
+    );
+    copyData.applied_level = Math.min(
+      Number(source.level ?? 1),
+      Number(campaignLevel),
+    );
+
     const copyId = randomUUID();
     const now = new Date().toISOString();
     await this.db.execute(
@@ -362,7 +378,7 @@ export class CampaignsService {
         source.race,
         source.class,
         campaignLevel,
-        source.data,
+        JSON.stringify(copyData),
         campaign.id,
         now,
         now,
@@ -529,19 +545,51 @@ export class CampaignsService {
   // Sets every active member's campaign-copy character to the same level in one shot — used by
   // the DM hub's party level control (manual set and "level party up" both funnel through here).
   // Only touches the `level` column; HP/spell slots/features stay whatever they were — the backend
-  // has no per-class hit-die/CON-mod math to recompute max_hp, so HP is left for the DM to adjust
-  // per character through the wizard, same as leveling a single character up manually.
+  // has no per-class hit-die/CON-mod math to recompute max_hp, so HP is left for the player to
+  // apply through the self-serve Level-Up flow (or the DM through the wizard). To make that flow
+  // reliably detectable, each character whose level actually goes up gets `applied_level` pinned
+  // to its *previous* level (never raised) — that's the exact "a level-up is pending" signal
+  // levelUpPending()/character_level_up_pending read.
   async setPartyLevel(campaignId: string, dmId: string, level: number) {
     const campaign = await this.getCampaignRow(campaignId);
     if (campaign.dm_id !== dmId) throw new ForbiddenException();
-    await this.db.execute(
-      `UPDATE characters SET level = ?, updated_at = ?
-       WHERE id IN (
-         SELECT character_id FROM campaign_members
-         WHERE campaign_id = ? AND status = 'active'
-       )`,
-      [level, new Date().toISOString(), campaignId],
+
+    const affected = await this.db.execute(
+      `SELECT ch.id, ch.level, ch.data FROM characters ch
+       JOIN campaign_members m ON m.character_id = ch.id
+       WHERE m.campaign_id = ? AND m.status = 'active'`,
+      [campaignId],
     );
+    const now = new Date().toISOString();
+    let anyLevelledUp = false;
+    for (const row of affected.rows) {
+      const previousLevel = Number(row.level ?? 1);
+      if (level > previousLevel) anyLevelledUp = true;
+      const data = this.db.parseJson<Record<string, unknown>>(
+        row.data as string,
+        {},
+      );
+      // Level up: pin applied_level to the old level so exactly the new band reads as pending
+      // (unless the player was already behind, in which case keep the lower value). Level down
+      // or unchanged: nothing to apply, so keep it in step with the new level.
+      const current =
+        data.applied_level != null ? Number(data.applied_level) : previousLevel;
+      data.applied_level =
+        level > previousLevel ? Math.min(current, previousLevel) : level;
+      await this.db.execute(
+        `UPDATE characters SET level = ?, data = ?, updated_at = ? WHERE id = ?`,
+        [level, JSON.stringify(data), now, row.id],
+      );
+    }
+
+    if (anyLevelledUp) {
+      this.presence.notifyPartyLeveled({
+        campaignId,
+        campaignName:
+          typeof campaign.name === 'string' ? campaign.name : 'your campaign',
+        level,
+      });
+    }
     return this.findOne(campaignId, { id: dmId, role: 'admin' } as RequestUser);
   }
 
@@ -604,6 +652,13 @@ export class CampaignsService {
       character_race: revealRaceClass ? row.character_race : null,
       character_class: revealRaceClass ? row.character_class : null,
       character_level: row.character_level,
+      // A self-serve level-up is pending when the player has a level the DM granted but hasn't
+      // resolved through POST /characters/:id/level-up yet. Only the explicit marker is checked
+      // here (legacy copies with no marker are still caught on the dashboard / play-sheet, which
+      // have live HP stats); absent marker => not flagged.
+      character_level_up_pending:
+        data.applied_level != null &&
+        Number(data.applied_level) < Number(row.character_level),
       character_max_hp: data.max_hp ?? null,
       character_current_hp: data.current_hp ?? null,
       character_armor_class: data.armor_class ?? null,

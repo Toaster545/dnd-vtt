@@ -35,6 +35,9 @@ export class PartyListComponent {
   toggleRaceClassVisibility = output<CampaignMember>();
   viewCharacter = output<CampaignMember>();
   editCharacter = output<CampaignMember>();
+  // Player self-service: the DM granted a level this character hasn't applied yet — opens the
+  // one-shot Level-Up flow. Only ever shown on the viewer's own row.
+  levelUpCharacter = output<CampaignMember>();
 
   isMe(member: CampaignMember): boolean {
     const id = this.currentUserId();

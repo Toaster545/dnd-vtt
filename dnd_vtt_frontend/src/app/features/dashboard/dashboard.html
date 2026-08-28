@@ -105,9 +105,9 @@
                   <p class="m-0 text-sm text-parchment">
                     <strong>{{ alert.character.name }}</strong> reached level <strong>{{ alert.character.level }}</strong> in <span class="text-gold">{{ alert.character.campaign_name }}</span>.
                   </p>
-                  <p class="m-0 mt-0.5 text-xs text-slate">{{ alert.character.edit_unlocked ? 'Update the character sheet to apply the new level.' : 'Your DM has not unlocked editing yet.' }}</p>
+                  <p class="m-0 mt-0.5 text-xs text-slate">Apply your level-up: pick HP, features and any new spells.</p>
                 </div>
-                @if (alert.character.edit_unlocked) { <button class="btn-outline px-3 py-1.5 text-sm" (click)="goToCharacters()">Update</button> }
+                <button class="btn-outline px-3 py-1.5 text-sm" [routerLink]="['/home/characters', alert.character.id, 'level-up']">Level Up</button>
               </div>
             }
           </div>

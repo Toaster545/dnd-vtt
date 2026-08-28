@@ -70,6 +70,12 @@ export class CharacterWizardComponent implements OnInit, OnDestroy {
   private dialog           = inject(MatDialog);
 
   readonly character  = input<Character | null>(null);
+  // Level-Up mode (routed in via /home/characters/:id/level-up): the wizard edits an existing,
+  // possibly DM-locked campaign copy through the one-shot POST /characters/:id/level-up endpoint
+  // instead of the normal save. Only the Class and Spells steps are shown, only the newly-reached
+  // level's grants are editable (minEditableLevel on the class step), and there's no autosave —
+  // the single write happens on "Apply Level-Up".
+  readonly levelUp    = input(false);
   readonly saved      = output<void>();
   readonly cancelled  = output<void>();
   readonly viewSheet  = output<string>();
@@ -77,6 +83,23 @@ export class CharacterWizardComponent implements OnInit, OnDestroy {
   readonly steps = STEPS;
 
   activeStep = signal(0);
+  saveError  = signal('');
+
+  // In level-up mode the stepper is limited to Class (0) and Spells (5); absolute indices are
+  // kept so incompleteSteps()/stepNeedsAttention() stay correctly aligned.
+  readonly visibleStepIndices = computed(() => this.levelUp() ? [0, 5] : [0, 1, 2, 3, 4, 5]);
+
+  // Levels at or below this are already locked in and render read-only on the class step. The
+  // route guard has already established a level-up is pending; `applied_level` is authoritative
+  // once set, otherwise fall back to "one level ago". Multiclass characters get no lower bound —
+  // the class step's per-class level frame doesn't line up with an overall-level baseline, so the
+  // whole class is shown editable and the backend's one-shot + level-sum checks keep it honest.
+  readonly levelUpBaseline = computed(() => {
+    if (!this.levelUp()) return 0;
+    const existing = this.existingCharacter();
+    if ((existing?.classes?.length ?? 1) > 1) return 0;
+    return existing?.applied_level ?? Math.max(1, (existing?.level ?? 1) - 1);
+  });
 
   races       = signal<DndRace[]>([]);
   classes     = signal<DndClass[]>([]);
@@ -255,14 +278,19 @@ export class CharacterWizardComponent implements OnInit, OnDestroy {
   });
 
   profBonus  = computed(() => Math.ceil(this.level() / 4) + 1);
-  suggestedMaxHP = computed(() => {
+  // Average HP for an arbitrary character level off the current class / CON / per-level-bonus
+  // picks. `suggestedMaxHP` reads it at the live level; the level-up seed also reads it at the
+  // pre-level-up baseline so the new level's gain lands on top of the stored (possibly
+  // hand-entered) max HP instead of recomputing the whole total from the average.
+  private averageMaxHpAt(charLevel: number): number {
     const cls = this.primaryClass();
     if (!cls) return 10;
     const conMod = abilityModifier(this.finalScores().constitution);
     // e.g. Tough: +2 max HP per character level, on top of the normal hit-die progression.
     const perLevelBonus = this.selectedEffects('hp_bonus_per_level').reduce((sum, e) => sum + (e.value ?? 0), 0);
-    return averageHpFormula(this.level(), cls.hit_die, conMod, perLevelBonus);
-  });
+    return averageHpFormula(charLevel, cls.hit_die, conMod, perLevelBonus);
+  }
+  suggestedMaxHP = computed(() => this.averageMaxHpAt(this.level()));
   maxHP = computed(() => this.maxHpOverride() ?? this.suggestedMaxHP());
   // Scans every chosen class option and feat for a structured `effects` entry of the given
   // type. Conditioned effects (e.g. Defense's ac_bonus "while wearing armor") are excluded by
@@ -302,7 +330,10 @@ export class CharacterWizardComponent implements OnInit, OnDestroy {
     return base + bonus;
   });
   isEditing  = computed(() => this.characterId() !== null);
-  isLastStep = computed(() => this.activeStep() === STEPS.length - 1);
+  isLastStep = computed(() => {
+    const visible = this.visibleStepIndices();
+    return this.activeStep() === visible[visible.length - 1];
+  });
   incompleteSteps = computed(() => [
     !areClassSelectionsComplete(this.selectedClasses(), this.feats()) || this.classHasSkillConflict(),
     !isRaceSelectionComplete(this.raceSelection(), this.feats()) || this.raceHasSkillConflict(),
@@ -561,7 +592,10 @@ export class CharacterWizardComponent implements OnInit, OnDestroy {
       alignment: this.alignment(),
       ability_scores: { ...this.finalScores() },
       max_hp: hp,
-      max_hp_overridden: this.maxHpOverride() !== null,
+      // "Overridden" means the player pinned a value that isn't the average progression — a
+      // manual entry that happens to equal the average (or a later CON bump that makes it
+      // match) isn't flagged, so the pending-level-up heuristics still read it as "caught up".
+      max_hp_overridden: this.maxHpOverride() !== null && this.maxHpOverride() !== this.suggestedMaxHP(),
       // Clamped to the (possibly just-lowered) max — e.g. leveling a character down elsewhere
       // shrinks max_hp on the next wizard save, and current_hp shouldn't end up exceeding it.
       current_hp: Math.min((this.currentHp() ?? hp) + hpGain, hp),
@@ -631,6 +665,9 @@ export class CharacterWizardComponent implements OnInit, OnDestroy {
       const step = this.activeStep();
 
       if (!this.initialized) return;
+      // Level-up mode is a single, one-shot write on "Apply Level-Up" — never autosave (the
+      // backend endpoint 409s once applied) and don't touch the draft-step bookmark.
+      if (this.levelUp()) return;
       localStorage.setItem(ACTIVE_DRAFT_STEP_KEY, String(step));
       this.scheduleSave();
     });
@@ -739,11 +776,22 @@ export class CharacterWizardComponent implements OnInit, OnDestroy {
         }), {} as Record<Ability, number | null>));
       }
       const suggestedHp = this.suggestedMaxHP();
-      this.maxHpOverride.set(
-        existing.max_hp_overridden || existing.max_hp !== suggestedHp
-          ? existing.max_hp
-          : null,
-      );
+      if (this.levelUp()) {
+        // The stored max_hp is the *pre*-level-up total (that mismatch is the very signal a
+        // level-up is pending). Seed the field with that total plus this level's average HP
+        // gain, so a rolled or hand-entered max HP from earlier levels carries forward and the
+        // new level lands on top of it — the player can still edit to their actual roll, or
+        // reset to the plain average.
+        // `levelUpBaseline()` is the pre-level-up level for a single-class character; it's 0 for
+        // multiclass (no reliable overall-level frame), where one level back is the safe fallback.
+        const baselineLevel = this.levelUpBaseline() || Math.max(1, this.level() - 1);
+        const gain = Math.max(0, suggestedHp - this.averageMaxHpAt(baselineLevel));
+        this.maxHpOverride.set((existing.max_hp ?? suggestedHp) + gain);
+      } else {
+        this.maxHpOverride.set(
+          existing.max_hp_overridden || existing.max_hp !== suggestedHp ? existing.max_hp : null,
+        );
+      }
       this.spellChoices.set(existing.spell_choices ?? this.migrateLegacySpells(existing.spells ?? []));
     }
 
@@ -935,11 +983,14 @@ export class CharacterWizardComponent implements OnInit, OnDestroy {
     if (this.saving()) return;
     if (this.saveTimer) { clearTimeout(this.saveTimer); this.saveTimer = null; }
     this.saving.set(true);
+    this.saveError.set('');
     try {
       const draft = this.draftCharacter();
       const existing = this.existingCharacter();
       let result: Character;
-      if (!this.characterId()) {
+      if (this.levelUp()) {
+        result = await this.characterService.applyLevelUp(this.characterId()!, draft);
+      } else if (!this.characterId()) {
         result = await this.characterService.createDraft(draft, this.activeStep());
       } else if (existing?.creation_status === 'draft') {
         result = await this.characterService.updateDraft(this.characterId()!, draft, this.activeStep());
@@ -955,13 +1006,26 @@ export class CharacterWizardComponent implements OnInit, OnDestroy {
       this.saveStatus.set('saved');
       if (this.statusTimer) clearTimeout(this.statusTimer);
       this.statusTimer = setTimeout(() => this.saveStatus.set('idle'), 2000);
+    } catch (error: unknown) {
+      // Preserve the pre-existing behaviour for the autosaved create/edit paths (propagate and
+      // let the next change retry). Level-up is a one-shot write, so capture the reason for the
+      // footer and still rethrow so finish() doesn't emit `saved`.
+      if (!this.levelUp()) throw error;
+      const candidate = error as { error?: { message?: string | string[] } };
+      const message = candidate.error?.message;
+      this.saveError.set(Array.isArray(message) ? message.join(' ') : message ?? 'Could not apply the level-up.');
+      throw error;
     } finally {
       this.saving.set(false);
     }
   }
 
   async finish() {
-    await this.save();
+    try {
+      await this.save();
+    } catch {
+      return; // level-up failure — saveError() is shown in the footer
+    }
     const id = this.characterId();
     if (id && this.existingCharacter()?.creation_status === 'draft') {
       const completed = await this.characterService.completeDraft(id);
@@ -971,8 +1035,25 @@ export class CharacterWizardComponent implements OnInit, OnDestroy {
     }
     this.saved.emit();
   }
-  async cancelAndSave() { await this.save(); this.cancelled.emit(); }
-  async openSheet() { await this.save(); const id = this.characterId(); if (id) this.viewSheet.emit(id); }
-  prev() { this.activeStep.update(s => Math.max(0, s - 1)); }
-  next() { this.activeStep.update(s => Math.min(STEPS.length - 1, s + 1)); }
+  // Manual Max-HP entry from the header field (available in every wizard mode) so a player can
+  // pin a rolled or otherwise non-average total; clearing it (maxHpOverride.set(null)) falls
+  // back to the average progression. In level-up mode the field is pre-seeded with the previous
+  // total plus the new level's average gain, so edits there add on top of that carried-forward value.
+  setMaxHpOverride(value: string | number) {
+    this.maxHpOverride.set(Math.max(1, Math.floor(Number(value) || 1)));
+  }
+
+  // Level-up discards unsaved picks on Close — the only persistence point is "Apply Level-Up".
+  async cancelAndSave() { if (!this.levelUp()) await this.save(); this.cancelled.emit(); }
+  async openSheet() { if (!this.levelUp()) await this.save(); const id = this.characterId(); if (id) this.viewSheet.emit(id); }
+  prev() {
+    const visible = this.visibleStepIndices();
+    const i = visible.indexOf(this.activeStep());
+    this.activeStep.set(visible[Math.max(0, i - 1)]);
+  }
+  next() {
+    const visible = this.visibleStepIndices();
+    const i = visible.indexOf(this.activeStep());
+    this.activeStep.set(visible[Math.min(visible.length - 1, i + 1)]);
+  }
 }
