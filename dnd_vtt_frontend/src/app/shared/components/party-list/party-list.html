@@ -41,6 +41,13 @@
                 [matTooltip]="member.show_race_class ? 'Your race/class is visible to the party — click to hide' : 'Your race/class is hidden from the party — click to reveal'">
           <mat-icon class="text-base">{{ member.show_race_class ? 'visibility' : 'visibility_off' }}</mat-icon>
         </button>
+        @if (member.character_level_up_pending) {
+          <button class="btn-outline text-xs px-2 py-1 flex-shrink-0 border-gold/40 text-gold"
+                  (click)="$event.stopPropagation(); levelUpCharacter.emit(member)"
+                  matTooltip="Apply the level your DM granted">
+            <mat-icon class="text-base">trending_up</mat-icon> Level Up
+          </button>
+        }
         <button class="btn-outline text-xs px-2 py-1 flex-shrink-0"
                 (click)="$event.stopPropagation(); viewCharacter.emit(member)"
                 matTooltip="View your character sheet">

@@ -180,6 +180,24 @@ const PLAYER_EDITABLE_FIELDS = [
   'armor_class',
 ] as const;
 
+// Blob fields the self-serve Level-Up flow (applyLevelUp) may rewrite even on a DM-locked
+// campaign copy. A superset of PLAYER_EDITABLE_FIELDS: it also lets the player record the
+// mechanical choices for the level the DM granted them — class/subclass progression and its
+// feat/ASI picks (which live inside `classes[].choices`), rolled/averaged HP, new spells, and
+// the proficiencies those grants can add. Still nothing that isn't a consequence of the new
+// level: race, background, ability_scores, alignment, and the `name`/`level` columns stay out.
+const LEVEL_UP_EDITABLE_FIELDS = [
+  ...PLAYER_EDITABLE_FIELDS,
+  'classes',
+  'subclass',
+  'max_hp',
+  'max_hp_overridden',
+  'spell_choices',
+  'skills',
+  'expertise',
+  'languages',
+] as const;
+
 // Columns deserialize() layers onto the data blob — must be stripped back out before rewriting
 // the blob, or they'd get persisted as (duplicate, stale) keys inside `data` itself.
 const CHARACTER_COLUMN_KEYS = new Set([
@@ -458,6 +476,117 @@ export class CharactersService {
       ],
     );
     return this.findOneReadable(id, user);
+  }
+
+  // The self-serve Level-Up flow: apply the choices for a level the DM granted (HP, class/
+  // subclass features, ASI/feat, spells) to a campaign copy the player otherwise can't edit.
+  // One-shot per level bump — once `applied_level` reaches `level` this 409s and the frontend
+  // route redirects away.
+  async applyLevelUp(
+    id: string,
+    user: RequestUser,
+    body: Record<string, unknown>,
+  ) {
+    return this.withCharacterLock(id, async () => {
+      const existing = (await this.findOneReadable(id, user)) as Record<
+        string,
+        unknown
+      >;
+      // Owning player only — the owning DM keeps the full update() path.
+      if (existing.user_id !== user.id) throw new ForbiddenException();
+      if (!existing.campaign_id)
+        throw new BadRequestException(
+          'Level-Up only applies to a campaign character; use the wizard for a standalone one.',
+        );
+
+      const level = Number(existing.level ?? 1);
+      if (this.levelUpBaseline(existing, level) >= level)
+        throw new ConflictException(
+          'No level-up is pending for this character.',
+        );
+
+      const data: Record<string, unknown> = {};
+      for (const [key, value] of Object.entries(existing)) {
+        if (!CHARACTER_COLUMN_KEYS.has(key)) data[key] = value;
+      }
+      for (const key of LEVEL_UP_EDITABLE_FIELDS) {
+        if (key in body) data[key] = body[key];
+      }
+
+      // Class levels must still add up to the level the DM set — never trust a `level` from the
+      // body, and don't let the multiclass split drift.
+      const classes = recordArray(data.classes);
+      if (classes.length) {
+        const total = classes.reduce(
+          (sum, entry) => sum + Number(entry.level ?? 0),
+          0,
+        );
+        if (total !== level)
+          throw new BadRequestException(
+            `Class levels add up to ${total}, but this character is level ${level}.`,
+          );
+      }
+
+      await this.assertCampaignSources(
+        existing.campaign_id as string,
+        data.enabled_sources,
+      );
+      if (
+        this.changed(existing.spell_choices, body.spell_choices) &&
+        (await this.isCharacterInActiveEncounter(
+          id,
+          existing.campaign_id as string,
+        ))
+      ) {
+        throw new ConflictException(
+          'Spell selection cannot be changed during an active encounter.',
+        );
+      }
+
+      const normalized =
+        'avatar_recipe' in body ? this.normalizeCharacterAvatar(data) : data;
+      normalized.applied_level = level;
+
+      await this.writeCharacterData(id, normalized);
+      return this.findOneReadable(id, user);
+    });
+  }
+
+  // Highest level the player has already resolved. Explicit `applied_level` wins; otherwise fall
+  // back to the same average-HP staleness signal the dashboard uses — a stored max_hp that still
+  // matches the average for the current level (or an explicit override) means nothing's pending.
+  private levelUpBaseline(
+    data: Record<string, unknown>,
+    level: number,
+  ): number {
+    if (data.applied_level != null) return Number(data.applied_level);
+    if (data.max_hp_overridden) return level;
+    const suggested = this.estimateAverageMaxHp(data, level);
+    if (suggested != null && suggested === Number(data.max_hp)) return level;
+    return Math.max(1, level - 1);
+  }
+
+  // Mirrors averageHpFormula in the frontend's character-effects.ts (primary-class hit die, no
+  // feat per-level bonuses) — only used to decide "did the level change since the last save".
+  private estimateAverageMaxHp(
+    data: Record<string, unknown>,
+    level: number,
+  ): number | null {
+    const raw = recordArray(data.classes)[0]?.name ?? data.class;
+    if (typeof raw !== 'string' || !raw.trim()) return null;
+    const primaryName = raw.toLowerCase().replace(/\s+/g, '-');
+    let hitDie: number;
+    try {
+      hitDie = Number(this.content.getClass(primaryName).hit_die ?? 8);
+    } catch {
+      return null;
+    }
+    const scores = (data.ability_scores ?? {}) as Record<string, unknown>;
+    const conMod = Math.floor((Number(scores.constitution ?? 10) - 10) / 2);
+    return Math.max(
+      1,
+      hitDie + conMod + (level - 1) * (Math.floor(hitDie / 2) + 1 + conMod),
+    );
   }
 
   private changed(current: unknown, next: unknown): boolean {

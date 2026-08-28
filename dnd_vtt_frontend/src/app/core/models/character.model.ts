@@ -133,6 +133,10 @@ export interface Character {
   // HP — max_hp stored so players can override auto-calc (rolled HP, feats, etc.)
   max_hp: number;
   max_hp_overridden?: boolean;
+  // Highest character level the player has applied through the self-serve Level-Up flow
+  // (POST /characters/:id/level-up). Absent on characters that predate that flow. When it's
+  // below `level`, a level-up is pending — see levelUpPending() in core/utils/level-up.
+  applied_level?: number;
   current_hp: number;
   temp_hp: number;
   hit_dice_used: number;

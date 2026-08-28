@@ -127,6 +127,10 @@ export class PlayerCampaignHubComponent implements OnInit {
     this.sheetCharacter.set(await this.characterService.getCharacter(member.character_id));
   }
 
+  levelUpMyCharacter(member: CampaignMember) {
+    void this.router.navigate(['/home/characters', member.character_id, 'level-up']);
+  }
+
   // The play sheet's (saved) emits the updated character after every persist — keep the sheet in
   // sync and refresh the Party roster's HP/AC badges to match, but stay on the sheet (unlike the
   // wizard's onCharacterSaved, which navigates back to the hub).

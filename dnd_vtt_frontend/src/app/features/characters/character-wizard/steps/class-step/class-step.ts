@@ -29,6 +29,10 @@ export class ClassStepComponent implements OnInit {
   readonly speciesChoices    = input<Record<string, string[]>>({});
   readonly selectedClasses   = input<ClassEntry[]>([]);
   readonly characterLevel    = input.required<number>();
+  // Lower bound for editable levels — grant rows at or below this render read-only (their picks
+  // are already locked in). 0 = no bound, the normal create/edit case. Set by the Level-Up flow
+  // to the character's previously-applied level so only the new level(s) are editable.
+  readonly minEditableLevel  = input(0);
   readonly baseAbilityScores = input.required<Record<Ability, number>>();
   readonly proficientSkills  = input<string[]>([]);
   readonly unavailableSkills = input<string[]>([]);
@@ -308,7 +312,13 @@ export class ClassStepComponent implements OnInit {
   }
 
   isLevelUnlocked(level: number): boolean {
-    return level <= this.effectiveLevel();
+    return level > this.minEditableLevel() && level <= this.effectiveLevel();
+  }
+
+  // A level that's locked because it sits at or below minEditableLevel (already resolved) rather
+  // than because it hasn't been reached yet — drives the "already chosen" vs "unlocks at" label.
+  isLevelAlreadyApplied(level: number): boolean {
+    return level <= this.minEditableLevel();
   }
 
   traitSelected(grant: TraitGrant & { key: string }, option: string): boolean {

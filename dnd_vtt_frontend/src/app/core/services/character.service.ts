@@ -114,6 +114,15 @@ export class CharacterService {
     );
   }
 
+  // Self-serve Level-Up: apply the choices for a level the DM granted (HP, class/subclass
+  // features, ASI/feat, spells) even on a DM-locked campaign copy. One-shot — the backend 409s
+  // once the character's `applied_level` has caught up to its `level`.
+  async applyLevelUp(id: string, character: Character): Promise<Character> {
+    return firstValueFrom(
+      this.http.post<Character>(`${API}/characters/${id}/level-up`, character)
+    );
+  }
+
   // DM-only: grants (or stacks more of) an item from the SRD/custom item catalog onto a party
   // member's campaign copy. The backend rejects this unless the caller DMs that character's campaign.
   async grantItem(id: string, itemIndex: string, quantity: number): Promise<Character> {

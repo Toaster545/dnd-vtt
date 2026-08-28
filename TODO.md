@@ -36,6 +36,7 @@
 - [ ] Fullscreen for ios mode
 - [X] Showing feat ability score improvements right below the chosen feat
 - [X] Viewing character sheet directly in encounter
+- [X] HP when leveling up
 
 ## Mathieu
 

@@ -30,12 +30,16 @@ describe('CampaignsService', () => {
   let cleanup: () => void;
   let dmId: string;
   let dm: RequestUser;
+  let notifyPartyLeveled: jest.Mock;
 
   beforeEach(async () => {
     const testDb = await createTestDb();
     db = testDb.db;
     cleanup = testDb.cleanup;
-    campaigns = new CampaignsService(db);
+    notifyPartyLeveled = jest.fn();
+    campaigns = new CampaignsService(db, {
+      notifyPartyLeveled,
+    } as unknown as ConstructorParameters<typeof CampaignsService>[1]);
     characters = new CharactersService(db);
     dmId = await insertProfile(db, 'admin');
     dm = { id: dmId, role: 'admin' } as RequestUser;
@@ -83,6 +87,66 @@ describe('CampaignsService', () => {
     await expect(
       campaigns.setPartyLevel(campaign.id as string, otherDm, 5),
     ).rejects.toThrow(ForbiddenException);
+  });
+
+  describe('setPartyLevel', () => {
+    async function joinedCopyId(level: number) {
+      const campaign = await campaigns.create(dmId, { name: 'Test' });
+      const playerId = await insertProfile(db);
+      const source = await characters.create(playerId, { name: 'Aria', level });
+      const joined = await campaigns.join(asPlayer(playerId), {
+        joinCode: campaign.join_code as string,
+        characterId: source.id,
+      } as JoinCampaignDto);
+      return {
+        campaignId: campaign.id as string,
+        characterId: joined.members[0].character_id,
+        playerId,
+      };
+    }
+
+    it('pins applied_level to the previous level when the party levels up', async () => {
+      const { campaignId, characterId, playerId } = await joinedCopyId(3);
+
+      await campaigns.setPartyLevel(campaignId, dmId, 4);
+      let copy = await characters.findOne(characterId, playerId);
+      expect(copy.level).toBe(4);
+      expect((copy as unknown as Record<string, unknown>).applied_level).toBe(
+        3,
+      );
+
+      // A further bump keeps the oldest un-applied level as the baseline.
+      await campaigns.setPartyLevel(campaignId, dmId, 6);
+      copy = await characters.findOne(characterId, playerId);
+      expect(copy.level).toBe(6);
+      expect((copy as unknown as Record<string, unknown>).applied_level).toBe(
+        3,
+      );
+    });
+
+    it('keeps applied_level in step with the level when the party levels down', async () => {
+      const { campaignId, characterId, playerId } = await joinedCopyId(5);
+
+      await campaigns.setPartyLevel(campaignId, dmId, 3);
+      const copy = await characters.findOne(characterId, playerId);
+      expect(copy.level).toBe(3);
+      expect((copy as unknown as Record<string, unknown>).applied_level).toBe(
+        3,
+      );
+    });
+
+    it('broadcasts party_leveled on a level-up, but not on a level-down', async () => {
+      const { campaignId } = await joinedCopyId(3);
+
+      await campaigns.setPartyLevel(campaignId, dmId, 5);
+      expect(notifyPartyLeveled).toHaveBeenCalledWith(
+        expect.objectContaining({ campaignId, level: 5 }),
+      );
+
+      notifyPartyLeveled.mockClear();
+      await campaigns.setPartyLevel(campaignId, dmId, 2);
+      expect(notifyPartyLeveled).not.toHaveBeenCalled();
+    });
   });
 
   it('sets an explicit current session and rejects a session from another campaign', async () => {

@@ -6,8 +6,9 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { AuthService } from '../../core/services/auth.service';
 import { CampaignService } from '../../core/services/campaign.service';
+import { CharacterService } from '../../core/services/character.service';
 import { EncounterService } from '../../core/services/encounter.service';
-import { EncounterStartedEvent } from '../../core/models/encounter.model';
+import { EncounterStartedEvent, PartyLeveledEvent } from '../../core/models/encounter.model';
 import { MainLayoutComponent } from '../../shared/layout/main-layout/main-layout';
 import { AppHeaderComponent } from '../../shared/layout/app-header/app-header';
 import { SettingsDialogComponent } from '../settings/settings-dialog';
@@ -29,6 +30,7 @@ type Tab = 'dashboard' | 'characters' | 'campaigns' | 'content-library';
 export class ShellComponent implements OnInit, OnDestroy {
   private router           = inject(Router);
   private campaignService  = inject(CampaignService);
+  private characterService = inject(CharacterService);
   private encounterService = inject(EncounterService);
   private dialog           = inject(MatDialog);
   auth = inject(AuthService);
@@ -38,8 +40,12 @@ export class ShellComponent implements OnInit, OnDestroy {
   // they'd already be the one starting it), a dismissible banner appears, a shortcut on top of the
   // existing browse-and-join flow in the campaign session view.
   liveAlert = signal<EncounterStartedEvent | null>(null);
+  // Same idea for a party level-up: the DM bumped the party, so surface a banner that jumps
+  // straight into the one-shot Level-Up flow for this member's own character in that campaign.
+  levelUpAlert = signal<{ campaignName: string; level: number; characterId: string } | null>(null);
   private myJoinedCampaignIds = new Set<string>();
   private startedSub?: Subscription;
+  private leveledSub?: Subscription;
 
   async ngOnInit() {
     this.syncActiveTabFromUrl(this.router.url);
@@ -52,14 +58,47 @@ export class ShellComponent implements OnInit, OnDestroy {
     this.startedSub = this.encounterService.watchEncounterStarted().subscribe(event => {
       if (this.myJoinedCampaignIds.has(event.campaignId)) this.liveAlert.set(event);
     });
+    this.leveledSub = this.encounterService.watchPartyLeveled().subscribe(event => {
+      if (this.myJoinedCampaignIds.has(event.campaignId)) void this.onPartyLeveled(event);
+    });
   }
 
   ngOnDestroy() {
     this.startedSub?.unsubscribe();
+    this.leveledSub?.unsubscribe();
+  }
+
+  // Resolve which of the viewer's characters the bump affects (one campaign copy per campaign)
+  // and only raise the banner if a level-up is genuinely outstanding on it.
+  private async onPartyLeveled(event: PartyLeveledEvent) {
+    try {
+      const copies = await this.characterService.getMyCampaignCopies();
+      const mine = copies.find(character => character.campaign_id === event.campaignId);
+      if (!mine?.id) return;
+      if (mine.applied_level != null && mine.applied_level >= mine.level) return;
+      this.levelUpAlert.set({
+        campaignName: event.campaignName,
+        level: event.level,
+        characterId: mine.id,
+      });
+    } catch {
+      /* transient fetch failure — the dashboard/sheet entry points still cover it */
+    }
   }
 
   dismissAlert() {
     this.liveAlert.set(null);
+  }
+
+  dismissLevelUpAlert() {
+    this.levelUpAlert.set(null);
+  }
+
+  openLevelUpAlert() {
+    const alert = this.levelUpAlert();
+    if (!alert) return;
+    this.levelUpAlert.set(null);
+    void this.router.navigate(['/home/characters', alert.characterId, 'level-up']);
   }
 
   joinLiveAlert() {

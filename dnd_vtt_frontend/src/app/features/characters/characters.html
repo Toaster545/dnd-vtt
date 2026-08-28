@@ -38,6 +38,12 @@
             <div class="flex items-center gap-1.5">
               <span class="text-xs text-slate border border-white/10 rounded px-2 py-0.5">HP {{ c.current_hp }}/{{ c.max_hp }}</span>
               <span class="text-xs text-slate border border-white/10 rounded px-2 py-0.5">AC {{ c.armor_class }}</span>
+              @if (levelUpPendingFor(c)) {
+                <button class="btn-outline text-xs px-2 py-0.5 border-gold/40 text-gold ml-auto"
+                        (click)="$event.stopPropagation(); openLevelUp(c)">
+                  <mat-icon class="text-sm">trending_up</mat-icon> Level Up
+                </button>
+              }
             </div>
 
             <div class="flex items-center gap-1.5 mt-auto pt-1 border-t border-white/8 -mx-5 px-5">

@@ -187,6 +187,19 @@ export class EncounterPresenceGateway
       .emit('encounter_started', payload);
   }
 
+  // Same campaign-room broadcast as encounter_started: the DM levelled the party, so every
+  // connected member's client can surface a "you have a level-up to apply" banner. The client
+  // resolves which of its own characters is affected (one per campaign) — see ShellComponent.
+  notifyPartyLeveled(payload: {
+    campaignId: string;
+    campaignName: string;
+    level: number;
+  }) {
+    this.server
+      .to(`campaign:${payload.campaignId}`)
+      .emit('party_leveled', payload);
+  }
+
   private async assertEncounterAccess(
     client: Socket,
     encounterId: string,

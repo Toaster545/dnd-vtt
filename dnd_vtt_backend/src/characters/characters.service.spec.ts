@@ -284,6 +284,105 @@ describe('CharactersService', () => {
 
       expect(updated.name).toBe('DM Renamed');
     });
+
+    describe('applyLevelUp', () => {
+      async function makePendingCopy() {
+        const created = await service.create(ownerId, {
+          name: 'Aria',
+          race: 'Elf',
+          class: 'Wizard',
+          level: 3,
+          // Deliberately below the average for level 3 and not overridden, so a level-up reads
+          // as pending (no applied_level marker yet).
+          max_hp: 1,
+          ability_scores: {
+            strength: 10,
+            dexterity: 10,
+            constitution: 10,
+            intelligence: 10,
+            wisdom: 10,
+            charisma: 10,
+          },
+          notes: 'secret DM notes',
+        });
+        const campaignId = randomUUID();
+        const dmId = await insertProfile(db);
+        await db.execute(
+          `INSERT INTO campaigns (id, dm_id, name, join_code) VALUES (?, ?, 'Test Campaign', ?)`,
+          [campaignId, dmId, randomUUID().slice(0, 6).toUpperCase()],
+        );
+        await db.execute('UPDATE characters SET campaign_id = ? WHERE id = ?', [
+          campaignId,
+          created.id,
+        ]);
+        await db.execute(
+          `INSERT INTO campaign_members (id, campaign_id, user_id, character_id, edit_unlocked)
+           VALUES (?, ?, ?, ?, 0)`,
+          [randomUUID(), campaignId, ownerId, created.id],
+        );
+        return { created, dmId };
+      }
+
+      it('applies level-up fields on a locked copy, stamps applied_level, drops the rest', async () => {
+        const { created } = await makePendingCopy();
+
+        const result = (await service.applyLevelUp(
+          created.id as string,
+          owner,
+          {
+            classes: [{ name: 'Wizard', level: 3, subclass: '', choices: {} }],
+            max_hp: 18,
+            spell_choices: { 'wizard:cantrips': ['fire-bolt'] },
+            level: 99, // must be ignored
+            race: 'Dragonborn', // outside the whitelist
+            notes: 'player tried to overwrite notes',
+          },
+        )) as unknown as Record<string, unknown>;
+
+        expect(result.max_hp).toBe(18);
+        expect(result.applied_level).toBe(3);
+        expect(result.level).toBe(3); // column untouched by the body
+        expect(result.race).toBe('Elf');
+        expect(result.notes).toBe('secret DM notes');
+        expect(result.spell_choices).toEqual({
+          'wizard:cantrips': ['fire-bolt'],
+        });
+      });
+
+      it('is one-shot — a second apply at the same level is a conflict', async () => {
+        const { created } = await makePendingCopy();
+        await service.applyLevelUp(created.id as string, owner, {
+          classes: [{ name: 'Wizard', level: 3, choices: {} }],
+          max_hp: 18,
+        });
+        await expect(
+          service.applyLevelUp(created.id as string, owner, { max_hp: 20 }),
+        ).rejects.toThrow(ConflictException);
+      });
+
+      it('rejects a class-level split that does not add up to the character level', async () => {
+        const { created } = await makePendingCopy();
+        await expect(
+          service.applyLevelUp(created.id as string, owner, {
+            classes: [{ name: 'Wizard', level: 2, choices: {} }],
+          }),
+        ).rejects.toThrow(BadRequestException);
+      });
+
+      it('is not the owning DM’s path — they use update()', async () => {
+        const { created, dmId } = await makePendingCopy();
+        await expect(
+          service.applyLevelUp(
+            created.id as string,
+            {
+              id: dmId,
+              role: 'player',
+            } as RequestUser,
+            { max_hp: 18 },
+          ),
+        ).rejects.toThrow(ForbiddenException);
+      });
+    });
   });
 
   describe('rest resources', () => {

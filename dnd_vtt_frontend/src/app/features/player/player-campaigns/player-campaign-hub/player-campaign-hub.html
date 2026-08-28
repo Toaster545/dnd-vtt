@@ -63,7 +63,8 @@
         <app-party-list [members]="c.members" [currentUserId]="auth.profile()?.id ?? null" [showSelfControls]="true"
           (toggleRaceClassVisibility)="toggleRaceClassVisibility($event)"
           (viewCharacter)="viewMyCharacter($event)"
-          (editCharacter)="editMyCharacter($event)" />
+          (editCharacter)="editMyCharacter($event)"
+          (levelUpCharacter)="levelUpMyCharacter($event)" />
       </div>
     </div>
   </div>

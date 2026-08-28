@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 import { authGuard } from './core/guards/auth.guard';
 import { homeRedirectGuard } from './core/guards/home-redirect.guard';
 import { staleSessionGuard } from './core/guards/stale-session.guard';
+import { levelUpPendingGuard } from './core/guards/level-up-pending.guard';
 
 export const routes: Routes = [
   { path: '', canActivate: [homeRedirectGuard], children: [] },
@@ -93,6 +94,15 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./features/characters/character-wizard-page/character-wizard-page').then(
             m => m.CharacterWizardPageComponent,
+          ),
+        data: { bgOverlay: .9 },
+      },
+      {
+        path: 'characters/:id/level-up',
+        canActivate: [levelUpPendingGuard],
+        loadComponent: () =>
+          import('./features/characters/character-level-up-page/character-level-up-page').then(
+            m => m.CharacterLevelUpPageComponent,
           ),
         data: { bgOverlay: .9 },
       },

@@ -28,6 +28,14 @@ export interface EncounterStartedEvent {
   name: string;
 }
 
+// Broadcast to a campaign room the moment the DM levels the party up — a listening member's
+// client resolves its own affected character and surfaces a "level-up ready" banner in the shell.
+export interface PartyLeveledEvent {
+  campaignId: string;
+  campaignName: string;
+  level: number;
+}
+
 // A player currently viewing this encounter — ephemeral (live socket presence), not stored.
 export interface PresentPlayer {
   socketId: string;

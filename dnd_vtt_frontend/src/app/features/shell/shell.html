@@ -28,6 +28,19 @@
     </div>
   }
 
+  @if (levelUpAlert(); as alert) {
+    <div class="flex items-center gap-3 px-4 py-2.5 bg-gold/10 border-b border-gold/30 flex-shrink-0">
+      <mat-icon class="text-gold text-base">trending_up</mat-icon>
+      <span class="text-sm text-parchment flex-1">
+        Your party reached <strong>level {{ alert.level }}</strong> in <strong>{{ alert.campaignName }}</strong>.
+      </span>
+      <button class="btn-primary text-xs px-3 py-1.5" (click)="openLevelUpAlert()">Level Up</button>
+      <button class="btn-icon" (click)="dismissLevelUpAlert()" matTooltip="Dismiss">
+        <mat-icon class="text-base">close</mat-icon>
+      </button>
+    </div>
+  }
+
   <div class="mobile-content flex-1 min-h-0 flex flex-col overflow-x-hidden overflow-y-auto">
     <router-outlet></router-outlet>
   </div>

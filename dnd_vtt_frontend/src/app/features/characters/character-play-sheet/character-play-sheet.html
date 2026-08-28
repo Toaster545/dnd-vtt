@@ -154,6 +154,15 @@
       }
     </div>
 
+    @if (showLevelUpBanner()) {
+      <button type="button" (click)="goToLevelUp()"
+        class="flex items-center gap-2 w-full px-6 py-2 bg-gold/10 border-b border-gold/25 flex-shrink-0 text-sm text-gold text-left border-x-0 border-t-0 cursor-pointer">
+        <mat-icon class="text-base flex-shrink-0">trending_up</mat-icon>
+        <span class="flex-1">You reached level {{ char.level }} — apply your level-up.</span>
+        <span class="btn-outline text-xs px-2 py-0.5 pointer-events-none">Level Up</span>
+      </button>
+    }
+
     <!-- Tabs -->
     <div class="sheet-tabs flex border-b border-white/10 overflow-x-auto flex-shrink-0">
       <button

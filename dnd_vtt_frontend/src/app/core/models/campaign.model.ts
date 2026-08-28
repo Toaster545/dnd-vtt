@@ -27,6 +27,10 @@ export interface CampaignMember {
   character_race?: string;
   character_class?: string;
   character_level?: number;
+  // True when the DM has granted this character a level the player hasn't yet applied through
+  // the self-serve Level-Up flow (see levelUpPending / POST /characters/:id/level-up). Only set
+  // from the explicit `applied_level` marker — legacy copies without it read false here.
+  character_level_up_pending?: boolean;
   character_max_hp?: number | null;
   character_current_hp?: number | null;
   character_armor_class?: number | null;

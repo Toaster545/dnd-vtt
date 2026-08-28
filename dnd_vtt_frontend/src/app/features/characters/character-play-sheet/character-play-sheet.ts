@@ -35,6 +35,8 @@ import {
 } from '../../../core/utils/spellcasting';
 import { ConfirmService } from '../../../shared/confirm.service';
 import { SwipeTabsDirective } from '../../../shared/directives/swipe-tabs.directive';
+import { levelUpPending } from '../../../core/utils/level-up';
+import { Router } from '@angular/router';
 
 function toIndex(name: string): string {
   return name.toLowerCase().replace(/\s+/g, '-');
@@ -117,6 +119,7 @@ export class CharacterPlaySheetComponent {
   private actionsService  = inject(CharacterActionsService);
   private confirm         = inject(ConfirmService);
   private dialog          = inject(MatDialog);
+  private router          = inject(Router);
 
   readonly character = input.required<Character>();
   // Set by DM-facing hosts (dm-campaign-hub, dm-campaign-session, dm-encounter-play) when the
@@ -303,6 +306,20 @@ export class CharacterPlaySheetComponent {
       char, this.primaryClass(), this.raceData(), this.featsAll(), classesForFeats, this.itemsAll(), this.bgData(),
     );
   });
+
+  // Campaign copies only: the DM has granted a level the player hasn't applied yet. Links to the
+  // one-shot Level-Up flow (see levelUpPending / character-level-up-page).
+  showLevelUpBanner = computed(() => {
+    if (this.isDm()) return false; // the DM viewing a party member's sheet isn't the one levelling
+    const char = this.localChar();
+    const stats = this.stats();
+    return !!char?.campaign_id && !!stats && levelUpPending(char, stats.suggested_max_hp);
+  });
+
+  goToLevelUp() {
+    const id = this.localChar()?.id;
+    if (id) void this.router.navigate(['/home/characters', id, 'level-up']);
+  }
 
   actions = computed<CharacterAction[]>(() => {
     const char = this.localChar();
