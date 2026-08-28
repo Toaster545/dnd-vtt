@@ -1,6 +1,9 @@
-import { Component, inject, input, output, signal, computed, effect } from '@angular/core';
+import {
+  Component, inject, input, output, signal, computed, effect, viewChild, ElementRef,
+} from '@angular/core';
 import { NgTemplateOutlet } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import {
@@ -19,6 +22,9 @@ import {
   abilityModifier, proficiencyBonus,
 } from '../../../core/models/character.model';
 import { adjustCurrency, CURRENCY_ORDER } from '../../../core/utils/currency';
+import { normalizeAvatarRecipe, portraitDataUri, portraitSource } from '../../../core/utils/avatar';
+import { AvatarRecipeV1 } from '../../../core/models/avatar.model';
+import { AvatarCreatorDialogComponent } from '../../../shared/avatar-creator-dialog/avatar-creator-dialog';
 import { reachableGrants, resolveCharacterFeatPicks } from '../../../core/utils/character-effects';
 import { characterContentEnabled } from '../../../core/utils/content-sources';
 import { resolveBackgroundOriginFeat } from '../../../core/utils/background-origin-feat';
@@ -93,6 +99,9 @@ interface DescriptionSegment { text: string; bold: boolean }
 
 type Tab = 'stats' | 'actions' | 'inventory' | 'spells';
 const TAB_ORDER: Tab[] = ['stats', 'actions', 'inventory', 'spells'];
+const TAB_LABELS: Record<Tab, string> = {
+  stats: 'Stats', actions: 'Actions', inventory: 'Inventory', spells: 'Spells',
+};
 
 @Component({
   selector: 'app-character-play-sheet',
@@ -107,12 +116,17 @@ export class CharacterPlaySheetComponent {
   private statsService    = inject(CharacterStatsService);
   private actionsService  = inject(CharacterActionsService);
   private confirm         = inject(ConfirmService);
+  private dialog          = inject(MatDialog);
 
   readonly character = input.required<Character>();
   // Set by DM-facing hosts (dm-campaign-hub, dm-campaign-session, dm-encounter-play) when the
   // sheet is opened for a party member rather than the viewer's own character — gates the
   // "Give Item" control, which calls a DM-only backend endpoint.
   readonly isDm       = input(false);
+  // Set by encounter-play hosts (dm-encounter-play, the battle-map sidebar) where the viewer
+  // already knows whose sheet this is — hides the "Level X Race · Class · Background" meta line
+  // to keep the header tight next to the map.
+  readonly compact    = input(false);
   readonly saved      = output<Character>();
 
   readonly abilities     = ABILITIES;
@@ -121,12 +135,90 @@ export class CharacterPlaySheetComponent {
   readonly skillAbility  = SKILLS;
 
   activeTab   = signal<Tab>('stats');
+  readonly tabOrder  = TAB_ORDER;
+  readonly tabLabels = TAB_LABELS;
+  private readonly bodyRef = viewChild<ElementRef<HTMLElement>>('sheetBody');
+
+  // Which way the incoming pane slides in on the next tab switch: 1 = from the right (advancing
+  // to a later tab), -1 = from the left (going back). Drives .sheet-pane's keyframe in the scss.
+  slideDir = signal<1 | -1>(1);
+
   // Swipe left/right (touch only, see appSwipeTabs) steps through the tabs in display order;
   // clamped rather than wrapping so a swipe past either end is simply a no-op.
   swipeTab(dir: 1 | -1) {
     const idx = TAB_ORDER.indexOf(this.activeTab());
-    const next = Math.min(TAB_ORDER.length - 1, Math.max(0, idx + dir));
-    this.activeTab.set(TAB_ORDER[next]);
+    this.goToTab(TAB_ORDER[Math.min(TAB_ORDER.length - 1, Math.max(0, idx + dir))]);
+  }
+
+  // Every tab switch (tab bar click or swipe) lands at the top of the fresh tab — but it does
+  // NOT touch the header state: if the user scrolled the header away, swiping between tabs keeps
+  // it away. The suppress window below stops this reset (and the browser's scroll clamp when a
+  // shorter pane mounts) from registering as a user gesture in onBodyScroll.
+  goToTab(tab: Tab) {
+    const from = TAB_ORDER.indexOf(this.activeTab());
+    const to = TAB_ORDER.indexOf(tab);
+    if (to !== from) this.slideDir.set(to > from ? 1 : -1);
+    this.activeTab.set(tab);
+    this.suppressScrollUntil = Date.now() + 200;
+    this.lastScrollTop = 0;
+    this.bodyRef()?.nativeElement.scrollTo({ top: 0 });
+    // Landed at the top: if the header is hidden it's now armed, so one upward gesture reopens
+    // it. Swiping itself never reopens it.
+    this.revealArmed = this.headerHidden();
+  }
+
+  // Phone-only affordance (the collapse is gated to narrow viewports in the scss): a deliberate
+  // downward scroll into a tab's content tucks the name/vitals header away. Once hidden it stays
+  // hidden through scrolling around and through tab swipes. Bringing it back takes two steps —
+  // scroll to the very top (which only *arms* the reveal), then a separate upward scroll gesture.
+  headerHidden = signal(false);
+  private lastScrollTop = 0;
+  private suppressScrollUntil = 0;
+  private revealArmed = false;
+  private touchStartY = 0;
+  private touchArmedAtStart = false;
+
+  onBodyScroll(event: Event) {
+    const top = (event.target as HTMLElement).scrollTop;
+    if (Date.now() < this.suppressScrollUntil) {
+      this.lastScrollTop = top;
+      return;
+    }
+    const delta = top - this.lastScrollTop;
+    this.lastScrollTop = top;
+    if (this.headerHidden()) {
+      // Being at the top only arms the reveal; leaving the top disarms it again. The reveal
+      // itself is driven by onBodyWheel / onBodyTouchMove below.
+      this.revealArmed = top <= 1;
+    } else if (delta > 4 && top > 48) {
+      // Hide on a deliberate downward scroll that's clear of the top.
+      this.headerHidden.set(true);
+      this.revealArmed = false;
+    }
+  }
+
+  onBodyWheel(event: WheelEvent) {
+    if (this.headerHidden() && this.revealArmed && event.deltaY < 0) {
+      this.headerHidden.set(false);
+      this.revealArmed = false;
+    }
+  }
+
+  onBodyTouchStart(event: TouchEvent) {
+    this.touchStartY = event.touches[0]?.clientY ?? 0;
+    // Snapshot the armed state at the gesture's start so the same drag that scrolled up to the
+    // top can't also trip the reveal — that takes a fresh, separate gesture.
+    this.touchArmedAtStart = this.headerHidden() && this.revealArmed;
+  }
+
+  onBodyTouchMove(event: TouchEvent) {
+    if (!this.touchArmedAtStart || !this.headerHidden()) return;
+    // Finger travelling down the screen = intent to scroll up while already parked at the top.
+    if ((event.touches[0]?.clientY ?? 0) - this.touchStartY > 24) {
+      this.headerHidden.set(false);
+      this.revealArmed = false;
+      this.touchArmedAtStart = false;
+    }
   }
   loading     = signal(true);
   persisting  = signal(false);
@@ -286,11 +378,36 @@ export class CharacterPlaySheetComponent {
       .map(it => ({ source: 'Weapon Mastery', name: `${it.name} — ${it.mastery!.property}`, detail: it.mastery!.description }));
   });
 
+  // Choice grants flagged `display: 'special_action'` (e.g. Battle Master maneuvers) — each
+  // selected option shown individually with its full rules text in the Actions tab's Special
+  // Actions section, rather than collapsed into one comma-joined line on the Features list.
+  // They carry no use counter of their own: they draw from an already-tracked pool (e.g.
+  // Superiority Dice) that appears alongside them as a normal resource action.
+  specialActionReferences = computed<DisplayFeature[]>(() => {
+    const out: DisplayFeature[] = [];
+    for (const rc of this.resolvedClasses()) {
+      const source = rc.subclassName ? `${rc.name} (${rc.subclassName})` : rc.name;
+      const levels = [...rc.data.levels, ...(rc.subclass?.levels ?? [])];
+      for (const grant of levels.flatMap(l => l.grants ?? [])) {
+        if (grant.type !== 'choice' || grant.display !== 'special_action') continue;
+        for (const name of rc.choices[grant.key] ?? []) {
+          const option = grant.options.find(o => o.name === name);
+          if (option) out.push({ source, name: option.name, detail: option.description });
+        }
+      }
+    }
+    return out;
+  });
+
   inventoryItems = computed(() => {
     const char = this.localChar();
     if (!char) return [];
     const items = this.itemsAll();
-    return char.equipment.map(e => ({ entry: e, item: items.find(it => it.index === e.itemIndex) ?? null }));
+    // Equipped items float to the top; order within each group is otherwise preserved
+    // (Array.prototype.sort is stable).
+    return char.equipment
+      .map(e => ({ entry: e, item: items.find(it => it.index === e.itemIndex) ?? null }))
+      .sort((a, b) => Number(b.entry.equipped) - Number(a.entry.equipped));
   });
 
   pactWeaponOptions = computed(() => this.itemsAll()
@@ -512,6 +629,14 @@ export class CharacterPlaySheetComponent {
     return out;
   });
 
+  private describeChoicePicks(
+    grant: Extract<TraitGrant, { type: 'choice' }>, choices: Record<string, string[]>, source: string,
+  ): DisplayFeature[] {
+    const picked = choices[grant.key] ?? [];
+    if (!picked.length) return [];
+    return [{ source, name: grant.name, detail: picked.join(', ') }];
+  }
+
   private grantsOrLegacy(grants: TraitGrant[] | undefined, traits: string[]): TraitGrant[] {
     return grants?.length ? grants : traits.map(name => ({ type: 'feature', name }) as TraitGrant);
   }
@@ -521,6 +646,8 @@ export class CharacterPlaySheetComponent {
       case 'feature':
         return [{ source, name: grant.name, detail: grant.description }];
       case 'choice':
+        if (grant.display === 'special_action') return []; // shown in Actions tab instead, see specialActionReferences
+        return this.describeChoicePicks(grant, choices, source);
       case 'skill_choice':
       case 'weapon_mastery': {
         const picked = choices[grant.key] ?? [];
@@ -565,6 +692,10 @@ export class CharacterPlaySheetComponent {
       if (char.id !== this.loadedId) {
         this.loadedId = char.id;
         this.activeTab.set('stats');
+        this.headerHidden.set(false);
+        this.revealArmed = false;
+        this.lastScrollTop = 0;
+        this.suppressScrollUntil = Date.now() + 200;
         this.load(char);
       } else {
         this.localChar.set(char);
@@ -979,6 +1110,57 @@ export class CharacterPlaySheetComponent {
 
   setCurrencyAdjustAmount(denom: keyof Currency, value: string) {
     this.currencyAdjustAmounts.update(amounts => ({ ...amounts, [denom]: Math.max(0, Math.floor(+value || 0)) }));
+  }
+
+  // The generated portrait shown in the sheet header, from the same recipe/seed pair every other
+  // portrait render uses (party list, tokens, dashboard).
+  portraitUri = computed(() => {
+    const char = this.localChar();
+    if (!char) return '';
+    return portraitDataUri(portraitSource(char.portrait_seed || char.id!, char.avatar_recipe));
+  });
+
+  // Picking a portrait is player agency we keep even when the DM has locked the wizard — the
+  // backend whitelists portrait_seed/avatar_recipe on a locked campaign copy (PLAYER_EDITABLE_FIELDS).
+  changePortrait() {
+    const char = this.localChar();
+    if (!char) return;
+    this.dialog.open(AvatarCreatorDialogComponent, {
+      data: { seed: char.portrait_seed || char.id || '', recipe: char.avatar_recipe },
+      width: '960px',
+      maxWidth: 'calc(100vw - 16px)',
+      maxHeight: 'calc(100vh - 16px)',
+      autoFocus: false,
+    }).afterClosed().subscribe((result: AvatarRecipeV1 | null | undefined) => {
+      const recipe = normalizeAvatarRecipe(result);
+      if (!recipe) return;
+      this.persist({ ...char, portrait_seed: recipe.seed, avatar_recipe: recipe });
+    });
+  }
+
+  // Renaming is player agency we keep even when the DM has locked the wizard — flavor only, like
+  // the portrait, so the backend accepts it separately from the rest of PLAYER_EDITABLE_FIELDS
+  // (see CharactersService.updatePlayerEditableFields; `name` is a column, not a data-blob key).
+  editingName = signal(false);
+  nameDraft   = signal('');
+
+  startEditingName() {
+    const char = this.localChar();
+    if (!char) return;
+    this.nameDraft.set(char.name);
+    this.editingName.set(true);
+  }
+
+  confirmNameEdit() {
+    const char = this.localChar();
+    const name = this.nameDraft().trim();
+    this.editingName.set(false);
+    if (!char || !name || name === char.name) return;
+    this.persist({ ...char, name });
+  }
+
+  cancelNameEdit() {
+    this.editingName.set(false);
   }
 
   // Adding is always safe; removing more than is on hand of one denomination auto-calibrates by

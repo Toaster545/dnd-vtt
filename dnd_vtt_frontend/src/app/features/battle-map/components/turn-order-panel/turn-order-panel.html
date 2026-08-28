@@ -1,5 +1,7 @@
 <div>
-  <p class="text-xs font-semibold text-slate uppercase tracking-wider mb-2">Turn Order</p>
+  @if (showHeading()) {
+    <p class="text-xs font-semibold text-slate uppercase tracking-wider mb-2">Turn Order</p>
+  }
   @if (editable() && tokens().length === 0) {
     <p class="text-xs text-slate">No tokens yet.</p>
   } @else {

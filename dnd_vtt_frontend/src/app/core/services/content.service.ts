@@ -90,7 +90,12 @@ export type TraitGrant =
   // (Character.resource_uses); `name` can be reworded freely without breaking saves.
   | { type: 'feature'; name: string; description?: string; key?: string; action?: TraitAction; effects?: TraitEffect[] }
   // `chooseByLevel` grows the pool with class level (key = level, value = total choices).
-  | { type: 'choice'; key: string; name: string; choose: number; chooseByLevel?: Record<string, number>; description?: string; options: TraitOption[] }
+  // `display: 'special_action'` is for choices whose picked options are themselves combat
+  // reference material (e.g. Battle Master maneuvers) rather than passive features: the play
+  // sheet lists each selected option individually in the Actions tab's Special Actions section
+  // (full description, no use counter — they draw from an already-tracked pool like Superiority
+  // Dice) instead of collapsing them into one comma-joined line on the Features list.
+  | { type: 'choice'; key: string; name: string; choose: number; chooseByLevel?: Record<string, number>; description?: string; options: TraitOption[]; display?: 'special_action' }
   // `skills` restricts to a named list (e.g. Elf's Keen Senses); omitted = any skill (Human's Skillful).
   | { type: 'skill_choice'; key: string; name: string; choose: number; description?: string; skills?: string[] }
   // Choose existing skill proficiencies whose proficiency bonus is doubled. Options are derived

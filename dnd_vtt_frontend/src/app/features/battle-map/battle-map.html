@@ -78,6 +78,27 @@
           No map selected. Ask your DM to select a map.
         </div>
       }
+
+      <!-- Re-open controls for the collapsed turn-order / character-sheet columns.
+           They float over the map (rather than sitting in the flex row) so a collapsed
+           column gives all of its width back to the map, and sit just under the
+           view-controls cluster in the same top-right corner, matching its styling. -->
+      @if (map() && myCharacter() && (!showTurnColumn() || !showSheetColumn())) {
+        <div class="absolute right-2 top-14 z-10 flex flex-col gap-1 bg-surface/90 rounded p-1 border border-white/10">
+          @if (!showTurnColumn()) {
+            <button type="button" class="btn-icon w-8 h-8 text-slate hover:text-parchment"
+                    (click)="toggleTurnColumn()" matTooltip="Show turn order">
+              <mat-icon class="text-base">format_list_numbered</mat-icon>
+            </button>
+          }
+          @if (!showSheetColumn()) {
+            <button type="button" class="btn-icon w-8 h-8 text-slate hover:text-parchment"
+                    (click)="toggleSheetColumn()" matTooltip="Show character sheet">
+              <mat-icon class="text-base">assignment_ind</mat-icon>
+            </button>
+          }
+        </div>
+      }
     </div>
 
     @if (controlsMap() && map()) {
@@ -103,14 +124,49 @@
           />
         </div>
       </aside>
-    } @else if (map() && tokens().length > 0) {
-      <div appResizeHandle (resizeDrag)="onRightAsideResize($event)"
-           class="w-1.5 flex-shrink-0 hover:bg-gold/40 active:bg-gold/60 transition-colors"></div>
-      <aside [style.width.px]="rightAsideWidth()" class="border-l border-white/10 overflow-y-auto flex-shrink-0 bg-surface">
-        <div class="p-4">
-          <app-turn-order-panel [tokens]="turnOrder()" [currentTurnTokenId]="currentTurnTokenId()" [editable]="false" />
-        </div>
-      </aside>
+    } @else if (map() && (tokens().length > 0 || myCharacter())) {
+      <!-- Turn order + character sheet, each with its own resize handle and persisted
+           width. A collapsed column is not rendered at all, so it gives its width back
+           to the map; its re-open control is a tab floating over the map's right edge
+           (see the .absolute stack inside the map container above). -->
+      @if ((showTurnColumn() || !myCharacter()) || (myCharacter() && showSheetColumn())) {
+        <aside class="border-l border-white/10 flex-shrink-0 bg-surface flex min-h-0 overflow-hidden">
+
+          @if (showTurnColumn() || !myCharacter()) {
+            <div appResizeHandle (resizeDrag)="onTurnColResize($event)"
+                 class="w-1.5 flex-shrink-0 hover:bg-gold/40 active:bg-gold/60 transition-colors"></div>
+            <div [style.width.px]="turnColWidth()" class="flex-shrink-0 flex flex-col min-h-0 border-r border-white/10">
+              <div class="flex items-center gap-1 px-3 py-2 flex-shrink-0 border-b border-white/10">
+                @if (myCharacter()) {
+                  <button type="button" class="btn-icon w-6 h-6 flex-shrink-0 text-slate hover:text-parchment"
+                          (click)="toggleTurnColumn()" matTooltip="Collapse">
+                    <mat-icon class="text-base">chevron_right</mat-icon>
+                  </button>
+                }
+                <span class="text-xs font-semibold text-slate uppercase tracking-wider truncate">Turn Order</span>
+              </div>
+              <div class="flex-1 overflow-y-auto p-3">
+                <app-turn-order-panel [tokens]="turnOrder()" [currentTurnTokenId]="currentTurnTokenId()"
+                  [editable]="false" [showHeading]="false" />
+              </div>
+            </div>
+          }
+
+          @if (myCharacter(); as ch) {
+            @if (showSheetColumn()) {
+              <div appResizeHandle (resizeDrag)="onSheetResize($event)"
+                   class="w-1.5 flex-shrink-0 hover:bg-gold/40 active:bg-gold/60 transition-colors"></div>
+              <app-character-play-sheet [character]="ch" [compact]="true" (saved)="characterSaved.emit($event)"
+                [style.width.px]="sheetWidth()" class="flex-shrink-0 min-h-0">
+                <button sheetHeaderLeading type="button" class="btn-icon" (click)="toggleSheetColumn()"
+                        matTooltip="Collapse character sheet">
+                  <mat-icon>chevron_right</mat-icon>
+                </button>
+              </app-character-play-sheet>
+            }
+          }
+        </aside>
+      }
     }
   </div>
 </app-main-layout>

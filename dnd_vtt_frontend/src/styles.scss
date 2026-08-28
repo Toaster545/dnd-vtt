@@ -103,6 +103,20 @@ html:fullscreen .hide-in-fullscreen {
            text-slate hover:text-parchment hover:bg-white/10 transition-colors
            border-0 outline-none cursor-pointer;
     background: transparent;
+
+    // Material sizes mat-icon as a fixed 24px box with overflow:hidden, which
+    // clips larger glyphs and throws off centering. Let the icon box track its
+    // font-size instead so it stays centered at any size (text-base, text-xl, …).
+    mat-icon {
+      width: 1em;
+      height: 1em;
+      font-size: 20px;
+      line-height: 1;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      overflow: visible;
+    }
   }
 
   // ── Cards ────────────────────────────────────────────────────

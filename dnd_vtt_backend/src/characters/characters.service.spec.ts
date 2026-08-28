@@ -227,6 +227,8 @@ describe('CharactersService', () => {
         name: 'Renamed',
         current_hp: 5,
         heroic_inspiration: true,
+        currency: { cp: 0, sp: 0, ep: 0, gp: 42, pp: 1 },
+        portrait_seed: 'chosen-by-player',
         spell_slot_uses: {
           spellcasting: { '1': 1 },
           'pact:class:warlock': { '2': 2 },
@@ -238,13 +240,28 @@ describe('CharactersService', () => {
       // Whitelisted field (current_hp) goes through...
       expect(blob.current_hp).toBe(5);
       expect(blob.heroic_inspiration).toBe(true);
+      // Coin purse and portrait stay player-writable even with the wizard locked.
+      expect(blob.currency).toEqual({ cp: 0, sp: 0, ep: 0, gp: 42, pp: 1 });
+      expect(blob.portrait_seed).toBe('chosen-by-player');
       expect(blob.spell_slot_uses).toEqual({
         spellcasting: { '1': 1 },
         'pact:class:warlock': { '2': 2 },
       });
-      // ...but name/notes are outside PLAYER_EDITABLE_FIELDS and are left untouched.
-      expect(updated.name).toBe('Aria');
+      // The character's name is a column, not a data-blob key, but is still player-writable
+      // (flavor only, handled separately from PLAYER_EDITABLE_FIELDS — see updatePlayerEditableFields).
+      expect(updated.name).toBe('Renamed');
+      // ...but notes is outside both whitelists and is left untouched.
       expect(blob.notes).toBe('secret DM notes');
+    });
+
+    it('keeps the existing name when a locked player sends a blank one', async () => {
+      const { created } = await makeLockedCampaignCopy(false);
+
+      const updated = await service.update(created.id as string, owner, {
+        name: '   ',
+      });
+
+      expect(updated.name).toBe('Aria');
     });
 
     it('lets the player fully rewrite the copy once the DM unlocks edit access', async () => {

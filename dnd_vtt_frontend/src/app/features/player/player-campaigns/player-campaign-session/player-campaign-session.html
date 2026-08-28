@@ -1,4 +1,17 @@
-@if (activeEncounter(); as encounter) {
+@if (showWizard()) {
+  <app-character-wizard class="flex flex-col flex-1 min-h-0"
+    [character]="editingCharacter()"
+    (saved)="onWizardSaved()"
+    (cancelled)="onWizardCancelled()"
+    (viewSheet)="onViewCharacterSheet($event)"
+  />
+} @else if (sheetCharacter(); as sc) {
+  <app-character-play-sheet class="flex-1 min-h-0" [character]="sc" (saved)="onCharacterSheetSaved($event)">
+    <button sheetHeaderLeading class="btn-icon" (click)="closeCharacterSheet()" [matTooltip]="sheetFromWizard() ? 'Back to editor' : 'Back to session'">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+  </app-character-play-sheet>
+} @else if (activeEncounter(); as encounter) {
   <div class="flex flex-col h-full overflow-hidden">
     <div class="hide-in-fullscreen flex items-center gap-2 px-4 py-2.5 border-b border-white/10 flex-shrink-0">
       <div class="flex items-center gap-2 flex-1 min-w-0">
@@ -39,8 +52,9 @@
             [characterPortraits]="characterPortraits()"
             [currentTurnTokenId]="encounter.current_turn_token_id ?? null"
             [myCharacterId]="activeCharacter()?.id ?? null" [myMoveSpeedFt]="activeCharacter()?.speed ?? null"
-            [myDarkvisionFt]="myDarkvisionFt()"
-            (currentTurnTokenChanged)="currentTurnToken.set($event)" class="flex-1 min-w-0" />
+            [myDarkvisionFt]="myDarkvisionFt()" [myCharacter]="activeCharacter()"
+            (currentTurnTokenChanged)="currentTurnToken.set($event)"
+            (characterSaved)="onCharacterSaved($event)" class="flex-1 min-w-0" />
         } @else {
           <div class="flex-1 flex items-center justify-center text-slate text-sm">
             No map attached to this encounter.
@@ -123,7 +137,10 @@
 
         <div>
           <h3 class="font-brand text-sm text-parchment m-0 mb-3">Party</h3>
-          <app-party-list [members]="members()" [currentUserId]="auth.profile()?.id ?? null" />
+          <app-party-list [members]="members()" [currentUserId]="auth.profile()?.id ?? null" [showSelfControls]="true"
+            (toggleRaceClassVisibility)="toggleRaceClassVisibility($event)"
+            (viewCharacter)="viewMyCharacter($event)"
+            (editCharacter)="editMyCharacter($event)" />
         </div>
       </div>
     }

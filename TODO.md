@@ -2,13 +2,24 @@
 
 # TODO
 
+
+## Bugs
+
+- [X] Cannot change money
+- [X] Viewing character sheet from session hub party
+- [X] Maneuvers not showing up as actions
+- [X] Showing feat ability score improvements right below the chosen feat
+- [ ] Center on my token not working
+- [ ] 
+
+
 ## General
 - [X] Rests (short long)
 - [ ] Shop?
 - [x] Spells
 - [X] Equipement
 - [ ] Party Inventory
-- [ ] Fix AC Issue (Klérin has an AC of 10 with armor)
+- [X] Fix AC Issue (Klérin has an AC of 10 with armor)
 - [ ] Defenses (resistances n shit)
 - [ ] Physical descriptions (character creation)
 - [ ] Backstory text section
@@ -22,6 +33,9 @@
 - [ ] Effect/ concentration on players in map
 - [x] players can hide race
 - [ ] custom equipment/spells/monsters (Creation Tools or Customization Tools)
+- [ ] Fullscreen for ios mode
+- [X] Showing feat ability score improvements right below the chosen feat
+- [X] Viewing character sheet directly in encounter
 
 ## Mathieu
 
@@ -53,6 +67,13 @@
     - [x] push to main
 - [ ] UX modifications
 - [ ] Settings and profile page
+- [X] Features and traits being smaller
+- [X] Action descriptions being hidden
+- [X] Equiped Items go to top
+- [X] Encounter character sheet top bar reorder
+- [X] Play sheet header: portrait picker + inline rename 
+- [X] In-encounter side panel: character sheet next to turn order, each independently collapsible
+- [X] Icon button glyphs no longer clipped; brighter secondary/disabled text in dark theme
 
 ## Andre
 
