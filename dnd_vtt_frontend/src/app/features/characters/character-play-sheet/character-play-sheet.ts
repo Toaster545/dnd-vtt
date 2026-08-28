@@ -1,4 +1,6 @@
-import { Component, inject, input, output, signal, computed, effect } from '@angular/core';
+import {
+  Component, inject, input, output, signal, computed, effect, viewChild, ElementRef,
+} from '@angular/core';
 import { NgTemplateOutlet } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
@@ -97,6 +99,9 @@ interface DescriptionSegment { text: string; bold: boolean }
 
 type Tab = 'stats' | 'actions' | 'inventory' | 'spells';
 const TAB_ORDER: Tab[] = ['stats', 'actions', 'inventory', 'spells'];
+const TAB_LABELS: Record<Tab, string> = {
+  stats: 'Stats', actions: 'Actions', inventory: 'Inventory', spells: 'Spells',
+};
 
 @Component({
   selector: 'app-character-play-sheet',
@@ -130,12 +135,90 @@ export class CharacterPlaySheetComponent {
   readonly skillAbility  = SKILLS;
 
   activeTab   = signal<Tab>('stats');
+  readonly tabOrder  = TAB_ORDER;
+  readonly tabLabels = TAB_LABELS;
+  private readonly bodyRef = viewChild<ElementRef<HTMLElement>>('sheetBody');
+
+  // Which way the incoming pane slides in on the next tab switch: 1 = from the right (advancing
+  // to a later tab), -1 = from the left (going back). Drives .sheet-pane's keyframe in the scss.
+  slideDir = signal<1 | -1>(1);
+
   // Swipe left/right (touch only, see appSwipeTabs) steps through the tabs in display order;
   // clamped rather than wrapping so a swipe past either end is simply a no-op.
   swipeTab(dir: 1 | -1) {
     const idx = TAB_ORDER.indexOf(this.activeTab());
-    const next = Math.min(TAB_ORDER.length - 1, Math.max(0, idx + dir));
-    this.activeTab.set(TAB_ORDER[next]);
+    this.goToTab(TAB_ORDER[Math.min(TAB_ORDER.length - 1, Math.max(0, idx + dir))]);
+  }
+
+  // Every tab switch (tab bar click or swipe) lands at the top of the fresh tab — but it does
+  // NOT touch the header state: if the user scrolled the header away, swiping between tabs keeps
+  // it away. The suppress window below stops this reset (and the browser's scroll clamp when a
+  // shorter pane mounts) from registering as a user gesture in onBodyScroll.
+  goToTab(tab: Tab) {
+    const from = TAB_ORDER.indexOf(this.activeTab());
+    const to = TAB_ORDER.indexOf(tab);
+    if (to !== from) this.slideDir.set(to > from ? 1 : -1);
+    this.activeTab.set(tab);
+    this.suppressScrollUntil = Date.now() + 200;
+    this.lastScrollTop = 0;
+    this.bodyRef()?.nativeElement.scrollTo({ top: 0 });
+    // Landed at the top: if the header is hidden it's now armed, so one upward gesture reopens
+    // it. Swiping itself never reopens it.
+    this.revealArmed = this.headerHidden();
+  }
+
+  // Phone-only affordance (the collapse is gated to narrow viewports in the scss): a deliberate
+  // downward scroll into a tab's content tucks the name/vitals header away. Once hidden it stays
+  // hidden through scrolling around and through tab swipes. Bringing it back takes two steps —
+  // scroll to the very top (which only *arms* the reveal), then a separate upward scroll gesture.
+  headerHidden = signal(false);
+  private lastScrollTop = 0;
+  private suppressScrollUntil = 0;
+  private revealArmed = false;
+  private touchStartY = 0;
+  private touchArmedAtStart = false;
+
+  onBodyScroll(event: Event) {
+    const top = (event.target as HTMLElement).scrollTop;
+    if (Date.now() < this.suppressScrollUntil) {
+      this.lastScrollTop = top;
+      return;
+    }
+    const delta = top - this.lastScrollTop;
+    this.lastScrollTop = top;
+    if (this.headerHidden()) {
+      // Being at the top only arms the reveal; leaving the top disarms it again. The reveal
+      // itself is driven by onBodyWheel / onBodyTouchMove below.
+      this.revealArmed = top <= 1;
+    } else if (delta > 4 && top > 48) {
+      // Hide on a deliberate downward scroll that's clear of the top.
+      this.headerHidden.set(true);
+      this.revealArmed = false;
+    }
+  }
+
+  onBodyWheel(event: WheelEvent) {
+    if (this.headerHidden() && this.revealArmed && event.deltaY < 0) {
+      this.headerHidden.set(false);
+      this.revealArmed = false;
+    }
+  }
+
+  onBodyTouchStart(event: TouchEvent) {
+    this.touchStartY = event.touches[0]?.clientY ?? 0;
+    // Snapshot the armed state at the gesture's start so the same drag that scrolled up to the
+    // top can't also trip the reveal — that takes a fresh, separate gesture.
+    this.touchArmedAtStart = this.headerHidden() && this.revealArmed;
+  }
+
+  onBodyTouchMove(event: TouchEvent) {
+    if (!this.touchArmedAtStart || !this.headerHidden()) return;
+    // Finger travelling down the screen = intent to scroll up while already parked at the top.
+    if ((event.touches[0]?.clientY ?? 0) - this.touchStartY > 24) {
+      this.headerHidden.set(false);
+      this.revealArmed = false;
+      this.touchArmedAtStart = false;
+    }
   }
   loading     = signal(true);
   persisting  = signal(false);
@@ -609,6 +692,10 @@ export class CharacterPlaySheetComponent {
       if (char.id !== this.loadedId) {
         this.loadedId = char.id;
         this.activeTab.set('stats');
+        this.headerHidden.set(false);
+        this.revealArmed = false;
+        this.lastScrollTop = 0;
+        this.suppressScrollUntil = Date.now() + 200;
         this.load(char);
       } else {
         this.localChar.set(char);

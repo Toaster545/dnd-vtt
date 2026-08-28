@@ -97,13 +97,31 @@
   font-size: clamp(.65rem, 1.2cqw, .75rem);
 }
 
-.sheet-rest-actions .btn-outline {
-  padding: clamp(.2rem, .8cqw, .375rem) clamp(.35rem, 1cqw, .625rem);
-  font-size: clamp(.65rem, 1.2cqw, .75rem);
+.sheet-rest-actions {
+  gap: .25rem;
 }
 
-.sheet-hp-adjuster .field-input {
-  width: clamp(2rem, 4cqw, 2.5rem);
+.sheet-rest-actions .btn-outline {
+  padding: clamp(.02rem, .2cqw, .1rem) clamp(.3rem, .85cqw, .5rem);
+  font-size: clamp(.6rem, 1.05cqw, .7rem);
+  line-height: 1;
+}
+
+// The stacked +/- HP steppers sit either side of a compact number field. Kept small and quiet
+// so the HP block doesn't tower over the other combat-strip tiles — the glyph, not a full
+// icon-button hit area, is the target.
+.btn-icon.sheet-hp-btn {
+  width: clamp(.85rem, 2cqw, 1rem);
+  height: clamp(.85rem, 2cqw, 1rem);
+  min-height: 0;
+  font-size: clamp(.7rem, 1.5cqw, .85rem);
+  line-height: 1;
+  border-radius: 3px;
+}
+
+.sheet-hp-input {
+  width: clamp(1.9rem, 4cqw, 2.4rem);
+  padding: .05rem .15rem;
 }
 
 .sheet-hp-summary > :nth-child(2) {
@@ -152,4 +170,104 @@
 
 .detail-disclosure[open] > summary .detail-chevron {
   transform: rotate(90deg);
+}
+
+// Tab content slide-in. The pane element is keyed on the active tab in the template, so each
+// switch mounts a fresh .sheet-pane and this keyframe runs once. Direction comes from the
+// .slide-from-* class set off slideDir() — right when advancing tabs, left when going back.
+// The body clips the x-axis so the brief off-screen offset never flashes a scrollbar.
+.sheet-body {
+  overflow-x: hidden;
+}
+
+.sheet-pane {
+  min-height: 100%;
+}
+
+@keyframes sheet-pane-in-right {
+  from { opacity: 0; transform: translateX(clamp(0.75rem, 6%, 2.5rem)); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes sheet-pane-in-left {
+  from { opacity: 0; transform: translateX(clamp(-2.5rem, -6%, -0.75rem)); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+.sheet-pane.slide-from-right { animation: sheet-pane-in-right 0.2s ease-out; }
+.sheet-pane.slide-from-left  { animation: sheet-pane-in-left 0.2s ease-out; }
+
+@media (prefers-reduced-motion: reduce) {
+  .sheet-pane.slide-from-right,
+  .sheet-pane.slide-from-left { animation: none; }
+}
+
+// The header animates its box metrics (never its flex structure) so the collapse driven by
+// onBodyScroll() is smooth and fully reversible. Off-mobile the .is-hidden class is never
+// applied (onBodyScroll still runs, but the media query below is what gives it any effect).
+.sheet-header {
+  transition: max-height .25s ease, padding .25s ease, opacity .2s ease, border-width .25s ease;
+}
+
+// Phone-only stand-in for the tab bar; the real bar is hidden at this width.
+.sheet-tab-indicator { display: none; }
+
+// --- Phone layout -------------------------------------------------------------------------
+// The sheet fills the screen on a phone, so give as much of it as possible to the tab
+// content: swap the tab bar for a slim swipe indicator (the body already changes tabs on a
+// horizontal swipe, see appSwipeTabs) and let the header collapse away on downward scroll.
+@media (max-width: 640px) {
+  .sheet-tabs { display: none; }
+
+  .sheet-tab-indicator {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: .5rem;
+    padding: .4rem 1rem;
+    border-bottom: 1px solid rgb(var(--dnd-text-rgb) / 0.1);
+    flex-shrink: 0;
+  }
+
+  .sheet-tab-indicator-label {
+    font-family: Cinzel, serif;
+    font-size: .8rem;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: rgb(var(--dnd-gold-rgb));
+  }
+
+  .sheet-tab-indicator-dots {
+    display: inline-flex;
+    gap: .3rem;
+  }
+
+  .sheet-tab-indicator-dots .dot {
+    width: .375rem;
+    height: .375rem;
+    border-radius: 9999px;
+    background: rgb(var(--dnd-text-rgb) / 0.25);
+    transition: background .15s ease;
+  }
+
+  .sheet-tab-indicator-dots .dot.active {
+    background: rgb(var(--dnd-gold-rgb));
+  }
+
+  // Explicit ceiling (never reached in practice) so the collapse to 0 has a value to
+  // animate from — max-height can't transition out of `auto`.
+  .sheet-header {
+    max-height: 32rem;
+    overflow: hidden;
+  }
+
+  .sheet-header.is-hidden {
+    max-height: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    border-bottom-width: 0;
+    opacity: 0;
+    overflow: hidden;
+    pointer-events: none;
+  }
 }

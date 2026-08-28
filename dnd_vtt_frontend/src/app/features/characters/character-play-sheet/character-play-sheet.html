@@ -26,7 +26,8 @@
   <div class="flex flex-col h-full overflow-hidden">
 
     <!-- Header -->
-    <div class="sheet-header flex flex-wrap items-center justify-between gap-4 px-6 pt-5 pb-4 border-b border-white/10 flex-shrink-0">
+    <div class="sheet-header flex flex-wrap items-center justify-between gap-4 px-6 pt-5 pb-4 border-b border-white/10 flex-shrink-0"
+      [class.is-hidden]="headerHidden()">
       <div class="sheet-identity flex items-center gap-2 min-w-0">
         <ng-content select="[sheetHeaderLeading]" />
         <button type="button"
@@ -65,20 +66,20 @@
       </div>
       @if (stats(); as s) {
         <div class="sheet-combat-strip">
-          <div class="sheet-hp-control flex items-center gap-1.5">
+          <div class="sheet-hp-control flex items-center gap-1">
             <div class="sheet-hp-adjuster flex flex-col items-center gap-0.5">
-              <button class="btn-icon w-5 h-5 text-xs" [disabled]="!hpAdjustAmount() || char.current_hp >= char.max_hp || persisting()"
+              <button class="btn-icon sheet-hp-btn" [disabled]="!hpAdjustAmount() || char.current_hp >= char.max_hp || persisting()"
                 (click)="applyHpDelta(hpAdjustAmount())" matTooltip="Heal">+</button>
-              <input class="field-input w-10 text-center text-xs py-0.5 px-1" type="number" min="0"
+              <input class="field-input sheet-hp-input text-center text-xs" type="number" min="0"
                 [ngModel]="hpAdjustAmount()" (ngModelChange)="setHpAdjustAmount($event)" name="hpAdjust" />
-              <button class="btn-icon w-5 h-5 text-xs" [disabled]="!hpAdjustAmount() || char.current_hp <= 0 || persisting()"
+              <button class="btn-icon sheet-hp-btn" [disabled]="!hpAdjustAmount() || char.current_hp <= 0 || persisting()"
                 (click)="applyHpDelta(-hpAdjustAmount())" matTooltip="Damage">−</button>
             </div>
             <div class="sheet-hp-summary text-center">
-              <div class="text-[10px] text-slate uppercase tracking-widest mb-0.5">Hit Points</div>
+              <div class="text-[10px] text-slate uppercase tracking-widest">Hit Points</div>
               <div class="font-brand text-2xl leading-none" [class]="hpPercent(char) <= 25 ? 'text-danger' : 'text-parchment'">{{ char.current_hp }}</div>
-              <div class="text-xs text-slate mt-0.5">/ {{ char.max_hp }}</div>
-              <div class="sheet-hp-bar w-16 h-1.5 bg-white/10 rounded-full mt-1 overflow-hidden">
+              <div class="text-xs text-slate">/ {{ char.max_hp }}</div>
+              <div class="sheet-hp-bar w-16 h-1.5 bg-white/10 rounded-full mt-0.5 overflow-hidden">
                 <div class="h-full rounded-full transition-all" [class]="hpColor(char)" [style.width.%]="hpPercent(char)"></div>
               </div>
             </div>
@@ -158,7 +159,7 @@
       <button
         class="flex items-center gap-2 px-5 py-3.5 text-sm font-medium whitespace-nowrap border-b-2 transition-colors border-0 cursor-pointer"
         [class]="activeTab() === 'stats' ? 'border-gold text-gold' : 'border-transparent text-slate hover:text-parchment'"
-        (click)="activeTab.set('stats')"
+        (click)="goToTab('stats')"
         style="background: transparent; font-family: inherit;"
       >
         <span class="flex items-center justify-center w-5 h-5 rounded-full text-xs font-bold flex-shrink-0"
@@ -168,7 +169,7 @@
       <button
         class="flex items-center gap-2 px-5 py-3.5 text-sm font-medium whitespace-nowrap border-b-2 transition-colors border-0 cursor-pointer"
         [class]="activeTab() === 'actions' ? 'border-gold text-gold' : 'border-transparent text-slate hover:text-parchment'"
-        (click)="activeTab.set('actions')"
+        (click)="goToTab('actions')"
         style="background: transparent; font-family: inherit;"
       >
         <span class="flex items-center justify-center w-5 h-5 rounded-full text-xs font-bold flex-shrink-0"
@@ -178,7 +179,7 @@
       <button
         class="flex items-center gap-2 px-5 py-3.5 text-sm font-medium whitespace-nowrap border-b-2 transition-colors border-0 cursor-pointer"
         [class]="activeTab() === 'inventory' ? 'border-gold text-gold' : 'border-transparent text-slate hover:text-parchment'"
-        (click)="activeTab.set('inventory')"
+        (click)="goToTab('inventory')"
         style="background: transparent; font-family: inherit;"
       >
         <span class="flex items-center justify-center w-5 h-5 rounded-full text-xs font-bold flex-shrink-0"
@@ -188,7 +189,7 @@
       <button
         class="flex items-center gap-2 px-5 py-3.5 text-sm font-medium whitespace-nowrap border-b-2 transition-colors border-0 cursor-pointer"
         [class]="activeTab() === 'spells' ? 'border-gold text-gold' : 'border-transparent text-slate hover:text-parchment'"
-        (click)="activeTab.set('spells')"
+        (click)="goToTab('spells')"
         style="background: transparent; font-family: inherit;"
       >
         <span class="flex items-center justify-center w-5 h-5 rounded-full text-xs font-bold flex-shrink-0"
@@ -197,8 +198,28 @@
       </button>
     </div>
 
-    <div class="sheet-body flex-1 overflow-y-auto p-6" appSwipeTabs (swipeLeft)="swipeTab(1)" (swipeRight)="swipeTab(-1)">
-      @switch (activeTab()) {
+    <!-- Phone-only stand-in for the tab bar (hidden above it via CSS): the full bar is
+         suppressed on narrow viewports since the body advances tabs on horizontal swipe
+         (appSwipeTabs), so this just names the current tab and shows position. -->
+    <div class="sheet-tab-indicator" aria-hidden="true">
+      <span class="sheet-tab-indicator-label">{{ tabLabels[activeTab()] }}</span>
+      <span class="sheet-tab-indicator-dots">
+        @for (t of tabOrder; track t) {
+          <span class="dot" [class.active]="activeTab() === t"></span>
+        }
+      </span>
+    </div>
+
+    <div #sheetBody class="sheet-body flex-1 overflow-y-auto p-6"
+      (scroll)="onBodyScroll($event)" (wheel)="onBodyWheel($event)"
+      (touchstart)="onBodyTouchStart($event)" (touchmove)="onBodyTouchMove($event)"
+      appSwipeTabs (swipeLeft)="swipeTab(1)" (swipeRight)="swipeTab(-1)">
+      <!-- Keyed on the active tab so the pane element is recreated on every switch, which
+           replays the slide-in keyframe (see .sheet-pane in the scss). slideDir() picks the
+           side it enters from — from the right when advancing, from the left when going back. -->
+      @for (tab of [activeTab()]; track tab) {
+      <div class="sheet-pane" [class.slide-from-right]="slideDir() === 1" [class.slide-from-left]="slideDir() === -1">
+      @switch (tab) {
 
         <!-- STATS -->
         @case ('stats') {
@@ -944,6 +965,8 @@
           }
         }
 
+      }
+      </div>
       }
     </div>
   </div>
