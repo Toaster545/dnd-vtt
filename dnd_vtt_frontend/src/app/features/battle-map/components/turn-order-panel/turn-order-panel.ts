@@ -14,6 +14,9 @@ export class TurnOrderPanelComponent {
   readonly tokens = input.required<MapToken[]>();
   readonly currentTurnTokenId = input<string | null>(null);
   readonly editable = input(false);
+  // Hidden when the panel sits under its own accordion header (see battle-map.html's
+  // player-facing side panel), which would otherwise duplicate the "Turn Order" label.
+  readonly showHeading = input(true);
 
   readonly initiativeChanged = output<{ token: MapToken; value: string }>();
   readonly rerollInitiative = output<MapToken>();

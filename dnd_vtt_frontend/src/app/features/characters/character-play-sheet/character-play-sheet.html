@@ -1,59 +1,70 @@
 @if (loading()) {
   <div class="flex justify-center items-center h-full"><span class="spinner-lg"></span></div>
 } @else if (localChar(); as char) {
+
+  <!-- Collapsed-by-default disclosure for a feature / trait / action row: the name is the
+       summary with its provenance as a sub-label to its right, and the rules text expands
+       below on click. Shared by the Stats and Actions tabs so both stay skimmable during play. -->
+  <ng-template #featureRow let-f>
+    @if (f.detail) {
+      <details class="detail-disclosure text-sm">
+        <summary class="flex items-center gap-1">
+          <mat-icon class="detail-chevron text-base text-slate flex-shrink-0">chevron_right</mat-icon>
+          <span class="text-parchment font-medium">{{ f.name }}</span>
+          <span class="text-coal text-xs"> · {{ f.source }}</span>
+        </summary>
+        <p class="text-slate mt-1 mb-0 pl-6 leading-relaxed">{{ f.detail }}</p>
+      </details>
+    } @else {
+      <div class="text-sm pl-6">
+        <span class="text-parchment font-medium">{{ f.name }}</span>
+        <span class="text-coal text-xs"> · {{ f.source }}</span>
+      </div>
+    }
+  </ng-template>
+
   <div class="flex flex-col h-full overflow-hidden">
 
     <!-- Header -->
-    <div class="sheet-header flex items-center justify-between gap-4 px-6 pt-5 pb-4 border-b border-white/10 flex-shrink-0">
+    <div class="sheet-header flex flex-wrap items-center justify-between gap-4 px-6 pt-5 pb-4 border-b border-white/10 flex-shrink-0">
       <div class="sheet-identity flex items-center gap-2 min-w-0">
         <ng-content select="[sheetHeaderLeading]" />
+        <button type="button"
+          class="group relative flex-shrink-0 rounded-full border-0 p-0 bg-transparent cursor-pointer disabled:cursor-default"
+          [disabled]="persisting()"
+          (click)="changePortrait()"
+          matTooltip="Change portrait">
+          <img [src]="portraitUri()" class="w-11 h-11 rounded-full ring-1 ring-white/15" alt="" />
+          <span class="absolute inset-0 flex items-center justify-center rounded-full bg-black/45 opacity-0 transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100">
+            <mat-icon class="text-base text-parchment">edit</mat-icon>
+          </span>
+        </button>
         <div class="sheet-identity-copy min-w-0">
-          <h2 class="font-brand text-2xl text-parchment m-0 leading-tight truncate">{{ char.name }}</h2>
-          <p class="text-slate text-sm m-0 mt-1">
-            Level {{ char.level }} {{ char.race }}
-            @if (char.subrace) { ({{ char.subrace }}) }
-            &nbsp;·&nbsp; {{ char.class }}@if (char.subclass) { — {{ char.subclass }} }
-            @if (char.background) { &nbsp;·&nbsp; {{ char.background }} }
-          </p>
+          @if (editingName()) {
+            <div class="flex items-center gap-1">
+              <input class="field-input font-brand text-2xl py-0.5 px-1.5 min-w-0" type="text" autofocus
+                [ngModel]="nameDraft()" (ngModelChange)="nameDraft.set($event)" name="characterNameEdit"
+                (keydown.enter)="confirmNameEdit()" (keydown.escape)="cancelNameEdit()" #nameInput
+                (focus)="nameInput.select()" />
+              <button class="btn-icon w-6 h-6 text-xs" [disabled]="persisting()" (click)="confirmNameEdit()" matTooltip="Save"><mat-icon class="text-base">check</mat-icon></button>
+              <button class="btn-icon w-6 h-6 text-xs" [disabled]="persisting()" (click)="cancelNameEdit()" matTooltip="Cancel"><mat-icon class="text-base">close</mat-icon></button>
+            </div>
+          } @else {
+            <h2 class="font-brand text-2xl text-parchment m-0 leading-tight truncate cursor-pointer hover:underline decoration-dotted underline-offset-4"
+              (click)="startEditingName()" matTooltip="Click to rename">{{ char.name }}</h2>
+          }
+          @if (!compact()) {
+            <p class="text-slate text-sm m-0 mt-1">
+              Level {{ char.level }} {{ char.race }}
+              @if (char.subrace) { ({{ char.subrace }}) }
+              &nbsp;·&nbsp; {{ char.class }}@if (char.subclass) { — {{ char.subclass }} }
+              @if (char.background) { &nbsp;·&nbsp; {{ char.background }} }
+            </p>
+          }
         </div>
       </div>
       @if (stats(); as s) {
-        <div class="sheet-combat-strip flex items-start gap-4 flex-shrink-0">
-          <div class="sheet-rest-actions flex flex-col gap-1 justify-center">
-            <button class="btn-outline text-xs px-2 py-1" [disabled]="persisting()" (click)="rest('short_rest')">Short Rest</button>
-            <button class="btn-outline text-xs px-2 py-1" [disabled]="persisting()" (click)="rest('long_rest')">Long Rest</button>
-          </div>
-          <div class="sheet-stat sheet-stat-ac text-center">
-            <div class="text-[10px] text-slate uppercase tracking-widest mb-0.5">AC</div>
-            <div class="font-brand text-2xl leading-none text-gold">{{ s.computed_ac }}</div>
-          </div>
-          <div class="sheet-stat sheet-stat-temp-hp text-center">
-            <div class="text-[10px] text-slate uppercase tracking-widest mb-0.5">Temp HP</div>
-            <div class="font-brand text-2xl leading-none text-parchment">{{ char.temp_hp || 0 }}</div>
-          </div>
-          <button
-            class="sheet-stat sheet-stat-inspiration text-center border-0 bg-transparent cursor-pointer p-0"
-            type="button"
-            [disabled]="persisting()"
-            (click)="toggleHeroicInspiration()"
-            [matTooltip]="char.heroic_inspiration ? 'Spend Heroic Inspiration' : 'Mark Heroic Inspiration available'"
-          >
-            <div class="text-[10px] text-slate uppercase tracking-widest mb-0.5">Inspiration</div>
-            <mat-icon class="text-2xl leading-none" [class]="char.heroic_inspiration ? 'text-gold' : 'text-coal'">{{ char.heroic_inspiration ? 'star' : 'star_border' }}</mat-icon>
-          </button>
-          <div class="sheet-stat sheet-stat-conditions text-center conditions-summary">
-            <div class="text-[10px] text-slate uppercase tracking-widest mb-0.5">Conditions</div>
-            <div class="text-xs text-parchment max-w-40 truncate">{{ char.conditions?.length ? char.conditions.join(', ') : 'None' }}</div>
-          </div>
-          <div class="sheet-stat sheet-stat-initiative text-center">
-            <div class="text-[10px] text-slate uppercase tracking-widest mb-0.5">Initiative</div>
-            <div class="font-brand text-2xl leading-none text-gold">{{ fmt(s.initiative) }}</div>
-            @if (s.initiative_advantage) { <div class="text-[9px] text-gold mt-1 uppercase">Advantage</div> }
-          </div>
-          <div class="sheet-stat sheet-stat-proficiency text-center">
-            <div class="text-[10px] text-slate uppercase tracking-widest mb-0.5">Prof. Bonus</div>
-            <div class="font-brand text-2xl leading-none text-gold">+{{ s.proficiency_bonus }}</div>
-          </div>
+        <div class="sheet-combat-strip">
           <div class="sheet-hp-control flex items-center gap-1.5">
             <div class="sheet-hp-adjuster flex flex-col items-center gap-0.5">
               <button class="btn-icon w-5 h-5 text-xs" [disabled]="!hpAdjustAmount() || char.current_hp >= char.max_hp || persisting()"
@@ -71,6 +82,46 @@
                 <div class="h-full rounded-full transition-all" [class]="hpColor(char)" [style.width.%]="hpPercent(char)"></div>
               </div>
             </div>
+          </div>
+          <div class="sheet-stat sheet-stat-ac text-center">
+            <div class="text-[10px] text-slate uppercase tracking-widest mb-0.5">AC</div>
+            <div class="font-brand text-2xl leading-none text-gold">{{ s.computed_ac }}</div>
+          </div>
+          @if (char.conditions?.length) {
+            <div class="sheet-stat sheet-stat-conditions text-center">
+              <div class="text-[10px] text-slate uppercase tracking-widest mb-0.5">Conditions</div>
+              <div class="flex flex-wrap gap-1 justify-center max-w-[15rem]">
+                @for (condition of char.conditions ?? []; track condition) {
+                  <span class="text-[11px] leading-none px-1.5 py-0.5 rounded-full bg-danger/15 text-danger border border-danger/30">{{ condition }}</span>
+                }
+              </div>
+            </div>
+          }
+          @if (char.temp_hp) {
+            <div class="sheet-stat sheet-stat-temp-hp text-center">
+              <div class="text-[10px] text-slate uppercase tracking-widest mb-0.5">Temp HP</div>
+              <div class="font-brand text-2xl leading-none text-parchment">{{ char.temp_hp }}</div>
+            </div>
+          }
+          <span class="sheet-strip-divider" aria-hidden="true"></span>
+          <div class="sheet-stat sheet-stat-initiative text-center">
+            <div class="text-[10px] text-slate uppercase tracking-widest mb-0.5">Initiative</div>
+            <div class="font-brand text-2xl leading-none text-gold">{{ fmt(s.initiative) }}</div>
+            @if (s.initiative_advantage) { <div class="text-[9px] text-gold mt-1 uppercase">Advantage</div> }
+          </div>
+          <button
+            class="sheet-stat sheet-stat-inspiration text-center border-0 bg-transparent cursor-pointer p-0"
+            type="button"
+            [disabled]="persisting()"
+            (click)="toggleHeroicInspiration()"
+            [matTooltip]="char.heroic_inspiration ? 'Spend Heroic Inspiration' : 'Mark Heroic Inspiration available'"
+          >
+            <div class="text-[10px] text-slate uppercase tracking-widest mb-0.5">Inspiration</div>
+            <mat-icon class="text-2xl leading-none" [class]="char.heroic_inspiration ? 'text-gold' : 'text-coal'">{{ char.heroic_inspiration ? 'star' : 'star_border' }}</mat-icon>
+          </button>
+          <div class="sheet-rest-actions flex flex-col gap-1 justify-center">
+            <button class="btn-outline text-xs px-2 py-1" [disabled]="persisting()" (click)="rest('short_rest')">Short Rest</button>
+            <button class="btn-outline text-xs px-2 py-1" [disabled]="persisting()" (click)="rest('long_rest')">Long Rest</button>
           </div>
         </div>
             @if (showShortRestDialog()) {
@@ -170,10 +221,9 @@
               <div class="flex flex-wrap gap-6">
                 <div class="flex flex-col gap-1.5 flex-shrink-0">
                   @for (ab of abilities; track ab) {
-                    <div class="bg-elevated rounded-lg border border-white/10 text-center w-[72px] py-2">
-                      <div class="text-[10px] text-slate uppercase tracking-widest">{{ abilityShort[ab] }}</div>
-                      <div class="font-brand text-2xl text-gold font-bold leading-none my-0.5">{{ fmt(s.ability_modifiers[ab]) }}</div>
-                      <div class="text-xs text-parchment">{{ char.ability_scores[ab] }}</div>
+                    <div class="bg-elevated rounded-lg border border-white/10 text-center w-[72px] py-2.5">
+                      <div class="text-xs text-slate uppercase tracking-widest font-semibold">{{ abilityShort[ab] }}</div>
+                      <div class="font-brand text-2xl text-gold font-bold leading-none mt-1">{{ fmt(s.ability_modifiers[ab]) }}</div>
                     </div>
                   }
                 </div>
@@ -189,6 +239,12 @@
                         <span class="text-slate text-xs">{{ abilityShort[ab] }}</span>
                       </div>
                     }
+                  </div>
+
+                  <h4 class="font-brand text-gold text-xs uppercase tracking-widest m-0 pt-3 pb-1.5 mb-2 border-b border-gold/25">Proficiency</h4>
+                  <div class="flex items-center justify-between gap-2 text-xs">
+                    <span class="text-slate">Bonus</span>
+                    <span class="font-brand text-gold">+{{ s.proficiency_bonus }}</span>
                   </div>
 
                   <h4 class="font-brand text-gold text-xs uppercase tracking-widest m-0 pt-3 pb-1.5 mb-2 border-b border-gold/25">Passives</h4>
@@ -234,13 +290,7 @@
                   @if (resolvedFeatures().length) {
                     <div class="flex flex-col gap-2">
                       @for (f of resolvedFeatures(); track f.source + f.name) {
-                        <div class="flex items-start gap-2 text-sm">
-                          <span class="tag flex-shrink-0">{{ f.source }}</span>
-                          <div>
-                            <span class="text-parchment font-medium">{{ f.name }}</span>
-                            @if (f.detail) { <span class="text-slate"> — {{ f.detail }}</span> }
-                          </div>
-                        </div>
+                        <ng-container [ngTemplateOutlet]="featureRow" [ngTemplateOutletContext]="{ $implicit: f }"></ng-container>
                       }
                     </div>
                   }
@@ -337,51 +387,10 @@
                     <div class="flex flex-col gap-1.5">
                       @for (action of bonusActions(); track action.key) {
                         @let remaining = action.maxUses - action.usedUses;
-                        <div class="flex items-center justify-between px-3 py-2 rounded border border-white/10 text-sm gap-3">
+                        <div class="px-3 py-2 rounded border border-white/10 text-sm">
+                          <div class="flex items-center justify-between gap-3">
                             <div class="min-w-0">
                               <span class="text-parchment font-medium">{{ action.name }}</span><span class="text-coal text-xs"> · {{ action.source }}</span>
-                              @if (action.description) { <p class="text-xs text-slate mt-1 mb-0">{{ action.description }}</p> }
-                            </div>
-                            <div class="flex items-center gap-2 flex-shrink-0">
-                              <span class="text-sm text-parchment tabular-nums">{{ remaining }} / {{ action.maxUses }}</span>
-                              <button class="btn-icon" [disabled]="action.usedUses === 0 || persisting()" (click)="restoreAction(action)" matTooltip="Restore a use">
-                                <mat-icon class="text-base">add</mat-icon>
-                              </button>
-                              <button class="btn-primary text-sm" [disabled]="remaining === 0 || persisting()" (click)="useAction(action)">Use</button>
-                            </div>
-                        </div>
-                      }
-                      @for (spellRow of bonusActionSpells(); track spellRow.spell.index) {
-                        <div class="flex items-center justify-between px-3 py-2 rounded border border-white/10 text-sm gap-3">
-                          <div class="min-w-0"><span class="text-parchment font-medium">{{ spellRow.spell.name }}</span><span class="text-coal text-xs"> · {{ spellRow.spell.level === 0 ? 'Cantrip' : 'Level ' + spellRow.spell.level }} ({{ spellSourceNames(spellRow) }}) · {{ spellRow.spell.range }}</span></div>
-                          <span class="text-slate text-xs flex-shrink-0">{{ spellRow.spell.duration }}</span>
-                        </div>
-                      }
-                      @for (feature of bonusActionFeatures(); track feature.name) {
-                        <div class="flex items-center justify-between px-3 py-2 rounded border border-white/10 text-sm gap-3">
-                          <div class="min-w-0"><span class="text-parchment font-medium">{{ feature.name }}</span><span class="text-coal text-xs"> · {{ feature.source }}</span></div>
-                          @if (feature.detail) { <span class="text-xs text-slate text-right">{{ feature.detail }}</span> }
-                        </div>
-                      }
-                    </div>
-                  </div>
-                }
-
-                <!-- SPECIAL ACTIONS: 'free' activation — resources outside the normal action economy -->
-                @if (specialActions().length) {
-                  <div>
-                    <h4 class="font-brand text-gold text-xs uppercase tracking-widest m-0 pb-1.5 mb-2 border-b border-gold/25">Special Actions</h4>
-                    <div class="flex flex-col gap-2">
-                      @for (action of specialActions(); track action.key) {
-                        @let remaining = action.maxUses - action.usedUses;
-                        <div class="card">
-                          <div class="card-body flex items-center justify-between gap-3">
-                            <div class="min-w-0">
-                              <div class="flex items-center gap-2 flex-wrap">
-                                <span class="text-parchment font-medium text-sm">{{ action.name }}</span>
-                                <span class="text-coal text-xs">{{ action.source }}</span>
-                              </div>
-                              @if (action.description) { <p class="text-xs text-slate mt-1 mb-0">{{ action.description }}</p> }
                             </div>
                             <div class="flex items-center gap-2 flex-shrink-0">
                               <span class="text-sm text-parchment tabular-nums">{{ remaining }} / {{ action.maxUses }}</span>
@@ -391,7 +400,78 @@
                               <button class="btn-primary text-sm" [disabled]="remaining === 0 || persisting()" (click)="useAction(action)">Use</button>
                             </div>
                           </div>
+                          @if (action.description) {
+                            <details class="detail-disclosure mt-1">
+                              <summary class="flex items-center gap-1 text-xs text-gold/90">
+                                <mat-icon class="detail-chevron text-base flex-shrink-0">chevron_right</mat-icon>
+                                Details
+                              </summary>
+                              <p class="text-xs text-slate mt-1 mb-0 leading-relaxed">{{ action.description }}</p>
+                            </details>
+                          }
                         </div>
+                      }
+                      @for (spellRow of bonusActionSpells(); track spellRow.spell.index) {
+                        <div class="flex items-center justify-between px-3 py-2 rounded border border-white/10 text-sm gap-3">
+                          <div class="min-w-0"><span class="text-parchment font-medium">{{ spellRow.spell.name }}</span><span class="text-coal text-xs"> · {{ spellRow.spell.level === 0 ? 'Cantrip' : 'Level ' + spellRow.spell.level }} ({{ spellSourceNames(spellRow) }}) · {{ spellRow.spell.range }}</span></div>
+                          <span class="text-slate text-xs flex-shrink-0">{{ spellRow.spell.duration }}</span>
+                        </div>
+                      }
+                      @for (feature of bonusActionFeatures(); track feature.name) {
+                        <div class="px-3 py-2 rounded border border-white/10 text-sm">
+                          <div class="min-w-0"><span class="text-parchment font-medium">{{ feature.name }}</span><span class="text-coal text-xs"> · {{ feature.source }}</span></div>
+                          @if (feature.detail) {
+                            <details class="detail-disclosure mt-1">
+                              <summary class="flex items-center gap-1 text-xs text-gold/90">
+                                <mat-icon class="detail-chevron text-base flex-shrink-0">chevron_right</mat-icon>
+                                Details
+                              </summary>
+                              <p class="text-xs text-slate mt-1 mb-0 leading-relaxed">{{ feature.detail }}</p>
+                            </details>
+                          }
+                        </div>
+                      }
+                    </div>
+                  </div>
+                }
+
+                <!-- SPECIAL ACTIONS: 'free' activation resources outside the normal action economy,
+                     plus reference-only entries (e.g. maneuvers) that draw from one of those pools -->
+                @if (specialActions().length || specialActionReferences().length) {
+                  <div>
+                    <h4 class="font-brand text-gold text-xs uppercase tracking-widest m-0 pb-1.5 mb-2 border-b border-gold/25">Special Actions</h4>
+                    <div class="flex flex-col gap-2">
+                      @for (action of specialActions(); track action.key) {
+                        @let remaining = action.maxUses - action.usedUses;
+                        <div class="card">
+                          <div class="card-body">
+                            <div class="flex items-center justify-between gap-3">
+                              <div class="flex items-center gap-2 flex-wrap min-w-0">
+                                <span class="text-parchment font-medium text-sm">{{ action.name }}</span>
+                                <span class="text-coal text-xs">{{ action.source }}</span>
+                              </div>
+                              <div class="flex items-center gap-2 flex-shrink-0">
+                                <span class="text-sm text-parchment tabular-nums">{{ remaining }} / {{ action.maxUses }}</span>
+                                <button class="btn-icon" [disabled]="action.usedUses === 0 || persisting()" (click)="restoreAction(action)" matTooltip="Restore a use">
+                                  <mat-icon class="text-base">add</mat-icon>
+                                </button>
+                                <button class="btn-primary text-sm" [disabled]="remaining === 0 || persisting()" (click)="useAction(action)">Use</button>
+                              </div>
+                            </div>
+                            @if (action.description) {
+                              <details class="detail-disclosure mt-1">
+                                <summary class="flex items-center gap-1 text-xs text-gold/90">
+                                  <mat-icon class="detail-chevron text-base flex-shrink-0">chevron_right</mat-icon>
+                                  Details
+                                </summary>
+                                <p class="text-xs text-slate mt-1 mb-0 leading-relaxed">{{ action.description }}</p>
+                              </details>
+                            }
+                          </div>
+                        </div>
+                      }
+                      @for (f of specialActionReferences(); track f.name) {
+                        <ng-container [ngTemplateOutlet]="featureRow" [ngTemplateOutletContext]="{ $implicit: f }"></ng-container>
                       }
                     </div>
                   </div>
@@ -404,10 +484,10 @@
                     <div class="flex flex-col gap-1.5">
                       @for (action of reactionResourceActions(); track action.key) {
                         @let remaining = action.maxUses - action.usedUses;
-                        <div class="flex items-center justify-between px-3 py-2 rounded border border-white/10 text-sm gap-3">
+                        <div class="px-3 py-2 rounded border border-white/10 text-sm">
+                          <div class="flex items-center justify-between gap-3">
                             <div class="min-w-0">
                               <span class="text-parchment font-medium">{{ action.name }}</span><span class="text-coal text-xs"> · {{ action.source }}</span>
-                              @if (action.description) { <p class="text-xs text-slate mt-1 mb-0">{{ action.description }}</p> }
                             </div>
                             <div class="flex items-center gap-2 flex-shrink-0">
                               <span class="text-sm text-parchment tabular-nums">{{ remaining }} / {{ action.maxUses }}</span>
@@ -416,6 +496,16 @@
                               </button>
                               <button class="btn-primary text-sm" [disabled]="remaining === 0 || persisting()" (click)="useAction(action)">Use</button>
                             </div>
+                          </div>
+                          @if (action.description) {
+                            <details class="detail-disclosure mt-1">
+                              <summary class="flex items-center gap-1 text-xs text-gold/90">
+                                <mat-icon class="detail-chevron text-base flex-shrink-0">chevron_right</mat-icon>
+                                Details
+                              </summary>
+                              <p class="text-xs text-slate mt-1 mb-0 leading-relaxed">{{ action.description }}</p>
+                            </details>
+                          }
                         </div>
                       }
                       @for (spellRow of reactionSpells(); track spellRow.spell.index) {
@@ -425,13 +515,7 @@
                         </div>
                       }
                       @for (f of universalReactions; track f.name) {
-                        <div class="flex items-start gap-2 text-sm">
-                          <span class="tag flex-shrink-0">{{ f.source }}</span>
-                          <div>
-                            <span class="text-parchment font-medium">{{ f.name }}</span>
-                            @if (f.detail) { <span class="text-slate"> — {{ f.detail }}</span> }
-                          </div>
-                        </div>
+                        <ng-container [ngTemplateOutlet]="featureRow" [ngTemplateOutletContext]="{ $implicit: f }"></ng-container>
                       }
                     </div>
                   </div>
@@ -447,41 +531,37 @@
                 @for (action of actionResourceActions(); track action.key) {
                   @let remaining = action.maxUses - action.usedUses;
                   <div class="card">
-                    <div class="card-body flex items-center justify-between gap-3">
-                      <div class="min-w-0">
-                        <div class="flex items-center gap-2 flex-wrap">
+                    <div class="card-body">
+                      <div class="flex items-center justify-between gap-3">
+                        <div class="flex items-center gap-2 flex-wrap min-w-0">
                           <span class="text-parchment font-medium text-sm">{{ action.name }}</span>
                           <span class="text-coal text-xs">{{ action.source }}</span>
                         </div>
-                        @if (action.description) { <p class="text-xs text-slate mt-1 mb-0">{{ action.description }}</p> }
+                        <div class="flex items-center gap-2 flex-shrink-0">
+                          <span class="text-sm text-parchment tabular-nums">{{ remaining }} / {{ action.maxUses }}</span>
+                          <button class="btn-icon" [disabled]="action.usedUses === 0 || persisting()" (click)="restoreAction(action)" matTooltip="Restore a use">
+                            <mat-icon class="text-base">add</mat-icon>
+                          </button>
+                          <button class="btn-primary text-sm" [disabled]="remaining === 0 || persisting()" (click)="useAction(action)">Use</button>
+                        </div>
                       </div>
-                      <div class="flex items-center gap-2 flex-shrink-0">
-                        <span class="text-sm text-parchment tabular-nums">{{ remaining }} / {{ action.maxUses }}</span>
-                        <button class="btn-icon" [disabled]="action.usedUses === 0 || persisting()" (click)="restoreAction(action)" matTooltip="Restore a use">
-                          <mat-icon class="text-base">add</mat-icon>
-                        </button>
-                        <button class="btn-primary text-sm" [disabled]="remaining === 0 || persisting()" (click)="useAction(action)">Use</button>
-                      </div>
+                      @if (action.description) {
+                        <details class="detail-disclosure mt-1">
+                          <summary class="flex items-center gap-1 text-xs text-gold/90">
+                            <mat-icon class="detail-chevron text-base flex-shrink-0">chevron_right</mat-icon>
+                            Details
+                          </summary>
+                          <p class="text-xs text-slate mt-1 mb-0 leading-relaxed">{{ action.description }}</p>
+                        </details>
+                      }
                     </div>
                   </div>
                 }
                 @for (f of masteredWeapons(); track f.name) {
-                  <div class="flex items-start gap-2 text-sm">
-                    <span class="tag flex-shrink-0">{{ f.source }}</span>
-                    <div>
-                      <span class="text-parchment font-medium">{{ f.name }}</span>
-                      @if (f.detail) { <span class="text-slate"> — {{ f.detail }}</span> }
-                    </div>
-                  </div>
+                  <ng-container [ngTemplateOutlet]="featureRow" [ngTemplateOutletContext]="{ $implicit: f }"></ng-container>
                 }
                 @for (f of universalActions; track f.name) {
-                  <div class="flex items-start gap-2 text-sm">
-                    <span class="tag flex-shrink-0">{{ f.source }}</span>
-                    <div>
-                      <span class="text-parchment font-medium">{{ f.name }}</span>
-                      @if (f.detail) { <span class="text-slate"> — {{ f.detail }}</span> }
-                    </div>
-                  </div>
+                  <ng-container [ngTemplateOutlet]="featureRow" [ngTemplateOutletContext]="{ $implicit: f }"></ng-container>
                 }
               </div>
             </div>

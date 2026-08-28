@@ -1,6 +1,7 @@
 import { Component, inject, input, output, signal, computed, effect } from '@angular/core';
 import { NgTemplateOutlet } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import {
@@ -19,6 +20,9 @@ import {
   abilityModifier, proficiencyBonus,
 } from '../../../core/models/character.model';
 import { adjustCurrency, CURRENCY_ORDER } from '../../../core/utils/currency';
+import { normalizeAvatarRecipe, portraitDataUri, portraitSource } from '../../../core/utils/avatar';
+import { AvatarRecipeV1 } from '../../../core/models/avatar.model';
+import { AvatarCreatorDialogComponent } from '../../../shared/avatar-creator-dialog/avatar-creator-dialog';
 import { reachableGrants, resolveCharacterFeatPicks } from '../../../core/utils/character-effects';
 import { characterContentEnabled } from '../../../core/utils/content-sources';
 import { resolveBackgroundOriginFeat } from '../../../core/utils/background-origin-feat';
@@ -107,12 +111,17 @@ export class CharacterPlaySheetComponent {
   private statsService    = inject(CharacterStatsService);
   private actionsService  = inject(CharacterActionsService);
   private confirm         = inject(ConfirmService);
+  private dialog          = inject(MatDialog);
 
   readonly character = input.required<Character>();
   // Set by DM-facing hosts (dm-campaign-hub, dm-campaign-session, dm-encounter-play) when the
   // sheet is opened for a party member rather than the viewer's own character — gates the
   // "Give Item" control, which calls a DM-only backend endpoint.
   readonly isDm       = input(false);
+  // Set by encounter-play hosts (dm-encounter-play, the battle-map sidebar) where the viewer
+  // already knows whose sheet this is — hides the "Level X Race · Class · Background" meta line
+  // to keep the header tight next to the map.
+  readonly compact    = input(false);
   readonly saved      = output<Character>();
 
   readonly abilities     = ABILITIES;
@@ -286,11 +295,36 @@ export class CharacterPlaySheetComponent {
       .map(it => ({ source: 'Weapon Mastery', name: `${it.name} — ${it.mastery!.property}`, detail: it.mastery!.description }));
   });
 
+  // Choice grants flagged `display: 'special_action'` (e.g. Battle Master maneuvers) — each
+  // selected option shown individually with its full rules text in the Actions tab's Special
+  // Actions section, rather than collapsed into one comma-joined line on the Features list.
+  // They carry no use counter of their own: they draw from an already-tracked pool (e.g.
+  // Superiority Dice) that appears alongside them as a normal resource action.
+  specialActionReferences = computed<DisplayFeature[]>(() => {
+    const out: DisplayFeature[] = [];
+    for (const rc of this.resolvedClasses()) {
+      const source = rc.subclassName ? `${rc.name} (${rc.subclassName})` : rc.name;
+      const levels = [...rc.data.levels, ...(rc.subclass?.levels ?? [])];
+      for (const grant of levels.flatMap(l => l.grants ?? [])) {
+        if (grant.type !== 'choice' || grant.display !== 'special_action') continue;
+        for (const name of rc.choices[grant.key] ?? []) {
+          const option = grant.options.find(o => o.name === name);
+          if (option) out.push({ source, name: option.name, detail: option.description });
+        }
+      }
+    }
+    return out;
+  });
+
   inventoryItems = computed(() => {
     const char = this.localChar();
     if (!char) return [];
     const items = this.itemsAll();
-    return char.equipment.map(e => ({ entry: e, item: items.find(it => it.index === e.itemIndex) ?? null }));
+    // Equipped items float to the top; order within each group is otherwise preserved
+    // (Array.prototype.sort is stable).
+    return char.equipment
+      .map(e => ({ entry: e, item: items.find(it => it.index === e.itemIndex) ?? null }))
+      .sort((a, b) => Number(b.entry.equipped) - Number(a.entry.equipped));
   });
 
   pactWeaponOptions = computed(() => this.itemsAll()
@@ -512,6 +546,14 @@ export class CharacterPlaySheetComponent {
     return out;
   });
 
+  private describeChoicePicks(
+    grant: Extract<TraitGrant, { type: 'choice' }>, choices: Record<string, string[]>, source: string,
+  ): DisplayFeature[] {
+    const picked = choices[grant.key] ?? [];
+    if (!picked.length) return [];
+    return [{ source, name: grant.name, detail: picked.join(', ') }];
+  }
+
   private grantsOrLegacy(grants: TraitGrant[] | undefined, traits: string[]): TraitGrant[] {
     return grants?.length ? grants : traits.map(name => ({ type: 'feature', name }) as TraitGrant);
   }
@@ -521,6 +563,8 @@ export class CharacterPlaySheetComponent {
       case 'feature':
         return [{ source, name: grant.name, detail: grant.description }];
       case 'choice':
+        if (grant.display === 'special_action') return []; // shown in Actions tab instead, see specialActionReferences
+        return this.describeChoicePicks(grant, choices, source);
       case 'skill_choice':
       case 'weapon_mastery': {
         const picked = choices[grant.key] ?? [];
@@ -979,6 +1023,57 @@ export class CharacterPlaySheetComponent {
 
   setCurrencyAdjustAmount(denom: keyof Currency, value: string) {
     this.currencyAdjustAmounts.update(amounts => ({ ...amounts, [denom]: Math.max(0, Math.floor(+value || 0)) }));
+  }
+
+  // The generated portrait shown in the sheet header, from the same recipe/seed pair every other
+  // portrait render uses (party list, tokens, dashboard).
+  portraitUri = computed(() => {
+    const char = this.localChar();
+    if (!char) return '';
+    return portraitDataUri(portraitSource(char.portrait_seed || char.id!, char.avatar_recipe));
+  });
+
+  // Picking a portrait is player agency we keep even when the DM has locked the wizard — the
+  // backend whitelists portrait_seed/avatar_recipe on a locked campaign copy (PLAYER_EDITABLE_FIELDS).
+  changePortrait() {
+    const char = this.localChar();
+    if (!char) return;
+    this.dialog.open(AvatarCreatorDialogComponent, {
+      data: { seed: char.portrait_seed || char.id || '', recipe: char.avatar_recipe },
+      width: '960px',
+      maxWidth: 'calc(100vw - 16px)',
+      maxHeight: 'calc(100vh - 16px)',
+      autoFocus: false,
+    }).afterClosed().subscribe((result: AvatarRecipeV1 | null | undefined) => {
+      const recipe = normalizeAvatarRecipe(result);
+      if (!recipe) return;
+      this.persist({ ...char, portrait_seed: recipe.seed, avatar_recipe: recipe });
+    });
+  }
+
+  // Renaming is player agency we keep even when the DM has locked the wizard — flavor only, like
+  // the portrait, so the backend accepts it separately from the rest of PLAYER_EDITABLE_FIELDS
+  // (see CharactersService.updatePlayerEditableFields; `name` is a column, not a data-blob key).
+  editingName = signal(false);
+  nameDraft   = signal('');
+
+  startEditingName() {
+    const char = this.localChar();
+    if (!char) return;
+    this.nameDraft.set(char.name);
+    this.editingName.set(true);
+  }
+
+  confirmNameEdit() {
+    const char = this.localChar();
+    const name = this.nameDraft().trim();
+    this.editingName.set(false);
+    if (!char || !name || name === char.name) return;
+    this.persist({ ...char, name });
+  }
+
+  cancelNameEdit() {
+    this.editingName.set(false);
   }
 
   // Adding is always safe; removing more than is on hand of one denomination auto-calibrates by

@@ -113,7 +113,7 @@
             },
             {
               "type": "choice", "key": "combat_maneuvers", "name": "Combat Maneuvers", "choose": 3,
-              "chooseByLevel": { "7": 5, "10": 7, "15": 9 },
+              "chooseByLevel": { "7": 5, "10": 7, "15": 9 }, "display": "special_action",
               "description": "Learn three maneuvers, then two more at Fighter levels 7, 10, and 15. Whenever a level grants maneuvers, you can also replace one maneuver you know. You can use only one maneuver per attack.",
               "options": [
                 { "name": "Ambush", "description": "Add your Superiority Die to a Stealth check or to an initiative roll." },

@@ -11,6 +11,7 @@ import { AuthService } from '../../core/services/auth.service';
 import {
   MapToken, BattleMap, MapFog, MapLight, MapLighting, PlacingEntity, MeasureShape, FogToolName, LightToolName,
 } from '../../core/models/campaign.model';
+import { Character } from '../../core/models/character.model';
 import { ConfirmService } from '../../shared/confirm.service';
 import { ResizeHandleDirective } from '../../shared/directives/resize-handle.directive';
 import { drawGrid } from './canvas/grid-renderer';
@@ -27,6 +28,7 @@ import { StageView } from './canvas/stage-view';
 import { MapToolbarComponent } from './components/map-toolbar/map-toolbar';
 import { TurnOrderPanelComponent } from './components/turn-order-panel/turn-order-panel';
 import { LightEditorPanelComponent } from './components/light-editor-panel/light-editor-panel';
+import { CharacterPlaySheetComponent } from '../characters/character-play-sheet/character-play-sheet';
 import { MainLayoutComponent } from '../../shared/layout/main-layout/main-layout';
 import { PageHeaderComponent } from '../../shared/layout/page-header/page-header';
 
@@ -34,7 +36,7 @@ import { PageHeaderComponent } from '../../shared/layout/page-header/page-header
   selector: 'app-battle-map',
   imports: [
     ResizeHandleDirective, MapToolbarComponent, TurnOrderPanelComponent, LightEditorPanelComponent,
-    MainLayoutComponent, PageHeaderComponent, MatIconModule, MatTooltipModule,
+    CharacterPlaySheetComponent, MainLayoutComponent, PageHeaderComponent, MatIconModule, MatTooltipModule,
   ],
   templateUrl: './battle-map.html',
   styleUrl: './battle-map.scss',
@@ -55,8 +57,13 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
   // darkness render around the player's own token; nobody else's screen is affected by it.
   readonly myDarkvisionFt = input<number | null>(null);
   readonly canControl = input<boolean | null>(null);
+  // The viewing player's live character — when set, the player-facing side panel gains a
+  // collapsible "Character Sheet" section alongside Turn Order so the sheet can be referenced
+  // without leaving the map (see player-campaign-session.html). Never set for the DM.
+  readonly myCharacter = input<Character | null>(null);
   readonly tokenClicked = output<MapToken>();
   readonly currentTurnTokenChanged = output<MapToken | null>();
+  readonly characterSaved = output<Character>();
 
   mapService = inject(BattleMapService);
   auth = inject(AuthService);
@@ -90,10 +97,63 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
 
   controlsMap = computed(() => this.canControl() ?? (!this.embedded() && this.auth.isAdmin()));
 
+  // DM roster / turn-order aside — unchanged, simple single width.
   rightAsideWidth = signal(256);
 
   onRightAsideResize(dx: number) {
     this.rightAsideWidth.update(w => Math.min(420, Math.max(220, w - dx)));
+  }
+
+  // Player in-encounter panel: turn order and character sheet sit side by side, each with its
+  // own resize handle and its own persisted width, and each independently collapsible to a
+  // small top-left button.
+  private static readonly TURN_W_KEY = 'dnd-battlemap-turn-w';
+  private static readonly SHEET_W_KEY = 'dnd-battlemap-sheet-w';
+  private static readonly PANEL_TURNCOL_KEY = 'dnd-battlemap-turn-col';
+  private static readonly PANEL_SHEETCOL_KEY = 'dnd-battlemap-sheet-col';
+
+  turnColWidth = signal(BattleMapComponent.readStoredNumber(BattleMapComponent.TURN_W_KEY, 208));
+  sheetWidth = signal(BattleMapComponent.readStoredNumber(BattleMapComponent.SHEET_W_KEY, 460));
+  showTurnColumn = signal(BattleMapComponent.readStoredBool(BattleMapComponent.PANEL_TURNCOL_KEY, true));
+  showSheetColumn = signal(BattleMapComponent.readStoredBool(BattleMapComponent.PANEL_SHEETCOL_KEY, true));
+
+  onTurnColResize(dx: number) {
+    this.turnColWidth.update(w => Math.min(380, Math.max(160, w - dx)));
+    BattleMapComponent.writeStored(BattleMapComponent.TURN_W_KEY, String(this.turnColWidth()));
+  }
+
+  onSheetResize(dx: number) {
+    const max = Math.max(360, Math.min(window.innerWidth - 320, 1100));
+    this.sheetWidth.update(w => Math.min(max, Math.max(300, w - dx)));
+    BattleMapComponent.writeStored(BattleMapComponent.SHEET_W_KEY, String(this.sheetWidth()));
+  }
+
+  toggleTurnColumn() {
+    this.showTurnColumn.update(v => !v);
+    BattleMapComponent.writeStored(BattleMapComponent.PANEL_TURNCOL_KEY, String(this.showTurnColumn()));
+  }
+
+  toggleSheetColumn() {
+    this.showSheetColumn.update(v => !v);
+    BattleMapComponent.writeStored(BattleMapComponent.PANEL_SHEETCOL_KEY, String(this.showSheetColumn()));
+  }
+
+  private static readStoredNumber(key: string, fallback: number): number {
+    const raw = Number(localStorage.getItem(key));
+    return Number.isFinite(raw) && raw > 0 ? raw : fallback;
+  }
+
+  private static readStoredBool(key: string, fallback: boolean): boolean {
+    const raw = localStorage.getItem(key);
+    return raw === null ? fallback : raw === 'true';
+  }
+
+  private static writeStored(key: string, value: string) {
+    try {
+      localStorage.setItem(key, value);
+    } catch {
+      /* storage unavailable (private mode) — non-critical */
+    }
   }
 
   activeMeasureTool = signal<MeasureShape | null>(null);
@@ -235,6 +295,10 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
   private img?: HTMLImageElement;
   private gridSize = 50;
   private resizeObserver?: ResizeObserver;
+  // A genuine browser-window resize still refits the map to the container; a container-only
+  // size change (side panel resized/collapsed) goes through the ResizeObserver and only
+  // re-syncs the stage buffer, without rescaling the map. See fitToContainer/syncStageSize.
+  private readonly onWindowResize = () => this.fitToContainer();
   private tokenSub?: Subscription;
   private measureSub?: Subscription;
   private fogSub?: Subscription;
@@ -316,6 +380,7 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnDestroy() {
     document.removeEventListener('fullscreenchange', this.onFullscreenChange);
+    window.removeEventListener('resize', this.onWindowResize);
     this.tokenSub?.unsubscribe();
     this.measureSub?.unsubscribe();
     this.fogSub?.unsubscribe();
@@ -342,6 +407,7 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
     this.fogTool.reset();
     this.resizeObserver?.disconnect();
     this.resizeObserver = undefined;
+    window.removeEventListener('resize', this.onWindowResize);
     this.stage?.destroy();
     this.stage = undefined;
     if (this.mapImageObjectUrl) {
@@ -351,7 +417,7 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
 
     try {
       // Fetched together so the fog/lighting state is already correct for the first paint in
-      // buildStage()'s reflow() — fetching either only after the map/image are ready would briefly
+      // buildStage()'s fitToContainer() — fetching either only after the map/image are ready would briefly
       // render the map fully unfogged/unlit (spoiling hidden areas) until the data caught up.
       const [map, fog, lighting] = await Promise.all([
         this.mapService.getMap(id),
@@ -480,15 +546,22 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
       this.renderLightMarkers();
     });
 
-    this.resizeObserver = new ResizeObserver(() => this.reflow());
+    // Container-size changes that aren't window resizes — the player dragging the turn-order or
+    // character-sheet resize handle, or collapsing/expanding a side column — only re-sync the
+    // stage buffer; they must not rescale or recenter the map (see syncStageSize). A real
+    // window resize refits, via the window 'resize' listener.
+    this.resizeObserver = new ResizeObserver(() => this.syncStageSize());
     this.resizeObserver.observe(container);
+    window.addEventListener('resize', this.onWindowResize);
 
-    this.reflow();
+    this.fitToContainer();
     this.stageView.centerOnHome();
     this.loading.set(false);
   }
 
-  private reflow() {
+  // Full fit-to-container: (re)computes the map's display scale, cell size and letterbox home,
+  // then redraws every layer. Runs once on load and again on a real browser-window resize.
+  private fitToContainer() {
     const container = this.stageContainer.nativeElement;
     const img = this.img;
     if (!this.stage || !img || !container.clientWidth || !container.clientHeight) return;
@@ -513,6 +586,19 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
     this.renderDarkness();
     this.renderLightMarkers();
     renderMoveRange(this.moveRangeLayer!, this.cellSize, this.showMoveRange(), this.myToken(), this.moveRangeFt());
+  }
+
+  // The map container changed size without the window resizing (a side panel was resized or
+  // collapsed). Keep the Konva stage's drawing buffer matched to the element — so pointer math
+  // and clipping stay correct — but leave the map's scale, cell size and position alone: the
+  // panel just reveals more or less of the same map. "Fit map" / a window resize still refit.
+  private syncStageSize() {
+    const container = this.stageContainer.nativeElement;
+    if (!this.stage || !container.clientWidth || !container.clientHeight) return;
+    if (this.stage.width() === container.clientWidth && this.stage.height() === container.clientHeight) return;
+    this.stage.width(container.clientWidth);
+    this.stage.height(container.clientHeight);
+    this.stage.batchDraw();
   }
 
   private renderFog() {

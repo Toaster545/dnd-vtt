@@ -19,6 +19,7 @@ import { BattleMap, CampaignMember, MapToken } from '../../../../core/models/cam
 import { Session } from '../../../../core/models/session.model';
 import { BattleMapComponent } from '../../../battle-map/battle-map';
 import { CharacterPlaySheetComponent } from '../../../characters/character-play-sheet/character-play-sheet';
+import { CharacterWizardComponent } from '../../../characters/character-wizard/character-wizard';
 import { NotesPanelComponent } from '../../../../shared/components/notes-panel/notes-panel';
 import { PartyListComponent } from '../../../../shared/components/party-list/party-list';
 
@@ -35,7 +36,10 @@ function toContentIndex(name: string): string {
 
 @Component({
   selector: 'app-player-campaign-session',
-  imports: [MatIconModule, MatTooltipModule, BattleMapComponent, CharacterPlaySheetComponent, NotesPanelComponent, PartyListComponent],
+  imports: [
+    MatIconModule, MatTooltipModule, BattleMapComponent, CharacterPlaySheetComponent, CharacterWizardComponent,
+    NotesPanelComponent, PartyListComponent,
+  ],
   templateUrl: './player-campaign-session.html',
   // Routed in via player-shell's <router-outlet> rather than embedded with an explicit sizing
   // class the way e.g. <app-battle-map class="flex-1 min-w-0"> is — the router inserts this
@@ -74,6 +78,16 @@ export class PlayerCampaignSessionComponent implements OnInit, OnDestroy {
   // This campaign's DM-editable copy of the player's character — the only character this player
   // ever plays as inside this campaign (see campaign_members.character_id).
   private myCharacterId: string | null = null;
+
+  // Self-service "view/edit my character" flow off the Party list, shown while no encounter is
+  // active — kept in lockstep with PlayerCampaignHubComponent's identical fields/methods so the
+  // Party list behaves the same whether opened from the campaign hub or the session hub.
+  editingCharacter = signal<Character | null>(null);
+  showWizard       = signal(false);
+  sheetCharacter   = signal<Character | null>(null);
+  // Set only when the sheet was opened via the wizard's "View Sheet" button (as opposed to
+  // viewMyCharacter) — routes closeCharacterSheet() back into the wizard instead of the session hub.
+  sheetFromWizard  = signal(false);
 
   activeEncounter = signal<Encounter | null>(null);
   activeCharacter = signal<Character | null>(null);
@@ -173,6 +187,65 @@ export class PlayerCampaignSessionComponent implements OnInit, OnDestroy {
 
   backToHub() {
     void this.router.navigate(['/home/campaigns', this.campaignId]);
+  }
+
+  // The DM grants this per member (see DmCampaignHubComponent.toggleEditAccess) — otherwise a
+  // player's campaign copy only accepts the play sheet's limited HP/rest/equipment writes.
+  // Mirrors PlayerCampaignHubComponent.editMyCharacter.
+  async editMyCharacter(member: CampaignMember) {
+    this.editingCharacter.set(await this.characterService.getCharacter(member.character_id));
+    this.showWizard.set(true);
+  }
+
+  // Player's own choice, hidden from the rest of the party by default (see CampaignsService V14
+  // migration / setOwnRaceClassVisibility) — the DM always sees it regardless of this toggle.
+  // Mirrors PlayerCampaignHubComponent.toggleRaceClassVisibility.
+  async toggleRaceClassVisibility(member: CampaignMember) {
+    const hub = await this.campaignService.setOwnRaceClassVisibility(this.campaignId, !member.show_race_class);
+    this.members.set(hub.members);
+  }
+
+  async onWizardSaved() {
+    this.showWizard.set(false);
+    const hub = await this.campaignService.getById(this.campaignId);
+    this.members.set(hub.members);
+  }
+
+  onWizardCancelled() {
+    this.showWizard.set(false);
+  }
+
+  async onViewCharacterSheet(id: string) {
+    this.showWizard.set(false);
+    this.sheetFromWizard.set(true);
+    this.sheetCharacter.set(await this.characterService.getCharacter(id));
+  }
+
+  async viewMyCharacter(member: CampaignMember) {
+    this.sheetFromWizard.set(false);
+    this.sheetCharacter.set(await this.characterService.getCharacter(member.character_id));
+  }
+
+  // The play sheet's (saved) emits the updated character after every persist — keep the sheet in
+  // sync and refresh the Party roster's HP/AC badges to match, but stay on the sheet (unlike the
+  // wizard's onWizardSaved, which navigates back to the session hub).
+  async onCharacterSheetSaved(character: Character) {
+    this.sheetCharacter.set(character);
+    const hub = await this.campaignService.getById(this.campaignId);
+    this.members.set(hub.members);
+  }
+
+  closeCharacterSheet() {
+    if (this.sheetFromWizard()) {
+      // sheetCharacter is already the latest saved copy (kept current by onCharacterSheetSaved),
+      // so reuse it as the wizard's starting point instead of re-fetching.
+      this.editingCharacter.set(this.sheetCharacter());
+      this.sheetFromWizard.set(false);
+      this.sheetCharacter.set(null);
+      this.showWizard.set(true);
+      return;
+    }
+    this.sheetCharacter.set(null);
   }
 
   private async loadRecapMaps(encounters: Encounter[]) {

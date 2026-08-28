@@ -1,3 +1,23 @@
+// The component is always dropped into a bounded flex cell (class="flex-1 …" or
+// "h-full w-full"), but Angular hosts default to `display: inline` with no height
+// constraint. Without this, an embed whose subtree has tall min-content — e.g. the
+// player session, where the internal aside now renders a full <app-character-play-sheet>
+// — grows the host (and the Konva #stageContainer inside it) to that content height
+// instead of the visible box. Konva then reads an oversized stage.height(), so
+// screenCenter() / centerOn() ("center on my token", fit map, reset view) target a
+// point far below what's actually on screen.
+:host {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+}
+
+:host > app-main-layout {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
 @media (max-width: 1023px) {
   .map-view-controls { top: auto; bottom: .5rem; right: .5rem; max-width: calc(100vw - 1rem); overflow-x: auto; }
   aside { position: absolute; right: .5rem; bottom: 4rem; z-index: 20; width: min(18rem, calc(100vw - 1rem)) !important; max-height: 35dvh; border: 1px solid #ffffff1a; border-radius: .5rem; }

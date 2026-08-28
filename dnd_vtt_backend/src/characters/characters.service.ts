@@ -152,8 +152,8 @@ const MULTICLASS_SLOTS: Record<number, Record<string, number>> = {
 
 // Fields a player may change on their own campaign copy without the DM granting full edit
 // access — everything the character play sheet's in-encounter controls touch (HP, resource/spell
-// slot uses from actions and rests, and equipment toggles). Anything else in the
-// data blob (abilities, class, background, etc.) is left untouched even if present in the body.
+// slot uses from actions and rests, equipment toggles, and their coin purse). Anything else in
+// the data blob (abilities, class, background, etc.) is left untouched even if present in the body.
 const PLAYER_EDITABLE_FIELDS = [
   'current_hp',
   'resource_uses',
@@ -164,6 +164,15 @@ const PLAYER_EDITABLE_FIELDS = [
   'heroic_inspiration',
   'equipment',
   'spells',
+  // Tracking loot/spending is table-side player agency we keep regardless of the wizard lock —
+  // the play sheet's Inventory tab +/- coin adjusters (CharacterPlaySheetComponent.applyCurrencyDelta)
+  // stay live for a locked campaign copy.
+  'currency',
+  // Same reasoning for the character's portrait: the play sheet's portrait picker
+  // (CharacterPlaySheetComponent.changePortrait) stays live even when the wizard is locked. The
+  // recipe is re-validated below via normalizeCharacterAvatar before it's written.
+  'portrait_seed',
+  'avatar_recipe',
   // Not itself an independent player choice — the frontend recomputes this from whatever's
   // equipped every time it persists (see CharacterPlaySheetComponent.persist), so it has to ride
   // along with the equipment toggle that changed it or campaign-hub/roster views relying on the
@@ -1438,9 +1447,24 @@ export class CharactersService {
     for (const key of PLAYER_EDITABLE_FIELDS) {
       if (key in body) data[key] = body[key];
     }
+    // Only when the player actually sent a new portrait — re-run the same validation the full
+    // update path does, without risking a throw on a pre-existing recipe during an unrelated
+    // (HP, rest, ...) locked save.
+    const normalized =
+      'avatar_recipe' in body ? this.normalizeCharacterAvatar(data) : data;
+
+    // `name` is a characters-table column, not a data-blob key, so it can't ride through
+    // PLAYER_EDITABLE_FIELDS like the rest of this whitelist — handled separately here. It's the
+    // one column-backed field a locked player may still change: flavor only, like the portrait,
+    // unlike race/class/level (also columns) which carry mechanical weight and stay wizard-only.
+    const name =
+      typeof body.name === 'string' && body.name.trim()
+        ? body.name.trim()
+        : (existing.name as string);
+
     await this.db.execute(
-      `UPDATE characters SET data=?, updated_at=? WHERE id=?`,
-      [JSON.stringify(data), new Date().toISOString(), id],
+      `UPDATE characters SET name=?, data=?, updated_at=? WHERE id=?`,
+      [name, JSON.stringify(normalized), new Date().toISOString(), id],
     );
     return this.findOneReadable(id, user);
   }

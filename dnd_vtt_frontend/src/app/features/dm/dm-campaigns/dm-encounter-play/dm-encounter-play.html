@@ -2,7 +2,7 @@
   <div class="flex justify-center mt-10"><span class="spinner-lg"></span></div>
 } @else if (selected(); as encounter) {
   @if (viewingCharacter(); as char) {
-    <app-character-play-sheet [character]="char" [isDm]="true" (saved)="onCharacterSaved($event)" class="block flex-1 min-h-0">
+    <app-character-play-sheet [character]="char" [isDm]="true" [compact]="true" (saved)="onCharacterSaved($event)" class="block flex-1 min-h-0">
       <div sheetHeaderLeading class="flex items-center gap-1">
         <button class="btn-icon" (click)="closeCharacterView()" [matTooltip]="'Back to ' + encounter.name">
           <mat-icon>arrow_back</mat-icon>

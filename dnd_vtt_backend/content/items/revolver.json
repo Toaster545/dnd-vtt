@@ -1,0 +1,19 @@
+{
+  "index": "revolver",
+  "name": "Revolver",
+  "type": "weapon",
+  "category": "Martial Ranged",
+  "damage": "2d8",
+  "damage_type": "piercing",
+  "properties": [
+    "Ammunition (range 40/120)",
+    "Loading"
+  ],
+  "weight": 3,
+  "cost": "600 gp",
+  "description": "A modern six-shot handgun. Rare in most D&D worlds — available only with the DM's permission.",
+  "mastery": {
+    "property": "Vex",
+    "description": "Hit gives you advantage on your next attack roll against the same target before the end of your next turn."
+  }
+}

@@ -1,4 +1,7 @@
-:host { display: block; height: 100%; }
+// container-type lets the rules below react to the sheet's own rendered width rather than the
+// viewport — so the fluid sizing also kicks in when the sheet is embedded in a narrow panel
+// (e.g. the in-encounter side panel) on a wide screen.
+:host { display: block; height: 100%; container-type: inline-size; }
 
 .sheet-stat.sheet-stat-inspiration > mat-icon {
   display: inline-flex;
@@ -11,200 +14,142 @@
   vertical-align: middle;
 }
 
-@media (max-width: 1023px) {
-  .sheet-header {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr);
-    align-items: stretch;
-    gap: .3rem;
-    padding: .4rem .5rem .45rem;
-    background: color-mix(in srgb, var(--dnd-bg-base) 96%, transparent);
-  }
+// Fluid sizing instead of a breakpoint swap: the header/combat-strip/tabs keep the exact same
+// flex structure at every width (see the `flex-wrap` on .sheet-header and the pre-existing
+// `flex-wrap` on .sheet-combat-strip in the template — that's what reflows onto more rows when
+// content no longer fits, not a layout rewrite). Only these metrics scale, continuously, via
+// `cqw` (1cqw = 1% of the sheet's own inline size) clamped between the old narrow/wide values —
+// so there's no width at which the sheet suddenly looks like a different component.
+.sheet-header {
+  // Overrides only the template's `justify-between` (keeps its `items-center`): with the combat
+  // strip flattened into this same flex row (see .sheet-combat-strip below), that would spread
+  // every item edge-to-edge across the row. `align-items: center` is kept so the identity block,
+  // the stat tiles, the HP control and the rest buttons all sit on one shared horizontal axis
+  // rather than hanging from the top at visibly different heights.
+  align-items: center;
+  justify-content: flex-start;
+  gap: clamp(.5rem, 1.6cqw, 1rem);
+  padding: clamp(.6rem, 2cqw, 1.25rem) clamp(.75rem, 2.4cqw, 1.5rem);
+}
 
-  .sheet-identity {
-    width: 100%;
-  }
+// Uniform height + centered contents so the label/number pair in every tile lands on the same
+// line as its neighbours once the row itself is centered (above).
+.sheet-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.75rem;
+}
 
-  .sheet-identity-copy {
-    width: 100%;
-  }
+// Pins the identity block to the left edge and lets the auto margin claim whatever space is left
+// on that line, pushing the combat-strip items that fit onto it flush to the right — reproducing
+// the original name-left/stats-right look at full width. Items that don't fit fall to their own
+// line below, where (with no auto-margin sibling ahead of them there) they read left-aligned.
+.sheet-identity {
+  margin-right: auto;
+}
 
-  .sheet-header h2 {
-    font-size: 1rem;
-    line-height: 1.05;
-  }
+.sheet-header h2 {
+  font-size: clamp(1rem, 3cqw, 1.5rem);
+  line-height: 1.15;
+}
 
-  .sheet-header p {
-    max-width: calc(100vw - 4.5rem);
-    margin-top: .15rem;
-    overflow: hidden;
-    font-size: .62rem;
-    line-height: 1.1;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
+.sheet-header p {
+  font-size: clamp(.7rem, 1.6cqw, .875rem);
+}
 
-  .sheet-combat-strip {
-    display: grid;
-    grid-template-columns: repeat(6, minmax(0, 1fr));
-    grid-template-areas:
-      'ac temp inspiration initiative proficiency conditions'
-      'hp hp hp hp rest rest';
-    align-items: center;
-    width: 100%;
-    gap: .25rem;
-    padding: 0;
-    overflow: hidden;
-  }
+// Flattened into .sheet-header's own flex row instead of being its own nested flex container:
+// with `display: contents` this box disappears from layout and its children (rest actions, each
+// stat tile, the HP control) become direct siblings of .sheet-identity. That's what makes them
+// wrap one at a time as the header narrows — the strip no longer moves below the name as a
+// single all-or-nothing block once it stops fitting; each element peels off to the next line on
+// its own, in order, exactly like flex-wrap always does for a flat row of items.
+.sheet-combat-strip {
+  display: contents;
+}
 
-  .sheet-combat-strip > * {
-    min-width: 0;
-  }
+// Separates the live-vitals group (HP / AC / Conditions / Temp HP) from the situational
+// group (Initiative / Inspiration / rests). It's a flex sibling like every other strip item
+// (see `display: contents` above), so on a narrow sheet it just wraps away with the rest.
+.sheet-strip-divider {
+  align-self: center;
+  width: 1px;
+  height: 2.25rem;
+  margin: 0 0.35rem;
+  background: rgb(255 255 255 / 0.12);
+}
 
-  .sheet-stat {
-    display: flex;
-    min-height: 38px;
-    flex-direction: column;
-    justify-content: center;
-    padding: .15rem .1rem;
-    border: 1px solid color-mix(in srgb, var(--dnd-text) 8%, transparent);
-    border-radius: .35rem;
-    background: color-mix(in srgb, var(--dnd-bg-elevated) 68%, transparent);
-  }
+.sheet-stat > :first-child,
+.sheet-hp-summary > :first-child {
+  font-size: clamp(.5rem, 1cqw, .625rem);
+}
 
-  .sheet-stat > :first-child,
-  .sheet-hp-summary > :first-child {
-    margin: 0;
-    font-size: .48rem;
-    line-height: 1;
-    letter-spacing: .06em;
-  }
+.sheet-stat > :last-child {
+  font-size: clamp(1rem, 2.6cqw, 1.5rem);
+}
 
-  .sheet-stat > :last-child {
-    overflow: hidden;
-    font-size: .92rem;
-    line-height: 1.05;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
+.sheet-stat.sheet-stat-inspiration > mat-icon {
+  font-size: clamp(1rem, 2.6cqw, 1.5rem);
+}
 
-  .sheet-stat-ac { grid-area: ac; }
-  .sheet-stat-temp-hp { grid-area: temp; }
-  .sheet-stat-inspiration { grid-area: inspiration; }
+.sheet-stat-conditions > :last-child {
+  font-size: clamp(.65rem, 1.2cqw, .75rem);
+}
 
-  .sheet-stat.sheet-stat-inspiration > mat-icon {
-    font-size: 1.15rem;
-  }
-  .sheet-stat-initiative { grid-area: initiative; }
-  .sheet-stat-proficiency { grid-area: proficiency; }
+.sheet-rest-actions .btn-outline {
+  padding: clamp(.2rem, .8cqw, .375rem) clamp(.35rem, 1cqw, .625rem);
+  font-size: clamp(.65rem, 1.2cqw, .75rem);
+}
 
-  .sheet-stat-conditions {
-    grid-area: conditions;
-    padding-inline: .25rem;
-  }
+.sheet-hp-adjuster .field-input {
+  width: clamp(2rem, 4cqw, 2.5rem);
+}
 
-  .sheet-stat-conditions > :last-child {
-    max-width: 100%;
-    font-family: inherit;
-    font-size: .65rem;
-  }
+.sheet-hp-summary > :nth-child(2) {
+  font-size: clamp(1rem, 2.6cqw, 1.5rem);
+}
 
-  .sheet-rest-actions {
-    grid-area: rest;
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: .25rem;
-  }
+.sheet-hp-summary > :nth-child(3) {
+  font-size: clamp(.65rem, 1.2cqw, .75rem);
+}
 
-  .sheet-rest-actions .btn-outline {
-    min-width: 0;
-    padding: .25rem;
-    font-size: .61rem;
-    line-height: 1.05;
-    white-space: normal;
-  }
+.sheet-hp-bar {
+  width: clamp(2rem, 5cqw, 4rem);
+}
 
-  .sheet-hp-control {
-    grid-area: hp;
-    display: flex;
-    align-items: center;
-    min-height: 38px;
-    gap: .25rem;
-    padding: .1rem .25rem;
-    overflow: hidden;
-    border: 1px solid color-mix(in srgb, var(--dnd-text) 8%, transparent);
-    border-radius: .35rem;
-    background: color-mix(in srgb, var(--dnd-bg-elevated) 68%, transparent);
-  }
+.sheet-tabs button {
+  padding: clamp(.5rem, 1.6cqw, .875rem) clamp(.5rem, 1.8cqw, 1.25rem);
+  gap: clamp(.35rem, 1cqw, .5rem);
+  font-size: clamp(.72rem, 1.4cqw, .875rem);
+}
 
-  .sheet-hp-adjuster {
-    display: grid;
-    grid-template-columns: 1.75rem minmax(2rem, 1fr) 1.75rem;
-    flex: 1 1 auto;
-    min-width: 0;
-    gap: .2rem;
-    order: 2;
-  }
+.sheet-tabs button > span:first-child {
+  width: clamp(.9rem, 1.8cqw, 1.25rem);
+  height: clamp(.9rem, 1.8cqw, 1.25rem);
+  font-size: clamp(.55rem, 1cqw, .75rem);
+}
 
-  .sheet-hp-adjuster .btn-icon,
-  .sheet-hp-adjuster .field-input {
-    width: 100%;
-    min-width: 0;
-    min-height: 34px;
-    height: 34px;
-    padding: 0;
-  }
+.sheet-body {
+  padding: clamp(.75rem, 2.4cqw, 1.5rem);
+}
 
-  .sheet-hp-summary {
-    display: flex;
-    flex: 0 0 2.7rem;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    min-width: 0;
-    order: 1;
-  }
+// Feature / trait / action rows on the Stats and Actions tabs render collapsed: only the name
+// shows, and the rules text sits behind a native <details> disclosure so both tabs stay
+// skimmable mid-combat. .detail-chevron is the rotation affordance on the <summary>.
+.detail-disclosure > summary {
+  list-style: none;
+  cursor: pointer;
+}
 
-  .sheet-hp-summary > :first-child {
-    line-height: 1;
-  }
+.detail-disclosure > summary::-webkit-details-marker {
+  display: none;
+}
 
-  .sheet-hp-summary > :nth-child(2) {
-    font-size: 1rem;
-    line-height: 1;
-  }
+.detail-chevron {
+  transition: transform .15s ease;
+}
 
-  .sheet-hp-summary > :nth-child(3) {
-    margin: 0;
-    font-size: .58rem;
-    line-height: 1;
-  }
-
-  .sheet-hp-bar {
-    display: none;
-  }
-
-  .sheet-tabs {
-    display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    overflow: hidden;
-  }
-
-  .sheet-tabs button {
-    justify-content: center;
-    min-width: 0;
-    padding: .55rem .15rem;
-    gap: .3rem;
-    font-size: .68rem;
-  }
-
-  .sheet-tabs button > span:first-child {
-    width: 1rem;
-    height: 1rem;
-    font-size: .55rem;
-  }
-
-  .sheet-body {
-    padding: .75rem;
-  }
+.detail-disclosure[open] > summary .detail-chevron {
+  transform: rotate(90deg);
 }
