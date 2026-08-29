@@ -39,6 +39,10 @@
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
       <div class="lg:col-span-2">
+        <app-wiki-embed [campaignId]="campaignId" [dm]="false" [matchTitles]="wikiTitles()" />
+      </div>
+
+      <div>
         <h3 class="font-brand text-sm text-parchment m-0 mb-3">Sessions</h3>
         <ul class="divide-y divide-white/8">
           @for (session of c.sessions; track session.id) {
@@ -57,13 +61,7 @@
           }
         </ul>
 
-        <div class="mt-6">
-          <app-wiki-embed [campaignId]="campaignId" [dm]="false" [matchTitles]="wikiTitles()" />
-        </div>
-      </div>
-
-      <div>
-        <h3 class="font-brand text-sm text-parchment m-0 mb-3">Party</h3>
+        <h3 class="font-brand text-sm text-parchment m-0 mt-6 mb-3">Party</h3>
         <app-party-list [members]="c.members" [currentUserId]="auth.profile()?.id ?? null" [showSelfControls]="true"
           (toggleRaceClassVisibility)="toggleRaceClassVisibility($event)"
           (viewCharacter)="viewMyCharacter($event)"
