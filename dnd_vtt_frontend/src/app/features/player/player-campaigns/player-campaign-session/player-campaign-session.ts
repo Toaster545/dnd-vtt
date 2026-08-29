@@ -19,8 +19,8 @@ import { Session } from '../../../../core/models/session.model';
 import { BattleMapComponent } from '../../../battle-map/battle-map';
 import { CharacterPlaySheetComponent } from '../../../characters/character-play-sheet/character-play-sheet';
 import { CharacterWizardComponent } from '../../../characters/character-wizard/character-wizard';
-import { NotesPanelComponent } from '../../../../shared/components/notes-panel/notes-panel';
 import { PartyListComponent } from '../../../../shared/components/party-list/party-list';
+import { WikiEmbedComponent } from '../../../wiki/wiki-embed.component';
 
 const REJOIN_KEY = 'dnd-player-campaign-encounter';
 interface StoredRejoin { encounterId: string; }
@@ -37,7 +37,7 @@ function toContentIndex(name: string): string {
   selector: 'app-player-campaign-session',
   imports: [
     MatIconModule, MatTooltipModule, BattleMapComponent, CharacterPlaySheetComponent, CharacterWizardComponent,
-    NotesPanelComponent, PartyListComponent,
+    PartyListComponent, WikiEmbedComponent,
   ],
   templateUrl: './player-campaign-session.html',
   // Routed in via player-shell's <router-outlet> rather than embedded with an explicit sizing
@@ -93,9 +93,6 @@ export class PlayerCampaignSessionComponent implements OnInit, OnDestroy {
   // player never sees through it. null = no darkvision (race grants none and no DM override).
   myDarkvisionFt = signal<number | null>(null);
   view = signal<'map' | 'sheet'>('map');
-  showLiveNotes = signal(false);
-
-  expandedNotesFor = signal<Set<string>>(new Set());
 
   presentPlayers = signal<PresentPlayer[]>([]);
   private presenceSub?: Subscription;
@@ -350,18 +347,6 @@ export class PlayerCampaignSessionComponent implements OnInit, OnDestroy {
       max_hp: character.max_hp,
       portraitSeed: character.portrait_seed,
       avatarRecipe: character.avatar_recipe,
-    });
-  }
-
-  notesExpanded(encounterId: string): boolean {
-    return this.expandedNotesFor().has(encounterId);
-  }
-
-  toggleNotes(encounterId: string) {
-    this.expandedNotesFor.update(set => {
-      const next = new Set(set);
-      if (next.has(encounterId)) next.delete(encounterId); else next.add(encounterId);
-      return next;
     });
   }
 

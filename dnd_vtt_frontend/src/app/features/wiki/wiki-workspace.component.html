@@ -1,0 +1,353 @@
+<!-- Sidebar: file explorer -->
+@if (!embedded() || mode() === 'edit') {
+  <aside
+    class="relative shrink-0 border-r border-slate/25 flex flex-col min-h-0"
+    [style.width.px]="sidebarWidth()"
+  >
+    <div class="py-3 pr-3 flex items-center gap-1">
+      @if (!embedded()) {
+        <a
+          class="btn-icon shrink-0"
+          [routerLink]="
+            isDm() ? ['/home/campaigns/manage', campaignId()] : ['/home/campaigns', campaignId()]
+          "
+          matTooltip="Back to campaign"
+        >
+          <mat-icon>arrow_back</mat-icon>
+        </a>
+      }
+      <div class="relative flex-1 min-w-0">
+        <input
+          type="search"
+          class="field-input w-full text-sm pr-7"
+          placeholder="Search pages…"
+          [ngModel]="q()"
+          (ngModelChange)="onSearchInput($event)"
+        />
+        @if (q()) {
+          <button
+            class="absolute right-1 top-1/2 -translate-y-1/2 btn-icon !w-6 !h-6"
+            (click)="clearSearch()"
+          >
+            <mat-icon class="text-base">close</mat-icon>
+          </button>
+        }
+      </div>
+      <button class="btn-icon shrink-0" (click)="newFolder()" matTooltip="New folder">
+        <mat-icon>create_new_folder</mat-icon>
+      </button>
+      <button class="btn-icon shrink-0" (click)="createPage(undefined, '')" matTooltip="New page">
+        <mat-icon>note_add</mat-icon>
+      </button>
+    </div>
+
+    <nav
+      class="flex-1 min-h-0 overflow-y-auto py-2 pr-2 text-sm"
+      [class.wiki-drop-target]="dropTarget() === ''"
+      (dragover)="onDragOver($event, '')"
+      (drop)="onDrop($event, '')"
+    >
+      @if (q()) {
+        @if (searching()) {
+          <p class="text-slate text-xs px-2 py-3">Searching…</p>
+        } @else if (searchResults().length === 0) {
+          <p class="text-slate text-xs px-2 py-3">No matches.</p>
+        } @else {
+          @for (hit of searchResults(); track hit.id) {
+            <button
+              class="w-full text-left px-2 py-2 rounded hover:bg-white/5 block"
+              (click)="openPage(hit.slug)"
+            >
+              <span class="text-parchment text-sm block truncate">{{ hit.title }}</span>
+              <span class="text-slate text-xs block truncate">{{ hit.snippet }}</span>
+            </button>
+          }
+        }
+      } @else if (loadingTree()) {
+        <p class="text-slate text-xs px-2 py-3">Loading…</p>
+      } @else if (tree().length === 0 && draftFolders().length === 0) {
+        <p class="text-slate text-xs px-2 py-3">No pages yet. Create the first one.</p>
+      } @else {
+        <!-- root-level pages -->
+        @for (p of rootNode().pages; track p.id) {
+          <ng-container *ngTemplateOutlet="pageRow; context: { $implicit: p, depth: 0 }" />
+        }
+        <!-- folders -->
+        @for (f of rootNode().folders; track f.path) {
+          <ng-container *ngTemplateOutlet="folderRow; context: { $implicit: f, depth: 0 }" />
+        }
+      }
+    </nav>
+
+    <!-- Drag to resize the sidebar -->
+    <div
+      class="absolute inset-y-0 right-0 w-1.5 translate-x-1/2 z-20 cursor-col-resize hover:bg-gold/40"
+      (pointerdown)="startResize($event)"
+    ></div>
+  </aside>
+}
+
+<!-- Recursive folder row -->
+<ng-template #folderRow let-node let-depth="depth">
+  <button
+    class="w-full text-left px-2 py-1.5 rounded flex items-center gap-1 text-parchment hover:bg-white/5"
+    [style.paddingLeft.px]="8 + depth * 14"
+    [class.wiki-drop-target]="dropTarget() === node.path"
+    [class.opacity-40]="draggingFolder(node.path)"
+    draggable="true"
+    (click)="toggleFolder(node.path)"
+    (contextmenu)="openFolderMenu($event, node.path)"
+    (dragstart)="startDragFolder($event, node.path)"
+    (dragover)="onDragOver($event, node.path)"
+    (dragleave)="onDragLeave(node.path)"
+    (drop)="onDrop($event, node.path)"
+    (dragend)="onDragEnd()"
+  >
+    <mat-icon class="text-[16px] text-slate/70 shrink-0">
+      {{ isExpanded(node.path) ? 'expand_more' : 'chevron_right' }}
+    </mat-icon>
+    <mat-icon class="text-[15px] text-gold/70 shrink-0">folder</mat-icon>
+    <span class="truncate flex-1">{{ node.name }}</span>
+  </button>
+  @if (isExpanded(node.path)) {
+    @for (child of node.folders; track child.path) {
+      <ng-container
+        *ngTemplateOutlet="folderRow; context: { $implicit: child, depth: depth + 1 }"
+      />
+    }
+    @for (p of node.pages; track p.id) {
+      <ng-container *ngTemplateOutlet="pageRow; context: { $implicit: p, depth: depth + 1 }" />
+    }
+    @if (node.folders.length === 0 && node.pages.length === 0) {
+      <p class="text-slate/50 text-xs italic" [style.paddingLeft.px]="8 + (depth + 1) * 14 + 4">
+        Empty
+      </p>
+    }
+  }
+</ng-template>
+
+<!-- Page row -->
+<ng-template #pageRow let-p let-depth="depth">
+  <button
+    class="w-full text-left px-2 py-1.5 rounded flex items-center gap-1.5"
+    [style.paddingLeft.px]="8 + depth * 14 + 18"
+    [ngClass]="p.slug === currentSlug() ? 'bg-white/10 text-gold' : 'text-parchment hover:bg-white/5'"
+    [class.opacity-40]="draggingPage(p.id)"
+    draggable="true"
+    (click)="openPage(p.slug)"
+    (contextmenu)="openPageMenu($event, p)"
+    (dragstart)="startDragPage($event, p)"
+    (dragover)="onDragOver($event, p.folder)"
+    (dragleave)="onDragLeave(p.folder)"
+    (drop)="onDrop($event, p.folder)"
+    (dragend)="onDragEnd()"
+  >
+    <mat-icon class="text-[15px] text-slate/50 shrink-0">description</mat-icon>
+    <span class="truncate flex-1">{{ p.title }}</span>
+    @if (p.visibility === 'dm_only') {
+      <mat-icon class="text-[13px] text-slate/60 shrink-0" matTooltip="DM only">
+        visibility_off
+      </mat-icon>
+    }
+  </button>
+</ng-template>
+
+<!-- Context menu -->
+@if (menu(); as m) {
+  <div class="fixed inset-0 z-40" (click)="closeMenu()" (contextmenu)="$event.preventDefault(); closeMenu()"></div>
+  <div
+    class="fixed z-50 min-w-44 py-1 rounded-md border border-white/12 bg-elevated shadow-xl text-sm"
+    [style.left.px]="m.x"
+    [style.top.px]="m.y"
+  >
+    @if (m.kind === 'folder') {
+      <button class="menu-item" (click)="createPage(undefined, m.path); closeMenu()">
+        New page here
+      </button>
+      <button class="menu-item" (click)="newFolder(m.path); closeMenu()">New subfolder</button>
+      <button class="menu-item" (click)="renameFolder(m.path); closeMenu()">Rename folder</button>
+      <button class="menu-item text-danger/80" (click)="deleteFolder(m.path); closeMenu()">
+        Delete folder
+      </button>
+    } @else {
+      <button class="menu-item" (click)="openPage(m.page.slug); closeMenu()">Open</button>
+      <button class="menu-item" (click)="renamePage(m.page); closeMenu()">Rename</button>
+      <button class="menu-item" (click)="movePage(m.page); closeMenu()">Move to folder…</button>
+      <button class="menu-item text-danger/80" (click)="deletePage(m.page); closeMenu()">
+        Delete
+      </button>
+    }
+  </div>
+}
+
+<!-- Main pane -->
+<section class="relative flex-1 min-w-0 flex flex-col" [class.min-h-0]="!embedded()">
+  @if (errorMsg()) {
+    <div class="bg-danger/15 text-danger text-sm px-4 py-2">{{ errorMsg() }}</div>
+  }
+
+  @if (loadingPage()) {
+    <div class="flex justify-center mt-16"><span class="spinner-lg"></span></div>
+  } @else if (notFound()) {
+    <div class="flex-1 flex flex-col items-center justify-center text-center gap-3 p-8">
+      <mat-icon class="text-4xl text-slate/50">description</mat-icon>
+      <p class="text-slate m-0">This page doesn't exist yet.</p>
+      @if (!readingOnly()) {
+        <button class="btn-outline text-sm" (click)="createPage(currentSlug() ?? undefined)">
+          Create it
+        </button>
+      }
+    </div>
+  } @else if (!page()) {
+    <div class="flex-1 flex flex-col items-center justify-center text-center gap-3 p-8">
+      <mat-icon class="text-4xl text-slate/50">menu_book</mat-icon>
+      <p class="text-slate m-0">Select a page, or create a new one.</p>
+      @if (!readingOnly()) {
+        <button class="btn-outline text-sm" (click)="createPage()">New page</button>
+      } @else if (embedded()) {
+        <button class="btn-outline text-sm" (click)="setMode('edit')">Edit wiki</button>
+      }
+    </div>
+  } @else {
+    <!-- Page header (full-page wiki only; the embed puts these controls on the title row) -->
+    @if (!embedded()) {
+      <header class="border-b border-white/8 px-5 py-2 flex items-center gap-2">
+        <p class="flex-1 min-w-0 text-slate text-xs m-0 truncate">
+          {{ page()!.folder || 'Wiki root' }} ·
+          edited by {{ page()!.updated_by_name || page()!.author_name || 'someone' }}
+          @if (page()!.visibility === 'dm_only') { · <span class="text-gold">DM only</span> }
+        </p>
+
+        @if (canEditCurrent()) {
+          <span class="text-xs text-slate/70 w-14 text-right">
+            @switch (saveState()) {
+              @case ('saving') { Saving… }
+              @case ('saved') { Saved }
+              @case ('error') { <span class="text-danger">Error</span> }
+            }
+          </span>
+        }
+        @if (isDm()) {
+          <button
+            class="btn-icon"
+            (click)="toggleVisibility()"
+            [matTooltip]="page()!.visibility === 'dm_only' ? 'Make visible to players' : 'Make DM-only'"
+          >
+            <mat-icon>{{ page()!.visibility === 'dm_only' ? 'lock' : 'lock_open' }}</mat-icon>
+          </button>
+        }
+        @if (canEditCurrent()) {
+          <button
+            class="btn-icon text-danger/70 hover:text-danger"
+            (click)="deletePage()"
+            matTooltip="Delete page"
+          >
+            <mat-icon>delete</mat-icon>
+          </button>
+        }
+      </header>
+    }
+
+    @if (conflict()) {
+      <div class="bg-gold/15 text-gold text-sm px-5 py-2 flex items-center gap-3">
+        <span class="flex-1">Someone else saved this page while you were editing.</span>
+        <button class="btn-outline text-xs" (click)="reloadFromServer()">
+          Discard mine &amp; reload
+        </button>
+        <button class="btn-outline text-xs" (click)="flushSave(true)">Overwrite theirs</button>
+      </div>
+    }
+
+    <!-- Body -->
+    <div class="flex-1 flex flex-col" [class.min-h-0]="!embedded()">
+      <div class="shrink-0" [class.pt-5]="!readingOnly()" [class.px-5]="!readingOnly()">
+        <div class="flex items-center gap-2">
+          <div class="flex-1 min-w-0 max-w-[46rem]">
+            @if (canEditCurrent() && !readingOnly()) {
+              <input
+                class="wiki-title-input w-full font-brand text-parchment bg-transparent border-0 outline-none p-0"
+                [ngModel]="draftTitle()"
+                (ngModelChange)="onTitleChange($event)"
+                (keydown.enter)="$event.preventDefault(); editor.focus()"
+                placeholder="Untitled"
+              />
+            } @else {
+              <h1 class="wiki-title-input font-brand text-parchment m-0">{{ page()!.title }}</h1>
+            }
+          </div>
+          @if (embedded()) {
+            <div class="ml-auto shrink-0 flex items-center gap-1">
+              @if (canEditCurrent() && !readingOnly()) {
+                <span class="text-xs text-slate/70 w-14 text-right">
+                  @switch (saveState()) {
+                    @case ('saving') { Saving… }
+                    @case ('saved') { Saved }
+                    @case ('error') { <span class="text-danger">Error</span> }
+                  }
+                </span>
+              }
+              @if (isDm() && !readingOnly()) {
+                <button
+                  class="btn-icon"
+                  (click)="toggleVisibility()"
+                  [matTooltip]="
+                    page()!.visibility === 'dm_only' ? 'Make visible to players' : 'Make DM-only'
+                  "
+                >
+                  <mat-icon>{{ page()!.visibility === 'dm_only' ? 'lock' : 'lock_open' }}</mat-icon>
+                </button>
+              }
+              @if (canEditCurrent() && !readingOnly()) {
+                <button
+                  class="btn-icon text-danger/70 hover:text-danger"
+                  (click)="deletePage()"
+                  matTooltip="Delete page"
+                >
+                  <mat-icon>delete</mat-icon>
+                </button>
+              }
+              <button
+                class="btn-icon"
+                (click)="setMode(mode() === 'read' ? 'edit' : 'read')"
+                [matTooltip]="mode() === 'read' ? 'Edit wiki' : 'View wiki'"
+              >
+                <mat-icon>{{ mode() === 'read' ? 'edit' : 'visibility' }}</mat-icon>
+              </button>
+            </div>
+          }
+        </div>
+      </div>
+      <div [class.flex-1]="!embedded()" [class.min-h-0]="!embedded()">
+        <app-wiki-live-editor
+          #editor
+          [value]="draftBody()"
+          [pages]="editorPages()"
+          [readonly]="readingOnly()"
+          [flow]="embedded()"
+          (valueChange)="onBodyChange($event)"
+          (openLink)="onEditorLink($event)"
+          (createLink)="createPage($event)"
+          (editorBlur)="flushSave()"
+        />
+      </div>
+
+      @if (!embedded() && backlinks().length) {
+        <div class="shrink-0 border-t border-white/8 px-6 py-3 max-h-40 overflow-y-auto">
+          <p class="text-slate/70 text-[11px] uppercase tracking-wide m-0 mb-2">Linked from</p>
+          <ul class="list-none p-0 m-0 flex flex-col gap-1">
+            @for (b of backlinks(); track b.id) {
+              <li>
+                <button class="text-gold/90 hover:text-gold text-sm" (click)="openPage(b.slug)">
+                  {{ b.title }}
+                  @if (b.folder) {
+                    <span class="text-slate/60 text-xs">— {{ b.folder }}</span>
+                  }
+                </button>
+              </li>
+            }
+          </ul>
+        </div>
+      }
+    </div>
+  }
+</section>

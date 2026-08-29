@@ -34,9 +34,6 @@
             <mat-icon class="text-base">badge</mat-icon> Character
           </button>
         }
-        <button class="btn-icon" [class.bg-white/10]="showLiveNotes()" (click)="showLiveNotes.set(!showLiveNotes())" matTooltip="Notes">
-          <mat-icon class="text-base">sticky_note_2</mat-icon>
-        </button>
       </div>
     </div>
 
@@ -61,12 +58,6 @@
           </div>
         }
       </div>
-
-      @if (showLiveNotes()) {
-        <aside class="w-80 border-l border-white/10 p-4 overflow-y-auto flex-shrink-0">
-          <app-notes-panel entityType="encounter" [entityId]="encounter.id!" />
-        </aside>
-      }
     </div>
   </div>
 } @else {
@@ -115,16 +106,7 @@
                         @if (joiningId() === encounter.id) { <span class="spinner-sm"></span> } @else { Join }
                       </button>
                     }
-                    <button class="btn-icon text-slate hover:text-parchment" (click)="toggleNotes(encounter.id!)" matTooltip="Notes">
-                      <mat-icon class="text-base">sticky_note_2</mat-icon>
-                    </button>
                   </div>
-
-                  @if (notesExpanded(encounter.id!)) {
-                    <div class="mt-3">
-                      <app-notes-panel entityType="encounter" [entityId]="encounter.id!" />
-                    </div>
-                  }
                 </div>
               </li>
             } @empty {
@@ -133,7 +115,7 @@
           </ul>
 
           <div class="mt-6">
-            <app-notes-panel entityType="session" [entityId]="sessionId" title="Comments" />
+            <app-wiki-embed [campaignId]="campaignId" [dm]="false" />
           </div>
         </div>
 
