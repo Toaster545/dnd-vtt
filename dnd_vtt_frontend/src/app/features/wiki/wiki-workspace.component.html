@@ -283,6 +283,16 @@
                 <mat-icon>delete</mat-icon>
               </button>
             }
+            @if (readingOnly() && canGoBack()) {
+              <button class="btn-icon" (click)="goBack()" matTooltip="Back">
+                <mat-icon>arrow_back</mat-icon>
+              </button>
+            }
+            @if (readingOnly() && !atEmbeddedHome()) {
+              <button class="btn-icon" (click)="goHome()" matTooltip="Home">
+                <mat-icon>home</mat-icon>
+              </button>
+            }
             @if (embedded()) {
               <button
                 class="btn-icon"
