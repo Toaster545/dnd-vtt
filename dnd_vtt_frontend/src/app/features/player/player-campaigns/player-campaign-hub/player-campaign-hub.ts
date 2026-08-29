@@ -8,7 +8,7 @@ import { AuthService } from '../../../../core/services/auth.service';
 import { RecentActivityService } from '../../../../core/services/recent-activity.service';
 import { CampaignHub, CampaignMember } from '../../../../core/models/campaign.model';
 import { Character } from '../../../../core/models/character.model';
-import { NotesPanelComponent } from '../../../../shared/components/notes-panel/notes-panel';
+import { WikiEmbedComponent } from '../../../wiki/wiki-embed.component';
 import { PartyListComponent } from '../../../../shared/components/party-list/party-list';
 import { CharacterWizardComponent } from '../../../characters/character-wizard/character-wizard';
 import { CharacterPlaySheetComponent } from '../../../characters/character-play-sheet/character-play-sheet';
@@ -18,7 +18,7 @@ import { ConfirmService } from '../../../../shared/confirm.service';
 @Component({
   selector: 'app-player-campaign-hub',
   imports: [
-    RouterLink, MatIconModule, MatTooltipModule, NotesPanelComponent, PartyListComponent, CharacterWizardComponent,
+    RouterLink, MatIconModule, MatTooltipModule, WikiEmbedComponent, PartyListComponent, CharacterWizardComponent,
     CharacterPlaySheetComponent,
   ],
   templateUrl: './player-campaign-hub.html',

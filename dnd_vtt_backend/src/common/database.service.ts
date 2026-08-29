@@ -79,6 +79,7 @@ export class DatabaseService implements OnModuleInit {
     if (version < 20) await this.applyV20();
     if (version < 21) await this.applyV21();
     if (version < 23) await this.applyV23();
+    if (version < 24) await this.applyV24();
   }
 
   // ── V1: initial schema (explicit columns on characters) ─────────────────────
@@ -771,5 +772,15 @@ export class DatabaseService implements OnModuleInit {
 
     await this.db.execute(`PRAGMA user_version = 23`);
     this.logger.log('Applied schema migration v23 (campaign wiki)');
+  }
+
+  // ── V24: drop the notes/comments feature ─────────────────────────────────────
+  // The campaign/session hubs replaced their "Comments" panels with an embedded wiki view, and
+  // the encounter notes panels went with them. Nothing reads the `notes` table any more.
+  private async applyV24() {
+    await this.db.execute(`DROP INDEX IF EXISTS idx_notes_entity`);
+    await this.db.execute(`DROP TABLE IF EXISTS notes`);
+    await this.db.execute(`PRAGMA user_version = 24`);
+    this.logger.log('Applied schema migration v24 (drop notes)');
   }
 }

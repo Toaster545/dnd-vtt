@@ -16,7 +16,7 @@ import { CampaignHub, CampaignMember } from '../../../../core/models/campaign.mo
 import { Session } from '../../../../core/models/session.model';
 import { Character } from '../../../../core/models/character.model';
 import { ConfirmService } from '../../../../shared/confirm.service';
-import { NotesPanelComponent } from '../../../../shared/components/notes-panel/notes-panel';
+import { WikiEmbedComponent } from '../../../wiki/wiki-embed.component';
 import { PartyListComponent } from '../../../../shared/components/party-list/party-list';
 import { CharacterWizardComponent } from '../../../characters/character-wizard/character-wizard';
 import { CharacterPlaySheetComponent } from '../../../characters/character-play-sheet/character-play-sheet';
@@ -29,7 +29,7 @@ function toContentIndex(name: string): string {
 @Component({
   selector: 'app-dm-campaign-hub',
   imports: [
-    FormsModule, RouterLink, MatIconModule, MatTooltipModule, NotesPanelComponent, PartyListComponent,
+    FormsModule, RouterLink, MatIconModule, MatTooltipModule, WikiEmbedComponent, PartyListComponent,
     CharacterWizardComponent, CharacterPlaySheetComponent,
   ],
   templateUrl: './dm-campaign-hub.html',

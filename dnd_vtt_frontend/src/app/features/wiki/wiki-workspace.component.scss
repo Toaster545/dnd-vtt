@@ -2,6 +2,51 @@
   color: var(--dnd-text, #e8e3d4);
 }
 
+// Embedded in a campaign/session hub: never a fixed height — the workspace grows to fit the page
+// and the hub page itself scrolls, in both view and edit mode. Both modes blend into the hub page;
+// edit mode only adds the navigation sidebar and inline-editing chrome, not a card outline.
+
+// Full-page wiki: the file-explorer sidebar sits on a faint dark panel to set it apart from the
+// document pane. Embedded in a hub it stays transparent so it blends into the page.
+:host(:not(.wiki-embedded)) aside {
+  background: rgb(0 0 0 / 0.2);
+}
+
+// Obsidian-style inline title: the page name lives at the top of the document, and editing it
+// renames the page (title -> new slug, backend rewrites inbound [[links]]).
+.wiki-title-input {
+  font-size: 1.9rem;
+  font-weight: 700;
+  line-height: 1.25;
+
+  &::placeholder {
+    color: rgb(var(--dnd-slate-rgb) / 0.5);
+  }
+}
+
+// Sidebar drag & drop: folder row / root nav highlighted while a valid drop hovers it.
+.wiki-drop-target {
+  background: rgb(var(--dnd-gold-rgb) / 0.14) !important;
+  box-shadow: inset 0 0 0 1px rgb(var(--dnd-gold-rgb) / 0.45);
+  border-radius: 4px;
+}
+
+.menu-item {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 0.4rem 0.85rem;
+  color: rgb(var(--dnd-text-rgb) / 0.9);
+  background: transparent;
+  border: 0;
+  font: inherit;
+  cursor: pointer;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.07);
+  }
+}
+
 .wiki-content {
   max-width: 46rem;
   line-height: 1.7;
