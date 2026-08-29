@@ -18,7 +18,7 @@
       <mat-icon>arrow_back</mat-icon>
     </button>
     <div class="flex-1 min-w-0">
-      <h2 class="font-brand text-lg text-parchment m-0">{{ session()?.name }}</h2>
+      <h2 class="font-brand text-xl text-parchment m-0">{{ session()?.name }}</h2>
       @if (session()?.description) { <p class="text-slate text-sm m-0 mt-0.5">{{ session()!.description }}</p> }
     </div>
     <input #bgInput type="file" accept="image/*" class="hidden" (change)="onBackgroundFileChange($event)" />
@@ -167,7 +167,7 @@
 
     <div>
       <div class="flex items-center gap-3 mb-3">
-        <h3 class="font-brand text-sm text-parchment m-0 flex-1">Encounters</h3>
+        <h3 class="font-brand text-base text-parchment m-0 flex-1">Encounters</h3>
         @if (showForm()) {
           <button class="btn-outline text-sm" (click)="cancelForm()">Cancel</button>
         } @else {
@@ -256,7 +256,7 @@
         </ul>
       }
 
-      <h3 class="font-brand text-sm text-parchment m-0 mt-6 mb-3">Party</h3>
+      <h3 class="font-brand text-base text-parchment m-0 mt-6 mb-3">Party</h3>
       <app-party-list [members]="members()" [memberMaxHp]="memberMaxHp()" [showManagement]="true" [clickableRows]="true"
         (rowClick)="openMember($event)"
         (viewCharacter)="viewMember($event)"

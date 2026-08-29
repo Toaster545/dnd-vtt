@@ -21,7 +21,7 @@
         <mat-icon>arrow_back</mat-icon>
       </button>
       <div class="flex-1 min-w-0">
-        <h2 class="font-brand text-lg text-parchment m-0">{{ c.name }}</h2>
+        <h2 class="font-brand text-xl text-parchment m-0">{{ c.name }}</h2>
         @if (c.description) { <p class="text-slate text-sm m-0 mt-0.5">{{ c.description }}</p> }
       </div>
       <a class="btn-outline text-xs gap-1.5" [routerLink]="['/home/campaigns', campaignId, 'wiki']" matTooltip="Campaign wiki">
@@ -43,7 +43,7 @@
       </div>
 
       <div>
-        <h3 class="font-brand text-sm text-parchment m-0 mb-3">Sessions</h3>
+        <h3 class="font-brand text-base text-parchment m-0 mb-3">Sessions</h3>
         <ul class="divide-y divide-white/8">
           @for (session of c.sessions; track session.id) {
             <li>
@@ -61,7 +61,7 @@
           }
         </ul>
 
-        <h3 class="font-brand text-sm text-parchment m-0 mt-6 mb-3">Party</h3>
+        <h3 class="font-brand text-base text-parchment m-0 mt-6 mb-3">Party</h3>
         <app-party-list [members]="c.members" [currentUserId]="auth.profile()?.id ?? null" [showSelfControls]="true"
           (toggleRaceClassVisibility)="toggleRaceClassVisibility($event)"
           (viewCharacter)="viewMyCharacter($event)"

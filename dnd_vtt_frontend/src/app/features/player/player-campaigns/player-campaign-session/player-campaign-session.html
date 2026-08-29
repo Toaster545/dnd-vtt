@@ -68,7 +68,7 @@
         <mat-icon>arrow_back</mat-icon>
       </button>
       <div class="flex-1 min-w-0">
-        <h2 class="font-brand text-lg text-parchment m-0">{{ session()?.name }}</h2>
+        <h2 class="font-brand text-xl text-parchment m-0">{{ session()?.name }}</h2>
         @if (session()?.description) { <p class="text-slate text-sm m-0 mt-0.5">{{ session()!.description }}</p> }
       </div>
     </div>
@@ -82,7 +82,7 @@
         </div>
 
         <div>
-          <h3 class="font-brand text-sm text-parchment m-0 mb-3">Encounters</h3>
+          <h3 class="font-brand text-base text-parchment m-0 mb-3">Encounters</h3>
           <ul class="divide-y divide-white/8">
             @for (encounter of encounters(); track encounter.id) {
               <li>
@@ -118,7 +118,7 @@
             }
           </ul>
 
-          <h3 class="font-brand text-sm text-parchment m-0 mt-6 mb-3">Party</h3>
+          <h3 class="font-brand text-base text-parchment m-0 mt-6 mb-3">Party</h3>
           <app-party-list [members]="members()" [currentUserId]="auth.profile()?.id ?? null" [showSelfControls]="true"
             (toggleRaceClassVisibility)="toggleRaceClassVisibility($event)"
             (viewCharacter)="viewMyCharacter($event)"

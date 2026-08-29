@@ -21,7 +21,7 @@
         <mat-icon>arrow_back</mat-icon>
       </button>
       <div class="flex-1 min-w-0">
-        <h2 class="font-brand text-lg text-parchment m-0">{{ c.name }}</h2>
+        <h2 class="font-brand text-xl text-parchment m-0">{{ c.name }}</h2>
         @if (c.description) { <p class="text-slate text-sm m-0 mt-0.5">{{ c.description }}</p> }
       </div>
       <input #bgInput type="file" accept="image/*" class="hidden" (change)="onBackgroundFileChange($event)" />
@@ -61,7 +61,7 @@
 
       <div>
         <div class="flex items-center gap-3 mb-3">
-          <h3 class="font-brand text-sm text-parchment m-0 flex-1">Sessions</h3>
+          <h3 class="font-brand text-base text-parchment m-0 flex-1">Sessions</h3>
           <button class="btn-outline text-sm" (click)="showForm.set(!showForm())">
             {{ showForm() ? 'Cancel' : '+ New Session' }}
           </button>
@@ -124,7 +124,7 @@
         </ul>
 
         <div class="flex items-center gap-1.5 mt-6 mb-3">
-          <h3 class="font-brand text-sm text-parchment m-0 flex-1">Party</h3>
+          <h3 class="font-brand text-base text-parchment m-0 flex-1">Party</h3>
           <input class="field-input w-12 text-center px-1 py-1" type="number" min="1" max="20"
                  [(ngModel)]="partyLevel" name="partyLevel" [disabled]="savingPartyLevel()"
                  matTooltip="Party level" />

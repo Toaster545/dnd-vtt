@@ -166,6 +166,21 @@ export class WikiWorkspaceComponent implements OnInit {
     return this.isDm() || p.visibility === 'shared';
   });
 
+  /** In an embedded hub's read view, suppress the page heading when the current page is the one
+   *  named after the campaign/session (the default landing page) — the hub already shows that
+   *  name above the panel, so repeating it as an <h1> is just noise. Only applies in read mode;
+   *  the editable title input always shows. */
+  readonly hideTitle = computed(() => {
+    if (!this.readingOnly()) return false;
+    const p = this.page();
+    if (!p) return false;
+    const want = slugify(p.title);
+    return (
+      !!want &&
+      this.preferredTitles().some((t) => slugify(t ?? '') === want)
+    );
+  });
+
   readonly dirty = computed(() => {
     const p = this.page();
     if (!p) return false;
