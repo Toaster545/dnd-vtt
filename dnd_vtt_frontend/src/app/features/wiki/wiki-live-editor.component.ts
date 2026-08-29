@@ -4,6 +4,7 @@ import {
   ElementRef,
   OnDestroy,
   effect,
+  inject,
   input,
   output,
   viewChild,
@@ -27,6 +28,7 @@ import {
   rectangularSelection,
 } from '@codemirror/view';
 import { knownSlugsField, livePreview, setKnownSlugs } from './wiki-live-preview';
+import { WikiService } from '../../core/services/wiki.service';
 
 export interface WikiEditorPage {
   title: string;
@@ -118,6 +120,8 @@ export class WikiLiveEditorComponent implements AfterViewInit, OnDestroy {
   readonly pages = input<WikiEditorPage[]>([]);
   readonly mode = input<'live' | 'source'>('live');
   readonly readonly = input(false);
+  /** Campaign whose wiki bucket pasted/dropped images upload to; empty disables image upload. */
+  readonly campaignId = input<string>('');
   /** Size to the document and let an outer element scroll, instead of scrolling internally. */
   readonly flow = input(false);
 
@@ -130,6 +134,7 @@ export class WikiLiveEditorComponent implements AfterViewInit, OnDestroy {
   private view?: EditorView;
   private liveComp = new Compartment();
   private readonlyComp = new Compartment();
+  private wiki = inject(WikiService);
 
   constructor() {
     // Push external value changes (page switch, autosave echo) into the editor without looping
@@ -198,6 +203,12 @@ export class WikiLiveEditorComponent implements AfterViewInit, OnDestroy {
             blur: () => {
               this.editorBlur.emit();
             },
+            paste: (event, view) => {
+              const files = Array.from(event.clipboardData?.files ?? []);
+              if (!this.uploadFiles(view, files)) return false;
+              event.preventDefault();
+              return true;
+            },
           }),
         ],
       }),
@@ -205,14 +216,82 @@ export class WikiLiveEditorComponent implements AfterViewInit, OnDestroy {
     this.view.dispatch({
       effects: setKnownSlugs.of(new Set(this.pages().map((p) => p.slug))),
     });
+
+    // Capture-phase drag/drop on the scroller: this runs before CodeMirror's own `contentDOM`
+    // drop handler (which would otherwise read the image file as text and paste garbage), and
+    // covers the gutter / bottom-padding areas that a `contentDOM`-scoped handler misses.
+    const sc = this.view.scrollDOM;
+    sc.addEventListener('dragover', this.onDragOver, true);
+    sc.addEventListener('drop', this.onDrop, true);
   }
 
   ngOnDestroy(): void {
+    const sc = this.view?.scrollDOM;
+    sc?.removeEventListener('dragover', this.onDragOver, true);
+    sc?.removeEventListener('drop', this.onDrop, true);
     this.view?.destroy();
   }
 
+  private readonly onDragOver = (event: DragEvent): void => {
+    if (this.readonly() || !this.campaignId() || !event.dataTransfer) return;
+    if (!Array.from(event.dataTransfer.types).includes('Files')) return;
+    event.preventDefault();
+    event.dataTransfer.dropEffect = 'copy';
+  };
+
+  private readonly onDrop = (event: DragEvent): void => {
+    const view = this.view;
+    if (!view || this.readonly() || !this.campaignId() || !event.dataTransfer) return;
+    const files = Array.from(event.dataTransfer.files).filter((f) =>
+      f.type.startsWith('image/'),
+    );
+    if (!files.length) return;
+    event.preventDefault();
+    event.stopPropagation();
+    const at = view.posAtCoords({ x: event.clientX, y: event.clientY });
+    this.uploadFiles(view, files, at ?? undefined);
+  };
+
   focus(): void {
     this.view?.focus();
+  }
+
+  /**
+   * Drop/paste image upload: insert an `![uploading…]()` placeholder at `at` (or the caret) for
+   * every image file, then swap each placeholder for the real `![name](url)` once its upload
+   * resolves. Returns true when it took over the event (so the browser/CM default is suppressed).
+   */
+  private uploadFiles(view: EditorView, files: File[], at?: number): boolean {
+    if (this.readonly() || !this.campaignId()) return false;
+    const images = files.filter((f) => f.type.startsWith('image/'));
+    if (!images.length) return false;
+
+    let pos = Math.min(at ?? view.state.selection.main.head, view.state.doc.length);
+    for (const file of images) {
+      const token = `![uploading ${file.name}…](uploading#${Math.random().toString(36).slice(2)})`;
+      const lead = pos > 0 && view.state.doc.sliceString(pos - 1, pos) !== '\n' ? '\n' : '';
+      const insert = `${lead}${token}\n`;
+      view.dispatch({
+        changes: { from: pos, insert },
+        selection: { anchor: pos + insert.length },
+      });
+      pos += insert.length;
+      void this.finishUpload(view, file, token);
+    }
+    return true;
+  }
+
+  private async finishUpload(view: EditorView, file: File, token: string): Promise<void> {
+    let replacement: string;
+    try {
+      const url = await this.wiki.uploadImage(this.campaignId(), file);
+      replacement = `![${file.name}](${url})`;
+    } catch {
+      replacement = `![upload failed: ${file.name}]()`;
+    }
+    const idx = view.state.doc.toString().indexOf(token);
+    if (idx < 0) return;
+    view.dispatch({ changes: { from: idx, to: idx + token.length, insert: replacement } });
   }
 
   private wikiLinkCompletions(ctx: CompletionContext): CompletionResult | null {

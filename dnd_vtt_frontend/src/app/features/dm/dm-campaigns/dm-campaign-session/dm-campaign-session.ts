@@ -62,8 +62,14 @@ export class DmCampaignSessionComponent implements OnInit, OnDestroy {
   campaignId = this.route.snapshot.paramMap.get('campaignId')!;
   sessionId  = this.route.snapshot.paramMap.get('sessionId')!;
 
-  session    = signal<Session | null>(null);
+  session      = signal<Session | null>(null);
+  campaignName = signal<string | null>(null);
   encounters = signal<Encounter[]>([]);
+
+  // The embedded wiki panel prefers a page named after this session, then one named after the campaign.
+  readonly wikiTitles = computed(() =>
+    [this.session()?.name, this.campaignName()].filter((n): n is string => !!n),
+  );
   monsters   = signal<DndMonster[]>([]);
   characters = signal<Character[]>([]);
   members    = signal<CampaignMember[]>([]);
@@ -152,6 +158,7 @@ export class DmCampaignSessionComponent implements OnInit, OnDestroy {
       this.encounterService.getActiveForCampaign(this.campaignId),
     ]);
     this.session.set(session);
+    this.campaignName.set(campaign.name);
     this.encounters.set(encounters);
     const allowed = new Set(campaign.allowed_sources);
     this.monsters.set(monsters.filter(monster => campaignContentEnabled(monster, allowed, sources)));

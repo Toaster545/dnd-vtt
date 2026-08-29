@@ -13,6 +13,7 @@ import { WikiWorkspaceComponent } from './wiki-workspace.component';
       [isDm]="dm()"
       [embedded]="true"
       [slug]="slug()"
+      [preferredTitles]="matchTitles()"
       (slugChange)="onSlug($event)"
     />
   `,
@@ -20,6 +21,12 @@ import { WikiWorkspaceComponent } from './wiki-workspace.component';
 export class WikiEmbedComponent implements OnInit {
   readonly campaignId = input.required<string>();
   readonly dm = input(false);
+  /** Display names this hub should prefer as the default page — the session name, then the
+   *  campaign name. See `WikiWorkspaceComponent.preferredTitles`. */
+  readonly matchTitles = input<string[]>([]);
+  /** Extra key segment so a hub keeps its own "last viewed page" memory instead of every hub in
+   *  the campaign sharing one — pass the session id on a session hub, leave unset elsewhere. */
+  readonly scope = input('');
 
   slug = signal<string | null>(null);
 
@@ -42,6 +49,7 @@ export class WikiEmbedComponent implements OnInit {
   }
 
   private key(): string {
-    return `wiki:embed:last:${this.campaignId()}`;
+    const base = `wiki:embed:last:${this.campaignId()}`;
+    return this.scope() ? `${base}:${this.scope()}` : base;
   }
 }

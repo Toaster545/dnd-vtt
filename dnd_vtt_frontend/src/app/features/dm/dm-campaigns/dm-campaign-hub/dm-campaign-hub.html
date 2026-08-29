@@ -21,7 +21,7 @@
         <mat-icon>arrow_back</mat-icon>
       </button>
       <div class="flex-1 min-w-0">
-        <h2 class="font-brand text-lg text-parchment m-0">{{ c.name }}</h2>
+        <h2 class="font-brand text-xl text-parchment m-0">{{ c.name }}</h2>
         @if (c.description) { <p class="text-slate text-sm m-0 mt-0.5">{{ c.description }}</p> }
       </div>
       <input #bgInput type="file" accept="image/*" class="hidden" (change)="onBackgroundFileChange($event)" />
@@ -56,8 +56,12 @@
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
       <div class="lg:col-span-2">
+        <app-wiki-embed [campaignId]="campaignId" [dm]="true" [matchTitles]="wikiTitles()" />
+      </div>
+
+      <div>
         <div class="flex items-center gap-3 mb-3">
-          <h3 class="font-brand text-sm text-parchment m-0 flex-1">Sessions</h3>
+          <h3 class="font-brand text-base text-parchment m-0 flex-1">Sessions</h3>
           <button class="btn-outline text-sm" (click)="showForm.set(!showForm())">
             {{ showForm() ? 'Cancel' : '+ New Session' }}
           </button>
@@ -119,13 +123,31 @@
           }
         </ul>
 
-        <div class="mt-6">
-          <app-wiki-embed [campaignId]="campaignId" [dm]="true" />
+        <div class="flex items-center gap-1.5 mt-6 mb-3">
+          <h3 class="font-brand text-base text-parchment m-0 flex-1">Party</h3>
+          <input class="field-input w-12 text-center px-1 py-1" type="number" min="1" max="20"
+                 [(ngModel)]="partyLevel" name="partyLevel" [disabled]="savingPartyLevel()"
+                 matTooltip="Party level" />
+          <button class="btn-outline text-xs px-2 py-1" (click)="applyPartyLevel()"
+                  [disabled]="savingPartyLevel()" matTooltip="Set every party member to this level">
+            Set
+          </button>
+          <button class="btn-primary text-xs px-2 py-1 gap-1" (click)="levelPartyUp()"
+                  [disabled]="savingPartyLevel() || partyLevel >= 20"
+                  matTooltip="Level up the whole party by one">
+            <mat-icon class="text-sm">trending_up</mat-icon>
+            Level Up
+          </button>
         </div>
-      </div>
 
-      <div>
-        <div class="card card-body mb-5">
+        <app-party-list [members]="c.members" [memberMaxHp]="memberMaxHp()" [showManagement]="true" [clickableRows]="true"
+          (rowClick)="openMember($event)"
+          (viewCharacter)="viewMember($event)"
+          (toggleEditAccess)="toggleEditAccess($event)"
+          (togglePartyVisibility)="togglePartyVisibility($event)"
+          (removeMember)="removeMember($event.user_id, $event.username)" />
+
+        <div class="card p-2.5 mt-5">
           <button type="button" class="flex items-center gap-2 w-full text-left"
                   (click)="sourcesExpanded.set(!sourcesExpanded())">
             <mat-icon class="text-base text-slate">{{ sourcesExpanded() ? 'expand_more' : 'chevron_right' }}</mat-icon>
@@ -156,31 +178,6 @@
             }
           }
         </div>
-
-        <h3 class="font-brand text-sm text-parchment m-0 mb-3">Party</h3>
-
-        <div class="card card-body flex items-center gap-2 mb-4">
-          <label class="field-label m-0 flex-shrink-0">Party level</label>
-          <input class="field-input w-16 text-center" type="number" min="1" max="20"
-                 [(ngModel)]="partyLevel" name="partyLevel" [disabled]="savingPartyLevel()" />
-          <button class="btn-outline text-sm flex-shrink-0" (click)="applyPartyLevel()"
-                  [disabled]="savingPartyLevel()" matTooltip="Set every party member to this level">
-            Set
-          </button>
-          <button class="btn-primary text-sm flex-1 gap-1.5" (click)="levelPartyUp()"
-                  [disabled]="savingPartyLevel() || partyLevel >= 20"
-                  matTooltip="Level up the whole party by one">
-            <mat-icon class="text-base">trending_up</mat-icon>
-            Level Party Up
-          </button>
-        </div>
-
-        <app-party-list [members]="c.members" [memberMaxHp]="memberMaxHp()" [showManagement]="true" [clickableRows]="true"
-          (rowClick)="openMember($event)"
-          (viewCharacter)="viewMember($event)"
-          (toggleEditAccess)="toggleEditAccess($event)"
-          (togglePartyVisibility)="togglePartyVisibility($event)"
-          (removeMember)="removeMember($event.user_id, $event.username)" />
       </div>
     </div>
   </div>

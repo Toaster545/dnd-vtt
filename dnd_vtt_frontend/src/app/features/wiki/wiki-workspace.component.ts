@@ -33,6 +33,7 @@ import {
   joinFolder,
   parentFolder,
 } from './wiki-tree';
+import { slugify } from './wiki-slug';
 
 type ContextMenu =
   | { kind: 'folder'; path: string; x: number; y: number }
@@ -99,6 +100,10 @@ export class WikiWorkspaceComponent implements OnInit {
   readonly isDm = input(false);
   readonly slug = input<string | null>(null);
   readonly embedded = input(false);
+  /** Ordered display names (e.g. the session name, then the campaign name) whose matching page an
+   *  embedded hub should land on by default, in place of the first page in the tree. A page the
+   *  viewer opened themselves — or one restored from the embed's last-viewed memory — still wins. */
+  readonly preferredTitles = input<string[]>([]);
 
   readonly slugChange = output<string | null>();
 
@@ -140,6 +145,12 @@ export class WikiWorkspaceComponent implements OnInit {
   private searchTimer?: ReturnType<typeof setTimeout>;
   private saveTimer?: ReturnType<typeof setTimeout>;
 
+  /** The slug this component last auto-selected for the embedded panel (first-page fallback or a
+   *  `preferredTitles` match). Cleared the moment the viewer navigates, so a late-arriving
+   *  `preferredTitles` (parent hub still resolving its campaign/session) can still upgrade the
+   *  pick while a real choice is never yanked away. */
+  private autoSlug: string | null = null;
+
   readonly slugSet = computed(() => new Set(this.tree().map((p) => p.slug)));
   readonly editorPages = computed(() =>
     this.tree().map((p) => ({ title: p.title, slug: p.slug })),
@@ -153,6 +164,21 @@ export class WikiWorkspaceComponent implements OnInit {
     const p = this.page();
     if (!p) return false;
     return this.isDm() || p.visibility === 'shared';
+  });
+
+  /** In an embedded hub's read view, suppress the page heading when the current page is the one
+   *  named after the campaign/session (the default landing page) — the hub already shows that
+   *  name above the panel, so repeating it as an <h1> is just noise. Only applies in read mode;
+   *  the editable title input always shows. */
+  readonly hideTitle = computed(() => {
+    if (!this.readingOnly()) return false;
+    const p = this.page();
+    if (!p) return false;
+    const want = slugify(p.title);
+    return (
+      !!want &&
+      this.preferredTitles().some((t) => slugify(t ?? '') === want)
+    );
   });
 
   readonly dirty = computed(() => {
@@ -177,6 +203,25 @@ export class WikiWorkspaceComponent implements OnInit {
             this.notFound.set(false);
           }
         })();
+      });
+    });
+
+    // The parent hub loads its campaign/session name asynchronously, so `preferredTitles` often
+    // arrives after the first `loadTree()`. Re-run the default pick when it (or the tree) changes,
+    // but only while the panel is still showing a page we auto-selected — never over the viewer's
+    // own navigation or a slug restored from the embed's last-viewed memory.
+    effect(() => {
+      const titles = this.preferredTitles();
+      const rows = this.tree();
+      untracked(() => {
+        if (!this.embedded() || this.loadingTree() || !titles.length) return;
+        const cur = this.currentSlug();
+        if (cur && cur !== this.autoSlug) return;
+        const want = this.defaultEmbeddedSlug(rows);
+        if (want && want !== cur) {
+          this.autoSlug = want;
+          this.slugChange.emit(want);
+        }
       });
     });
   }
@@ -205,7 +250,9 @@ export class WikiWorkspaceComponent implements OnInit {
       if (this.embedded()) {
         const cur = this.currentSlug();
         if (!cur || !rows.some((r) => r.slug === cur)) {
-          this.slugChange.emit(firstPageSlug(this.rootNode()));
+          const want = this.defaultEmbeddedSlug(rows);
+          this.autoSlug = want;
+          this.slugChange.emit(want);
         }
       }
     } finally {
@@ -240,7 +287,23 @@ export class WikiWorkspaceComponent implements OnInit {
   // ── navigation ─────────────────────────────────────────────────────────────
 
   openPage(slug: string): void {
+    this.autoSlug = null;
     this.slugChange.emit(slug);
+  }
+
+  /** Which page an embedded hub opens by default: the first `preferredTitles` entry that matches a
+   *  page (by slug, or by title for a renamed page whose slug drifted to `name-2`), else the first
+   *  page in the tree — the original fallback. */
+  private defaultEmbeddedSlug(rows: WikiPageSummary[]): string | null {
+    for (const title of this.preferredTitles()) {
+      const want = slugify(title ?? '');
+      if (!want) continue;
+      const hit =
+        rows.find((r) => r.slug === want) ??
+        rows.find((r) => slugify(r.title) === want);
+      if (hit) return hit.slug;
+    }
+    return firstPageSlug(this.rootNode());
   }
 
   @HostListener('document:keydown.escape')

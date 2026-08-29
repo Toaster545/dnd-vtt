@@ -83,6 +83,29 @@ class LinkWidget extends WidgetType {
   }
 }
 
+class ImageWidget extends WidgetType {
+  constructor(
+    readonly url: string,
+    readonly alt: string,
+  ) {
+    super();
+  }
+  override eq(o: ImageWidget) {
+    return o.url === this.url && o.alt === this.alt;
+  }
+  override toDOM() {
+    const img = document.createElement('img');
+    img.className = 'cm-lp-img';
+    img.src = this.url;
+    img.alt = this.alt;
+    img.loading = 'lazy';
+    return img;
+  }
+  override ignoreEvent() {
+    return true;
+  }
+}
+
 class BulletWidget extends WidgetType {
   override eq() {
     return true;
@@ -214,6 +237,21 @@ function buildDecorations(view: EditorView): DecorationSet {
           return;
         }
 
+        if (name === 'Image') {
+          if (touches(node.from, node.to)) return;
+          const m = /^!\[([^\]]*)\]\(\s*(\S+?)\s*(?:"[^"]*")?\)$/.exec(
+            doc.sliceString(node.from, node.to),
+          );
+          if (!m) return;
+          ranges.push(
+            Decoration.replace({ widget: new ImageWidget(m[2], m[1]) }).range(
+              node.from,
+              node.to,
+            ),
+          );
+          return;
+        }
+
         if (name === 'Link') {
           if (touches(node.from, node.to)) return;
           const m = /^\[([^\]]*)\]\(([^)]+)\)$/.exec(doc.sliceString(node.from, node.to));
@@ -340,6 +378,14 @@ const livePreviewTheme = EditorView.theme({
     fontFamily: 'ui-monospace, SFMono-Regular, Menlo, Consolas, monospace',
   },
   '.cm-lp-bullet': { color: 'rgba(212,175,55,0.9)', paddingRight: '0.4em' },
+  '.cm-lp-img': {
+    display: 'block',
+    maxWidth: '100%',
+    height: 'auto',
+    borderRadius: '6px',
+    margin: '0.5em 0',
+    border: '1px solid rgba(255,255,255,0.1)',
+  },
   '.cm-lp-hr': {
     display: 'inline-block',
     width: '100%',

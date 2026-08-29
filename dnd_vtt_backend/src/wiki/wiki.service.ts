@@ -6,6 +6,8 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { randomUUID } from 'crypto';
+import { existsSync, mkdirSync, writeFileSync } from 'fs';
+import { join } from 'path';
 import { DatabaseService } from '../common/database.service';
 import { CreateWikiPageDto } from './dto/create-wiki-page.dto';
 import { UpdateWikiPageDto } from './dto/update-wiki-page.dto';
@@ -258,6 +260,36 @@ export class WikiService {
       { sql: `DELETE FROM wiki_pages WHERE id = ?`, args: [id] },
     ]);
     return { deleted: true };
+  }
+
+  /**
+   * Save an uploaded image into the campaign-wide wiki bucket and return its public
+   * `/uploads/...` URL. Images are campaign-scoped, not page-scoped: one page's image can be
+   * referenced from any page, so `remove()` never deletes files.
+   */
+  async uploadImage(
+    campaignId: string,
+    user: RequestUser,
+    file: Express.Multer.File | undefined,
+  ): Promise<{ url: string }> {
+    await this.assertAccess(campaignId, user);
+    if (!file?.buffer?.length)
+      throw new BadRequestException('No file uploaded');
+    if (!file.mimetype?.startsWith('image/'))
+      throw new BadRequestException('Only image files are allowed');
+
+    const dir = join(process.cwd(), 'uploads', 'wiki', campaignId);
+    if (!existsSync(dir)) mkdirSync(dir, { recursive: true });
+
+    const safe =
+      (file.originalname || 'image')
+        .replace(/[^\w.-]+/g, '_')
+        .replace(/^_+|_+$/g, '')
+        .slice(-64) || 'image';
+    const filename = `${Date.now()}_${safe}`;
+    writeFileSync(join(dir, filename), file.buffer);
+
+    return { url: `/uploads/wiki/${campaignId}/${filename}` };
   }
 
   // ── helpers ────────────────────────────────────────────────────────────────
