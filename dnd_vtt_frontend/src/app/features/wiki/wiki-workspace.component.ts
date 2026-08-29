@@ -113,6 +113,11 @@ export class WikiWorkspaceComponent implements OnInit {
   mode = signal<'read' | 'edit'>('read');
   readonly readingOnly = computed(() => this.embedded() && this.mode() === 'read');
 
+  /** Slugs visited in the embedded read view, oldest first; the current page is not on it. Powers
+   *  the read-mode Back button, which is the only way to retrace steps once the sidebar is hidden. */
+  private navHistory = signal<string[]>([]);
+  readonly canGoBack = computed(() => this.navHistory().length > 0);
+
   tree = signal<WikiPageSummary[]>([]);
   page = signal<WikiPage | null>(null);
   backlinks = signal<WikiBacklink[]>([]);
@@ -159,6 +164,14 @@ export class WikiWorkspaceComponent implements OnInit {
   readonly rootNode = computed<FolderNode>(() =>
     buildTree(this.tree(), this.draftFolders()),
   );
+
+  /** True when the embedded panel is showing its default landing page — the Home button hides then
+   *  since there's nowhere for it to go. */
+  readonly atEmbeddedHome = computed(() => {
+    if (!this.embedded()) return false;
+    const cur = this.currentSlug();
+    return !!cur && cur === this.defaultEmbeddedSlug(this.tree());
+  });
 
   readonly canEditCurrent = computed(() => {
     const p = this.page();
@@ -287,8 +300,31 @@ export class WikiWorkspaceComponent implements OnInit {
   // ── navigation ─────────────────────────────────────────────────────────────
 
   openPage(slug: string): void {
+    const cur = this.currentSlug();
+    if (cur && cur !== slug) {
+      this.navHistory.update((h) => [...h, cur]);
+    }
     this.autoSlug = null;
     this.slugChange.emit(slug);
+  }
+
+  /** Read-mode Back button: return to the previously viewed page. */
+  goBack(): void {
+    const h = this.navHistory();
+    if (!h.length) return;
+    this.navHistory.set(h.slice(0, -1));
+    this.autoSlug = null;
+    this.slugChange.emit(h[h.length - 1]);
+  }
+
+  /** Read-mode Home button: jump to the panel's default landing page (the campaign/session page,
+   *  or the first page in the tree) and drop the Back trail — it's a fresh start. */
+  goHome(): void {
+    const want = this.defaultEmbeddedSlug(this.tree());
+    if (!want || want === this.currentSlug()) return;
+    this.navHistory.set([]);
+    this.autoSlug = null;
+    this.slugChange.emit(want);
   }
 
   /** Which page an embedded hub opens by default: the first `preferredTitles` entry that matches a
