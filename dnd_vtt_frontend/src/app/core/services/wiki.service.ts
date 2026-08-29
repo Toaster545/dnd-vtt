@@ -56,6 +56,15 @@ export class WikiService {
     return firstValueFrom(this.http.delete<void>(`${API}/wiki/${id}`));
   }
 
+  /** Upload an image into the campaign-wide wiki bucket; resolves to its `/uploads/...` URL. */
+  uploadImage(campaignId: string, file: File): Promise<string> {
+    const form = new FormData();
+    form.append('file', file);
+    return firstValueFrom(
+      this.http.post<{ url: string }>(`${API}/wiki/${campaignId}/upload`, form),
+    ).then((res) => res.url);
+  }
+
   // Re-exported for callers that want the page shape without the wrapper.
   static unwrap(res: WikiPageResponse): WikiPage {
     return res.page;

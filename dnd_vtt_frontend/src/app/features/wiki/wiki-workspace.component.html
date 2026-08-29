@@ -209,45 +209,6 @@
       }
     </div>
   } @else {
-    <!-- Page header (full-page wiki only; the embed puts these controls on the title row) -->
-    @if (!embedded()) {
-      <header class="border-b border-white/8 px-5 py-2 flex items-center gap-2">
-        <p class="flex-1 min-w-0 text-slate text-xs m-0 truncate">
-          {{ page()!.folder || 'Wiki root' }} ·
-          edited by {{ page()!.updated_by_name || page()!.author_name || 'someone' }}
-          @if (page()!.visibility === 'dm_only') { · <span class="text-gold">DM only</span> }
-        </p>
-
-        @if (canEditCurrent()) {
-          <span class="text-xs text-slate/70 w-14 text-right">
-            @switch (saveState()) {
-              @case ('saving') { Saving… }
-              @case ('saved') { Saved }
-              @case ('error') { <span class="text-danger">Error</span> }
-            }
-          </span>
-        }
-        @if (isDm()) {
-          <button
-            class="btn-icon"
-            (click)="toggleVisibility()"
-            [matTooltip]="page()!.visibility === 'dm_only' ? 'Make visible to players' : 'Make DM-only'"
-          >
-            <mat-icon>{{ page()!.visibility === 'dm_only' ? 'lock' : 'lock_open' }}</mat-icon>
-          </button>
-        }
-        @if (canEditCurrent()) {
-          <button
-            class="btn-icon text-danger/70 hover:text-danger"
-            (click)="deletePage()"
-            matTooltip="Delete page"
-          >
-            <mat-icon>delete</mat-icon>
-          </button>
-        }
-      </header>
-    }
-
     @if (conflict()) {
       <div class="bg-gold/15 text-gold text-sm px-5 py-2 flex items-center gap-3">
         <span class="flex-1">Someone else saved this page while you were editing.</span>
@@ -260,7 +221,14 @@
 
     <!-- Body -->
     <div class="flex-1 flex flex-col" [class.min-h-0]="!embedded()">
-      <div class="shrink-0" [class.pt-5]="!readingOnly()" [class.px-5]="!readingOnly()">
+      <!-- Full-page: the title scrolls together with the document. The embed lets the hub page
+           scroll, so this stays a plain wrapper there. -->
+      <div
+        [class.flex-1]="!embedded()"
+        [class.min-h-0]="!embedded()"
+        [class.overflow-y-auto]="!embedded()"
+      >
+      <div [class.pt-5]="!readingOnly()" [class.pl-2]="!readingOnly()" [class.pr-5]="!readingOnly()">
         <div class="flex items-center gap-2">
           <div class="flex-1 min-w-0 max-w-[46rem]">
             @if (canEditCurrent() && !readingOnly()) {
@@ -275,37 +243,37 @@
               <h1 class="wiki-title-input font-brand text-parchment m-0">{{ page()!.title }}</h1>
             }
           </div>
-          @if (embedded()) {
-            <div class="ml-auto shrink-0 flex items-center gap-1">
-              @if (canEditCurrent() && !readingOnly()) {
-                <span class="text-xs text-slate/70 w-14 text-right">
-                  @switch (saveState()) {
-                    @case ('saving') { Saving… }
-                    @case ('saved') { Saved }
-                    @case ('error') { <span class="text-danger">Error</span> }
-                  }
-                </span>
-              }
-              @if (isDm() && !readingOnly()) {
-                <button
-                  class="btn-icon"
-                  (click)="toggleVisibility()"
-                  [matTooltip]="
-                    page()!.visibility === 'dm_only' ? 'Make visible to players' : 'Make DM-only'
-                  "
-                >
-                  <mat-icon>{{ page()!.visibility === 'dm_only' ? 'lock' : 'lock_open' }}</mat-icon>
-                </button>
-              }
-              @if (canEditCurrent() && !readingOnly()) {
-                <button
-                  class="btn-icon text-danger/70 hover:text-danger"
-                  (click)="deletePage()"
-                  matTooltip="Delete page"
-                >
-                  <mat-icon>delete</mat-icon>
-                </button>
-              }
+          <div class="ml-auto shrink-0 flex items-center gap-1">
+            @if (canEditCurrent() && !readingOnly()) {
+              <span class="text-xs text-slate/70 w-14 text-right">
+                @switch (saveState()) {
+                  @case ('saving') { Saving… }
+                  @case ('saved') { Saved }
+                  @case ('error') { <span class="text-danger">Error</span> }
+                }
+              </span>
+            }
+            @if (isDm() && !readingOnly()) {
+              <button
+                class="btn-icon"
+                (click)="toggleVisibility()"
+                [matTooltip]="
+                  page()!.visibility === 'dm_only' ? 'Make visible to players' : 'Make DM-only'
+                "
+              >
+                <mat-icon>{{ page()!.visibility === 'dm_only' ? 'lock' : 'lock_open' }}</mat-icon>
+              </button>
+            }
+            @if (canEditCurrent() && !readingOnly()) {
+              <button
+                class="btn-icon text-danger/70 hover:text-danger"
+                (click)="deletePage()"
+                matTooltip="Delete page"
+              >
+                <mat-icon>delete</mat-icon>
+              </button>
+            }
+            @if (embedded()) {
               <button
                 class="btn-icon"
                 (click)="setMode(mode() === 'read' ? 'edit' : 'read')"
@@ -313,41 +281,25 @@
               >
                 <mat-icon>{{ mode() === 'read' ? 'edit' : 'visibility' }}</mat-icon>
               </button>
-            </div>
-          }
+            }
+          </div>
         </div>
       </div>
-      <div [class.flex-1]="!embedded()" [class.min-h-0]="!embedded()">
+      <div>
         <app-wiki-live-editor
           #editor
           [value]="draftBody()"
           [pages]="editorPages()"
+          [campaignId]="campaignId()"
           [readonly]="readingOnly()"
-          [flow]="embedded()"
+          [flow]="true"
           (valueChange)="onBodyChange($event)"
           (openLink)="onEditorLink($event)"
           (createLink)="createPage($event)"
           (editorBlur)="flushSave()"
         />
       </div>
-
-      @if (!embedded() && backlinks().length) {
-        <div class="shrink-0 border-t border-white/8 px-6 py-3 max-h-40 overflow-y-auto">
-          <p class="text-slate/70 text-[11px] uppercase tracking-wide m-0 mb-2">Linked from</p>
-          <ul class="list-none p-0 m-0 flex flex-col gap-1">
-            @for (b of backlinks(); track b.id) {
-              <li>
-                <button class="text-gold/90 hover:text-gold text-sm" (click)="openPage(b.slug)">
-                  {{ b.title }}
-                  @if (b.folder) {
-                    <span class="text-slate/60 text-xs">— {{ b.folder }}</span>
-                  }
-                </button>
-              </li>
-            }
-          </ul>
-        </div>
-      }
+      </div>
     </div>
   }
 </section>

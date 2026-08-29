@@ -7,8 +7,11 @@ import {
   Post,
   Put,
   Query,
+  UploadedFile,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { WikiService } from './wiki.service';
 import { CreateWikiPageDto } from './dto/create-wiki-page.dto';
 import { UpdateWikiPageDto } from './dto/update-wiki-page.dto';
@@ -44,6 +47,18 @@ export class WikiController {
     @CurrentUser() user: RequestUser,
   ) {
     return this.wiki.graph(campaignId, user);
+  }
+
+  @Post(':campaignId/upload')
+  @UseInterceptors(
+    FileInterceptor('file', { limits: { fileSize: 10 * 1024 * 1024 } }),
+  )
+  uploadImage(
+    @Param('campaignId') campaignId: string,
+    @UploadedFile() file: Express.Multer.File,
+    @CurrentUser() user: RequestUser,
+  ) {
+    return this.wiki.uploadImage(campaignId, user, file);
   }
 
   @Get(':campaignId/page/:slug')
