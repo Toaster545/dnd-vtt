@@ -273,7 +273,8 @@ export class WikiService {
     file: Express.Multer.File | undefined,
   ): Promise<{ url: string }> {
     await this.assertAccess(campaignId, user);
-    if (!file?.buffer?.length) throw new BadRequestException('No file uploaded');
+    if (!file?.buffer?.length)
+      throw new BadRequestException('No file uploaded');
     if (!file.mimetype?.startsWith('image/'))
       throw new BadRequestException('Only image files are allowed');
 
