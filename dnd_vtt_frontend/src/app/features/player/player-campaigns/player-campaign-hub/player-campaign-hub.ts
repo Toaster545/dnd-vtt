@@ -1,4 +1,4 @@
-import { Component, inject, signal, OnInit } from '@angular/core';
+import { Component, inject, signal, computed, OnInit } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -42,6 +42,12 @@ export class PlayerCampaignHubComponent implements OnInit {
 
   campaign = signal<CampaignHub | null>(null);
   loading  = signal(true);
+
+  // The embedded wiki panel lands on a page named after this campaign, if one exists.
+  readonly wikiTitles = computed(() => {
+    const c = this.campaign();
+    return c ? [c.name] : [];
+  });
   leaving  = signal(false);
   leaveError = signal('');
 

@@ -1,4 +1,4 @@
-import { Component, inject, signal, OnInit } from '@angular/core';
+import { Component, inject, signal, computed, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
@@ -56,6 +56,12 @@ export class DmCampaignHubComponent implements OnInit {
 
   campaign = signal<CampaignHub | null>(null);
   loading  = signal(true);
+
+  // The embedded wiki panel lands on a page named after this campaign, if one exists.
+  readonly wikiTitles = computed(() => {
+    const c = this.campaign();
+    return c ? [c.name] : [];
+  });
   copied   = signal(false);
   sources  = signal<DndContentSource[]>([]);
   sourcesExpanded = signal(false);

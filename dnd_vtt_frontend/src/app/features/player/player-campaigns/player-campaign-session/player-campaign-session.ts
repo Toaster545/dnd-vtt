@@ -66,8 +66,14 @@ export class PlayerCampaignSessionComponent implements OnInit, OnDestroy {
   campaignId!: string;
   sessionId!: string;
 
-  session    = signal<Session | null>(null);
+  session      = signal<Session | null>(null);
+  campaignName = signal<string | null>(null);
   encounters = signal<Encounter[]>([]);
+
+  // The embedded wiki panel prefers a page named after this session, then one named after the campaign.
+  readonly wikiTitles = computed(() =>
+    [this.session()?.name, this.campaignName()].filter((n): n is string => !!n),
+  );
   members    = signal<CampaignMember[]>([]);
   loading    = signal(true);
   joiningId  = signal<string | null>(null);
@@ -158,6 +164,7 @@ export class PlayerCampaignSessionComponent implements OnInit, OnDestroy {
     const me = hub.members.find(m => m.user_id === this.auth.profile()?.id);
     this.myCharacterId = me?.character_id ?? null;
     this.session.set(session);
+    this.campaignName.set(hub.name);
     this.encounters.set(encounters);
     this.members.set(hub.members);
     this.loading.set(false);
