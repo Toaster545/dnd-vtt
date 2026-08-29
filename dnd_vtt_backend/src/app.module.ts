@@ -9,6 +9,7 @@ import { SessionsModule } from './sessions/sessions.module';
 import { EncountersModule } from './encounters/encounters.module';
 import { CampaignsModule } from './campaigns/campaigns.module';
 import { NotesModule } from './notes/notes.module';
+import { WikiModule } from './wiki/wiki.module';
 import { UsersModule } from './users/users.module';
 import { PlayerModule } from './player/player.module';
 
@@ -24,6 +25,7 @@ import { PlayerModule } from './player/player.module';
     EncountersModule,
     CampaignsModule,
     NotesModule,
+    WikiModule,
     UsersModule,
     PlayerModule,
   ],

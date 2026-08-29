@@ -24,6 +24,10 @@
         <h2 class="font-brand text-lg text-parchment m-0">{{ c.name }}</h2>
         @if (c.description) { <p class="text-slate text-sm m-0 mt-0.5">{{ c.description }}</p> }
       </div>
+      <a class="btn-outline text-xs gap-1.5" [routerLink]="['/home/campaigns', campaignId, 'wiki']" matTooltip="Campaign wiki">
+        <mat-icon class="text-base">menu_book</mat-icon>
+        Wiki
+      </a>
       @if (c.dm_id !== auth.profile()?.id) {
         <button class="btn-outline text-xs text-danger" [disabled]="leaving()" (click)="leaveCampaign()">
           <mat-icon class="text-base">logout</mat-icon>

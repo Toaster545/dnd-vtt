@@ -1,0 +1,226 @@
+<!-- Sidebar: search + folder tree -->
+<aside class="w-64 shrink-0 border-r border-white/8 flex flex-col min-h-0 bg-black/20">
+  <div class="p-3 border-b border-white/8 flex items-center gap-2">
+    <a
+      class="btn-icon"
+      [routerLink]="isDm ? ['/home/campaigns/manage', campaignId] : ['/home/campaigns', campaignId]"
+      matTooltip="Back to campaign"
+    >
+      <mat-icon>arrow_back</mat-icon>
+    </a>
+    <h2 class="font-brand text-sm text-parchment m-0 flex-1">Wiki</h2>
+    <button class="btn-icon" (click)="createPage()" [disabled]="saving()" matTooltip="New page">
+      <mat-icon>note_add</mat-icon>
+    </button>
+  </div>
+
+  <div class="p-3 border-b border-white/8">
+    <div class="relative">
+      <input
+        type="search"
+        class="field-input w-full text-sm pr-7"
+        placeholder="Search pages…"
+        [ngModel]="q()"
+        (ngModelChange)="onSearchInput($event)"
+      />
+      @if (q()) {
+        <button
+          class="absolute right-1 top-1/2 -translate-y-1/2 btn-icon !w-6 !h-6"
+          (click)="clearSearch()"
+        >
+          <mat-icon class="text-base">close</mat-icon>
+        </button>
+      }
+    </div>
+  </div>
+
+  <nav class="flex-1 min-h-0 overflow-y-auto p-2">
+    @if (q()) {
+      @if (searching()) {
+        <p class="text-slate text-xs px-2 py-3">Searching…</p>
+      } @else if (searchResults().length === 0) {
+        <p class="text-slate text-xs px-2 py-3">No matches.</p>
+      } @else {
+        @for (hit of searchResults(); track hit.id) {
+          <button
+            class="w-full text-left px-2 py-2 rounded hover:bg-white/5 block"
+            (click)="openPage(hit.slug)"
+          >
+            <span class="text-parchment text-sm block truncate">{{ hit.title }}</span>
+            <span class="text-slate text-xs block truncate">{{ hit.snippet }}</span>
+          </button>
+        }
+      }
+    } @else if (loadingTree()) {
+      <p class="text-slate text-xs px-2 py-3">Loading…</p>
+    } @else if (tree().length === 0) {
+      <p class="text-slate text-xs px-2 py-3">
+        No pages yet. Create the first one.
+      </p>
+    } @else {
+      @for (group of folderGroups(); track group.folder) {
+        <p
+          class="text-slate/70 text-[11px] uppercase tracking-wide px-2 mt-3 mb-1 first:mt-1"
+        >
+          {{ folderLabel(group.folder) }}
+        </p>
+        @for (p of group.pages; track p.id) {
+          <button
+            class="w-full text-left px-2 py-1.5 rounded flex items-center gap-1.5"
+            [ngClass]="p.slug === currentSlug() ? 'bg-white/10 text-gold' : 'hover:bg-white/5'"
+            (click)="openPage(p.slug)"
+          >
+            @if (p.visibility === 'dm_only') {
+              <mat-icon class="text-[13px] text-slate/60 shrink-0" matTooltip="DM only"
+                >visibility_off</mat-icon
+              >
+            }
+            <span class="text-sm truncate">{{ p.title }}</span>
+          </button>
+        }
+      }
+    }
+  </nav>
+</aside>
+
+<!-- Main pane -->
+<section class="flex-1 min-w-0 flex flex-col min-h-0">
+  @if (errorMsg()) {
+    <div class="bg-danger/15 text-danger text-sm px-4 py-2">{{ errorMsg() }}</div>
+  }
+
+  @if (loadingPage()) {
+    <div class="flex justify-center mt-16"><span class="spinner-lg"></span></div>
+  } @else if (notFound()) {
+    <div class="flex-1 flex flex-col items-center justify-center text-center gap-3 p-8">
+      <mat-icon class="text-4xl text-slate/50">description</mat-icon>
+      <p class="text-slate m-0">This page doesn't exist yet.</p>
+      <button class="btn-outline text-sm" (click)="createPage(currentSlug() ?? undefined)">
+        Create it
+      </button>
+    </div>
+  } @else if (!page()) {
+    <div class="flex-1 flex flex-col items-center justify-center text-center gap-3 p-8">
+      <mat-icon class="text-4xl text-slate/50">menu_book</mat-icon>
+      <p class="text-slate m-0">Select a page, or create a new one.</p>
+      <button class="btn-outline text-sm" (click)="createPage()">New page</button>
+    </div>
+  } @else {
+    <!-- Page header -->
+    <header class="border-b border-white/8 px-5 py-3 flex items-center gap-2">
+      <div class="flex-1 min-w-0">
+        @if (editing()) {
+          <input
+            class="field-input w-full font-brand text-lg text-parchment"
+            [ngModel]="draftTitle()"
+            (ngModelChange)="draftTitle.set($event)"
+            placeholder="Page title"
+          />
+        } @else {
+          <h1 class="font-brand text-lg text-parchment m-0 truncate">{{ page()!.title }}</h1>
+          <p class="text-slate text-xs m-0 mt-0.5">
+            {{ page()!.folder || 'General' }} ·
+            edited by {{ page()!.updated_by_name || page()!.author_name || 'someone' }}
+            @if (page()!.visibility === 'dm_only') { · <span class="text-gold">DM only</span> }
+          </p>
+        }
+      </div>
+
+      @if (editing()) {
+        <input
+          class="field-input w-40 text-sm"
+          [ngModel]="draftFolder()"
+          (ngModelChange)="draftFolder.set($event)"
+          placeholder="Folder (optional)"
+          matTooltip="Folder path, e.g. Lore/NPCs"
+        />
+        <button class="btn-outline text-sm" (click)="cancelEdit()" [disabled]="saving()">
+          Cancel
+        </button>
+        <button class="btn-primary text-sm" (click)="save()" [disabled]="saving()">
+          {{ saving() ? 'Saving…' : 'Save' }}
+        </button>
+      } @else {
+        @if (isDm) {
+          <button
+            class="btn-icon"
+            (click)="toggleVisibility()"
+            [matTooltip]="page()!.visibility === 'dm_only' ? 'Make visible to players' : 'Make DM-only'"
+          >
+            <mat-icon>{{
+              page()!.visibility === 'dm_only' ? 'visibility_off' : 'visibility'
+            }}</mat-icon>
+          </button>
+        }
+        @if (canEditCurrent()) {
+          <button class="btn-icon" (click)="startEdit()" matTooltip="Edit">
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button
+            class="btn-icon text-danger/70 hover:text-danger"
+            (click)="deletePage()"
+            matTooltip="Delete page"
+          >
+            <mat-icon>delete</mat-icon>
+          </button>
+        }
+      }
+    </header>
+
+    @if (conflict()) {
+      <div class="bg-gold/15 text-gold text-sm px-5 py-2 flex items-center gap-3">
+        <span class="flex-1"
+          >Someone else saved this page while you were editing.</span
+        >
+        <button class="btn-outline text-xs" (click)="reloadFromServer()">
+          Discard mine &amp; reload
+        </button>
+        <button class="btn-outline text-xs" (click)="save(true)">Overwrite theirs</button>
+      </div>
+    }
+
+    <!-- Body -->
+    <div class="flex-1 min-h-0 flex">
+      @if (editing()) {
+        <div class="w-1/2 min-w-0 border-r border-white/8">
+          <app-wiki-editor
+            [value]="draftBody()"
+            [pages]="editorPages()"
+            (valueChange)="draftBody.set($event)"
+          />
+        </div>
+      }
+      <div class="min-w-0 flex-1 overflow-y-auto px-6 py-5">
+        <div
+          #preview
+          class="wiki-content"
+          [innerHTML]="renderedHtml()"
+          (click)="onPreviewClick($event)"
+        ></div>
+
+        @if (!editing() && backlinks().length) {
+          <div class="mt-10 pt-4 border-t border-white/8">
+            <p class="text-slate/70 text-[11px] uppercase tracking-wide m-0 mb-2">
+              Linked from
+            </p>
+            <ul class="list-none p-0 m-0 flex flex-col gap-1">
+              @for (b of backlinks(); track b.id) {
+                <li>
+                  <button
+                    class="text-gold/90 hover:text-gold text-sm"
+                    (click)="openPage(b.slug)"
+                  >
+                    {{ b.title }}
+                    @if (b.folder) {
+                      <span class="text-slate/60 text-xs">— {{ b.folder }}</span>
+                    }
+                  </button>
+                </li>
+              }
+            </ul>
+          </div>
+        }
+      </div>
+    </div>
+  }
+</section>

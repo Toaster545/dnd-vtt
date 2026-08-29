@@ -139,6 +139,16 @@ export const routes: Routes = [
           data: { bgOverlay: 0.9 },
       },
       {
+        path: 'campaigns/manage/:campaignId/wiki',
+        loadComponent: () => import('./features/wiki/wiki.component').then(m => m.WikiComponent),
+        data: { wikiDm: true, bgOverlay: 0.95 },
+      },
+      {
+        path: 'campaigns/manage/:campaignId/wiki/:slug',
+        loadComponent: () => import('./features/wiki/wiki.component').then(m => m.WikiComponent),
+        data: { wikiDm: true, bgOverlay: 0.95 },
+      },
+      {
         path: 'campaigns/manage/:campaignId/sessions/:sessionId',
         loadComponent: () =>
           import('./features/dm/dm-campaigns/dm-campaign-session/dm-campaign-session').then(
@@ -163,6 +173,16 @@ export const routes: Routes = [
             m => m.PlayerCampaignHubComponent,
           ),
           data: { bgOverlay: 0.9 },
+      },
+      {
+        path: 'campaigns/:campaignId/wiki',
+        loadComponent: () => import('./features/wiki/wiki.component').then(m => m.WikiComponent),
+        data: { wikiDm: false, bgOverlay: 0.95 },
+      },
+      {
+        path: 'campaigns/:campaignId/wiki/:slug',
+        loadComponent: () => import('./features/wiki/wiki.component').then(m => m.WikiComponent),
+        data: { wikiDm: false, bgOverlay: 0.95 },
       },
       {
         path: 'campaigns/:campaignId/sessions/:sessionId',
