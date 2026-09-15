@@ -1,0 +1,41 @@
+{
+  "index": "ice-devil",
+  "name": "Ice Devil",
+  "size": "Large",
+  "type": "fiend (devil)",
+  "alignment": "lawful evil",
+  "armor_class": 18,
+  "armor_class_desc": "natural armor",
+  "hit_points": 199,
+  "hit_dice": "19d10 + 95",
+  "speed": { "walk": 40 },
+  "ability_scores": {
+    "strength": 21,
+    "dexterity": 14,
+    "constitution": 21,
+    "intelligence": 18,
+    "wisdom": 15,
+    "charisma": 18
+  },
+  "initiative_bonus": 2,
+  "saving_throws": { "Intelligence": 8, "Wisdom": 6 },
+  "damage_resistances": ["cold"],
+  "damage_immunities": ["fire", "poison"],
+  "condition_immunities": ["poisoned"],
+  "senses": { "darkvision": 120, "passive_perception": 12 },
+  "languages": ["Infernal", "telepathy 120 ft."],
+  "challenge_rating": "14",
+  "xp": 11500,
+  "traits": [
+    { "name": "Devil's Sight", "description": "Magical darkness doesn't impede the devil's darkvision." },
+    { "name": "Magic Resistance", "description": "The devil has advantage on saving throws against spells and other magical effects." },
+    { "name": "Wall of Ice", "description": "As a Bonus Action, the devil can create a permanent, opaque wall of ice up to 30 feet long, 10 feet high, and 1 foot thick, anchored at a point it can see within 60 feet of it. The wall lasts until it is destroyed (AC 5, 15 hit points per 10-foot section, immunity to Cold, Poison, and Psychic damage)." }
+  ],
+  "actions": [
+    { "name": "Multiattack", "description": "The devil makes two Claw attacks and one Tail attack." },
+    { "name": "Claw", "description": "Melee Attack Roll: +10, reach 10 ft. Hit: 14 (2d8 + 5) Cold damage." },
+    { "name": "Tail", "description": "Melee Attack Roll: +10, reach 10 ft. Hit: 14 (2d8 + 5) Piercing damage. If the target is Medium or smaller, it has the Poisoned condition until the end of the devil's next turn." },
+    { "name": "Ice Storm (Recharge 6)", "description": "The devil casts a barrage of ice in a 20-foot-radius Sphere centered on a point it can see within 120 feet. Each creature in that area makes a DC 16 Dexterity saving throw, taking 27 (6d8) Bludgeoning damage and 27 (6d8) Cold damage on a failed save, or half as much damage on a successful one." }
+  ],
+  "description": "Ice devils, or gelugons, are hulking insectoid tacticians who patrol the frozen wastes of Stygia, encasing their foes in wall of ice and impaling stragglers on their poisoned tail."
+}

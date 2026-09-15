@@ -1,0 +1,39 @@
+{
+  "index": "glabrezu",
+  "name": "Glabrezu",
+  "size": "Large",
+  "type": "fiend (demon)",
+  "alignment": "chaotic evil",
+  "armor_class": 17,
+  "armor_class_desc": "natural armor",
+  "hit_points": 189,
+  "hit_dice": "18d10 + 90",
+  "speed": { "walk": 40 },
+  "ability_scores": {
+    "strength": 20,
+    "dexterity": 15,
+    "constitution": 21,
+    "intelligence": 19,
+    "wisdom": 17,
+    "charisma": 16
+  },
+  "initiative_bonus": 2,
+  "saving_throws": { "Intelligence": 8, "Wisdom": 7, "Charisma": 7 },
+  "damage_resistances": ["cold", "fire", "lightning", "bludgeoning, piercing, and slashing from nonmagical attacks"],
+  "damage_immunities": ["poison"],
+  "condition_immunities": ["poisoned"],
+  "senses": { "truesight": 120, "passive_perception": 13 },
+  "languages": ["Abyssal", "telepathy 120 ft."],
+  "challenge_rating": "9",
+  "xp": 5000,
+  "traits": [
+    { "name": "Magic Resistance", "description": "The glabrezu has advantage on saving throws against spells and other magical effects." },
+    { "name": "Spellcasting", "description": "The glabrezu casts one of the following spells, requiring no material components and using Charisma as the spellcasting ability (spell save DC 15): At will: Darkness, Detect Magic, Dispel Magic. 1/Day Each: Confusion, Fly (self only), Power Word Stun." }
+  ],
+  "actions": [
+    { "name": "Multiattack", "description": "The glabrezu makes two Pincer attacks and two Fist attacks." },
+    { "name": "Pincer", "description": "Melee Attack Roll: +9, reach 10 ft. Hit: 16 (2d10 + 5) Bludgeoning damage. If the target is a Medium or smaller creature, it is Grappled (escape DC 15) and has the Restrained condition until the grapple ends." },
+    { "name": "Fist", "description": "Melee Attack Roll: +9, reach 5 ft. Hit: 7 (1d8 + 3) Bludgeoning damage." }
+  ],
+  "description": "Glabrezu are cunning, four-armed demons who tempt mortals with wishes and magic granted through Spellcasting, only to crush any deal-breaker in their crushing pincers once the bargain sours."
+}

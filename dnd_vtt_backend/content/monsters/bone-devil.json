@@ -1,0 +1,39 @@
+{
+  "index": "bone-devil",
+  "name": "Bone Devil",
+  "size": "Large",
+  "type": "fiend (devil)",
+  "alignment": "lawful evil",
+  "armor_class": 16,
+  "armor_class_desc": "natural armor",
+  "hit_points": 161,
+  "hit_dice": "17d10 + 68",
+  "speed": { "walk": 40, "fly": 40 },
+  "ability_scores": {
+    "strength": 18,
+    "dexterity": 16,
+    "constitution": 18,
+    "intelligence": 13,
+    "wisdom": 14,
+    "charisma": 16
+  },
+  "initiative_bonus": 3,
+  "skills": { "Deception": 6, "Insight": 5 },
+  "damage_resistances": ["cold"],
+  "damage_immunities": ["fire", "poison"],
+  "condition_immunities": ["poisoned"],
+  "senses": { "darkvision": 120, "passive_perception": 12 },
+  "languages": ["Infernal", "telepathy 120 ft."],
+  "challenge_rating": "9",
+  "xp": 5000,
+  "traits": [
+    { "name": "Devil's Sight", "description": "Magical darkness doesn't impede the devil's darkvision." },
+    { "name": "Magic Resistance", "description": "The devil has advantage on saving throws against spells and other magical effects." }
+  ],
+  "actions": [
+    { "name": "Multiattack", "description": "The devil makes two Claw attacks and one Sting attack." },
+    { "name": "Claw", "description": "Melee Attack Roll: +8, reach 10 ft. Hit: 12 (2d6 + 5) Slashing damage." },
+    { "name": "Sting", "description": "Melee Attack Roll: +8, reach 10 ft. Hit: 10 (1d8 + 6) Piercing damage plus 17 (5d6) Poison damage, and the target's Hit Point maximum decreases by an amount equal to the Poison damage taken." }
+  ],
+  "description": "Bone devils are skeletal, scorpion-tailed torturers who serve as interrogators and taskmasters in the Nine Hells, delighting in the slow, wasting agony of their poisoned sting."
+}

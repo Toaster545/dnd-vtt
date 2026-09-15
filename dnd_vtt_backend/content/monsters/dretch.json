@@ -1,0 +1,36 @@
+{
+  "index": "dretch",
+  "name": "Dretch",
+  "size": "Small",
+  "type": "fiend (demon)",
+  "alignment": "chaotic evil",
+  "armor_class": 11,
+  "armor_class_desc": "natural armor",
+  "hit_points": 18,
+  "hit_dice": "4d6 + 4",
+  "speed": { "walk": 20 },
+  "ability_scores": {
+    "strength": 11,
+    "dexterity": 11,
+    "constitution": 12,
+    "intelligence": 5,
+    "wisdom": 8,
+    "charisma": 3
+  },
+  "initiative_bonus": 0,
+  "damage_resistances": ["cold", "fire", "lightning"],
+  "damage_immunities": ["poison"],
+  "condition_immunities": ["poisoned"],
+  "senses": { "darkvision": 60, "passive_perception": 9 },
+  "languages": ["Abyssal", "telepathy 60 ft. (works only with other demons)"],
+  "challenge_rating": "1/4",
+  "xp": 50,
+  "traits": [],
+  "actions": [
+    { "name": "Multiattack", "description": "The dretch makes one Bite attack and one Claws attack." },
+    { "name": "Bite", "description": "Melee Attack Roll: +2, reach 5 ft. Hit: 3 (1d6) Piercing damage." },
+    { "name": "Claws", "description": "Melee Attack Roll: +2, reach 5 ft. Hit: 3 (1d4 + 1) Slashing damage." },
+    { "name": "Fetid Cloud (1/Day)", "description": "A 10-foot-radius cloud of nauseating gas extends out from the dretch. The cloud spreads around corners, and its area is heavily obscured. It lasts for 1 minute or until a strong wind disperses it. Any creature that starts its turn in that area must succeed on a DC 11 Constitution saving throw or have the Poisoned condition until the start of its next turn." }
+  ],
+  "description": "Dretches are squat, wretched demons of the lowest rank, spawned in the Abyss by the thousand and sent into battle as expendable fodder that vents its frustration in noxious, poisonous gas."
+}

@@ -1,0 +1,36 @@
+{
+  "index": "chasme",
+  "name": "Chasme",
+  "size": "Large",
+  "type": "fiend (demon)",
+  "alignment": "chaotic evil",
+  "armor_class": 13,
+  "armor_class_desc": "natural armor",
+  "hit_points": 82,
+  "hit_dice": "11d10 + 22",
+  "speed": { "walk": 20, "fly": 50 },
+  "ability_scores": {
+    "strength": 15,
+    "dexterity": 17,
+    "constitution": 14,
+    "intelligence": 9,
+    "wisdom": 13,
+    "charisma": 10
+  },
+  "initiative_bonus": 3,
+  "damage_resistances": ["cold", "fire", "lightning", "bludgeoning, piercing, and slashing from nonmagical attacks"],
+  "damage_immunities": ["poison"],
+  "condition_immunities": ["poisoned"],
+  "senses": { "darkvision": 120, "passive_perception": 11 },
+  "languages": ["Abyssal", "telepathy 120 ft."],
+  "challenge_rating": "6",
+  "xp": 2300,
+  "traits": [
+    { "name": "Magic Resistance", "description": "The chasme has advantage on saving throws against spells and other magical effects." },
+    { "name": "Buzzing Wings", "description": "While the chasme is flying, it emits a maddening buzz audible out to 60 feet. Each creature that starts its turn within 60 feet of the chasme and can hear the buzz must succeed on a DC 14 Constitution saving throw or, on its turn, subtract 1d4 from the first attack roll, ability check, or saving throw it makes before the start of its next turn." }
+  ],
+  "actions": [
+    { "name": "Proboscis", "description": "Melee Attack Roll: +6, reach 5 ft. Hit: 12 (2d8 + 3) Piercing damage, and the chasme attaches to the target if the target is Large or smaller. While attached, the chasme doesn't attack; instead, at the start of each of its turns, the target loses 10 (3d6) Hit Points due to blood loss, and the chasme regains that many hit points. The chasme can detach itself by spending 5 feet of movement. A creature, including the target, can take an action to detach the chasme, doing so by succeeding on a DC 13 Strength check." }
+  ],
+  "description": "Chasme are gaunt, fly-headed demons that stalk battlefields for the wounded and dying, their maddening buzzing wings sapping the will of nearby foes before they drain victims dry through a long proboscis."
+}

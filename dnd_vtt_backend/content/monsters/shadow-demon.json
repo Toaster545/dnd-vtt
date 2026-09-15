@@ -1,0 +1,37 @@
+{
+  "index": "shadow-demon",
+  "name": "Shadow Demon",
+  "size": "Medium",
+  "type": "fiend (demon)",
+  "alignment": "chaotic evil",
+  "armor_class": 13,
+  "hit_points": 33,
+  "hit_dice": "6d8 + 6",
+  "speed": { "walk": 30, "fly": 50 },
+  "ability_scores": {
+    "strength": 1,
+    "dexterity": 17,
+    "constitution": 12,
+    "intelligence": 14,
+    "wisdom": 13,
+    "charisma": 14
+  },
+  "initiative_bonus": 3,
+  "skills": { "Stealth": 5 },
+  "damage_resistances": ["cold", "fire", "lightning", "bludgeoning, piercing, and slashing from nonmagical attacks"],
+  "damage_immunities": ["poison"],
+  "condition_immunities": ["poisoned"],
+  "senses": { "darkvision": 60, "passive_perception": 11 },
+  "languages": ["Abyssal", "telepathy 60 ft."],
+  "challenge_rating": "4",
+  "xp": 1100,
+  "traits": [
+    { "name": "Incorporeal Movement", "description": "The demon can move through other creatures and objects as if they were Difficult Terrain. It takes 5 (1d10) Force damage if it ends its turn inside an object." },
+    { "name": "Light Weakness", "description": "While in bright light, the demon has Disadvantage on attack rolls, ability checks, and saving throws." },
+    { "name": "Shadow Stealth", "description": "While in dim light or darkness, the demon can take the Hide action as a Bonus Action, and it has Advantage on the ensuing Stealth check." }
+  ],
+  "actions": [
+    { "name": "Claw", "description": "Melee Attack Roll: +5, reach 5 ft. Hit: 9 (2d6 + 2) Psychic damage. If the target is a creature, its Strength score is reduced by 1d4 until it finishes a Long Rest. The target dies if this reduces its Strength to 0." }
+  ],
+  "description": "Shadow demons are cunning, incorporeal fiends that lurk in darkness on the fringes of battle, draining a victim's strength with a touch and vanishing into shadow before retaliation."
+}

@@ -1,0 +1,34 @@
+{
+  "index": "manes",
+  "name": "Manes",
+  "size": "Small",
+  "type": "fiend (demon)",
+  "alignment": "chaotic evil",
+  "armor_class": 9,
+  "hit_points": 9,
+  "hit_dice": "2d6 + 2",
+  "speed": { "walk": 20 },
+  "ability_scores": {
+    "strength": 10,
+    "dexterity": 9,
+    "constitution": 13,
+    "intelligence": 3,
+    "wisdom": 8,
+    "charisma": 4
+  },
+  "initiative_bonus": -1,
+  "damage_resistances": ["cold", "fire", "lightning"],
+  "damage_immunities": ["poison"],
+  "condition_immunities": ["poisoned"],
+  "senses": { "darkvision": 60, "passive_perception": 9 },
+  "languages": ["understands Abyssal but can't speak"],
+  "challenge_rating": "1/8",
+  "xp": 25,
+  "traits": [
+    { "name": "Aggressive Carnage", "description": "As a Bonus Action, the manes can move up to its Speed toward an enemy it can see." }
+  ],
+  "actions": [
+    { "name": "Bite", "description": "Melee Attack Roll: +2, reach 5 ft. Hit: 3 (1d4 + 1) Piercing damage." }
+  ],
+  "description": "Manes are the lowest of demonkind, feral remnants of mortal souls consumed by the Abyss and twisted into mindless, ravenous husks that swarm in packs."
+}

@@ -1,0 +1,34 @@
+{
+  "index": "lemure",
+  "name": "Lemure",
+  "size": "Medium",
+  "type": "fiend (devil)",
+  "alignment": "lawful evil",
+  "armor_class": 7,
+  "hit_points": 13,
+  "hit_dice": "3d8",
+  "speed": { "walk": 15 },
+  "ability_scores": {
+    "strength": 6,
+    "dexterity": 5,
+    "constitution": 11,
+    "intelligence": 1,
+    "wisdom": 11,
+    "charisma": 3
+  },
+  "initiative_bonus": -3,
+  "damage_resistances": ["cold"],
+  "damage_immunities": ["fire", "poison"],
+  "condition_immunities": ["charmed", "frightened", "poisoned"],
+  "senses": { "darkvision": 120, "passive_perception": 10 },
+  "languages": ["understands Infernal but can't speak", "telepathy 120 ft. (works only with creatures that understand Infernal)"],
+  "challenge_rating": "0",
+  "xp": 10,
+  "traits": [
+    { "name": "Hellish Restoration", "description": "If the lemure dies outside the Nine Hells, it disintegrates into ichor and its remains re-form within a day at the bottom of the River Styx, restored to full hit points, unless it is killed by a good-aligned creature that speaks a command word to it as it dies." }
+  ],
+  "actions": [
+    { "name": "Claw", "description": "Melee Attack Roll: +2, reach 5 ft. Hit: 2 (1d4) Slashing damage." }
+  ],
+  "description": "Lemures are the mindless, larval mass of the damned, mewling humanoid blobs that fill the lowest ranks of the Nine Hells and are reshaped into other devils at their masters' whim."
+}

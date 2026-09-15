@@ -1,0 +1,39 @@
+{
+  "index": "chain-devil",
+  "name": "Chain Devil",
+  "size": "Medium",
+  "type": "fiend (devil)",
+  "alignment": "lawful evil",
+  "armor_class": 16,
+  "armor_class_desc": "natural armor",
+  "hit_points": 85,
+  "hit_dice": "10d8 + 40",
+  "speed": { "walk": 30 },
+  "ability_scores": {
+    "strength": 18,
+    "dexterity": 15,
+    "constitution": 18,
+    "intelligence": 11,
+    "wisdom": 12,
+    "charisma": 14
+  },
+  "initiative_bonus": 2,
+  "skills": { "Deception": 4, "Insight": 3 },
+  "damage_resistances": ["cold"],
+  "damage_immunities": ["fire", "poison"],
+  "condition_immunities": ["poisoned"],
+  "senses": { "darkvision": 120, "passive_perception": 11 },
+  "languages": ["Infernal", "telepathy 120 ft."],
+  "challenge_rating": "8",
+  "xp": 3900,
+  "traits": [
+    { "name": "Devil's Sight", "description": "Magical darkness doesn't impede the devil's darkvision." },
+    { "name": "Magic Resistance", "description": "The devil has advantage on saving throws against spells and other magical effects." }
+  ],
+  "actions": [
+    { "name": "Multiattack", "description": "The devil makes four Chain attacks. It can replace two attacks with a use of Animate Chains." },
+    { "name": "Chain", "description": "Melee Attack Roll: +7, reach 10 ft. Hit: 7 (1d6 + 4) Force damage. If the target is a creature, it is Grappled (escape DC 14) and pulled up to 10 feet toward the devil." },
+    { "name": "Animate Chains", "description": "One Large chain that isn't being worn or carried and that is within 60 feet of the devil animates and forms a spectral, chain-wrapped humanoid guardian, using the devil's Chain statistics, in an unoccupied space within 5 feet of the animated chain. This guardian is an object with AC 15, immunity to Poison and Psychic damage, and immunity to all conditions. It uses the devil's initiative count and acts as an ally of the devil, obeying its commands. On the devil's turn, the guardian can move only within 30 feet of the devil. If the devil dies, the guardian reverts to an inert chain and can't be animated again for 1 minute." }
+  ],
+  "description": "Chain devils prowl the Hells' torture chambers and battlefields alike, wrapped in living chains they animate into spectral guardians and lash out with to bind their victims."
+}

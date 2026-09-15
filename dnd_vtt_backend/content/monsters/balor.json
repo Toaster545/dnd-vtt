@@ -1,0 +1,41 @@
+{
+  "index": "balor",
+  "name": "Balor",
+  "size": "Huge",
+  "type": "fiend (demon)",
+  "alignment": "chaotic evil",
+  "armor_class": 19,
+  "armor_class_desc": "natural armor",
+  "hit_points": 297,
+  "hit_dice": "22d12 + 154",
+  "speed": { "walk": 40, "fly": 80 },
+  "ability_scores": {
+    "strength": 26,
+    "dexterity": 15,
+    "constitution": 25,
+    "intelligence": 20,
+    "wisdom": 16,
+    "charisma": 22
+  },
+  "initiative_bonus": 2,
+  "saving_throws": { "Strength": 14, "Constitution": 13, "Wisdom": 9, "Charisma": 12 },
+  "damage_resistances": ["cold", "lightning", "bludgeoning, piercing, and slashing from nonmagical attacks"],
+  "damage_immunities": ["fire", "poison"],
+  "condition_immunities": ["poisoned"],
+  "senses": { "truesight": 120, "passive_perception": 13 },
+  "languages": ["Abyssal", "telepathy 120 ft."],
+  "challenge_rating": "19",
+  "xp": 22000,
+  "traits": [
+    { "name": "Death Throes", "description": "When the balor dies, it explodes, and each creature within 30 feet of it must make a DC 20 Dexterity saving throw, taking 70 (20d6) Fire damage on a failed save, or half as much damage on a successful one. The explosion ignites flammable objects in that area that aren't being worn or carried, and it destroys the balor's weapons." },
+    { "name": "Fire Aura", "description": "At the start of each of the balor's turns, each creature within 5 feet of it takes 13 (3d8) Fire damage, and flammable objects in that area that aren't being worn or carried ignite." },
+    { "name": "Magic Resistance", "description": "The balor has advantage on saving throws against spells and other magical effects." }
+  ],
+  "actions": [
+    { "name": "Multiattack", "description": "The balor makes one Lightning Sword attack and one Whip attack." },
+    { "name": "Lightning Sword", "description": "Melee Attack Roll: +14, reach 10 ft. Hit: 21 (3d8 + 8) Slashing damage plus 13 (3d8) Lightning damage." },
+    { "name": "Whip", "description": "Melee Attack Roll: +14, reach 30 ft. Hit: 15 (2d6 + 8) Force damage, and the target is pulled up to 25 feet straight toward the balor if it is a Huge or smaller creature." },
+    { "name": "Teleport", "description": "The balor magically teleports itself, along with any equipment it is wearing or carrying, up to 120 feet to an unoccupied space it can see." }
+  ],
+  "description": "Balors are massive, flame-wreathed demon lords who lead the Abyss's armies in the Blood War, wielding a lightning-wreathed sword and a lashing fire whip, and detonating in a final blast of hellfire when finally slain."
+}

@@ -1,0 +1,38 @@
+{
+  "index": "vrock",
+  "name": "Vrock",
+  "size": "Large",
+  "type": "fiend (demon)",
+  "alignment": "chaotic evil",
+  "armor_class": 15,
+  "armor_class_desc": "natural armor",
+  "hit_points": 152,
+  "hit_dice": "16d10 + 64",
+  "speed": { "walk": 40, "fly": 60 },
+  "ability_scores": {
+    "strength": 17,
+    "dexterity": 15,
+    "constitution": 18,
+    "intelligence": 8,
+    "wisdom": 13,
+    "charisma": 8
+  },
+  "initiative_bonus": 2,
+  "damage_resistances": ["cold", "fire", "lightning", "bludgeoning, piercing, and slashing from nonmagical attacks"],
+  "damage_immunities": ["poison"],
+  "condition_immunities": ["poisoned"],
+  "senses": { "darkvision": 120, "passive_perception": 11 },
+  "languages": ["Abyssal", "telepathy 120 ft."],
+  "challenge_rating": "6",
+  "xp": 2300,
+  "traits": [
+    { "name": "Magic Resistance", "description": "The vrock has advantage on saving throws against spells and other magical effects." }
+  ],
+  "actions": [
+    { "name": "Multiattack", "description": "The vrock makes two Talon attacks." },
+    { "name": "Talon", "description": "Melee Attack Roll: +7, reach 5 ft. Hit: 11 (2d6 + 4) Slashing damage." },
+    { "name": "Spores (Recharge 6)", "description": "A cloud of toxic spores extends out from the vrock in a 20-foot Emanation. Each creature in that area when the spores appear must succeed on a DC 15 Constitution saving throw or take 10 (3d6) Poison damage and have the Poisoned condition. While Poisoned, the target takes 5 (1d10) Poison damage at the start of each of its turns. A creature can repeat the saving throw at the end of each of its turns, ending the effect on itself on a success." },
+    { "name": "Stunning Screech (1/Day)", "description": "The vrock emits a horrific screech. Each creature within 20 feet of the vrock that can hear it must succeed on a DC 15 Constitution saving throw or have the Stunned condition until the end of the vrock's next turn." }
+  ],
+  "description": "Vrocks are vulture-headed demons that revel in wanton destruction, their toxic spores and stunning screech softening prey before their talons finish the job."
+}

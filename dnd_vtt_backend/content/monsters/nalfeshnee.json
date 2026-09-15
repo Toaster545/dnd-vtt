@@ -1,0 +1,39 @@
+{
+  "index": "nalfeshnee",
+  "name": "Nalfeshnee",
+  "size": "Large",
+  "type": "fiend (demon)",
+  "alignment": "chaotic evil",
+  "armor_class": 18,
+  "armor_class_desc": "natural armor",
+  "hit_points": 184,
+  "hit_dice": "16d10 + 96",
+  "speed": { "walk": 20, "fly": 30 },
+  "ability_scores": {
+    "strength": 21,
+    "dexterity": 10,
+    "constitution": 22,
+    "intelligence": 19,
+    "wisdom": 12,
+    "charisma": 15
+  },
+  "initiative_bonus": 0,
+  "damage_resistances": ["cold", "fire", "lightning", "bludgeoning, piercing, and slashing from nonmagical attacks"],
+  "damage_immunities": ["poison"],
+  "condition_immunities": ["poisoned"],
+  "senses": { "truesight": 120, "passive_perception": 11 },
+  "languages": ["Abyssal", "telepathy 120 ft."],
+  "challenge_rating": "13",
+  "xp": 10000,
+  "traits": [
+    { "name": "Magic Resistance", "description": "The nalfeshnee has advantage on saving throws against spells and other magical effects." }
+  ],
+  "actions": [
+    { "name": "Multiattack", "description": "The nalfeshnee makes one Bite attack and two Claw attacks." },
+    { "name": "Bite", "description": "Melee Attack Roll: +10, reach 5 ft. Hit: 32 (5d10 + 5) Piercing damage." },
+    { "name": "Claw", "description": "Melee Attack Roll: +10, reach 10 ft. Hit: 12 (2d6 + 5) Slashing damage." },
+    { "name": "Teleport", "description": "The nalfeshnee magically teleports itself, along with any equipment it is wearing or carrying, up to 120 feet to an unoccupied space it can see." },
+    { "name": "Horror Nimbus (Recharge 5-6)", "description": "The nalfeshnee magically emits scintillating, multicolored light. Each creature within 15 feet of the nalfeshnee that can see the light must succeed on a DC 17 Wisdom saving throw or have the Frightened condition for 1 minute. A creature can repeat the saving throw at the end of each of its turns, ending the effect on itself on a success." }
+  ],
+  "description": "Nalfeshnee are gluttonous, boar-tusked demon lords, corrupt masterminds who orchestrate the Blood War from behind the lines, teleporting away from danger while their horrific presence breaks enemy nerve."
+}

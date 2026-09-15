@@ -1,0 +1,39 @@
+{
+  "index": "erinyes",
+  "name": "Erinyes",
+  "size": "Medium",
+  "type": "fiend (devil)",
+  "alignment": "lawful evil",
+  "armor_class": 18,
+  "armor_class_desc": "chain mail",
+  "hit_points": 153,
+  "hit_dice": "18d8 + 72",
+  "speed": { "walk": 30, "fly": 60 },
+  "ability_scores": {
+    "strength": 18,
+    "dexterity": 16,
+    "constitution": 18,
+    "intelligence": 14,
+    "wisdom": 14,
+    "charisma": 18
+  },
+  "initiative_bonus": 3,
+  "skills": { "Perception": 6, "Persuasion": 8 },
+  "damage_resistances": ["cold"],
+  "damage_immunities": ["fire", "poison"],
+  "condition_immunities": ["poisoned"],
+  "senses": { "truesight": 120, "passive_perception": 16 },
+  "languages": ["Infernal", "telepathy 120 ft."],
+  "challenge_rating": "12",
+  "xp": 8400,
+  "traits": [
+    { "name": "Hellish Weapons", "description": "The erinyes's Longsword and Longbow attacks deal an extra 13 (3d8) Poison damage on a hit (included in the attacks)." },
+    { "name": "Magic Resistance", "description": "The erinyes has advantage on saving throws against spells and other magical effects." }
+  ],
+  "actions": [
+    { "name": "Multiattack", "description": "The erinyes makes two Longsword attacks or two Longbow attacks." },
+    { "name": "Longsword", "description": "Melee Attack Roll: +9, reach 5 ft. Hit: 10 (1d8 + 6) Slashing damage plus 13 (3d8) Poison damage. If the target is a creature, it must succeed on a DC 14 Constitution saving throw or have the Poisoned condition until the start of the erinyes's next turn." },
+    { "name": "Longbow", "description": "Ranged Attack Roll: +8, range 150/600 ft. Hit: 8 (1d8 + 4) Piercing damage plus 13 (3d8) Poison damage. If the target is a creature, it must succeed on a DC 14 Constitution saving throw or have the Poisoned condition until the start of the erinyes's next turn." }
+  ],
+  "description": "Erinyes are the fallen angels of the Nine Hells, elegant and merciless commanders who lead infernal legions and hunt down souls that break their infernal contracts, striking with poisoned blade and bow."
+}

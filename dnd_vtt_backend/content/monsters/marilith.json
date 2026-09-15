@@ -1,0 +1,40 @@
+{
+  "index": "marilith",
+  "name": "Marilith",
+  "size": "Large",
+  "type": "fiend (demon)",
+  "alignment": "chaotic evil",
+  "armor_class": 18,
+  "armor_class_desc": "natural armor",
+  "hit_points": 220,
+  "hit_dice": "21d10 + 105",
+  "speed": { "walk": 40 },
+  "ability_scores": {
+    "strength": 18,
+    "dexterity": 20,
+    "constitution": 20,
+    "intelligence": 18,
+    "wisdom": 16,
+    "charisma": 20
+  },
+  "initiative_bonus": 5,
+  "saving_throws": { "Strength": 9, "Constitution": 10, "Wisdom": 8 },
+  "damage_resistances": ["cold", "fire", "lightning", "bludgeoning, piercing, and slashing from nonmagical attacks"],
+  "damage_immunities": ["poison"],
+  "condition_immunities": ["poisoned"],
+  "senses": { "truesight": 120, "passive_perception": 13 },
+  "languages": ["Abyssal", "telepathy 120 ft."],
+  "challenge_rating": "16",
+  "xp": 15000,
+  "traits": [
+    { "name": "Magic Resistance", "description": "The marilith has advantage on saving throws against spells and other magical effects." },
+    { "name": "Reactive Rebuke", "description": "When a creature the marilith can see hits it with an attack roll, the marilith can make one Longsword attack against that creature as a Reaction, if it hasn't already used its Reaction this turn." }
+  ],
+  "actions": [
+    { "name": "Multiattack", "description": "The marilith makes six Longsword attacks and one Tail attack." },
+    { "name": "Longsword", "description": "Melee Attack Roll: +11, reach 5 ft. Hit: 14 (2d8 + 5) Slashing damage." },
+    { "name": "Tail", "description": "Melee Attack Roll: +11, reach 10 ft. Hit: 15 (2d10 + 4) Bludgeoning damage, and the target has the Grappled condition (escape DC 19) if it is a Large or smaller creature and the marilith doesn't have another creature Grappled." },
+    { "name": "Teleport", "description": "The marilith magically teleports itself, along with any equipment it is wearing or carrying, up to 120 feet to an unoccupied space it can see." }
+  ],
+  "description": "Mariliths are serpentine, six-armed demon generals whose mastery of the blade and the battlefield makes them the Abyss's most feared tacticians, wielding six swords at once while a crushing tail seals off escape."
+}
