@@ -1,0 +1,36 @@
+{
+  "index": "cloud-giant",
+  "name": "Cloud Giant",
+  "size": "Huge",
+  "type": "giant",
+  "alignment": "neutral",
+  "armor_class": 14,
+  "hit_points": 200,
+  "hit_dice": "16d12 + 96",
+  "speed": { "walk": 40 },
+  "ability_scores": {
+    "strength": 27,
+    "dexterity": 10,
+    "constitution": 22,
+    "intelligence": 12,
+    "wisdom": 16,
+    "charisma": 16
+  },
+  "initiative_bonus": 0,
+  "saving_throws": { "Constitution": 10, "Wisdom": 7, "Charisma": 7 },
+  "skills": { "Insight": 7, "Perception": 7, "Persuasion": 7 },
+  "senses": { "passive_perception": 17 },
+  "languages": ["Common", "Giant"],
+  "challenge_rating": "9",
+  "xp": 5000,
+  "traits": [
+    { "name": "Keen Smell", "description": "The giant has advantage on Wisdom (Perception) checks that rely on smell." },
+    { "name": "Innate Spellcasting", "description": "The giant's innate spellcasting ability is Charisma. It can innately cast the following spells, requiring no material components: At will: Detect Magic, Fog Cloud, Light. 3/Day Each: Feather Fall, Fly, Misty Step. 1/Day Each: Control Weather, Telekinesis." }
+  ],
+  "actions": [
+    { "name": "Multiattack", "description": "The giant makes two Morningstar attacks or two Rock attacks." },
+    { "name": "Morningstar", "description": "Melee Attack Roll: +12, reach 10 ft. Hit: 21 (3d8 + 8) Piercing damage." },
+    { "name": "Rock", "description": "Ranged Attack Roll: +12, range 60/240 ft. Hit: 30 (4d10 + 8) Bludgeoning damage." }
+  ],
+  "description": "Cloud giants dwell in castles hidden amid the clouds, courtly and capricious hosts whose innate magic lets them vanish in a blink and shape the weather to their whims."
+}

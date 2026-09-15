@@ -1,0 +1,39 @@
+{
+  "index": "horned-devil",
+  "name": "Horned Devil",
+  "size": "Large",
+  "type": "fiend (devil)",
+  "alignment": "lawful evil",
+  "armor_class": 18,
+  "armor_class_desc": "natural armor",
+  "hit_points": 178,
+  "hit_dice": "17d10 + 85",
+  "speed": { "walk": 20, "fly": 60 },
+  "ability_scores": {
+    "strength": 22,
+    "dexterity": 17,
+    "constitution": 21,
+    "intelligence": 12,
+    "wisdom": 16,
+    "charisma": 17
+  },
+  "initiative_bonus": 3,
+  "damage_resistances": ["cold"],
+  "damage_immunities": ["fire", "poison"],
+  "condition_immunities": ["poisoned"],
+  "senses": { "darkvision": 120, "passive_perception": 13 },
+  "languages": ["Infernal", "telepathy 120 ft."],
+  "challenge_rating": "11",
+  "xp": 7200,
+  "traits": [
+    { "name": "Devil's Sight", "description": "Magical darkness doesn't impede the devil's darkvision." },
+    { "name": "Magic Resistance", "description": "The devil has advantage on saving throws against spells and other magical effects." }
+  ],
+  "actions": [
+    { "name": "Multiattack", "description": "The devil makes two Fork attacks and one Tail attack." },
+    { "name": "Fork", "description": "Melee Attack Roll: +10, reach 10 ft. Hit: 15 (2d8 + 6) Piercing damage." },
+    { "name": "Tail", "description": "Melee Attack Roll: +10, reach 10 ft. Hit: 13 (2d6 + 6) Piercing damage plus 10 (3d6) Fire damage." },
+    { "name": "Hurl Flame", "description": "Ranged Attack Roll: +7, range 150 ft. Hit: 24 (7d6) Fire damage. If the target is a flammable object that isn't being worn or carried, it starts burning." }
+  ],
+  "description": "Horned devils, or cornugons, are winged shock troops feared even by other devils, wading into battle with barbed forks and a whip-like tail wreathed in flame."
+}

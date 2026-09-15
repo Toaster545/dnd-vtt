@@ -1,0 +1,35 @@
+{
+  "index": "gelatinous-cube",
+  "name": "Gelatinous Cube",
+  "size": "Large",
+  "type": "ooze",
+  "alignment": "unaligned",
+  "armor_class": 6,
+  "hit_points": 84,
+  "hit_dice": "8d10 + 40",
+  "speed": { "walk": 15 },
+  "ability_scores": {
+    "strength": 14,
+    "dexterity": 3,
+    "constitution": 20,
+    "intelligence": 1,
+    "wisdom": 6,
+    "charisma": 1
+  },
+  "initiative_bonus": -4,
+  "damage_immunities": ["acid", "cold"],
+  "condition_immunities": ["blinded", "charmed", "deafened", "exhaustion", "frightened", "prone"],
+  "senses": { "blindsight": 60, "passive_perception": 8 },
+  "languages": [],
+  "challenge_rating": "2",
+  "xp": 450,
+  "traits": [
+    { "name": "Ooze Cube", "description": "The cube takes up its entire 10-foot space. Other creatures can enter the space, but a creature that does so is subjected to the cube's Engulf and has Disadvantage on the saving throw." },
+    { "name": "Transparent", "description": "Even when the cube is in plain sight, it takes a successful DC 15 Wisdom (Perception) check to spot a cube that hasn't moved or attacked. A creature that tries to enter the cube's space while unaware of the cube is Surprised by the cube." }
+  ],
+  "actions": [
+    { "name": "Pseudopod", "description": "Melee Attack Roll: +4, reach 5 ft. Hit: 10 (3d6) Acid damage." },
+    { "name": "Engulf", "description": "The cube moves up to its Speed without provoking Opportunity Attacks. It can move through the spaces of Large or smaller creatures if it has room. Whenever the cube enters a creature's space, that creature must make a DC 12 Dexterity saving throw. On a successful save, the creature can choose to be pushed or move to an unoccupied space within 5 feet of the cube. A creature that chooses not to be pushed suffers the consequences of a failed saving throw. On a failed save, the cube enters the creature's space, and the creature takes 10 (3d6) Acid damage and is Engulfed. The Engulfed creature can't breathe, is Restrained, and takes 10 (3d6) Acid damage at the start of each of the cube's turns. When the cube moves, the Engulfed creature moves with it. An Engulfed creature can try to escape by taking an action to make a DC 12 Strength (Athletics) check. On a success, the creature escapes and enters a space of its choice within 5 feet of the cube." }
+  ],
+  "description": "Gelatinous cubes are near-transparent scavenger oozes that scour dungeon corridors, dissolving forgotten refuse and unwary adventurers alike inside their acidic bulk."
+}

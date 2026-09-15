@@ -1,0 +1,35 @@
+{
+  "index": "minotaur",
+  "name": "Minotaur",
+  "size": "Large",
+  "type": "monstrosity",
+  "alignment": "chaotic evil",
+  "armor_class": 14,
+  "armor_class_desc": "natural armor",
+  "hit_points": 76,
+  "hit_dice": "9d10 + 27",
+  "speed": { "walk": 40 },
+  "ability_scores": {
+    "strength": 18,
+    "dexterity": 11,
+    "constitution": 16,
+    "intelligence": 6,
+    "wisdom": 16,
+    "charisma": 9
+  },
+  "initiative_bonus": 0,
+  "skills": { "Perception": 5 },
+  "senses": { "darkvision": 60, "passive_perception": 15 },
+  "languages": ["Abyssal"],
+  "challenge_rating": "3",
+  "xp": 700,
+  "traits": [
+    { "name": "Labyrinthine Recall", "description": "The minotaur can perfectly recall any path it has traveled." },
+    { "name": "Reckless", "description": "At the start of its turn, the minotaur can gain Advantage on all melee weapon attack rolls it makes during that turn, but attack rolls against it have Advantage until the start of its next turn." }
+  ],
+  "actions": [
+    { "name": "Greataxe", "description": "Melee Attack Roll: +6, reach 5 ft. Hit: 17 (2d12 + 4) Slashing damage." },
+    { "name": "Gore", "description": "Melee Attack Roll: +6, reach 5 ft. Hit: 13 (2d8 + 4) Piercing damage. If the minotaur moved at least 10 feet straight toward the target immediately before the hit, the target takes an extra 9 (2d8) Piercing damage. If the target is a creature, it must succeed on a DC 14 Strength saving throw or be pushed up to 10 feet away and knocked prone." }
+  ],
+  "description": "Minotaurs are bull-headed monstrosities cursed to stalk twisting labyrinths, their unerring sense of direction and reckless charging horns making them deadly wardens of any maze."
+}

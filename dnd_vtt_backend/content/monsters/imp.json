@@ -1,0 +1,38 @@
+{
+  "index": "imp",
+  "name": "Imp",
+  "size": "Tiny",
+  "type": "fiend (devil, shapechanger)",
+  "alignment": "lawful evil",
+  "armor_class": 13,
+  "hit_points": 21,
+  "hit_dice": "6d4 + 6",
+  "speed": { "walk": 20, "fly": 40 },
+  "ability_scores": {
+    "strength": 6,
+    "dexterity": 17,
+    "constitution": 13,
+    "intelligence": 11,
+    "wisdom": 12,
+    "charisma": 14
+  },
+  "initiative_bonus": 3,
+  "skills": { "Deception": 4, "Insight": 3, "Persuasion": 4, "Stealth": 5 },
+  "damage_resistances": ["cold"],
+  "damage_immunities": ["fire", "poison"],
+  "condition_immunities": ["poisoned"],
+  "senses": { "darkvision": 120, "passive_perception": 11 },
+  "languages": ["Common", "Infernal"],
+  "challenge_rating": "2",
+  "xp": 450,
+  "traits": [
+    { "name": "Shapechanger", "description": "The imp can take a bonus action to polymorph into a beast form that resembles a rat (Speed 20 ft.), a raven (20 ft., Fly 40 ft.), or a spider (20 ft., Climb 20 ft.), or back into its true fiendish form. Its stats are the same in each form, except for the Speed changes noted. Anything it's wearing transforms with it, but not anything it's carrying. It reverts to its true form if it dies." },
+    { "name": "Devil's Sight", "description": "Magical darkness doesn't impede the imp's darkvision." },
+    { "name": "Magic Resistance", "description": "The imp has advantage on saving throws against spells and other magical effects." }
+  ],
+  "actions": [
+    { "name": "Sting (Beast Form Only)", "description": "Melee Attack Roll: +5, reach 5 ft. Hit: 6 (1d4 + 3) Piercing damage plus 10 (3d6) Poison damage." },
+    { "name": "Invisibility", "description": "The imp casts the Invisibility spell on itself, requiring no spell components. In the spell, it uses Charisma as the spellcasting ability." }
+  ],
+  "description": "Imps are shapechanging devils sent to the Material Plane as spies, tempters, and familiars to warlocks, using their cunning wit and a venomous sting to bring ruin to mortals who cross them."
+}

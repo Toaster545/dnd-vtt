@@ -1,0 +1,36 @@
+{
+  "index": "ettin",
+  "name": "Ettin",
+  "size": "Huge",
+  "type": "giant",
+  "alignment": "chaotic evil",
+  "armor_class": 12,
+  "armor_class_desc": "natural armor",
+  "hit_points": 85,
+  "hit_dice": "10d10 + 30",
+  "speed": { "walk": 40 },
+  "ability_scores": {
+    "strength": 21,
+    "dexterity": 8,
+    "constitution": 17,
+    "intelligence": 6,
+    "wisdom": 10,
+    "charisma": 8
+  },
+  "initiative_bonus": -1,
+  "skills": { "Perception": 6 },
+  "senses": { "darkvision": 60, "passive_perception": 16 },
+  "languages": ["Giant", "Orc"],
+  "challenge_rating": "4",
+  "xp": 1100,
+  "traits": [
+    { "name": "Two Heads", "description": "The ettin has advantage on Wisdom (Perception) checks and on saving throws against being Blinded, Charmed, Deafened, Frightened, Stunned, and knocked Unconscious." },
+    { "name": "Wakeful", "description": "When one of the ettin's heads is asleep, its other head is awake." }
+  ],
+  "actions": [
+    { "name": "Multiattack", "description": "The ettin makes one Battleaxe attack and one Morningstar attack." },
+    { "name": "Battleaxe", "description": "Melee Attack Roll: +8, reach 5 ft. Hit: 14 (2d8 + 5) Slashing damage." },
+    { "name": "Morningstar", "description": "Melee Attack Roll: +8, reach 5 ft. Hit: 14 (2d8 + 5) Piercing damage." }
+  ],
+  "description": "Ettins are two-headed giants whose bickering skulls never quite agree, but whose battleaxe and morningstar strike in the same brutal instant against any who wander into their territory."
+}

@@ -1,0 +1,35 @@
+{
+  "index": "stone-giant",
+  "name": "Stone Giant",
+  "size": "Huge",
+  "type": "giant",
+  "alignment": "neutral",
+  "armor_class": 17,
+  "armor_class_desc": "natural armor",
+  "hit_points": 126,
+  "hit_dice": "11d12 + 55",
+  "speed": { "walk": 40 },
+  "ability_scores": {
+    "strength": 23,
+    "dexterity": 15,
+    "constitution": 20,
+    "intelligence": 10,
+    "wisdom": 12,
+    "charisma": 9
+  },
+  "initiative_bonus": 2,
+  "skills": { "Athletics": 9, "Perception": 4 },
+  "senses": { "darkvision": 60, "passive_perception": 14 },
+  "languages": ["Giant"],
+  "challenge_rating": "7",
+  "xp": 2900,
+  "traits": [
+    { "name": "Stone Camouflage", "description": "The giant has advantage on Dexterity (Stealth) checks made to hide in rocky terrain." }
+  ],
+  "actions": [
+    { "name": "Multiattack", "description": "The giant makes two Greatclub attacks." },
+    { "name": "Greatclub", "description": "Melee Attack Roll: +9, reach 15 ft. Hit: 19 (3d8 + 6) Bludgeoning damage." },
+    { "name": "Rock", "description": "Ranged Attack Roll: +9, range 60/240 ft. Hit: 28 (4d10 + 6) Bludgeoning damage. If the target is a creature, it must succeed on a DC 17 Strength saving throw or be knocked prone." }
+  ],
+  "description": "Stone giants are reclusive artisans who dwell in cavern halls beneath the mountains, hurling boulders with uncanny accuracy at any who disturb their solitude."
+}

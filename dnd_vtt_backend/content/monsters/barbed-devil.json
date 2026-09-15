@@ -1,0 +1,40 @@
+{
+  "index": "barbed-devil",
+  "name": "Barbed Devil",
+  "size": "Medium",
+  "type": "fiend (devil)",
+  "alignment": "lawful evil",
+  "armor_class": 15,
+  "armor_class_desc": "natural armor",
+  "hit_points": 110,
+  "hit_dice": "13d8 + 52",
+  "speed": { "walk": 30 },
+  "ability_scores": {
+    "strength": 16,
+    "dexterity": 17,
+    "constitution": 18,
+    "intelligence": 12,
+    "wisdom": 14,
+    "charisma": 14
+  },
+  "initiative_bonus": 3,
+  "skills": { "Perception": 6 },
+  "damage_resistances": ["cold"],
+  "damage_immunities": ["fire", "poison"],
+  "condition_immunities": ["poisoned"],
+  "senses": { "darkvision": 120, "passive_perception": 16 },
+  "languages": ["Infernal", "telepathy 120 ft."],
+  "challenge_rating": "5",
+  "xp": 1800,
+  "traits": [
+    { "name": "Barbed Hide", "description": "At the start of each of its turns, the barbed devil deals 3 (1d6) Piercing damage to any creature Grappling it." },
+    { "name": "Devil's Sight", "description": "Magical darkness doesn't impede the devil's darkvision." },
+    { "name": "Magic Resistance", "description": "The devil has advantage on saving throws against spells and other magical effects." }
+  ],
+  "actions": [
+    { "name": "Multiattack", "description": "The devil makes three Claw attacks. It can replace one attack with a use of Tail." },
+    { "name": "Claw", "description": "Melee Attack Roll: +6, reach 5 ft. Hit: 8 (1d8 + 4) Piercing damage. If the target is a creature, it is Grappled (escape DC 14) unless the devil is already grappling a creature." },
+    { "name": "Tail", "description": "Melee Attack Roll: +6, reach 10 ft. Hit: 10 (2d6 + 3) Piercing damage." }
+  ],
+  "description": "Barbed devils stand as sentinels of the Nine Hells, their spiked hides punishing any creature foolish enough to grapple them while their claws pin victims in place for the tail's finishing blow."
+}

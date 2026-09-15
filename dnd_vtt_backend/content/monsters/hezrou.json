@@ -1,0 +1,38 @@
+{
+  "index": "hezrou",
+  "name": "Hezrou",
+  "size": "Large",
+  "type": "fiend (demon)",
+  "alignment": "chaotic evil",
+  "armor_class": 16,
+  "armor_class_desc": "natural armor",
+  "hit_points": 136,
+  "hit_dice": "13d10 + 65",
+  "speed": { "walk": 30 },
+  "ability_scores": {
+    "strength": 19,
+    "dexterity": 17,
+    "constitution": 20,
+    "intelligence": 5,
+    "wisdom": 12,
+    "charisma": 13
+  },
+  "initiative_bonus": 3,
+  "damage_resistances": ["cold", "fire", "lightning", "bludgeoning, piercing, and slashing from nonmagical attacks"],
+  "damage_immunities": ["poison"],
+  "condition_immunities": ["poisoned"],
+  "senses": { "darkvision": 120, "passive_perception": 11 },
+  "languages": ["Abyssal", "telepathy 120 ft."],
+  "challenge_rating": "8",
+  "xp": 3900,
+  "traits": [
+    { "name": "Magic Resistance", "description": "The hezrou has advantage on saving throws against spells and other magical effects." },
+    { "name": "Stench", "description": "Any creature that starts its turn within 10 feet of the hezrou must succeed on a DC 14 Constitution saving throw or have the Poisoned condition until the start of its next turn. On a successful save, the creature is immune to this hezrou's Stench for 24 hours." }
+  ],
+  "actions": [
+    { "name": "Multiattack", "description": "The hezrou makes one Bite attack and two Claw attacks." },
+    { "name": "Bite", "description": "Melee Attack Roll: +8, reach 5 ft. Hit: 17 (3d8 + 4) Piercing damage." },
+    { "name": "Claw", "description": "Melee Attack Roll: +8, reach 5 ft. Hit: 13 (2d8 + 4) Slashing damage." }
+  ],
+  "description": "Hezrou are hulking, toad-like demon soldiers whose overpowering stench alone can wear down enemies before their crushing bite and claws finish the fight."
+}

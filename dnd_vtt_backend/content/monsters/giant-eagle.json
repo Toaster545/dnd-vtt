@@ -1,0 +1,34 @@
+{
+  "index": "giant-eagle",
+  "name": "Giant Eagle",
+  "size": "Large",
+  "type": "beast",
+  "alignment": "neutral good",
+  "armor_class": 13,
+  "hit_points": 26,
+  "hit_dice": "4d10 + 4",
+  "speed": { "walk": 10, "fly": 80 },
+  "ability_scores": {
+    "strength": 16,
+    "dexterity": 17,
+    "constitution": 13,
+    "intelligence": 8,
+    "wisdom": 14,
+    "charisma": 10
+  },
+  "initiative_bonus": 3,
+  "skills": { "Perception": 4 },
+  "senses": { "passive_perception": 14 },
+  "languages": ["Giant Eagle", "understands Common and Auran but can't speak them"],
+  "challenge_rating": "1",
+  "xp": 200,
+  "traits": [
+    { "name": "Keen Sight", "description": "The eagle has advantage on Wisdom (Perception) checks that rely on sight." }
+  ],
+  "actions": [
+    { "name": "Multiattack", "description": "The eagle makes one Beak attack and one Talons attack." },
+    { "name": "Beak", "description": "Melee Attack Roll: +5, reach 5 ft. Hit: 6 (1d6 + 3) Piercing damage." },
+    { "name": "Talons", "description": "Melee Attack Roll: +5, reach 5 ft. Hit: 10 (2d6 + 3) Slashing damage." }
+  ],
+  "description": "Giant eagles are noble, intelligent birds of prey that nest on remote mountaintops, sometimes allying with good-hearted travelers against the forces of evil."
+}

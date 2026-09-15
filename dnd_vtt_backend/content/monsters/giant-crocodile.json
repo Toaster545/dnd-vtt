@@ -1,0 +1,35 @@
+{
+  "index": "giant-crocodile",
+  "name": "Giant Crocodile",
+  "size": "Huge",
+  "type": "beast",
+  "alignment": "unaligned",
+  "armor_class": 14,
+  "armor_class_desc": "natural armor",
+  "hit_points": 85,
+  "hit_dice": "9d12 + 27",
+  "speed": { "walk": 30, "swim": 50 },
+  "ability_scores": {
+    "strength": 21,
+    "dexterity": 9,
+    "constitution": 17,
+    "intelligence": 2,
+    "wisdom": 10,
+    "charisma": 7
+  },
+  "initiative_bonus": -1,
+  "skills": { "Stealth": 6 },
+  "senses": { "passive_perception": 10 },
+  "languages": [],
+  "challenge_rating": "5",
+  "xp": 1800,
+  "traits": [
+    { "name": "Hold Breath", "description": "The crocodile can hold its breath for 30 minutes." }
+  ],
+  "actions": [
+    { "name": "Multiattack", "description": "The crocodile makes one Bite attack and one Tail attack. It can't make both attacks against the same target." },
+    { "name": "Bite", "description": "Melee Attack Roll: +8, reach 5 ft. Hit: 21 (3d10 + 5) Piercing damage. If the target is a Large or smaller creature, it has the Grappled condition (escape DC 16) and the Restrained condition until the grapple ends, and the crocodile can't bite another target." },
+    { "name": "Tail", "description": "Melee Attack Roll: +8, reach 10 ft. Hit: 14 (2d8 + 5) Bludgeoning damage. If the target is a creature that isn't Grappled by the crocodile, it is pushed up to 10 feet away and knocked prone." }
+  ],
+  "description": "Giant crocodiles lurk motionless below the surface of rivers and swamps, ancient predators that clamp down on prey and drag it beneath the water to drown."
+}

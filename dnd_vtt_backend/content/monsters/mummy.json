@@ -1,0 +1,36 @@
+{
+  "index": "mummy",
+  "name": "Mummy",
+  "size": "Medium",
+  "type": "undead",
+  "alignment": "lawful evil",
+  "armor_class": 11,
+  "hit_points": 58,
+  "hit_dice": "9d8 + 18",
+  "speed": { "walk": 20 },
+  "ability_scores": {
+    "strength": 16,
+    "dexterity": 8,
+    "constitution": 15,
+    "intelligence": 6,
+    "wisdom": 10,
+    "charisma": 12
+  },
+  "initiative_bonus": -1,
+  "saving_throws": { "Wisdom": 2, "Charisma": 3 },
+  "damage_vulnerabilities": ["fire"],
+  "damage_resistances": ["bludgeoning, piercing, and slashing from nonmagical attacks"],
+  "damage_immunities": ["necrotic", "poison"],
+  "condition_immunities": ["charmed", "exhaustion", "frightened", "paralyzed", "poisoned"],
+  "senses": { "darkvision": 60, "passive_perception": 10 },
+  "languages": ["the languages it knew in life"],
+  "challenge_rating": "3",
+  "xp": 700,
+  "traits": [],
+  "actions": [
+    { "name": "Multiattack", "description": "The mummy makes one Rotting Fist attack. If it has another creature Grappled, the mummy can also use Dreadful Glare against that creature." },
+    { "name": "Rotting Fist", "description": "Melee Attack Roll: +5, reach 5 ft. Hit: 10 (2d6 + 3) Bludgeoning damage plus 10 (3d6) Necrotic damage. If the target is a creature, its Hit Point maximum decreases by an amount equal to the Necrotic damage taken. The target dies if this reduces its Hit Point maximum to 0. This reduction lasts until removed by the Greater Restoration spell or similar magic." },
+    { "name": "Dreadful Glare", "description": "The mummy targets one creature it can see within 60 feet of it. If the target can see the mummy, it must succeed on a DC 11 Wisdom saving throw against this magic or have the Frightened condition until the end of the mummy's next turn. If the target fails the save by 5 or more, it also has the Paralyzed condition for the same duration. A target that succeeds on the save is immune to this mummy's Dreadful Glare for the next 24 hours." }
+  ],
+  "description": "Mummies are the preserved dead of ancient dynasties, bound by funerary rites to guard tombs and treasure, their rotting touch withering the living and their glare freezing intruders in terror."
+}

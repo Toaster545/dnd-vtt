@@ -1,0 +1,36 @@
+{
+  "index": "lion",
+  "name": "Lion",
+  "size": "Large",
+  "type": "beast",
+  "alignment": "unaligned",
+  "armor_class": 12,
+  "hit_points": 26,
+  "hit_dice": "4d10 + 4",
+  "speed": { "walk": 50 },
+  "ability_scores": {
+    "strength": 17,
+    "dexterity": 15,
+    "constitution": 13,
+    "intelligence": 3,
+    "wisdom": 12,
+    "charisma": 8
+  },
+  "initiative_bonus": 2,
+  "skills": { "Perception": 3, "Stealth": 6 },
+  "senses": { "passive_perception": 13 },
+  "languages": [],
+  "challenge_rating": "1",
+  "xp": 200,
+  "traits": [
+    { "name": "Pack Tactics", "description": "The lion has advantage on an attack roll against a creature if at least one of the lion's allies is within 5 feet of the creature and the ally doesn't have the Incapacitated condition." },
+    { "name": "Pounce", "description": "If the lion moves at least 20 feet straight toward a creature and then hits it with a Claw attack on the same turn, that target must succeed on a DC 13 Strength saving throw or be knocked prone. If the target is prone, the lion can make one Bite attack against it as a Bonus Action." },
+    { "name": "Running Leap", "description": "With a 10-foot running start, the lion can long jump up to 25 feet." }
+  ],
+  "actions": [
+    { "name": "Multiattack", "description": "The lion makes one Bite attack and one Claw attack." },
+    { "name": "Bite", "description": "Melee Attack Roll: +5, reach 5 ft. Hit: 7 (1d8 + 3) Piercing damage." },
+    { "name": "Claw", "description": "Melee Attack Roll: +5, reach 5 ft. Hit: 6 (1d6 + 3) Slashing damage." }
+  ],
+  "description": "Lions hunt in coordinated prides, using pack tactics and a bounding pounce to bowl over prey before the rest of the pride closes in."
+}

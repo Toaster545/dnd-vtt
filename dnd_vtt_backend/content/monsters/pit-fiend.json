@@ -1,0 +1,40 @@
+{
+  "index": "pit-fiend",
+  "name": "Pit Fiend",
+  "size": "Large",
+  "type": "fiend (devil)",
+  "alignment": "lawful evil",
+  "armor_class": 21,
+  "armor_class_desc": "natural armor",
+  "hit_points": 336,
+  "hit_dice": "32d10 + 160",
+  "speed": { "walk": 30, "fly": 60 },
+  "ability_scores": {
+    "strength": 26,
+    "dexterity": 14,
+    "constitution": 20,
+    "intelligence": 22,
+    "wisdom": 18,
+    "charisma": 24
+  },
+  "initiative_bonus": 2,
+  "saving_throws": { "Dexterity": 8, "Constitution": 11, "Wisdom": 10, "Charisma": 13 },
+  "damage_resistances": ["cold"],
+  "damage_immunities": ["fire", "poison"],
+  "condition_immunities": ["poisoned"],
+  "senses": { "truesight": 120, "passive_perception": 14 },
+  "languages": ["Infernal", "telepathy 120 ft."],
+  "challenge_rating": "20",
+  "xp": 25000,
+  "traits": [
+    { "name": "Fear Aura", "description": "Any creature hostile to the pit fiend that starts its turn within 20 feet of the pit fiend must succeed on a DC 21 Wisdom saving throw unless the pit fiend is Incapacitated. On a failed save, the creature has the Frightened condition until the start of its next turn. If a creature's saving throw is successful, the creature is immune to this pit fiend's Fear Aura for 24 hours." },
+    { "name": "Magic Resistance", "description": "The pit fiend has advantage on saving throws against spells and other magical effects." },
+    { "name": "Spellcasting", "description": "The pit fiend casts one of the following spells, requiring no spell components and using Charisma as the spellcasting ability (spell save DC 21): At will: Detect Magic, Fireball. 1/Day Each: Sending, Wall of Fire." }
+  ],
+  "actions": [
+    { "name": "Multiattack", "description": "The pit fiend makes one Bite attack and two Mace attacks." },
+    { "name": "Bite", "description": "Melee Attack Roll: +14, reach 5 ft. Hit: 22 (4d6 + 8) Piercing damage plus 21 (6d6) Poison damage. If the target is a creature, it must succeed on a DC 21 Constitution saving throw or have the Poisoned condition until the start of the pit fiend's next turn." },
+    { "name": "Mace", "description": "Melee Attack Roll: +14, reach 10 ft. Hit: 15 (2d6 + 8) Bludgeoning damage plus 21 (6d6) Fire damage." }
+  ],
+  "description": "Pit fiends are the greatest of the Nine Hells' devils, towering commanders whose mere presence spreads dread across the battlefield as their poisoned bite and flaming mace crush any who oppose Hell's armies."
+}

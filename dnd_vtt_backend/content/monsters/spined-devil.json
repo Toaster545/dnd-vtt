@@ -1,0 +1,39 @@
+{
+  "index": "spined-devil",
+  "name": "Spined Devil",
+  "size": "Small",
+  "type": "fiend (devil)",
+  "alignment": "lawful evil",
+  "armor_class": 13,
+  "armor_class_desc": "natural armor",
+  "hit_points": 22,
+  "hit_dice": "5d6 + 5",
+  "speed": { "walk": 20, "fly": 40 },
+  "ability_scores": {
+    "strength": 10,
+    "dexterity": 15,
+    "constitution": 12,
+    "intelligence": 11,
+    "wisdom": 14,
+    "charisma": 8
+  },
+  "initiative_bonus": 2,
+  "skills": { "Perception": 4, "Stealth": 4 },
+  "damage_resistances": ["cold"],
+  "damage_immunities": ["fire", "poison"],
+  "condition_immunities": ["poisoned"],
+  "senses": { "darkvision": 120, "passive_perception": 14 },
+  "languages": ["Infernal", "telepathy 120 ft."],
+  "challenge_rating": "2",
+  "xp": 450,
+  "traits": [
+    { "name": "Devil's Sight", "description": "Magical darkness doesn't impede the spined devil's darkvision." },
+    { "name": "Magic Resistance", "description": "The spined devil has advantage on saving throws against spells and other magical effects." }
+  ],
+  "actions": [
+    { "name": "Multiattack", "description": "The devil makes two Fork Tail attacks." },
+    { "name": "Fork Tail", "description": "Melee Attack Roll: +4, reach 5 ft. Hit: 5 (1d4 + 3) Piercing damage." },
+    { "name": "Spine Volley", "description": "Ranged Attack Roll: +4, range 20/80 ft., up to three targets. Hit: 5 (1d4 + 3) Piercing damage." }
+  ],
+  "description": "Spined devils are winged, gargoyle-like fiends who serve as messengers and airborne skirmishers, raining barbed tail spines on their foes from above."
+}
