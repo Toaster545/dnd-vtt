@@ -1,0 +1,38 @@
+{
+  "index": "ghost",
+  "name": "Ghost",
+  "size": "Medium",
+  "type": "undead",
+  "alignment": "any alignment",
+  "armor_class": 11,
+  "hit_points": 45,
+  "hit_dice": "10d8",
+  "speed": { "walk": 0, "fly": 40, "hover": true },
+  "ability_scores": {
+    "strength": 7,
+    "dexterity": 13,
+    "constitution": 10,
+    "intelligence": 10,
+    "wisdom": 12,
+    "charisma": 17
+  },
+  "initiative_bonus": 1,
+  "damage_resistances": ["acid", "fire", "lightning", "thunder", "bludgeoning, piercing, and slashing from nonmagical attacks"],
+  "damage_immunities": ["cold", "necrotic", "poison"],
+  "condition_immunities": ["charmed", "exhaustion", "frightened", "grappled", "paralyzed", "petrified", "poisoned", "prone", "restrained"],
+  "senses": { "darkvision": 60, "passive_perception": 11 },
+  "languages": ["the languages it knew in life"],
+  "challenge_rating": "4",
+  "xp": 1100,
+  "traits": [
+    { "name": "Ethereal Sight", "description": "The ghost can see 60 feet into the Ethereal Plane if it is on the Material Plane, and vice versa." },
+    { "name": "Incorporeal Movement", "description": "The ghost can move through other creatures and objects as if they were Difficult Terrain. It takes 5 (1d10) Force damage if it ends its turn inside an object." }
+  ],
+  "actions": [
+    { "name": "Withering Touch", "description": "Melee Attack Roll: +5, reach 5 ft. Hit: 17 (4d6 + 3) Necrotic damage." },
+    { "name": "Horrifying Visage", "description": "Each non-Undead creature within 60 feet of the ghost that can see it must succeed on a DC 13 Wisdom saving throw or have the Frightened condition for 1 minute. A creature that fails the save by 5 or more also ages 1d4 x 10 years. A Frightened target can repeat the saving throw at the end of each of its turns, ending the effect on itself on a success. A creature that succeeds on the save is immune to this ghost's Horrifying Visage for 24 hours." },
+    { "name": "Etherealness", "description": "The ghost enters the Ethereal Plane from the Material Plane, or vice versa. It is visible on the Material Plane while it is in the Border Ethereal, and vice versa, but it can't affect or be affected by anything on the other plane." },
+    { "name": "Possession (Recharge 6)", "description": "One humanoid the ghost can see within 5 feet of it must succeed on a DC 13 Charisma saving throw or be possessed by the ghost; the ghost then disappears, and the target is Incapacitated and loses control of its body. The ghost now controls the body but doesn't deprive the target of awareness. The ghost can't be targeted by any attack, spell, or other effect, except ones that turn Undead, and it retains its alignment, Intelligence, Wisdom, Charisma, and immunity to being Charmed and Frightened, but otherwise uses the possessed target's statistics. The possession lasts until the body drops to 0 Hit Points, the ghost ends it as a Bonus Action, or the ghost is turned or forced out by an effect like the Dispel Evil and Good spell. When the possession ends, the ghost reappears in an unoccupied space within 5 feet of the body. The target is immune to this ghost's Possession for 24 hours after succeeding on the save or after the possession ends." }
+  ],
+  "description": "Ghosts are the restless spirits of those who died with unfinished business, drifting between the Material and Ethereal Planes to haunt the living with a chilling touch and a visage of terrible sorrow."
+}

@@ -1,0 +1,34 @@
+{
+  "index": "displacer-beast",
+  "name": "Displacer Beast",
+  "size": "Large",
+  "type": "monstrosity",
+  "alignment": "lawful evil",
+  "armor_class": 13,
+  "armor_class_desc": "natural armor",
+  "hit_points": 85,
+  "hit_dice": "10d10 + 30",
+  "speed": { "walk": 40 },
+  "ability_scores": {
+    "strength": 18,
+    "dexterity": 15,
+    "constitution": 16,
+    "intelligence": 6,
+    "wisdom": 12,
+    "charisma": 8
+  },
+  "initiative_bonus": 2,
+  "senses": { "darkvision": 60, "passive_perception": 11 },
+  "languages": [],
+  "challenge_rating": "3",
+  "xp": 700,
+  "traits": [
+    { "name": "Avoidance", "description": "If the beast is subjected to an effect that allows it to make a saving throw to take only half damage, it instead takes no damage if it succeeds on the saving throw, and only half damage if it fails." },
+    { "name": "Displacement", "description": "A magical effect gives the beast the illusion of being in a place near its actual location, causing attack rolls against it to have Disadvantage, unless the attacker doesn't rely on sight. If the beast is subjected to bright light, the effect is negated. This trait is also negated while the beast is Incapacitated or has a Speed of 0." }
+  ],
+  "actions": [
+    { "name": "Multiattack", "description": "The beast makes two Tentacle attacks." },
+    { "name": "Tentacle", "description": "Melee Attack Roll: +6, reach 10 ft. Hit: 7 (1d6 + 4) Bludgeoning damage plus 3 (1d6) Piercing damage." }
+  ],
+  "description": "Displacer beasts are sleek, panther-like predators with a pair of barbed tentacles, their innate illusion magic making them appear to stand a few feet from where they truly are."
+}

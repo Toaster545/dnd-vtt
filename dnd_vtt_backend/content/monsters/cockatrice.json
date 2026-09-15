@@ -1,0 +1,29 @@
+{
+  "index": "cockatrice",
+  "name": "Cockatrice",
+  "size": "Small",
+  "type": "monstrosity",
+  "alignment": "unaligned",
+  "armor_class": 11,
+  "hit_points": 27,
+  "hit_dice": "6d6 + 6",
+  "speed": { "walk": 20, "fly": 40 },
+  "ability_scores": {
+    "strength": 6,
+    "dexterity": 12,
+    "constitution": 12,
+    "intelligence": 2,
+    "wisdom": 13,
+    "charisma": 5
+  },
+  "initiative_bonus": 1,
+  "senses": { "darkvision": 60, "passive_perception": 11 },
+  "languages": [],
+  "challenge_rating": "1/2",
+  "xp": 100,
+  "traits": [],
+  "actions": [
+    { "name": "Bite", "description": "Melee Attack Roll: +3, reach 5 ft. Hit: 3 (1d4 + 1) Piercing damage, and the target must succeed on a DC 11 Constitution saving throw against being magically Petrified. On a failed save, the creature begins to turn to stone and has the Restrained condition. It must repeat the saving throw at the end of its next turn. On a success, the effect ends. On a failure, the creature has the Petrified condition for 24 hours, after which it turns to stone permanently until freed by the Greater Restoration spell or similar magic." }
+  ],
+  "description": "Cockatrices are ungainly, chicken-like reptiles whose bite carries a slow, creeping petrification that leaves their prey as stone statues scattered around their nests."
+}

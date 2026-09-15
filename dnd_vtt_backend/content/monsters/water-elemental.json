@@ -1,0 +1,36 @@
+{
+  "index": "water-elemental",
+  "name": "Water Elemental",
+  "size": "Large",
+  "type": "elemental",
+  "alignment": "neutral",
+  "armor_class": 14,
+  "hit_points": 114,
+  "hit_dice": "12d10 + 48",
+  "speed": { "walk": 30, "swim": 90 },
+  "ability_scores": {
+    "strength": 18,
+    "dexterity": 14,
+    "constitution": 18,
+    "intelligence": 5,
+    "wisdom": 10,
+    "charisma": 8
+  },
+  "initiative_bonus": 2,
+  "damage_resistances": ["acid", "bludgeoning, piercing, and slashing from nonmagical attacks"],
+  "damage_immunities": ["poison"],
+  "condition_immunities": ["exhaustion", "paralyzed", "petrified", "poisoned", "unconscious"],
+  "senses": { "darkvision": 60, "passive_perception": 10 },
+  "languages": ["Aquan"],
+  "challenge_rating": "5",
+  "xp": 1800,
+  "traits": [
+    { "name": "Water Form", "description": "The elemental can enter a hostile creature's space and stop there. It can move through a space as narrow as 1 inch without squeezing." },
+    { "name": "Freeze", "description": "If the elemental takes Cold damage, its Speed is reduced by 20 feet until the end of its next turn." }
+  ],
+  "actions": [
+    { "name": "Multiattack", "description": "The elemental makes two Slam attacks." },
+    { "name": "Slam", "description": "Melee Attack Roll: +7, reach 5 ft. Hit: 13 (2d8 + 4) Bludgeoning damage. If the target is a Medium or smaller creature, it must succeed on a DC 15 Strength saving throw or be Grappled (escape DC 14) and pulled into the elemental's space, where it has the Restrained condition and can't breathe unless it can breathe water. The elemental can grapple only one creature at a time." }
+  ],
+  "description": "Water elementals are churning, wave-crested torrents summoned from the Elemental Plane of Water, swallowing anything caught in their flood and dragging it beneath the surface."
+}

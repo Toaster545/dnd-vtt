@@ -1,0 +1,35 @@
+{
+  "index": "frost-giant",
+  "name": "Frost Giant",
+  "size": "Huge",
+  "type": "giant",
+  "alignment": "neutral evil",
+  "armor_class": 15,
+  "armor_class_desc": "patchwork armor",
+  "hit_points": 138,
+  "hit_dice": "12d12 + 60",
+  "speed": { "walk": 40 },
+  "ability_scores": {
+    "strength": 23,
+    "dexterity": 9,
+    "constitution": 21,
+    "intelligence": 9,
+    "wisdom": 10,
+    "charisma": 12
+  },
+  "initiative_bonus": -1,
+  "saving_throws": { "Constitution": 8, "Wisdom": 3 },
+  "skills": { "Athletics": 9, "Perception": 3 },
+  "damage_immunities": ["cold"],
+  "senses": { "passive_perception": 13 },
+  "languages": ["Giant"],
+  "challenge_rating": "8",
+  "xp": 3900,
+  "traits": [],
+  "actions": [
+    { "name": "Multiattack", "description": "The giant makes two Greataxe attacks." },
+    { "name": "Greataxe", "description": "Melee Attack Roll: +9, reach 10 ft. Hit: 25 (3d12 + 6) Slashing damage." },
+    { "name": "Rock", "description": "Ranged Attack Roll: +9, range 60/240 ft. Hit: 28 (4d10 + 6) Bludgeoning damage." }
+  ],
+  "description": "Frost giants raid the frozen north with axe and boulder, their icy halls built from plunder and their disdain for weaker creatures matched only by their brutal strength."
+}

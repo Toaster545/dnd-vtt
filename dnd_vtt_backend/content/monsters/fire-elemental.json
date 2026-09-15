@@ -1,0 +1,36 @@
+{
+  "index": "fire-elemental",
+  "name": "Fire Elemental",
+  "size": "Large",
+  "type": "elemental",
+  "alignment": "neutral",
+  "armor_class": 13,
+  "hit_points": 102,
+  "hit_dice": "12d10 + 36",
+  "speed": { "walk": 50 },
+  "ability_scores": {
+    "strength": 10,
+    "dexterity": 17,
+    "constitution": 16,
+    "intelligence": 6,
+    "wisdom": 10,
+    "charisma": 7
+  },
+  "initiative_bonus": 3,
+  "damage_resistances": ["bludgeoning, piercing, and slashing from nonmagical attacks"],
+  "damage_immunities": ["fire", "poison"],
+  "condition_immunities": ["exhaustion", "grappled", "paralyzed", "petrified", "poisoned", "prone", "restrained", "unconscious"],
+  "senses": { "darkvision": 60, "passive_perception": 10 },
+  "languages": ["Ignan"],
+  "challenge_rating": "5",
+  "xp": 1800,
+  "traits": [
+    { "name": "Fire Form", "description": "The elemental can move through a space as narrow as 1 inch without squeezing. A creature that touches the elemental or hits it with a melee attack while within 5 feet of it takes 5 (1d10) Fire damage. If it deals fire damage to a flammable object that isn't being worn or carried, the object ignites." },
+    { "name": "Illumination", "description": "The elemental sheds bright light in a 30-foot radius and dim light for an additional 30 feet." },
+    { "name": "Water Susceptibility", "description": "For every 5 feet the elemental moves in water, or for every gallon of water splashed on it, it takes 1 Cold damage." }
+  ],
+  "actions": [
+    { "name": "Touch", "description": "Melee Attack Roll: +8, reach 5 ft. Hit: 10 (2d6 + 3) Fire damage. If the target is a creature or a flammable object that isn't being worn or carried, it ignites." }
+  ],
+  "description": "Fire elementals are living blazes summoned from the Elemental Plane of Fire, wreathing anything they touch in flame and leaving only scorched earth in their wake."
+}

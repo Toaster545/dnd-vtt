@@ -1,0 +1,32 @@
+{
+  "index": "basilisk",
+  "name": "Basilisk",
+  "size": "Medium",
+  "type": "monstrosity",
+  "alignment": "unaligned",
+  "armor_class": 15,
+  "armor_class_desc": "natural armor",
+  "hit_points": 52,
+  "hit_dice": "8d8 + 16",
+  "speed": { "walk": 20 },
+  "ability_scores": {
+    "strength": 16,
+    "dexterity": 8,
+    "constitution": 15,
+    "intelligence": 2,
+    "wisdom": 8,
+    "charisma": 7
+  },
+  "initiative_bonus": -1,
+  "senses": { "darkvision": 60, "passive_perception": 9 },
+  "languages": [],
+  "challenge_rating": "3",
+  "xp": 700,
+  "traits": [
+    { "name": "Petrifying Gaze", "description": "If a creature starts its turn within 30 feet of the basilisk and the two of them can see each other, the basilisk can force the creature to make a DC 12 Constitution saving throw if the basilisk isn't Incapacitated. On a failed save, the creature begins to turn to stone and has the Restrained condition. It must repeat the saving throw at the end of its next turn. On a success, the effect ends. On a failure, the creature has the Petrified condition for 24 hours, after which it turns to stone permanently until freed by the Greater Restoration spell or similar magic. A creature that isn't surprised can avert its eyes to avoid the saving throw at the start of its turn, but if it does, it can't see the basilisk until the start of its next turn, when it can avert its eyes again. If it looks at the basilisk in the meantime, it must immediately make the save." }
+  ],
+  "actions": [
+    { "name": "Bite", "description": "Melee Attack Roll: +5, reach 5 ft. Hit: 10 (2d6 + 3) Piercing damage plus 7 (2d6) Poison damage." }
+  ],
+  "description": "Basilisks are reptilian horrors whose gaze slowly petrifies anything that meets their eyes, prowling ruins and caverns already littered with the stone statues of past victims."
+}
