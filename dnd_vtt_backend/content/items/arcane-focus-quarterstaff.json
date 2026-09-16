@@ -8,6 +8,7 @@
   "properties": ["Versatile (1d8)", "Arcane Focus"],
   "weight": 4,
   "cost": "5 gp",
+  "image_url": "/icons/crescent-staff.svg",
   "description": "A specially constructed staff that functions as both a Quarterstaff and an Arcane Focus.",
   "mastery": {
     "property": "Topple",

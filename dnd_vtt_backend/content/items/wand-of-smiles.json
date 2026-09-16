@@ -8,6 +8,7 @@
   "properties": [],
   "weight": 1,
   "cost": "—",
+  "image_url": "/icons/fairy-wand.svg",
   "description": "A charged wand that can force a humanoid’s expression into a smile.",
   "rarity": "common",
   "charges": {

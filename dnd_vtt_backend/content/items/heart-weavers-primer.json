@@ -8,6 +8,7 @@
   "properties": [],
   "weight": 3,
   "cost": "Magic item",
+  "image_url": "/icons/book-cover.svg",
   "description": "An enchantment spellbook and focus whose charges cast charms and can impose Disadvantage on a save against one of your Enchantment spells.",
   "rarity": "rare",
   "requires_attunement": "by a wizard",

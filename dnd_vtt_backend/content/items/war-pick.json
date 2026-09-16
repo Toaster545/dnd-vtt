@@ -8,6 +8,7 @@
   "properties": [],
   "weight": 2,
   "cost": "5 gp",
+  "image_url": "/icons/war-pick.svg",
   "description": "A pick adapted for war, able to punch through armor.",
   "mastery": {
     "property": "Sap",

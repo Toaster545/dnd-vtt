@@ -8,5 +8,6 @@
   "properties": [],
   "weight": 59,
   "cost": "10 gp",
+  "image_url": "/icons/backpack.svg",
   "description": "Includes a backpack, a bedroll, a mess kit, a tinderbox, 10 torches, 10 days of rations, and a waterskin."
 }

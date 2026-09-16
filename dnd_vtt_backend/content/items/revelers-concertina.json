@@ -8,6 +8,7 @@
   "properties": [],
   "weight": 0,
   "cost": "Magic item",
+  "image_url": "/icons/concentration-orb.svg",
   "description": "A Bard instrument that improves Bard spell attacks and save DCs and can cast Otto’s Irresistible Dance once per day.",
   "rarity": "rare",
   "requires_attunement": "by a bard",

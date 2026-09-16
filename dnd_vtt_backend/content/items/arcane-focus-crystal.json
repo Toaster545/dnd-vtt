@@ -8,5 +8,6 @@
   "properties": [],
   "weight": 1,
   "cost": "10 gp",
+  "image_url": "/icons/crystal-ball.svg",
   "description": "A crystal specially constructed to channel the power of arcane spells."
 }

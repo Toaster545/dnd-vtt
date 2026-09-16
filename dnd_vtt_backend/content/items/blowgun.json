@@ -11,6 +11,7 @@
   ],
   "weight": 1,
   "cost": "10 gp",
+  "image_url": "/icons/bow-arrow.svg",
   "description": "A slender tube that fires small needles.",
   "mastery": {
     "property": "Vex",

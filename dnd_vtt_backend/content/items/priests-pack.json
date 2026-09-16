@@ -8,5 +8,6 @@
   "properties": [],
   "weight": 29,
   "cost": "33 gp",
+  "image_url": "/icons/backpack.svg",
   "description": "Contains a backpack, blanket, holy water, lamp, seven days of rations, robe, and tinderbox."
 }

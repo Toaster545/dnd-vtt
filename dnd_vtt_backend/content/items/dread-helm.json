@@ -8,6 +8,7 @@
   "properties": [],
   "weight": 0,
   "cost": "—",
+  "image_url": "/icons/black-knight-helm.svg",
   "description": "A helmet that makes the wearer’s eyes glow red.",
   "rarity": "common",
   "source": {

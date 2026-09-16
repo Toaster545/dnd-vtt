@@ -8,6 +8,7 @@
   "properties": [],
   "weight": 0,
   "cost": "—",
+  "image_url": "/icons/drum.svg",
   "description": "A charged instrument that writes a short luminous message while played.",
   "rarity": "common",
   "requires_attunement": true,

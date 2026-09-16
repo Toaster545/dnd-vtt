@@ -8,6 +8,7 @@
   "properties": [],
   "weight": 0,
   "cost": "—",
+  "image_url": "/icons/diamond-ring.svg",
   "description": "An attuned ruby that turns a weapon into a spellcasting focus.",
   "rarity": "common",
   "requires_attunement": "by a spellcaster",

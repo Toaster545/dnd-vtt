@@ -12,6 +12,7 @@
   ],
   "weight": 18,
   "cost": "5 gp",
+  "image_url": "/icons/barbed-spear.svg",
   "description": "A massive spear, unwieldy but far-reaching.",
   "mastery": {
     "property": "Push",

@@ -11,6 +11,7 @@
   ],
   "weight": 3,
   "cost": "1 gp",
+  "image_url": "/icons/barbed-spear.svg",
   "description": "A simple, versatile thrusting weapon.",
   "mastery": {
     "property": "Sap",

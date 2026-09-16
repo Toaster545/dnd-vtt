@@ -11,6 +11,7 @@
   ],
   "weight": 2,
   "cost": "10 gp",
+  "image_url": "/icons/ancient-sword.svg",
   "description": "A short, quick blade.",
   "mastery": {
     "property": "Vex",

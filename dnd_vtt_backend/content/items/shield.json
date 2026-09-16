@@ -7,5 +7,6 @@
   "properties": [],
   "weight": 6,
   "cost": "10 gp",
+  "image_url": "/icons/acid-shield.svg",
   "description": "A shield is made from wood or metal and is carried in one hand. Wielding a shield increases your AC by 2."
 }

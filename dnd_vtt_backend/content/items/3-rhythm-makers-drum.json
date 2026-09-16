@@ -8,6 +8,7 @@
   "properties": [],
   "weight": 3,
   "cost": "Magic item",
+  "image_url": "/icons/drum.svg",
   "description": "A Bard focus that grants its listed bonus to spell attacks and save DCs and can restore Bardic Inspiration.",
   "rarity": "very rare",
   "requires_attunement": "by a bard",

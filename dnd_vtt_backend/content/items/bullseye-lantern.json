@@ -8,6 +8,7 @@
   "properties": [],
   "weight": 0,
   "cost": "See PHB 2024",
+  "image_url": "/icons/asian-lantern.svg",
   "description": "A lantern that focuses its light in a cone.",
   "source": {
     "code": "XPHB",

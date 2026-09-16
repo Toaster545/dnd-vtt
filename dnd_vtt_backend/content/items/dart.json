@@ -11,6 +11,7 @@
   ],
   "weight": 0.25,
   "cost": "5 cp",
+  "image_url": "/icons/dart.svg",
   "description": "A small, weighted throwing blade.",
   "mastery": {
     "property": "Vex",

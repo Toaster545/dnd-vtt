@@ -12,6 +12,7 @@
   ],
   "weight": 10,
   "cost": "500 gp",
+  "image_url": "/icons/saber-and-pistol.svg",
   "description": "A two-handed firearm. Rare in most D&D worlds — available only with the DM's permission.",
   "mastery": {
     "property": "Slow",

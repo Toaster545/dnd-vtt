@@ -8,5 +8,6 @@
   "properties": [],
   "weight": 58.5,
   "cost": "40 gp",
+  "image_url": "/icons/backpack.svg",
   "description": "Contains a backpack, bedroll, bell, bullseye lantern, three costumes, mirror, eight flasks of oil, nine days of rations, a tinderbox, and a waterskin."
 }

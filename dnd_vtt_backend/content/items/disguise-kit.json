@@ -8,6 +8,7 @@
   "properties": [],
   "weight": 0,
   "cost": "See PHB 2024",
+  "image_url": "/icons/anvil.svg",
   "description": "A kit for creating disguises.",
   "source": {
     "code": "XPHB",

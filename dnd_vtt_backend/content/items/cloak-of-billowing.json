@@ -8,6 +8,7 @@
   "properties": [],
   "weight": 0,
   "cost": "—",
+  "image_url": "/icons/cape.svg",
   "description": "A cloak that can billow dramatically on command.",
   "rarity": "common",
   "source": {

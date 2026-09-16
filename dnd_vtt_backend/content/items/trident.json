@@ -11,6 +11,7 @@
   ],
   "weight": 4,
   "cost": "5 gp",
+  "image_url": "/icons/flaming-trident.svg",
   "description": "A three-pronged spear.",
   "mastery": {
     "property": "Topple",

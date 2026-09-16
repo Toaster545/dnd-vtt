@@ -10,6 +10,7 @@
   ],
   "weight": 2,
   "cost": "5 sp",
+  "image_url": "/icons/barbed-spear.svg",
   "description": "A light spear meant to be thrown.",
   "mastery": {
     "property": "Slow",

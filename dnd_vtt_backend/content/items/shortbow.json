@@ -11,6 +11,7 @@
   ],
   "weight": 2,
   "cost": "25 gp",
+  "image_url": "/icons/bow-arrow.svg",
   "description": "A compact bow, easy to wield.",
   "mastery": {
     "property": "Vex",
