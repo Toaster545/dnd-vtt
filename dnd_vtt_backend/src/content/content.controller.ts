@@ -7,8 +7,11 @@ import {
   Post,
   Put,
   Query,
+  UploadedFile,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { ContentService } from './content.service';
 import { CreateMonsterDto } from './dto/create-monster.dto';
 import { CreateItemDto } from './dto/create-item.dto';
@@ -57,6 +60,10 @@ export class ContentController {
 
   @Get('sources') getSources() {
     return this.content.getSources();
+  }
+
+  @Get('icons') getIconLibrary() {
+    return this.content.getIconLibrary();
   }
 
   @Get('classes') getClasses() {
@@ -165,6 +172,16 @@ export class ContentController {
   @UseGuards(JwtGuard)
   deleteItem(@Param('index') index: string, @CurrentUser() user: RequestUser) {
     return this.content.deleteCustom('items', index, user);
+  }
+  @Post('items/:index/image')
+  @UseGuards(JwtGuard)
+  @UseInterceptors(FileInterceptor('file'))
+  uploadItemImage(
+    @Param('index') index: string,
+    @CurrentUser() user: RequestUser,
+    @UploadedFile() file: Express.Multer.File,
+  ) {
+    return this.content.uploadItemImage(index, user, file);
   }
 
   // ── Spells ────────────────────────────────────────────────────────────────────────────────

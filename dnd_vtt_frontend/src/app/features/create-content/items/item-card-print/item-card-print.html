@@ -1,0 +1,159 @@
+<div class="flex flex-col flex-1 min-h-0">
+  <div class="no-print border-b border-white/10">
+    <div class="flex items-center gap-3 p-4 pb-2">
+      <h2 class="font-brand text-lg text-parchment m-0 flex-1">
+        Print Item Cards
+        <span class="text-slate text-xs font-normal ml-1">
+          · {{ items().length }} card{{ items().length === 1 ? '' : 's' }} · {{ totalPrintedPages() }} page{{ totalPrintedPages() === 1 ? '' : 's' }}
+        </span>
+      </h2>
+      <button class="btn-outline" type="button" (click)="close()">Close</button>
+      <button class="btn-primary" type="button" (click)="print()">
+        <mat-icon>print</mat-icon> Print
+      </button>
+    </div>
+
+    <div class="flex flex-wrap items-center gap-3 px-4 pb-2">
+      <label class="field-label m-0">Color</label>
+      <select class="field-input w-36" [ngModel]="colorMode()" (ngModelChange)="colorMode.set($event)">
+        <option value="rarity">By rarity</option>
+        <option value="custom">Custom color</option>
+      </select>
+      @if (colorMode() === 'custom') {
+        <input type="color" class="w-10 h-9 rounded border border-white/10 bg-transparent cursor-pointer"
+          [ngModel]="customColor()" (ngModelChange)="customColor.set($event)" />
+      }
+
+      <label class="field-label m-0">Border</label>
+      <select class="field-input w-32" [ngModel]="borderStyle()" (ngModelChange)="borderStyle.set($event)">
+        <option value="thin">Thin</option>
+        <option value="heavy">Heavy</option>
+        <option value="ornate">Ornate</option>
+        <option value="dotted">Dotted</option>
+        <option value="none">None</option>
+      </select>
+
+      <label class="field-label m-0">Font</label>
+      <select class="field-input w-32" [ngModel]="font()" (ngModelChange)="font.set($event)">
+        <option value="serif">Serif</option>
+        <option value="sans">Sans</option>
+        <option value="fantasy">Fantasy</option>
+      </select>
+
+      <label class="field-label m-0">Paper</label>
+      <select class="field-input w-28" [ngModel]="paperSize()" (ngModelChange)="paperSize.set($event)">
+        <option value="letter">Letter</option>
+        <option value="a4">A4</option>
+      </select>
+
+      <label class="field-label m-0">Text Size</label>
+      <select class="field-input w-32" [ngModel]="fontScale()" (ngModelChange)="fontScale.set(+$event)">
+        @for (s of fontScales; track s.value) { <option [value]="s.value">{{ s.label }}</option> }
+      </select>
+    </div>
+
+    <div class="flex flex-wrap items-center gap-4 px-4 pb-4">
+      <label class="flex items-center gap-1.5 text-xs text-slate cursor-pointer">
+        <input type="checkbox" [ngModel]="showDescription()" (ngModelChange)="showDescription.set($event)" /> Description
+      </label>
+      <label class="flex items-center gap-1.5 text-xs text-slate cursor-pointer">
+        <input type="checkbox" [ngModel]="showCostWeight()" (ngModelChange)="showCostWeight.set($event)" /> Cost &amp; weight
+      </label>
+      <label class="flex items-center gap-1.5 text-xs text-slate cursor-pointer">
+        <input type="checkbox" [ngModel]="showExtras()" (ngModelChange)="showExtras.set($event)" /> Properties &amp; actions
+      </label>
+      <label class="flex items-center gap-1.5 text-xs text-slate cursor-pointer">
+        <input type="checkbox" [ngModel]="showImage()" (ngModelChange)="showImage.set($event)" /> Item image
+      </label>
+
+      <span class="w-px h-4 bg-white/10"></span>
+
+      <label class="flex items-center gap-1.5 text-xs text-slate cursor-pointer">
+        <input type="checkbox" [ngModel]="printBacks()" (ngModelChange)="printBacks.set($event)" />
+        Print card backs
+      </label>
+      @if (printBacks()) {
+        <span class="text-coal text-[10px]">
+          Adds a back with a rarity-colored outline and the item's icon after each page — print two-sided, flip on the long edge.
+        </span>
+      }
+    </div>
+  </div>
+
+  <div class="print-root print-preview flex-1 overflow-auto" [style.--card-font-scale]="fontScale()">
+    @for (page of pages(); track $index) {
+      <div class="print-page" [style.width.mm]="pageContentSize().width" [style.height.mm]="pageContentSize().height">
+        @for (line of colGuides; track line) {
+          <div class="cut-guide cut-guide-v" [style.left.%]="line"></div>
+        }
+        @for (line of rowGuides; track line) {
+          <div class="cut-guide cut-guide-h" [style.top.%]="line"></div>
+        }
+        @for (item of page; track item.index) {
+          <div class="item-card" [class.border-thin]="borderStyle() === 'thin'"
+            [class.border-heavy]="borderStyle() === 'heavy'" [class.border-ornate]="borderStyle() === 'ornate'"
+            [class.border-dotted]="borderStyle() === 'dotted'" [class.border-none]="borderStyle() === 'none'"
+            [style.border-color]="cardColor(item)" [style.font-family]="fontFamily()">
+            <div class="item-card-header" [style.border-color]="cardColor(item)">
+              <h3>{{ item.name }}</h3>
+              <p class="item-card-subtitle">{{ subtitle(item) }}</p>
+            </div>
+
+            <div class="item-card-meta">
+              @if (showCostWeight() && item.cost) { <span>{{ item.cost }}</span> }
+              @if (showCostWeight() && item.weight) { <span>{{ item.weight }} lb.</span> }
+              @if (item.damage) { <span>{{ item.damage }} {{ item.damage_type || '' }}</span> }
+              @if (item.armor_class) { <span>AC {{ item.armor_class }}</span> }
+              @if (item.charges) { <span>{{ item.charges.max }} charges · {{ item.charges.recovery.replace('_', ' ') }}</span> }
+            </div>
+            @if (attunementText(item); as attune) {
+              <p class="item-card-attunement">{{ attune }}</p>
+            }
+
+            <div class="item-card-body">
+              @if (showDescription()) {
+                <p class="item-card-description">{{ item.description }}</p>
+              }
+
+              @if (showExtras()) {
+                @if (item.properties.length) {
+                  <p class="item-card-extra"><strong>Properties:</strong> {{ item.properties.join(', ') }}</p>
+                }
+                @if (item.mastery) {
+                  <p class="item-card-extra"><strong>{{ item.mastery.property }}:</strong> {{ item.mastery.description }}</p>
+                }
+                @for (action of item.actions ?? []; track action.key) {
+                  <p class="item-card-extra"><strong>{{ action.name }}.</strong> {{ action.description }}</p>
+                }
+              }
+            </div>
+
+            @if (showImage() && item.image_url) {
+              <img [src]="item.image_url" alt="" class="item-card-image" />
+            }
+          </div>
+        }
+      </div>
+
+      @if (printBacks()) {
+        <div class="print-page" [style.width.mm]="pageContentSize().width" [style.height.mm]="pageContentSize().height">
+          @for (line of colGuides; track line) {
+            <div class="cut-guide cut-guide-v" [style.left.%]="line"></div>
+          }
+          @for (line of rowGuides; track line) {
+            <div class="cut-guide cut-guide-h" [style.top.%]="line"></div>
+          }
+          @for (item of backCards(page); track item.index) {
+            <div class="item-card item-card-back" [style.border-color]="cardColor(item)">
+              @if (item.image_url) {
+                <img [src]="item.image_url" alt="" class="item-card-back-icon" />
+              } @else {
+                <mat-icon class="item-card-back-icon-fallback" [style.color]="cardColor(item)">inventory_2</mat-icon>
+              }
+            </div>
+          }
+        </div>
+      }
+    }
+  </div>
+</div>

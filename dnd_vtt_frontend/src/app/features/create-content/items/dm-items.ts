@@ -7,12 +7,13 @@ import { ConfirmService } from '../../../shared/confirm.service';
 import { ItemFormComponent } from './item-form/item-form';
 import { ContentDetailDialogComponent } from '../content-detail-dialog/content-detail-dialog';
 import { ContentSourceFilterComponent } from '../content-source-filter/content-source-filter';
+import { ItemCardPrintComponent } from './item-card-print/item-card-print';
 
 type ItemSort = 'name-asc' | 'name-desc' | 'source-asc' | 'type-asc';
 
 @Component({
   selector: 'app-dm-items',
-  imports: [ItemFormComponent, ContentDetailDialogComponent, ContentSourceFilterComponent, MatIconModule, FormsModule],
+  imports: [ItemFormComponent, ContentDetailDialogComponent, ContentSourceFilterComponent, ItemCardPrintComponent, MatIconModule, FormsModule],
   templateUrl: './dm-items.html',
 })
 export class DmItemsComponent implements OnInit {
@@ -29,6 +30,10 @@ export class DmItemsComponent implements OnInit {
   duplicatingItem = signal<DndItem | null>(null);
   detailItem = signal<DndItem | null>(null);
 
+  printMode = signal(false);
+  selectedForPrint = signal<Set<string>>(new Set());
+  showPrintView = signal(false);
+
   search = signal('');
   sourceFilters = signal<string[]>([]);
   sort = signal<ItemSort>('name-asc');
@@ -36,6 +41,10 @@ export class DmItemsComponent implements OnInit {
 
   filteredItems    = computed(() => this.filter(this.items(), 'HOMEBREW'));
   filteredOfficial = computed(() => this.filter(this.officialItems(), 'XPHB'));
+  itemsToPrint = computed(() => {
+    const selected = this.selectedForPrint();
+    return [...this.items(), ...this.officialItems()].filter(i => selected.has(i.index));
+  });
 
   async ngOnInit() { await this.load(); }
 
@@ -110,5 +119,29 @@ export class DmItemsComponent implements OnInit {
     if (!ok) return;
     await this.itemService.deleteItem(item.index);
     await this.load();
+  }
+
+  togglePrintMode() {
+    this.printMode.update(v => !v);
+    this.selectedForPrint.set(new Set());
+  }
+
+  isSelectedForPrint(item: DndItem): boolean {
+    return this.selectedForPrint().has(item.index);
+  }
+
+  toggleSelectedForPrint(item: DndItem) {
+    const set = new Set(this.selectedForPrint());
+    if (set.has(item.index)) set.delete(item.index); else set.add(item.index);
+    this.selectedForPrint.set(set);
+  }
+
+  openPrintView() {
+    if (this.itemsToPrint().length === 0) return;
+    this.showPrintView.set(true);
+  }
+
+  closePrintView() {
+    this.showPrintView.set(false);
   }
 }

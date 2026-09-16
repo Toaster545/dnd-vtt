@@ -1,0 +1,186 @@
+// Screen preview: pages stacked on a neutral backdrop so the white "paper" reads clearly
+// against the app's dark theme. None of this backdrop styling is printed (see @media print
+// below) — only .item-card's own colors end up on paper.
+.print-preview {
+  background: #3a3a3a;
+  padding: 16px;
+}
+
+// Card margin after cutting: the page's own padding and the inter-card gap are both derived from
+// this one value (gap = 2x) so a cut made at the exact midpoint of the gap — or of the outer
+// padding vs. the page edge — leaves every card with the same margin on every side. See
+// item-card-print.ts's colGuides/rowGuides for why that lands the cut lines at exact 1/N marks.
+$card-margin: 4mm;
+
+.print-page {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  gap: $card-margin * 2;
+  margin: 0 auto 16px;
+  padding: $card-margin;
+  background: #fff;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
+  position: relative;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.cut-guide {
+  position: absolute;
+  pointer-events: none;
+}
+.cut-guide-v {
+  top: 0;
+  bottom: 0;
+  width: 0;
+  border-left: 0.5pt dashed #999;
+}
+.cut-guide-h {
+  left: 0;
+  right: 0;
+  height: 0;
+  border-top: 0.5pt dashed #999;
+}
+
+.item-card {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  height: 100%;
+  padding: 4mm;
+  border-radius: 4px;
+  background: #fdfdfb;
+  color: #1c1c1c;
+  overflow: hidden;
+  break-inside: avoid;
+
+  &.border-thin { border: 1.5pt solid; }
+  &.border-heavy { border: 4pt solid; }
+  &.border-ornate {
+    border: 5pt double;
+    outline: 1pt solid currentColor;
+    outline-offset: -7pt;
+  }
+  &.border-dotted { border: 1.5pt dotted; }
+  &.border-none { border: none; }
+}
+
+// Uniform back face: paper background with a rarity/custom-colored outline and just the item's
+// icon, so the back gives nothing away when cards are laid face-down. See backCards() for how
+// fronts/backs are paired up.
+.item-card-back {
+  align-items: center;
+  justify-content: center;
+  border: 3pt solid;
+}
+
+.item-card-back-icon {
+  width: 40%;
+  height: 40%;
+  object-fit: contain;
+}
+
+.item-card-back-icon-fallback {
+  font-size: 28pt;
+  width: 28pt;
+  height: 28pt;
+}
+
+// Everything below the header/meta/attunement shares whatever room is left on a fixed-size card —
+// clipped as a whole (with the description itself ellipsized, see below) rather than left to
+// overflow past the card's edge, which is what a physically cut card can't do anyway.
+.item-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.item-card-image {
+  align-self: center;
+  width: 14mm;
+  height: 14mm;
+  flex-shrink: 0;
+  object-fit: cover;
+  border-radius: 3px;
+  margin-top: 2px;
+}
+
+.item-card-header {
+  padding-bottom: 3px;
+  border-bottom: 1pt solid;
+
+  h3 {
+    margin: 0;
+    font-size: calc(12.5pt * var(--card-font-scale, 1));
+    font-weight: 700;
+    line-height: 1.15;
+  }
+}
+
+.item-card-subtitle {
+  margin: 1px 0 0;
+  font-size: calc(7.5pt * var(--card-font-scale, 1));
+  font-style: italic;
+  opacity: 0.75;
+  text-transform: capitalize;
+}
+
+.item-card-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px 8px;
+  font-size: calc(7.5pt * var(--card-font-scale, 1));
+  font-weight: 600;
+  opacity: 0.85;
+}
+
+.item-card-attunement {
+  margin: 0;
+  font-size: calc(7.5pt * var(--card-font-scale, 1));
+  font-weight: 600;
+  font-style: italic;
+}
+
+.item-card-description {
+  margin: 2px 0 0;
+  font-size: calc(8.5pt * var(--card-font-scale, 1));
+  line-height: 1.3;
+  white-space: pre-wrap;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 6;
+  overflow: hidden;
+}
+
+.item-card-extra {
+  margin: 2px 0 0;
+  font-size: calc(8pt * var(--card-font-scale, 1));
+  line-height: 1.3;
+}
+
+@media print {
+  @page {
+    margin: 10mm;
+  }
+
+  .print-preview {
+    background: none;
+    padding: 0;
+  }
+
+  .print-page {
+    box-shadow: none;
+    margin: 0;
+    break-after: page;
+
+    &:last-child {
+      break-after: auto;
+    }
+  }
+}

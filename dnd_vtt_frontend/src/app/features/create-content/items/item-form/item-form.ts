@@ -3,11 +3,17 @@ import { FormsModule } from '@angular/forms';
 import { HttpErrorResponse } from '@angular/common/http';
 import { MatIconModule } from '@angular/material/icon';
 import { ItemService } from '../../../../core/services/item.service';
-import { DndItem } from '../../../../core/services/content.service';
+import { ActionActivation, DndItem, IconLibraryEntry } from '../../../../core/services/content.service';
+import { IconPickerDialogComponent } from '../icon-picker-dialog/icon-picker-dialog';
 
 const TYPES = ['weapon', 'armor', 'gear', 'consumable'];
 const WEAPON_CATEGORIES = ['Simple Melee', 'Simple Ranged', 'Martial Melee', 'Martial Ranged'];
 const ARMOR_CATEGORIES = ['Light Armor', 'Medium Armor', 'Heavy Armor', 'Shield'];
+const GEAR_CATEGORIES = [
+  'Adventuring Gear', 'Tool', 'Wondrous Item', 'Ring', 'Rod', 'Staff', 'Wand', 'Ammunition', 'Trade Good',
+];
+const CONSUMABLE_CATEGORIES = ['Potion', 'Scroll', 'Poison', 'Food & Drink'];
+const CURRENCIES = ['cp', 'sp', 'ep', 'gp', 'pp'] as const;
 const DAMAGE_TYPES = [
   'acid', 'bludgeoning', 'cold', 'fire', 'force', 'lightning', 'necrotic',
   'piercing', 'poison', 'psychic', 'radiant', 'slashing', 'thunder',
@@ -15,6 +21,20 @@ const DAMAGE_TYPES = [
 const DICE_COUNTS = [1, 2, 3, 4];
 const DIE_FACES = ['4', '6', '8', '10', '12', '20'];
 const MASTERY_PROPERTIES = ['Cleave', 'Graze', 'Nick', 'Push', 'Sap', 'Slow', 'Topple', 'Vex'];
+const RARITIES = ['common', 'uncommon', 'rare', 'very rare', 'legendary', 'artifact'];
+const CHARGE_RECOVERIES = ['dawn', 'short_rest', 'long_rest'] as const;
+const ACTIVATIONS: ActionActivation[] = ['action', 'bonus_action', 'reaction', 'free'];
+
+interface ItemActionEntry {
+  key: string;
+  name: string;
+  description: string;
+  activation: ActionActivation;
+}
+
+function slugify(name: string): string {
+  return name.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || 'action';
+}
 
 interface PropertyDef {
   key: string;
@@ -43,7 +63,7 @@ function tagsFrom(raw: string): string[] {
 
 @Component({
   selector: 'app-item-form',
-  imports: [FormsModule, MatIconModule],
+  imports: [FormsModule, MatIconModule, IconPickerDialogComponent],
   templateUrl: './item-form.html',
 })
 export class ItemFormComponent implements OnInit {
@@ -65,6 +85,11 @@ export class ItemFormComponent implements OnInit {
   readonly dieFaces = DIE_FACES;
   readonly masteryProperties = MASTERY_PROPERTIES;
   readonly weaponProperties = WEAPON_PROPERTIES;
+  readonly rarities = RARITIES;
+  readonly chargeRecoveries = CHARGE_RECOVERIES;
+  readonly activations = ACTIVATIONS;
+  readonly currencies = CURRENCIES;
+  readonly isCombat = computed(() => this.type() === 'weapon' || this.type() === 'armor');
 
   private originalIndex: string | null = null;
 
@@ -74,6 +99,7 @@ export class ItemFormComponent implements OnInit {
   name       = signal('');
   type       = signal('weapon');
   category   = signal('');
+  categoryIsCustom = signal(false);
   diceCount  = signal(1);
   // 'flat' means the weapon deals a fixed amount of damage with no die (e.g. a Blowgun's "1"),
   // stored via diceCount alone; otherwise this holds the die's face count ('4', '6', ...).
@@ -86,16 +112,34 @@ export class ItemFormComponent implements OnInit {
   // (e.g. "Stealth Disadvantage", "Restores 2d4+2 HP") rather than the closed weapon vocabulary.
   looseProperties = signal('');
   weight     = signal(0);
-  cost       = signal('');
+  costAmount = signal(0);
+  costUnit   = signal<typeof CURRENCIES[number] | 'custom'>('gp');
+  costCustom = signal('');
   description = signal('');
 
   hasMastery       = signal(false);
   masteryProperty    = signal('');
   masteryDescription = signal('');
 
+  imageUrl       = signal<string | null>(null);
+  uploadingImage = signal(false);
+  imageError     = signal<string | null>(null);
+  showIconPicker = signal(false);
+
+  rarity           = signal('');
+  requiresAttunement    = signal(false);
+  attunementRestriction = signal('');
+  hasCharges       = signal(false);
+  chargesMax       = signal(1);
+  chargesRecovery  = signal<typeof CHARGE_RECOVERIES[number] | 'custom'>('dawn');
+  chargesRecoveryCustom = signal('');
+  actions          = signal<ItemActionEntry[]>([]);
+
   readonly canSave = computed(() =>
     !!(this.name().trim() && this.type().trim() && this.category().trim() &&
-       this.cost().trim() && this.description().trim()));
+       (this.costUnit() !== 'custom' || this.costCustom().trim()) &&
+       (!this.hasCharges() || this.chargesRecovery() !== 'custom' || this.chargesRecoveryCustom().trim()) &&
+       this.description().trim()));
 
   ngOnInit() {
     const editing = this.item();
@@ -106,26 +150,105 @@ export class ItemFormComponent implements OnInit {
     this.name.set(editing ? i.name : `Copy of ${i.name}`);
     this.type.set(i.type);
     this.category.set(i.category);
+    this.categoryIsCustom.set(!this.categoryOptions().includes(i.category));
     this.parseDamage(i.damage ?? '');
     this.damageType.set(i.damage_type ?? '');
     this.armorClass.set(i.armor_class ?? '');
     if (i.type === 'weapon') this.parseProperties(i.properties ?? []);
     else this.looseProperties.set((i.properties ?? []).join(', '));
     this.weight.set(i.weight);
-    this.cost.set(i.cost);
+    this.parseCost(i.cost);
     this.description.set(i.description);
+    if (editing) this.imageUrl.set(i.image_url ?? null);
 
     if (i.mastery) {
       this.hasMastery.set(true);
       this.masteryProperty.set(i.mastery.property);
       this.masteryDescription.set(i.mastery.description);
     }
+
+    this.rarity.set(i.rarity ?? '');
+    if (i.requires_attunement) {
+      this.requiresAttunement.set(true);
+      this.attunementRestriction.set(typeof i.requires_attunement === 'string' ? i.requires_attunement : '');
+    }
+    if (i.charges) {
+      this.hasCharges.set(true);
+      this.chargesMax.set(i.charges.max);
+      if ((CHARGE_RECOVERIES as readonly string[]).includes(i.charges.recovery)) {
+        this.chargesRecovery.set(i.charges.recovery as typeof CHARGE_RECOVERIES[number]);
+      } else {
+        this.chargesRecovery.set('custom');
+        this.chargesRecoveryCustom.set(i.charges.recovery);
+      }
+    }
+    this.actions.set((i.actions ?? []).map(a => ({
+      key: a.key, name: a.name, description: a.description ?? '', activation: a.activation,
+    })));
+  }
+
+  async onImageFileChange(event: Event) {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    input.value = '';
+    if (!file || !this.originalIndex) return;
+    this.uploadingImage.set(true);
+    this.imageError.set(null);
+    try {
+      const updated = await this.itemService.uploadImage(this.originalIndex, file);
+      this.imageUrl.set(updated.image_url ?? null);
+    } catch (e) {
+      const message = e instanceof HttpErrorResponse ? (e.error?.message ?? e.message) : 'Failed to upload image.';
+      this.imageError.set(Array.isArray(message) ? message.join(', ') : message);
+    } finally {
+      this.uploadingImage.set(false);
+    }
+  }
+
+  removeImage() {
+    this.imageUrl.set(null);
+  }
+
+  onIconPicked(icon: IconLibraryEntry) {
+    this.imageUrl.set(icon.url);
+    this.showIconPicker.set(false);
+  }
+
+  addAction() {
+    this.actions.update(list => [...list, { key: '', name: '', description: '', activation: 'action' }]);
+  }
+  removeAction(i: number) {
+    this.actions.update(list => list.filter((_, idx) => idx !== i));
+  }
+  updateAction(i: number, patch: Partial<ItemActionEntry>) {
+    this.actions.update(list => list.map((a, idx) => (idx === i ? { ...a, ...patch } : a)));
   }
 
   onTypeChange(next: string) {
     this.type.set(next);
-    const validCategories = next === 'weapon' ? WEAPON_CATEGORIES : next === 'armor' ? ARMOR_CATEGORIES : null;
-    if (validCategories && !validCategories.includes(this.category())) this.category.set('');
+    if (!this.categoryOptions().includes(this.category())) {
+      this.category.set('');
+      this.categoryIsCustom.set(false);
+    }
+  }
+
+  categoryOptions(): string[] {
+    switch (this.type()) {
+      case 'weapon': return WEAPON_CATEGORIES;
+      case 'armor': return ARMOR_CATEGORIES;
+      case 'consumable': return CONSUMABLE_CATEGORIES;
+      default: return GEAR_CATEGORIES;
+    }
+  }
+
+  onCategorySelect(value: string) {
+    if (value === 'custom') {
+      this.categoryIsCustom.set(true);
+      this.category.set('');
+    } else {
+      this.categoryIsCustom.set(false);
+      this.category.set(value);
+    }
   }
 
   isPropertySelected(key: string): boolean {
@@ -157,6 +280,21 @@ export class ItemFormComponent implements OnInit {
       this.diceCount.set(+raw.trim());
       this.dieFace.set('flat');
     }
+  }
+
+  private parseCost(raw: string) {
+    const m = raw.trim().match(/^(\d+(?:\.\d+)?)\s*(cp|sp|ep|gp|pp)$/i);
+    if (m) {
+      this.costAmount.set(+m[1]);
+      this.costUnit.set(m[2].toLowerCase() as typeof CURRENCIES[number]);
+    } else {
+      this.costUnit.set('custom');
+      this.costCustom.set(raw);
+    }
+  }
+
+  private buildCost(): string {
+    return this.costUnit() === 'custom' ? this.costCustom().trim() : `${this.costAmount()} ${this.costUnit()}`;
   }
 
   private parseProperties(raw: string[]) {
@@ -200,7 +338,7 @@ export class ItemFormComponent implements OnInit {
       category: this.category().trim(),
       properties: this.type() === 'weapon' ? this.buildProperties() : tagsFrom(this.looseProperties()),
       weight: this.weight(),
-      cost: this.cost().trim(),
+      cost: this.buildCost(),
       description: this.description().trim(),
     };
     if (this.type() === 'weapon') built.damage = this.buildDamage();
@@ -211,6 +349,27 @@ export class ItemFormComponent implements OnInit {
         property: this.masteryProperty().trim(),
         description: this.masteryDescription().trim(),
       };
+    }
+    const imageUrl = this.imageUrl();
+    if (imageUrl) built.image_url = imageUrl;
+    if (this.rarity()) built.rarity = this.rarity();
+    if (this.requiresAttunement()) {
+      built.requires_attunement = this.attunementRestriction().trim() || true;
+    }
+    if (this.hasCharges()) {
+      built.charges = {
+        max: this.chargesMax(),
+        recovery: this.chargesRecovery() === 'custom' ? this.chargesRecoveryCustom().trim() : this.chargesRecovery(),
+      };
+    }
+    const actions = this.actions().filter(a => a.name.trim());
+    if (actions.length) {
+      built.actions = actions.map(a => ({
+        key: a.key || slugify(a.name),
+        name: a.name.trim(),
+        description: a.description.trim() || undefined,
+        activation: a.activation,
+      }));
     }
     return built;
   }

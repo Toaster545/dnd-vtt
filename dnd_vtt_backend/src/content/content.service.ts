@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ForbiddenException,
   Injectable,
   NotFoundException,
@@ -7,6 +8,7 @@ import { readdirSync, readFileSync } from 'fs';
 import { join } from 'path';
 import { randomUUID } from 'crypto';
 import { DatabaseService } from '../common/database.service';
+import { saveUploadedImage } from '../common/upload.util';
 import type { RequestUser } from '../common/current-user.decorator';
 import {
   CONTENT_SOURCES,
@@ -80,6 +82,18 @@ export class ContentService {
 
   getSources() {
     return CONTENT_SOURCES;
+  }
+
+  // Curated game-icons.net (CC BY 3.0) SVGs a DM can pick as an item image instead of uploading
+  // one — see content/icons/manifest.json and /icons/*.svg (served statically, see main.ts).
+  getIconLibrary(): unknown[] {
+    const key = 'icon-library';
+    if (this.cache.has(key)) return this.cache.get(key) as unknown[];
+    const manifest = JSON.parse(
+      readFileSync(join(CONTENT_PATH, 'icons', 'manifest.json'), 'utf-8'),
+    ) as unknown[];
+    this.cache.set(key, manifest);
+    return manifest;
   }
 
   private fallbackSource(type: string): string {
@@ -413,6 +427,29 @@ export class ContentService {
       [typeof dto.name === 'string' ? dto.name : '', JSON.stringify(data), id],
     );
     return data;
+  }
+
+  async uploadItemImage(
+    index: string,
+    user: RequestUser,
+    file: Express.Multer.File,
+  ) {
+    const id = this.requireCustomId(index);
+    const row = await this.findCustomRow('items', id);
+    if (row.created_by !== user.id) throw new ForbiddenException();
+    if (!file?.buffer?.length || !file.mimetype?.startsWith('image/')) {
+      throw new BadRequestException('A valid image file is required.');
+    }
+    const url = saveUploadedImage(file, `items/${id}`);
+    const data = {
+      ...(JSON.parse(row.data as string) as Record<string, unknown>),
+      image_url: url,
+    };
+    await this.db.execute(
+      `UPDATE ${CUSTOM_TABLE.items} SET data = ?, updated_at = datetime('now') WHERE id = ?`,
+      [JSON.stringify(data), id],
+    );
+    return this.withSource(data, HOMEBREW_SOURCE_CODE);
   }
 
   async deleteCustom(

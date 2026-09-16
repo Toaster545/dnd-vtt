@@ -37,4 +37,14 @@ export class ItemService {
     );
     this.content.invalidateContent('items', index);
   }
+
+  async uploadImage(index: string, file: File): Promise<DndItem> {
+    const form = new FormData();
+    form.append('file', file);
+    const updated = await firstValueFrom(
+      this.http.post<DndItem>(`${API}/content/items/${encodeURIComponent(index)}/image`, form)
+    );
+    this.content.invalidateContent('items', updated.index);
+    return updated;
+  }
 }
