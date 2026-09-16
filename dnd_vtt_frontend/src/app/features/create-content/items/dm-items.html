@@ -64,9 +64,9 @@
               @if (printMode()) {
                 <input type="checkbox" class="flex-shrink-0" [checked]="isSelectedForPrint(i)" (click)="$event.stopPropagation()" (change)="toggleSelectedForPrint(i)" />
               }
-              <div class="w-9 h-9 rounded flex items-center justify-center flex-shrink-0 bg-white/5 border border-white/10 overflow-hidden">
+              <div class="w-9 h-9 flex items-center justify-center flex-shrink-0">
                 @if (i.image_url) {
-                  <img [src]="i.image_url" alt="" class="w-full h-full object-cover" />
+                  <img [src]="i.image_url" alt="" class="w-full h-full object-contain brightness-0 invert" />
                 } @else {
                   <mat-icon class="text-base text-slate">inventory_2</mat-icon>
                 }
@@ -106,10 +106,10 @@
                 @if (printMode()) {
                   <input type="checkbox" class="flex-shrink-0" [checked]="isSelectedForPrint(i)" (click)="$event.stopPropagation()" (change)="toggleSelectedForPrint(i)" />
                 }
-                <div class="relative w-9 h-9 rounded flex-shrink-0 group/thumb">
-                  <div class="w-9 h-9 rounded flex items-center justify-center bg-white/5 border border-white/10 overflow-hidden">
+                <div class="relative w-9 h-9 flex-shrink-0 group/thumb">
+                  <div class="w-9 h-9 flex items-center justify-center">
                     @if (i.image_url) {
-                      <img [src]="i.image_url" alt="" class="w-full h-full object-cover" />
+                      <img [src]="i.image_url" alt="" class="w-full h-full object-contain brightness-0 invert" />
                     } @else {
                       <mat-icon class="text-base text-slate">inventory_2</mat-icon>
                     }
