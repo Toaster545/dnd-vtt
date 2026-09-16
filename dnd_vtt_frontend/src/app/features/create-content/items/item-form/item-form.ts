@@ -21,6 +21,18 @@ const DAMAGE_TYPES = [
 const DICE_COUNTS = [1, 2, 3, 4];
 const DIE_FACES = ['4', '6', '8', '10', '12', '20'];
 const MASTERY_PROPERTIES = ['Cleave', 'Graze', 'Nick', 'Push', 'Sap', 'Slow', 'Topple', 'Vex'];
+// Weapon mastery properties are a fixed 2024-rules vocabulary with fixed rules text — the
+// description is derived from the property, never freeform per-item.
+const MASTERY_DESCRIPTIONS: Record<string, string> = {
+  Cleave: "Hit lets you make a free attack against another creature within 5 ft. of the original target.",
+  Graze: 'On a miss, you still deal damage to the target equal to your relevant ability modifier.',
+  Nick: "The extra attack granted by this weapon's Light property doesn't require a bonus action.",
+  Push: 'Hit pushes the target up to 10 ft. away from you.',
+  Sap: "Hit gives the target disadvantage on its next attack roll before the start of your next turn.",
+  Slow: "Hit reduces the target's speed by 10 ft. until the start of your next turn.",
+  Topple: 'Hit can knock the target prone (target makes a Constitution save).',
+  Vex: "Hit grants advantage on your next attack roll against that target before the end of your next turn.",
+};
 const RARITIES = ['common', 'uncommon', 'rare', 'very rare', 'legendary', 'artifact'];
 const CHARGE_RECOVERIES = ['dawn', 'short_rest', 'long_rest'] as const;
 const ACTIVATIONS: ActionActivation[] = ['action', 'bonus_action', 'reaction', 'free'];
@@ -119,7 +131,7 @@ export class ItemFormComponent implements OnInit {
 
   hasMastery       = signal(false);
   masteryProperty    = signal('');
-  masteryDescription = signal('');
+  readonly masteryDescription = computed(() => MASTERY_DESCRIPTIONS[this.masteryProperty()] ?? '');
 
   imageUrl       = signal<string | null>(null);
   uploadingImage = signal(false);
@@ -164,7 +176,6 @@ export class ItemFormComponent implements OnInit {
     if (i.mastery) {
       this.hasMastery.set(true);
       this.masteryProperty.set(i.mastery.property);
-      this.masteryDescription.set(i.mastery.description);
     }
 
     this.rarity.set(i.rarity ?? '');
