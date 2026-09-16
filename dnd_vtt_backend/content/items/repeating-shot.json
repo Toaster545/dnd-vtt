@@ -8,6 +8,7 @@
   "properties": [],
   "weight": 0,
   "cost": "Magic item",
+  "image_url": "/icons/bow-arrow.svg",
   "description": "A +1 ranged weapon that ignores Loading and produces its own magical ammunition.",
   "rarity": "uncommon",
   "requires_attunement": true,

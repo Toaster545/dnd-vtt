@@ -1,5 +1,6 @@
 {
   "index": "perfume", "name": "Perfume", "type": "gear", "category": "Adventuring Gear",
   "damage": null, "damage_type": null, "properties": [], "weight": 0, "cost": "5 gp",
+  "image_url": "/icons/perfume-bottle.svg",
   "description": "A small vial of fragrant perfume."
 }

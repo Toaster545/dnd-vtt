@@ -8,6 +8,7 @@
   "properties": [],
   "weight": 0,
   "cost": "—",
+  "image_url": "/icons/greaves.svg",
   "description": "Boots that let a humanoid leave tracks resembling those of another kind of humanoid.",
   "rarity": "common",
   "source": {

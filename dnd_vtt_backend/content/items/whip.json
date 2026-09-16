@@ -11,6 +11,7 @@
   ],
   "weight": 3,
   "cost": "2 gp",
+  "image_url": "/icons/electric-whip.svg",
   "description": "A long, flexible weapon that keeps foes at bay.",
   "mastery": {
     "property": "Slow",

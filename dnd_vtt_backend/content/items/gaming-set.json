@@ -8,5 +8,6 @@
   "properties": [],
   "weight": 0,
   "cost": "1 gp",
+  "image_url": "/icons/anvil.svg",
   "description": "A set of bone dice, or a deck of cards, or another kind of gaming set used for games of chance."
 }

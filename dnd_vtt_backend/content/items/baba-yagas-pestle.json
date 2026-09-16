@@ -8,6 +8,7 @@
   "properties": [],
   "weight": 4,
   "cost": "Magic item",
+  "image_url": "/icons/sword-hilt.svg",
   "description": "The weapon component of Baba Yaga’s artifact; it functions as a powerful magic quarterstaff while held.",
   "rarity": "artifact",
   "requires_attunement": true,

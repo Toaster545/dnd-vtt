@@ -8,6 +8,7 @@
   "properties": [],
   "weight": 0,
   "cost": "—",
+  "image_url": "/icons/cog-lock.svg",
   "description": "A magical lock that is harder to pick than an ordinary lock.",
   "rarity": "common",
   "source": {

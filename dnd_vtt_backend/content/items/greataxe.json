@@ -11,6 +11,7 @@
   ],
   "weight": 7,
   "cost": "30 gp",
+  "image_url": "/icons/axe-in-log.svg",
   "description": "A massive, two-handed axe.",
   "mastery": {
     "property": "Cleave",

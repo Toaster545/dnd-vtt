@@ -13,6 +13,7 @@
   ],
   "weight": 18,
   "cost": "50 gp",
+  "image_url": "/icons/crossbow.svg",
   "description": "A large, powerful crossbow.",
   "mastery": {
     "property": "Push",

@@ -8,6 +8,7 @@
   "properties": [],
   "weight": 3,
   "cost": "Magic item",
+  "image_url": "/icons/concentration-orb.svg",
   "description": "An alchemical spellbook and focus that can transmute a nearby nonmagical object and spend charges to cast its recorded spells.",
   "rarity": "rare",
   "requires_attunement": "by a wizard",

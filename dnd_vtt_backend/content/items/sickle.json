@@ -10,6 +10,7 @@
   ],
   "weight": 2,
   "cost": "1 gp",
+  "image_url": "/icons/hammer-sickle.svg",
   "description": "A curved blade, as much tool as weapon.",
   "mastery": {
     "property": "Nick",

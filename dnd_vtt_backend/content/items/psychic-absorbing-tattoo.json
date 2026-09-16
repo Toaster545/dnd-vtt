@@ -8,6 +8,7 @@
   "properties": [],
   "weight": 0,
   "cost": "Magic item",
+  "image_url": "/icons/concentration-orb.svg",
   "description": "A tattoo that grants Resistance to Psychic damage and can absorb one instance of that damage each day, converting it into healing.",
   "rarity": "very rare",
   "requires_attunement": true,

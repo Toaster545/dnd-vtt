@@ -8,6 +8,7 @@
   "properties": [],
   "weight": 0,
   "cost": "Magic item",
+  "image_url": "/icons/concentration-orb.svg",
   "description": "A tattoo that grants Resistance to Necrotic damage and can leave you at 1 Hit Point instead of 0 once per day.",
   "rarity": "very rare",
   "requires_attunement": true,

@@ -12,6 +12,7 @@
   ],
   "weight": 6,
   "cost": "20 gp",
+  "image_url": "/icons/halberd.svg",
   "description": "An axe blade topped with a spike, mounted on a long pole.",
   "mastery": {
     "property": "Cleave",

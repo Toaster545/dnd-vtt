@@ -8,6 +8,7 @@
   "properties": [],
   "weight": 0,
   "cost": "See PHB 2024",
+  "image_url": "/icons/treasure-map.svg",
   "description": "A regional or local map.",
   "source": {
     "code": "XPHB",

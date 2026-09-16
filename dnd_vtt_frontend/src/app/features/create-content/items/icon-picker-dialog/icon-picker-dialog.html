@@ -1,0 +1,76 @@
+<div
+  class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm"
+  role="presentation"
+  (click)="close()"
+>
+  <section
+    class="flex h-[92vh] w-[95vw] max-w-6xl flex-col overflow-hidden rounded-xl border border-gold/35 bg-elevated shadow-2xl"
+    role="dialog"
+    aria-modal="true"
+    aria-label="Choose an icon"
+    (click)="$event.stopPropagation()"
+  >
+    <header class="flex flex-shrink-0 flex-wrap items-center gap-3 border-b border-white/10 px-5 py-4">
+      <h2 class="font-brand m-0 text-lg text-parchment">Choose an Icon</h2>
+      <input
+        class="field-input w-64"
+        [ngModel]="search()"
+        (ngModelChange)="search.set($event)"
+        placeholder="Search icons…"
+        autofocus
+      />
+      <span class="text-xs text-slate">{{ filtered().length }} of {{ icons().length }}</span>
+      <div class="flex-1"></div>
+      @if (showReset()) {
+        <button class="btn-outline text-sm" type="button" (click)="resetToDefault()">
+          Reset to default
+        </button>
+      }
+      <button class="btn-icon" type="button" (click)="close()" aria-label="Close">
+        <mat-icon>close</mat-icon>
+      </button>
+    </header>
+
+    <div class="flex flex-shrink-0 flex-wrap gap-1.5 border-b border-white/10 px-5 py-3">
+      <button class="tab-pill" [class.active]="categoryFilter() === null" type="button" (click)="categoryFilter.set(null)">
+        All
+      </button>
+      @for (c of categories(); track c.value) {
+        <button class="tab-pill" [class.active]="categoryFilter() === c.value" type="button" (click)="categoryFilter.set(c.value)">
+          {{ c.label }}
+        </button>
+      }
+    </div>
+
+    <div class="flex-1 overflow-y-auto p-5">
+      @if (loading()) {
+        <div class="flex items-center justify-center py-16">
+          <span class="spinner-lg"></span>
+        </div>
+      } @else if (filtered().length === 0) {
+        <p class="text-slate text-sm">No icons match your search.</p>
+      } @else {
+        <div class="grid gap-3" style="grid-template-columns: repeat(auto-fill, minmax(96px, 1fr));">
+          @for (icon of filtered(); track icon.name) {
+            <button
+              class="flex flex-col items-center gap-1.5 rounded-lg border border-white/10 bg-white/5 p-2.5 text-center transition-colors hover:border-gold/50 hover:bg-gold/10"
+              type="button"
+              [title]="icon.label + ' — icon by ' + icon.author"
+              (click)="pick(icon)"
+            >
+              <span class="flex h-12 w-12 items-center justify-center rounded bg-white/90 p-1.5">
+                <img [src]="icon.url" [alt]="icon.label" class="h-full w-full object-contain" loading="lazy" />
+              </span>
+              <span class="w-full truncate text-[10px] text-slate">{{ icon.label }}</span>
+            </button>
+          }
+        </div>
+      }
+    </div>
+
+    <footer class="flex-shrink-0 border-t border-white/10 px-5 py-2.5 text-center text-[10px] text-coal">
+      Icons by <a href="https://game-icons.net/" target="_blank" rel="noopener" class="underline hover:text-slate">game-icons.net</a>
+      contributors, licensed <a href="https://creativecommons.org/licenses/by/3.0/" target="_blank" rel="noopener" class="underline hover:text-slate">CC BY 3.0</a>
+    </footer>
+  </section>
+</div>

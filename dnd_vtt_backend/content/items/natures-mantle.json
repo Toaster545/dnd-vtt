@@ -8,6 +8,7 @@
   "properties": [],
   "weight": 2,
   "cost": "Magic item",
+  "image_url": "/icons/cape.svg",
   "description": "A Druid or Ranger focus that can hide its wearer as a Bonus Action while lightly obscured.",
   "rarity": "uncommon",
   "requires_attunement": "by a druid or ranger",

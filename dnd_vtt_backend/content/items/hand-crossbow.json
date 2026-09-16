@@ -12,6 +12,7 @@
   ],
   "weight": 3,
   "cost": "75 gp",
+  "image_url": "/icons/crossbow.svg",
   "description": "A compact crossbow that can be fired one-handed.",
   "mastery": {
     "property": "Nick",

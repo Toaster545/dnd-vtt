@@ -10,6 +10,7 @@
   ],
   "weight": 0,
   "cost": "1 sp",
+  "image_url": "/icons/arm-sling.svg",
   "description": "A leather pouch on a cord, used to hurl stones.",
   "mastery": {
     "property": "Slow",

@@ -8,6 +8,7 @@
   "properties": [],
   "weight": 0,
   "cost": "—",
+  "image_url": "/icons/flute.svg",
   "description": "A pipe that shapes smoke into harmless miniature creatures.",
   "rarity": "common",
   "source": {

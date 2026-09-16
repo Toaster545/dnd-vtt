@@ -8,5 +8,6 @@
   "properties": [],
   "weight": 5,
   "cost": "25 gp",
+  "image_url": "/icons/black-book.svg",
   "description": "A book of forbidden lore, strange rites, and notes about supernatural beings."
 }

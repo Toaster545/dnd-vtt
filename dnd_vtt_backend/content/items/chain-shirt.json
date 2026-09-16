@@ -7,5 +7,6 @@
   "properties": [],
   "weight": 20,
   "cost": "50 gp",
+  "image_url": "/icons/chain-mail.svg",
   "description": "Interlocking metal rings worn between layers of clothing or leather offer protection while preserving mobility."
 }

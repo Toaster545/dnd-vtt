@@ -8,5 +8,6 @@
   "properties": [],
   "weight": 0,
   "cost": "1 gp",
+  "image_url": "/icons/rune-stone.svg",
   "description": "A sprig of mistletoe used as a spellcasting focus for primal magic."
 }

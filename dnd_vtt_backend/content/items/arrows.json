@@ -8,5 +8,6 @@
   "properties": [],
   "weight": 1,
   "cost": "1 gp",
+  "image_url": "/icons/arrow-cluster.svg",
   "description": "A bundle of 20 arrows for use with a bow."
 }

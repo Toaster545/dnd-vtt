@@ -8,5 +8,6 @@
   "properties": [],
   "weight": 10,
   "cost": "50 gp",
+  "image_url": "/icons/anvil.svg",
   "description": "Hand tools, thread, needles, whetstones, scraps, and other implements used to repair ordinary objects and create small devices."
 }

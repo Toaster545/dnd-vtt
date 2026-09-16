@@ -8,5 +8,6 @@
   "properties": [],
   "weight": 42,
   "cost": "16 gp",
+  "image_url": "/icons/backpack.svg",
   "description": "Includes a backpack, ball bearings, a bell, candles, a crowbar, a hooded lantern, oil, rations, rope, a tinderbox, and a waterskin."
 }

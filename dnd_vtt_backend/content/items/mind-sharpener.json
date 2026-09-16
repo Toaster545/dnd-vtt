@@ -8,6 +8,7 @@
   "properties": [],
   "weight": 0,
   "cost": "Magic item",
+  "image_url": "/icons/concentration-orb.svg",
   "description": "A robe or suit of armor attachment with charges that can turn a failed Constitution save to maintain Concentration into a success.",
   "rarity": "uncommon",
   "requires_attunement": true,

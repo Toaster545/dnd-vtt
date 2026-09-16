@@ -8,6 +8,7 @@
   "properties": [],
   "weight": 0,
   "cost": "Magic item",
+  "image_url": "/icons/concentration-orb.svg",
   "description": "An artifact mortar and pestle that creates ingredients, summons spectral tools, grinds magical paste, and travels through the air or between destinations.",
   "rarity": "artifact",
   "requires_attunement": true,

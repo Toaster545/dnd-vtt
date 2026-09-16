@@ -8,5 +8,6 @@
   "properties": [],
   "weight": 4,
   "cost": "2 gp",
+  "image_url": "/icons/backpack.svg",
   "description": "Sturdy clothing suited for time spent outdoors."
 }

@@ -7,12 +7,16 @@ import {
   Post,
   Put,
   Query,
+  UploadedFile,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { ContentService } from './content.service';
 import { CreateMonsterDto } from './dto/create-monster.dto';
 import { CreateItemDto } from './dto/create-item.dto';
 import { CreateSpellDto } from './dto/create-spell.dto';
+import { SetItemImageOverrideDto } from './dto/set-item-image-override.dto';
 import { JwtGuard } from '../auth/jwt.guard';
 import { CurrentUser } from '../common/current-user.decorator';
 import type { RequestUser } from '../common/current-user.decorator';
@@ -57,6 +61,10 @@ export class ContentController {
 
   @Get('sources') getSources() {
     return this.content.getSources();
+  }
+
+  @Get('icons') getIconLibrary() {
+    return this.content.getIconLibrary();
   }
 
   @Get('classes') getClasses() {
@@ -165,6 +173,35 @@ export class ContentController {
   @UseGuards(JwtGuard)
   deleteItem(@Param('index') index: string, @CurrentUser() user: RequestUser) {
     return this.content.deleteCustom('items', index, user);
+  }
+  @Post('items/:index/image')
+  @UseGuards(JwtGuard)
+  @UseInterceptors(FileInterceptor('file'))
+  uploadItemImage(
+    @Param('index') index: string,
+    @CurrentUser() user: RequestUser,
+    @UploadedFile() file: Express.Multer.File,
+  ) {
+    return this.content.uploadItemImage(index, user, file);
+  }
+  // Lets a DM swap an official SRD item's picture (e.g. a better icon-library pick) without
+  // forking the whole item into their own custom library — see item_image_overrides.
+  @Put('items/:index/image-override')
+  @UseGuards(JwtGuard)
+  setItemImageOverride(
+    @Param('index') index: string,
+    @CurrentUser() user: RequestUser,
+    @Body() dto: SetItemImageOverrideDto,
+  ) {
+    return this.content.setItemImageOverride(index, user, dto.image_url);
+  }
+  @Delete('items/:index/image-override')
+  @UseGuards(JwtGuard)
+  clearItemImageOverride(
+    @Param('index') index: string,
+    @CurrentUser() user: RequestUser,
+  ) {
+    return this.content.clearItemImageOverride(index, user);
   }
 
   // ── Spells ────────────────────────────────────────────────────────────────────────────────

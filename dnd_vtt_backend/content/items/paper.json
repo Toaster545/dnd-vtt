@@ -8,6 +8,7 @@
   "properties": [],
   "weight": 0,
   "cost": "See PHB 2024",
+  "image_url": "/icons/paper-arrow.svg",
   "description": "A sheet of writing paper.",
   "source": {
     "code": "XPHB",

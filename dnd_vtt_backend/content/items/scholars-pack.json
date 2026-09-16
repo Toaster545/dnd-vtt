@@ -8,5 +8,6 @@
   "properties": [],
   "weight": 22,
   "cost": "40 gp",
+  "image_url": "/icons/backpack.svg",
   "description": "Includes a backpack, a book, ink, an ink pen, a lamp, oil, parchment, and tinderbox."
 }

@@ -22,6 +22,40 @@
             <label class="field-label">Name</label>
             <input class="field-input" [ngModel]="name()" (ngModelChange)="name.set($event)" placeholder="e.g. Sunfire Blade" name="name" />
           </div>
+          <div class="field col-span-2">
+            <label class="field-label">Image</label>
+            <div class="flex items-center gap-3">
+              @if (imageUrl()) {
+                <span class="w-16 h-16 flex items-center justify-center rounded border border-white/10 bg-white/90 p-1.5">
+                  <img [src]="imageUrl()" alt="" class="w-full h-full object-contain" />
+                </span>
+              } @else {
+                <div class="w-16 h-16 rounded border border-dashed border-white/20 flex items-center justify-center text-slate">
+                  <mat-icon class="text-xl">image</mat-icon>
+                </div>
+              }
+              <button class="btn-outline text-sm" type="button" (click)="showIconPicker.set(true)">
+                <mat-icon class="text-base">grid_view</mat-icon> Choose Icon
+              </button>
+              @if (isEdit()) {
+                <input #imageInput type="file" accept="image/*" class="hidden" (change)="onImageFileChange($event)" />
+                <button class="btn-outline text-sm" type="button" (click)="imageInput.click()" [disabled]="uploadingImage()">
+                  @if (uploadingImage()) { <span class="spinner-sm"></span> } @else { <mat-icon class="text-base">upload</mat-icon> }
+                  {{ imageUrl() ? 'Change' : 'Upload' }}
+                </button>
+              }
+              @if (imageUrl()) {
+                <button class="btn-ghost text-sm" type="button" (click)="removeImage()">Remove</button>
+              }
+            </div>
+            @if (imageError()) { <p class="field-error mt-1">{{ imageError() }}</p> }
+            @if (!isEdit()) {
+              <p class="text-slate text-xs m-0 mt-1">Save the item first to upload a custom image file.</p>
+            }
+          </div>
+          @if (showIconPicker()) {
+            <app-icon-picker-dialog (picked)="onIconPicked($event)" (closed)="showIconPicker.set(false)" />
+          }
           <div class="field">
             <label class="field-label">Type</label>
             <select class="field-input" [ngModel]="type()" (ngModelChange)="onTypeChange($event)" name="type">
@@ -41,7 +75,14 @@
                 @for (c of armorCategories; track c) { <option [value]="c">{{ c }}</option> }
               </select>
             } @else {
-              <input class="field-input" [ngModel]="category()" (ngModelChange)="category.set($event)" placeholder="e.g. Adventuring Gear" name="category" />
+              <select class="field-input" [ngModel]="categoryIsCustom() ? 'custom' : category()" (ngModelChange)="onCategorySelect($event)" name="category">
+                <option value="" disabled>Select…</option>
+                @for (c of categoryOptions(); track c) { <option [value]="c">{{ c }}</option> }
+                <option value="custom">Other (custom)…</option>
+              </select>
+              @if (categoryIsCustom()) {
+                <input class="field-input mt-2" [ngModel]="category()" (ngModelChange)="category.set($event)" placeholder="Custom category name" name="categoryCustom" />
+              }
             }
           </div>
           <div class="field">
@@ -50,7 +91,17 @@
           </div>
           <div class="field">
             <label class="field-label">Cost</label>
-            <input class="field-input" [ngModel]="cost()" (ngModelChange)="cost.set($event)" placeholder="e.g. 25 gp" name="cost" />
+            <div class="flex gap-2">
+              @if (costUnit() !== 'custom') {
+                <input class="field-input flex-1 min-w-0" type="number" min="0" [ngModel]="costAmount()" (ngModelChange)="costAmount.set(+$event)" name="costAmount" />
+              } @else {
+                <input class="field-input flex-1 min-w-0" [ngModel]="costCustom()" (ngModelChange)="costCustom.set($event)" placeholder="e.g. Priceless" name="costCustom" />
+              }
+              <select class="field-input w-24 flex-shrink-0" [ngModel]="costUnit()" (ngModelChange)="costUnit.set($event)" name="costUnit">
+                @for (c of currencies; track c) { <option [value]="c">{{ c }}</option> }
+                <option value="custom">Other</option>
+              </select>
+            </div>
           </div>
           @if (type() !== 'weapon') {
             <div class="field col-span-2">
@@ -61,6 +112,7 @@
         </div>
       </div>
 
+      @if (isCombat()) {
       <div class="card card-body">
         <h3 class="text-sm font-semibold text-gold uppercase tracking-wide mb-3">Combat</h3>
         <div class="grid grid-cols-2 gap-3">
@@ -136,6 +188,83 @@
             <div class="field col-span-2">
               <label class="field-label">Armor Class</label>
               <input class="field-input" [ngModel]="armorClass()" (ngModelChange)="armorClass.set($event)" placeholder="e.g. 14 + Dex modifier (max 2)" name="armorClass" />
+            </div>
+          }
+        </div>
+      </div>
+      }
+
+      <div class="card card-body">
+        <h3 class="text-sm font-semibold text-gold uppercase tracking-wide mb-3">Magic Properties</h3>
+        <div class="grid grid-cols-2 gap-3">
+          <div class="field">
+            <label class="field-label">Rarity</label>
+            <select class="field-input" [ngModel]="rarity()" (ngModelChange)="rarity.set($event)" name="rarity">
+              <option value="">Mundane (not magic)</option>
+              @for (r of rarities; track r) { <option [value]="r">{{ r }}</option> }
+            </select>
+          </div>
+          <div class="field">
+            <label class="field-label">Charges</label>
+            <label class="flex items-center gap-2 text-sm text-parchment h-9">
+              <input type="checkbox" [ngModel]="hasCharges()" (ngModelChange)="hasCharges.set($event)" name="hasCharges" />
+              Has limited charges
+            </label>
+          </div>
+          @if (hasCharges()) {
+            <div class="field">
+              <label class="field-label">Max Charges</label>
+              <input class="field-input" type="number" min="1" [ngModel]="chargesMax()" (ngModelChange)="chargesMax.set(+$event)" name="chargesMax" />
+            </div>
+            <div class="field">
+              <label class="field-label">Recharges</label>
+              <select class="field-input" [ngModel]="chargesRecovery()" (ngModelChange)="chargesRecovery.set($event)" name="chargesRecovery">
+                @for (r of chargeRecoveries; track r) { <option [value]="r">{{ r.replace('_', ' ') }}</option> }
+                <option value="custom">Other…</option>
+              </select>
+              @if (chargesRecovery() === 'custom') {
+                <input class="field-input mt-2" [ngModel]="chargesRecoveryCustom()" (ngModelChange)="chargesRecoveryCustom.set($event)" placeholder="e.g. randomly at dawn (1d6+1)" name="chargesRecoveryCustom" />
+              }
+            </div>
+          }
+          <div class="field col-span-2">
+            <label class="flex items-center gap-2 text-sm text-parchment">
+              <input type="checkbox" [ngModel]="requiresAttunement()" (ngModelChange)="requiresAttunement.set($event)" name="requiresAttunement" />
+              Requires attunement
+            </label>
+          </div>
+          @if (requiresAttunement()) {
+            <div class="field col-span-2">
+              <label class="field-label">Attunement Restriction (optional)</label>
+              <input class="field-input" [ngModel]="attunementRestriction()" (ngModelChange)="attunementRestriction.set($event)" placeholder="e.g. by a spellcaster" name="attunementRestriction" />
+            </div>
+          }
+        </div>
+      </div>
+
+      <div class="card card-body">
+        <div class="flex items-center mb-3 gap-2">
+          <h3 class="text-sm font-semibold text-gold uppercase tracking-wide flex-1 m-0">Item Actions</h3>
+          <button class="btn-icon" type="button" (click)="addAction()" title="Add action">
+            <mat-icon class="text-base">add</mat-icon>
+          </button>
+        </div>
+        @if (actions().length === 0) {
+          <p class="text-slate text-xs m-0">None — for items with an activated ability, e.g. a wand's spell.</p>
+        }
+        <div class="flex flex-col gap-3">
+          @for (action of actions(); track $index) {
+            <div class="flex flex-col gap-2 border border-white/10 rounded p-3">
+              <div class="flex items-center gap-2">
+                <input class="field-input flex-1" [ngModel]="action.name" (ngModelChange)="updateAction($index, { name: $event })" placeholder="e.g. Cast Fireball" name="actionName{{ $index }}" />
+                <select class="field-input w-36" [ngModel]="action.activation" (ngModelChange)="updateAction($index, { activation: $event })" name="actionActivation{{ $index }}">
+                  @for (a of activations; track a) { <option [value]="a">{{ a.replace('_', ' ') }}</option> }
+                </select>
+                <button class="btn-icon" type="button" (click)="removeAction($index)" title="Remove">
+                  <mat-icon class="text-base">close</mat-icon>
+                </button>
+              </div>
+              <textarea class="field-input" rows="2" [ngModel]="action.description" (ngModelChange)="updateAction($index, { description: $event })" placeholder="Description, e.g. expend 1 charge to cast Fireball (save DC 15)" name="actionDesc{{ $index }}"></textarea>
             </div>
           }
         </div>

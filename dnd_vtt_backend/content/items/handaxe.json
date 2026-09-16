@@ -11,6 +11,7 @@
   ],
   "weight": 2,
   "cost": "5 gp",
+  "image_url": "/icons/axe-in-log.svg",
   "description": "A light axe balanced for throwing as well as melee.",
   "mastery": {
     "property": "Vex",

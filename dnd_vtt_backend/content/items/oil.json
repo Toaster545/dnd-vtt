@@ -1,5 +1,6 @@
 {
   "index": "oil", "name": "Oil Flask", "type": "gear", "category": "Adventuring Gear",
   "damage": null, "damage_type": null, "properties": [], "weight": 1, "cost": "1 sp",
+  "image_url": "/icons/bubbling-flask.svg",
   "description": "A flask of oil suitable for fueling a lamp or lantern."
 }

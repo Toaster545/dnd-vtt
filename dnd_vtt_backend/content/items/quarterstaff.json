@@ -10,6 +10,7 @@
   ],
   "weight": 4,
   "cost": "2 sp",
+  "image_url": "/icons/crescent-staff.svg",
   "description": "A simple wooden staff, useful in one or two hands.",
   "mastery": {
     "property": "Topple",
