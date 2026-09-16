@@ -1,4 +1,4 @@
-import { Component, HostListener, OnInit, computed, inject, output, signal } from '@angular/core';
+import { Component, HostListener, OnInit, computed, inject, input, output, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { ContentService, IconLibraryEntry } from '../../../../core/services/content.service';
@@ -11,7 +11,9 @@ import { ContentService, IconLibraryEntry } from '../../../../core/services/cont
 export class IconPickerDialogComponent implements OnInit {
   private content = inject(ContentService);
 
+  readonly showReset = input(false);
   readonly picked = output<IconLibraryEntry>();
+  readonly resetRequested = output<void>();
   readonly closed = output<void>();
 
   loading = signal(true);
@@ -47,5 +49,9 @@ export class IconPickerDialogComponent implements OnInit {
 
   pick(icon: IconLibraryEntry) {
     this.picked.emit(icon);
+  }
+
+  resetToDefault() {
+    this.resetRequested.emit();
   }
 }

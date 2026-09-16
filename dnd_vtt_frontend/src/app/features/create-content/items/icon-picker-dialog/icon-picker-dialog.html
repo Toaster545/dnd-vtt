@@ -21,6 +21,11 @@
       />
       <span class="text-xs text-slate">{{ filtered().length }} of {{ icons().length }}</span>
       <div class="flex-1"></div>
+      @if (showReset()) {
+        <button class="btn-outline text-sm" type="button" (click)="resetToDefault()">
+          Reset to default
+        </button>
+      }
       <button class="btn-icon" type="button" (click)="close()" aria-label="Close">
         <mat-icon>close</mat-icon>
       </button>

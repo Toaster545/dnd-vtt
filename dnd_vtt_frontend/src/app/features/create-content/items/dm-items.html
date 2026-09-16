@@ -2,6 +2,10 @@
   <app-content-detail-dialog [item]="item" (closed)="closeDetails()" />
 }
 
+@if (editingImageFor()) {
+  <app-icon-picker-dialog [showReset]="true" (picked)="onImagePicked($event)" (resetRequested)="onImageReset()" (closed)="closeImageEditor()" />
+}
+
 @if (showPrintView()) {
   <app-item-card-print class="flex flex-col flex-1 min-h-0" [items]="itemsToPrint()" (closed)="closePrintView()" />
 } @else if (showForm()) {
@@ -102,11 +106,20 @@
                 @if (printMode()) {
                   <input type="checkbox" class="flex-shrink-0" [checked]="isSelectedForPrint(i)" (click)="$event.stopPropagation()" (change)="toggleSelectedForPrint(i)" />
                 }
-                <div class="w-9 h-9 rounded flex items-center justify-center flex-shrink-0 bg-white/5 border border-white/10 overflow-hidden">
-                  @if (i.image_url) {
-                    <img [src]="i.image_url" alt="" class="w-full h-full object-cover" />
-                  } @else {
-                    <mat-icon class="text-base text-slate">inventory_2</mat-icon>
+                <div class="relative w-9 h-9 rounded flex-shrink-0 group/thumb">
+                  <div class="w-9 h-9 rounded flex items-center justify-center bg-white/5 border border-white/10 overflow-hidden">
+                    @if (i.image_url) {
+                      <img [src]="i.image_url" alt="" class="w-full h-full object-cover" />
+                    } @else {
+                      <mat-icon class="text-base text-slate">inventory_2</mat-icon>
+                    }
+                  </div>
+                  @if (!printMode()) {
+                    <button
+                      class="absolute inset-0 flex items-center justify-center rounded bg-black/60 opacity-0 transition-opacity group-hover/thumb:opacity-100"
+                      type="button" (click)="openImageEditor(i, $event)" title="Change image">
+                      <mat-icon class="text-sm text-parchment">edit</mat-icon>
+                    </button>
                   }
                 </div>
                 <div class="flex-1 min-w-0">
