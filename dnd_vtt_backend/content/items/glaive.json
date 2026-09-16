@@ -12,7 +12,6 @@
   ],
   "weight": 6,
   "cost": "20 gp",
-  "image_url": "/icons/glaive.svg",
   "description": "A blade fixed to the end of a long pole.",
   "mastery": {
     "property": "Graze",

@@ -12,7 +12,6 @@
   ],
   "weight": 2,
   "cost": "50 gp",
-  "image_url": "/icons/bow-arrow.svg",
   "description": "A tall bow capable of long-range shots.",
   "mastery": {
     "property": "Slow",

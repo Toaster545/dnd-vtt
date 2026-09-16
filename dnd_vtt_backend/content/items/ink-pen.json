@@ -8,7 +8,6 @@
   "properties": [],
   "weight": 0,
   "cost": "See PHB 2024",
-  "image_url": "/icons/quill-ink.svg",
   "description": "A pen suitable for ink.",
   "source": {
     "code": "XPHB",

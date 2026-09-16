@@ -37,34 +37,4 @@ export class ItemService {
     );
     this.content.invalidateContent('items', index);
   }
-
-  async uploadImage(index: string, file: File): Promise<DndItem> {
-    const form = new FormData();
-    form.append('file', file);
-    const updated = await firstValueFrom(
-      this.http.post<DndItem>(`${API}/content/items/${encodeURIComponent(index)}/image`, form)
-    );
-    this.content.invalidateContent('items', updated.index);
-    return updated;
-  }
-
-  // For official SRD items (a `custom:` index goes through updateItem/uploadImage instead) —
-  // swaps just the picture without forking the item into the DM's own homebrew library.
-  async setImageOverride(index: string, imageUrl: string): Promise<DndItem> {
-    const updated = await firstValueFrom(
-      this.http.put<DndItem>(`${API}/content/items/${encodeURIComponent(index)}/image-override`, {
-        image_url: imageUrl,
-      })
-    );
-    this.content.invalidateContent('items', updated.index);
-    return updated;
-  }
-
-  async clearImageOverride(index: string): Promise<DndItem> {
-    const updated = await firstValueFrom(
-      this.http.delete<DndItem>(`${API}/content/items/${encodeURIComponent(index)}/image-override`)
-    );
-    this.content.invalidateContent('items', updated.index);
-    return updated;
-  }
 }

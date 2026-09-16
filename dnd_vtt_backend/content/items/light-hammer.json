@@ -11,7 +11,6 @@
   ],
   "weight": 2,
   "cost": "2 gp",
-  "image_url": "/icons/3d-hammer.svg",
   "description": "A one-handed hammer balanced for throwing.",
   "mastery": {
     "property": "Nick",

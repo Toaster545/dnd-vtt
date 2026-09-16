@@ -10,7 +10,6 @@
   ],
   "weight": 2,
   "cost": "25 gp",
-  "image_url": "/icons/ancient-sword.svg",
   "description": "A slender, sharply pointed blade.",
   "mastery": {
     "property": "Vex",

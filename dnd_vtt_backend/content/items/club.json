@@ -10,7 +10,6 @@
   ],
   "weight": 2,
   "cost": "1 sp",
-  "image_url": "/icons/wood-club.svg",
   "description": "A stout length of wood, favored as an improvised bludgeon.",
   "mastery": {
     "property": "Slow",

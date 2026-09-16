@@ -1,6 +1,5 @@
 {
   "index": "mirror", "name": "Mirror", "type": "gear", "category": "Adventuring Gear",
   "damage": null, "damage_type": null, "properties": [], "weight": 0.5, "cost": "5 gp",
-  "image_url": "/icons/shinto-shrine-mirror.svg",
   "description": "A small polished steel mirror."
 }

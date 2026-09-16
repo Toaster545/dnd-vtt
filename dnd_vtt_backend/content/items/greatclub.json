@@ -10,7 +10,6 @@
   ],
   "weight": 10,
   "cost": "2 sp",
-  "image_url": "/icons/wood-club.svg",
   "description": "A massive, roughly shaped club.",
   "mastery": {
     "property": "Push",

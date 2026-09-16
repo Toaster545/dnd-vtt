@@ -8,7 +8,6 @@
   "properties": [],
   "weight": 3,
   "cost": "—",
-  "image_url": "/icons/orb-direction.svg",
   "description": "An orb that identifies the direction of north.",
   "rarity": "common",
   "source": {

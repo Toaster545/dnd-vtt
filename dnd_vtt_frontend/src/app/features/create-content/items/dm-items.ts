@@ -7,15 +7,12 @@ import { ConfirmService } from '../../../shared/confirm.service';
 import { ItemFormComponent } from './item-form/item-form';
 import { ContentDetailDialogComponent } from '../content-detail-dialog/content-detail-dialog';
 import { ContentSourceFilterComponent } from '../content-source-filter/content-source-filter';
-import { ItemCardPrintComponent } from './item-card-print/item-card-print';
-import { IconPickerDialogComponent } from './icon-picker-dialog/icon-picker-dialog';
-import { IconLibraryEntry } from '../../../core/services/content.service';
 
 type ItemSort = 'name-asc' | 'name-desc' | 'source-asc' | 'type-asc';
 
 @Component({
   selector: 'app-dm-items',
-  imports: [ItemFormComponent, ContentDetailDialogComponent, ContentSourceFilterComponent, ItemCardPrintComponent, IconPickerDialogComponent, MatIconModule, FormsModule],
+  imports: [ItemFormComponent, ContentDetailDialogComponent, ContentSourceFilterComponent, MatIconModule, FormsModule],
   templateUrl: './dm-items.html',
 })
 export class DmItemsComponent implements OnInit {
@@ -31,11 +28,6 @@ export class DmItemsComponent implements OnInit {
   editingItem    = signal<DndItem | null>(null);
   duplicatingItem = signal<DndItem | null>(null);
   detailItem = signal<DndItem | null>(null);
-  editingImageFor = signal<DndItem | null>(null);
-
-  printMode = signal(false);
-  selectedForPrint = signal<Set<string>>(new Set());
-  showPrintView = signal(false);
 
   search = signal('');
   sourceFilters = signal<string[]>([]);
@@ -44,10 +36,6 @@ export class DmItemsComponent implements OnInit {
 
   filteredItems    = computed(() => this.filter(this.items(), 'HOMEBREW'));
   filteredOfficial = computed(() => this.filter(this.officialItems(), 'XPHB'));
-  itemsToPrint = computed(() => {
-    const selected = this.selectedForPrint();
-    return [...this.items(), ...this.officialItems()].filter(i => selected.has(i.index));
-  });
 
   async ngOnInit() { await this.load(); }
 
@@ -122,53 +110,5 @@ export class DmItemsComponent implements OnInit {
     if (!ok) return;
     await this.itemService.deleteItem(item.index);
     await this.load();
-  }
-
-  togglePrintMode() {
-    this.printMode.update(v => !v);
-    this.selectedForPrint.set(new Set());
-  }
-
-  isSelectedForPrint(item: DndItem): boolean {
-    return this.selectedForPrint().has(item.index);
-  }
-
-  toggleSelectedForPrint(item: DndItem) {
-    const set = new Set(this.selectedForPrint());
-    if (set.has(item.index)) set.delete(item.index); else set.add(item.index);
-    this.selectedForPrint.set(set);
-  }
-
-  openImageEditor(item: DndItem, event: Event) {
-    event.stopPropagation();
-    this.editingImageFor.set(item);
-  }
-  closeImageEditor() {
-    this.editingImageFor.set(null);
-  }
-
-  async onImagePicked(icon: IconLibraryEntry) {
-    const item = this.editingImageFor();
-    if (!item) return;
-    this.editingImageFor.set(null);
-    const updated = await this.itemService.setImageOverride(item.index, icon.url);
-    this.officialItems.update(items => items.map(i => i.index === updated.index ? updated : i));
-  }
-
-  async onImageReset() {
-    const item = this.editingImageFor();
-    if (!item) return;
-    this.editingImageFor.set(null);
-    const updated = await this.itemService.clearImageOverride(item.index);
-    this.officialItems.update(items => items.map(i => i.index === updated.index ? updated : i));
-  }
-
-  openPrintView() {
-    if (this.itemsToPrint().length === 0) return;
-    this.showPrintView.set(true);
-  }
-
-  closePrintView() {
-    this.showPrintView.set(false);
   }
 }

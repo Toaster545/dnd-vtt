@@ -8,7 +8,6 @@
   "properties": [],
   "weight": 0,
   "cost": "—",
-  "image_url": "/icons/rope-bridge.svg",
   "description": "A cut rope that can magically repair itself.",
   "rarity": "common",
   "source": {

@@ -1,6 +1,5 @@
 {
   "index": "pouch", "name": "Pouch", "type": "gear", "category": "Adventuring Gear",
   "damage": null, "damage_type": null, "properties": [], "weight": 1, "cost": "5 sp",
-  "image_url": "/icons/beach-bag.svg",
   "description": "A small cloth or leather container worn on a belt."
 }

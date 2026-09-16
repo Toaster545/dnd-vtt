@@ -8,7 +8,6 @@
   "properties": [],
   "weight": 1,
   "cost": "Magic item",
-  "image_url": "/icons/shard-sword.svg",
   "description": "A Sorcerer focus that triggers a planar-alignment benefit whenever you apply Metamagic to a spell. This variant channels Lawful essence.",
   "rarity": "rare",
   "requires_attunement": "by a sorcerer",

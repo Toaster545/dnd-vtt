@@ -8,7 +8,6 @@
   "properties": [],
   "weight": 3,
   "cost": "—",
-  "image_url": "/icons/concentration-orb.svg",
   "description": "An orb that identifies whether it is morning, afternoon, evening, or night.",
   "rarity": "common",
   "source": {

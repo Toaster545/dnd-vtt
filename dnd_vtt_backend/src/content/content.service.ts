@@ -1,5 +1,4 @@
 import {
-  BadRequestException,
   ForbiddenException,
   Injectable,
   NotFoundException,
@@ -8,7 +7,6 @@ import { readdirSync, readFileSync } from 'fs';
 import { join } from 'path';
 import { randomUUID } from 'crypto';
 import { DatabaseService } from '../common/database.service';
-import { saveUploadedImage } from '../common/upload.util';
 import type { RequestUser } from '../common/current-user.decorator';
 import {
   CONTENT_SOURCES,
@@ -82,18 +80,6 @@ export class ContentService {
 
   getSources() {
     return CONTENT_SOURCES;
-  }
-
-  // Curated game-icons.net (CC BY 3.0) SVGs a DM can pick as an item image instead of uploading
-  // one — see content/icons/manifest.json and /icons/*.svg (served statically, see main.ts).
-  getIconLibrary(): unknown[] {
-    const key = 'icon-library';
-    if (this.cache.has(key)) return this.cache.get(key) as unknown[];
-    const manifest = JSON.parse(
-      readFileSync(join(CONTENT_PATH, 'icons', 'manifest.json'), 'utf-8'),
-    ) as unknown[];
-    this.cache.set(key, manifest);
-    return manifest;
   }
 
   private fallbackSource(type: string): string {
@@ -290,48 +276,10 @@ export class ContentService {
     campaignId?: string,
     user?: RequestUser,
   ): Promise<T[]> {
-    let srd = this.loadAll<T>(kind);
-    if (!campaignId || !user) {
-      if (kind === 'items' && user) {
-        srd = await this.applyItemImageOverrides(srd, user.id);
-      }
-      return srd;
-    }
+    const srd = this.loadAll<T>(kind);
+    if (!campaignId || !user) return srd;
     const dmId = await this.resolveCampaignDmId(campaignId, user);
-    if (kind === 'items') {
-      srd = await this.applyItemImageOverrides(srd, dmId);
-    }
     return [...srd, ...(await this.loadCustomAll<T>(kind, dmId))];
-  }
-
-  // Splices a DM's chosen `image_url` onto matching SRD items — see item_image_overrides
-  // (applyV25): a DM can swap an SRD item's picture without forking it into their own custom
-  // library, since it's still the same shared SRD item everywhere else (same index, mechanics,
-  // description). Scoped per-DM like custom_items, not global, so one DM's pick never affects
-  // another DM's game.
-  private async applyItemImageOverrides<T>(
-    items: T[],
-    ownerId: string,
-  ): Promise<T[]> {
-    const result = await this.db.execute(
-      `SELECT item_index, image_url FROM item_image_overrides WHERE created_by = ?`,
-      [ownerId],
-    );
-    if (!result.rows.length) return items;
-    const overrides = new Map(
-      result.rows.map((row) => [
-        row.item_index as string,
-        row.image_url as string,
-      ]),
-    );
-    return items.map((item) => {
-      const record = item as Record<string, unknown>;
-      const override =
-        typeof record.index === 'string'
-          ? overrides.get(record.index)
-          : undefined;
-      return override ? ({ ...record, image_url: override } as T) : item;
-    });
   }
 
   private async getMergedOne<T>(
@@ -465,63 +413,6 @@ export class ContentService {
       [typeof dto.name === 'string' ? dto.name : '', JSON.stringify(data), id],
     );
     return data;
-  }
-
-  async uploadItemImage(
-    index: string,
-    user: RequestUser,
-    file: Express.Multer.File,
-  ) {
-    const id = this.requireCustomId(index);
-    const row = await this.findCustomRow('items', id);
-    if (row.created_by !== user.id) throw new ForbiddenException();
-    if (!file?.buffer?.length || !file.mimetype?.startsWith('image/')) {
-      throw new BadRequestException('A valid image file is required.');
-    }
-    const url = saveUploadedImage(file, `items/${id}`);
-    const data = {
-      ...(JSON.parse(row.data as string) as Record<string, unknown>),
-      image_url: url,
-    };
-    await this.db.execute(
-      `UPDATE ${CUSTOM_TABLE.items} SET data = ?, updated_at = datetime('now') WHERE id = ?`,
-      [JSON.stringify(data), id],
-    );
-    return this.withSource(data, HOMEBREW_SOURCE_CODE);
-  }
-
-  // Only for SRD items (plain index, never `custom:...` — that's a full item edit via
-  // updateCustom instead). Upserts so re-picking a different image just replaces the row.
-  async setItemImageOverride(
-    index: string,
-    user: RequestUser,
-    imageUrl: string,
-  ): Promise<Record<string, unknown>> {
-    if (index.startsWith(CUSTOM_PREFIX)) {
-      throw new BadRequestException(
-        "Use the item update endpoint to change a custom item's image.",
-      );
-    }
-    const srdItem = this.loadOne<Record<string, unknown>>('items', index);
-    await this.db.execute(
-      `INSERT INTO item_image_overrides (item_index, created_by, image_url, updated_at)
-       VALUES (?, ?, ?, datetime('now'))
-       ON CONFLICT(item_index, created_by)
-       DO UPDATE SET image_url = excluded.image_url, updated_at = datetime('now')`,
-      [index, user.id, imageUrl],
-    );
-    return { ...srdItem, image_url: imageUrl };
-  }
-
-  async clearItemImageOverride(
-    index: string,
-    user: RequestUser,
-  ): Promise<Record<string, unknown>> {
-    await this.db.execute(
-      `DELETE FROM item_image_overrides WHERE item_index = ? AND created_by = ?`,
-      [index, user.id],
-    );
-    return this.loadOne<Record<string, unknown>>('items', index);
   }
 
   async deleteCustom(

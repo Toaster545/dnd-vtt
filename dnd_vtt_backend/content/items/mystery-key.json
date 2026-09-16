@@ -8,7 +8,6 @@
   "properties": [],
   "weight": 0,
   "cost": "—",
-  "image_url": "/icons/heart-key.svg",
   "description": "A key with a small chance to open a lock into which it is inserted.",
   "rarity": "common",
   "source": {

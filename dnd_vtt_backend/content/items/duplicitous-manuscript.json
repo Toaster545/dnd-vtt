@@ -8,7 +8,6 @@
   "properties": [],
   "weight": 3,
   "cost": "Magic item",
-  "image_url": "/icons/black-book.svg",
   "description": "An illusion spellbook and focus whose charges cast deceptive magic and can impose Disadvantage on Insight checks.",
   "rarity": "rare",
   "requires_attunement": "by a wizard",

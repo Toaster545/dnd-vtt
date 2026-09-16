@@ -8,6 +8,5 @@
   "properties": ["Spellcasting Focus (Wizard)"],
   "weight": 3,
   "cost": "50 gp",
-  "image_url": "/icons/black-book.svg",
   "description": "A 100-page book containing a Wizard's level 1 and higher spells. It can be read only by its owner or with the Identify spell and can serve as a Wizard spellcasting focus."
 }

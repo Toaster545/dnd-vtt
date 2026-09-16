@@ -11,7 +11,6 @@
   ],
   "weight": 3,
   "cost": "25 gp",
-  "image_url": "/icons/ancient-sword.svg",
   "description": "A curved sword with a wicked edge.",
   "mastery": {
     "property": "Nick",

@@ -8,7 +8,6 @@
   "properties": [],
   "weight": 0,
   "cost": "Magic item",
-  "image_url": "/icons/fairy-wand.svg",
   "description": "A Druid focus whose charges cast Protection from Evil and Good and can suppress nearby extraplanar creatures.",
   "rarity": "rare",
   "requires_attunement": "by a druid or warlock",

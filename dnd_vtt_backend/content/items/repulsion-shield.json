@@ -9,7 +9,6 @@
   "properties": [],
   "weight": 6,
   "cost": "Magic item",
-  "image_url": "/icons/acid-shield.svg",
   "description": "A +1 shield with charges that can push a melee attacker away after it hits the wielder.",
   "rarity": "uncommon",
   "requires_attunement": false,

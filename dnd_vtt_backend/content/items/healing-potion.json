@@ -8,6 +8,5 @@
   "properties": ["Restores 2d4+2 HP"],
   "weight": 0.5,
   "cost": "50 gp",
-  "image_url": "/icons/health-potion.svg",
   "description": "A character who drinks the magical red fluid in this vial regains 2d4+2 hit points."
 }

@@ -8,7 +8,6 @@
   "properties": [],
   "weight": 2,
   "cost": "10 gp",
-  "image_url": "/icons/crook-flail.svg",
   "description": "A spiked head on a chain, swung to devastating effect.",
   "mastery": {
     "property": "Sap",

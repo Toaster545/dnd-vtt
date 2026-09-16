@@ -8,7 +8,6 @@
   "properties": [],
   "weight": 4,
   "cost": "—",
-  "image_url": "/icons/crescent-staff.svg",
   "description": "A charged staff that creates a variety of bird calls.",
   "rarity": "common",
   "charges": {

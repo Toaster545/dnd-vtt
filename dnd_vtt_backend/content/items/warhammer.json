@@ -10,7 +10,6 @@
   ],
   "weight": 2,
   "cost": "15 gp",
-  "image_url": "/icons/3d-hammer.svg",
   "description": "A heavy hammer built for combat.",
   "mastery": {
     "property": "Push",

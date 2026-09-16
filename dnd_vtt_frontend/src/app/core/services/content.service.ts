@@ -4,15 +4,6 @@ import { AuthTokenService } from './auth-token.service';
 
 const API = environment.apiUrl;
 
-export interface IconLibraryEntry {
-  name: string;
-  label: string;
-  category: string;
-  categoryLabel: string;
-  url: string;
-  author: string;
-}
-
 export interface DndContentSource {
   code: string;
   name: string;
@@ -362,11 +353,10 @@ export interface DndItem {
   mastery?: { property: string; description: string };
   rarity?: string;
   requires_attunement?: boolean | string;
-  charges?: { max: number; recovery: string };
+  charges?: { max: number; recovery: 'dawn' | 'short_rest' | 'long_rest' };
   actions?: { key: string; name: string; description?: string; activation: ActionActivation; uses?: TraitAction['uses'] }[];
   effects?: TraitEffect[];
   artificer_plan?: { name: string; itemIndex: string };
-  image_url?: string;
   source?: DndSourceReference;
 }
 
@@ -491,7 +481,6 @@ export class ContentService {
   }
 
   getSources()                      { return this.get<DndContentSource[]>('sources'); }
-  getIconLibrary()                  { return this.get<IconLibraryEntry[]>('icons'); }
   getClasses()                      { return this.get<DndClass[]>('classes'); }
   getClass(index: string)           { return this.get<DndClass>(`classes/${index}`); }
   getRaces()                        { return this.get<DndRace[]>('races'); }

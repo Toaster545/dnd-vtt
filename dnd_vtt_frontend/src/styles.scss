@@ -308,30 +308,6 @@ body[class*='bg-image-']:not(.bg-image-none) {
   background: linear-gradient(135deg, #4a5361, #ffffff);
 }
 
-// ── Print-only content ───────────────────────────────────────────
-// Standard "print only this element" trick: on print, hide everything on the
-// page, then re-reveal only the marked print root and pull it out to the
-// document's initial containing block via position:absolute. The app shell is
-// a fixed-height flex layout with internal scroll containers, which would
-// otherwise clip anything printed to a single viewport-height page.
-@media print {
-  body * {
-    visibility: hidden;
-  }
-  .print-root,
-  .print-root * {
-    visibility: visible;
-  }
-  .print-root {
-    position: absolute;
-    inset: 0 auto auto 0;
-    width: 100%;
-  }
-  .no-print {
-    display: none !important;
-  }
-}
-
 .bg-image-mist {
   background-image:
     radial-gradient(ellipse at 20% 20%, rgba(139, 26, 26, 0.12), transparent 55%),

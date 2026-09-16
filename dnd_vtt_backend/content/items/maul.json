@@ -11,7 +11,6 @@
   ],
   "weight": 10,
   "cost": "10 gp",
-  "image_url": "/icons/3d-hammer.svg",
   "description": "An immense two-handed hammer.",
   "mastery": {
     "property": "Topple",

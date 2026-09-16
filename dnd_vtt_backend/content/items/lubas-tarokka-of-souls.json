@@ -8,7 +8,6 @@
   "properties": [],
   "weight": 0,
   "cost": "Magic item",
-  "image_url": "/icons/card-pick.svg",
   "description": "An artifact deck that manipulates spirits, grants divinatory magic, and carries a dangerous curse.",
   "rarity": "artifact",
   "requires_attunement": true,

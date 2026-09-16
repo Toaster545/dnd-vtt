@@ -8,7 +8,6 @@
   "properties": [],
   "weight": 3,
   "cost": "Magic item",
-  "image_url": "/icons/black-book.svg",
   "description": "A necromancy spellbook and focus that can make you appear undead and grants access to several Necromancy spells.",
   "rarity": "rare",
   "requires_attunement": "by a wizard",

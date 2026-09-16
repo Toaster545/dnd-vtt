@@ -8,7 +8,6 @@
   "properties": [],
   "weight": 2,
   "cost": "Magic item",
-  "image_url": "/icons/hammer-sickle.svg",
   "description": "A Druid or Ranger weapon and focus that grants its listed spell bonus and improves healing spells.",
   "rarity": "uncommon",
   "requires_attunement": "by a druid or ranger",

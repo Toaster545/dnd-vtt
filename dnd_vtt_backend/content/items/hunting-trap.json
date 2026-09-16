@@ -8,7 +8,6 @@
   "properties": [],
   "weight": 0,
   "cost": "See PHB 2024",
-  "image_url": "/icons/backpack.svg",
   "description": "A portable trap for restraining prey.",
   "source": {
     "code": "XPHB",

@@ -8,7 +8,6 @@
   "properties": [],
   "weight": 0,
   "cost": "—",
-  "image_url": "/icons/pirate-hat.svg",
   "description": "A Wizard focus that can temporarily provide an unknown Wizard cantrip after a successful check.",
   "rarity": "common",
   "requires_attunement": "by a wizard",

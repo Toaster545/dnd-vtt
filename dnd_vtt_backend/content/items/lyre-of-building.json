@@ -8,7 +8,6 @@
   "properties": [],
   "weight": 2,
   "cost": "Magic item",
-  "image_url": "/icons/lyre.svg",
   "description": "A magical instrument that protects structures, constructs objects, and can repair damaged buildings.",
   "rarity": "rare",
   "requires_attunement": "by a bard",

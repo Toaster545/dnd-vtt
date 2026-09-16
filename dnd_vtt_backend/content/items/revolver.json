@@ -11,7 +11,6 @@
   ],
   "weight": 3,
   "cost": "600 gp",
-  "image_url": "/icons/saber-and-pistol.svg",
   "description": "A modern six-shot handgun. Rare in most D&D worlds — available only with the DM's permission.",
   "mastery": {
     "property": "Vex",

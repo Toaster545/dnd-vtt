@@ -80,7 +80,6 @@ export class DatabaseService implements OnModuleInit {
     if (version < 21) await this.applyV21();
     if (version < 23) await this.applyV23();
     if (version < 24) await this.applyV24();
-    if (version < 25) await this.applyV25();
   }
 
   // ── V1: initial schema (explicit columns on characters) ─────────────────────
@@ -783,25 +782,5 @@ export class DatabaseService implements OnModuleInit {
     await this.db.execute(`DROP TABLE IF EXISTS notes`);
     await this.db.execute(`PRAGMA user_version = 24`);
     this.logger.log('Applied schema migration v24 (drop notes)');
-  }
-
-  // ── V25: per-DM image overrides for official SRD items ──────────────────────
-  // SRD items are static JSON files, not DB rows, so a DM can't just edit one like a homebrew
-  // item — this table lets them swap in a different image without forking the item into their
-  // own custom-content library. Keyed by (item_index, created_by) rather than item_index alone
-  // because each DM's library (and therefore their view of the SRD set) is independent, matching
-  // how custom_items is already scoped per-created_by rather than shared globally.
-  private async applyV25() {
-    await this.db.execute(`
-      CREATE TABLE item_image_overrides (
-        item_index TEXT NOT NULL,
-        created_by TEXT NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
-        image_url  TEXT NOT NULL,
-        updated_at TEXT NOT NULL DEFAULT (datetime('now')),
-        PRIMARY KEY (item_index, created_by)
-      )
-    `);
-    await this.db.execute(`PRAGMA user_version = 25`);
-    this.logger.log('Applied schema migration v25 (item image overrides)');
   }
 }

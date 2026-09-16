@@ -8,7 +8,6 @@
   "properties": [],
   "weight": 3,
   "cost": "Magic item",
-  "image_url": "/icons/black-book.svg",
   "description": "A conjuration spellbook and focus whose charges call planar creatures and can reinforce a summoned creature.",
   "rarity": "rare",
   "requires_attunement": "by a wizard",

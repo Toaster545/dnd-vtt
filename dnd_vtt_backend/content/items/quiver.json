@@ -8,6 +8,5 @@
   "properties": [],
   "weight": 1,
   "cost": "1 gp",
-  "image_url": "/icons/quiver.svg",
   "description": "Holds up to 20 arrows."
 }
