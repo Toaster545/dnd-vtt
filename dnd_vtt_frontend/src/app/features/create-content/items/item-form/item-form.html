@@ -180,7 +180,7 @@
               </div>
               <div class="field">
                 <label class="field-label">Mastery Description</label>
-                <input class="field-input" [ngModel]="masteryDescription()" (ngModelChange)="masteryDescription.set($event)" name="masteryDescription" />
+                <p class="field-input text-parchment/70 m-0">{{ masteryDescription() || 'Select a property above' }}</p>
               </div>
             }
           }
