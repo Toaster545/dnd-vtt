@@ -47,7 +47,10 @@ async function bootstrap() {
   // Bundled, curated game-icons.net library (CC BY 3.0) DMs can pick from for item images,
   // instead of uploading their own — see content/icons/manifest.json for the credited author
   // per icon.
-  server.use('/icons', express.static(join(process.cwd(), 'content', 'icons', 'svg')));
+  server.use(
+    '/icons',
+    express.static(join(process.cwd(), 'content', 'icons', 'svg')),
+  );
   server.use(express.static(distPath, staticOpts));
   server.use(
     (
