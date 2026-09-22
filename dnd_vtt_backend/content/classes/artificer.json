@@ -984,7 +984,8 @@
         {
           "type": "feature",
           "name": "Magic Item Adept",
-          "description": "You can be attuned to as many as four magic items at the same time."
+          "description": "You can be attuned to as many as four magic items at the same time.",
+          "effects": [{ "type": "attunement_slot_override", "value": 4 }]
         }
       ]
     },
@@ -1081,7 +1082,8 @@
         {
           "type": "feature",
           "name": "Advanced Artifice",
-          "description": "You can be attuned to as many as five magic items at once. When you finish a Short Rest, regain one expended use of Flash of Genius."
+          "description": "You can be attuned to as many as five magic items at once. When you finish a Short Rest, regain one expended use of Flash of Genius.",
+          "effects": [{ "type": "attunement_slot_override", "value": 5 }]
         }
       ]
     },
@@ -1182,7 +1184,8 @@
         {
           "type": "feature",
           "name": "Magic Item Master",
-          "description": "You can be attuned to as many as six magic items at the same time."
+          "description": "You can be attuned to as many as six magic items at the same time.",
+          "effects": [{ "type": "attunement_slot_override", "value": 6 }]
         }
       ]
     },

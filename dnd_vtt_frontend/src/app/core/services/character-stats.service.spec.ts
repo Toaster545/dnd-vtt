@@ -456,13 +456,38 @@ describe('CharacterStatsService', () => {
         strength: 14, dexterity: 10, constitution: 10,
         intelligence: 10, wisdom: 10, charisma: 10,
       },
-      equipment: [{ itemIndex: beltOfGiantStrength.index, name: beltOfGiantStrength.name, quantity: 1, equipped: true }],
+      equipment: [{
+        itemIndex: beltOfGiantStrength.index, name: beltOfGiantStrength.name, quantity: 1,
+        equipped: true, attuned: true,
+      }],
     };
 
     const stats = new CharacterStatsService().compute(character, null, null, [], [], [beltOfGiantStrength]);
 
     expect(stats.ability_modifiers.strength).toBe(5);
     expect(stats.unarmed_attack.attack_bonus).toBe(5 + 2);
+  });
+
+  it('leaves an item\'s effects dormant while it requires attunement and isn\'t attuned', () => {
+    const beltOfGiantStrength: DndItem = {
+      index: 'belt-of-giant-strength', name: 'Belt of Hill Giant Strength', type: 'gear', category: 'Wondrous Item',
+      properties: [], weight: 1, cost: 'Magic item', description: '',
+      requires_attunement: true,
+      effects: [{ type: 'ability_score_bonus', ability: 'strength', minimum: 21 }],
+    };
+    const character: Character = {
+      ...defaultCharacter(),
+      name: 'Unattuned Barbarian', level: 1,
+      ability_scores: {
+        strength: 14, dexterity: 10, constitution: 10,
+        intelligence: 10, wisdom: 10, charisma: 10,
+      },
+      equipment: [{ itemIndex: beltOfGiantStrength.index, name: beltOfGiantStrength.name, quantity: 1, equipped: true }],
+    };
+
+    const stats = new CharacterStatsService().compute(character, null, null, [], [], [beltOfGiantStrength]);
+
+    expect(stats.ability_modifiers.strength).toBe(2);
   });
 
   it('adds a Gloom Stalker ability modifier to Initiative without discarding a penalty', () => {

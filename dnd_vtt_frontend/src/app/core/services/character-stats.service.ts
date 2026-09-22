@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import { Character, Ability, ABILITIES, SKILLS, abilityModifier, proficiencyBonus } from '../models/character.model';
+import { ATTUNEMENT_SLOT_LIMIT, Character, Ability, ABILITIES, SKILLS, abilityModifier, proficiencyBonus } from '../models/character.model';
 import { DndBackground, DndClass, DndFeat, DndItem, DndRace, itemDisplayName } from './content.service';
 import {
-  ClassChoiceSource, RaceChoiceSource, activeEffects, averageHpFormula, baseArmorClass, collectFeatEffects, collectTraitEffects, equippedItems, resolveCharacterFeatPicks,
+  ClassChoiceSource, RaceChoiceSource, activeEffects, activeMagicItems, attunementActive, averageHpFormula, baseArmorClass, collectFeatEffects, collectTraitEffects, equippedItems, resolveCharacterFeatPicks,
   unarmoredDefenseBonus,
 } from '../utils/character-effects';
 import { weaponMatchesAnyProficiency } from '../utils/weapon-proficiency';
@@ -50,6 +50,11 @@ export interface ComputedStats {
   computed_ac: number;
   unarmed_attack: WeaponAttack;
   weapon_attacks: WeaponAttack[];
+  // The base 3-item cap (ATTUNEMENT_SLOT_LIMIT), raised by whichever granted
+  // attunement_slot_override effect is highest right now (e.g. Artificer's Magic Item
+  // Adept/Advanced Artifice/Magic Item Master, Rogue's Use Magic Device) — each is an absolute
+  // replacement for the previous tier, not a stacking bonus, so this takes the max rather than a sum.
+  attunement_slot_limit: number;
 }
 
 // Weapon proficiency comes from book-facing labels that can name broad categories, restricted
@@ -110,15 +115,25 @@ export class CharacterStatsService {
     } : null;
     const equipment = [
       ...char.equipment,
+      // A replicated item never requires attunement in its own right (Artificer's Replicate
+      // Magic Item), so it's stamped `attuned: true` here rather than left to the default —
+      // otherwise attunementActive() would wrongly treat one as dormant.
       ...(char.replicated_items ?? []).map(entry => ({
-        itemIndex: entry.itemIndex, name: entry.planName, quantity: 1, equipped: entry.equipped,
+        itemIndex: entry.itemIndex, name: entry.planName, quantity: 1, equipped: entry.equipped, attuned: true,
       })),
     ];
     const allEffects = [
       ...collectTraitEffects(classesForFeats, feats, raceForFeats),
       ...collectFeatEffects(resolveBackgroundOriginFeat(backgroundData, feats), char.background_choices ?? {}),
-      ...equippedItems(equipment, items).flatMap(item => item.effects ?? []),
+      ...activeMagicItems(equipment, items).flatMap(item => item.effects ?? []),
     ];
+
+    const attunement_slot_limit = Math.max(
+      ATTUNEMENT_SLOT_LIMIT,
+      ...allEffects
+        .filter(effect => effect.type === 'attunement_slot_override')
+        .map(effect => effect.value ?? ATTUNEMENT_SLOT_LIMIT),
+    );
 
     // A worn/held item's own score-altering magic (Gauntlets of Ogre Power's flat set, a Belt of
     // Giant Strength's `minimum`) — resolved before every other stat below, since ability
@@ -242,8 +257,9 @@ export class CharacterStatsService {
           : 0;
         // The weapon's own +N (or cursed -N) applies to both the attack roll and the damage
         // roll, on top of any character-wide bonus above — that's what makes a +1 weapon a +1
-        // weapon rather than just a name.
-        const enhancementBonus = weapon.enhancement_bonus ?? 0;
+        // weapon rather than just a name. Dormant (equipped but not attuned, for a weapon that
+        // requires it) instead of applied.
+        const enhancementBonus = attunementActive(weapon, equipment) ? (weapon.enhancement_bonus ?? 0) : 0;
 
         return {
           itemIndex: weapon.index,
@@ -296,6 +312,7 @@ export class CharacterStatsService {
       passive_insight,
       spell_attack_bonus,
       spell_save_dc,
+      attunement_slot_limit,
     };
   }
 

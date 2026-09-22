@@ -42,7 +42,7 @@ export interface SpellSlots {
 // A choice's mechanical effect (AC bonus, proficiency, etc.), computed generically
 // instead of matched by display name.
 export interface TraitEffect {
-  type: string; // e.g. 'ac_bonus' | 'initiative_ability_bonus' | 'initiative_proficiency_bonus' | 'language_proficiency' | 'saving_throw_ability_bonus' | 'melee_damage_bonus' | 'ability_score_bonus' | 'special'
+  type: string; // e.g. 'ac_bonus' | 'initiative_ability_bonus' | 'initiative_proficiency_bonus' | 'language_proficiency' | 'saving_throw_ability_bonus' | 'melee_damage_bonus' | 'ability_score_bonus' | 'attunement_slot_override' | 'special'
   value?: number;
   values?: number[];
   tags?: string[];
