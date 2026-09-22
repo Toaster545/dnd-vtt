@@ -15,6 +15,18 @@
     "max": 10,
     "recovery": "dawn"
   },
+  "actions": [
+    {
+      "key": "item:staff-of-flowers",
+      "name": "Staff of Flowers",
+      "description": "A charged staff that causes a harmless flower to grow from nearby earth.",
+      "activation": "action",
+      "uses": {
+        "max": 10,
+        "per": "long_rest"
+      }
+    }
+  ],
   "source": {
     "code": "XGE",
     "book": "Xanathar's Guide to Everything",

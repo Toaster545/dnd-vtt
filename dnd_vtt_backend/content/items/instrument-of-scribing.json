@@ -16,6 +16,18 @@
     "max": 3,
     "recovery": "dawn"
   },
+  "actions": [
+    {
+      "key": "item:instrument-of-scribing",
+      "name": "Instrument of Scribing",
+      "description": "A charged instrument that writes a short luminous message while played.",
+      "activation": "action",
+      "uses": {
+        "max": 3,
+        "per": "long_rest"
+      }
+    }
+  ],
   "source": {
     "code": "XGE",
     "book": "Xanathar's Guide to Everything",

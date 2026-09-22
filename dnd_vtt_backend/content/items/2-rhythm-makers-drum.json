@@ -13,6 +13,16 @@
   "rarity": "rare",
   "requires_attunement": "by a bard",
   "enhancement_bonus": 2,
+  "effects": [
+    {
+      "type": "spell_attack_bonus",
+      "value": 2
+    },
+    {
+      "type": "spell_save_dc_bonus",
+      "value": 2
+    }
+  ],
   "source": {
     "code": "TCE",
     "book": "Tasha's Cauldron of Everything",

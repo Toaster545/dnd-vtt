@@ -12,6 +12,18 @@
   "description": "A Bard instrument that improves Bard spell attacks and save DCs and can cast Otto’s Irresistible Dance once per day.",
   "rarity": "rare",
   "requires_attunement": "by a bard",
+  "actions": [
+    {
+      "key": "item:revelers-concertina",
+      "name": "Reveler's Concertina",
+      "description": "A Bard instrument that improves Bard spell attacks and save DCs and can cast Otto’s Irresistible Dance once per day.",
+      "activation": "action",
+      "uses": {
+        "max": 1,
+        "per": "long_rest"
+      }
+    }
+  ],
   "source": {
     "code": "TCE",
     "book": "Tasha's Cauldron of Everything",

@@ -15,6 +15,18 @@
     "max": 10,
     "recovery": "dawn"
   },
+  "actions": [
+    {
+      "key": "item:staff-of-birdcalls",
+      "name": "Staff of Birdcalls",
+      "description": "A charged staff that creates a variety of bird calls.",
+      "activation": "action",
+      "uses": {
+        "max": 10,
+        "per": "long_rest"
+      }
+    }
+  ],
   "source": {
     "code": "XGE",
     "book": "Xanathar's Guide to Everything",

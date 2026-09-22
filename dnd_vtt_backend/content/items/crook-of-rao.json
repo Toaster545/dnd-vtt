@@ -16,6 +16,18 @@
     "max": 6,
     "recovery": "dawn"
   },
+  "actions": [
+    {
+      "key": "item:crook-of-rao",
+      "name": "Crook of Rao",
+      "description": "An artifact staff that protects against fiends and can attempt to banish extraplanar creatures, with unpredictable consequences.",
+      "activation": "action",
+      "uses": {
+        "max": 6,
+        "per": "long_rest"
+      }
+    }
+  ],
   "source": {
     "code": "TCE",
     "book": "Tasha's Cauldron of Everything",

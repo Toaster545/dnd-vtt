@@ -16,6 +16,18 @@
     "max": 3,
     "recovery": "dawn"
   },
+  "actions": [
+    {
+      "key": "item:protective-verses",
+      "name": "Protective Verses",
+      "description": "An abjuration spellbook and focus whose charges create protective wards and can grant temporary Hit Points when you cast Abjuration magic.",
+      "activation": "action",
+      "uses": {
+        "max": 3,
+        "per": "long_rest"
+      }
+    }
+  ],
   "source": {
     "code": "TCE",
     "book": "Tasha's Cauldron of Everything",

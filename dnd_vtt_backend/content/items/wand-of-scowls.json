@@ -15,6 +15,18 @@
     "max": 3,
     "recovery": "dawn"
   },
+  "actions": [
+    {
+      "key": "item:wand-of-scowls",
+      "name": "Wand of Scowls",
+      "description": "A charged wand that can force a humanoid’s expression into a scowl.",
+      "activation": "action",
+      "uses": {
+        "max": 3,
+        "per": "long_rest"
+      }
+    }
+  ],
   "source": {
     "code": "XGE",
     "book": "Xanathar's Guide to Everything",

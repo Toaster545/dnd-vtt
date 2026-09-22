@@ -16,6 +16,18 @@
     "max": 3,
     "recovery": "dawn"
   },
+  "actions": [
+    {
+      "key": "item:ghost-step-tattoo",
+      "name": "Ghost Step Tattoo",
+      "description": "A tattoo that can make you briefly incorporeal, granting damage resistance and movement through creatures and objects.",
+      "activation": "action",
+      "uses": {
+        "max": 3,
+        "per": "long_rest"
+      }
+    }
+  ],
   "source": {
     "code": "TCE",
     "book": "Tasha's Cauldron of Everything",

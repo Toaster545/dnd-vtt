@@ -16,6 +16,18 @@
     "max": 3,
     "recovery": "dawn"
   },
+  "actions": [
+    {
+      "key": "item:atlas-of-endless-horizons",
+      "name": "Atlas of Endless Horizons",
+      "description": "A conjuration spellbook and focus whose charges cast teleportation magic and can move you away from an attack.",
+      "activation": "action",
+      "uses": {
+        "max": 3,
+        "per": "long_rest"
+      }
+    }
+  ],
   "source": {
     "code": "TCE",
     "book": "Tasha's Cauldron of Everything",

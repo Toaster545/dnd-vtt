@@ -12,6 +12,18 @@
   "description": "A tattoo that changes its appearance and can cast Disguise Self once per day.",
   "rarity": "common",
   "requires_attunement": true,
+  "actions": [
+    {
+      "key": "item:masquerade-tattoo",
+      "name": "Masquerade Tattoo",
+      "description": "A tattoo that changes its appearance and can cast Disguise Self once per day.",
+      "activation": "action",
+      "uses": {
+        "max": 1,
+        "per": "long_rest"
+      }
+    }
+  ],
   "source": {
     "code": "TCE",
     "book": "Tasha's Cauldron of Everything",

@@ -16,6 +16,18 @@
     "max": 8,
     "recovery": "dawn"
   },
+  "actions": [
+    {
+      "key": "item:demonomicon-of-iggwilv",
+      "name": "Demonomicon of Iggwilv",
+      "description": "An artifact tome that grants occult knowledge, stores fiends, and can imprison extraplanar creatures within its pages.",
+      "activation": "action",
+      "uses": {
+        "max": 8,
+        "per": "long_rest"
+      }
+    }
+  ],
   "source": {
     "code": "TCE",
     "book": "Tasha's Cauldron of Everything",

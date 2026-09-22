@@ -16,6 +16,18 @@
     "max": 10,
     "recovery": "dawn"
   },
+  "actions": [
+    {
+      "key": "item:blood-fury-tattoo",
+      "name": "Blood Fury Tattoo",
+      "description": "A legendary tattoo whose charges empower weapon hits with Necrotic damage and healing or retaliate against a creature that damages you.",
+      "activation": "free",
+      "uses": {
+        "max": 10,
+        "per": "long_rest"
+      }
+    }
+  ],
   "source": {
     "code": "TCE",
     "book": "Tasha's Cauldron of Everything",

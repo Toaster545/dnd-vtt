@@ -15,6 +15,18 @@
     "max": 10,
     "recovery": "dawn"
   },
+  "actions": [
+    {
+      "key": "item:hewards-handy-spice-pouch",
+      "name": "Heward's Handy Spice Pouch",
+      "description": "A charged pouch that produces pinches of selected mundane seasonings.",
+      "activation": "action",
+      "uses": {
+        "max": 10,
+        "per": "long_rest"
+      }
+    }
+  ],
   "source": {
     "code": "XGE",
     "book": "Xanathar's Guide to Everything",

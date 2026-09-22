@@ -16,6 +16,18 @@
     "max": 3,
     "recovery": "dawn"
   },
+  "actions": [
+    {
+      "key": "item:alchemical-compendium",
+      "name": "Alchemical Compendium",
+      "description": "An alchemical spellbook and focus that can transmute a nearby nonmagical object and spend charges to cast its recorded spells.",
+      "activation": "action",
+      "uses": {
+        "max": 3,
+        "per": "long_rest"
+      }
+    }
+  ],
   "source": {
     "code": "TCE",
     "book": "Tasha's Cauldron of Everything",

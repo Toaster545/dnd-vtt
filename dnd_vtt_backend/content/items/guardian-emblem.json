@@ -16,6 +16,18 @@
     "max": 3,
     "recovery": "dawn"
   },
+  "actions": [
+    {
+      "key": "item:guardian-emblem",
+      "name": "Guardian Emblem",
+      "description": "An emblem attached to armor or a shield that can turn a nearby critical hit into a normal hit.",
+      "activation": "reaction",
+      "uses": {
+        "max": 3,
+        "per": "long_rest"
+      }
+    }
+  ],
   "source": {
     "code": "TCE",
     "book": "Tasha's Cauldron of Everything",

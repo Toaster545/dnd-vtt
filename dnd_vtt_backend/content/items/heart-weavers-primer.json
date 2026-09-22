@@ -16,6 +16,18 @@
     "max": 3,
     "recovery": "dawn"
   },
+  "actions": [
+    {
+      "key": "item:heart-weavers-primer",
+      "name": "Heart Weaver's Primer",
+      "description": "An enchantment spellbook and focus whose charges cast charms and can impose Disadvantage on a save against one of your Enchantment spells.",
+      "activation": "action",
+      "uses": {
+        "max": 3,
+        "per": "long_rest"
+      }
+    }
+  ],
   "source": {
     "code": "TCE",
     "book": "Tasha's Cauldron of Everything",

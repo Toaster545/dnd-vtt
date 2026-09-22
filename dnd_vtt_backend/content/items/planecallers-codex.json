@@ -16,6 +16,18 @@
     "max": 3,
     "recovery": "dawn"
   },
+  "actions": [
+    {
+      "key": "item:planecallers-codex",
+      "name": "Planecaller's Codex",
+      "description": "A conjuration spellbook and focus whose charges call planar creatures and can reinforce a summoned creature.",
+      "activation": "action",
+      "uses": {
+        "max": 3,
+        "per": "long_rest"
+      }
+    }
+  ],
   "source": {
     "code": "TCE",
     "book": "Tasha's Cauldron of Everything",

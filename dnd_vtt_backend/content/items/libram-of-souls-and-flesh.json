@@ -16,6 +16,18 @@
     "max": 3,
     "recovery": "dawn"
   },
+  "actions": [
+    {
+      "key": "item:libram-of-souls-and-flesh",
+      "name": "Libram of Souls and Flesh",
+      "description": "A necromancy spellbook and focus that can make you appear undead and grants access to several Necromancy spells.",
+      "activation": "action",
+      "uses": {
+        "max": 3,
+        "per": "long_rest"
+      }
+    }
+  ],
   "source": {
     "code": "TCE",
     "book": "Tasha's Cauldron of Everything",

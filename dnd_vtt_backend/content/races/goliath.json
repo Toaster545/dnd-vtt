@@ -14,12 +14,102 @@
       "choose": 1,
       "description": "Choose one giant boon. You can use the chosen benefit a number of times equal to your Proficiency Bonus per Long Rest.",
       "options": [
-        { "name": "Cloud's Jaunt", "description": "Cloud Giant: as a Bonus Action, teleport up to 30 feet to an unoccupied space you can see." },
-        { "name": "Fire's Burn", "description": "Fire Giant: after an attack roll hits and deals damage, deal an extra 1d10 Fire damage." },
-        { "name": "Frost's Chill", "description": "Frost Giant: after an attack roll hits and deals damage, deal an extra 1d6 Cold damage and reduce the target's Speed by 10 feet until your next turn." },
-        { "name": "Hill's Tumble", "description": "Hill Giant: after an attack roll damages a Large or smaller creature, give it the Prone condition." },
-        { "name": "Stone's Endurance", "description": "Stone Giant: as a Reaction when damaged, reduce the damage by 1d12 + your Constitution modifier." },
-        { "name": "Storm's Thunder", "description": "Storm Giant: as a Reaction when a creature within 60 feet damages you, deal 1d8 Thunder damage to it." }
+        {
+          "name": "Cloud's Jaunt",
+          "description": "Cloud Giant: as a Bonus Action, teleport up to 30 feet to an unoccupied space you can see.",
+          "grants": [
+            {
+              "type": "feature",
+              "key": "goliath-clouds-jaunt",
+              "name": "Cloud's Jaunt",
+              "description": "Cloud Giant: as a Bonus Action, teleport up to 30 feet to an unoccupied space you can see.",
+              "action": {
+                "activation": "bonus_action",
+                "uses": { "max": 1, "maxProficiencyBonus": true, "per": "long_rest" }
+              }
+            }
+          ]
+        },
+        {
+          "name": "Fire's Burn",
+          "description": "Fire Giant: after an attack roll hits and deals damage, deal an extra 1d10 Fire damage.",
+          "grants": [
+            {
+              "type": "feature",
+              "key": "goliath-fires-burn",
+              "name": "Fire's Burn",
+              "description": "Fire Giant: after an attack roll hits and deals damage, deal an extra 1d10 Fire damage.",
+              "action": {
+                "activation": "free",
+                "uses": { "max": 1, "maxProficiencyBonus": true, "per": "long_rest" }
+              }
+            }
+          ]
+        },
+        {
+          "name": "Frost's Chill",
+          "description": "Frost Giant: after an attack roll hits and deals damage, deal an extra 1d6 Cold damage and reduce the target's Speed by 10 feet until your next turn.",
+          "grants": [
+            {
+              "type": "feature",
+              "key": "goliath-frosts-chill",
+              "name": "Frost's Chill",
+              "description": "Frost Giant: after an attack roll hits and deals damage, deal an extra 1d6 Cold damage and reduce the target's Speed by 10 feet until your next turn.",
+              "action": {
+                "activation": "free",
+                "uses": { "max": 1, "maxProficiencyBonus": true, "per": "long_rest" }
+              }
+            }
+          ]
+        },
+        {
+          "name": "Hill's Tumble",
+          "description": "Hill Giant: after an attack roll damages a Large or smaller creature, give it the Prone condition.",
+          "grants": [
+            {
+              "type": "feature",
+              "key": "goliath-hills-tumble",
+              "name": "Hill's Tumble",
+              "description": "Hill Giant: after an attack roll damages a Large or smaller creature, give it the Prone condition.",
+              "action": {
+                "activation": "free",
+                "uses": { "max": 1, "maxProficiencyBonus": true, "per": "long_rest" }
+              }
+            }
+          ]
+        },
+        {
+          "name": "Stone's Endurance",
+          "description": "Stone Giant: as a Reaction when damaged, reduce the damage by 1d12 + your Constitution modifier.",
+          "grants": [
+            {
+              "type": "feature",
+              "key": "goliath-stones-endurance",
+              "name": "Stone's Endurance",
+              "description": "Stone Giant: as a Reaction when damaged, reduce the damage by 1d12 + your Constitution modifier.",
+              "action": {
+                "activation": "reaction",
+                "uses": { "max": 1, "maxProficiencyBonus": true, "per": "long_rest" }
+              }
+            }
+          ]
+        },
+        {
+          "name": "Storm's Thunder",
+          "description": "Storm Giant: as a Reaction when a creature within 60 feet damages you, deal 1d8 Thunder damage to it.",
+          "grants": [
+            {
+              "type": "feature",
+              "key": "goliath-storms-thunder",
+              "name": "Storm's Thunder",
+              "description": "Storm Giant: as a Reaction when a creature within 60 feet damages you, deal 1d8 Thunder damage to it.",
+              "action": {
+                "activation": "reaction",
+                "uses": { "max": 1, "maxProficiencyBonus": true, "per": "long_rest" }
+              }
+            }
+          ]
+        }
       ]
     },
     {

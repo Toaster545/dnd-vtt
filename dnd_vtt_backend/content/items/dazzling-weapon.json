@@ -16,6 +16,18 @@
     "max": 4,
     "recovery": "dawn"
   },
+  "actions": [
+    {
+      "key": "item:dazzling-weapon",
+      "name": "Dazzling Weapon",
+      "description": "A +1 weapon that can shed light and spend charges to try to blind a creature that hits its wielder.",
+      "activation": "reaction",
+      "uses": {
+        "max": 4,
+        "per": "long_rest"
+      }
+    }
+  ],
   "artificer_plan": {
     "name": "Dazzling Weapon",
     "itemIndex": "dazzling-weapon"

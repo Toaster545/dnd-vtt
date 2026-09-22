@@ -278,10 +278,18 @@ export class CharacterStatsService {
       });
 
     const spellcastingAbility = classData?.spellcasting_ability as Ability | undefined;
+    // A spellcasting focus item's own +N (Arcane Grimoire, Amulet of the Devout, etc.) — only
+    // counts while equipped and attuned, same gating as every other item effect.
+    const spellAttackItemBonus = allEffects
+      .filter(effect => effect.type === 'spell_attack_bonus')
+      .reduce((sum, effect) => sum + (effect.value ?? 0), 0);
+    const spellSaveDcItemBonus = allEffects
+      .filter(effect => effect.type === 'spell_save_dc_bonus')
+      .reduce((sum, effect) => sum + (effect.value ?? 0), 0);
     const spell_attack_bonus = spellcastingAbility != null
-      ? prof + mods[spellcastingAbility] : null;
+      ? prof + mods[spellcastingAbility] + spellAttackItemBonus : null;
     const spell_save_dc = spellcastingAbility != null
-      ? 8 + prof + mods[spellcastingAbility] : null;
+      ? 8 + prof + mods[spellcastingAbility] + spellSaveDcItemBonus : null;
 
     const initiativeAbilityBonus = allEffects
       .filter(effect => effect.type === 'initiative_ability_bonus')

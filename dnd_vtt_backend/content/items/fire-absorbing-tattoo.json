@@ -12,6 +12,18 @@
   "description": "A tattoo that grants Resistance to Fire damage and can absorb one instance of that damage each day, converting it into healing.",
   "rarity": "very rare",
   "requires_attunement": true,
+  "actions": [
+    {
+      "key": "item:fire-absorbing-tattoo",
+      "name": "Fire Absorbing Tattoo",
+      "description": "A tattoo that grants Resistance to Fire damage and can absorb one instance of that damage each day, converting it into healing.",
+      "activation": "reaction",
+      "uses": {
+        "max": 1,
+        "per": "long_rest"
+      }
+    }
+  ],
   "source": {
     "code": "TCE",
     "book": "Tasha's Cauldron of Everything",

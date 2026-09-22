@@ -15,6 +15,18 @@
     "max": 7,
     "recovery": "dawn"
   },
+  "actions": [
+    {
+      "key": "item:wand-of-pyrotechnics",
+      "name": "Wand of Pyrotechnics",
+      "description": "A charged wand that creates a harmless burst of light.",
+      "activation": "action",
+      "uses": {
+        "max": 7,
+        "per": "long_rest"
+      }
+    }
+  ],
   "source": {
     "code": "XGE",
     "book": "Xanathar's Guide to Everything",

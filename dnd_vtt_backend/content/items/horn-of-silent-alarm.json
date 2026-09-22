@@ -15,6 +15,18 @@
     "max": 4,
     "recovery": "dawn"
   },
+  "actions": [
+    {
+      "key": "item:horn-of-silent-alarm",
+      "name": "Horn of Silent Alarm",
+      "description": "A charged horn that silently alerts one creature within range.",
+      "activation": "action",
+      "uses": {
+        "max": 4,
+        "per": "long_rest"
+      }
+    }
+  ],
   "source": {
     "code": "XGE",
     "book": "Xanathar's Guide to Everything",

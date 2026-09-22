@@ -17,6 +17,18 @@
     "max": 12,
     "recovery": "dawn"
   },
+  "actions": [
+    {
+      "key": "item:baba-yagas-mortar-and-pestle",
+      "name": "Baba Yaga's Mortar and Pestle",
+      "description": "An artifact mortar and pestle that creates ingredients, summons spectral tools, grinds magical paste, and travels through the air or between destinations.",
+      "activation": "action",
+      "uses": {
+        "max": 12,
+        "per": "long_rest"
+      }
+    }
+  ],
   "source": {
     "code": "TCE",
     "book": "Tasha's Cauldron of Everything",
