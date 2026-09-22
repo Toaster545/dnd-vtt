@@ -1,0 +1,15 @@
+{
+  "index": "holy-water",
+  "name": "Holy Water (flask)",
+  "type": "consumable",
+  "category": "Alchemical",
+  "damage": null,
+  "damage_type": null,
+  "properties": [
+    "Thrown (range 20/60), 2d6 radiant damage to a fiend or undead on a hit"
+  ],
+  "weight": 1,
+  "cost": "25 gp",
+  "image_url": "/icons/magic-potion.svg",
+  "description": "Water blessed by a priest, harmful to fiends and the undead."
+}

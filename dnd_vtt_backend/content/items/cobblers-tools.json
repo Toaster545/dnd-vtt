@@ -1,0 +1,13 @@
+{
+  "index": "cobblers-tools",
+  "name": "Cobbler's Tools",
+  "type": "gear",
+  "category": "Artisan's Tools",
+  "damage": null,
+  "damage_type": null,
+  "properties": [],
+  "weight": 5,
+  "cost": "5 gp",
+  "image_url": "/icons/anvil.svg",
+  "description": "Knives, awls, and lasts used to make and repair footwear."
+}

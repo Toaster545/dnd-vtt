@@ -1,0 +1,13 @@
+{
+  "index": "candle",
+  "name": "Candle",
+  "type": "gear",
+  "category": "Adventuring Gear",
+  "damage": null,
+  "damage_type": null,
+  "properties": [],
+  "weight": 0,
+  "cost": "1 cp",
+  "image_url": "/icons/candle-light.svg",
+  "description": "A wax candle that sheds dim light for 1 hour."
+}

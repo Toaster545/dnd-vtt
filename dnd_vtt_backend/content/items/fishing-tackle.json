@@ -1,0 +1,13 @@
+{
+  "index": "fishing-tackle",
+  "name": "Fishing Tackle",
+  "type": "gear",
+  "category": "Adventuring Gear",
+  "damage": null,
+  "damage_type": null,
+  "properties": [],
+  "weight": 4,
+  "cost": "1 gp",
+  "image_url": "/icons/fishing-hook.svg",
+  "description": "A wooden pole, line, hooks, and other tackle used to catch fish."
+}

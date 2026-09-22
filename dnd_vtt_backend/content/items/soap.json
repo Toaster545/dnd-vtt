@@ -1,0 +1,13 @@
+{
+  "index": "soap",
+  "name": "Soap",
+  "type": "gear",
+  "category": "Adventuring Gear",
+  "damage": null,
+  "damage_type": null,
+  "properties": [],
+  "weight": 0,
+  "cost": "2 cp",
+  "image_url": "/icons/backpack.svg",
+  "description": "A bar of soap for washing."
+}

@@ -1,0 +1,15 @@
+{
+  "index": "antitoxin",
+  "name": "Antitoxin (vial)",
+  "type": "consumable",
+  "category": "Alchemical",
+  "damage": null,
+  "damage_type": null,
+  "properties": [
+    "Advantage on saving throws against poison for 1 hour when drunk"
+  ],
+  "weight": 0,
+  "cost": "50 gp",
+  "image_url": "/icons/square-bottle.svg",
+  "description": "A vial of medicinal fluid that wards off the effects of poison."
+}

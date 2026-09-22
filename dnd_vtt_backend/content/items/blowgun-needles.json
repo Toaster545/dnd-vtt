@@ -1,0 +1,13 @@
+{
+  "index": "blowgun-needles",
+  "name": "Blowgun Needles (50)",
+  "type": "gear",
+  "category": "Ammunition",
+  "damage": null,
+  "damage_type": null,
+  "properties": [],
+  "weight": 1,
+  "cost": "1 gp",
+  "image_url": "/icons/spine-arrow.svg",
+  "description": "A pouch of 50 needles for use with a blowgun."
+}

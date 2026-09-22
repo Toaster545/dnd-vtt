@@ -1,0 +1,13 @@
+{
+  "index": "druidic-focus-totem",
+  "name": "Druidic Focus (Totem)",
+  "type": "gear",
+  "category": "Druidic Focus",
+  "damage": null,
+  "damage_type": null,
+  "properties": [],
+  "weight": 0,
+  "cost": "1 gp",
+  "image_url": "/icons/tribal-pendant.svg",
+  "description": "A small carved effigy used as a spellcasting focus for primal magic."
+}

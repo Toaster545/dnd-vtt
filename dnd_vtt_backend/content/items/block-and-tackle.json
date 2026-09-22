@@ -1,0 +1,13 @@
+{
+  "index": "block-and-tackle",
+  "name": "Block and Tackle",
+  "type": "gear",
+  "category": "Adventuring Gear",
+  "damage": null,
+  "damage_type": null,
+  "properties": [],
+  "weight": 5,
+  "cost": "1 gp",
+  "image_url": "/icons/pulley-hook.svg",
+  "description": "A set of pulleys with a cable threaded through them, used to lift heavy objects."
+}

@@ -1,0 +1,13 @@
+{
+  "index": "rations",
+  "name": "Rations (1 day)",
+  "type": "gear",
+  "category": "Adventuring Gear",
+  "damage": null,
+  "damage_type": null,
+  "properties": [],
+  "weight": 2,
+  "cost": "5 sp",
+  "image_url": "/icons/backpack.svg",
+  "description": "Dry foods suitable for extended travel, including jerky, dried fruit, hardtack, and nuts."
+}

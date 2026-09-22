@@ -1,0 +1,13 @@
+{
+  "index": "whetstone",
+  "name": "Whetstone",
+  "type": "gear",
+  "category": "Adventuring Gear",
+  "damage": null,
+  "damage_type": null,
+  "properties": [],
+  "weight": 1,
+  "cost": "1 cp",
+  "image_url": "/icons/anvil.svg",
+  "description": "A stone used to sharpen and maintain the edge of a blade."
+}

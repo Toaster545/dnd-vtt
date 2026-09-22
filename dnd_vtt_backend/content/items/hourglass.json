@@ -1,0 +1,13 @@
+{
+  "index": "hourglass",
+  "name": "Hourglass",
+  "type": "gear",
+  "category": "Adventuring Gear",
+  "damage": null,
+  "damage_type": null,
+  "properties": [],
+  "weight": 1,
+  "cost": "25 gp",
+  "image_url": "/icons/hourglass.svg",
+  "description": "A sand-filled timepiece that measures the passage of one hour."
+}

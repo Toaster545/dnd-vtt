@@ -1,0 +1,13 @@
+{
+  "index": "glassblowers-tools",
+  "name": "Glassblower's Tools",
+  "type": "gear",
+  "category": "Artisan's Tools",
+  "damage": null,
+  "damage_type": null,
+  "properties": [],
+  "weight": 5,
+  "cost": "30 gp",
+  "image_url": "/icons/spiral-bottle.svg",
+  "description": "A blowpipe and shaping tools used to work molten glass."
+}

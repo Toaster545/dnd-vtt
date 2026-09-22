@@ -1,0 +1,13 @@
+{
+  "index": "arcane-focus-staff",
+  "name": "Arcane Focus (Staff)",
+  "type": "gear",
+  "category": "Arcane Focus",
+  "damage": null,
+  "damage_type": null,
+  "properties": [],
+  "weight": 4,
+  "cost": "5 gp",
+  "image_url": "/icons/wizard-staff.svg",
+  "description": "A staff carved to channel the power of arcane spells; it can also serve as a quarterstaff."
+}

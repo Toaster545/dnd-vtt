@@ -1,0 +1,13 @@
+{
+  "index": "signet-ring",
+  "name": "Signet Ring",
+  "type": "gear",
+  "category": "Adventuring Gear",
+  "damage": null,
+  "damage_type": null,
+  "properties": [],
+  "weight": 0,
+  "cost": "5 gp",
+  "image_url": "/icons/ring.svg",
+  "description": "A ring engraved with a personal or family crest, often used to seal letters."
+}

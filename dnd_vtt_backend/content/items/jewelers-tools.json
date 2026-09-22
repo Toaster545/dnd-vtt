@@ -1,0 +1,13 @@
+{
+  "index": "jewelers-tools",
+  "name": "Jeweler's Tools",
+  "type": "gear",
+  "category": "Artisan's Tools",
+  "damage": null,
+  "damage_type": null,
+  "properties": [],
+  "weight": 2,
+  "cost": "25 gp",
+  "image_url": "/icons/ring-mould.svg",
+  "description": "Files, pliers, and a magnifying lens used to cut and set gemstones."
+}

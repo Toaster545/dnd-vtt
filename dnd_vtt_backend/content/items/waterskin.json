@@ -1,0 +1,13 @@
+{
+  "index": "waterskin",
+  "name": "Waterskin",
+  "type": "gear",
+  "category": "Adventuring Gear",
+  "damage": null,
+  "damage_type": null,
+  "properties": [],
+  "weight": 5,
+  "cost": "2 sp",
+  "image_url": "/icons/waterskin.svg",
+  "description": "A leather pouch that holds up to 4 pints of liquid."
+}

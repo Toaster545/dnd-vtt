@@ -1,0 +1,13 @@
+{
+  "index": "flask-or-tankard",
+  "name": "Flask or Tankard",
+  "type": "gear",
+  "category": "Adventuring Gear",
+  "damage": null,
+  "damage_type": null,
+  "properties": [],
+  "weight": 1,
+  "cost": "2 cp",
+  "image_url": "/icons/standing-potion.svg",
+  "description": "A metal or ceramic vessel for drinking."
+}

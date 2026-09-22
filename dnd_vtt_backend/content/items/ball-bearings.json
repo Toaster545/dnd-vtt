@@ -1,0 +1,13 @@
+{
+  "index": "ball-bearings",
+  "name": "Ball Bearings (bag of 1,000)",
+  "type": "gear",
+  "category": "Adventuring Gear",
+  "damage": null,
+  "damage_type": null,
+  "properties": [],
+  "weight": 2,
+  "cost": "1 gp",
+  "image_url": "/icons/backpack.svg",
+  "description": "Tiny metal balls that can be scattered to turn a floor space into difficult terrain."
+}

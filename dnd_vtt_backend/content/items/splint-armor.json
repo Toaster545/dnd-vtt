@@ -1,0 +1,15 @@
+{
+  "index": "splint-armor",
+  "name": "Splint Armor",
+  "type": "armor",
+  "category": "Heavy Armor",
+  "armor_class": "17",
+  "properties": [
+    "Requires Strength 15",
+    "Stealth Disadvantage"
+  ],
+  "weight": 60,
+  "cost": "200 gp",
+  "image_url": "/icons/trench-body-armor.svg",
+  "description": "Strips of metal riveted to a backing of leather and mounted on cloth."
+}

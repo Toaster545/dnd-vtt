@@ -1,0 +1,13 @@
+{
+  "index": "druidic-focus-yew-wand",
+  "name": "Druidic Focus (Yew Wand)",
+  "type": "gear",
+  "category": "Druidic Focus",
+  "damage": null,
+  "damage_type": null,
+  "properties": [],
+  "weight": 1,
+  "cost": "10 gp",
+  "image_url": "/icons/fairy-wand.svg",
+  "description": "A wand carved from yew wood, used as a spellcasting focus for primal magic."
+}

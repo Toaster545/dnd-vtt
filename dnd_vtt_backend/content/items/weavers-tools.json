@@ -1,0 +1,13 @@
+{
+  "index": "weavers-tools",
+  "name": "Weaver's Tools",
+  "type": "gear",
+  "category": "Artisan's Tools",
+  "damage": null,
+  "damage_type": null,
+  "properties": [],
+  "weight": 5,
+  "cost": "1 gp",
+  "image_url": "/icons/anvil.svg",
+  "description": "A loom and shuttles used to weave cloth."
+}

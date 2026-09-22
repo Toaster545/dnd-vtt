@@ -1,0 +1,15 @@
+{
+  "index": "spyglass",
+  "name": "Spyglass",
+  "type": "gear",
+  "category": "Adventuring Gear",
+  "damage": null,
+  "damage_type": null,
+  "properties": [
+    "Objects viewed through it are magnified to twice their size"
+  ],
+  "weight": 1,
+  "cost": "1000 gp",
+  "image_url": "/icons/telescope.svg",
+  "description": "A brass and glass tube that magnifies distant objects."
+}

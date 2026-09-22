@@ -1,0 +1,15 @@
+{
+  "index": "alchemists-fire",
+  "name": "Alchemist's Fire (flask)",
+  "type": "consumable",
+  "category": "Alchemical",
+  "damage": null,
+  "damage_type": null,
+  "properties": [
+    "Thrown (range 20/60), 1d4 fire damage at the start of each of the target's turns until extinguished"
+  ],
+  "weight": 1,
+  "cost": "50 gp",
+  "image_url": "/icons/fire-bottle.svg",
+  "description": "A sticky, adhesive fluid that ignites when exposed to air."
+}

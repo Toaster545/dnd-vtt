@@ -1,0 +1,13 @@
+{
+  "index": "painters-supplies",
+  "name": "Painter's Supplies",
+  "type": "gear",
+  "category": "Artisan's Tools",
+  "damage": null,
+  "damage_type": null,
+  "properties": [],
+  "weight": 5,
+  "cost": "10 gp",
+  "image_url": "/icons/anvil.svg",
+  "description": "Brushes, pigments, and a palette used to create paintings."
+}

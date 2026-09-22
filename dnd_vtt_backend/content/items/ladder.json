@@ -1,0 +1,13 @@
+{
+  "index": "ladder",
+  "name": "Ladder (10-foot)",
+  "type": "gear",
+  "category": "Adventuring Gear",
+  "damage": null,
+  "damage_type": null,
+  "properties": [],
+  "weight": 25,
+  "cost": "1 sp",
+  "image_url": "/icons/backpack.svg",
+  "description": "A 10-foot wooden ladder."
+}

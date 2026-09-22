@@ -1,0 +1,14 @@
+{
+  "index": "padded-armor",
+  "name": "Padded Armor",
+  "type": "armor",
+  "category": "Light Armor",
+  "armor_class": "11 + DEX",
+  "properties": [
+    "Stealth Disadvantage"
+  ],
+  "weight": 8,
+  "cost": "5 gp",
+  "image_url": "/icons/layered-armor.svg",
+  "description": "Quilted layers of cloth and batting stitched under a canvas or leather cover."
+}

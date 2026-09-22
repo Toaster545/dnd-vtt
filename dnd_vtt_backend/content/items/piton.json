@@ -1,0 +1,13 @@
+{
+  "index": "piton",
+  "name": "Piton",
+  "type": "gear",
+  "category": "Adventuring Gear",
+  "damage": null,
+  "damage_type": null,
+  "properties": [],
+  "weight": 0.25,
+  "cost": "5 cp",
+  "image_url": "/icons/meat-hook.svg",
+  "description": "A metal spike that can be driven into a surface to anchor a rope."
+}

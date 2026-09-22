@@ -1,0 +1,14 @@
+{
+  "index": "ring-mail",
+  "name": "Ring Mail",
+  "type": "armor",
+  "category": "Heavy Armor",
+  "armor_class": "14",
+  "properties": [
+    "Stealth Disadvantage"
+  ],
+  "weight": 40,
+  "cost": "30 gp",
+  "image_url": "/icons/mail-shirt.svg",
+  "description": "Leather armor with heavy rings sewn into it to help deflect blows."
+}

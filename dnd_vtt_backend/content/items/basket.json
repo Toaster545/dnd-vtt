@@ -1,0 +1,13 @@
+{
+  "index": "basket",
+  "name": "Basket",
+  "type": "gear",
+  "category": "Adventuring Gear",
+  "damage": null,
+  "damage_type": null,
+  "properties": [],
+  "weight": 2,
+  "cost": "4 sp",
+  "image_url": "/icons/hand-bag.svg",
+  "description": "A woven container for carrying goods."
+}

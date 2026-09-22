@@ -1,0 +1,12 @@
+{
+  "index": "hide-armor",
+  "name": "Hide Armor",
+  "type": "armor",
+  "category": "Medium Armor",
+  "armor_class": "12 + DEX (max 2)",
+  "properties": [],
+  "weight": 12,
+  "cost": "10 gp",
+  "image_url": "/icons/leather-armor.svg",
+  "description": "A crude armor of thick furs and pelts, favored by tribal warriors."
+}

@@ -1,0 +1,13 @@
+{
+  "index": "brewers-supplies",
+  "name": "Brewer's Supplies",
+  "type": "gear",
+  "category": "Artisan's Tools",
+  "damage": null,
+  "damage_type": null,
+  "properties": [],
+  "weight": 9,
+  "cost": "20 gp",
+  "image_url": "/icons/beer-bottle.svg",
+  "description": "Fermenting jugs, hoses, and other implements used to brew ale, beer, and mead."
+}

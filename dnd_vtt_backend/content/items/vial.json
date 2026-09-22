@@ -1,0 +1,13 @@
+{
+  "index": "vial",
+  "name": "Vial",
+  "type": "gear",
+  "category": "Adventuring Gear",
+  "damage": null,
+  "damage_type": null,
+  "properties": [],
+  "weight": 0,
+  "cost": "1 gp",
+  "image_url": "/icons/vial.svg",
+  "description": "A small glass vessel that holds up to 4 ounces of liquid, with a cork stopper."
+}

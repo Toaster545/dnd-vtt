@@ -1,0 +1,15 @@
+{
+  "index": "magnifying-glass",
+  "name": "Magnifying Glass",
+  "type": "gear",
+  "category": "Adventuring Gear",
+  "damage": null,
+  "damage_type": null,
+  "properties": [
+    "Grants advantage on ability checks made to appraise or inspect small or fine details"
+  ],
+  "weight": 0,
+  "cost": "100 gp",
+  "image_url": "/icons/backpack.svg",
+  "description": "A lens that magnifies small objects and text; can also focus sunlight to start a fire."
+}
