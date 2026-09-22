@@ -450,6 +450,35 @@ export class ContentService {
     return data;
   }
 
+  // Bulk JSON import — same shape as createCustom but inserts every item as one atomic batch,
+  // so a mid-list failure doesn't leave a partial import in the DM's library.
+  async createCustomBulk(
+    kind: CustomContentKind,
+    user: RequestUser,
+    dtos: Record<string, unknown>[],
+  ) {
+    const rows = dtos.map((dto) => {
+      const id = randomUUID();
+      const index = `${CUSTOM_PREFIX}${id}`;
+      const data = this.withSource({ ...dto, index }, HOMEBREW_SOURCE_CODE);
+      return { id, data };
+    });
+    await this.db.executeMany(
+      rows.map(({ id, data }) => ({
+        sql: `INSERT INTO ${CUSTOM_TABLE[kind]} (id, created_by, name, data) VALUES (?, ?, ?, ?)`,
+        args: [
+          id,
+          user.id,
+          typeof (data as Record<string, unknown>).name === 'string'
+            ? (data as Record<string, unknown>).name
+            : '',
+          JSON.stringify(data),
+        ],
+      })),
+    );
+    return rows.map((r) => r.data);
+  }
+
   async updateCustom(
     kind: CustomContentKind,
     index: string,

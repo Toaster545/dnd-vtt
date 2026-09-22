@@ -14,7 +14,7 @@ import {
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ContentService } from './content.service';
 import { CreateMonsterDto } from './dto/create-monster.dto';
-import { CreateItemDto } from './dto/create-item.dto';
+import { CreateItemDto, CreateItemsBulkDto } from './dto/create-item.dto';
 import { CreateSpellDto } from './dto/create-spell.dto';
 import { SetItemImageOverrideDto } from './dto/set-item-image-override.dto';
 import { JwtGuard } from '../auth/jwt.guard';
@@ -159,6 +159,20 @@ export class ContentController {
   @UseGuards(JwtGuard)
   createItem(@CurrentUser() user: RequestUser, @Body() dto: CreateItemDto) {
     return this.content.createCustom('items', user, { ...dto });
+  }
+  // Bulk JSON import — body is `{ "items": [...] }`, each entry validated like a single
+  // CreateItemDto.
+  @Post('items/bulk')
+  @UseGuards(JwtGuard)
+  createItemsBulk(
+    @CurrentUser() user: RequestUser,
+    @Body() dto: CreateItemsBulkDto,
+  ) {
+    return this.content.createCustomBulk(
+      'items',
+      user,
+      dto.items.map((item) => ({ ...item })),
+    );
   }
   @Put('items/:index')
   @UseGuards(JwtGuard)

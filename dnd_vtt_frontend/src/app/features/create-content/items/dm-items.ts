@@ -10,6 +10,7 @@ import { ContentSourceFilterComponent } from '../content-source-filter/content-s
 import { ItemCardPrintComponent } from './item-card-print/item-card-print';
 import { IconPickerDialogComponent } from './icon-picker-dialog/icon-picker-dialog';
 import { IconLibraryEntry } from '../../../core/services/content.service';
+import { HttpErrorResponse } from '@angular/common/http';
 
 type ItemSort = 'name-asc' | 'name-desc' | 'source-asc' | 'type-asc';
 
@@ -41,6 +42,10 @@ export class DmItemsComponent implements OnInit {
   sourceFilters = signal<string[]>([]);
   sort = signal<ItemSort>('name-asc');
   officialExpanded = signal(true);
+
+  importing = signal(false);
+  importMessage = signal<string | null>(null);
+  importError = signal<string | null>(null);
 
   filteredItems    = computed(() => this.filter(this.items(), 'HOMEBREW'));
   filteredOfficial = computed(() => this.filter(this.officialItems(), 'XPHB'));
@@ -170,5 +175,43 @@ export class DmItemsComponent implements OnInit {
 
   closePrintView() {
     this.showPrintView.set(false);
+  }
+
+  // Accepts either a bare array of items or `{ "items": [...] }` — the same shape a DM might
+  // hand-author or get back from exporting a previous batch. Extra fields (e.g. a stale `index`
+  // from a re-imported export) are silently dropped by the backend's DTO whitelist.
+  async onImportFileSelected(event: Event) {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0] ?? null;
+    input.value = '';
+    if (!file) return;
+
+    this.importMessage.set(null);
+    this.importError.set(null);
+    this.importing.set(true);
+    try {
+      const text = await file.text();
+      const parsed: unknown = JSON.parse(text);
+      const items = Array.isArray(parsed)
+        ? parsed
+        : Array.isArray((parsed as { items?: unknown })?.items)
+          ? (parsed as { items: unknown[] }).items
+          : null;
+      if (!items || items.length === 0) {
+        throw new Error('Expected a JSON array of items, or an object with an "items" array.');
+      }
+      const created = await this.itemService.createItems(items as Omit<DndItem, 'index'>[]);
+      this.importMessage.set(`Imported ${created.length} item${created.length === 1 ? '' : 's'}.`);
+      await this.load();
+    } catch (e) {
+      if (e instanceof SyntaxError) {
+        this.importError.set('That file isn\'t valid JSON.');
+      } else {
+        const message = e instanceof HttpErrorResponse ? (e.error?.message ?? e.message) : e instanceof Error ? e.message : 'Failed to import items.';
+        this.importError.set(Array.isArray(message) ? message.join(', ') : message);
+      }
+    } finally {
+      this.importing.set(false);
+    }
   }
 }
