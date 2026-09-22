@@ -23,6 +23,15 @@ export class ItemService {
     return created;
   }
 
+  // Bulk JSON import — server assigns `index` for every entry, same as createItem.
+  async createItems(items: Omit<DndItem, 'index'>[]): Promise<DndItem[]> {
+    const created = await firstValueFrom(
+      this.http.post<DndItem[]>(`${API}/content/items/bulk`, { items })
+    );
+    this.content.invalidateContent('items');
+    return created;
+  }
+
   async updateItem(item: DndItem): Promise<DndItem> {
     const updated = await firstValueFrom(
       this.http.put<DndItem>(`${API}/content/items/${encodeURIComponent(item.index)}`, item)

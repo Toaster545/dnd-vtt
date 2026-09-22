@@ -30,10 +30,21 @@
       <button class="btn-outline" [class.border-gold]="printMode()" [class.text-gold]="printMode()" (click)="togglePrintMode()">
         <mat-icon>print</mat-icon> {{ printMode() ? 'Cancel' : 'Print Cards' }}
       </button>
+      <input #importInput type="file" accept="application/json,.json" hidden (change)="onImportFileSelected($event)" />
+      <button class="btn-outline" [disabled]="importing()" (click)="importInput.click()">
+        <mat-icon>{{ importing() ? 'hourglass_empty' : 'upload_file' }}</mat-icon> Import JSON
+      </button>
       <button class="btn-primary" (click)="openCreate()">
         <mat-icon>add</mat-icon> New Item
       </button>
     </div>
+
+    @if (importMessage()) {
+      <p class="text-success text-sm mb-3">{{ importMessage() }}</p>
+    }
+    @if (importError()) {
+      <p class="text-danger text-sm mb-3">{{ importError() }}</p>
+    }
 
     @if (printMode()) {
       <div class="flex items-center gap-3 mb-5 p-3 rounded border border-gold/30 bg-gold/5">

@@ -1,5 +1,6 @@
 import { Type } from 'class-transformer';
 import {
+  ArrayMinSize,
   IsArray,
   IsIn,
   IsNotEmpty,
@@ -67,4 +68,14 @@ export class CreateItemDto {
   // Set only via POST items/:index/image — accepted here too so editing an item elsewhere
   // (which resends the full object) doesn't wipe out a previously uploaded image.
   @IsString() @IsOptional() image_url?: string;
+}
+
+// Wrapper for POST items/bulk — a JSON file the user authors/exports containing several items
+// at once, validated per-item with the same rules as a single create.
+export class CreateItemsBulkDto {
+  @IsArray()
+  @ArrayMinSize(1)
+  @ValidateNested({ each: true })
+  @Type(() => CreateItemDto)
+  items: CreateItemDto[];
 }
