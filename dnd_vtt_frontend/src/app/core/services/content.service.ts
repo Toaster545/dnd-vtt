@@ -42,7 +42,7 @@ export interface SpellSlots {
 // A choice's mechanical effect (AC bonus, proficiency, etc.), computed generically
 // instead of matched by display name.
 export interface TraitEffect {
-  type: string; // e.g. 'ac_bonus' | 'initiative_ability_bonus' | 'initiative_proficiency_bonus' | 'language_proficiency' | 'saving_throw_ability_bonus' | 'melee_damage_bonus' | 'special'
+  type: string; // e.g. 'ac_bonus' | 'initiative_ability_bonus' | 'initiative_proficiency_bonus' | 'language_proficiency' | 'saving_throw_ability_bonus' | 'melee_damage_bonus' | 'ability_score_bonus' | 'special'
   value?: number;
   values?: number[];
   tags?: string[];
@@ -362,12 +362,25 @@ export interface DndItem {
   mastery?: { property: string; description: string };
   rarity?: string;
   requires_attunement?: boolean | string;
+  // The item's own +N (or cursed -N) — applied to a weapon's attack/damage rolls, or to AC for
+  // armor/a shield, wherever the item is equipped. See CharacterStatsService/baseArmorClass.
+  enhancement_bonus?: number;
   charges?: { max: number; recovery: string };
   actions?: { key: string; name: string; description?: string; activation: ActionActivation; uses?: TraitAction['uses'] }[];
   effects?: TraitEffect[];
   artificer_plan?: { name: string; itemIndex: string };
   image_url?: string;
   source?: DndSourceReference;
+}
+
+// A magic weapon/armor's `name` is stored plain ("Longsword") — the "+N" players actually see
+// ("Longsword +1") is derived here from `enhancement_bonus` at display time instead of being
+// baked into the content file, so the mechanical field stays the only source of truth for the
+// bonus and the display text can never drift from it.
+export function itemDisplayName(item: Pick<DndItem, 'name' | 'enhancement_bonus'>): string {
+  const bonus = item.enhancement_bonus;
+  if (!bonus) return item.name;
+  return `${item.name} ${bonus > 0 ? '+' : ''}${bonus}`;
 }
 
 export interface DndSpell {

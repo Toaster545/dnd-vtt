@@ -421,6 +421,50 @@ describe('CharacterStatsService', () => {
     expect(stats.saving_throw_bonuses.charisma).toBe(9);
   });
 
+  it('adds a weapon\'s own enhancement bonus to both its attack and damage rolls', () => {
+    const plusOneLongsword: DndItem = {
+      index: 'plus-one-longsword', name: '+1 Longsword', type: 'weapon', category: 'Martial Melee',
+      damage: '1d8', damage_type: 'slashing', properties: ['Versatile (1d10)'],
+      weight: 3, cost: '15 GP', description: '', enhancement_bonus: 1,
+    };
+    const character: Character = {
+      ...defaultCharacter(),
+      name: 'Plus One Fighter', level: 1,
+      ability_scores: {
+        strength: 16, dexterity: 10, constitution: 10,
+        intelligence: 10, wisdom: 10, charisma: 10,
+      },
+      equipment: [{ itemIndex: plusOneLongsword.index, name: plusOneLongsword.name, quantity: 1, equipped: true }],
+    };
+
+    const stats = new CharacterStatsService().compute(character, null, null, [], [], [plusOneLongsword]);
+
+    expect(stats.weapon_attacks).toEqual([expect.objectContaining({ attack_bonus: 4, damage_bonus: 4 })]);
+  });
+
+  it('adds a flat ability_score_bonus item effect to the derived modifier and everything downstream', () => {
+    const beltOfGiantStrength: DndItem = {
+      index: 'belt-of-giant-strength', name: 'Belt of Hill Giant Strength', type: 'gear', category: 'Wondrous Item',
+      properties: [], weight: 1, cost: 'Magic item', description: '',
+      requires_attunement: true,
+      effects: [{ type: 'ability_score_bonus', ability: 'strength', minimum: 21 }],
+    };
+    const character: Character = {
+      ...defaultCharacter(),
+      name: 'Belted Barbarian', level: 1,
+      ability_scores: {
+        strength: 14, dexterity: 10, constitution: 10,
+        intelligence: 10, wisdom: 10, charisma: 10,
+      },
+      equipment: [{ itemIndex: beltOfGiantStrength.index, name: beltOfGiantStrength.name, quantity: 1, equipped: true }],
+    };
+
+    const stats = new CharacterStatsService().compute(character, null, null, [], [], [beltOfGiantStrength]);
+
+    expect(stats.ability_modifiers.strength).toBe(5);
+    expect(stats.unarmed_attack.attack_bonus).toBe(5 + 2);
+  });
+
   it('adds a Gloom Stalker ability modifier to Initiative without discarding a penalty', () => {
     const character: Character = {
       ...defaultCharacter(),

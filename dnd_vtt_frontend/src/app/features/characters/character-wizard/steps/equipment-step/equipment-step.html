@@ -57,7 +57,7 @@
       style="background: transparent; font-family: inherit;"
     >
       <div class="flex items-center gap-3">
-        <span class="font-medium text-sm" [class]="selectedItemIndices().has(item.index) ? 'text-parchment' : 'text-slate'">{{ item.name }}</span>
+        <span class="font-medium text-sm" [class]="selectedItemIndices().has(item.index) ? 'text-parchment' : 'text-slate'">{{ itemDisplayName(item) }}</span>
         @if (selectedItemIndices().has(item.index)) {
           <span class="text-gold text-xs">✓</span>
         }

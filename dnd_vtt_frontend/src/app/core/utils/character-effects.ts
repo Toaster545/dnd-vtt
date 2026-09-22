@@ -240,14 +240,17 @@ function armorDexBonus(category: string, dexMod: number): number {
 }
 
 // AC from what's actually equipped right now: the worn armor's own formula (or 10 + Dex if
-// nothing's worn), plus a shield's flat bonus — live off `equipment`, not baked in once at
-// character creation, so putting on/taking off Chain Mail actually changes displayed AC.
+// nothing's worn) plus its own enhancement bonus, plus a shield's flat bonus and its own
+// enhancement bonus — live off `equipment`, not baked in once at character creation, so putting
+// on/taking off Chain Mail (or a +1 suit of it) actually changes displayed AC.
 export function baseArmorClass(equipment: EquipmentEntry[], items: DndItem[], dexMod: number): number {
   const equipped = equippedItems(equipment, items);
   const armor  = equipped.find(isArmorItem);
   const shield = equipped.find(isShieldItem);
-  const base = armor ? armorClassBase(armor.armor_class) + armorDexBonus(armor.category, dexMod) : 10 + dexMod;
-  return base + (shield ? armorClassBase(shield.armor_class) : 0);
+  const base = armor
+    ? armorClassBase(armor.armor_class) + armorDexBonus(armor.category, dexMod) + (armor.enhancement_bonus ?? 0)
+    : 10 + dexMod;
+  return base + (shield ? armorClassBase(shield.armor_class) + (shield.enhancement_bonus ?? 0) : 0);
 }
 
 // An unarmored-defense feature contributes the modifier named by its first tag (Constitution

@@ -45,7 +45,7 @@
                     [class]="picked ? 'border-gold/60 bg-gold/10 text-parchment' : 'border-white/15 text-slate hover:border-white/30'"
                     (click)="pickCategory(ref, opt.index)"
                     style="font-family: inherit;"
-                  >{{ opt.name }}</button>
+                  >{{ itemDisplayName(opt) }}</button>
                 }
               </div>
             </div>
@@ -90,7 +90,7 @@
                           [class]="catIsPicked ? 'border-gold/60 bg-gold/10 text-parchment' : 'border-white/15 text-slate hover:border-white/30'"
                           (click)="pickCategory(ref, catOpt.index)"
                           style="font-family: inherit;"
-                        >{{ catOpt.name }}</button>
+                        >{{ itemDisplayName(catOpt) }}</button>
                       }
                     </div>
                   </div>

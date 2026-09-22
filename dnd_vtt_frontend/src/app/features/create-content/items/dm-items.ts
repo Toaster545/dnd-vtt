@@ -2,7 +2,7 @@ import { Component, inject, signal, computed, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { ItemService } from '../../../core/services/item.service';
-import { ContentService, DndContentSource, DndItem } from '../../../core/services/content.service';
+import { ContentService, DndContentSource, DndItem, itemDisplayName } from '../../../core/services/content.service';
 import { ConfirmService } from '../../../shared/confirm.service';
 import { ItemFormComponent } from './item-form/item-form';
 import { ContentDetailDialogComponent } from '../content-detail-dialog/content-detail-dialog';
@@ -23,6 +23,8 @@ export class DmItemsComponent implements OnInit {
   private itemService = inject(ItemService);
   private content = inject(ContentService);
   private confirm = inject(ConfirmService);
+
+  readonly itemDisplayName = itemDisplayName;
 
   items          = signal<DndItem[]>([]);
   officialItems  = signal<DndItem[]>([]);

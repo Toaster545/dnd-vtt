@@ -12,7 +12,7 @@
   "description": "A tattoo that makes unarmed strikes magical and can extend their reach while adding Force damage.",
   "rarity": "uncommon",
   "requires_attunement": true,
-  "magic_bonus": 1,
+  "enhancement_bonus": 1,
   "source": {
     "code": "TCE",
     "book": "Tasha's Cauldron of Everything",

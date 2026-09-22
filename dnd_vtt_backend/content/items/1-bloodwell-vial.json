@@ -1,6 +1,6 @@
 {
   "index": "1-bloodwell-vial",
-  "name": "+1 Bloodwell Vial",
+  "name": "Bloodwell Vial",
   "type": "gear",
   "category": "Wondrous Item",
   "damage": null,
@@ -12,7 +12,7 @@
   "description": "A Sorcerer focus that grants its listed bonus to spell attacks and save DCs and restores Sorcery Points when Hit Dice are spent.",
   "rarity": "uncommon",
   "requires_attunement": "by a sorcerer",
-  "magic_bonus": 1,
+  "enhancement_bonus": 1,
   "source": {
     "code": "TCE",
     "book": "Tasha's Cauldron of Everything",

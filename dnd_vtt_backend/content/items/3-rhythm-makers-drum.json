@@ -1,6 +1,6 @@
 {
   "index": "3-rhythm-makers-drum",
-  "name": "+3 Rhythm-Maker's Drum",
+  "name": "Rhythm-Maker's Drum",
   "type": "gear",
   "category": "Wondrous Item",
   "damage": null,
@@ -12,7 +12,7 @@
   "description": "A Bard focus that grants its listed bonus to spell attacks and save DCs and can restore Bardic Inspiration.",
   "rarity": "very rare",
   "requires_attunement": "by a bard",
-  "magic_bonus": 3,
+  "enhancement_bonus": 3,
   "source": {
     "code": "TCE",
     "book": "Tasha's Cauldron of Everything",

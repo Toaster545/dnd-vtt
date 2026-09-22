@@ -1,0 +1,15 @@
+{
+  "index": "3-shield",
+  "name": "Shield",
+  "type": "armor",
+  "category": "Shield",
+  "armor_class": "+2",
+  "properties": [],
+  "weight": 6,
+  "cost": "Magic item",
+  "image_url": "/icons/acid-shield.svg",
+  "description": "While holding this shield, you have a +3 bonus to AC. This bonus is in addition to the shield's normal +2 bonus to AC.",
+  "rarity": "legendary",
+  "requires_attunement": false,
+  "enhancement_bonus": 3
+}

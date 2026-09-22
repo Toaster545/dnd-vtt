@@ -8,7 +8,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import {
   ContentService, DndClass, DndRace, DndBackground, DndItem, DndSpell, DndFeat, DndMonster,
-  DndContentSource, Subclass, TraitGrant,
+  DndContentSource, Subclass, TraitGrant, itemDisplayName,
 } from '../../../core/services/content.service';
 import { ItemFormComponent } from '../../create-content/items/item-form/item-form';
 import { ItemService } from '../../../core/services/item.service';
@@ -120,6 +120,8 @@ export class CharacterPlaySheetComponent {
   private confirm         = inject(ConfirmService);
   private dialog          = inject(MatDialog);
   private router          = inject(Router);
+
+  readonly itemDisplayName = itemDisplayName;
 
   readonly character = input.required<Character>();
   // Set by DM-facing hosts (dm-campaign-hub, dm-campaign-session, dm-encounter-play) when the
@@ -1054,7 +1056,7 @@ export class CharacterPlaySheetComponent {
       const result = await this.characterService.grantItem(char.id, item.index, quantity);
       this.localChar.set(result);
       this.saved.emit(result);
-      this.grantItemNotice.set(`Gave ${char.name} ${quantity > 1 ? quantity + '× ' : ''}${item.name}.`);
+      this.grantItemNotice.set(`Gave ${char.name} ${quantity > 1 ? quantity + '× ' : ''}${itemDisplayName(item)}.`);
     } catch (error: unknown) {
       const candidate = error as { error?: { message?: string | string[] } };
       const message = candidate.error?.message;

@@ -3,7 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { ContentService, DndContentSource, DndRace, DndClass, DndBackground, DndItem, DndSpell, DndFeat, TraitEffect, TraitGrant } from '../../../core/services/content.service';
+import { ContentService, DndContentSource, DndRace, DndClass, DndBackground, DndItem, DndSpell, DndFeat, TraitEffect, TraitGrant, itemDisplayName } from '../../../core/services/content.service';
 import { ClassChoiceSource, activeEffects, averageHpFormula, baseArmorClass, collectFeatEffects, collectTraitEffects, reachableGrants, resolveCharacterFeatPicks, resolveLanguageProficiencies, unarmoredDefenseBonus } from '../../../core/utils/character-effects';
 import { isStructuredEquipment, resolveStartingEquipment } from '../../../core/utils/starting-equipment';
 import { resolveBackgroundSkills } from '../../../core/utils/background-skills';
@@ -452,7 +452,10 @@ export class CharacterWizardComponent implements OnInit, OnDestroy {
   private resolvedEquipment = computed(() => {
     const existing = this.existingCharacter();
     const priorEquipment = new Map((existing?.equipment ?? []).map(e => [e.itemIndex, e]));
-    const itemName = (index: string) => this.items().find(it => it.index === index)?.name ?? index;
+    const itemName = (index: string) => {
+      const item = this.items().find(it => it.index === index);
+      return item ? itemDisplayName(item) : index;
+    };
     const structuredEquipment = [...this.resolvedClassEquipment().items, ...this.resolvedBackgroundEquipment().items]
       .map(r => ({
         itemIndex: r.itemIndex, name: itemName(r.itemIndex), quantity: r.quantity,
@@ -461,7 +464,7 @@ export class CharacterWizardComponent implements OnInit, OnDestroy {
     const freeEquipment = this.items()
       .filter(it => this.selectedItemIndices().has(it.index))
       .map(it => ({
-        itemIndex: it.index, name: it.name,
+        itemIndex: it.index, name: itemDisplayName(it),
         quantity: priorEquipment.get(it.index)?.quantity ?? 1,
         equipped: priorEquipment.get(it.index)?.equipped ?? false,
       }));

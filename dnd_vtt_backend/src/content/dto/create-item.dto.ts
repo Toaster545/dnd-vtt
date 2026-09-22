@@ -54,6 +54,11 @@ export class CreateItemDto {
   // Either a plain "yes" (boolean true) or a restriction like "by a cleric".
   @IsOptional() requires_attunement?: boolean | string;
 
+  // The item's own +N (or cursed -N), applied to attack/damage rolls for a weapon and AC for
+  // armor/a shield — structured so a "+1 Longsword" actually behaves like one instead of the
+  // bonus living only in the item's display name.
+  @IsNumber() @IsOptional() enhancement_bonus?: number;
+
   @ValidateNested()
   @Type(() => ItemChargesDto)
   @IsOptional()

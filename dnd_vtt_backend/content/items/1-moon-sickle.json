@@ -1,6 +1,6 @@
 {
   "index": "1-moon-sickle",
-  "name": "+1 Moon Sickle",
+  "name": "Moon Sickle",
   "type": "gear",
   "category": "Magic Weapon",
   "damage": null,
@@ -12,7 +12,7 @@
   "description": "A Druid or Ranger weapon and focus that grants its listed spell bonus and improves healing spells.",
   "rarity": "uncommon",
   "requires_attunement": "by a druid or ranger",
-  "magic_bonus": 1,
+  "enhancement_bonus": 1,
   "source": {
     "code": "TCE",
     "book": "Tasha's Cauldron of Everything",

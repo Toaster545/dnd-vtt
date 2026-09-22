@@ -1,0 +1,15 @@
+{
+  "index": "1-plate-armor",
+  "name": "Plate Armor",
+  "type": "armor",
+  "category": "Heavy Armor",
+  "armor_class": "18",
+  "properties": ["Requires Strength 15", "Stealth Disadvantage"],
+  "weight": 65,
+  "cost": "Magic item",
+  "image_url": "/icons/spiked-armor.svg",
+  "description": "You have a +1 bonus to Armor Class while wearing this armor.",
+  "rarity": "rare",
+  "requires_attunement": false,
+  "enhancement_bonus": 1
+}

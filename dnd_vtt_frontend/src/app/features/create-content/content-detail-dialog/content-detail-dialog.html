@@ -35,7 +35,7 @@
             <span class="rounded-full border border-white/10 px-2 py-0.5 text-[10px] uppercase tracking-wider text-slate">{{ value.category }}</span>
             @if (value.rarity) { <span class="text-[10px] uppercase tracking-wider text-slate">{{ value.rarity }}</span> }
           </div>
-          <h2 class="font-brand m-0 text-xl text-parchment">{{ value.name }}</h2>
+          <h2 class="font-brand m-0 text-xl text-parchment">{{ itemDisplayName(value) }}</h2>
           <p class="m-0 mt-1 text-[10px] uppercase tracking-wider text-coal">{{ value.source?.book || 'Published Content' }}</p>
         }
       </div>
@@ -142,6 +142,7 @@
           <div><p class="field-label m-0">Attunement</p><p class="m-0 mt-1">{{ attunementText(value) }}</p></div>
           @if (value.damage) { <div><p class="field-label m-0">Damage</p><p class="m-0 mt-1">{{ value.damage }} {{ value.damage_type || '' }}</p></div> }
           @if (value.armor_class) { <div><p class="field-label m-0">Armor Class</p><p class="m-0 mt-1">{{ value.armor_class }}</p></div> }
+          @if (value.enhancement_bonus) { <div><p class="field-label m-0">Enhancement Bonus</p><p class="m-0 mt-1">{{ value.enhancement_bonus >= 0 ? '+' : '' }}{{ value.enhancement_bonus }}</p></div> }
           @if (value.charges) { <div><p class="field-label m-0">Charges</p><p class="m-0 mt-1">{{ value.charges.max }} · {{ value.charges.recovery.replace('_', ' ') }}</p></div> }
         </div>
         <div class="mt-4 rounded-lg border border-white/10 bg-black/10 p-4">

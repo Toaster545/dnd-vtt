@@ -715,7 +715,7 @@
                   <div class="flex items-center justify-between px-3 py-2 rounded border border-white/10 gap-3">
                     <div class="min-w-0">
                       <div class="flex items-center gap-2">
-                        <span class="text-sm text-parchment">{{ row.entry.name }}</span>
+                        <span class="text-sm text-parchment">{{ row.item ? itemDisplayName(row.item) : row.entry.name }}</span>
                         @if (row.entry.quantity > 1) { <span class="text-xs text-coal">×{{ row.entry.quantity }}</span> }
                       </div>
                       @if (row.item) {
@@ -787,7 +787,7 @@
                           (click)="grantItem(candidate)"
                         >
                           <div class="min-w-0">
-                            <span class="text-sm text-parchment">{{ candidate.name }}</span>
+                            <span class="text-sm text-parchment">{{ itemDisplayName(candidate) }}</span>
                             <p class="text-xs text-slate m-0 mt-0.5">
                               {{ candidate.category }}
                               @if (candidate.damage) { · {{ candidate.damage }} {{ candidate.damage_type }} }

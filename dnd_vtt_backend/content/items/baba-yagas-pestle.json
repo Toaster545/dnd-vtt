@@ -12,7 +12,7 @@
   "description": "The weapon component of Baba Yaga’s artifact; it functions as a powerful magic quarterstaff while held.",
   "rarity": "artifact",
   "requires_attunement": true,
-  "magic_bonus": 3,
+  "enhancement_bonus": 3,
   "charges": {
     "max": 12,
     "recovery": "dawn"
