@@ -74,7 +74,7 @@
           (click)="activeStep.set(stepIndex)"
           style="background: transparent; font-family: inherit;"
         >
-          <span class="flex items-center justify-center w-5 h-5 rounded-full text-xs font-bold flex-shrink-0"
+          <span class="flex items-center justify-center w-5 h-5 rounded-full text-xs font-bold leading-none flex-shrink-0"
             [class]="activeStep() === stepIndex ? 'bg-gold text-on-accent' : 'bg-white/10 text-slate'">
             {{ position + 1 }}
           </span>

@@ -164,18 +164,9 @@
   display: none;
 }
 
-// Material boxes mat-icon at a fixed 24px with the glyph positioned by font metrics rather
-// than centered in that box — rotating it as-is pivots around the box center while the visible
-// glyph sits off to one side, so it appears to swivel/translate instead of turning in place.
-// Sizing the box to the glyph itself (1em) and flex-centering it fixes the rotation's pivot point.
+// Centering (so the rotation below pivots in place rather than swiveling) comes from the global
+// `mat-icon.mat-icon` rule in styles.scss — this just adds the rotation affordance itself.
 .detail-chevron {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 1em;
-  height: 1em;
-  line-height: 1;
-  overflow: visible;
   transition: transform .15s ease;
 }
 
