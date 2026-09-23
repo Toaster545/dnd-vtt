@@ -570,7 +570,11 @@
         {
           "type": "feature",
           "name": "Wild Companion",
-          "description": "As a Magic action, expend a spell slot or one Wild Shape use to cast Find Familiar without Material components. The familiar is Fey and disappears when you finish a Long Rest."
+          "description": "As a Magic action, expend a spell slot or one Wild Shape use to cast Find Familiar without Material components. The familiar is Fey and disappears when you finish a Long Rest.",
+          "key": "druid-wild-companion",
+          "action": {
+            "activation": "action"
+          }
         },
         { "type": "spell_grant", "key": "wild_companion_spell", "name": "Wild Companion", "destination": "known", "spells": ["find-familiar"], "countsAgainstLimit": false }
       ]

@@ -642,12 +642,16 @@ export class CharacterPlaySheetComponent {
     const race = this.raceData();
     if (race) {
       const raceChoices = char.race_choices ?? {};
-      for (const grant of this.grantsOrLegacy(race.grants, race.traits)) {
+      // A `feature` grant's `level` gates it the same way a class level does below — a
+      // level-5 race trait (e.g. Goliath's Large Form) shouldn't preview on the sheet any
+      // earlier than a level-5 class feature would.
+      const reachable = (grant: TraitGrant) => grant.type !== 'feature' || (grant.level ?? 1) <= char.level;
+      for (const grant of this.grantsOrLegacy(race.grants, race.traits).filter(reachable)) {
         out.push(...this.describeGrant(grant, raceChoices, race.name));
       }
       const sub = char.subrace ? race.subraces.find(s => s.name === char.subrace) : null;
       if (sub) {
-        for (const grant of this.grantsOrLegacy(sub.grants, sub.traits)) {
+        for (const grant of this.grantsOrLegacy(sub.grants, sub.traits).filter(reachable)) {
           out.push(...this.describeGrant(grant, raceChoices, sub.name));
         }
       }

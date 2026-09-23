@@ -795,7 +795,11 @@
         {
           "type": "feature",
           "name": "Uncanny Dodge",
-          "description": "When an attacker you can see hits you with an attack roll, use your Reaction to halve the attack's damage against you, rounded down."
+          "description": "When an attacker you can see hits you with an attack roll, use your Reaction to halve the attack's damage against you, rounded down.",
+          "key": "uncanny-dodge",
+          "action": {
+            "activation": "reaction"
+          }
         }
       ]
     },

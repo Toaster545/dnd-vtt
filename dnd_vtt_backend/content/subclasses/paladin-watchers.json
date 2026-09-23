@@ -33,12 +33,22 @@
         {
           "type": "feature",
           "name": "Abjure the Extraplanar",
-          "description": "As an Action using Channel Divinity, force nearby Aberrations, Celestials, Elementals, Fey, and Fiends to make a Wisdom save or become Turned for 1 minute."
+          "description": "As an Action using Channel Divinity, force nearby Aberrations, Celestials, Elementals, Fey, and Fiends to make a Wisdom save or become Turned for 1 minute.",
+          "key": "tce_paladin_watchers_abjure-the-extraplanar",
+          "action": {
+            "activation": "action",
+            "uses": { "max": 2, "maxByLevel": { "11": 3 }, "per": "long_rest", "shortRestRestore": 1 }
+          }
         },
         {
           "type": "feature",
           "name": "Watcher's Will",
-          "description": "As an Action using Channel Divinity, grant chosen creatures within 30 feet Advantage on Intelligence, Wisdom, and Charisma saving throws for 1 minute."
+          "description": "As an Action using Channel Divinity, grant chosen creatures within 30 feet Advantage on Intelligence, Wisdom, and Charisma saving throws for 1 minute.",
+          "key": "tce_paladin_watchers_watchers-will",
+          "action": {
+            "activation": "action",
+            "uses": { "max": 2, "maxByLevel": { "11": 3 }, "per": "long_rest", "shortRestRestore": 1 }
+          }
         }
       ]
     },
@@ -51,7 +61,8 @@
         {
           "type": "feature",
           "name": "Aura of the Sentinel",
-          "description": "You and allies in your Aura of Protection add your Proficiency Bonus to Initiative rolls."
+          "description": "You and allies in your Aura of Protection add your Proficiency Bonus to Initiative rolls.",
+          "effects": [{ "type": "initiative_proficiency_bonus" }]
         }
       ]
     },

@@ -48,7 +48,12 @@
         {
           "type": "feature",
           "name": "Channel Divinity: Order's Demand",
-          "description": "As an Action, present your Holy Symbol. Chosen creatures within 30 feet make a Wisdom save; a failure Charms them until the end of your next turn and makes them drop what they are holding."
+          "description": "As an Action, present your Holy Symbol. Chosen creatures within 30 feet make a Wisdom save; a failure Charms them until the end of your next turn and makes them drop what they are holding.",
+          "key": "tce_cleric_order_orders-demand",
+          "action": {
+            "activation": "action",
+            "uses": { "max": 2, "maxByLevel": { "6": 3, "18": 4 }, "per": "long_rest", "shortRestRestore": 1 }
+          }
         }
       ]
     },

@@ -85,7 +85,8 @@
           "name": "Conquering Presence",
           "description": "As an action, chosen creatures you can see within 30 feet make a Wisdom save. On a failure, a creature is Frightened of you for 1 minute and repeats the save at the end of each of its turns.",
           "action": {
-            "activation": "action"
+            "activation": "action",
+            "uses": { "max": 2, "maxByLevel": { "11": 3 }, "per": "long_rest", "shortRestRestore": 1 }
           },
           "key": "xge_paladin_conquest_3_conquering-presence"
         },

@@ -423,11 +423,15 @@
                               <span class="text-parchment font-medium">{{ action.name }}</span><span class="text-coal text-xs"> · {{ action.source }}</span>
                             </div>
                             <div class="flex items-center gap-2 flex-shrink-0">
-                              <span class="text-sm text-parchment tabular-nums">{{ remaining }} / {{ action.maxUses }}</span>
-                              <button class="btn-icon" [disabled]="action.usedUses === 0 || persisting()" (click)="restoreAction(action)" matTooltip="Restore a use">
-                                <mat-icon class="text-base">add</mat-icon>
-                              </button>
-                              <button class="btn-primary text-sm" [disabled]="remaining === 0 || persisting()" (click)="useAction(action)">Use</button>
+                              @if (action.unlimited) {
+                                <span class="text-sm text-slate">At will</span>
+                              } @else {
+                                <span class="text-sm text-parchment tabular-nums">{{ remaining }} / {{ action.maxUses }}</span>
+                                <button class="btn-icon" [disabled]="action.usedUses === 0 || persisting()" (click)="restoreAction(action)" matTooltip="Restore a use">
+                                  <mat-icon class="text-base">add</mat-icon>
+                                </button>
+                                <button class="btn-primary text-sm" [disabled]="remaining === 0 || persisting()" (click)="useAction(action)">Use</button>
+                              }
                             </div>
                           </div>
                           @if (action.description) {
@@ -481,11 +485,15 @@
                                 <span class="text-coal text-xs">{{ action.source }}</span>
                               </div>
                               <div class="flex items-center gap-2 flex-shrink-0">
-                                <span class="text-sm text-parchment tabular-nums">{{ remaining }} / {{ action.maxUses }}</span>
-                                <button class="btn-icon" [disabled]="action.usedUses === 0 || persisting()" (click)="restoreAction(action)" matTooltip="Restore a use">
-                                  <mat-icon class="text-base">add</mat-icon>
-                                </button>
-                                <button class="btn-primary text-sm" [disabled]="remaining === 0 || persisting()" (click)="useAction(action)">Use</button>
+                                @if (action.unlimited) {
+                                  <span class="text-sm text-slate">At will</span>
+                                } @else {
+                                  <span class="text-sm text-parchment tabular-nums">{{ remaining }} / {{ action.maxUses }}</span>
+                                  <button class="btn-icon" [disabled]="action.usedUses === 0 || persisting()" (click)="restoreAction(action)" matTooltip="Restore a use">
+                                    <mat-icon class="text-base">add</mat-icon>
+                                  </button>
+                                  <button class="btn-primary text-sm" [disabled]="remaining === 0 || persisting()" (click)="useAction(action)">Use</button>
+                                }
                               </div>
                             </div>
                             @if (action.description) {
@@ -520,11 +528,15 @@
                               <span class="text-parchment font-medium">{{ action.name }}</span><span class="text-coal text-xs"> · {{ action.source }}</span>
                             </div>
                             <div class="flex items-center gap-2 flex-shrink-0">
-                              <span class="text-sm text-parchment tabular-nums">{{ remaining }} / {{ action.maxUses }}</span>
-                              <button class="btn-icon" [disabled]="action.usedUses === 0 || persisting()" (click)="restoreAction(action)" matTooltip="Restore a use">
-                                <mat-icon class="text-base">add</mat-icon>
-                              </button>
-                              <button class="btn-primary text-sm" [disabled]="remaining === 0 || persisting()" (click)="useAction(action)">Use</button>
+                              @if (action.unlimited) {
+                                <span class="text-sm text-slate">At will</span>
+                              } @else {
+                                <span class="text-sm text-parchment tabular-nums">{{ remaining }} / {{ action.maxUses }}</span>
+                                <button class="btn-icon" [disabled]="action.usedUses === 0 || persisting()" (click)="restoreAction(action)" matTooltip="Restore a use">
+                                  <mat-icon class="text-base">add</mat-icon>
+                                </button>
+                                <button class="btn-primary text-sm" [disabled]="remaining === 0 || persisting()" (click)="useAction(action)">Use</button>
+                              }
                             </div>
                           </div>
                           @if (action.description) {
@@ -568,11 +580,15 @@
                           <span class="text-coal text-xs">{{ action.source }}</span>
                         </div>
                         <div class="flex items-center gap-2 flex-shrink-0">
-                          <span class="text-sm text-parchment tabular-nums">{{ remaining }} / {{ action.maxUses }}</span>
-                          <button class="btn-icon" [disabled]="action.usedUses === 0 || persisting()" (click)="restoreAction(action)" matTooltip="Restore a use">
-                            <mat-icon class="text-base">add</mat-icon>
-                          </button>
-                          <button class="btn-primary text-sm" [disabled]="remaining === 0 || persisting()" (click)="useAction(action)">Use</button>
+                          @if (action.unlimited) {
+                            <span class="text-sm text-slate">At will</span>
+                          } @else {
+                            <span class="text-sm text-parchment tabular-nums">{{ remaining }} / {{ action.maxUses }}</span>
+                            <button class="btn-icon" [disabled]="action.usedUses === 0 || persisting()" (click)="restoreAction(action)" matTooltip="Restore a use">
+                              <mat-icon class="text-base">add</mat-icon>
+                            </button>
+                            <button class="btn-primary text-sm" [disabled]="remaining === 0 || persisting()" (click)="useAction(action)">Use</button>
+                          }
                         </div>
                       </div>
                       @if (action.description) {

@@ -51,7 +51,11 @@
         {
           "type": "feature",
           "name": "Desert",
-          "description": "Gain Fire resistance and ignore extreme heat. As an action, ignite an unattended flammable object you touch."
+          "description": "Gain Fire resistance and ignore extreme heat. As an action, ignite an unattended flammable object you touch.",
+          "key": "xge_barbarian_storm-herald_6_desert-ignite",
+          "action": {
+            "activation": "action"
+          }
         },
         {
           "type": "feature",
@@ -61,7 +65,11 @@
         {
           "type": "feature",
           "name": "Tundra",
-          "description": "Gain Cold resistance and ignore extreme cold. As an action, freeze a creature-free 5-foot cube of water you touch for 1 minute."
+          "description": "Gain Cold resistance and ignore extreme cold. As an action, freeze a creature-free 5-foot cube of water you touch for 1 minute.",
+          "key": "xge_barbarian_storm-herald_6_tundra-freeze",
+          "action": {
+            "activation": "action"
+          }
         },
         {
           "type": "feature",

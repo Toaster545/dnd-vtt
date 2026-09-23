@@ -97,7 +97,10 @@ export interface TraitAction {
 export type TraitGrant =
   // `key` is only required with `action` — it's the stable id usage is tracked against
   // (Character.resource_uses); `name` can be reworded freely without breaking saves.
-  | { type: 'feature'; name: string; description?: string; key?: string; action?: TraitAction; effects?: TraitEffect[] }
+  // `level` gates a race feature that unlocks past character level 1 (e.g. Goliath's Large
+  // Form at 5) — races have no per-level grant structure like a class's `levels[]`, so this is
+  // checked directly against character level instead. Omitted = always active.
+  | { type: 'feature'; name: string; description?: string; key?: string; action?: TraitAction; effects?: TraitEffect[]; level?: number }
   // `chooseByLevel` grows the pool with class level (key = level, value = total choices).
   // `display: 'special_action'` is for choices whose picked options are themselves combat
   // reference material (e.g. Battle Master maneuvers) rather than passive features: the play

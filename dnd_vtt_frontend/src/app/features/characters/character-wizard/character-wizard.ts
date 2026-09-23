@@ -304,7 +304,10 @@ export class CharacterWizardComponent implements OnInit, OnDestroy {
     return [...collectTraitEffects(
       this.selectedClasses().map(e => ({ data: e.cls, choices: e.traits, level: e.level, subclass: e.subclass })),
       this.feats(),
-      race ? { data: race, choices: this.raceTraits(), subrace: this.selectedSubrace()?.name } : null,
+      race ? {
+        data: race, choices: this.raceTraits(), subrace: this.selectedSubrace()?.name,
+        characterLevel: this.level(),
+      } : null,
     ), ...backgroundFeatEffects]
       .filter(e => e.type === type && (includeConditional || !e.condition));
   }
@@ -493,7 +496,10 @@ export class CharacterWizardComponent implements OnInit, OnDestroy {
         data: entry.cls, choices: entry.traits, level: entry.level, subclass: entry.subclass,
       })),
       this.feats(),
-      race ? { data: race, choices: this.raceTraits(), subrace: this.selectedSubrace()?.name } : null,
+      race ? {
+        data: race, choices: this.raceTraits(), subrace: this.selectedSubrace()?.name,
+        characterLevel: this.level(),
+      } : null,
     );
     const background = this.selectedBackground();
     const originFeat = resolveBackgroundOriginFeat(background, this.feats());

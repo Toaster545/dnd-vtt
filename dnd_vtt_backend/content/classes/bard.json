@@ -558,7 +558,11 @@
         {
           "type": "feature",
           "name": "Countercharm",
-          "description": "When you or a creature within 30 feet fails a save against an effect that applies Charmed or Frightened, use your Reaction to cause the save to be rerolled with Advantage; the new roll must be used."
+          "description": "When you or a creature within 30 feet fails a save against an effect that applies Charmed or Frightened, use your Reaction to cause the save to be rerolled with Advantage; the new roll must be used.",
+          "key": "bard-countercharm",
+          "action": {
+            "activation": "reaction"
+          }
         }
       ]
     },

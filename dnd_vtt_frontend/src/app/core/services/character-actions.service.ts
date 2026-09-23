@@ -13,6 +13,11 @@ export interface CharacterAction {
   usedUses: number;
   per: 'short_rest' | 'long_rest';
   shortRestRestore: number;
+  // A feature with no `uses` block at all (e.g. Rogue's Cunning Action) — genuinely at will,
+  // not limited-to-zero. maxUses/usedUses stay 0 and are meaningless here; callers must check
+  // this first rather than infer it from maxUses === 0, which is also what a mis-set limited
+  // action would show.
+  unlimited: boolean;
 }
 
 type FeatureGrant = Extract<TraitGrant, { type: 'feature' }>;
@@ -77,7 +82,12 @@ export class CharacterActionsService {
     }
 
     if (additional.race) {
-      collect(additional.race.data.grants ?? [], additional.race.choices, additional.race.data.name, 0, additional.characterLevel);
+      // A `feature` grant's `level` gates a race trait that unlocks past level 1 (e.g.
+      // Goliath's Large Form at 5) — races have no per-level `levels[]` structure like a class,
+      // so this is the one place that checks it directly against character level.
+      const reachable = (additional.race.data.grants ?? [])
+        .filter(g => g.type !== 'feature' || (g.level ?? 1) <= additional.characterLevel);
+      collect(reachable, additional.race.choices, additional.race.data.name, 0, additional.characterLevel);
     }
     for (const selection of additional.feats ?? []) {
       collect(selection.feat.grants ?? [], selection.choices, selection.source ?? selection.feat.name, 1, additional.characterLevel);
@@ -112,12 +122,13 @@ export class CharacterActionsService {
         usedUses: Math.min(resourceUses[grant.key!] ?? 0, max),
         per: uses ? resolveLevelValue(uses.per, uses.perByLevel, classLevel) : 'long_rest',
         shortRestRestore: uses?.shortRestRestore ?? 0,
+        unlimited: !uses,
       };
     });
   }
 
   use(resourceUses: Record<string, number>, action: CharacterAction): Record<string, number> {
-    if (action.usedUses >= action.maxUses) return resourceUses;
+    if (action.unlimited || action.usedUses >= action.maxUses) return resourceUses;
     return { ...resourceUses, [action.key]: action.usedUses + 1 };
   }
 

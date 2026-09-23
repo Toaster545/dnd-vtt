@@ -30,6 +30,9 @@ export interface RaceChoiceSource {
   data: DndRace;
   choices: Record<string, string[]>;
   subrace?: string | null;
+  // Gates a `feature` grant's `level` field (e.g. Goliath's Large Form at 5) — omitted callers
+  // get the pre-level-gating behavior of "always active", same as a feature with no `level` set.
+  characterLevel?: number;
 }
 
 export interface FeatPick {
@@ -75,7 +78,9 @@ function activeRaceGrants(source: RaceChoiceSource): TraitGrant[] {
   const subrace = source.subrace
     ? source.data.subraces.find(sub => sub.name === source.subrace || sub.index === source.subrace)
     : null;
-  return [...(source.data.grants ?? []), ...(subrace?.grants ?? [])];
+  const grants = [...(source.data.grants ?? []), ...(subrace?.grants ?? [])];
+  const level = source.characterLevel ?? 1;
+  return grants.filter(g => g.type !== 'feature' || (g.level ?? 1) <= level);
 }
 
 export function resolveCharacterFeatPicks(

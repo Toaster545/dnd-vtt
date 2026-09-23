@@ -115,7 +115,13 @@
     {
       "type": "feature",
       "name": "Large Form",
-      "description": "At level 5, use a Bonus Action to become Large for 10 minutes if space allows. During that time you have Advantage on Strength checks and your Speed increases by 10 feet. Once used, this trait refreshes on a Long Rest."
+      "description": "At level 5, use a Bonus Action to become Large for 10 minutes if space allows. During that time you have Advantage on Strength checks and your Speed increases by 10 feet. Once used, this trait refreshes on a Long Rest.",
+      "key": "goliath-large-form",
+      "level": 5,
+      "action": {
+        "activation": "bonus_action",
+        "uses": { "max": 1, "per": "long_rest" }
+      }
     },
     {
       "type": "feature",

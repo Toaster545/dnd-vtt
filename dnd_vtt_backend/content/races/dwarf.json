@@ -27,7 +27,12 @@
     {
       "type": "feature",
       "name": "Stonecunning",
-      "description": "As a Bonus Action while touching a natural or worked stone surface, gain Tremorsense out to 60 feet for 10 minutes. You can do this a number of times equal to your Proficiency Bonus per Long Rest."
+      "description": "As a Bonus Action while touching a natural or worked stone surface, gain Tremorsense out to 60 feet for 10 minutes. You can do this a number of times equal to your Proficiency Bonus per Long Rest.",
+      "key": "dwarf-stonecunning",
+      "action": {
+        "activation": "bonus_action",
+        "uses": { "max": 1, "maxProficiencyBonus": true, "per": "long_rest" }
+      }
     }
   ],
   "languages": [],

@@ -30,7 +30,12 @@
     {
       "type": "feature",
       "name": "Breath Weapon",
-      "description": "When you take the Attack action, replace one attack with a 15-foot Cone or a 30-foot-by-5-foot Line (chosen each use). Creatures make a Dexterity save against DC 8 + your Constitution modifier + Proficiency Bonus, taking 1d10 ancestry damage on a failure or half on a success. Damage becomes 2d10 at level 5, 3d10 at level 11, and 4d10 at level 17. Uses equal your Proficiency Bonus per Long Rest."
+      "description": "When you take the Attack action, replace one attack with a 15-foot Cone or a 30-foot-by-5-foot Line (chosen each use). Creatures make a Dexterity save against DC 8 + your Constitution modifier + Proficiency Bonus, taking 1d10 ancestry damage on a failure or half on a success. Damage becomes 2d10 at level 5, 3d10 at level 11, and 4d10 at level 17. Uses equal your Proficiency Bonus per Long Rest.",
+      "key": "dragonborn-breath-weapon",
+      "action": {
+        "activation": "action",
+        "uses": { "max": 1, "maxProficiencyBonus": true, "per": "long_rest" }
+      }
     },
     {
       "type": "feature",
@@ -45,7 +50,13 @@
     {
       "type": "feature",
       "name": "Draconic Flight",
-      "description": "At level 5, use a Bonus Action to sprout spectral wings for 10 minutes. They grant a Fly Speed equal to your Speed until retracted or you become Incapacitated. Once used, this trait refreshes on a Long Rest."
+      "description": "At level 5, use a Bonus Action to sprout spectral wings for 10 minutes. They grant a Fly Speed equal to your Speed until retracted or you become Incapacitated. Once used, this trait refreshes on a Long Rest.",
+      "key": "dragonborn-draconic-flight",
+      "level": 5,
+      "action": {
+        "activation": "bonus_action",
+        "uses": { "max": 1, "per": "long_rest" }
+      }
     }
   ],
   "languages": [],

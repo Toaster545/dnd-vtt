@@ -11,7 +11,12 @@
     {
       "type": "feature",
       "name": "Adrenaline Rush",
-      "description": "Take the Dash action as a Bonus Action and gain Temporary Hit Points equal to your Proficiency Bonus. Uses equal your Proficiency Bonus, and all uses return after a Short or Long Rest."
+      "description": "Take the Dash action as a Bonus Action and gain Temporary Hit Points equal to your Proficiency Bonus. Uses equal your Proficiency Bonus, and all uses return after a Short or Long Rest.",
+      "key": "orc-adrenaline-rush",
+      "action": {
+        "activation": "bonus_action",
+        "uses": { "max": 1, "maxProficiencyBonus": true, "per": "short_rest" }
+      }
     },
     {
       "type": "feature",
@@ -21,7 +26,12 @@
     {
       "type": "feature",
       "name": "Relentless Endurance",
-      "description": "When reduced to 0 Hit Points without being killed outright, you can drop to 1 Hit Point instead. Once used, this trait refreshes on a Long Rest."
+      "description": "When reduced to 0 Hit Points without being killed outright, you can drop to 1 Hit Point instead. Once used, this trait refreshes on a Long Rest.",
+      "key": "orc-relentless-endurance",
+      "action": {
+        "activation": "reaction",
+        "uses": { "max": 1, "per": "long_rest" }
+      }
     }
   ],
   "languages": [],

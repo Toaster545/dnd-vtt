@@ -112,6 +112,7 @@ export class CharacterStatsService {
       data: raceData,
       choices: char.race_choices ?? {},
       subrace: char.subrace,
+      characterLevel: char.level,
     } : null;
     const equipment = [
       ...char.equipment,
