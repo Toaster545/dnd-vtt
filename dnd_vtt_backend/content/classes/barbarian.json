@@ -489,7 +489,15 @@
       "proficiency_bonus": 6,
       "features": ["Primal Champion"],
       "grants": [
-        { "type": "feature", "name": "Primal Champion", "description": "Your Strength and Constitution scores each increase by 4, to a maximum of 25." }
+        {
+          "type": "feature",
+          "name": "Primal Champion",
+          "description": "Your Strength and Constitution scores each increase by 4, to a maximum of 25.",
+          "effects": [
+            { "type": "ability_score_bonus", "ability": "strength", "value": 4 },
+            { "type": "ability_score_bonus", "ability": "constitution", "value": 4 }
+          ]
+        }
       ],
       "class_specific": { "rages": 6, "rage_damage": 4, "weapon_masteries": 4 }
     }

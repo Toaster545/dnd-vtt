@@ -30,6 +30,9 @@ export interface RaceChoiceSource {
   data: DndRace;
   choices: Record<string, string[]>;
   subrace?: string | null;
+  // Gates a `feature` grant's `level` field (e.g. Goliath's Large Form at 5) — omitted callers
+  // get the pre-level-gating behavior of "always active", same as a feature with no `level` set.
+  characterLevel?: number;
 }
 
 export interface FeatPick {
@@ -75,7 +78,9 @@ function activeRaceGrants(source: RaceChoiceSource): TraitGrant[] {
   const subrace = source.subrace
     ? source.data.subraces.find(sub => sub.name === source.subrace || sub.index === source.subrace)
     : null;
-  return [...(source.data.grants ?? []), ...(subrace?.grants ?? [])];
+  const grants = [...(source.data.grants ?? []), ...(subrace?.grants ?? [])];
+  const level = source.characterLevel ?? 1;
+  return grants.filter(g => g.type !== 'feature' || (g.level ?? 1) <= level);
 }
 
 export function resolveCharacterFeatPicks(
@@ -185,6 +190,22 @@ export function equippedItems(equipment: EquipmentEntry[], items: DndItem[]): Dn
     .filter((it): it is DndItem => !!it);
 }
 
+// An item that doesn't require attunement is always "active" once equipped. One that does only
+// contributes its magic (enhancement_bonus, effects) once the matching equipment entry is marked
+// `attuned` — independent of `equipped` itself, matching 5e (you can stay attuned to something
+// you've taken off, but a worn-but-unattuned item that requires attunement is mechanically inert).
+export function attunementActive(item: DndItem, equipment: EquipmentEntry[]): boolean {
+  if (!item.requires_attunement) return true;
+  return !!equipment.find(e => e.itemIndex === item.index)?.attuned;
+}
+
+// Equipped items whose magic is actually switched on right now — the basis for effects that
+// come from gear (see collectTraitEffects's caller in character-stats.service.ts), so an
+// unattuned item requiring attunement never contributes effects just for being worn.
+export function activeMagicItems(equipment: EquipmentEntry[], items: DndItem[]): DndItem[] {
+  return equippedItems(equipment, items).filter(item => attunementActive(item, equipment));
+}
+
 export const isShieldItem = (it: DndItem) => it.category === 'Shield';
 export const isArmorItem  = (it: DndItem) => it.type === 'armor' && !isShieldItem(it);
 
@@ -240,14 +261,19 @@ function armorDexBonus(category: string, dexMod: number): number {
 }
 
 // AC from what's actually equipped right now: the worn armor's own formula (or 10 + Dex if
-// nothing's worn), plus a shield's flat bonus — live off `equipment`, not baked in once at
-// character creation, so putting on/taking off Chain Mail actually changes displayed AC.
+// nothing's worn) plus its own enhancement bonus, plus a shield's flat bonus and its own
+// enhancement bonus — live off `equipment`, not baked in once at character creation, so putting
+// on/taking off Chain Mail (or a +1 suit of it) actually changes displayed AC.
 export function baseArmorClass(equipment: EquipmentEntry[], items: DndItem[], dexMod: number): number {
   const equipped = equippedItems(equipment, items);
   const armor  = equipped.find(isArmorItem);
   const shield = equipped.find(isShieldItem);
-  const base = armor ? armorClassBase(armor.armor_class) + armorDexBonus(armor.category, dexMod) : 10 + dexMod;
-  return base + (shield ? armorClassBase(shield.armor_class) : 0);
+  const armorBonus  = armor && attunementActive(armor, equipment) ? (armor.enhancement_bonus ?? 0) : 0;
+  const shieldBonus = shield && attunementActive(shield, equipment) ? (shield.enhancement_bonus ?? 0) : 0;
+  const base = armor
+    ? armorClassBase(armor.armor_class) + armorDexBonus(armor.category, dexMod) + armorBonus
+    : 10 + dexMod;
+  return base + (shield ? armorClassBase(shield.armor_class) + shieldBonus : 0);
 }
 
 // An unarmored-defense feature contributes the modifier named by its first tag (Constitution

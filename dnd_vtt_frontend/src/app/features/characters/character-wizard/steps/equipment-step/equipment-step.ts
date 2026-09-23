@@ -1,5 +1,5 @@
 import { Component, computed, input, output, signal } from '@angular/core';
-import { DndBackground, DndClass, DndItem } from '../../../../../core/services/content.service';
+import { DndBackground, DndClass, DndItem, itemDisplayName } from '../../../../../core/services/content.service';
 import { Currency } from '../../../../../core/models/character.model';
 import { isStructuredEquipment } from '../../../../../core/utils/starting-equipment';
 import { EquipmentChoiceComponent } from './equipment-choice/equipment-choice';
@@ -10,6 +10,8 @@ import { EquipmentChoiceComponent } from './equipment-choice/equipment-choice';
   templateUrl: './equipment-step.html',
 })
 export class EquipmentStepComponent {
+  readonly itemDisplayName = itemDisplayName;
+
   readonly items                = input.required<DndItem[]>();
   readonly selectedItemIndices  = input.required<Set<string>>();
   readonly currency             = input.required<Currency>();

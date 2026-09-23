@@ -1,0 +1,13 @@
+{
+  "index": "woodcarvers-tools",
+  "name": "Woodcarver's Tools",
+  "type": "gear",
+  "category": "Artisan's Tools",
+  "damage": null,
+  "damage_type": null,
+  "properties": [],
+  "weight": 5,
+  "cost": "1 gp",
+  "image_url": "/icons/hatchet.svg",
+  "description": "Knives and gouges used to carve wood into objects and decorations."
+}

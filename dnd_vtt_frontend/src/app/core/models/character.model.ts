@@ -53,7 +53,16 @@ export interface EquipmentEntry {
   name: string;
   quantity: number;
   equipped: boolean;
+  // Only meaningful for an item whose `DndItem.requires_attunement` is set — independent of
+  // `equipped` (5e lets you stay attuned to something you've taken off), but an item that
+  // requires attunement contributes none of its magic (enhancement_bonus, effects) unless both
+  // `equipped` and `attuned` are true. See attunementActive() in character-effects.ts.
+  attuned?: boolean;
 }
+
+// 5e's fixed cap on how many attuned items a character can hold at once — not known to vary by
+// class/feat in this content set, so it's a constant rather than a per-character field.
+export const ATTUNEMENT_SLOT_LIMIT = 3;
 
 export interface PactWeaponState {
   itemIndex: string;

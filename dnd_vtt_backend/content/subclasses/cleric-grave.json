@@ -97,7 +97,12 @@
         {
           "type": "feature",
           "name": "Channel Divinity: Path to the Grave",
-          "description": "As an action, expend Channel Divinity to curse one visible creature within 30 feet until your next turn ends. The next attack that hits it treats it as vulnerable to all damage from that attack, then the curse ends."
+          "description": "As an action, expend Channel Divinity to curse one visible creature within 30 feet until your next turn ends. The next attack that hits it treats it as vulnerable to all damage from that attack, then the curse ends.",
+          "key": "xge_cleric_grave_3_path-to-the-grave",
+          "action": {
+            "activation": "action",
+            "uses": { "max": 2, "maxByLevel": { "6": 3, "18": 4 }, "per": "long_rest", "shortRestRestore": 1 }
+          }
         }
       ]
     },

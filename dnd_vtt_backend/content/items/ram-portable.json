@@ -1,0 +1,15 @@
+{
+  "index": "ram-portable",
+  "name": "Ram, Portable",
+  "type": "gear",
+  "category": "Adventuring Gear",
+  "damage": null,
+  "damage_type": null,
+  "properties": [
+    "Grants advantage on Strength checks made to break down doors"
+  ],
+  "weight": 35,
+  "cost": "4 gp",
+  "image_url": "/icons/3d-hammer.svg",
+  "description": "A double-handled iron-shod bar carried by two people to batter down doors."
+}

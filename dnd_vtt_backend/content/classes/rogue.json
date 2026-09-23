@@ -549,7 +549,8 @@
             {
               "type": "feature",
               "name": "Use Magic Device",
-              "description": "You can attune to four magic items at once. When a magic item property spends charges, roll 1d6; on a 6, no charge is spent. You can use any Spell Scroll with Intelligence: cantrips and level 1 spells work automatically, while higher-level spells require a successful Intelligence (Arcana) check with DC 10 plus the spell's level."
+              "description": "You can attune to four magic items at once. When a magic item property spends charges, roll 1d6; on a 6, no charge is spent. You can use any Spell Scroll with Intelligence: cantrips and level 1 spells work automatically, while higher-level spells require a successful Intelligence (Arcana) check with DC 10 plus the spell's level.",
+              "effects": [{ "type": "attunement_slot_override", "value": 4 }]
             }
           ]
         },
@@ -794,7 +795,11 @@
         {
           "type": "feature",
           "name": "Uncanny Dodge",
-          "description": "When an attacker you can see hits you with an attack roll, use your Reaction to halve the attack's damage against you, rounded down."
+          "description": "When an attacker you can see hits you with an attack roll, use your Reaction to halve the attack's damage against you, rounded down.",
+          "key": "uncanny-dodge",
+          "action": {
+            "activation": "reaction"
+          }
         }
       ]
     },

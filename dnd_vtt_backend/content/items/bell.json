@@ -1,0 +1,13 @@
+{
+  "index": "bell",
+  "name": "Bell",
+  "type": "gear",
+  "category": "Adventuring Gear",
+  "damage": null,
+  "damage_type": null,
+  "properties": [],
+  "weight": 0,
+  "cost": "1 gp",
+  "image_url": "/icons/backpack.svg",
+  "description": "A small bell that rings when shaken or struck."
+}

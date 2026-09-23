@@ -70,12 +70,6 @@
           "action": {
             "activation": "bonus_action"
           },
-          "effects": [
-            {
-              "type": "ac_bonus",
-              "value": 2
-            }
-          ],
           "key": "tce_monk_astral-self_awakened-astral-self"
         }
       ]

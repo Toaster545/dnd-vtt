@@ -1,0 +1,13 @@
+{
+  "index": "scale-merchants",
+  "name": "Scale, Merchant's",
+  "type": "gear",
+  "category": "Adventuring Gear",
+  "damage": null,
+  "damage_type": null,
+  "properties": [],
+  "weight": 3,
+  "cost": "5 gp",
+  "image_url": "/icons/backpack.svg",
+  "description": "A small scale used to weigh coins and precious materials, complete with a set of weights."
+}

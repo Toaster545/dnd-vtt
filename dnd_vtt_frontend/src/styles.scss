@@ -32,6 +32,27 @@ html {
   }
 }
 
+// Material boxes mat-icon at a fixed 24px with the glyph positioned by font metrics rather than
+// centered in that box. Every icon in this app sets its size via a Tailwind `text-*` class on the
+// <mat-icon> itself (the app-wide convention), which changes the font-size but not that fixed box —
+// so the glyph ends up visually off-center within it, most noticeable when the icon is rotated
+// (e.g. .detail-chevron's toggle animation swivels instead of turning in place). Sizing the box to
+// the glyph itself (1em, tracking font-size) and flex-centering it keeps every icon centered
+// regardless of which font-size utility is applied. `mat-icon.mat-icon` matches Material's own
+// `.mat-icon` selector's shape but with one extra selector segment, so it reliably wins on
+// specificity; component-scoped overrides (e.g. shell.scss's `.mobile-player-nav mat-icon`) still
+// take precedence since Angular's emulated view encapsulation raises their effective specificity
+// above this global, unencapsulated rule.
+mat-icon.mat-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1em;
+  height: 1em;
+  line-height: 1;
+  overflow: visible;
+}
+
 @layer base {
   *, *::before, *::after { box-sizing: border-box; }
   html, body {
@@ -104,18 +125,10 @@ html:fullscreen .hide-in-fullscreen {
            border-0 outline-none cursor-pointer;
     background: transparent;
 
-    // Material sizes mat-icon as a fixed 24px box with overflow:hidden, which
-    // clips larger glyphs and throws off centering. Let the icon box track its
-    // font-size instead so it stays centered at any size (text-base, text-xl, …).
+    // The global `mat-icon.mat-icon` rule above already keeps the icon centered at any
+    // font-size; buttons just need a default size when the caller doesn't set one.
     mat-icon {
-      width: 1em;
-      height: 1em;
       font-size: 20px;
-      line-height: 1;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      overflow: visible;
     }
   }
 

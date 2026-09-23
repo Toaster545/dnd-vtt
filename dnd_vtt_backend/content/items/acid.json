@@ -1,0 +1,15 @@
+{
+  "index": "acid",
+  "name": "Acid (flask)",
+  "type": "consumable",
+  "category": "Alchemical",
+  "damage": null,
+  "damage_type": null,
+  "properties": [
+    "Thrown (range 20/60), 2d6 acid damage on a hit"
+  ],
+  "weight": 1,
+  "cost": "25 gp",
+  "image_url": "/icons/round-bottom-flask.svg",
+  "description": "A corrosive fluid that can be hurled at a foe or used to dissolve a small object."
+}

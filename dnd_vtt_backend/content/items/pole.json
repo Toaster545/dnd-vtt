@@ -1,0 +1,13 @@
+{
+  "index": "pole",
+  "name": "Pole (10-foot)",
+  "type": "gear",
+  "category": "Adventuring Gear",
+  "damage": null,
+  "damage_type": null,
+  "properties": [],
+  "weight": 7,
+  "cost": "5 cp",
+  "image_url": "/icons/backpack.svg",
+  "description": "A simple 10-foot wooden pole, useful for probing ahead or vaulting."
+}

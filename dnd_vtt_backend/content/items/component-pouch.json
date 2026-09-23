@@ -1,0 +1,15 @@
+{
+  "index": "component-pouch",
+  "name": "Component Pouch",
+  "type": "gear",
+  "category": "Adventuring Gear",
+  "damage": null,
+  "damage_type": null,
+  "properties": [
+    "Spellcasting Focus (any spellcaster)"
+  ],
+  "weight": 2,
+  "cost": "25 gp",
+  "image_url": "/icons/pouch-with-beads.svg",
+  "description": "A small watertight pouch holding the material components and other implements needed for spellcasting."
+}

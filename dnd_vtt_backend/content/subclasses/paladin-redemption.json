@@ -85,7 +85,8 @@
           "name": "Emissary of Peace",
           "description": "As a Bonus Action, expend Channel Divinity to gain +5 to Persuasion checks for 10 minutes.",
           "action": {
-            "activation": "bonus_action"
+            "activation": "bonus_action",
+            "uses": { "max": 2, "maxByLevel": { "11": 3 }, "per": "long_rest", "shortRestRestore": 1 }
           },
           "key": "xge_paladin_redemption_3_emissary-of-peace"
         },
@@ -99,7 +100,8 @@
           "name": "Rebuke the Violent",
           "description": "Immediately after an attacker within 30 feet damages a creature other than you, use a Reaction and expend Channel Divinity. The attacker makes a Wisdom save, taking radiant damage equal to the damage it just dealt on a failure or half as much on a success.",
           "action": {
-            "activation": "reaction"
+            "activation": "reaction",
+            "uses": { "max": 2, "maxByLevel": { "11": 3 }, "per": "long_rest", "shortRestRestore": 1 }
           },
           "key": "xge_paladin_redemption_3_rebuke-the-violent"
         },

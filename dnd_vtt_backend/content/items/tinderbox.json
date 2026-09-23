@@ -1,0 +1,13 @@
+{
+  "index": "tinderbox",
+  "name": "Tinderbox",
+  "type": "gear",
+  "category": "Adventuring Gear",
+  "damage": null,
+  "damage_type": null,
+  "properties": [],
+  "weight": 1,
+  "cost": "5 sp",
+  "image_url": "/icons/candle-flame.svg",
+  "description": "Flint, fire steel, and tinder used to kindle a fire."
+}

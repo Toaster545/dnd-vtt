@@ -42,7 +42,7 @@ export interface SpellSlots {
 // A choice's mechanical effect (AC bonus, proficiency, etc.), computed generically
 // instead of matched by display name.
 export interface TraitEffect {
-  type: string; // e.g. 'ac_bonus' | 'initiative_ability_bonus' | 'initiative_proficiency_bonus' | 'language_proficiency' | 'saving_throw_ability_bonus' | 'melee_damage_bonus' | 'special'
+  type: string; // e.g. 'ac_bonus' | 'initiative_ability_bonus' | 'initiative_proficiency_bonus' | 'language_proficiency' | 'saving_throw_ability_bonus' | 'melee_damage_bonus' | 'ability_score_bonus' | 'attunement_slot_override' | 'spell_attack_bonus' | 'spell_save_dc_bonus' | 'special'
   value?: number;
   values?: number[];
   tags?: string[];
@@ -97,7 +97,10 @@ export interface TraitAction {
 export type TraitGrant =
   // `key` is only required with `action` — it's the stable id usage is tracked against
   // (Character.resource_uses); `name` can be reworded freely without breaking saves.
-  | { type: 'feature'; name: string; description?: string; key?: string; action?: TraitAction; effects?: TraitEffect[] }
+  // `level` gates a race feature that unlocks past character level 1 (e.g. Goliath's Large
+  // Form at 5) — races have no per-level grant structure like a class's `levels[]`, so this is
+  // checked directly against character level instead. Omitted = always active.
+  | { type: 'feature'; name: string; description?: string; key?: string; action?: TraitAction; effects?: TraitEffect[]; level?: number }
   // `chooseByLevel` grows the pool with class level (key = level, value = total choices).
   // `display: 'special_action'` is for choices whose picked options are themselves combat
   // reference material (e.g. Battle Master maneuvers) rather than passive features: the play
@@ -362,12 +365,25 @@ export interface DndItem {
   mastery?: { property: string; description: string };
   rarity?: string;
   requires_attunement?: boolean | string;
+  // The item's own +N (or cursed -N) — applied to a weapon's attack/damage rolls, or to AC for
+  // armor/a shield, wherever the item is equipped. See CharacterStatsService/baseArmorClass.
+  enhancement_bonus?: number;
   charges?: { max: number; recovery: string };
   actions?: { key: string; name: string; description?: string; activation: ActionActivation; uses?: TraitAction['uses'] }[];
   effects?: TraitEffect[];
   artificer_plan?: { name: string; itemIndex: string };
   image_url?: string;
   source?: DndSourceReference;
+}
+
+// A magic weapon/armor's `name` is stored plain ("Longsword") — the "+N" players actually see
+// ("Longsword +1") is derived here from `enhancement_bonus` at display time instead of being
+// baked into the content file, so the mechanical field stays the only source of truth for the
+// bonus and the display text can never drift from it.
+export function itemDisplayName(item: Pick<DndItem, 'name' | 'enhancement_bonus'>): string {
+  const bonus = item.enhancement_bonus;
+  if (!bonus) return item.name;
+  return `${item.name} ${bonus > 0 ? '+' : ''}${bonus}`;
 }
 
 export interface DndSpell {

@@ -22,7 +22,12 @@
     {
       "type": "feature",
       "name": "Healing Hands",
-      "description": "As a Magic action, touch a creature and roll a number of d4s equal to your Proficiency Bonus. The creature regains Hit Points equal to the total. Once used, this trait refreshes on a Long Rest."
+      "description": "As a Magic action, touch a creature and roll a number of d4s equal to your Proficiency Bonus. The creature regains Hit Points equal to the total. Once used, this trait refreshes on a Long Rest.",
+      "key": "aasimar-healing-hands",
+      "action": {
+        "activation": "action",
+        "uses": { "max": 1, "per": "long_rest" }
+      }
     },
     {
       "type": "feature",
@@ -43,7 +48,13 @@
     {
       "type": "feature",
       "name": "Celestial Revelation",
-      "description": "At level 3, use a Bonus Action once per Long Rest to transform for 1 minute, choosing each time: Heavenly Wings grants a Fly Speed equal to your Speed; Inner Radiance sheds bright light for 10 feet and dim light for 10 more and deals Radiant damage equal to your Proficiency Bonus to creatures within 10 feet at the end of your turns; Necrotic Shroud forces creatures of your choice within 10 feet to make a Charisma save (DC 8 + your Charisma modifier + Proficiency Bonus) or become Frightened until the end of your next turn. Once on each of your turns during the transformation, one target you damage with an attack or spell takes extra damage equal to your Proficiency Bonus—Radiant for Heavenly Wings or Inner Radiance, Necrotic for Necrotic Shroud."
+      "description": "At level 3, use a Bonus Action once per Long Rest to transform for 1 minute, choosing each time: Heavenly Wings grants a Fly Speed equal to your Speed; Inner Radiance sheds bright light for 10 feet and dim light for 10 more and deals Radiant damage equal to your Proficiency Bonus to creatures within 10 feet at the end of your turns; Necrotic Shroud forces creatures of your choice within 10 feet to make a Charisma save (DC 8 + your Charisma modifier + Proficiency Bonus) or become Frightened until the end of your next turn. Once on each of your turns during the transformation, one target you damage with an attack or spell takes extra damage equal to your Proficiency Bonus—Radiant for Heavenly Wings or Inner Radiance, Necrotic for Necrotic Shroud.",
+      "key": "aasimar-celestial-revelation",
+      "level": 3,
+      "action": {
+        "activation": "bonus_action",
+        "uses": { "max": 1, "per": "long_rest" }
+      }
     }
   ],
   "languages": [],

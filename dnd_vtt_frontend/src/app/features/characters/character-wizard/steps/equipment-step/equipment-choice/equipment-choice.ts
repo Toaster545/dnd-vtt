@@ -1,5 +1,5 @@
 import { Component, input, output } from '@angular/core';
-import { DndItem, EquipmentGroup, EquipmentItemRef, EquipmentOption, StartingEquipment } from '../../../../../../core/services/content.service';
+import { DndItem, EquipmentGroup, EquipmentItemRef, EquipmentOption, StartingEquipment, itemDisplayName } from '../../../../../../core/services/content.service';
 import {
   categoryOptions, categoryPick, equipmentMode, groupOptionKey, isEquipmentComplete,
   resolveStartingEquipment, withCategoryPick, withGroupOption, withMode,
@@ -13,6 +13,8 @@ import {
   templateUrl: './equipment-choice.html',
 })
 export class EquipmentChoiceComponent {
+  readonly itemDisplayName = itemDisplayName;
+
   readonly label   = input.required<string>();
   readonly equip   = input.required<StartingEquipment | null>();
   readonly items   = input.required<DndItem[]>();
@@ -65,7 +67,8 @@ export class EquipmentChoiceComponent {
   }
 
   itemName(index: string): string {
-    return this.items().find(it => it.index === index)?.name ?? index;
+    const item = this.items().find(it => it.index === index);
+    return item ? itemDisplayName(item) : index;
   }
 
   resolved() {

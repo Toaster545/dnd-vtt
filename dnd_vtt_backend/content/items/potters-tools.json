@@ -1,0 +1,13 @@
+{
+  "index": "potters-tools",
+  "name": "Potter's Tools",
+  "type": "gear",
+  "category": "Artisan's Tools",
+  "damage": null,
+  "damage_type": null,
+  "properties": [],
+  "weight": 3,
+  "cost": "10 gp",
+  "image_url": "/icons/anvil.svg",
+  "description": "A wheel, kiln implements, and shaping tools used to work clay."
+}

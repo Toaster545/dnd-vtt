@@ -8,7 +8,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import {
   ContentService, DndClass, DndRace, DndBackground, DndItem, DndSpell, DndFeat, DndMonster,
-  DndContentSource, Subclass, TraitGrant,
+  DndContentSource, Subclass, TraitGrant, itemDisplayName,
 } from '../../../core/services/content.service';
 import { ItemFormComponent } from '../../create-content/items/item-form/item-form';
 import { ItemService } from '../../../core/services/item.service';
@@ -18,7 +18,7 @@ import {
 import { CharacterStatsService } from '../../../core/services/character-stats.service';
 import { CharacterActionsService, CharacterAction } from '../../../core/services/character-actions.service';
 import {
-  Character, ABILITIES, ABILITY_SHORT, SKILLS, EquipmentEntry, Currency,
+  Character, ABILITIES, ABILITY_SHORT, SKILLS, EquipmentEntry, Currency, ATTUNEMENT_SLOT_LIMIT,
   abilityModifier, proficiencyBonus,
 } from '../../../core/models/character.model';
 import { adjustCurrency, CURRENCY_ORDER } from '../../../core/utils/currency';
@@ -102,7 +102,7 @@ interface DescriptionSegment { text: string; bold: boolean }
 type Tab = 'stats' | 'actions' | 'inventory' | 'spells';
 const TAB_ORDER: Tab[] = ['stats', 'actions', 'inventory', 'spells'];
 const TAB_LABELS: Record<Tab, string> = {
-  stats: 'Stats', actions: 'Actions', inventory: 'Inventory', spells: 'Spells',
+  stats: 'Stats', actions: 'Actions', inventory: 'Equipment', spells: 'Spells',
 };
 
 @Component({
@@ -120,6 +120,8 @@ export class CharacterPlaySheetComponent {
   private confirm         = inject(ConfirmService);
   private dialog          = inject(MatDialog);
   private router          = inject(Router);
+
+  readonly itemDisplayName = itemDisplayName;
 
   readonly character = input.required<Character>();
   // Set by DM-facing hosts (dm-campaign-hub, dm-campaign-session, dm-encounter-play) when the
@@ -235,6 +237,17 @@ export class CharacterPlaySheetComponent {
     search: '', level: '', school: '', source: '', castingTime: '', ritual: false,
     concentration: false, prepared: '',
   });
+
+  inventorySearch  = signal('');
+  expandedItems    = signal<Set<string>>(new Set());
+
+  toggleItemExpanded(itemIndex: string) {
+    this.expandedItems.update(set => {
+      const next = new Set(set);
+      if (next.has(itemIndex)) next.delete(itemIndex); else next.add(itemIndex);
+      return next;
+    });
+  }
 
   showGrantItemDialog    = signal(false);
   grantItemSearch        = signal('');
@@ -426,6 +439,16 @@ export class CharacterPlaySheetComponent {
       .map(e => ({ entry: e, item: items.find(it => it.index === e.itemIndex) ?? null }))
       .sort((a, b) => Number(b.entry.equipped) - Number(a.entry.equipped));
   });
+
+  filteredInventoryItems = computed(() => {
+    const query = this.inventorySearch().trim().toLowerCase();
+    const rows = this.inventoryItems();
+    if (!query) return rows;
+    return rows.filter(row => (row.item ? itemDisplayName(row.item) : row.entry.name).toLowerCase().includes(query));
+  });
+
+  attunedCount = computed(() => this.localChar()?.equipment.filter(e => e.attuned).length ?? 0);
+  attunementSlotLimit = computed(() => this.stats()?.attunement_slot_limit ?? ATTUNEMENT_SLOT_LIMIT);
 
   pactWeaponOptions = computed(() => this.itemsAll()
     .filter(item => item.type === 'weapon'
@@ -619,12 +642,16 @@ export class CharacterPlaySheetComponent {
     const race = this.raceData();
     if (race) {
       const raceChoices = char.race_choices ?? {};
-      for (const grant of this.grantsOrLegacy(race.grants, race.traits)) {
+      // A `feature` grant's `level` gates it the same way a class level does below — a
+      // level-5 race trait (e.g. Goliath's Large Form) shouldn't preview on the sheet any
+      // earlier than a level-5 class feature would.
+      const reachable = (grant: TraitGrant) => grant.type !== 'feature' || (grant.level ?? 1) <= char.level;
+      for (const grant of this.grantsOrLegacy(race.grants, race.traits).filter(reachable)) {
         out.push(...this.describeGrant(grant, raceChoices, race.name));
       }
       const sub = char.subrace ? race.subraces.find(s => s.name === char.subrace) : null;
       if (sub) {
-        for (const grant of this.grantsOrLegacy(sub.grants, sub.traits)) {
+        for (const grant of this.grantsOrLegacy(sub.grants, sub.traits).filter(reachable)) {
           out.push(...this.describeGrant(grant, raceChoices, sub.name));
         }
       }
@@ -966,6 +993,18 @@ export class CharacterPlaySheetComponent {
     this.persist({ ...char, equipment });
   }
 
+  // Attunement is independent of equipped — 5e lets you stay attuned to something you've taken
+  // off — so this only ever refuses to turn ON past the character's current slot limit; turning
+  // off is always allowed.
+  toggleAttuned(entry: EquipmentEntry) {
+    const char = this.localChar();
+    if (!char) return;
+    const attuning = !entry.attuned;
+    if (attuning && this.attunedCount() >= this.attunementSlotLimit()) return;
+    const equipment = char.equipment.map(e => e.itemIndex === entry.itemIndex ? { ...e, attuned: attuning } : e);
+    this.persist({ ...char, equipment });
+  }
+
   async updateReplicatedItem(action: 'create' | 'dismiss' | 'toggle', itemIndex: string) {
     const char = this.localChar();
     if (!char?.id || this.replicateItemBusy()) return;
@@ -1014,7 +1053,7 @@ export class CharacterPlaySheetComponent {
   async revokeItem(entry: EquipmentEntry) {
     const char = this.localChar();
     if (!char?.id || this.persisting()) return;
-    if (!await this.confirm.confirm(`Remove ${entry.name} from ${char.name}'s inventory?`, 'Remove Item')) return;
+    if (!await this.confirm.confirm(`Remove ${entry.name} from ${char.name}'s equipment?`, 'Remove Item')) return;
     this.persisting.set(true);
     try {
       const result = await this.characterService.revokeItem(char.id, entry.itemIndex);
@@ -1054,7 +1093,7 @@ export class CharacterPlaySheetComponent {
       const result = await this.characterService.grantItem(char.id, item.index, quantity);
       this.localChar.set(result);
       this.saved.emit(result);
-      this.grantItemNotice.set(`Gave ${char.name} ${quantity > 1 ? quantity + '× ' : ''}${item.name}.`);
+      this.grantItemNotice.set(`Gave ${char.name} ${quantity > 1 ? quantity + '× ' : ''}${itemDisplayName(item)}.`);
     } catch (error: unknown) {
       const candidate = error as { error?: { message?: string | string[] } };
       const message = candidate.error?.message;

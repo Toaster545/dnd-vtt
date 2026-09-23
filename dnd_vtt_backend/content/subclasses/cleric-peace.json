@@ -49,7 +49,12 @@
         {
           "type": "feature",
           "name": "Channel Divinity: Balm of Peace",
-          "description": "As an Action, move up to your Speed without provoking Opportunity Attacks. The first time you move within 5 feet of a creature during this movement, you can restore 2d6 plus your Wisdom modifier Hit Points to it."
+          "description": "As an Action, move up to your Speed without provoking Opportunity Attacks. The first time you move within 5 feet of a creature during this movement, you can restore 2d6 plus your Wisdom modifier Hit Points to it.",
+          "key": "tce_cleric_peace_balm-of-peace",
+          "action": {
+            "activation": "action",
+            "uses": { "max": 2, "maxByLevel": { "6": 3, "18": 4 }, "per": "long_rest", "shortRestRestore": 1 }
+          }
         }
       ]
     },

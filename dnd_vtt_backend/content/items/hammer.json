@@ -1,0 +1,13 @@
+{
+  "index": "hammer",
+  "name": "Hammer",
+  "type": "gear",
+  "category": "Adventuring Gear",
+  "damage": null,
+  "damage_type": null,
+  "properties": [],
+  "weight": 3,
+  "cost": "1 gp",
+  "image_url": "/icons/claw-hammer.svg",
+  "description": "A one-handed hammer useful for driving pitons or nails."
+}

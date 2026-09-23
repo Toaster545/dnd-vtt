@@ -1,6 +1,6 @@
 import { Component, HostListener, input, output } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
-import { DndItem, DndMonster, DndSpell } from '../../../core/services/content.service';
+import { DndItem, DndMonster, DndSpell, itemDisplayName } from '../../../core/services/content.service';
 
 @Component({
   selector: 'app-content-detail-dialog',
@@ -36,6 +36,8 @@ export class ContentDetailDialogComponent {
     const value = Math.floor((score - 10) / 2);
     return value >= 0 ? `+${value}` : `${value}`;
   }
+
+  readonly itemDisplayName = itemDisplayName;
 
   attunementText(item: DndItem): string {
     if (!item.requires_attunement) return 'No';

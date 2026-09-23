@@ -1,0 +1,13 @@
+{
+  "index": "arcane-focus-wand",
+  "name": "Arcane Focus (Wand)",
+  "type": "gear",
+  "category": "Arcane Focus",
+  "damage": null,
+  "damage_type": null,
+  "properties": [],
+  "weight": 1,
+  "cost": "10 gp",
+  "image_url": "/icons/crystal-wand.svg",
+  "description": "A slim wand used by an arcane spellcaster as a spellcasting focus."
+}

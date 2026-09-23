@@ -19,7 +19,8 @@
         {
           "type": "feature",
           "name": "Rakish Audacity",
-          "description": "Add your Charisma modifier to Initiative. You can Sneak Attack a target within 5 feet when no other creature is within 5 feet of you and you do not have disadvantage, even without advantage."
+          "description": "Add your Charisma modifier to Initiative. You can Sneak Attack a target within 5 feet when no other creature is within 5 feet of you and you do not have disadvantage, even without advantage.",
+          "effects": [{ "type": "initiative_ability_bonus", "ability": "charisma" }]
         }
       ]
     },

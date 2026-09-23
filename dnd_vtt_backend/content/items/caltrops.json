@@ -1,0 +1,13 @@
+{
+  "index": "caltrops",
+  "name": "Caltrops (bag of 20)",
+  "type": "gear",
+  "category": "Adventuring Gear",
+  "damage": null,
+  "damage_type": null,
+  "properties": [],
+  "weight": 2,
+  "cost": "1 gp",
+  "image_url": "/icons/backpack.svg",
+  "description": "Small spiked metal stars that can be scattered to turn a floor space into difficult terrain."
+}

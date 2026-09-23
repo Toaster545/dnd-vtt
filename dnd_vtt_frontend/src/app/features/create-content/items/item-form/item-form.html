@@ -204,6 +204,16 @@
               @for (r of rarities; track r) { <option [value]="r">{{ r }}</option> }
             </select>
           </div>
+          @if (type() === 'weapon' || type() === 'armor') {
+            <div class="field">
+              <label class="field-label">Enhancement Bonus</label>
+              <input
+                class="field-input" type="number" step="1"
+                [ngModel]="enhancementBonus()" (ngModelChange)="enhancementBonus.set($event === '' || $event == null ? null : +$event)"
+                placeholder="e.g. 1 for +1, -1 if cursed" name="enhancementBonus"
+              />
+            </div>
+          }
           <div class="field">
             <label class="field-label">Charges</label>
             <label class="flex items-center gap-2 text-sm text-parchment h-9">

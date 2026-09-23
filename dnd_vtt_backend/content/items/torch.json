@@ -1,0 +1,13 @@
+{
+  "index": "torch",
+  "name": "Torch",
+  "type": "gear",
+  "category": "Adventuring Gear",
+  "damage": null,
+  "damage_type": null,
+  "properties": [],
+  "weight": 1,
+  "cost": "1 cp",
+  "image_url": "/icons/torch.svg",
+  "description": "A wooden rod capped with an oil-soaked rag that burns for 1 hour, shedding bright light in a 20-foot radius."
+}

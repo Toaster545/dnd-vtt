@@ -95,7 +95,7 @@
             [class.border-dotted]="borderStyle() === 'dotted'" [class.border-none]="borderStyle() === 'none'"
             [style.border-color]="cardColor(item)" [style.font-family]="fontFamily()">
             <div class="item-card-header" [style.border-color]="cardColor(item)">
-              <h3>{{ item.name }}</h3>
+              <h3>{{ itemDisplayName(item) }}</h3>
               <p class="item-card-subtitle">{{ subtitle(item) }}</p>
             </div>
 

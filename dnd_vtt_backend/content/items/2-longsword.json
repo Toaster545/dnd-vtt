@@ -1,0 +1,17 @@
+{
+  "index": "2-longsword",
+  "name": "Longsword",
+  "type": "weapon",
+  "category": "Martial Melee",
+  "damage": "1d8",
+  "damage_type": "slashing",
+  "properties": ["Versatile (1d10)"],
+  "weight": 3,
+  "cost": "Magic item",
+  "image_url": "/icons/ancient-sword.svg",
+  "description": "You have a +2 bonus to attack and damage rolls made with this magic weapon.",
+  "rarity": "rare",
+  "requires_attunement": false,
+  "enhancement_bonus": 2,
+  "mastery": { "property": "Sap", "description": "Hit gives the target disadvantage on its next attack roll before the start of your next turn." }
+}

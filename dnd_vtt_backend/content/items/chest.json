@@ -1,0 +1,13 @@
+{
+  "index": "chest",
+  "name": "Chest",
+  "type": "gear",
+  "category": "Adventuring Gear",
+  "damage": null,
+  "damage_type": null,
+  "properties": [],
+  "weight": 25,
+  "cost": "5 gp",
+  "image_url": "/icons/chest.svg",
+  "description": "A sturdy lockable wooden chest for storing belongings."
+}

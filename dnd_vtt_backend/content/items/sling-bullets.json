@@ -1,0 +1,13 @@
+{
+  "index": "sling-bullets",
+  "name": "Sling Bullets (20)",
+  "type": "gear",
+  "category": "Ammunition",
+  "damage": null,
+  "damage_type": null,
+  "properties": [],
+  "weight": 1.5,
+  "cost": "4 cp",
+  "image_url": "/icons/sling.svg",
+  "description": "A pouch of 20 lead bullets for use with a sling."
+}

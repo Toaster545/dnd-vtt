@@ -1,0 +1,15 @@
+{
+  "index": "poison-basic",
+  "name": "Poison, Basic (vial)",
+  "type": "consumable",
+  "category": "Alchemical",
+  "damage": null,
+  "damage_type": null,
+  "properties": [
+    "Coats one weapon or up to 3 pieces of ammunition; DC 10 Constitution save or take 1d4 poison damage"
+  ],
+  "weight": 0,
+  "cost": "100 gp",
+  "image_url": "/icons/poison-bottle.svg",
+  "description": "A vial of venom that can be applied to a weapon or ammunition as a bonus action."
+}

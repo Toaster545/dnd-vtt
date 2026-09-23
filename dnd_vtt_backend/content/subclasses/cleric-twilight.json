@@ -50,17 +50,31 @@
         {
           "type": "feature",
           "name": "Eyes of Night",
-          "description": "Gain Darkvision out to 300 feet. As an Action, share that range with willing creatures up to your Wisdom modifier for 1 hour; restore the shared use on a Long Rest or by expending a spell slot."
+          "description": "Gain Darkvision out to 300 feet. As an Action, share that range with willing creatures up to your Wisdom modifier for 1 hour; restore the shared use on a Long Rest or by expending a spell slot.",
+          "key": "tce_cleric_twilight_eyes-of-night",
+          "action": {
+            "activation": "action",
+            "uses": { "max": 1, "per": "long_rest" }
+          }
         },
         {
           "type": "feature",
           "name": "Vigilant Blessing",
-          "description": "As an Action, give one creature Advantage on its next Initiative roll. The blessing ends after that roll or when you bless another creature."
+          "description": "As an Action, give one creature Advantage on its next Initiative roll. The blessing ends after that roll or when you bless another creature.",
+          "key": "tce_cleric_twilight_vigilant-blessing",
+          "action": {
+            "activation": "action"
+          }
         },
         {
           "type": "feature",
           "name": "Channel Divinity: Twilight Sanctuary",
-          "description": "As an Action, create a 30-foot sphere of twilight for 1 minute. At the end of each ally's turn in it, grant temporary Hit Points equal to 1d6 plus Cleric level or end one Charmed or Frightened effect on that ally."
+          "description": "As an Action, create a 30-foot sphere of twilight for 1 minute. At the end of each ally's turn in it, grant temporary Hit Points equal to 1d6 plus Cleric level or end one Charmed or Frightened effect on that ally.",
+          "key": "tce_cleric_twilight_twilight-sanctuary",
+          "action": {
+            "activation": "action",
+            "uses": { "max": 2, "maxByLevel": { "6": 3, "18": 4 }, "per": "long_rest", "shortRestRestore": 1 }
+          }
         }
       ]
     },

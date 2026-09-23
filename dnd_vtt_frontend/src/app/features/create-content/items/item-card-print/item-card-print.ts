@@ -1,7 +1,7 @@
 import { Component, computed, input, output, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
-import { DndItem } from '../../../../core/services/content.service';
+import { DndItem, itemDisplayName } from '../../../../core/services/content.service';
 
 type ColorMode = 'rarity' | 'custom';
 type BorderStyle = 'thin' | 'heavy' | 'ornate' | 'dotted' | 'none';
@@ -108,6 +108,8 @@ export class ItemCardPrintComponent {
       default: return 'Georgia, "Times New Roman", serif';
     }
   }
+
+  readonly itemDisplayName = itemDisplayName;
 
   subtitle(item: DndItem): string {
     const parts = [item.type, item.category];

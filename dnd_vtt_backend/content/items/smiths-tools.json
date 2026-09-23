@@ -1,0 +1,13 @@
+{
+  "index": "smiths-tools",
+  "name": "Smith's Tools",
+  "type": "gear",
+  "category": "Artisan's Tools",
+  "damage": null,
+  "damage_type": null,
+  "properties": [],
+  "weight": 8,
+  "cost": "20 gp",
+  "image_url": "/icons/anvil.svg",
+  "description": "A hammer, tongs, and other implements used to work metal at a forge."
+}

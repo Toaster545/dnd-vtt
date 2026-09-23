@@ -1,0 +1,13 @@
+{
+  "index": "bottle-glass",
+  "name": "Bottle, Glass",
+  "type": "gear",
+  "category": "Adventuring Gear",
+  "damage": null,
+  "damage_type": null,
+  "properties": [],
+  "weight": 2,
+  "cost": "2 gp",
+  "image_url": "/icons/water-bottle.svg",
+  "description": "A stoppered glass bottle for carrying liquids."
+}

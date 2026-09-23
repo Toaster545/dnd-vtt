@@ -18,5 +18,17 @@
     "page": 137,
     "srd_5_2_1": false,
     "rules_text": "reference-only"
-  }
+  },
+  "actions": [
+    {
+      "key": "item:clockwork-amulet",
+      "name": "Clockwork Amulet",
+      "description": "An amulet that can replace one attack roll with a fixed, reliable result once per day.",
+      "activation": "free",
+      "uses": {
+        "max": 1,
+        "per": "long_rest"
+      }
+    }
+  ]
 }

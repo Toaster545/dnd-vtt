@@ -1,0 +1,13 @@
+{
+  "index": "signal-whistle",
+  "name": "Signal Whistle",
+  "type": "gear",
+  "category": "Adventuring Gear",
+  "damage": null,
+  "damage_type": null,
+  "properties": [],
+  "weight": 0,
+  "cost": "5 cp",
+  "image_url": "/icons/hunting-horn.svg",
+  "description": "A small whistle that carries a piercing note over long distances."
+}

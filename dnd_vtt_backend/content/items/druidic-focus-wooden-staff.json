@@ -1,0 +1,13 @@
+{
+  "index": "druidic-focus-wooden-staff",
+  "name": "Druidic Focus (Wooden Staff)",
+  "type": "gear",
+  "category": "Druidic Focus",
+  "damage": null,
+  "damage_type": null,
+  "properties": [],
+  "weight": 4,
+  "cost": "5 gp",
+  "image_url": "/icons/crescent-staff.svg",
+  "description": "A gnarled wooden staff used as a spellcasting focus for primal magic; it can also serve as a quarterstaff."
+}

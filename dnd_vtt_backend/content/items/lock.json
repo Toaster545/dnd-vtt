@@ -1,0 +1,13 @@
+{
+  "index": "lock",
+  "name": "Lock",
+  "type": "gear",
+  "category": "Adventuring Gear",
+  "damage": null,
+  "damage_type": null,
+  "properties": [],
+  "weight": 1,
+  "cost": "10 gp",
+  "image_url": "/icons/combination-lock.svg",
+  "description": "A metal lock that comes with a key; without the key, picking it requires thieves’ tools and proficiency."
+}

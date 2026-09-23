@@ -1,0 +1,15 @@
+{
+  "index": "plate-armor",
+  "name": "Plate Armor",
+  "type": "armor",
+  "category": "Heavy Armor",
+  "armor_class": "18",
+  "properties": [
+    "Requires Strength 15",
+    "Stealth Disadvantage"
+  ],
+  "weight": 65,
+  "cost": "1500 gp",
+  "image_url": "/icons/spiked-armor.svg",
+  "description": "Shaped and fitted metal plates cover the entire body, worn over padded leather."
+}

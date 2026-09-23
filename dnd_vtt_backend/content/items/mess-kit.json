@@ -1,0 +1,13 @@
+{
+  "index": "mess-kit",
+  "name": "Mess Kit",
+  "type": "gear",
+  "category": "Adventuring Gear",
+  "damage": null,
+  "damage_type": null,
+  "properties": [],
+  "weight": 1,
+  "cost": "2 sp",
+  "image_url": "/icons/backpack.svg",
+  "description": "A tin of cooking and eating utensils that fold up for easy storage."
+}

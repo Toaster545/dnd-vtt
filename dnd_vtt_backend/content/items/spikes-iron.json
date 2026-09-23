@@ -1,0 +1,13 @@
+{
+  "index": "spikes-iron",
+  "name": "Spikes, Iron (10)",
+  "type": "gear",
+  "category": "Adventuring Gear",
+  "damage": null,
+  "damage_type": null,
+  "properties": [],
+  "weight": 5,
+  "cost": "1 gp",
+  "image_url": "/icons/backpack.svg",
+  "description": "A set of 10 iron spikes that can be driven into surfaces to bar doors or anchor ropes."
+}

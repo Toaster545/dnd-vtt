@@ -139,6 +139,7 @@ export class ItemFormComponent implements OnInit {
   showIconPicker = signal(false);
 
   rarity           = signal('');
+  enhancementBonus       = signal<number | null>(null);
   requiresAttunement    = signal(false);
   attunementRestriction = signal('');
   hasCharges       = signal(false);
@@ -179,6 +180,7 @@ export class ItemFormComponent implements OnInit {
     }
 
     this.rarity.set(i.rarity ?? '');
+    this.enhancementBonus.set(i.enhancement_bonus ?? null);
     if (i.requires_attunement) {
       this.requiresAttunement.set(true);
       this.attunementRestriction.set(typeof i.requires_attunement === 'string' ? i.requires_attunement : '');
@@ -364,6 +366,7 @@ export class ItemFormComponent implements OnInit {
     const imageUrl = this.imageUrl();
     if (imageUrl) built.image_url = imageUrl;
     if (this.rarity()) built.rarity = this.rarity();
+    if (this.enhancementBonus() != null) built.enhancement_bonus = this.enhancementBonus()!;
     if (this.requiresAttunement()) {
       built.requires_attunement = this.attunementRestriction().trim() || true;
     }

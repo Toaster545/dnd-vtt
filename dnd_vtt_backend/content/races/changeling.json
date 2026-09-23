@@ -40,7 +40,11 @@
     {
       "type": "feature",
       "name": "Shape-Shifter",
-      "description": "As an action, alter your appearance, voice, height, weight, and Small or Medium size without changing game statistics. While transformed this way, you have Advantage on Charisma checks."
+      "description": "As an action, alter your appearance, voice, height, weight, and Small or Medium size without changing game statistics. While transformed this way, you have Advantage on Charisma checks.",
+      "key": "changeling-shape-shifter",
+      "action": {
+        "activation": "action"
+      }
     }
   ]
 }

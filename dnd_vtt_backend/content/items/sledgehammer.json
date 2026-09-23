@@ -1,0 +1,13 @@
+{
+  "index": "sledgehammer",
+  "name": "Sledgehammer",
+  "type": "gear",
+  "category": "Adventuring Gear",
+  "damage": null,
+  "damage_type": null,
+  "properties": [],
+  "weight": 10,
+  "cost": "2 gp",
+  "image_url": "/icons/stake-hammer.svg",
+  "description": "A heavy, long-handled hammer used to break down doors and other obstacles."
+}

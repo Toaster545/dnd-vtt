@@ -16,6 +16,18 @@
     "max": 3,
     "recovery": "dawn"
   },
+  "actions": [
+    {
+      "key": "item:astromancy-archive",
+      "name": "Astromancy Archive",
+      "description": "A divination spellbook and focus whose charges cast divinations or influence a nearby d20 roll.",
+      "activation": "action",
+      "uses": {
+        "max": 3,
+        "per": "long_rest"
+      }
+    }
+  ],
   "source": {
     "code": "TCE",
     "book": "Tasha's Cauldron of Everything",

@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { EquipmentEntry } from '../models/character.model';
 import { DndItem, TraitEffect } from '../services/content.service';
 import {
+  baseArmorClass,
   evaluateCondition,
   resolveLanguageProficiencies,
   unarmoredDefenseBonus,
@@ -60,6 +61,29 @@ describe('wearing_heavy_armor equipment condition', () => {
     expect(evaluateCondition('wearing_heavy_armor', [], [lightArmor, heavyArmor])).toBe(false);
     expect(evaluateCondition('wearing_heavy_armor', equipped(lightArmor.index), [lightArmor, heavyArmor])).toBe(false);
     expect(evaluateCondition('wearing_heavy_armor', equipped(heavyArmor.index), [lightArmor, heavyArmor])).toBe(true);
+  });
+});
+
+describe('baseArmorClass enhancement_bonus', () => {
+  const plusOneArmor = {
+    index: 'plus-one-plate', type: 'armor', category: 'Heavy Armor', properties: [],
+    armor_class: '18', enhancement_bonus: 1,
+  } as unknown as DndItem;
+  const plusTwoShield = {
+    index: 'plus-two-shield', type: 'armor', category: 'Shield', properties: [],
+    armor_class: '+2', enhancement_bonus: 2,
+  } as unknown as DndItem;
+  const equipped = (itemIndex: string): EquipmentEntry[] => [
+    { itemIndex, name: itemIndex, quantity: 1, equipped: true },
+  ];
+
+  it('adds a +1 armor\'s own enhancement bonus on top of its formula', () => {
+    expect(baseArmorClass(equipped(plusOneArmor.index), [plusOneArmor, plusTwoShield], 3)).toBe(19);
+  });
+
+  it('adds a +2 shield\'s own enhancement bonus on top of its flat bonus, alongside worn armor', () => {
+    const equipment = [...equipped(plusOneArmor.index), ...equipped(plusTwoShield.index)];
+    expect(baseArmorClass(equipment, [plusOneArmor, plusTwoShield], 3)).toBe(23);
   });
 });
 

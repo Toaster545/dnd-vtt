@@ -1,0 +1,13 @@
+{
+  "index": "miners-pick",
+  "name": "Miner's Pick",
+  "type": "gear",
+  "category": "Adventuring Gear",
+  "damage": null,
+  "damage_type": null,
+  "properties": [],
+  "weight": 10,
+  "cost": "2 gp",
+  "image_url": "/icons/pick-of-destiny.svg",
+  "description": "A pickaxe used to break rock and dig through earth."
+}

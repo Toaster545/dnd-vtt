@@ -1,6 +1,6 @@
 {
   "index": "2-amulet-of-the-devout",
-  "name": "+2 Amulet of the Devout",
+  "name": "Amulet of the Devout",
   "type": "gear",
   "category": "Wondrous Item",
   "damage": null,
@@ -12,7 +12,17 @@
   "description": "A Cleric or Paladin focus that grants its listed bonus to spell attacks and save DCs and provides one additional Channel Divinity use each day.",
   "rarity": "rare",
   "requires_attunement": "by a cleric or paladin",
-  "magic_bonus": 2,
+  "enhancement_bonus": 2,
+  "effects": [
+    {
+      "type": "spell_attack_bonus",
+      "value": 2
+    },
+    {
+      "type": "spell_save_dc_bonus",
+      "value": 2
+    }
+  ],
   "source": {
     "code": "TCE",
     "book": "Tasha's Cauldron of Everything",

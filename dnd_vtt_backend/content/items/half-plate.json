@@ -1,0 +1,14 @@
+{
+  "index": "half-plate",
+  "name": "Half Plate Armor",
+  "type": "armor",
+  "category": "Medium Armor",
+  "armor_class": "15 + DEX (max 2)",
+  "properties": [
+    "Stealth Disadvantage"
+  ],
+  "weight": 40,
+  "cost": "750 gp",
+  "image_url": "/icons/armor-vest.svg",
+  "description": "Shaped metal plates cover most of the wearer’s body, with leather and chain filling the gaps."
+}

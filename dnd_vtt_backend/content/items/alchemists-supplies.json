@@ -1,0 +1,13 @@
+{
+  "index": "alchemists-supplies",
+  "name": "Alchemist's Supplies",
+  "type": "gear",
+  "category": "Artisan's Tools",
+  "damage": null,
+  "damage_type": null,
+  "properties": [],
+  "weight": 8,
+  "cost": "50 gp",
+  "image_url": "/icons/cauldron.svg",
+  "description": "Glassware, chemicals, and other implements used to mix reagents and compounds."
+}

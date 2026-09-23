@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import { Character, Ability, ABILITIES, SKILLS, abilityModifier, proficiencyBonus } from '../models/character.model';
-import { DndBackground, DndClass, DndFeat, DndItem, DndRace } from './content.service';
+import { ATTUNEMENT_SLOT_LIMIT, Character, Ability, ABILITIES, SKILLS, abilityModifier, proficiencyBonus } from '../models/character.model';
+import { DndBackground, DndClass, DndFeat, DndItem, DndRace, itemDisplayName } from './content.service';
 import {
-  ClassChoiceSource, RaceChoiceSource, activeEffects, averageHpFormula, baseArmorClass, collectFeatEffects, collectTraitEffects, equippedItems, resolveCharacterFeatPicks,
+  ClassChoiceSource, RaceChoiceSource, activeEffects, activeMagicItems, attunementActive, averageHpFormula, baseArmorClass, collectFeatEffects, collectTraitEffects, equippedItems, resolveCharacterFeatPicks,
   unarmoredDefenseBonus,
 } from '../utils/character-effects';
 import { weaponMatchesAnyProficiency } from '../utils/weapon-proficiency';
@@ -50,6 +50,11 @@ export interface ComputedStats {
   computed_ac: number;
   unarmed_attack: WeaponAttack;
   weapon_attacks: WeaponAttack[];
+  // The base 3-item cap (ATTUNEMENT_SLOT_LIMIT), raised by whichever granted
+  // attunement_slot_override effect is highest right now (e.g. Artificer's Magic Item
+  // Adept/Advanced Artifice/Magic Item Master, Rogue's Use Magic Device) — each is an absolute
+  // replacement for the previous tier, not a stacking bonus, so this takes the max rather than a sum.
+  attunement_slot_limit: number;
 }
 
 // Weapon proficiency comes from book-facing labels that can name broad categories, restricted
@@ -103,26 +108,46 @@ export class CharacterStatsService {
     const prof = proficiencyBonus(char.level);
     const scores = char.ability_scores;
 
-    const mods = ABILITIES.reduce((acc, ab) => ({
-      ...acc, [ab]: abilityModifier(scores[ab] ?? 10),
-    }), {} as Record<Ability, number>);
-
     const raceForFeats: RaceChoiceSource | null = raceData ? {
       data: raceData,
       choices: char.race_choices ?? {},
       subrace: char.subrace,
+      characterLevel: char.level,
     } : null;
     const equipment = [
       ...char.equipment,
+      // A replicated item never requires attunement in its own right (Artificer's Replicate
+      // Magic Item), so it's stamped `attuned: true` here rather than left to the default —
+      // otherwise attunementActive() would wrongly treat one as dormant.
       ...(char.replicated_items ?? []).map(entry => ({
-        itemIndex: entry.itemIndex, name: entry.planName, quantity: 1, equipped: entry.equipped,
+        itemIndex: entry.itemIndex, name: entry.planName, quantity: 1, equipped: entry.equipped, attuned: true,
       })),
     ];
     const allEffects = [
       ...collectTraitEffects(classesForFeats, feats, raceForFeats),
       ...collectFeatEffects(resolveBackgroundOriginFeat(backgroundData, feats), char.background_choices ?? {}),
-      ...equippedItems(equipment, items).flatMap(item => item.effects ?? []),
+      ...activeMagicItems(equipment, items).flatMap(item => item.effects ?? []),
     ];
+
+    const attunement_slot_limit = Math.max(
+      ATTUNEMENT_SLOT_LIMIT,
+      ...allEffects
+        .filter(effect => effect.type === 'attunement_slot_override')
+        .map(effect => effect.value ?? ATTUNEMENT_SLOT_LIMIT),
+    );
+
+    // A worn/held item's own score-altering magic (Gauntlets of Ogre Power's flat set, a Belt of
+    // Giant Strength's `minimum`) — resolved before every other stat below, since ability
+    // modifiers feed AC, attack/damage, saves, skills, and spellcasting DC alike.
+    const abilityScoreEffects = activeEffects(
+      allEffects.filter(effect => effect.type === 'ability_score_bonus'), equipment, items,
+    );
+    const mods = ABILITIES.reduce((acc, ab) => {
+      const relevant = abilityScoreEffects.filter(effect => effect.ability === ab);
+      const bonused = (scores[ab] ?? 10) + relevant.reduce((sum, effect) => sum + (effect.value ?? 0), 0);
+      const score = Math.max(bonused, ...relevant.map(effect => effect.minimum).filter((m): m is number => m != null));
+      return { ...acc, [ab]: abilityModifier(score) };
+    }, {} as Record<Ability, number>);
 
     const hit_die = classData?.hit_die ?? 8;
     const hpBonusPerLevel = allEffects
@@ -231,15 +256,20 @@ export class CharacterStatsService {
           ? activeEffects(allEffects.filter(e => e.type === 'thrown_damage_bonus'), equipment, items)
               .reduce((sum, e) => sum + (e.value ?? 0), 0)
           : 0;
+        // The weapon's own +N (or cursed -N) applies to both the attack roll and the damage
+        // roll, on top of any character-wide bonus above — that's what makes a +1 weapon a +1
+        // weapon rather than just a name. Dormant (equipped but not attuned, for a weapon that
+        // requires it) instead of applied.
+        const enhancementBonus = attunementActive(weapon, equipment) ? (weapon.enhancement_bonus ?? 0) : 0;
 
         return {
           itemIndex: weapon.index,
-          name: weapon.name,
+          name: itemDisplayName(weapon),
           distance: weaponDistance(weapon),
-          attack_bonus: abilityMod + (proficient ? prof : 0) + rangedAttackBonus,
+          attack_bonus: abilityMod + (proficient ? prof : 0) + rangedAttackBonus + enhancementBonus,
           damage_dice: weapon.damage ?? '',
           versatile_damage_dice: versatileDamageDice(weapon),
-          damage_bonus: abilityMod + meleeDamageBonus + thrownDamageBonus,
+          damage_bonus: abilityMod + meleeDamageBonus + thrownDamageBonus + enhancementBonus,
           damage_type: isPactWeapon
             ? [weapon.damage_type, 'necrotic', 'psychic', 'radiant'].filter(Boolean).join(' / ')
             : weapon.damage_type ?? null,
@@ -249,10 +279,18 @@ export class CharacterStatsService {
       });
 
     const spellcastingAbility = classData?.spellcasting_ability as Ability | undefined;
+    // A spellcasting focus item's own +N (Arcane Grimoire, Amulet of the Devout, etc.) — only
+    // counts while equipped and attuned, same gating as every other item effect.
+    const spellAttackItemBonus = allEffects
+      .filter(effect => effect.type === 'spell_attack_bonus')
+      .reduce((sum, effect) => sum + (effect.value ?? 0), 0);
+    const spellSaveDcItemBonus = allEffects
+      .filter(effect => effect.type === 'spell_save_dc_bonus')
+      .reduce((sum, effect) => sum + (effect.value ?? 0), 0);
     const spell_attack_bonus = spellcastingAbility != null
-      ? prof + mods[spellcastingAbility] : null;
+      ? prof + mods[spellcastingAbility] + spellAttackItemBonus : null;
     const spell_save_dc = spellcastingAbility != null
-      ? 8 + prof + mods[spellcastingAbility] : null;
+      ? 8 + prof + mods[spellcastingAbility] + spellSaveDcItemBonus : null;
 
     const initiativeAbilityBonus = allEffects
       .filter(effect => effect.type === 'initiative_ability_bonus')
@@ -283,6 +321,7 @@ export class CharacterStatsService {
       passive_insight,
       spell_attack_bonus,
       spell_save_dc,
+      attunement_slot_limit,
     };
   }
 

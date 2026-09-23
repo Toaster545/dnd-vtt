@@ -1,0 +1,13 @@
+{
+  "index": "rope-silk",
+  "name": "Rope, Silk (50 feet)",
+  "type": "gear",
+  "category": "Adventuring Gear",
+  "damage": null,
+  "damage_type": null,
+  "properties": [],
+  "weight": 5,
+  "cost": "10 gp",
+  "image_url": "/icons/rope-coil.svg",
+  "description": "A 50-foot coil of silk rope, lighter and stronger than hempen rope."
+}

@@ -1,0 +1,13 @@
+{
+  "index": "masons-tools",
+  "name": "Mason's Tools",
+  "type": "gear",
+  "category": "Artisan's Tools",
+  "damage": null,
+  "damage_type": null,
+  "properties": [],
+  "weight": 8,
+  "cost": "10 gp",
+  "image_url": "/icons/chisel.svg",
+  "description": "A hammer, chisels, and other implements used to work and shape stone."
+}

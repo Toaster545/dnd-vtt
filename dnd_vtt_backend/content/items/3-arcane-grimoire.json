@@ -1,6 +1,6 @@
 {
   "index": "3-arcane-grimoire",
-  "name": "+3 Arcane Grimoire",
+  "name": "Arcane Grimoire",
   "type": "gear",
   "category": "Wondrous Item",
   "damage": null,
@@ -12,7 +12,17 @@
   "description": "A Wizard spellbook and focus that grants its listed bonus to spell attacks and save DCs and improves Arcane Recovery.",
   "rarity": "very rare",
   "requires_attunement": "by a wizard",
-  "magic_bonus": 3,
+  "enhancement_bonus": 3,
+  "effects": [
+    {
+      "type": "spell_attack_bonus",
+      "value": 3
+    },
+    {
+      "type": "spell_save_dc_bonus",
+      "value": 3
+    }
+  ],
   "source": {
     "code": "TCE",
     "book": "Tasha's Cauldron of Everything",

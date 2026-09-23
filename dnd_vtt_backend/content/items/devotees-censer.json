@@ -12,6 +12,18 @@
   "description": "A magic flail that deals extra Radiant damage and can release a healing cloud once per day.",
   "rarity": "rare",
   "requires_attunement": "by a cleric or paladin",
+  "actions": [
+    {
+      "key": "item:devotees-censer",
+      "name": "Devotee's Censer",
+      "description": "A magic flail that deals extra Radiant damage and can release a healing cloud once per day.",
+      "activation": "action",
+      "uses": {
+        "max": 1,
+        "per": "long_rest"
+      }
+    }
+  ],
   "source": {
     "code": "TCE",
     "book": "Tasha's Cauldron of Everything",

@@ -1,0 +1,13 @@
+{
+  "index": "bucket",
+  "name": "Bucket",
+  "type": "gear",
+  "category": "Adventuring Gear",
+  "damage": null,
+  "damage_type": null,
+  "properties": [],
+  "weight": 2,
+  "cost": "5 cp",
+  "image_url": "/icons/backpack.svg",
+  "description": "A wooden or metal pail for carrying water and other materials."
+}

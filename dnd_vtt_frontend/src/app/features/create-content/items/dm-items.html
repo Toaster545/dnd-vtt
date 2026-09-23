@@ -83,7 +83,7 @@
                 }
               </div>
               <div class="flex-1 min-w-0">
-                <p class="text-parchment font-medium truncate m-0">{{ i.name }}</p>
+                <p class="text-parchment font-medium truncate m-0">{{ itemDisplayName(i) }}</p>
                 <p class="text-slate text-xs m-0 mt-0.5">{{ i.type }} · {{ i.category }}</p>
               </div>
               <div class="flex items-center gap-1.5">
@@ -134,7 +134,7 @@
                   }
                 </div>
                 <div class="flex-1 min-w-0">
-                  <p class="text-parchment font-medium truncate m-0">{{ i.name }}</p>
+                  <p class="text-parchment font-medium truncate m-0">{{ itemDisplayName(i) }}</p>
                   <p class="text-slate text-xs m-0 mt-0.5">{{ i.type }} · {{ i.category }}</p>
                   <p class="text-coal text-[10px] m-0 mt-0.5">{{ i.source?.book || 'Player\'s Handbook' }}</p>
                 </div>

@@ -1,0 +1,13 @@
+{
+  "index": "arcane-focus-rod",
+  "name": "Arcane Focus (Rod)",
+  "type": "gear",
+  "category": "Arcane Focus",
+  "damage": null,
+  "damage_type": null,
+  "properties": [],
+  "weight": 2,
+  "cost": "10 gp",
+  "image_url": "/icons/rod-of-asclepius.svg",
+  "description": "A slender rod used by an arcane spellcaster as a spellcasting focus."
+}

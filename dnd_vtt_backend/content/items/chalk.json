@@ -1,0 +1,13 @@
+{
+  "index": "chalk",
+  "name": "Chalk (1 piece)",
+  "type": "gear",
+  "category": "Adventuring Gear",
+  "damage": null,
+  "damage_type": null,
+  "properties": [],
+  "weight": 0,
+  "cost": "1 cp",
+  "image_url": "/icons/backpack.svg",
+  "description": "A stick of chalk for marking surfaces."
+}

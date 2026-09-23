@@ -49,7 +49,8 @@
         {
           "type": "feature",
           "name": "Ambush Master",
-          "description": "Gain advantage on Initiative rolls. The first creature you hit during the first round of combat grants advantage on attacks against it to all attackers until the start of your next turn."
+          "description": "Gain advantage on Initiative rolls. The first creature you hit during the first round of combat grants advantage on attacks against it to all attackers until the start of your next turn.",
+          "effects": [{ "type": "initiative_advantage" }]
         }
       ]
     },

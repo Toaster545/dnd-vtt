@@ -164,6 +164,8 @@
   display: none;
 }
 
+// Centering (so the rotation below pivots in place rather than swiveling) comes from the global
+// `mat-icon.mat-icon` rule in styles.scss — this just adds the rotation affordance itself.
 .detail-chevron {
   transition: transform .15s ease;
 }

@@ -16,6 +16,18 @@
     "max": 3,
     "recovery": "dawn"
   },
+  "actions": [
+    {
+      "key": "item:crystalline-chronicle",
+      "name": "Crystalline Chronicle",
+      "description": "A Sorcerer focus that grants several Psionic spells and spends charges to alter spells without Sorcery Point costs.",
+      "activation": "free",
+      "uses": {
+        "max": 3,
+        "per": "long_rest"
+      }
+    }
+  ],
   "source": {
     "code": "TCE",
     "book": "Tasha's Cauldron of Everything",
