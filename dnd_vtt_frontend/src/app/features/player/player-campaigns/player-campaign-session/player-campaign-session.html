@@ -61,27 +61,56 @@
     </div>
   </div>
 } @else {
-  <div class="flex-1 min-h-0 overflow-y-auto p-6 bg-cover bg-center"
+  <div class="flex-1 min-h-0 flex flex-col overflow-y-auto p-6 bg-cover bg-center"
        [style.background-image]="session()?.background_url ? 'linear-gradient(rgba(13,14,22,0.88), rgba(13,14,22,0.88)), url(' + session()!.background_url + ')' : null">
-    <div class="flex items-center gap-2 mb-5">
+    <div class="flex items-center gap-2 mb-5 flex-shrink-0">
       <button class="btn-icon" (click)="backToHub()" matTooltip="Back to campaign">
         <mat-icon>arrow_back</mat-icon>
       </button>
-      <div class="flex-1 min-w-0">
+      <div class="min-w-0">
         <h2 class="font-brand text-xl text-parchment m-0">{{ session()?.name }}</h2>
         @if (session()?.description) { <p class="text-slate text-sm m-0 mt-0.5">{{ session()!.description }}</p> }
+      </div>
+      <div class="flex-1 flex items-center gap-1 ml-3">
+        @if (myCharacterId()) {
+          <button class="btn-ghost text-sm" [class.bg-white/10]="!showSheet()" (click)="hubView.set('wiki')">
+            <mat-icon class="text-base">menu_book</mat-icon> Wiki
+          </button>
+          <button class="btn-ghost text-sm" [class.bg-white/10]="showSheet()" (click)="hubView.set('sheet')">
+            <mat-icon class="text-base">badge</mat-icon> Character
+          </button>
+        }
       </div>
     </div>
 
     @if (loading()) {
       <div class="flex justify-center mt-10"><span class="spinner-lg"></span></div>
     } @else {
-      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div class="lg:col-span-2">
-          <app-wiki-embed [campaignId]="campaignId" [dm]="false" [matchTitles]="wikiTitles()" [scope]="sessionId" />
+      <!-- Same sheet-vs-wiki sizing as PlayerCampaignHubComponent's grid. -->
+      <div class="flex-1 flex flex-col lg:flex-row gap-6 lg:gap-0"
+           [class]="showSheet() ? 'lg:min-h-0' : ''"
+           [style.--hub-sidebar-w]="hubView.sidebarWidth() + 'px'">
+        <div class="flex-1 min-w-0 flex flex-col">
+          @if (showSheet()) {
+            @if (myCharacter(); as mc) {
+              <app-character-play-sheet class="h-[80dvh] lg:h-full min-h-0 rounded-lg border border-white/10 bg-black/20 overflow-hidden"
+                [character]="mc" (saved)="onMyCharacterSaved($event)" />
+            } @else {
+              <div class="flex justify-center mt-10"><span class="spinner-lg"></span></div>
+            }
+          } @else {
+            <app-wiki-embed [campaignId]="campaignId" [dm]="false" [matchTitles]="wikiTitles()" [scope]="sessionId" />
+          }
         </div>
 
-        <div>
+        <!-- Drag to resize the sidebar (lg+ only; below that the columns stack). -->
+        <div appResizeHandle (resizeDrag)="onSidebarResize($event)"
+             class="hidden lg:block w-1.5 ml-2 flex-shrink-0 rounded hover:bg-gold/40 active:bg-gold/60 transition-colors"></div>
+
+        <!-- lg:px-2 leaves room for the rows' -mx-2 hover background, which the sheet view's
+             overflow-y-auto would otherwise clip (overflow-y forces overflow-x to clip too). -->
+        <div class="lg:flex-shrink-0 lg:w-[var(--hub-sidebar-w)] lg:px-2"
+             [class]="showSheet() ? 'lg:min-h-0 lg:overflow-y-auto' : ''">
           <h3 class="font-brand text-base text-parchment m-0 mb-3">Encounters</h3>
           <ul class="divide-y divide-white/8">
             @for (encounter of encounters(); track encounter.id) {

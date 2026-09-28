@@ -21,6 +21,8 @@ import { CharacterPlaySheetComponent } from '../../../characters/character-play-
 import { CharacterWizardComponent } from '../../../characters/character-wizard/character-wizard';
 import { PartyListComponent } from '../../../../shared/components/party-list/party-list';
 import { WikiEmbedComponent } from '../../../wiki/wiki-embed.component';
+import { HubViewService } from '../../../../core/services/hub-view.service';
+import { ResizeHandleDirective } from '../../../../shared/directives/resize-handle.directive';
 
 const REJOIN_KEY = 'dnd-player-campaign-encounter';
 interface StoredRejoin { encounterId: string; }
@@ -37,7 +39,7 @@ function toContentIndex(name: string): string {
   selector: 'app-player-campaign-session',
   imports: [
     MatIconModule, MatTooltipModule, BattleMapComponent, CharacterPlaySheetComponent, CharacterWizardComponent,
-    PartyListComponent, WikiEmbedComponent,
+    PartyListComponent, WikiEmbedComponent, ResizeHandleDirective,
   ],
   templateUrl: './player-campaign-session.html',
   // Routed in via player-shell's <router-outlet> rather than embedded with an explicit sizing
@@ -58,6 +60,7 @@ export class PlayerCampaignSessionComponent implements OnInit, OnDestroy {
   private contentService   = inject(ContentService);
   private background       = inject(BackgroundService);
   auth                     = inject(AuthService);
+  hubView                  = inject(HubViewService);
 
   // Angular reuses this component instance across navigations to the same route config even when
   // :campaignId/:sessionId change (e.g. the live-alert banner in player-shell can send someone
@@ -80,7 +83,11 @@ export class PlayerCampaignSessionComponent implements OnInit, OnDestroy {
 
   // This campaign's DM-editable copy of the player's character — the only character this player
   // ever plays as inside this campaign (see campaign_members.character_id).
-  private myCharacterId: string | null = null;
+  myCharacterId = signal<string | null>(null);
+  // Loaded copy of that character, shown inline in the main column when the Wiki/Character tabs
+  // next to the title are set to Character (see HubViewService).
+  myCharacter = signal<Character | null>(null);
+  readonly showSheet = computed(() => this.hubView.current() === 'sheet' && !!this.myCharacterId());
 
   // Self-service "view/edit my character" flow off the Party list, shown while no encounter is
   // active — kept in lockstep with PlayerCampaignHubComponent's identical fields/methods so the
@@ -162,12 +169,13 @@ export class PlayerCampaignSessionComponent implements OnInit, OnDestroy {
       this.sessionService.getById(this.sessionId),
     ]);
     const me = hub.members.find(m => m.user_id === this.auth.profile()?.id);
-    this.myCharacterId = me?.character_id ?? null;
+    this.myCharacterId.set(me?.character_id ?? null);
     this.session.set(session);
     this.campaignName.set(hub.name);
     this.encounters.set(encounters);
     this.members.set(hub.members);
     this.loading.set(false);
+    void this.loadMyCharacter();
 
     const stored = this.loadStoredRejoin();
     const stillActive = stored && encounters.find(e => e.id === stored.encounterId && e.status === 'active');
@@ -203,6 +211,24 @@ export class PlayerCampaignSessionComponent implements OnInit, OnDestroy {
     }
   }
 
+  // The drag handle sits left of the sidebar, so dragging left (negative dx) widens it.
+  onSidebarResize(dx: number) {
+    this.hubView.setSidebarWidth(this.hubView.sidebarWidth() - dx);
+  }
+
+  private async loadMyCharacter() {
+    const id = this.myCharacterId();
+    this.myCharacter.set(id ? await this.characterService.getCharacter(id) : null);
+  }
+
+  // The inline sheet's (saved) — same Party-roster refresh as onCharacterSheetSaved, without
+  // opening the full-page sheet.
+  async onMyCharacterSaved(character: Character) {
+    this.myCharacter.set(character);
+    const hub = await this.campaignService.getById(this.campaignId);
+    this.members.set(hub.members);
+  }
+
   backToHub() {
     void this.router.navigate(['/home/campaigns', this.campaignId]);
   }
@@ -227,6 +253,7 @@ export class PlayerCampaignSessionComponent implements OnInit, OnDestroy {
     this.showWizard.set(false);
     const hub = await this.campaignService.getById(this.campaignId);
     this.members.set(hub.members);
+    void this.loadMyCharacter();
   }
 
   onWizardCancelled() {
@@ -253,6 +280,7 @@ export class PlayerCampaignSessionComponent implements OnInit, OnDestroy {
   // wizard's onWizardSaved, which navigates back to the session hub).
   async onCharacterSheetSaved(character: Character) {
     this.sheetCharacter.set(character);
+    if (character.id === this.myCharacterId()) this.myCharacter.set(character);
     const hub = await this.campaignService.getById(this.campaignId);
     this.members.set(hub.members);
   }
@@ -271,7 +299,7 @@ export class PlayerCampaignSessionComponent implements OnInit, OnDestroy {
   }
 
   async join(encounter: Encounter) {
-    const characterId = this.myCharacterId;
+    const characterId = this.myCharacterId();
     if (!characterId) return;
     this.joiningId.set(encounter.id!);
     try {
@@ -323,6 +351,7 @@ export class PlayerCampaignSessionComponent implements OnInit, OnDestroy {
 
   onCharacterSaved(character: Character) {
     this.activeCharacter.set(character);
+    this.myCharacter.set(character);
     void this.refreshDarkvision(character);
     const encounter = this.activeEncounter();
     if (encounter?.id) this.announceSelf(encounter.id, character);

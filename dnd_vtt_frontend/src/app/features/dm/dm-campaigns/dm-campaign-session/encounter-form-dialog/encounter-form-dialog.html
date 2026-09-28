@@ -1,6 +1,36 @@
 <h2 mat-dialog-title class="font-brand text-parchment">{{ editingId() ? 'Edit Encounter' : 'New Encounter' }}</h2>
 <mat-dialog-content class="!py-2" style="width: min(1200px, 95vw);">
   <form id="encounter-form" (ngSubmit)="save()" class="flex flex-col gap-4">
+    @if (!editingId() && pastEncounters().length) {
+      <div class="field">
+        <label class="field-label">Start from an existing encounter (optional)</label>
+        <select class="field-input" [ngModel]="templateId()" (ngModelChange)="applyTemplate($event)"
+                [ngModelOptions]="{ standalone: true }">
+          <option value="">— blank encounter —</option>
+          @if (pastEncounterGroups().thisCampaign.length) {
+            <optgroup label="This campaign">
+              @for (item of pastEncounterGroups().thisCampaign; track item.encounter.id) {
+                <option [value]="item.encounter.id">{{ item.label }}</option>
+              }
+            </optgroup>
+          }
+          @if (pastEncounterGroups().other.length) {
+            <optgroup label="Other campaigns">
+              @for (item of pastEncounterGroups().other; track item.encounter.id) {
+                <option [value]="item.encounter.id">{{ item.label }}</option>
+              }
+            </optgroup>
+          }
+        </select>
+        <p class="text-xs text-slate mt-1 mb-0">
+          Copies its monsters, characters and map into a new encounter for this session — the original is left as is.
+        </p>
+        @if (templateMapDropped()) {
+          <p class="text-xs text-gold mt-1 mb-0">That encounter's map belongs to another campaign — pick or upload one below.</p>
+        }
+      </div>
+    }
+
     <div class="field">
       <label class="field-label">Encounter name</label>
       <input class="field-input" [(ngModel)]="name" name="name" required autofocus />

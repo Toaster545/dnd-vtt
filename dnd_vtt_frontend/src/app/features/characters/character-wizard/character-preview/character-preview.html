@@ -46,10 +46,10 @@
   <!-- Ability Scores -->
   <div class="grid grid-cols-3 gap-1.5">
     @for (ab of abilities; track ab) {
-      <div class="bg-elevated rounded-lg border border-white/10 text-center py-1.5">
-        <div class="text-[9px] text-slate uppercase tracking-widest">{{ abilityShort[ab] }}</div>
-        <div class="font-brand text-lg text-gold font-bold leading-none my-0.5">{{ fmt(s.ability_modifiers[ab]) }}</div>
-        <div class="text-[11px] text-parchment">{{ char.ability_scores[ab] }}</div>
+      <div class="bg-elevated rounded-lg border border-white/10 flex items-center justify-between gap-2 px-3 py-2">
+        <div class="text-[11px] text-slate uppercase tracking-widest w-8">{{ abilityShort[ab] }}</div>
+        <div class="font-brand text-2xl text-gold font-bold leading-none">{{ fmt(s.ability_modifiers[ab]) }}</div>
+        <div class="text-sm text-parchment w-8 text-right tabular-nums">{{ char.ability_scores[ab] }}</div>
       </div>
     }
   </div>

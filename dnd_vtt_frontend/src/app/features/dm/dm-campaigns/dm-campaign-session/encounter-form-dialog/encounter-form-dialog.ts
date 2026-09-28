@@ -6,6 +6,7 @@ import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/materia
 import Konva from 'konva';
 import { EncounterService } from '../../../../../core/services/encounter.service';
 import { BattleMapService } from '../../../../../core/services/battle-map.service';
+import { SessionService } from '../../../../../core/services/session.service';
 import { DndMonster } from '../../../../../core/services/content.service';
 import { Encounter } from '../../../../../core/models/encounter.model';
 import { Character } from '../../../../../core/models/character.model';
@@ -37,6 +38,7 @@ export class EncounterFormDialogComponent implements OnInit, OnDestroy {
   readonly data           = inject<EncounterFormDialogData>(MAT_DIALOG_DATA);
   private encounterService = inject(EncounterService);
   private mapService       = inject(BattleMapService);
+  private sessionService   = inject(SessionService);
 
   saving    = signal(false);
   editingId = signal<string | null>(this.data.encounter?.id ?? null);
@@ -68,6 +70,26 @@ export class EncounterFormDialogComponent implements OnInit, OnDestroy {
   selectedMonsterIndices = signal<Set<string>>(new Set(this.data.encounter?.monsters ?? []));
   selectedCharacterIds   = signal<Set<string>>(new Set(this.data.encounter?.character_ids ?? []));
 
+  // Create mode only: every encounter this DM has made (any session, any campaign), offered as a
+  // starting point. Picking one pre-fills the form; saving still creates a *new* encounter in this
+  // session, so the original (and its recap/status) is left untouched.
+  pastEncounters    = signal<Encounter[]>([]);
+  templateId        = signal('');
+  templateMapDropped = signal(false);
+  // session_id -> session name for this campaign's sessions; anything missing is from another campaign.
+  private sessionNames = signal<Record<string, string>>({});
+  pastEncounterGroups = computed(() => {
+    const names = this.sessionNames();
+    const thisCampaign: { encounter: Encounter; label: string }[] = [];
+    const other: { encounter: Encounter; label: string }[] = [];
+    for (const encounter of this.pastEncounters()) {
+      const sessionName = encounter.session_id ? names[encounter.session_id] : undefined;
+      if (sessionName !== undefined) thisCampaign.push({ encounter, label: `${encounter.name} — ${sessionName}` });
+      else other.push({ encounter, label: encounter.name });
+    }
+    return { thisCampaign, other };
+  });
+
   monsterSearchQuery = signal('');
   filteredMonsters = computed(() => {
     const query = this.monsterSearchQuery().trim().toLowerCase();
@@ -88,7 +110,17 @@ export class EncounterFormDialogComponent implements OnInit, OnDestroy {
   }
 
   async ngOnInit() {
-    this.campaignMaps.set(await this.mapService.getMapsForCampaign(this.data.campaignId));
+    const [maps, past] = await Promise.all([
+      this.mapService.getMapsForCampaign(this.data.campaignId),
+      this.editingId() ? null : this.fetchPastEncounters(),
+    ]);
+    // Maps first — applyTemplate() matches against campaignMaps(), so the picker (shown once
+    // pastEncounters is non-empty) mustn't become usable before they're in.
+    this.campaignMaps.set(maps);
+    if (past) {
+      this.sessionNames.set(past.sessionNames);
+      this.pastEncounters.set(past.encounters);
+    }
     const mapId = this.data.encounter?.map_id;
     if (mapId) {
       // Reuse the picker's logic so an encounter's already-attached map renders in the visualizer
@@ -99,6 +131,36 @@ export class EncounterFormDialogComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.stage?.destroy();
+  }
+
+  private async fetchPastEncounters() {
+    const [encounters, sessions] = await Promise.all([
+      this.encounterService.getAll(),
+      this.sessionService.getAllForCampaign(this.data.campaignId),
+    ]);
+    return { encounters, sessionNames: Object.fromEntries(sessions.map(s => [s.id, s.name])) };
+  }
+
+  // Copies the picked encounter's name, monsters, characters and map into the form. The recap is
+  // deliberately not copied — it describes what happened in *that* run of the fight. A map from
+  // another campaign can't be reused (maps are campaign-scoped), so it's dropped with a notice.
+  async applyTemplate(id: string) {
+    this.templateId.set(id);
+    this.templateMapDropped.set(false);
+    const source = this.pastEncounters().find(e => e.id === id);
+    if (!source) return;
+    this.name = source.name;
+    const monsterIndices = new Set(this.data.monsters.map(m => m.index));
+    this.selectedMonsterIndices.set(new Set(source.monsters.filter(i => monsterIndices.has(i))));
+    const characterIds = new Set(this.data.characters.map(c => c.id));
+    this.selectedCharacterIds.set(new Set(source.character_ids.filter(i => characterIds.has(i))));
+    const map = source.map_id ? this.campaignMaps().find(m => m.id === source.map_id) : undefined;
+    if (map) {
+      await this.selectExistingMap(map);
+    } else {
+      this.clearMapSelection();
+      this.templateMapDropped.set(!!source.map_id);
+    }
   }
 
   cancel() {

@@ -14,12 +14,14 @@ import { CharacterWizardComponent } from '../../../characters/character-wizard/c
 import { CharacterPlaySheetComponent } from '../../../characters/character-play-sheet/character-play-sheet';
 import { PlayerContextService } from '../../../../core/services/player-context.service';
 import { ConfirmService } from '../../../../shared/confirm.service';
+import { HubViewService } from '../../../../core/services/hub-view.service';
+import { ResizeHandleDirective } from '../../../../shared/directives/resize-handle.directive';
 
 @Component({
   selector: 'app-player-campaign-hub',
   imports: [
     RouterLink, MatIconModule, MatTooltipModule, WikiEmbedComponent, PartyListComponent, CharacterWizardComponent,
-    CharacterPlaySheetComponent,
+    CharacterPlaySheetComponent, ResizeHandleDirective,
   ],
   templateUrl: './player-campaign-hub.html',
   // Routed in via player-shell's <router-outlet>, so without a host sizing class this stays an
@@ -37,6 +39,7 @@ export class PlayerCampaignHubComponent implements OnInit {
   private playerContext    = inject(PlayerContextService);
   private confirm          = inject(ConfirmService);
   auth                     = inject(AuthService);
+  hubView                  = inject(HubViewService);
 
   campaignId = this.route.snapshot.paramMap.get('campaignId')!;
 
@@ -50,6 +53,14 @@ export class PlayerCampaignHubComponent implements OnInit {
   });
   leaving  = signal(false);
   leaveError = signal('');
+
+  // This campaign's copy of the player's character, shown inline in the main column when the
+  // Wiki/Character tabs next to the title are set to Character (see HubViewService).
+  readonly myCharacterId = computed(() =>
+    this.campaign()?.members.find(m => m.user_id === this.auth.profile()?.id)?.character_id ?? null,
+  );
+  myCharacter = signal<Character | null>(null);
+  readonly showSheet = computed(() => this.hubView.current() === 'sheet' && !!this.myCharacterId());
 
   editingCharacter = signal<Character | null>(null);
   showWizard       = signal(false);
@@ -66,6 +77,24 @@ export class PlayerCampaignHubComponent implements OnInit {
     ]);
     this.campaign.set(campaign);
     this.loading.set(false);
+    void this.loadMyCharacter();
+  }
+
+  // The drag handle sits left of the sidebar, so dragging left (negative dx) widens it.
+  onSidebarResize(dx: number) {
+    this.hubView.setSidebarWidth(this.hubView.sidebarWidth() - dx);
+  }
+
+  private async loadMyCharacter() {
+    const id = this.myCharacterId();
+    this.myCharacter.set(id ? await this.characterService.getCharacter(id) : null);
+  }
+
+  // The inline sheet's (saved) — same Party-roster refresh as onCharacterSheetSaved, without
+  // opening the full-page sheet.
+  async onMyCharacterSaved(character: Character) {
+    this.myCharacter.set(character);
+    this.campaign.set(await this.campaignService.getById(this.campaignId));
   }
 
   backToList() {
@@ -116,6 +145,7 @@ export class PlayerCampaignHubComponent implements OnInit {
   async onCharacterSaved() {
     this.showWizard.set(false);
     this.campaign.set(await this.campaignService.getById(this.campaignId));
+    void this.loadMyCharacter();
   }
 
   onCharacterCancelled() {
@@ -142,6 +172,7 @@ export class PlayerCampaignHubComponent implements OnInit {
   // wizard's onCharacterSaved, which navigates back to the hub).
   async onCharacterSheetSaved(character: Character) {
     this.sheetCharacter.set(character);
+    if (character.id === this.myCharacterId()) this.myCharacter.set(character);
     this.campaign.set(await this.campaignService.getById(this.campaignId));
   }
 
