@@ -164,7 +164,7 @@
     }
 
     <!-- Tabs -->
-    <div class="sheet-tabs flex border-b border-white/10 overflow-x-auto flex-shrink-0">
+    <div class="sheet-tabs flex border-b border-white/10 overflow-x-auto flex-shrink-0" data-preview-ok>
       <button
         class="flex items-center gap-2 px-5 py-3.5 text-sm font-medium whitespace-nowrap border-b-2 transition-colors border-0 cursor-pointer"
         [class]="activeTab() === 'stats' ? 'border-gold text-gold' : 'border-transparent text-slate hover:text-parchment'"
@@ -745,7 +745,7 @@
                         <button type="button"
                           class="flex flex-col items-start min-w-0 flex-1 text-left border-0 bg-transparent cursor-pointer p-0"
                           style="font-family: inherit;"
-                          [disabled]="!row.item"
+                          [disabled]="!row.item" data-preview-ok
                           (click)="toggleItemExpanded(row.entry.itemIndex)"
                         >
                           <div class="flex items-center gap-1.5 flex-wrap">
@@ -915,7 +915,7 @@
                   <mat-icon class="absolute left-3 top-1/2 -translate-y-1/2 text-slate text-lg">search</mat-icon>
                   <input class="w-full bg-elevated border border-white/15 rounded-lg pl-10 pr-3 py-2 text-sm text-parchment outline-none focus:border-gold/60" placeholder="Search spells" [ngModel]="spellFilters().search" (ngModelChange)="updateSpellFilter('search', $event)">
                 </div>
-                <button class="btn-secondary flex items-center justify-center gap-2" (click)="spellFiltersOpen.set(true)"><mat-icon class="text-lg">tune</mat-icon> Filters</button>
+                <button class="btn-secondary flex items-center justify-center gap-2" data-preview-ok (click)="spellFiltersOpen.set(true)"><mat-icon class="text-lg">tune</mat-icon> Filters</button>
                 @if (isDm()) {
                   <button class="btn-outline text-sm gap-1.5 flex-shrink-0" (click)="openGrantSpellDialog()">
                     <mat-icon class="text-base">auto_awesome</mat-icon>
@@ -925,8 +925,8 @@
               </div>
 
               @if (spellFiltersOpen()) {
-                <div class="fixed inset-0 z-30 bg-black/25" (click)="spellFiltersOpen.set(false)"></div>
-                <div class="fixed z-40 top-20 right-4 sm:right-8 w-[min(92vw,430px)] bg-elevated border border-gold/30 rounded-xl shadow-2xl p-4" (click)="$event.stopPropagation()">
+                <div class="fixed inset-0 z-30 bg-black/25" data-preview-ok (click)="spellFiltersOpen.set(false)"></div>
+                <div class="fixed z-40 top-20 right-4 sm:right-8 w-[min(92vw,430px)] bg-elevated border border-gold/30 rounded-xl shadow-2xl p-4" data-preview-ok (click)="$event.stopPropagation()">
                   <div class="flex items-center justify-between mb-4"><h3 class="font-brand text-gold m-0">Filter spells</h3><button class="btn-icon" (click)="spellFiltersOpen.set(false)"><mat-icon>close</mat-icon></button></div>
                   <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <label class="text-xs text-slate">Level<select class="field-select mt-1 w-full" [ngModel]="spellFilters().level" (ngModelChange)="updateSpellFilter('level', $event)"><option value="">All levels</option><option value="0">Cantrip</option>@for (level of slotPips(9); track level) { <option [value]="level + 1">Level {{ level + 1 }}</option> }</select></label>

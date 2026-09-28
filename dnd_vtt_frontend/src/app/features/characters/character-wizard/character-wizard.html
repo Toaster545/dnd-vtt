@@ -87,8 +87,8 @@
     </div>
 
     <!-- Step content + live preview -->
-    <div class="wizard-main flex-1 flex min-h-0">
-    <div class="wizard-step-pane w-[50%] min-w-0 overflow-y-auto p-6" appSwipeTabs (swipeLeft)="next()" (swipeRight)="prev()">
+    <div #wizardMain class="wizard-main flex-1 flex min-h-0">
+    <div class="wizard-step-pane flex-1 min-w-0 overflow-y-auto p-6" appSwipeTabs (swipeLeft)="next()" (swipeRight)="prev()">
       @if (activeStep() === 0) {
         <app-class-step
           [classes]="classes()"
@@ -160,8 +160,11 @@
     </div>
 
     <!-- Live preview -->
-    <div class="wizard-preview w-[50%] min-w-0 overflow-y-auto p-6 border-l border-white/10">
-      <app-character-preview [character]="draftCharacter()" [stats]="previewStats()" />
+    <!-- Drag to resize the preview -->
+    <div appResizeHandle (resizeDrag)="onPreviewResize($event)"
+         class="wizard-preview-handle w-1.5 flex-shrink-0 border-l border-white/10 hover:bg-gold/40 active:bg-gold/60 transition-colors"></div>
+    <div class="wizard-preview flex-shrink-0 min-w-0 overflow-hidden" [style.width.%]="previewFraction() * 100">
+      <app-character-play-sheet [character]="draftCharacter()" [preview]="true" />
     </div>
     </div>
 

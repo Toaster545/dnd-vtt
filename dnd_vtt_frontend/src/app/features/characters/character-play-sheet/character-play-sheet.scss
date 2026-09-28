@@ -3,6 +3,12 @@
 // (e.g. the in-encounter side panel) on a wide screen.
 :host { display: block; height: 100%; container-type: inline-size; }
 
+// Wizard preview (see CharacterPlaySheetComponent.preview): controls that onPreviewClick swallows
+// shouldn't advertise themselves as clickable.
+:host(.sheet-preview) button:not([data-preview-ok], [data-preview-ok] *) {
+  cursor: default;
+}
+
 .sheet-stat.sheet-stat-inspiration > mat-icon {
   display: inline-flex;
   align-items: center;

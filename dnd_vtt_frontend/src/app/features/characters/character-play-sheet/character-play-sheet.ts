@@ -38,6 +38,15 @@ import { SwipeTabsDirective } from '../../../shared/directives/swipe-tabs.direct
 import { levelUpPending } from '../../../core/utils/level-up';
 import { Router } from '@angular/router';
 
+// The fields load() resolves content from — a change to any of them means refetching.
+function contentKey(char: Character): string {
+  return JSON.stringify([
+    char.race, char.background, char.campaign_id ?? null, char.enabled_sources ?? null,
+    char.class, char.subclass, char.level,
+    (char.classes ?? []).map(c => [c.name, c.level, c.subclass ?? '', c.choices ?? {}]),
+  ]);
+}
+
 function toIndex(name: string): string {
   return name.toLowerCase().replace(/\s+/g, '-');
 }
@@ -110,6 +119,7 @@ const TAB_LABELS: Record<Tab, string> = {
   imports: [FormsModule, MatIconModule, MatTooltipModule, NgTemplateOutlet, ItemFormComponent, SwipeTabsDirective],
   templateUrl: './character-play-sheet.html',
   styleUrl: './character-play-sheet.scss',
+  host: { '[class.sheet-preview]': 'preview()' },
 })
 export class CharacterPlaySheetComponent {
   private content        = inject(ContentService);
@@ -132,6 +142,12 @@ export class CharacterPlaySheetComponent {
   // already knows whose sheet this is — hides the "Level X Race · Class · Background" meta line
   // to keep the header tight next to the map.
   readonly compact    = input(false);
+  // Set by the character wizard, which shows this sheet as a live preview of an unsaved draft.
+  // The sheet is look-only then: clicks that would change or save the character (HP, rests,
+  // equip, casting, portrait, …) are swallowed by onPreviewClick, and only navigation — tabs,
+  // item expanders, spell filters, <details> disclosures — marked `data-preview-ok` gets through.
+  // Race/class/background edits reload their content data in place (see the constructor).
+  readonly preview    = input(false);
   readonly saved      = output<Character>();
 
   readonly abilities     = ABILITIES;
@@ -323,7 +339,7 @@ export class CharacterPlaySheetComponent {
   // Campaign copies only: the DM has granted a level the player hasn't applied yet. Links to the
   // one-shot Level-Up flow (see levelUpPending / character-level-up-page).
   showLevelUpBanner = computed(() => {
-    if (this.isDm()) return false; // the DM viewing a party member's sheet isn't the one levelling
+    if (this.isDm() || this.preview()) return false; // the DM viewing a party member's sheet isn't the one levelling
     const char = this.localChar();
     const stats = this.stats();
     return !!char?.campaign_id && !!stats && levelUpPending(char, stats.suggested_max_hp);
@@ -728,27 +744,50 @@ export class CharacterPlaySheetComponent {
   // from "the same character came back down after a save round-trip" (just refresh the local
   // copy in place) — interactive actions (Use, Rest, equip/slot toggles) save and emit the
   // updated character back through the parent, which re-feeds it into this same input.
+  private loaded = false;
   private loadedId: string | null | undefined = undefined;
+  // Preview only: the content-affecting fields load() last resolved, so a wizard edit to the
+  // race/class/background refetches their data. A new draft also gains its id on its first
+  // autosave, which must not reset the tab or flash the spinner the way a real switch does.
+  private loadedContentKey = '';
+  // Guards against an older load() finishing after a newer one and overwriting its data.
+  private loadSeq = 0;
 
   constructor() {
     effect(() => {
       const char = this.character();
-      if (char.id !== this.loadedId) {
+      if (!this.loaded || (!this.preview() && char.id !== this.loadedId)) {
+        this.loaded = true;
         this.loadedId = char.id;
+        this.loadedContentKey = contentKey(char);
         this.activeTab.set('stats');
         this.headerHidden.set(false);
         this.revealArmed = false;
         this.lastScrollTop = 0;
         this.suppressScrollUntil = Date.now() + 200;
         this.load(char);
+      } else if (this.preview() && contentKey(char) !== this.loadedContentKey) {
+        this.loadedContentKey = contentKey(char);
+        this.load(char, true);
       } else {
         this.localChar.set(char);
       }
     });
+
+    inject(ElementRef<HTMLElement>).nativeElement.addEventListener('click', this.onPreviewClick, true);
   }
 
-  private async load(char: Character) {
-    this.loading.set(true);
+  // Capture-phase listener on the host, so it runs before any (click) handler inside the sheet.
+  private onPreviewClick = (event: Event) => {
+    if (!this.preview()) return;
+    if ((event.target as HTMLElement | null)?.closest('[data-preview-ok], summary')) return;
+    event.preventDefault();
+    event.stopPropagation();
+  };
+
+  private async load(char: Character, silent = false) {
+    const seq = ++this.loadSeq;
+    if (!silent) this.loading.set(true);
     this.localChar.set(char);
 
     const classEntries = char.classes?.length
@@ -774,6 +813,7 @@ export class CharacterPlaySheetComponent {
     ]);
 
     const classDataList = await Promise.all(classEntries.map(c => this.content.getClass(toIndex(c.name)).catch(() => null)));
+    if (seq !== this.loadSeq) return;
 
     const enabledSources = new Set(char.enabled_sources ?? sources
       .filter(source => source.player_options && (source.default_enabled || source.locked))
@@ -818,6 +858,7 @@ export class CharacterPlaySheetComponent {
   }
 
   private async persist(next: Character) {
+    if (this.preview()) return; // backstop — onPreviewClick already blocks every entry point
     const withAc = { ...next, armor_class: this.computeArmorClass(next) };
     this.localChar.set(withAc);
     this.persisting.set(true);

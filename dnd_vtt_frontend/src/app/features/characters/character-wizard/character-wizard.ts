@@ -1,10 +1,10 @@
-import { Component, inject, signal, computed, effect, output, OnInit, OnDestroy, input } from '@angular/core';
+import { Component, inject, signal, computed, effect, output, OnInit, OnDestroy, input, viewChild, ElementRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { ContentService, DndContentSource, DndRace, DndClass, DndBackground, DndItem, DndSpell, DndFeat, TraitEffect, TraitGrant, itemDisplayName } from '../../../core/services/content.service';
-import { ClassChoiceSource, activeEffects, averageHpFormula, baseArmorClass, collectFeatEffects, collectTraitEffects, reachableGrants, resolveCharacterFeatPicks, resolveLanguageProficiencies, unarmoredDefenseBonus } from '../../../core/utils/character-effects';
+import { activeEffects, averageHpFormula, baseArmorClass, collectFeatEffects, collectTraitEffects, reachableGrants, resolveCharacterFeatPicks, resolveLanguageProficiencies, unarmoredDefenseBonus } from '../../../core/utils/character-effects';
 import { isStructuredEquipment, resolveStartingEquipment } from '../../../core/utils/starting-equipment';
 import { resolveBackgroundSkills } from '../../../core/utils/background-skills';
 import { resolveBackgroundOriginFeat } from '../../../core/utils/background-origin-feat';
@@ -17,7 +17,6 @@ import {
 } from '../../../core/utils/avatar';
 import { resolveSpellcasting, type SpellSelectionRequirement } from '../../../core/utils/spellcasting';
 import { CharacterService } from '../../../core/services/character.service';
-import { CharacterStatsService } from '../../../core/services/character-stats.service';
 import { CampaignService } from '../../../core/services/campaign.service';
 import { Character, Ability, ABILITIES, ScoreMethod, POINT_BUY_MIN, defaultCharacter, abilityModifier } from '../../../core/models/character.model';
 import { AvatarRecipeV1 } from '../../../core/models/avatar.model';
@@ -30,8 +29,10 @@ import { BackgroundStepComponent, BackgroundChoice } from './steps/background-st
 import { AbilitiesStepComponent } from './steps/abilities-step/abilities-step';
 import { EquipmentStepComponent } from './steps/equipment-step/equipment-step';
 import { SpellsStepComponent } from './steps/spells-step/spells-step';
-import { CharacterPreviewComponent } from './character-preview/character-preview';
+import { CharacterPlaySheetComponent } from '../character-play-sheet/character-play-sheet';
 import { SwipeTabsDirective } from '../../../shared/directives/swipe-tabs.directive';
+import { carriedCurrentHp } from './wizard-hp';
+import { ResizeHandleDirective } from '../../../shared/directives/resize-handle.directive';
 import {
   areAbilityAssignmentsComplete,
   areClassSelectionsComplete,
@@ -43,6 +44,19 @@ import {
 const STEPS = ['Class', 'Race', 'Background', 'Ability Scores', 'Equipment', 'Spells'];
 const ACTIVE_DRAFT_KEY = 'character.active-draft-id';
 const ACTIVE_DRAFT_STEP_KEY = 'character.active-draft-step';
+
+const PREVIEW_FRACTION_KEY = 'dnd-vtt-wizard-preview-fraction';
+const MIN_PREVIEW = 0.25;
+const MAX_PREVIEW = 0.75;
+
+function loadPreviewFraction(): number {
+  try {
+    const n = Number(localStorage.getItem(PREVIEW_FRACTION_KEY));
+    return n >= MIN_PREVIEW && n <= MAX_PREVIEW ? n : 0.5;
+  } catch {
+    return 0.5;
+  }
+}
 
 @Component({
   selector: 'app-character-wizard',
@@ -56,16 +70,34 @@ const ACTIVE_DRAFT_STEP_KEY = 'character.active-draft-step';
     AbilitiesStepComponent,
     EquipmentStepComponent,
     SpellsStepComponent,
-    CharacterPreviewComponent,
+    CharacterPlaySheetComponent,
     SwipeTabsDirective,
+    ResizeHandleDirective,
   ],
   templateUrl: './character-wizard.html',
   styleUrl: './character-wizard.scss',
 })
 export class CharacterWizardComponent implements OnInit, OnDestroy {
+  // Share of the wizard's width the live-preview sheet takes, dragged via the handle between it
+  // and the step pane. Kept as a fraction rather than px so it holds up across window sizes.
+  previewFraction = signal(loadPreviewFraction());
+  private readonly mainRef = viewChild<ElementRef<HTMLElement>>('wizardMain');
+
+  // The handle sits left of the preview, so dragging left (negative dx) widens it.
+  onPreviewResize(dx: number) {
+    const width = this.mainRef()?.nativeElement.clientWidth;
+    if (!width) return;
+    const next = Math.min(MAX_PREVIEW, Math.max(MIN_PREVIEW, this.previewFraction() - dx / width));
+    this.previewFraction.set(next);
+    try {
+      localStorage.setItem(PREVIEW_FRACTION_KEY, String(next));
+    } catch {
+      /* ignore */
+    }
+  }
+
   private content          = inject(ContentService);
   private characterService = inject(CharacterService);
-  private statsService     = inject(CharacterStatsService);
   private campaignService  = inject(CampaignService);
   private dialog           = inject(MatDialog);
 
@@ -175,6 +207,10 @@ export class CharacterWizardComponent implements OnInit, OnDestroy {
   level         = signal(1);
   alignment     = signal('True Neutral');
   currentHp     = signal<number | null>(null);
+  // The existing record's max_hp as of when the wizard opened — with currentHp (also captured at
+  // load), the fixed baseline carriedCurrentHp measures max-HP gains against. Not re-read from
+  // existingCharacter, which every autosave replaces.
+  private loadedMaxHp = signal<number | null>(null);
   maxHpOverride = signal<number | null>(null);
   heroicInspiration = signal(false);
   saving        = signal(false);
@@ -577,8 +613,6 @@ export class CharacterWizardComponent implements OnInit, OnDestroy {
     }
     const spells = [...spellEntries.values()];
     const hp = this.maxHP();
-    const previousMaxHp = existing?.max_hp;
-    const hpGain = previousMaxHp !== undefined ? Math.max(0, hp - previousMaxHp) : 0;
 
     return {
       ...(existing ?? defaultCharacter()),
@@ -605,9 +639,7 @@ export class CharacterWizardComponent implements OnInit, OnDestroy {
       // manual entry that happens to equal the average (or a later CON bump that makes it
       // match) isn't flagged, so the pending-level-up heuristics still read it as "caught up".
       max_hp_overridden: this.maxHpOverride() !== null && this.maxHpOverride() !== this.suggestedMaxHP(),
-      // Clamped to the (possibly just-lowered) max — e.g. leveling a character down elsewhere
-      // shrinks max_hp on the next wizard save, and current_hp shouldn't end up exceeding it.
-      current_hp: Math.min((this.currentHp() ?? hp) + hpGain, hp),
+      current_hp: carriedCurrentHp(this.currentHp(), this.loadedMaxHp(), hp),
       heroic_inspiration: this.heroicInspiration(),
       armor_class: this.armorClass(),
       speed: this.speed(),
@@ -620,15 +652,6 @@ export class CharacterWizardComponent implements OnInit, OnDestroy {
       enabled_sources: [...this.enabledSources()],
     } as Character;
   });
-
-  private classesForFeats = computed<ClassChoiceSource[]>(() =>
-    this.reconciledClasses().map(e => ({ data: e.cls, choices: e.traits, level: e.level, subclass: e.subclass })),
-  );
-
-  previewStats = computed(() => this.statsService.compute(
-    this.draftCharacter(), this.primaryClass(), this.selectedRace(),
-    this.feats(), this.classesForFeats(), this.items(), this.selectedBackground(),
-  ));
 
   private initialized = false;
   private saveTimer: ReturnType<typeof setTimeout> | null = null;
@@ -733,6 +756,7 @@ export class CharacterWizardComponent implements OnInit, OnDestroy {
       this.level.set(existing.level);
       this.alignment.set(existing.alignment);
       this.currentHp.set(existing.current_hp);
+      this.loadedMaxHp.set(existing.max_hp ?? null);
       const race = this.allRaces.find(r => r.name === existing.race) ?? null;
       const bg   = this.allBackgrounds.find(b => b.name === existing.background) ?? null;
       this.selectedRace.set(race);

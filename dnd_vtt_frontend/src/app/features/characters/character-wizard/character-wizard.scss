@@ -53,7 +53,7 @@
 
   .wizard-main { display: block; overflow-y: auto; }
   .wizard-step-pane { width: 100%; overflow: visible; padding: .75rem; }
-  .wizard-preview { display: none; }
+  .wizard-preview, .wizard-preview-handle { display: none; }
   .wizard-footer { padding: .5rem .75rem calc(.5rem + env(safe-area-inset-bottom)); gap: .5rem; }
   .wizard-footer > div { gap: .25rem; }
 }
