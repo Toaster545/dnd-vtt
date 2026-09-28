@@ -7,7 +7,8 @@
 
   <div class="flex flex-1 overflow-hidden">
     <div class="flex-1 bg-black relative overflow-hidden">
-      <div #stageContainer class="w-full h-full"></div>
+      <!-- Hidden until the first full paint so the map can never show before its fog/darkness. -->
+      <div #stageContainer class="w-full h-full" [class.invisible]="loading()"></div>
 
       @if (map()) {
         <app-map-toolbar
@@ -113,6 +114,23 @@
               (deleteRequested)="removeLight(light)"
               (closed)="selectedLightId.set(null)"
             />
+          } @else if (activeLightTool() === 'place') {
+            <div>
+              <h3 class="text-xs font-semibold text-slate uppercase tracking-wider mb-2">New Torch</h3>
+              <div class="flex flex-col gap-3">
+                <div class="field">
+                  <label class="field-label">Bright radius (ft)</label>
+                  <input class="field-input" type="number" min="0" step="5"
+                         [value]="newLightBrightFt()" (input)="setNewLightRadius('bright', $any($event.target).value)" />
+                </div>
+                <div class="field">
+                  <label class="field-label">Dim radius (ft, beyond bright)</label>
+                  <input class="field-input" type="number" min="0" step="5"
+                         [value]="newLightDimFt()" (input)="setNewLightRadius('dim', $any($event.target).value)" />
+                </div>
+                <p class="text-xs text-slate">Click the map or a token to place it.</p>
+              </div>
+            </div>
           }
           <app-turn-order-panel
             [tokens]="turnOrder()"

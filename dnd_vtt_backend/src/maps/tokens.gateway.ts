@@ -70,6 +70,12 @@ export class TokensGateway implements OnGatewayInit, OnGatewayDisconnect {
     this.server.to(`map:${mapId}:player`).emit('fog_updated', fog);
   }
 
+  broadcastFogCells(mapId: string, cells: string[], revealed: boolean) {
+    this.server
+      .to([`map:${mapId}:dm`, `map:${mapId}:player`])
+      .emit('fog_cells', { cells, revealed });
+  }
+
   async broadcastLighting<T extends { token_id?: string | null }>(
     mapId: string,
     lighting: { enabled: boolean; lights: T[] },

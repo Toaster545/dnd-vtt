@@ -5,9 +5,8 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { randomUUID } from 'crypto';
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'fs';
+import { existsSync, mkdirSync, writeFileSync } from 'fs';
 import { join, resolve, sep } from 'path';
-import sharp from 'sharp';
 import { DatabaseService } from '../common/database.service';
 import { ContentService } from '../content/content.service';
 import { TokensGateway } from './tokens.gateway';
@@ -15,7 +14,6 @@ import type { RequestUser } from '../common/current-user.decorator';
 
 @Injectable()
 export class MapsService {
-  private readonly playerImageCache = new Map<string, Buffer>();
   constructor(
     private db: DatabaseService,
     private gateway: TokensGateway,
@@ -283,13 +281,17 @@ export class MapsService {
     await this.assertMapAccess(mapId, user);
     const fog = await this.getFogRaw(mapId);
     const cellSet = new Set(fog.hidden_cells);
-    for (const { col, row } of cells) {
-      const key = `${col},${row}`;
+    const keys = cells.map(({ col, row }) => `${col},${row}`);
+    for (const key of keys) {
       if (revealed) cellSet.delete(key);
       else cellSet.add(key);
     }
-    await this.upsertFog(mapId, fog.enabled, [...cellSet]);
-    return this.broadcastFog(mapId);
+    const hiddenCells = [...cellSet];
+    await this.upsertFog(mapId, fog.enabled, hiddenCells);
+    // Only the touched cells go over the socket — a brush stroke flushes every ~50ms, and
+    // re-sending the whole hidden list each time grows with the size of the fogged area.
+    this.gateway.broadcastFogCells(mapId, keys, revealed);
+    return { enabled: fog.enabled, hidden_cells: hiddenCells };
   }
 
   // "Reset" now means "back to the fully-visible default" — clears whatever's been hidden.
@@ -315,7 +317,6 @@ export class MapsService {
 
   private async broadcastFog(mapId: string) {
     const fog = await this.getFogRaw(mapId);
-    await this.bumpVisibilityRevision(mapId);
     this.gateway.broadcastFog(mapId, fog);
     return fog;
   }
@@ -515,54 +516,9 @@ export class MapsService {
     };
   }
 
-  async getImageFile(mapId: string, user: RequestUser, dmOnly = false) {
+  async getImageFile(mapId: string, user: RequestUser) {
     const access = await this.resolveMapReadAccess(mapId, user);
-    if (dmOnly && !access.isDm) throw new ForbiddenException();
     return this.resolveImagePath(access.map.image_url as string);
-  }
-
-  async getPlayerImage(mapId: string, user: RequestUser): Promise<Buffer> {
-    const access = await this.resolveMapReadAccess(mapId, user);
-    const path = this.resolveImagePath(access.map.image_url as string);
-    if (access.isDm) return readFileSync(path);
-    const fog = await this.getFogRaw(mapId);
-    const revision = Number(access.map.visibility_revision ?? 0);
-    const key = `${mapId}:${revision}`;
-    const cached = this.playerImageCache.get(key);
-    if (cached) return cached;
-
-    let output: Buffer;
-    if (!fog.enabled || fog.hidden_cells.length === 0) {
-      output = await sharp(path).png().toBuffer();
-    } else {
-      const metadata = await sharp(path).metadata();
-      const width = metadata.width ?? 1;
-      const height = metadata.height ?? 1;
-      const grid = Math.max(1, Number(access.map.grid_size ?? 50));
-      const rects = fog.hidden_cells
-        .map((cell) => cell.split(',').map(Number))
-        .filter(([col, row]) => Number.isFinite(col) && Number.isFinite(row))
-        .map(
-          ([col, row]) =>
-            `<rect x="${col * grid}" y="${row * grid}" width="${grid}" height="${grid}" fill="#05060a"/>`,
-        )
-        .join('');
-      const overlay = Buffer.from(
-        `<svg width="${width}" height="${height}" xmlns="http://www.w3.org/2000/svg">${rects}</svg>`,
-      );
-      output = await sharp(path)
-        .composite([{ input: overlay, top: 0, left: 0 }])
-        .png()
-        .toBuffer();
-    }
-    this.playerImageCache.set(key, output);
-    while (this.playerImageCache.size > 12) {
-      const oldest = this.playerImageCache.keys().next().value as
-        string | undefined;
-      if (!oldest) break;
-      this.playerImageCache.delete(oldest);
-    }
-    return output;
   }
 
   private serializeMap(map: Record<string, unknown>, isDm: boolean) {
@@ -572,9 +528,7 @@ export class MapsService {
       name: map.name,
       grid_size: Number(map.grid_size ?? 50),
       visibility_revision: Number(map.visibility_revision ?? 0),
-      image_url: isDm
-        ? `/api/maps/${String(map.id)}/image`
-        : `/api/maps/${String(map.id)}/player-image`,
+      image_url: `/api/maps/${String(map.id)}/image`,
       created_at: map.created_at,
     };
     return isDm ? { ...map, ...common } : common;
@@ -632,16 +586,6 @@ export class MapsService {
       throw new NotFoundException('Map image not found');
     }
     return target;
-  }
-
-  private async bumpVisibilityRevision(mapId: string) {
-    await this.db.execute(
-      `UPDATE battle_maps SET visibility_revision = visibility_revision + 1 WHERE id = ?`,
-      [mapId],
-    );
-    for (const key of [...this.playerImageCache.keys()]) {
-      if (key.startsWith(`${mapId}:`)) this.playerImageCache.delete(key);
-    }
   }
 
   private async rollMonsterInitiative(
