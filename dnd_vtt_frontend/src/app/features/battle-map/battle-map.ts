@@ -9,7 +9,8 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { BattleMapService } from '../../core/services/battle-map.service';
 import { AuthService } from '../../core/services/auth.service';
 import {
-  MapToken, BattleMap, MapFog, MapLight, MapLighting, PlacingEntity, MeasureShape, FogToolName, LightToolName,
+  MapToken, BattleMap, MapFog, MapLight, MapLighting, MapWall, PlacingEntity, MeasureShape, FogToolName,
+  LightToolName,
 } from '../../core/models/campaign.model';
 import { Character } from '../../core/models/character.model';
 import { ConfirmService } from '../../shared/confirm.service';
@@ -21,6 +22,7 @@ import { renderDarkness, renderLightMarkers } from './canvas/lighting-renderer';
 import { getErrorMessage } from '../../core/utils/error-message';
 import { MeasurementTool } from './canvas/measurement-tool';
 import { FogTool } from './canvas/fog-tool';
+import { WallTool, wallIndexNear, wallPointUnderPointer } from './canvas/wall-tool';
 import { PortraitCache } from './canvas/portrait-cache';
 import { PortraitSource } from '../../core/models/avatar.model';
 import { StagePointerTools } from './canvas/stage-pointer-tools';
@@ -171,7 +173,7 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
     if (this.activeFogTool()) { this.activeMeasureTool.set(null); this.activeLightTool.set(null); }
   }
 
-  lighting = signal<MapLighting>({ enabled: false, lights: [] });
+  lighting = signal<MapLighting>({ enabled: false, lights: [], walls: [] });
   activeLightTool = signal<LightToolName | null>(null);
   selectedLightId = signal<string | null>(null);
   selectedLight = computed(() => this.lighting().lights.find(l => l.id === this.selectedLightId()) ?? null);
@@ -185,15 +187,71 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
     (which === 'bright' ? this.newLightBrightFt : this.newLightDimFt).set(ft);
   }
 
-  toggleLightTool() {
-    this.activeLightTool.update(current => current === 'place' ? null : 'place');
+  toggleLightTool(tool: LightToolName) {
+    this.activeLightTool.update(current => current === tool ? null : tool);
     if (this.activeLightTool()) { this.activeMeasureTool.set(null); this.activeFogTool.set(null); }
   }
+
+  // Walls are edited optimistically: the local `lighting` signal updates on every click so the
+  // overlay and the light clipping react instantly, and the full list is saved after a short
+  // debounce so a quick run of clicks around a room becomes one request instead of one per
+  // segment. While a save is pending, incoming lighting broadcasts keep the local walls (see
+  // lightingSub) so an unrelated update — a torch moved — can't briefly wipe unsaved walls.
+  private pendingWalls: MapWall[] | null = null;
+  private wallSaveTimer?: ReturnType<typeof setTimeout>;
+
+  private commitWalls(walls: MapWall[]) {
+    this.pendingWalls = walls;
+    this.lighting.update(l => ({ ...l, walls }));
+    clearTimeout(this.wallSaveTimer);
+    this.wallSaveTimer = setTimeout(() => this.flushWalls(), 300);
+  }
+
+  private flushWalls() {
+    clearTimeout(this.wallSaveTimer);
+    this.wallSaveTimer = undefined;
+    const walls = this.pendingWalls;
+    if (!walls) return;
+    const mapId = this.mapId;
+    this.mapService.setWalls(mapId, walls).then(() => {
+      if (this.pendingWalls === walls) this.pendingWalls = null;
+    }).catch(async e => {
+      // Drop the unsaved local walls and resync with what the server actually has.
+      this.pendingWalls = null;
+      // Shown over the (still usable) map briefly — there's no app-wide toast to route it to.
+      const message = `Couldn't save walls: ${getErrorMessage(e)}`;
+      this.error.set(message);
+      setTimeout(() => { if (this.error() === message) this.error.set(null); }, 5000);
+      if (mapId === this.mapId) this.lighting.set(await this.mapService.getLighting(mapId));
+    });
+  }
+
+  async clearWalls() {
+    if (!this.lighting().walls.length) return;
+    if (!await this.confirm.confirm(
+      'Remove every wall from this map? Light will spread freely again.', 'Clear Walls', 'Clear'
+    )) return;
+    this.wallTool.reset();
+    this.commitWalls([]);
+    this.flushWalls();
+  }
+
+  private readonly onKeyDown = (e: KeyboardEvent) => {
+    if (e.key === 'Escape' && this.wallTool.isChaining) {
+      this.wallTool.endChain();
+      this.renderWalls();
+    }
+  };
 
   selectPointerTool() {
     this.activeMeasureTool.set(null);
     this.activeFogTool.set(null);
     this.activeLightTool.set(null);
+  }
+
+  get isEditingWalls(): boolean {
+    const tool = this.activeLightTool();
+    return tool === 'wall' || tool === 'erase-wall';
   }
 
   zoomIn() {
@@ -298,6 +356,7 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
   private fogLayer?: Konva.Layer;
   private darknessLayer?: Konva.Layer;
   private lightMarkerLayer?: Konva.Layer;
+  private wallLayer?: Konva.Layer;
   private measureLayer?: Konva.Layer;
   private moveRangeLayer?: Konva.Layer;
   private konvaImg?: Konva.Image;
@@ -313,6 +372,7 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
   private fogSub?: Subscription;
   private lightingSub?: Subscription;
   private measurementTool = new MeasurementTool();
+  private wallTool = new WallTool();
   private fogTool = new FogTool((cells, revealed) => this.mapService.paintFog(this.mapId, cells, revealed));
   private pointerTools?: StagePointerTools;
   private stageView?: StageView;
@@ -369,7 +429,22 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
       if (this.darknessLayer && this.cellSize) {
         this.renderDarkness();
         this.renderLightMarkers();
+        this.renderWalls();
       }
+    });
+
+    // Leaving the wall tools drops any half-drawn chain / eraser highlight. While they're armed,
+    // tokens and torch markers stop listening so clicks (and right-click to end a chain) land on
+    // the wall tool instead of dragging a token or triggering its remove-on-right-click.
+    effect(() => {
+      const tool = this.activeLightTool();
+      if (tool !== 'wall') this.wallTool.endChain();
+      if (tool !== 'wall') this.wallTool.setHover(null);
+      if (tool !== 'erase-wall') this.wallTool.setEraseHover(-1);
+      const editing = tool === 'wall' || tool === 'erase-wall';
+      this.tokenLayer?.listening(!editing);
+      this.lightMarkerLayer?.listening(!editing);
+      this.renderWalls();
     });
 
     effect(() => {
@@ -381,6 +456,7 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
   ngOnInit() {
     this.routeMapId = this.route.snapshot.paramMap.get('id');
     document.addEventListener('fullscreenchange', this.onFullscreenChange);
+    window.addEventListener('keydown', this.onKeyDown);
   }
 
   ngAfterViewInit() {
@@ -389,7 +465,9 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnDestroy() {
     document.removeEventListener('fullscreenchange', this.onFullscreenChange);
+    window.removeEventListener('keydown', this.onKeyDown);
     window.removeEventListener('resize', this.onWindowResize);
+    this.flushWalls();
     this.tokenSub?.unsubscribe();
     this.measureSub?.unsubscribe();
     this.fogSub?.unsubscribe();
@@ -412,8 +490,12 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
     this.fogSub = undefined;
     this.lightingSub?.unsubscribe();
     this.lightingSub = undefined;
+    // Save any walls still waiting on the debounce against the map they were drawn on, before
+    // this.mapId moves to the new one.
+    this.flushWalls();
     this.measurementTool.reset();
     this.fogTool.reset();
+    this.wallTool.reset();
     this.resizeObserver?.disconnect();
     this.resizeObserver = undefined;
     window.removeEventListener('resize', this.onWindowResize);
@@ -480,17 +562,21 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
     this.moveRangeLayer = new Konva.Layer();
     this.tokenLayer = new Konva.Layer();
     this.lightMarkerLayer = new Konva.Layer();
+    this.wallLayer = new Konva.Layer();
     this.measureLayer = new Konva.Layer();
     // Darkness (and each torch's glow) sits under the fog, so fogged areas hide lighting too.
     this.stage.add(
       this.mapLayer, this.gridLayer, this.darknessLayer, this.fogLayer, this.moveRangeLayer,
-      this.tokenLayer, this.lightMarkerLayer, this.measureLayer,
+      this.tokenLayer, this.lightMarkerLayer, this.wallLayer, this.measureLayer,
     );
     this.fogLayer.listening(false);
     this.darknessLayer.listening(false);
     this.moveRangeLayer.listening(false);
     this.measureLayer.listening(false);
     this.gridLayer.listening(false);
+    this.wallLayer.listening(false);
+    this.tokenLayer.listening(!this.isEditingWalls);
+    this.lightMarkerLayer.listening(!this.isEditingWalls);
 
     this.konvaImg = new Konva.Image({ image: this.img!, x: 0, y: 0, width: 0, height: 0 });
     this.mapLayer.add(this.konvaImg);
@@ -500,6 +586,23 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
       // button whose down/up land on the same target, so without this a middle-click would also
       // place a torch or drop a new token here.
       if ('button' in e.evt && (e.evt as MouseEvent).button === 1) return;
+      if (this.activeLightTool() === 'wall' && this.controlsMap()) {
+        const point = wallPointUnderPointer(this.stage!, this.cellSize, !!(e.evt as MouseEvent).shiftKey);
+        const wall = point && this.wallTool.addVertex(point);
+        if (wall) this.commitWalls([...this.lighting().walls, wall]);
+        this.renderWalls();
+        return;
+      }
+      if (this.activeLightTool() === 'erase-wall' && this.controlsMap()) {
+        const point = wallPointUnderPointer(this.stage!, this.cellSize, true);
+        const walls = this.lighting().walls;
+        const index = point ? wallIndexNear(walls, point) : -1;
+        if (index >= 0) {
+          this.wallTool.setEraseHover(-1);
+          this.commitWalls(walls.filter((_, i) => i !== index));
+        }
+        return;
+      }
       if (this.activeLightTool() === 'place' && this.controlsMap()) {
         if (e.target === this.konvaImg) {
           const pos = this.stage!.getRelativePointerPosition()!;
@@ -516,6 +619,31 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
         const row = Math.floor(pos.y / this.cellSize);
         this.addTokenAt(col, row);
       }
+    });
+
+    // Wall tool hover: the rubber-band preview while chaining, the red highlight while erasing.
+    this.stage.on('mousemove touchmove', (e) => {
+      const tool = this.activeLightTool();
+      if (tool === 'wall') {
+        this.wallTool.setHover(wallPointUnderPointer(this.stage!, this.cellSize, !!(e.evt as MouseEvent).shiftKey));
+        this.renderWalls();
+      } else if (tool === 'erase-wall') {
+        const point = wallPointUnderPointer(this.stage!, this.cellSize, true);
+        this.wallTool.setEraseHover(point ? wallIndexNear(this.lighting().walls, point) : -1);
+        this.renderWalls();
+      }
+    });
+    // Right-click or double-click finishes the current wall chain.
+    this.stage.on('contextmenu', (e) => {
+      if (this.activeLightTool() !== 'wall') return;
+      e.evt.preventDefault();
+      this.wallTool.endChain();
+      this.renderWalls();
+    });
+    this.stage.on('dblclick dbltap', () => {
+      if (this.activeLightTool() !== 'wall') return;
+      this.wallTool.endChain();
+      this.renderWalls();
     });
 
     this.stageView = new StageView(this.stage, () => !this.activeFogTool() && !this.activeMeasureTool() && !this.activeLightTool());
@@ -552,9 +680,11 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
     });
 
     this.lightingSub = this.mapService.watchLighting(this.mapId).subscribe(lighting => {
-      this.lighting.set(lighting);
+      const walls = this.pendingWalls ?? lighting.walls ?? [];
+      this.lighting.set({ ...lighting, walls });
       this.renderDarkness();
       this.renderLightMarkers();
+      this.renderWalls();
     });
 
     // Container-size changes that aren't window resizes — the player dragging the turn-order or
@@ -596,6 +726,7 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
     this.renderTokens(this.lastTokens);
     this.renderDarkness();
     this.renderLightMarkers();
+    this.renderWalls();
     renderMoveRange(this.moveRangeLayer!, this.cellSize, this.showMoveRange(), this.myToken(), this.moveRangeFt());
   }
 
@@ -663,6 +794,15 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
       onLightDragEnd: (light, col, row) => this.moveLight(light, col, row),
       onLightContextMenu: light => this.removeLight(light),
     });
+  }
+
+  // Walls are an editing overlay: only the DM sees them, and only while a lighting tool is armed
+  // — during play their effect shows up in the darkness itself.
+  private renderWalls() {
+    const layer = this.wallLayer;
+    if (!layer) return;
+    const visible = this.controlsMap() && !!this.activeLightTool();
+    this.wallTool.render(layer, this.lighting().walls, this.cellSize, visible);
   }
 
   private renderTokens(tokens: MapToken[]) {

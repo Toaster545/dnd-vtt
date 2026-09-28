@@ -9,6 +9,9 @@ async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
   app.setGlobalPrefix('api');
+  // Nest's 100kb JSON default is too small for a big map's wall set (PUT /maps/:id/lighting/walls
+  // — a .dd2vtt dungeon import can carry thousands of segments).
+  app.useBodyParser('json', { limit: '1mb' });
 
   const origins = (
     process.env.CORS_ORIGINS ??

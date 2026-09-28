@@ -32,5 +32,6 @@ export class MapToolbarComponent {
   readonly fogToolToggled = output<FogToolName>();
   readonly revealAllFog = output<void>();
   readonly lightingEnabledToggled = output<void>();
-  readonly lightToolToggled = output<void>();
+  readonly lightToolToggled = output<LightToolName>();
+  readonly clearWalls = output<void>();
 }

@@ -1,6 +1,7 @@
 import Konva from 'konva';
 import { MapLight, MapLighting, MapToken } from '../../../core/models/campaign.model';
 import { FEET_PER_SQUARE } from './measurement-tool';
+import { Point, Segment, visibilityPolygon } from './visibility';
 
 // A standalone light's x/y are fractional grid units (like the measure tool, not floored like
 // tokens/fog cells); an attached light's x/y are always null — its position is derived from the
@@ -49,6 +50,11 @@ function hexToRgb(hex: string): [number, number, number] {
 // lights with no persisted `id` — the ephemeral personal-darkvision light battle-map.ts splices
 // in (see BattleMapComponent.personalDarkvisionLight) never has one, and darkvision has no color
 // of its own; it just reveals shapes in shades of gray per the 5e rule.
+//
+// Walls: each light's hole and tint are clipped to that light's visibility polygon (see
+// visibility.ts), so light stops at walls and rooms behind them stay dark. Darkvision goes
+// through the same path, so a player can't see through walls with it either. The polygon is
+// computed once per light per render and shared by both passes.
 export function renderDarkness(
   layer: Konva.Layer,
   lighting: MapLighting,
@@ -68,6 +74,19 @@ export function renderDarkness(
     // darkness" apart from "seeing through fog" when both overlays are active at once.
     const baseFill = isAdmin ? 'rgba(10,10,20,0.55)' : '#000';
     const lights = lighting.lights.filter(l => l.enabled);
+    const wallSegments: Segment[] = (lighting.walls ?? []).map(w => ({
+      a: { x: w.x1 * cellSize, y: w.y1 * cellSize },
+      b: { x: w.x2 * cellSize, y: w.y2 * cellSize },
+    }));
+    // Resolved up front (position, outer radius, visibility polygon) so both passes below and
+    // every redraw Konva does of this shape reuse the same ray-cast work.
+    const resolved = lights.flatMap(light => {
+      const pos = resolveLightPosition(light, tokens, cellSize);
+      if (!pos) return [];
+      const outerPx = ((light.bright_radius_ft + light.dim_radius_ft) / FEET_PER_SQUARE) * cellSize;
+      if (outerPx <= 0) return [];
+      return [{ light, pos, outerPx, clip: visibilityPolygon(pos, outerPx, wallSegments) }];
+    });
 
     const darknessShape = new Konva.Shape({
       listening: false,
@@ -79,12 +98,10 @@ export function renderDarkness(
         context.fillRect(0, 0, width, height);
 
         context.globalCompositeOperation = 'destination-out';
-        for (const light of lights) {
-          const pos = resolveLightPosition(light, tokens, cellSize);
-          if (!pos) continue;
+        for (const { light, pos, outerPx, clip } of resolved) {
           const brightPx = (light.bright_radius_ft / FEET_PER_SQUARE) * cellSize;
-          const outerPx = ((light.bright_radius_ft + light.dim_radius_ft) / FEET_PER_SQUARE) * cellSize;
-          if (outerPx <= 0) continue;
+          context.save();
+          if (clip) clipTo(context, clip);
           // Fully erase through the bright radius, then a soft gradient back to zero erasure
           // (full darkness restored) at the outer edge of the dim radius.
           const brightStop = Math.min(1, brightPx / outerPx);
@@ -96,15 +113,14 @@ export function renderDarkness(
           context.arc(pos.x, pos.y, outerPx, 0, Math.PI * 2);
           context.fillStyle = gradient;
           context.fill();
+          context.restore();
         }
 
         context.globalCompositeOperation = 'source-over';
-        for (const light of lights) {
+        for (const { light, pos, outerPx, clip } of resolved) {
           if (!light.id) continue;
-          const pos = resolveLightPosition(light, tokens, cellSize);
-          if (!pos) continue;
-          const outerPx = ((light.bright_radius_ft + light.dim_radius_ft) / FEET_PER_SQUARE) * cellSize;
-          if (outerPx <= 0) continue;
+          context.save();
+          if (clip) clipTo(context, clip);
           const [r, g, b] = hexToRgb(light.color);
           const tint = context.createRadialGradient(pos.x, pos.y, 0, pos.x, pos.y, outerPx);
           tint.addColorStop(0, `rgba(${r},${g},${b},0.35)`);
@@ -113,6 +129,7 @@ export function renderDarkness(
           context.arc(pos.x, pos.y, outerPx, 0, Math.PI * 2);
           context.fillStyle = tint;
           context.fill();
+          context.restore();
         }
         // save()/restore() above already scopes globalCompositeOperation back to source-over —
         // nothing downstream (hit-canvas painting, later shapes on other layers) inherits it.
@@ -122,6 +139,14 @@ export function renderDarkness(
     layer.add(darknessShape);
   }
   layer.draw();
+}
+
+function clipTo(context: Konva.Context, polygon: Point[]) {
+  context.beginPath();
+  context.moveTo(polygon[0].x, polygon[0].y);
+  for (let i = 1; i < polygon.length; i++) context.lineTo(polygon[i].x, polygon[i].y);
+  context.closePath();
+  context.clip();
 }
 
 export interface LightMarkerCallbacks {

@@ -29,7 +29,7 @@
           (fogToolToggled)="toggleFogTool($event)"
           (revealAllFog)="revealAllFog()"
           (lightingEnabledToggled)="toggleLightingEnabled()"
-          (lightToolToggled)="toggleLightTool()"
+          (lightToolToggled)="toggleLightTool($event)"
         />
 
         <div class="map-view-controls absolute top-2 right-2 flex gap-1 bg-surface/90 rounded p-1 border border-white/10">
@@ -129,6 +129,29 @@
                          [value]="newLightDimFt()" (input)="setNewLightRadius('dim', $any($event.target).value)" />
                 </div>
                 <p class="text-xs text-slate">Click the map or a token to place it.</p>
+              </div>
+            </div>
+          } @else if (isEditingWalls) {
+            <div>
+              <h3 class="text-xs font-semibold text-slate uppercase tracking-wider mb-2">Walls</h3>
+              <div class="flex flex-col gap-2 text-xs text-slate">
+                @if (activeLightTool() === 'wall') {
+                  <p>Click to drop wall points; each click after the first adds a wall. Right-click,
+                    double-click or Esc to finish a run.</p>
+                  <p>Points snap to grid corners. Hold <kbd>Shift</kbd> to place freely.</p>
+                } @else {
+                  <p>Click a wall (highlighted red) to remove it.</p>
+                }
+                @if (!lighting().enabled) {
+                  <p class="text-gold/80">Darkness is off, so walls won't have a visible effect until you
+                    turn it on.</p>
+                }
+                <div class="flex items-center justify-between mt-1">
+                  <span>{{ lighting().walls.length }} wall{{ lighting().walls.length === 1 ? '' : 's' }}</span>
+                  <button class="btn-outline text-xs px-2 py-1" [disabled]="!lighting().walls.length" (click)="clearWalls()">
+                    Clear all
+                  </button>
+                </div>
               </div>
             </div>
           }

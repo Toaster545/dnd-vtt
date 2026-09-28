@@ -12,6 +12,17 @@ import { ContentService } from '../content/content.service';
 import { TokensGateway } from './tokens.gateway';
 import type { RequestUser } from '../common/current-user.decorator';
 
+// A light-blocking wall segment, in fractional grid units (see applyV26).
+export interface MapWall {
+  x1: number;
+  y1: number;
+  x2: number;
+  y2: number;
+}
+
+// Generous for a hand-drawn map; a large .dd2vtt dungeon export is typically a few hundred.
+const MAX_WALLS = 5000;
+
 @Injectable()
 export class MapsService {
   constructor(
@@ -337,6 +348,7 @@ export class MapsService {
     return {
       enabled: !!lightingResult.rows[0]?.enabled,
       lights: lightsResult.rows.map((r) => this.deserializeLight(r)),
+      walls: this.parseWalls(lightingResult.rows[0]?.walls),
     };
   }
 
@@ -356,12 +368,42 @@ export class MapsService {
           (light) => !light.token_id || visibleTokenIds.has(light.token_id),
         )
         .map((light) => ({ ...light, label: '' })),
+      // Players need the walls too — their own browser clips each light (and their darkvision)
+      // against them. Walls are geometry only; nothing about them is DM-secret.
+      walls: lighting.walls,
     };
   }
 
   async setLightingEnabled(mapId: string, enabled: boolean, user: RequestUser) {
     await this.assertMapAccess(mapId, user);
     await this.upsertMapLighting(mapId, enabled);
+    return this.broadcastLighting(mapId);
+  }
+
+  // Replaces the map's whole wall set — the wall tool sends every add/erase as the full list,
+  // same as a .dd2vtt import does. Each segment is validated and rounded so a malformed client
+  // payload can't persist NaNs or a multi-megabyte blob.
+  async setWalls(mapId: string, walls: unknown, user: RequestUser) {
+    await this.assertMapAccess(mapId, user);
+    if (!Array.isArray(walls))
+      throw new BadRequestException('walls must be an array');
+    if (walls.length > MAX_WALLS)
+      throw new BadRequestException(
+        `A map can have at most ${MAX_WALLS} walls`,
+      );
+    const clean = walls.map((wall) => {
+      const w = (wall ?? {}) as Record<string, unknown>;
+      const coords = [w.x1, w.y1, w.x2, w.y2].map(Number);
+      if (!coords.every((n) => Number.isFinite(n)))
+        throw new BadRequestException('Each wall needs numeric x1, y1, x2, y2');
+      const [x1, y1, x2, y2] = coords.map((n) => Math.round(n * 1000) / 1000);
+      return { x1, y1, x2, y2 };
+    });
+    await this.db.execute(
+      `INSERT INTO map_lighting (map_id, enabled, walls) VALUES (?,0,?)
+       ON CONFLICT(map_id) DO UPDATE SET walls=excluded.walls`,
+      [mapId, JSON.stringify(clean)],
+    );
     return this.broadcastLighting(mapId);
   }
 
@@ -436,6 +478,16 @@ export class MapsService {
       enabled: !!row.enabled,
       label: row.label as string,
     };
+  }
+
+  private parseWalls(raw: unknown): MapWall[] {
+    if (typeof raw !== 'string') return [];
+    try {
+      const parsed: unknown = JSON.parse(raw);
+      return Array.isArray(parsed) ? (parsed as MapWall[]) : [];
+    } catch {
+      return [];
+    }
   }
 
   private async upsertMapLighting(mapId: string, enabled: boolean) {

@@ -170,12 +170,23 @@ export interface MapLight {
 export interface MapLighting {
   enabled: boolean;
   lights: MapLight[];
+  walls: MapWall[];
 }
 
-// Only one lighting tool for now: click to drop a standalone torch, or click a token to attach
-// one to it. Stays armed across placements (like fog's brush/rect tools) so a DM can drop several
-// torches without re-arming.
-export type LightToolName = 'place';
+// A DM-drawn wall segment that blocks light (and darkvision) — each light only brightens what it
+// has an unobstructed line to. Fractional grid units, same space as a standalone light's x/y.
+// Walls are pure geometry with no id: the whole set is replaced on every edit (see setWalls).
+export interface MapWall {
+  x1: number;
+  y1: number;
+  x2: number;
+  y2: number;
+}
+
+// Lighting tools, all DM-only and all staying armed across uses (like fog's brush/rect tools):
+// 'place' drops a standalone torch or attaches one to a clicked token; 'wall' draws a chain of
+// light-blocking wall segments click by click; 'erase-wall' removes the wall under the pointer.
+export type LightToolName = 'place' | 'wall' | 'erase-wall';
 
 // What's "armed" from an encounter's roster sidebar, ready to be dropped onto the map on the next
 // click — built by the roster UI (from a Character or a DndMonster), consumed by BattleMapComponent
@@ -198,8 +209,9 @@ export interface UniversalVTTData {
   environment: { baked_lighting: boolean; ambient_light: string };
   lights: Light[];
   image: string;
-  line_of_sight: number[][];
-  objects_line_of_sight: number[][];
+  // Polylines of {x, y} points in grid units — converted to battle-map walls by wallsFromUniversalVtt.
+  line_of_sight: { x: number; y: number }[][];
+  objects_line_of_sight: { x: number; y: number }[][];
 }
 
 interface Portal {

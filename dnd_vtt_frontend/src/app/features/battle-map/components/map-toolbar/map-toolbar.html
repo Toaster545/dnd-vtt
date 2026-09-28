@@ -1,5 +1,5 @@
 <div class="absolute top-2 left-2 flex gap-1 bg-surface/90 rounded p-1 border border-white/10">
-  <button class="btn-icon w-8 h-8" [class.border-gold/50]="!activeMeasureTool() && !activeFogTool()" [class.bg-gold/5]="!activeMeasureTool() && !activeFogTool()"
+  <button class="btn-icon w-8 h-8" [class.border-gold/50]="!activeMeasureTool() && !activeFogTool() && !activeLightTool()" [class.bg-gold/5]="!activeMeasureTool() && !activeFogTool() && !activeLightTool()"
           (click)="selectPointerTool.emit()" matTooltip="Select / move">
     <mat-icon class="text-base">near_me</mat-icon>
   </button>
@@ -57,8 +57,16 @@
       <mat-icon class="text-base">{{ lightingEnabled() ? 'dark_mode' : 'light_mode' }}</mat-icon>
     </button>
     <button class="btn-icon w-8 h-8" [class.border-gold/50]="activeLightTool() === 'place'" [class.bg-gold/5]="activeLightTool() === 'place'"
-            (click)="lightToolToggled.emit()" matTooltip="Place torch: click the map or a token">
+            (click)="lightToolToggled.emit('place')" matTooltip="Place torch: click the map or a token">
       <mat-icon class="text-base">local_fire_department</mat-icon>
+    </button>
+    <button class="btn-icon w-8 h-8" [class.border-gold/50]="activeLightTool() === 'wall'" [class.bg-gold/5]="activeLightTool() === 'wall'"
+            (click)="lightToolToggled.emit('wall')" matTooltip="Draw walls that block light: click to chain, right-click to finish">
+      <mat-icon class="text-base">polyline</mat-icon>
+    </button>
+    <button class="btn-icon w-8 h-8" [class.border-gold/50]="activeLightTool() === 'erase-wall'" [class.bg-gold/5]="activeLightTool() === 'erase-wall'"
+            (click)="lightToolToggled.emit('erase-wall')" matTooltip="Erase walls: click a wall to remove it">
+      <mat-icon class="text-base">edit_off</mat-icon>
     </button>
   }
 </div>
