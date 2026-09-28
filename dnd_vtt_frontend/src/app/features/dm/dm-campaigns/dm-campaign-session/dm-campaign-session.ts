@@ -18,7 +18,8 @@ import { ClassChoiceSource } from '../../../../core/utils/character-effects';
 import { campaignContentEnabled } from '../../../../core/utils/content-sources';
 import { Encounter } from '../../../../core/models/encounter.model';
 import { Character } from '../../../../core/models/character.model';
-import { BattleMap, CampaignMember, UniversalVTTData } from '../../../../core/models/campaign.model';
+import { BattleMap, CampaignMember, MapWall, UniversalVTTData } from '../../../../core/models/campaign.model';
+import { wallsFromUniversalVtt } from '../../../../core/utils/uvtt-walls';
 import { Session } from '../../../../core/models/session.model';
 import { ConfirmService } from '../../../../shared/confirm.service';
 import { WikiEmbedComponent } from '../../../wiki/wiki-embed.component';
@@ -354,11 +355,15 @@ export class DmCampaignSessionComponent implements OnInit, OnDestroy {
     }
   }
 
+  // Walls parsed from the last loaded .dd2vtt; only used while mapKind() is 'dd2vtt'.
+  private dd2vttWalls: MapWall[] = [];
+
   private async loadDd2vtt(file: File) {
     const data: UniversalVTTData = JSON.parse(await file.text());
     if (!data.image || !data.resolution?.pixels_per_grid) throw new Error('missing image/grid data');
 
     this.mapKind.set('dd2vtt');
+    this.dd2vttWalls = wallsFromUniversalVtt(data);
     this.pixelsPerGrid.set(Math.round(data.resolution.pixels_per_grid));
     this.mapCols.set(data.resolution.map_size?.x ?? 0);
     this.mapRows.set(data.resolution.map_size?.y ?? 0);
@@ -495,6 +500,11 @@ export class DmCampaignSessionComponent implements OnInit, OnDestroy {
           grid_size: this.pixelsPerGrid() || 50,
         });
         map_id = map.id;
+        // A .dd2vtt export carries the map's walls — bring them in so light is blocked out of
+        // the box instead of the DM re-tracing every wall by hand.
+        if (map.id && this.mapKind() === 'dd2vtt' && this.dd2vttWalls.length) {
+          await this.mapService.setWalls(map.id, this.dd2vttWalls);
+        }
       }
 
       const payload = {

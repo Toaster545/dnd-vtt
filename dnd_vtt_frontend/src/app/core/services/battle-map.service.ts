@@ -4,7 +4,7 @@ import { firstValueFrom, Observable } from 'rxjs';
 import type { Socket } from 'socket.io-client';
 import { environment } from '../../../environments/environment';
 import { SocketService } from './socket.service';
-import { BattleMap, MapFog, MapLight, MapLighting, MapToken, Measurement } from '../models/campaign.model';
+import { BattleMap, MapFog, MapLight, MapLighting, MapToken, MapWall, Measurement } from '../models/campaign.model';
 
 interface FogCellsDelta { cells: string[]; revealed: boolean; }
 
@@ -210,6 +210,14 @@ export class BattleMapService {
   async upsertLight(mapId: string, light: Partial<MapLight>): Promise<MapLight> {
     return firstValueFrom(
       this.http.post<MapLight>(`${API}/maps/${mapId}/lighting/lights`, light)
+    );
+  }
+
+  // Replaces the map's entire wall set; the resulting lighting state comes back and is also
+  // broadcast to every viewer via lighting_updated.
+  async setWalls(mapId: string, walls: MapWall[]): Promise<MapLighting> {
+    return firstValueFrom(
+      this.http.put<MapLighting>(`${API}/maps/${mapId}/lighting/walls`, { walls })
     );
   }
 

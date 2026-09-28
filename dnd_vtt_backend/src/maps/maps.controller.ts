@@ -5,6 +5,7 @@ import {
   Get,
   Param,
   Post,
+  Put,
   UploadedFile,
   UseGuards,
   UseInterceptors,
@@ -154,6 +155,15 @@ export class MapsController {
     @CurrentUser() user: RequestUser,
   ) {
     return this.maps.setLightingEnabled(id, !!body.enabled, user);
+  }
+
+  @Put(':id/lighting/walls')
+  setWalls(
+    @Param('id') id: string,
+    @Body() body: { walls: unknown },
+    @CurrentUser() user: RequestUser,
+  ) {
+    return this.maps.setWalls(id, body?.walls, user);
   }
 
   @Post(':id/lighting/lights')

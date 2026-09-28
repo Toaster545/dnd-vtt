@@ -81,6 +81,7 @@ export class DatabaseService implements OnModuleInit {
     if (version < 23) await this.applyV23();
     if (version < 24) await this.applyV24();
     if (version < 25) await this.applyV25();
+    if (version < 26) await this.applyV26();
   }
 
   // ── V1: initial schema (explicit columns on characters) ─────────────────────
@@ -803,5 +804,19 @@ export class DatabaseService implements OnModuleInit {
     `);
     await this.db.execute(`PRAGMA user_version = 25`);
     this.logger.log('Applied schema migration v25 (item image overrides)');
+  }
+
+  // ── V26: light-blocking walls ───────────────────────────────────────────────
+  // DM-drawn wall segments that stop light (and darkvision) from spilling through. Stored as one
+  // JSON array per map on map_lighting rather than a row per segment: walls are always loaded,
+  // broadcast and replaced as a whole set (a DM draws/erases a batch at a time, and a .dd2vtt
+  // import brings hundreds at once), never queried individually. Each entry is
+  // { x1, y1, x2, y2 } in fractional grid units, the same space standalone lights use.
+  private async applyV26() {
+    await this.db.execute(
+      `ALTER TABLE map_lighting ADD COLUMN walls TEXT NOT NULL DEFAULT '[]'`,
+    );
+    await this.db.execute(`PRAGMA user_version = 26`);
+    this.logger.log('Applied schema migration v26 (light-blocking walls)');
   }
 }

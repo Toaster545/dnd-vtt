@@ -78,7 +78,7 @@ export class TokensGateway implements OnGatewayInit, OnGatewayDisconnect {
 
   async broadcastLighting<T extends { token_id?: string | null }>(
     mapId: string,
-    lighting: { enabled: boolean; lights: T[] },
+    lighting: { enabled: boolean; lights: T[]; walls: unknown[] },
   ) {
     this.server.to(`map:${mapId}:dm`).emit('lighting_updated', lighting);
     const tokens = await this.db.execute(
@@ -91,6 +91,7 @@ export class TokensGateway implements OnGatewayInit, OnGatewayDisconnect {
       lights: lighting.lights
         .filter((light) => !light.token_id || visible.has(light.token_id))
         .map((light) => ({ ...light, label: '' })),
+      walls: lighting.walls,
     });
   }
 
