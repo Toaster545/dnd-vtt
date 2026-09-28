@@ -95,7 +95,13 @@ export function renderDarkness(
       sceneFunc: context => {
         context.save();
         context.fillStyle = baseFill;
-        context.fillRect(0, 0, width, height);
+        // Overshoot the map by a margin on every side. If the fill stopped exactly at the map
+        // image's edge, then whenever that edge lands between screen pixels (letterbox offset,
+        // zoom, rotation) both layers would only partially cover the border pixels, and the
+        // anti-aliased half-darkness over half-image would show as a thin lit outline around
+        // the map. The overshoot only ever lies over the black stage background, so it's invisible.
+        const margin = Math.max(cellSize, 8);
+        context.fillRect(-margin, -margin, width + margin * 2, height + margin * 2);
 
         context.globalCompositeOperation = 'destination-out';
         for (const { light, pos, outerPx, clip } of resolved) {
