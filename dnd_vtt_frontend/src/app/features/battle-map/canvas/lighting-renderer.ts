@@ -136,7 +136,9 @@ export interface LightMarkerCallbacks {
 // marker rendered read-only (`listening: false`, no handlers attached) so it can't intercept
 // clicks meant for a token/the map underneath it. Only standalone lights are draggable even in
 // the DM view; an attached light's position is derived from its token, so dragging it wouldn't
-// have anywhere to persist to.
+// have anywhere to persist to. `hiddenCells` (players only, null otherwise) drops markers sitting
+// on fogged cells — this layer is drawn above the fog so attached markers aren't covered by their
+// token, so it has to do its own fog check, same as token-renderer's hiddenByFog.
 export function renderLightMarkers(
   layer: Konva.Layer,
   lighting: MapLighting,
@@ -144,6 +146,7 @@ export function renderLightMarkers(
   cellSize: number,
   selectedLightId: string | null,
   interactive: boolean,
+  hiddenCells: Set<string> | null,
   callbacks: LightMarkerCallbacks,
 ) {
   layer.destroyChildren();
@@ -151,6 +154,7 @@ export function renderLightMarkers(
   for (const light of lighting.lights) {
     const pos = resolveLightPosition(light, tokens, cellSize);
     if (!pos) continue;
+    if (hiddenCells?.has(`${Math.floor(pos.x / cellSize)},${Math.floor(pos.y / cellSize)}`)) continue;
     const isSelected = interactive && light.id === selectedLightId;
 
     const marker = new Konva.Shape({

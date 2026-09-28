@@ -47,21 +47,9 @@ export class MapsController {
     @CurrentUser() user: RequestUser,
     @Res() response: Response,
   ) {
-    const file = await this.maps.getImageFile(id, user, true);
+    const file = await this.maps.getImageFile(id, user);
     response.setHeader('Cache-Control', 'private, no-store');
     return response.sendFile(file);
-  }
-
-  @Get(':id/player-image')
-  async playerImage(
-    @Param('id') id: string,
-    @CurrentUser() user: RequestUser,
-    @Res() response: Response,
-  ) {
-    const image = await this.maps.getPlayerImage(id, user);
-    response.setHeader('Cache-Control', 'private, no-store');
-    response.type('image/png');
-    return response.send(image);
   }
 
   @Post()

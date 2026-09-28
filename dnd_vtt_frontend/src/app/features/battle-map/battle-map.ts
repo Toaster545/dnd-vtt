@@ -175,6 +175,15 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
   activeLightTool = signal<LightToolName | null>(null);
   selectedLightId = signal<string | null>(null);
   selectedLight = computed(() => this.lighting().lights.find(l => l.id === this.selectedLightId()) ?? null);
+  // Radii the next placed torch gets — set in the aside while the place tool is active, and
+  // still editable per torch afterwards via the light editor. Defaults match a 5e torch.
+  newLightBrightFt = signal(20);
+  newLightDimFt = signal(20);
+
+  setNewLightRadius(which: 'bright' | 'dim', value: string) {
+    const ft = Math.max(0, Number(value) || 0);
+    (which === 'bright' ? this.newLightBrightFt : this.newLightDimFt).set(ft);
+  }
 
   toggleLightTool() {
     this.activeLightTool.update(current => current === 'place' ? null : 'place');
@@ -255,8 +264,8 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
   private async placeLight(fields: Partial<Pick<MapLight, 'x' | 'y' | 'token_id'>>) {
     await this.mapService.upsertLight(this.mapId, {
       map_id: this.mapId,
-      bright_radius_ft: 20,
-      dim_radius_ft: 20,
+      bright_radius_ft: this.newLightBrightFt(),
+      dim_radius_ft: this.newLightDimFt(),
       color: '#ffa542',
       enabled: true,
       label: 'Torch',
@@ -472,8 +481,9 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
     this.tokenLayer = new Konva.Layer();
     this.lightMarkerLayer = new Konva.Layer();
     this.measureLayer = new Konva.Layer();
+    // Darkness (and each torch's glow) sits under the fog, so fogged areas hide lighting too.
     this.stage.add(
-      this.mapLayer, this.gridLayer, this.fogLayer, this.darknessLayer, this.moveRangeLayer,
+      this.mapLayer, this.gridLayer, this.darknessLayer, this.fogLayer, this.moveRangeLayer,
       this.tokenLayer, this.lightMarkerLayer, this.measureLayer,
     );
     this.fogLayer.listening(false);
@@ -538,6 +548,7 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
     this.fogSub = this.mapService.watchFog(this.mapId).subscribe(fog => {
       this.fog.set(fog);
       this.renderFog();
+      this.renderLightMarkers();
     });
 
     this.lightingSub = this.mapService.watchLighting(this.mapId).subscribe(lighting => {
@@ -645,7 +656,9 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
     if (!layer) return;
     // Markers are visible to every viewer (a lit torch is something anyone in the room would see)
     // — only the DM's view gets click/drag/delete wired up, via `interactive` below.
-    renderLightMarkers(layer, this.lighting(), this.lastTokens, this.cellSize, this.selectedLightId(), this.controlsMap(), {
+    const fog = this.fog();
+    const hiddenCells = !this.controlsMap() && fog.enabled ? new Set(fog.hidden_cells) : null;
+    renderLightMarkers(layer, this.lighting(), this.lastTokens, this.cellSize, this.selectedLightId(), this.controlsMap(), hiddenCells, {
       onLightClick: light => this.selectLight(light),
       onLightDragEnd: (light, col, row) => this.moveLight(light, col, row),
       onLightContextMenu: light => this.removeLight(light),

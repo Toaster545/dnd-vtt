@@ -6,6 +6,8 @@ import { environment } from '../../../environments/environment';
 import { SocketService } from './socket.service';
 import { BattleMap, MapFog, MapLight, MapLighting, MapToken, Measurement } from '../models/campaign.model';
 
+interface FogCellsDelta { cells: string[]; revealed: boolean; }
+
 const API = environment.apiUrl;
 
 @Injectable({ providedIn: 'root' })
@@ -147,20 +149,50 @@ export class BattleMapService {
 
   // WebSocket subscription for live fog updates — same join/leave-the-map-room lifecycle as
   // watchTokens; joining/leaving the same room twice (once per subscriber) is a harmless no-op.
+  // Brush/rect paints arrive as per-cell `fog_cells` deltas; toggle/reset send the full state.
+  // Deltas that land before the (re)join fetch resolves are queued and replayed on top of it —
+  // add/delete per cell is idempotent, so replaying one the fetch already includes is harmless.
   watchFog(mapId: string): Observable<MapFog> {
     return new Observable(observer => {
       const socket = this.socketService.socket;
-      const handleUpdate = (fog: MapFog) => observer.next(fog);
+      let current: MapFog | null = null;
+      let pending: FogCellsDelta[] = [];
+
+      const applyDelta = (fog: MapFog, { cells, revealed }: FogCellsDelta): MapFog => {
+        const hidden = new Set(fog.hidden_cells);
+        for (const key of cells) {
+          if (revealed) hidden.delete(key);
+          else hidden.add(key);
+        }
+        return { ...fog, hidden_cells: [...hidden] };
+      };
+      const emitFull = (fog: MapFog) => {
+        current = pending.reduce(applyDelta, fog);
+        pending = [];
+        observer.next(current);
+      };
+      const handleUpdate = (fog: MapFog) => emitFull(fog);
+      const handleCells = (delta: FogCellsDelta) => {
+        if (!current) {
+          pending.push(delta);
+          return;
+        }
+        current = applyDelta(current, delta);
+        observer.next(current);
+      };
 
       const rejoin = this.joinMapRoom(socket, mapId, () => {
-        this.getFog(mapId).then(fog => observer.next(fog));
+        current = null;
+        this.getFog(mapId).then(emitFull);
       });
       socket.on('fog_updated', handleUpdate);
+      socket.on('fog_cells', handleCells);
 
       return () => {
         socket.emit('leave_map', mapId);
         socket.off('connect', rejoin);
         socket.off('fog_updated', handleUpdate);
+        socket.off('fog_cells', handleCells);
       };
     });
   }
