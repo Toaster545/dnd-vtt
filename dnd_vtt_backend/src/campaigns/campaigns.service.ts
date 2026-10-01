@@ -20,6 +20,7 @@ import {
   sourceName,
 } from '../content/content-sources';
 import { parseAvatarRecipe } from '../common/avatar-recipe';
+import { parsePortraitImage } from '../common/portrait-image';
 import { EncounterPresenceGateway } from '../encounters/encounter-presence.gateway';
 
 function stringArray(value: unknown): string[] {
@@ -664,6 +665,7 @@ export class CampaignsService {
       character_armor_class: data.armor_class ?? null,
       character_portrait_seed: data.portrait_seed ?? null,
       character_avatar_recipe: parseAvatarRecipe(data.avatar_recipe),
+      character_portrait_image: parsePortraitImage(data.portrait_image),
       show_race_class: showRaceClass,
       visible_to_party: !!row.visible_to_party,
       source_compatible: compatibility.compatible,

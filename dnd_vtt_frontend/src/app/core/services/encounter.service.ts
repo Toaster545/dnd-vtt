@@ -120,6 +120,7 @@ export class EncounterService {
     username: string; characterId: string; characterName: string; hp?: number; max_hp?: number;
     portraitSeed?: string;
     avatarRecipe?: AvatarRecipeV1;
+    portraitImage?: string;
   }) {
     const socket = this.socketService.socket;
     if (this.activeAnnounce) socket.off('connect', this.activeAnnounce.reannounce);

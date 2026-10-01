@@ -36,6 +36,7 @@ export interface CampaignMember {
   character_armor_class?: number | null;
   character_portrait_seed?: string | null;
   character_avatar_recipe?: AvatarRecipeV1 | null;
+  character_portrait_image?: string | null;
   source_character_id?: string | null;
   status?: 'active' | 'removed';
   joined_at?: string;

@@ -213,6 +213,7 @@ export interface Character {
   avatar_url?: string;
   portrait_seed?: string; // DiceBear (Lorelei style) seed for the generated portrait shown next to the character's name
   avatar_recipe?: AvatarRecipeV1; // Versioned, explicit avatar choices; portrait_seed remains the legacy/failure fallback
+  portrait_image?: string | null; // Uploaded, pre-cropped square portrait (/uploads/portraits/...); wins over avatar_recipe when set
   created_at?: string;
   updated_at?: string;
 }

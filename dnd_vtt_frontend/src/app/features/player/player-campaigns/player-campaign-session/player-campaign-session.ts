@@ -141,7 +141,7 @@ export class PlayerCampaignSessionComponent implements OnInit, OnDestroy {
     const map: Record<string, PortraitSource> = {};
     for (const p of this.presentPlayers()) {
       if (p.characterId) {
-        map[p.characterId] = portraitSource(p.portraitSeed || p.characterId, p.avatarRecipe);
+        map[p.characterId] = portraitSource(p.portraitSeed || p.characterId, p.avatarRecipe, p.portraitImage);
       }
     }
     return map;
@@ -427,6 +427,7 @@ export class PlayerCampaignSessionComponent implements OnInit, OnDestroy {
       max_hp: character.max_hp,
       portraitSeed: character.portrait_seed,
       avatarRecipe: character.avatar_recipe,
+      portraitImage: character.portrait_image ?? undefined,
     });
   }
 

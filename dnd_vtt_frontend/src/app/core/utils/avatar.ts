@@ -177,7 +177,20 @@ export function avatarRecipeKey(recipe: AvatarRecipeV1): string {
   ]);
 }
 
-export function portraitSource(seed: string, recipe?: AvatarRecipeV1 | null): PortraitSource {
+// Same shape the backend accepts (parsePortraitImage) — anything else falls back to the recipe/seed.
+const PORTRAIT_IMAGE_URL =
+  /^\/uploads\/portraits\/[A-Za-z0-9-]{1,64}\/[A-Za-z0-9-]{1,64}\.(png|jpg|webp)$/;
+
+export function isPortraitImageUrl(value: unknown): value is string {
+  return typeof value === 'string' && PORTRAIT_IMAGE_URL.test(value);
+}
+
+export function portraitSource(
+  seed: string,
+  recipe?: AvatarRecipeV1 | null,
+  image?: string | null,
+): PortraitSource {
+  if (isPortraitImageUrl(image)) return { kind: 'image', url: image, fallbackSeed: seed };
   const normalized = normalizeAvatarRecipe(recipe);
   return normalized
     ? { kind: 'recipe', recipe: normalized, fallbackSeed: seed }
@@ -187,6 +200,7 @@ export function portraitSource(seed: string, recipe?: AvatarRecipeV1 | null): Po
 export function portraitDataUri(source: string | PortraitSource): string {
   if (typeof source === 'string') return createAvatar(lorelei, { seed: source }).toDataUri();
   if (source.kind === 'legacy') return createAvatar(lorelei, { seed: source.seed }).toDataUri();
+  if (source.kind === 'image') return source.url;
   const recipe = normalizeAvatarRecipe(source.recipe);
   if (!recipe) return createAvatar(lorelei, { seed: source.fallbackSeed }).toDataUri();
   const key = avatarRecipeKey(recipe);

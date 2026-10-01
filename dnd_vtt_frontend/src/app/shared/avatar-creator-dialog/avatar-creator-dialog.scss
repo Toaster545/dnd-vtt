@@ -42,6 +42,52 @@
     -10px 0;
 }
 
+.mode-toggle {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px;
+  padding: 3px;
+  border: 1px solid rgb(var(--dnd-text-rgb) / 0.12);
+  border-radius: 8px;
+}
+
+.mode-toggle button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  min-height: 34px;
+  border: 0;
+  border-radius: 6px;
+  color: rgb(var(--dnd-slate-rgb));
+  background: transparent;
+  font: inherit;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.mode-toggle button:hover,
+.mode-toggle button:focus-visible {
+  color: rgb(var(--dnd-text-rgb));
+  outline: none;
+}
+
+.mode-toggle button.active {
+  color: var(--dnd-gold-bright);
+  background: color-mix(in srgb, var(--dnd-gold) 14%, transparent);
+}
+
+.upload-panel {
+  grid-column: 2 / -1;
+  min-width: 0;
+  overflow-y: auto;
+  padding: 24px 18px;
+}
+
+.upload-panel[hidden] {
+  display: none;
+}
+
 .category-nav {
   overflow-y: auto;
   padding: 10px 0;
@@ -203,6 +249,11 @@
 
   .category-button {
     padding-inline: 8px;
+  }
+
+  .upload-panel {
+    grid-column: 1 / -1;
+    padding: 14px 12px;
   }
 }
 

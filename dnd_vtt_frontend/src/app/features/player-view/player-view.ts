@@ -58,7 +58,7 @@ export class PlayerViewComponent implements OnInit, OnDestroy {
     const map: Record<string, PortraitSource> = {};
     for (const p of this.presentPlayers()) {
       if (p.characterId) {
-        map[p.characterId] = portraitSource(p.portraitSeed || p.characterId, p.avatarRecipe);
+        map[p.characterId] = portraitSource(p.portraitSeed || p.characterId, p.avatarRecipe, p.portraitImage);
       }
     }
     return map;

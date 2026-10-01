@@ -80,4 +80,5 @@ export interface PresentPlayer {
   max_hp?: number;
   portraitSeed?: string;
   avatarRecipe?: AvatarRecipeV1;
+  portraitImage?: string;
 }

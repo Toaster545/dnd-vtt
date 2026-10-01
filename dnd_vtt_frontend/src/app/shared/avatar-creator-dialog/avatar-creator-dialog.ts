@@ -1,6 +1,6 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal, viewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import {
@@ -11,6 +11,7 @@ import {
 } from '../../core/models/avatar.model';
 import {
   AVATAR_STYLE_DEFINITIONS,
+  isPortraitImageUrl,
   legacySeedToAvatarRecipe,
   normalizeAvatarRecipe,
   portraitDataUri,
@@ -19,20 +20,40 @@ import {
   randomAvatarRecipeForStyle,
   randomizeAvatarCategory,
 } from '../../core/utils/avatar';
+import { CharacterService } from '../../core/services/character.service';
+import { HttpErrorResponse } from '@angular/common/http';
+import { PortraitCropperComponent } from './portrait-cropper';
 
 export interface AvatarCreatorDialogData {
   seed: string;
   recipe?: AvatarRecipeV1 | null;
+  image?: string | null;
+}
+
+// `recipe` is always the builder's current design (kept even while an upload is in use, so
+// switching back restores it); `image` is the uploaded portrait URL, or null for the built avatar.
+export interface AvatarCreatorResult {
+  recipe: AvatarRecipeV1;
+  image: string | null;
 }
 
 @Component({
   selector: 'app-avatar-creator-dialog',
-  imports: [FormsModule, MatDialogModule, MatIconModule, MatMenuModule],
+  imports: [FormsModule, MatDialogModule, MatIconModule, MatMenuModule, PortraitCropperComponent],
   templateUrl: './avatar-creator-dialog.html',
   styleUrl: './avatar-creator-dialog.scss',
 })
 export class AvatarCreatorDialogComponent {
   readonly data = inject<AvatarCreatorDialogData>(MAT_DIALOG_DATA);
+  private readonly dialogRef = inject(MatDialogRef<AvatarCreatorDialogComponent>);
+  private readonly characters = inject(CharacterService);
+  private readonly cropper = viewChild(PortraitCropperComponent);
+  readonly existingImage = isPortraitImageUrl(this.data.image) ? this.data.image : null;
+  readonly mode = signal<'build' | 'upload'>(this.existingImage ? 'upload' : 'build');
+  // Live crop preview once a new file is loaded; until then the previously uploaded portrait.
+  readonly uploadPreview = signal<string | null>(null);
+  readonly saving = signal(false);
+  readonly saveError = signal('');
   readonly styles = AVATAR_STYLE_DEFINITIONS;
   readonly recipe = signal(
     normalizeAvatarRecipe(this.data.recipe) ?? legacySeedToAvatarRecipe(this.data.seed),
@@ -50,8 +71,13 @@ export class AvatarCreatorDialogComponent {
   readonly activeCategory = computed(
     () => this.style().categories.find((category) => category.id === this.activePanel()) ?? null,
   );
-  readonly previewUri = computed(() =>
-    portraitDataUri(portraitSource(this.data.seed, this.recipe())),
+  readonly previewUri = computed(() => {
+    if (this.mode() === 'upload') return this.uploadPreview() ?? this.existingImage ?? '';
+    return portraitDataUri(portraitSource(this.data.seed, this.recipe()));
+  });
+  readonly canApply = computed(
+    () =>
+      !this.saving() && (this.mode() === 'build' || !!this.uploadPreview() || !!this.existingImage),
   );
 
   private readonly categoryColorIds: Readonly<Record<string, readonly string[]>> = {
@@ -69,6 +95,46 @@ export class AvatarCreatorDialogComponent {
     piercings: ['piercings'],
     accessories: ['accessories'],
   };
+
+  cropChanged() {
+    this.uploadPreview.set(this.cropper()?.previewDataUrl() ?? null);
+  }
+
+  async apply() {
+    if (!this.canApply()) return;
+    if (this.mode() === 'build') {
+      this.dialogRef.close({ recipe: this.recipe(), image: null } satisfies AvatarCreatorResult);
+      return;
+    }
+    if (!this.uploadPreview()) {
+      this.dialogRef.close({
+        recipe: this.recipe(),
+        image: this.existingImage,
+      } satisfies AvatarCreatorResult);
+      return;
+    }
+    this.saving.set(true);
+    this.saveError.set('');
+    try {
+      const blob = await this.cropper()?.export();
+      if (!blob) throw new Error('The cropped portrait could not be created.');
+      const image = await this.characters.uploadPortrait(blob);
+      this.dialogRef.close({ recipe: this.recipe(), image } satisfies AvatarCreatorResult);
+    } catch (error) {
+      // Prefer the backend's reason (wrong type, too large) over HttpClient's generic message.
+      const reason =
+        error instanceof HttpErrorResponse
+          ? error.status === 413
+            ? 'That image is too large.'
+            : error.error?.message
+          : error instanceof Error
+            ? error.message
+            : null;
+      this.saveError.set(typeof reason === 'string' ? reason : 'Could not upload the portrait.');
+    } finally {
+      this.saving.set(false);
+    }
+  }
 
   isSelected(categoryId: string, partId: string): boolean {
     return this.recipe().parts[categoryId]?.includes(partId) ?? false;

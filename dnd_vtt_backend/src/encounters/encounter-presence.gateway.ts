@@ -12,6 +12,7 @@ import { Server, Socket } from 'socket.io';
 import { DatabaseService } from '../common/database.service';
 import { SocketAuthService } from '../auth/socket-auth.service';
 import { AvatarRecipeV1, parseAvatarRecipe } from '../common/avatar-recipe';
+import { parsePortraitImage } from '../common/portrait-image';
 
 interface PresentPlayer {
   socketId: string;
@@ -24,6 +25,7 @@ interface PresentPlayer {
   max_hp?: number;
   portraitSeed?: string;
   avatarRecipe?: AvatarRecipeV1;
+  portraitImage?: string;
 }
 
 // Tracks which players currently have an encounter open (for the DM's "Players" roster section) —
@@ -129,6 +131,8 @@ export class EncounterPresenceGateway
           ? characterData.portrait_seed
           : undefined,
       avatarRecipe: parseAvatarRecipe(characterData.avatar_recipe) ?? undefined,
+      portraitImage:
+        parsePortraitImage(characterData.portrait_image) ?? undefined,
     });
     this.broadcast(data.encounterId);
   }

@@ -153,7 +153,7 @@ export class DmEncounterPlayComponent implements OnInit, OnDestroy {
   characterPortraits = computed(() => {
     const map: Record<string, PortraitSource> = {};
     for (const c of Object.values(this.allCharactersById())) {
-      if (c.id) map[c.id] = portraitSource(c.portrait_seed || c.id, c.avatar_recipe);
+      if (c.id) map[c.id] = portraitSource(c.portrait_seed || c.id, c.avatar_recipe, c.portrait_image);
     }
     return map;
   });
