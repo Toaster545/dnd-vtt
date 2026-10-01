@@ -36,6 +36,8 @@ import {
 import { ConfirmService } from '../../../shared/confirm.service';
 import { SwipeTabsDirective } from '../../../shared/directives/swipe-tabs.directive';
 import { levelUpPending } from '../../../core/utils/level-up';
+import { StatblockSpellGroup, characterStatblock } from '../../../core/utils/statblock-export';
+import { StatblockExportMenuComponent } from '../../../shared/components/statblock-export-menu/statblock-export-menu';
 import { Router } from '@angular/router';
 
 // The fields load() resolves content from — a change to any of them means refetching.
@@ -116,7 +118,10 @@ const TAB_LABELS: Record<Tab, string> = {
 
 @Component({
   selector: 'app-character-play-sheet',
-  imports: [FormsModule, MatIconModule, MatTooltipModule, NgTemplateOutlet, ItemFormComponent, SwipeTabsDirective],
+  imports: [
+    FormsModule, MatIconModule, MatTooltipModule, NgTemplateOutlet, ItemFormComponent, SwipeTabsDirective,
+    StatblockExportMenuComponent,
+  ],
   templateUrl: './character-play-sheet.html',
   styleUrl: './character-play-sheet.scss',
   host: { '[class.sheet-preview]': 'preview()' },
@@ -597,6 +602,40 @@ export class CharacterPlaySheetComponent {
   });
 
   castableSpells = computed(() => this.spellRows().filter(row => row.origins.some(origin => origin.category !== 'spellbook')));
+
+  // Obsidian Fantasy Statblocks export — formats what the sheet has already resolved (stats,
+  // features, tracked actions, castable spells) rather than re-deriving anything.
+  readonly buildStatblock = (): string => {
+    const char = this.localChar()!;
+    const stats = this.stats()!;
+    const rows = this.castableSpells();
+    const slotsByLevel: Record<string, number> = {};
+    for (const pool of this.spellResolution()?.slotPools ?? []) {
+      for (const [level, count] of Object.entries(pool.slots)) slotsByLevel[level] = (slotsByLevel[level] ?? 0) + count;
+    }
+    const ordinal = (n: number) => `${n}${n === 1 ? 'st' : n === 2 ? 'nd' : n === 3 ? 'rd' : 'th'}`;
+    const groups: StatblockSpellGroup[] = [];
+    for (const level of [...new Set(rows.map(row => row.spell.level))]) {
+      const slots = slotsByLevel[String(level)];
+      groups.push({
+        label: level === 0 ? 'Cantrips (at will)' : `${ordinal(level)} level${slots ? ` (${slots} slot${slots === 1 ? '' : 's'})` : ''}`,
+        spells: rows.filter(row => row.spell.level === level).map(row => row.spell.name.toLowerCase()),
+      });
+    }
+    const castingAbility = rows.map(row => row.origin.castingAbility).find(Boolean);
+    return characterStatblock({
+      character: char,
+      stats,
+      size: this.raceData()?.size,
+      hitDice: this.resolvedClasses().map(rc => `${rc.level}d${rc.data.hit_die}`).join(' + '),
+      darkvisionFt: char.darkvision_ft ?? this.raceData()?.darkvision_ft,
+      features: this.resolvedFeatures(),
+      actions: this.actions(),
+      spellcasting: castingAbility
+        ? { ability: castingAbility[0].toUpperCase() + castingAbility.slice(1), groups }
+        : undefined,
+    });
+  };
   private spellRollsMatching(predicate: (spell: DndSpell) => boolean): DisplaySpellRoll[] {
     const rolls: DisplaySpellRoll[] = [];
     for (const row of this.castableSpells()) {
