@@ -16,7 +16,8 @@ import { PortraitSource } from '../../../../core/models/avatar.model';
 import { portraitSource } from '../../../../core/utils/avatar';
 import { getErrorMessage } from '../../../../core/utils/error-message';
 import { campaignContentEnabled } from '../../../../core/utils/content-sources';
-import { MapToken, PlacingEntity } from '../../../../core/models/campaign.model';
+import { CampaignMember, MapToken, PlacingEntity } from '../../../../core/models/campaign.model';
+import { RosterPlayer } from './components/roster-panel/roster-panel';
 import { BattleMapComponent } from '../../../battle-map/battle-map';
 import { CharacterPlaySheetComponent } from '../../../characters/character-play-sheet/character-play-sheet';
 import { ResizeHandleDirective } from '../../../../shared/directives/resize-handle.directive';
@@ -94,6 +95,29 @@ export class DmEncounterPlayComponent implements OnInit, OnDestroy {
   );
 
   presentPlayers = signal<PresentPlayer[]>([]);
+  private members = signal<CampaignMember[]>([]);
+
+  // The whole party, connected or not — the DM can place a member's token before they join.
+  // Connected players first; anyone present who isn't (yet) in the member list still shows.
+  partyPlayers = computed<RosterPlayer[]>(() => {
+    const present = new Set(this.presentPlayers().map(p => p.characterId));
+    const rows = new Map<string, RosterPlayer>();
+    for (const m of this.members()) {
+      if (m.status === 'removed' || !m.character_id) continue;
+      rows.set(m.character_id, {
+        characterId: m.character_id, characterName: m.character_name, username: m.username,
+        present: present.has(m.character_id),
+      });
+    }
+    for (const p of this.presentPlayers()) {
+      if (!rows.has(p.characterId)) {
+        rows.set(p.characterId, {
+          characterId: p.characterId, characterName: p.characterName, username: p.username, present: true,
+        });
+      }
+    }
+    return [...rows.values()].sort((a, b) => Number(b.present) - Number(a.present));
+  });
   private presenceSub?: Subscription;
 
   // Every level's tokens, so the side panel's turn order covers the whole encounter.
@@ -184,10 +208,14 @@ export class DmEncounterPlayComponent implements OnInit, OnDestroy {
 
     this.selected.set(encounter);
     this.viewMapId.set(encounter.current_turn_map_id ?? null);
+    void this.loadMembers();
     this.presenceSub = this.encounterService.watchPresence(encounter.id!)
       .subscribe(players => {
         this.presentPlayers.set(players);
         this.refreshPresentCharacters(players);
+        // Someone who joined the campaign after this page loaded.
+        const known = new Set(this.members().map(m => m.character_id));
+        if (players.some(p => !known.has(p.characterId))) void this.loadMembers();
       });
     this.turnOrderSub = this.encounterService.watchTurnOrder(encounter.id!)
       .subscribe(tokens => this.turnOrderTokens.set(tokens));
@@ -212,8 +240,21 @@ export class DmEncounterPlayComponent implements OnInit, OnDestroy {
     clearInterval(this.hpPollInterval);
   }
 
-  private async refreshPresentCharacters(players: PresentPlayer[]) {
-    const ids = [...new Set(players.map(p => p.characterId).filter(Boolean))]
+  // Also loads each member's character, so an absent player's token still gets its HP badge and
+  // portrait once placed.
+  private async loadMembers() {
+    const members = await this.campaignService.getMembers(this.campaignId).catch(() => null);
+    if (!members) return;
+    this.members.set(members);
+    await this.loadCharacters(members.filter(m => m.status !== 'removed').map(m => m.character_id));
+  }
+
+  private refreshPresentCharacters(players: PresentPlayer[]) {
+    return this.loadCharacters(players.map(p => p.characterId));
+  }
+
+  private async loadCharacters(characterIds: string[]) {
+    const ids = [...new Set(characterIds.filter(Boolean))]
       .filter(id => !this.characters().some(c => c.id === id));
     if (!ids.length) return;
     const fetched = await Promise.all(ids.map(id => this.characterService.getCharacter(id).catch(() => null)));
@@ -401,7 +442,7 @@ export class DmEncounterPlayComponent implements OnInit, OnDestroy {
     });
   }
 
-  toggleArmPresentPlayer(player: PresentPlayer) {
+  toggleArmPartyPlayer(player: RosterPlayer) {
     this.toggleArm({
       kind: 'character',
       label: player.characterName,
@@ -423,7 +464,7 @@ export class DmEncounterPlayComponent implements OnInit, OnDestroy {
 
   private rosterIds(): string[] {
     const fromRoster = this.selected()?.character_ids ?? [];
-    const fromPresence = this.presentPlayers().map(p => p.characterId);
+    const fromPresence = this.partyPlayers().map(p => p.characterId);
     return [...new Set([...fromRoster, ...fromPresence])];
   }
 
@@ -462,15 +503,22 @@ export class DmEncounterPlayComponent implements OnInit, OnDestroy {
     this.armedEntity.set(same ? null : entity);
   }
 
+  // Bumped on every token click, so a slow character fetch can't open its panel over a token
+  // clicked after it.
+  private tokenClickSeq = 0;
+
   async onTokenClicked(token: MapToken) {
-    this.playerLevelError.set(null);
+    // Only one token panel at a time — the template shows custom > monster > character, so a
+    // panel left open from the previous click would hide this one.
+    this.closeTokenPanels();
+    const seq = ++this.tokenClickSeq;
     if (token.character_id) {
       // A player's campaign copy isn't among the DM's own characters, and is only preloaded while
       // that player is connected — fetch it on demand so their token always opens its panel.
       let character = this.characterFor(token.character_id);
       if (!character) {
         character = await this.characterService.getCharacter(token.character_id).catch(() => undefined);
-        if (!character) return;
+        if (!character || seq !== this.tokenClickSeq) return;
         this.extraCharacters.update(map => ({ ...map, [token.character_id!]: character! }));
       }
       this.viewingCharacterSummary.set({ token, character });

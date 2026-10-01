@@ -10,11 +10,11 @@
 </button>
 
 <h3 class="text-xs font-semibold text-slate uppercase tracking-wider mb-2">Players</h3>
-@if (presentPlayers().length === 0) {
-  <p class="text-xs text-slate mb-4">No players have joined yet.</p>
+@if (players().length === 0) {
+  <p class="text-xs text-slate mb-4">No one is in the party yet.</p>
 } @else {
   <div class="flex flex-col gap-1.5 mb-4">
-    @for (player of presentPlayers(); track player.socketId) {
+    @for (player of players(); track player.characterId) {
       <div class="flex items-center gap-1.5">
         <button type="button"
           class="flex-1 min-w-0 flex items-center gap-2 px-3 py-2 rounded border text-left text-sm cursor-pointer"
@@ -22,7 +22,8 @@
           (click)="armPlayer.emit(player)"
           style="font-family: inherit;"
         >
-          <span class="w-1.5 h-1.5 rounded-full bg-success flex-shrink-0"></span>
+          <span class="w-1.5 h-1.5 rounded-full flex-shrink-0" [class]="player.present ? 'bg-success' : 'bg-white/20'"
+                [matTooltip]="player.present ? 'In the encounter' : 'Hasn\'t joined yet — you can still place their token'"></span>
           <div class="min-w-0">
             <span class="text-parchment font-medium truncate">{{ player.characterName }}</span>
             <p class="text-coal text-xs m-0 mt-0.5">{{ player.username }}</p>
@@ -30,7 +31,7 @@
         </button>
         <input type="color" class="h-7 w-7 rounded cursor-pointer border border-white/10 bg-transparent flex-shrink-0"
           [ngModel]="colorFor()(player.characterId)" (ngModelChange)="characterColorChanged.emit({ id: player.characterId, color: $event })"
-          (click)="$event.stopPropagation()" name="color-player-{{ player.socketId }}"
+          (click)="$event.stopPropagation()" name="color-player-{{ player.characterId }}"
           [matTooltip]="'Token color for ' + player.characterName" />
       </div>
     }

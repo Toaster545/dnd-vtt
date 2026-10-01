@@ -97,6 +97,52 @@ export class MapsController {
     return this.maps.setTokenColor(mapId, tokenId, body.color, user);
   }
 
+  @Post(':id/tokens/:tokenId/move/confirm')
+  confirmTokenMove(
+    @Param('id') mapId: string,
+    @Param('tokenId') tokenId: string,
+    @CurrentUser() user: RequestUser,
+  ) {
+    return this.maps.confirmTokenMove(mapId, tokenId, user);
+  }
+
+  @Post(':id/tokens/:tokenId/move/undo')
+  undoTokenMove(
+    @Param('id') mapId: string,
+    @Param('tokenId') tokenId: string,
+    @CurrentUser() user: RequestUser,
+  ) {
+    return this.maps.undoTokenMove(mapId, tokenId, user);
+  }
+
+  @Get(':id/tokens/:tokenId/plan')
+  getTokenPlan(
+    @Param('id') mapId: string,
+    @Param('tokenId') tokenId: string,
+    @CurrentUser() user: RequestUser,
+  ) {
+    return this.maps.getTokenPlan(mapId, tokenId, user);
+  }
+
+  @Put(':id/tokens/:tokenId/plan')
+  setTokenPlan(
+    @Param('id') mapId: string,
+    @Param('tokenId') tokenId: string,
+    @Body() body: { x: number; y: number },
+    @CurrentUser() user: RequestUser,
+  ) {
+    return this.maps.setTokenPlan(mapId, tokenId, body, user);
+  }
+
+  @Delete(':id/tokens/:tokenId/plan')
+  clearTokenPlan(
+    @Param('id') mapId: string,
+    @Param('tokenId') tokenId: string,
+    @CurrentUser() user: RequestUser,
+  ) {
+    return this.maps.setTokenPlan(mapId, tokenId, null, user);
+  }
+
   @Delete(':id/tokens/:tokenId')
   deleteToken(
     @Param('id') mapId: string,

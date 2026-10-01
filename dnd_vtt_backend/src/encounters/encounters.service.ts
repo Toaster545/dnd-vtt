@@ -11,6 +11,7 @@ import { CreateEncounterDto } from './dto/create-encounter.dto';
 import { EncounterPresenceGateway } from './encounter-presence.gateway';
 import type { RequestUser } from '../common/current-user.decorator';
 import { serializePlayerTokens } from '../maps/player-tokens';
+import { TokensGateway } from '../maps/tokens.gateway';
 
 export interface EncounterLevel {
   map_id: string;
@@ -23,6 +24,7 @@ export class EncountersService {
   constructor(
     private db: DatabaseService,
     private presence: EncounterPresenceGateway,
+    private tokensGateway: TokensGateway,
   ) {}
 
   async findAllForUser(dmId: string) {
@@ -607,11 +609,45 @@ export class EncountersService {
     tokenId: string | null,
     round: number,
   ) {
-    await this.db.execute(
-      `UPDATE encounters SET current_turn_token_id=?, round_number=?, updated_at=? WHERE id=?`,
-      [tokenId, round, new Date().toISOString(), id],
-    );
+    await this.db.executeMany([
+      // The token whose turn just ended is done with the destination it asked for.
+      {
+        sql: `UPDATE map_tokens SET planned_x = NULL, planned_y = NULL
+              WHERE id = (SELECT current_turn_token_id FROM encounters WHERE id = ?)
+                AND id IS NOT ?`,
+        args: [id, tokenId],
+      },
+      {
+        sql: `UPDATE encounters SET current_turn_token_id=?, round_number=?, updated_at=? WHERE id=?`,
+        args: [tokenId, round, new Date().toISOString(), id],
+      },
+      // Movement is tracked per turn: only the token whose turn it now is gets a starting point
+      // (which is also its first confirmed square), pinned where it stands right now, with
+      // nothing traveled yet (see MapsService.confirmTokenMove).
+      {
+        sql: `UPDATE map_tokens SET
+                turn_start_x = CASE WHEN id = ? THEN x END,
+                turn_start_y = CASE WHEN id = ? THEN y END,
+                turn_anchor_x = CASE WHEN id = ? THEN x END,
+                turn_anchor_y = CASE WHEN id = ? THEN y END,
+                turn_moved_ft = 0, turn_diagonals = 0
+              WHERE map_id IN (SELECT map_id FROM encounter_levels WHERE encounter_id = ?)`,
+        args: [tokenId, tokenId, tokenId, tokenId, id],
+      },
+    ]);
     const updated = await this.findOne(id, dmId);
+    // Every level's tokens carry the reset turn_start/turn_moved_ft — push them out so each map
+    // drops the previous token's trail and draws the new one's starting point.
+    for (const level of updated.levels) {
+      const tokens = await this.db.execute(
+        'SELECT * FROM map_tokens WHERE map_id = ?',
+        [level.map_id],
+      );
+      this.tokensGateway.broadcastTokens(
+        level.map_id,
+        tokens.rows.map((r) => ({ ...r, is_player: !!r.is_player })),
+      );
+    }
     this.presence.broadcastTurnState(id, {
       current_turn_token_id: updated.current_turn_token_id as string | null,
       current_turn_map_id: updated.current_turn_map_id,

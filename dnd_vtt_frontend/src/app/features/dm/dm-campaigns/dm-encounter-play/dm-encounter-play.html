@@ -76,7 +76,7 @@
             />
           } @else {
             <app-roster-panel
-              [presentPlayers]="presentPlayers()"
+              [players]="partyPlayers()"
               [monsters]="rosterMonsters()"
               [characters]="rosterCharacters()"
               [classLabel]="classLabel"
@@ -90,7 +90,7 @@
               [availableMonstersToAdd]="availableMonstersToAdd()"
               [addingMonster]="addingMonster()"
               (armCustomToken)="toggleArmCustomToken()"
-              (armPlayer)="toggleArmPresentPlayer($event)"
+              (armPlayer)="toggleArmPartyPlayer($event)"
               (armMonster)="toggleArmMonster($event)"
               (armCharacter)="toggleArmCharacter($event)"
               (characterColorChanged)="setCharacterColor($event.id, $event.color)"

@@ -23,6 +23,9 @@ export class MapToolbarComponent {
   // the same control — it just doesn't require DM privileges the way the rest of this toolbar does.
   readonly myTokenColor = input<string | null>(null);
   readonly isAdmin = input(false);
+  // Player only: picking the square they'd like the DM to move their token to on their turn.
+  readonly pickingDestination = input(false);
+  readonly hasDestination = input(false);
 
   readonly selectPointerTool = output<void>();
   readonly measureToolToggled = output<MeasureShape>();
@@ -34,4 +37,6 @@ export class MapToolbarComponent {
   readonly lightingEnabledToggled = output<void>();
   readonly lightToolToggled = output<LightToolName>();
   readonly clearWalls = output<void>();
+  readonly destinationToolToggled = output<void>();
+  readonly clearDestination = output<void>();
 }

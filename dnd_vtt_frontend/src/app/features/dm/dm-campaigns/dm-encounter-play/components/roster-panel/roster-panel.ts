@@ -4,7 +4,14 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { DndMonster } from '../../../../../../core/services/content.service';
 import { Character } from '../../../../../../core/models/character.model';
-import { PresentPlayer } from '../../../../../../core/models/encounter.model';
+
+// A party member's character, placeable whether or not their player has joined the encounter.
+export interface RosterPlayer {
+  characterId: string;
+  characterName: string;
+  username: string;
+  present: boolean;
+}
 
 @Component({
   selector: 'app-roster-panel',
@@ -12,7 +19,7 @@ import { PresentPlayer } from '../../../../../../core/models/encounter.model';
   templateUrl: './roster-panel.html',
 })
 export class RosterPanelComponent {
-  readonly presentPlayers = input.required<PresentPlayer[]>();
+  readonly players = input.required<RosterPlayer[]>();
   readonly monsters = input.required<DndMonster[]>();
   readonly characters = input.required<Character[]>();
 
@@ -29,7 +36,7 @@ export class RosterPanelComponent {
   readonly addingMonster = input(false);
 
   readonly armCustomToken = output<void>();
-  readonly armPlayer = output<PresentPlayer>();
+  readonly armPlayer = output<RosterPlayer>();
   readonly armMonster = output<DndMonster>();
   readonly armCharacter = output<Character>();
   readonly characterColorChanged = output<{ id: string; color: string }>();

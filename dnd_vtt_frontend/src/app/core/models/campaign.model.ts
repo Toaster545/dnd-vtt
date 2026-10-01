@@ -117,6 +117,21 @@ export interface MapToken {
   initiative?: number | null;
   visible_to_players?: boolean;
   name_visible_to_players?: boolean;
+  // Where the token stood when its current turn began — null whenever it isn't its turn — and the
+  // distance it has moved since (server-tracked, see EncountersService.applyTurn).
+  // turn_diagonals is the running diagonal-step count behind the 5/10/5 diagonal rule.
+  turn_start_x?: number | null;
+  turn_start_y?: number | null;
+  // The last square the DM confirmed this turn; a move from it counts toward turn_moved_ft only
+  // once confirmed (see BattleMapService.confirmTokenMove).
+  turn_anchor_x?: number | null;
+  turn_anchor_y?: number | null;
+  turn_moved_ft?: number;
+  turn_diagonals?: number;
+  // The square the token's player asked to be moved to (DM payloads only — a player reads their
+  // own through BattleMapService.getTokenPlan). Cleared when the token's turn ends.
+  planned_x?: number | null;
+  planned_y?: number | null;
 }
 
 // Manual reveal-brush fog of war. `hidden_cells` is a set of "col,row" keys — everything else on

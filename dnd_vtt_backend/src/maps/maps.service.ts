@@ -12,6 +12,7 @@ import { ContentService } from '../content/content.service';
 import { TokensGateway } from './tokens.gateway';
 import type { RequestUser } from '../common/current-user.decorator';
 import { serializePlayerTokens } from './player-tokens';
+import { moveCost } from './movement';
 
 // A light-blocking wall segment, in fractional grid units (see applyV26).
 export interface MapWall {
@@ -224,8 +225,16 @@ export class MapsService {
     campaignId: string,
   ) {
     await this.db.execute(
-      'UPDATE map_tokens SET map_id = ?, x = ?, y = ? WHERE id = ?',
-      [mapId, x, y, existing.id],
+      // Mid-turn, the trail restarts on the new level (a ghost on another map would point
+      // nowhere) but the confirmed distance already traveled this turn is kept.
+      `UPDATE map_tokens SET map_id = ?, x = ?, y = ?,
+         turn_start_x = CASE WHEN turn_start_x IS NULL THEN NULL ELSE ? END,
+         turn_start_y = CASE WHEN turn_start_y IS NULL THEN NULL ELSE ? END,
+         turn_anchor_x = CASE WHEN turn_anchor_x IS NULL THEN NULL ELSE ? END,
+         turn_anchor_y = CASE WHEN turn_anchor_y IS NULL THEN NULL ELSE ? END,
+         planned_x = NULL, planned_y = NULL
+       WHERE id = ?`,
+      [mapId, x, y, x, y, x, y, existing.id],
     );
     await this.db.execute(
       'UPDATE map_lights SET map_id = ? WHERE token_id = ?',
@@ -326,6 +335,62 @@ export class MapsService {
     if (typeof color !== 'string' || !/^#[0-9a-fA-F]{6}$/.test(color)) {
       throw new BadRequestException('Color must be a hex string like #a1b2c3');
     }
+    await this.assertOwnTokenOrDm(mapId, tokenId, user);
+    await this.db.execute('UPDATE map_tokens SET color = ? WHERE id = ?', [
+      color,
+      tokenId,
+    ]);
+    const tokens = await this.getTokensRaw(mapId);
+    this.gateway.broadcastTokens(mapId, tokens);
+    return tokens.find((t) => t.id === tokenId);
+  }
+
+  // The square this player would like their token moved to (see applyV30). Readable by the
+  // token's owner (or the DM) only — the shared player broadcast never carries it, so other
+  // players can't see it, and the DM's screen only shows it on that token's turn.
+  async getTokenPlan(mapId: string, tokenId: string, user: RequestUser) {
+    const token = await this.assertOwnTokenOrDm(mapId, tokenId, user);
+    return this.planOf(token);
+  }
+
+  async setTokenPlan(
+    mapId: string,
+    tokenId: string,
+    plan: { x: number; y: number } | null,
+    user: RequestUser,
+  ) {
+    if (
+      plan &&
+      !(
+        Number.isInteger(plan.x) &&
+        Number.isInteger(plan.y) &&
+        plan.x >= 0 &&
+        plan.y >= 0
+      )
+    ) {
+      throw new BadRequestException('Destination must be a grid square');
+    }
+    await this.assertOwnTokenOrDm(mapId, tokenId, user);
+    await this.db.execute(
+      'UPDATE map_tokens SET planned_x = ?, planned_y = ? WHERE id = ?',
+      [plan?.x ?? null, plan?.y ?? null, tokenId],
+    );
+    this.gateway.broadcastTokens(mapId, await this.getTokensRaw(mapId));
+    return plan;
+  }
+
+  private planOf(token: Record<string, unknown>) {
+    return token.planned_x == null || token.planned_y == null
+      ? null
+      : { x: Number(token.planned_x), y: Number(token.planned_y) };
+  }
+
+  // A player may act on their own character's token; the campaign's DM on any token.
+  private async assertOwnTokenOrDm(
+    mapId: string,
+    tokenId: string,
+    user: RequestUser,
+  ) {
     const map = await this.findOneRaw(mapId);
     const result = await this.db.execute(
       'SELECT * FROM map_tokens WHERE id = ? AND map_id = ?',
@@ -344,14 +409,57 @@ export class MapsService {
       );
       if (!owns.rows[0]) throw new ForbiddenException();
     }
+    return token as Record<string, unknown>;
+  }
 
-    await this.db.execute('UPDATE map_tokens SET color = ? WHERE id = ?', [
-      color,
-      tokenId,
-    ]);
+  // A move during a token's turn stays pending — the token sits on its new square, but the
+  // distance isn't counted — until the DM confirms it here: the cost from the last confirmed
+  // square (turn_anchor) to where it stands now joins turn_moved_ft. Several drags before a
+  // confirm count as one straight move from the anchor, so a misplaced drop costs nothing.
+  async confirmTokenMove(mapId: string, tokenId: string, user: RequestUser) {
+    await this.assertMapAccess(mapId, user);
+    const token = await this.findTurnToken(mapId, tokenId);
+    const cost = moveCost(
+      { x: Number(token.turn_anchor_x), y: Number(token.turn_anchor_y) },
+      { x: Number(token.x), y: Number(token.y) },
+      Number(token.turn_diagonals),
+    );
+    await this.db.execute(
+      `UPDATE map_tokens SET turn_moved_ft = ?, turn_diagonals = ?,
+         turn_anchor_x = x, turn_anchor_y = y
+       WHERE id = ?`,
+      [Number(token.turn_moved_ft) + cost.feet, cost.diagonals, tokenId],
+    );
     const tokens = await this.getTokensRaw(mapId);
     this.gateway.broadcastTokens(mapId, tokens);
     return tokens.find((t) => t.id === tokenId);
+  }
+
+  // Throws away a pending move: the token goes back to its last confirmed square.
+  async undoTokenMove(mapId: string, tokenId: string, user: RequestUser) {
+    await this.assertMapAccess(mapId, user);
+    await this.findTurnToken(mapId, tokenId);
+    await this.db.execute(
+      'UPDATE map_tokens SET x = turn_anchor_x, y = turn_anchor_y WHERE id = ?',
+      [tokenId],
+    );
+    const tokens = await this.getTokensRaw(mapId);
+    this.gateway.broadcastTokens(mapId, tokens);
+    return tokens.find((t) => t.id === tokenId);
+  }
+
+  // The token, which must be taking its turn (only then does it have a confirmed anchor).
+  private async findTurnToken(mapId: string, tokenId: string) {
+    const result = await this.db.execute(
+      'SELECT * FROM map_tokens WHERE id = ? AND map_id = ?',
+      [tokenId, mapId],
+    );
+    const token = result.rows[0];
+    if (!token) throw new NotFoundException('Token not found');
+    if (token.turn_anchor_x == null || token.turn_anchor_y == null) {
+      throw new BadRequestException("It isn't this token's turn");
+    }
+    return token;
   }
 
   async rerollInitiative(mapId: string, tokenId: string, user: RequestUser) {

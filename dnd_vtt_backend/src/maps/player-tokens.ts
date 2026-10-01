@@ -15,5 +15,11 @@ export function serializePlayerTokens(tokens: Record<string, unknown>[]) {
       is_player: !!token.is_player,
       character_id: token.is_player ? token.character_id : undefined,
       initiative: token.initiative ?? null,
+      turn_start_x: token.turn_start_x ?? null,
+      turn_start_y: token.turn_start_y ?? null,
+      turn_anchor_x: token.turn_anchor_x ?? null,
+      turn_anchor_y: token.turn_anchor_y ?? null,
+      turn_moved_ft: Number(token.turn_moved_ft ?? 0),
+      turn_diagonals: Number(token.turn_diagonals ?? 0),
     }));
 }

@@ -15,6 +15,9 @@ export interface TokenRenderContext {
   // BattleMapComponent.resolvePortraitImages), so a token with a character_id but no entry here
   // just falls back to its plain color fill for this render pass.
   characterPortraits: Record<string, HTMLImageElement>;
+  // Tokens this viewer can't see at all — enemies standing in darkness on a player's screen (see
+  // BattleMapComponent.tokensHiddenByDarkness). Skipped like fog-hidden ones.
+  hiddenTokenIds?: Set<string>;
   onTokenClick: (token: MapToken) => void;
   onTokenMoved: (token: MapToken, col: number, row: number) => void;
   onTokenContextMenu: (token: MapToken) => void;
@@ -63,7 +66,7 @@ export function renderTokens(layer: Konva.Layer, tokens: MapToken[], ctx: TokenR
     ? [...tokens.filter(t => t.id !== ctx.selectedTokenId), ...tokens.filter(t => t.id === ctx.selectedTokenId)]
     : tokens;
   for (const token of orderedTokens) {
-    if (hiddenByFog(token)) continue;
+    if (hiddenByFog(token) || (token.id && ctx.hiddenTokenIds?.has(token.id))) continue;
     const r = (cellSize * token.size) / 2;
     const cx = token.x * cellSize + r;
     const cy = token.y * cellSize + r;
