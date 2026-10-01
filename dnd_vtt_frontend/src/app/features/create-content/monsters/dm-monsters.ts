@@ -7,12 +7,17 @@ import { ConfirmService } from '../../../shared/confirm.service';
 import { MonsterFormComponent } from './monster-form/monster-form';
 import { ContentDetailDialogComponent } from '../content-detail-dialog/content-detail-dialog';
 import { ContentSourceFilterComponent } from '../content-source-filter/content-source-filter';
+import { StatblockExportMenuComponent } from '../../../shared/components/statblock-export-menu/statblock-export-menu';
+import { monsterStatblock } from '../../../core/utils/statblock-export';
 
 type MonsterSort = 'name-asc' | 'name-desc' | 'source-asc' | 'cr-asc' | 'cr-desc';
 
 @Component({
   selector: 'app-dm-monsters',
-  imports: [MonsterFormComponent, ContentDetailDialogComponent, ContentSourceFilterComponent, MatIconModule, FormsModule],
+  imports: [
+    MonsterFormComponent, ContentDetailDialogComponent, ContentSourceFilterComponent, StatblockExportMenuComponent,
+    MatIconModule, FormsModule,
+  ],
   templateUrl: './dm-monsters.html',
 })
 export class DmMonstersComponent implements OnInit {
@@ -59,6 +64,10 @@ export class DmMonstersComponent implements OnInit {
   }
 
   setSourceFilters(codes: string[]) { this.sourceFilters.set(codes); }
+
+  statblockFor(monster: DndMonster): () => string {
+    return () => monsterStatblock(monster);
+  }
 
   private challengeRating(value: string): number {
     const [numerator, denominator] = String(value).split('/').map(Number);

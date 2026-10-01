@@ -63,6 +63,9 @@
             </p>
           }
         </div>
+        @if (!preview() && stats()) {
+          <app-statblock-export-menu class="self-start" [name]="char.name" [build]="buildStatblock" />
+        }
       </div>
       @if (stats(); as s) {
         <div class="sheet-combat-strip">

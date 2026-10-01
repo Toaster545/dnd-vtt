@@ -49,6 +49,7 @@
                 <span class="text-xs text-slate border border-white/10 rounded px-2 py-0.5">HP {{ m.hit_points }}</span>
                 <span class="text-xs text-slate border border-white/10 rounded px-2 py-0.5">AC {{ m.armor_class }}</span>
                 <span class="text-xs text-slate border border-white/10 rounded px-2 py-0.5">CR {{ m.challenge_rating }}</span>
+                <app-statblock-export-menu [name]="m.name" [description]="m.description" [build]="statblockFor(m)" />
                 <button class="btn-icon" type="button" (click)="openDuplicate(m, $event)" title="Duplicate">
                   <mat-icon class="text-base">content_copy</mat-icon>
                 </button>
@@ -81,6 +82,7 @@
                   <span class="text-xs text-slate border border-white/10 rounded px-2 py-0.5">HP {{ m.hit_points }}</span>
                   <span class="text-xs text-slate border border-white/10 rounded px-2 py-0.5">AC {{ m.armor_class }}</span>
                   <span class="text-xs text-slate border border-white/10 rounded px-2 py-0.5">CR {{ m.challenge_rating }}</span>
+                  <app-statblock-export-menu [name]="m.name" [description]="m.description" [build]="statblockFor(m)" />
                   <button class="btn-icon" type="button" (click)="openDuplicate(m, $event)" title="Duplicate as homebrew">
                     <mat-icon class="text-base">content_copy</mat-icon>
                   </button>
