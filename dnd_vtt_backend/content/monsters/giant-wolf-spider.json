@@ -1,0 +1,32 @@
+{
+  "index": "giant-wolf-spider",
+  "name": "Giant Wolf Spider",
+  "size": "Medium",
+  "type": "beast",
+  "alignment": "unaligned",
+  "armor_class": 13,
+  "hit_points": 11,
+  "hit_dice": "2d8 + 2",
+  "speed": { "walk": 40, "climb": 40 },
+  "ability_scores": {
+    "strength": 12,
+    "dexterity": 16,
+    "constitution": 13,
+    "intelligence": 3,
+    "wisdom": 12,
+    "charisma": 4
+  },
+  "initiative_bonus": 3,
+  "skills": { "Perception": 3, "Stealth": 7 },
+  "senses": { "blindsight": 10, "darkvision": 60, "passive_perception": 13 },
+  "languages": [],
+  "challenge_rating": "1/4",
+  "xp": 50,
+  "traits": [
+    { "name": "Spider Climb", "description": "The spider can climb difficult surfaces, including along ceilings, without needing to make an ability check." }
+  ],
+  "actions": [
+    { "name": "Bite", "description": "Melee Attack Roll: +5, reach 5 ft. Hit: 5 (1d4 + 3) Piercing damage plus 5 (2d4) Poison damage." }
+  ],
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 355 }
+}

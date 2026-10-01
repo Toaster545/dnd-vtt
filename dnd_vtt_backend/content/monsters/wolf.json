@@ -4,13 +4,12 @@
   "size": "Medium",
   "type": "beast",
   "alignment": "unaligned",
-  "armor_class": 13,
-  "armor_class_desc": "natural armor",
+  "armor_class": 12,
   "hit_points": 11,
   "hit_dice": "2d8 + 2",
   "speed": { "walk": 40 },
   "ability_scores": {
-    "strength": 12,
+    "strength": 14,
     "dexterity": 15,
     "constitution": 12,
     "intelligence": 3,
@@ -18,17 +17,17 @@
     "charisma": 6
   },
   "initiative_bonus": 2,
-  "skills": { "Perception": 3, "Stealth": 4 },
-  "senses": { "passive_perception": 13 },
+  "skills": { "Perception": 5, "Stealth": 4 },
+  "senses": { "darkvision": 60, "passive_perception": 15 },
   "languages": [],
   "challenge_rating": "1/4",
   "xp": 50,
   "traits": [
-    { "name": "Keen Hearing and Smell", "description": "The wolf has advantage on Wisdom (Perception) checks that rely on hearing or smell." },
-    { "name": "Pack Tactics", "description": "The wolf has advantage on an attack roll against a creature if at least one of the wolf's allies is within 5 ft. of the creature and the ally isn't incapacitated." }
+    { "name": "Pack Tactics", "description": "The wolf has Advantage on attack rolls against a creature if at least one of the wolf's allies is within 5 feet of the creature and the ally doesn't have the Incapacitated condition." }
   ],
   "actions": [
-    { "name": "Bite", "description": "Melee Weapon Attack: +4 to hit, reach 5 ft., one target. Hit: 7 (2d4 + 2) piercing damage. If the target is a creature, it must succeed on a DC 11 Strength saving throw or be knocked prone." }
+    { "name": "Bite", "description": "Melee Attack Roll: +4, reach 5 ft. Hit: 5 (1d6 + 2) Piercing damage. If the target is a Medium or smaller creature, it has the Prone condition." }
   ],
-  "description": "A wolf pack is bound together by social order, and pack members work together to bring down prey and defend their territory."
+  "description": "A wolf pack is bound together by social order, and pack members work together to bring down prey and defend their territory.",
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 364 }
 }

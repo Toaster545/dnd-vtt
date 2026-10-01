@@ -1,0 +1,32 @@
+{
+  "index": "warrior-infantry",
+  "name": "Warrior Infantry",
+  "size": "Medium or Small",
+  "type": "humanoid",
+  "alignment": "neutral",
+  "armor_class": 13,
+  "hit_points": 9,
+  "hit_dice": "2d8",
+  "speed": { "walk": 30 },
+  "ability_scores": {
+    "strength": 13,
+    "dexterity": 11,
+    "constitution": 11,
+    "intelligence": 8,
+    "wisdom": 11,
+    "charisma": 8
+  },
+  "initiative_bonus": 0,
+  "gear": ["Chain Shirt", "Spear"],
+  "senses": { "passive_perception": 10 },
+  "languages": ["Common"],
+  "challenge_rating": "1/8",
+  "xp": 25,
+  "traits": [
+    { "name": "Pack Tactics", "description": "The warrior has Advantage on an attack roll against a creature if at least one of the warrior's allies is within 5 feet of the creature and the ally doesn't have the Incapacitated condition." }
+  ],
+  "actions": [
+    { "name": "Spear", "description": "Melee or Ranged Attack Roll: +3, reach 5 ft. or range 20/60 ft. Hit: 4 (1d6 + 1) Piercing damage." }
+  ],
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 336 }
+}

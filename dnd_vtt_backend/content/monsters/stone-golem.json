@@ -1,0 +1,39 @@
+{
+  "index": "stone-golem",
+  "name": "Stone Golem",
+  "size": "Large",
+  "type": "construct",
+  "alignment": "unaligned",
+  "armor_class": 18,
+  "hit_points": 220,
+  "hit_dice": "21d10 + 105",
+  "speed": { "walk": 30 },
+  "ability_scores": {
+    "strength": 22,
+    "dexterity": 9,
+    "constitution": 20,
+    "intelligence": 3,
+    "wisdom": 11,
+    "charisma": 1
+  },
+  "initiative_bonus": 3,
+  "damage_immunities": ["poison", "psychic"],
+  "condition_immunities": ["charmed", "exhaustion", "frightened", "paralyzed", "petrified", "poisoned"],
+  "senses": { "darkvision": 120, "passive_perception": 10 },
+  "languages": ["Understands Common plus two other languages but can't speak"],
+  "challenge_rating": "10",
+  "xp": 5900,
+  "traits": [
+    { "name": "Immutable Form", "description": "The golem can't shape-shift." },
+    { "name": "Magic Resistance", "description": "The golem has Advantage on saving throws against spells and other magical effects." }
+  ],
+  "actions": [
+    { "name": "Multiattack", "description": "The golem makes two attacks, using Slam or Force Bolt in any combination." },
+    { "name": "Slam", "description": "Melee Attack Roll: +10, reach 5 ft. Hit: 15 (2d8 + 6) Bludgeoning damage plus 9 (2d8) Force damage." },
+    { "name": "Force Bolt", "description": "Ranged Attack Roll: +9, range 120 ft. Hit: 22 (4d10) Force damage." }
+  ],
+  "bonus_actions": [
+    { "name": "Slow (Recharge 5-6)", "description": "The golem casts the Slow spell, requiring no spell components and using Constitution as the spellcasting ability (spell save DC 17)." }
+  ],
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 330 }
+}

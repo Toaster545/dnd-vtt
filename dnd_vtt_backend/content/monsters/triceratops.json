@@ -1,0 +1,29 @@
+{
+  "index": "triceratops",
+  "name": "Triceratops",
+  "size": "Huge",
+  "type": "beast (dinosaur)",
+  "alignment": "unaligned",
+  "armor_class": 14,
+  "hit_points": 114,
+  "hit_dice": "12d12 + 36",
+  "speed": { "walk": 50 },
+  "ability_scores": {
+    "strength": 22,
+    "dexterity": 9,
+    "constitution": 17,
+    "intelligence": 2,
+    "wisdom": 11,
+    "charisma": 5
+  },
+  "initiative_bonus": -1,
+  "senses": { "passive_perception": 10 },
+  "languages": [],
+  "challenge_rating": "5",
+  "xp": 1800,
+  "actions": [
+    { "name": "Multiattack", "description": "The triceratops makes two Gore attacks." },
+    { "name": "Gore", "description": "Melee Attack Roll: +9, reach 5 ft. Hit: 19 (2d12 + 6) Piercing damage. If the target is Huge or smaller and the triceratops moved 20+ feet straight toward it immediately before the hit, the target takes an extra 9 (2d8) Piercing damage and has the Prone condition." }
+  ],
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 363 }
+}

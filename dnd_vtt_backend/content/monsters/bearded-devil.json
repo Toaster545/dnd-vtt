@@ -5,9 +5,8 @@
   "type": "fiend (devil)",
   "alignment": "lawful evil",
   "armor_class": 13,
-  "armor_class_desc": "natural armor",
-  "hit_points": 52,
-  "hit_dice": "8d8 + 16",
+  "hit_points": 58,
+  "hit_dice": "9d8 + 18",
   "speed": { "walk": 30 },
   "ability_scores": {
     "strength": 16,
@@ -15,24 +14,25 @@
     "constitution": 15,
     "intelligence": 9,
     "wisdom": 11,
-    "charisma": 12
+    "charisma": 14
   },
   "initiative_bonus": 2,
+  "saving_throws": { "Strength": 5, "Constitution": 4, "Charisma": 4 },
   "damage_resistances": ["cold"],
   "damage_immunities": ["fire", "poison"],
-  "condition_immunities": ["poisoned"],
-  "senses": { "darkvision": 120, "passive_perception": 10 },
+  "condition_immunities": ["frightened", "poisoned"],
+  "senses": { "darkvision": 120, "notes": ["Darkvision unimpeded by magical Darkness"], "passive_perception": 10 },
   "languages": ["Infernal", "telepathy 120 ft."],
   "challenge_rating": "3",
   "xp": 700,
   "traits": [
-    { "name": "Devil's Sight", "description": "Magical darkness doesn't impede the devil's darkvision." },
-    { "name": "Magic Resistance", "description": "The devil has advantage on saving throws against spells and other magical effects." }
+    { "name": "Magic Resistance", "description": "The devil has Advantage on saving throws against spells and other magical effects." }
   ],
   "actions": [
-    { "name": "Multiattack", "description": "The devil makes two Beard and Glaive attacks." },
-    { "name": "Beard", "description": "Melee Attack Roll: +5, reach 5 ft. Hit: 5 (1d8 + 1) Piercing damage, and the target can't regain hit points until the end of its next turn." },
-    { "name": "Glaive", "description": "Melee Attack Roll: +5, reach 10 ft. Hit: 8 (1d10 + 3) Slashing damage. If the target is a creature that isn't already affected by the devil's Beard, it must succeed on a DC 12 Constitution saving throw or be poisoned until the end of the devil's next turn." }
+    { "name": "Multiattack", "description": "The devil makes one Beard attack and one Infernal Glaive attack." },
+    { "name": "Beard", "description": "Melee Attack Roll: +5, reach 5 ft. Hit: 7 (1d8 + 3) Piercing damage, and the target has the Poisoned condition until the start of the devil's next turn. Until this poison ends, the target can't regain Hit Points." },
+    { "name": "Infernal Glaive", "description": "Melee Attack Roll: +5, reach 10 ft. Hit: 8 (1d10 + 3) Slashing damage. If the target is a creature and doesn't already have an infernal wound, it is subjected to the following effect. Constitution Saving Throw: DC 12. Failure: The target receives an infernal wound. While wounded, the target loses 5 (1d10) Hit Points at the start of each of its turns. The wound closes after 1 minute, after a spell restores Hit Points to the target, or after the target or a creature within 5 feet of it takes an action to stanch the wound, doing so by succeeding on a DC 12 Wisdom (Medicine) check." }
   ],
-  "description": "Bearded devils are savage infantry demons of Hell's armies, their infected, quill-like beards spreading poison and staving off healing wherever they strike with their glaives."
+  "description": "Bearded devils are savage infantry demons of Hell's armies, their infected, quill-like beards spreading poison and staving off healing wherever they strike with their glaives.",
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 262 }
 }

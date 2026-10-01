@@ -1,0 +1,35 @@
+{
+  "index": "roc",
+  "name": "Roc",
+  "size": "Gargantuan",
+  "type": "monstrosity",
+  "alignment": "unaligned",
+  "armor_class": 15,
+  "hit_points": 248,
+  "hit_dice": "16d20 + 80",
+  "speed": { "walk": 20, "fly": 120 },
+  "ability_scores": {
+    "strength": 28,
+    "dexterity": 10,
+    "constitution": 20,
+    "intelligence": 3,
+    "wisdom": 10,
+    "charisma": 9
+  },
+  "initiative_bonus": 8,
+  "saving_throws": { "Dexterity": 4, "Wisdom": 4 },
+  "skills": { "Perception": 8 },
+  "senses": { "passive_perception": 18 },
+  "languages": [],
+  "challenge_rating": "11",
+  "xp": 7200,
+  "actions": [
+    { "name": "Multiattack", "description": "The roc makes two Beak attacks. It can replace one attack with a Talons attack." },
+    { "name": "Beak", "description": "Melee Attack Roll: +13, reach 10 ft. Hit: 28 (3d12 + 9) Piercing damage." },
+    { "name": "Talons", "description": "Melee Attack Roll: +13, reach 5 ft. Hit: 23 (4d6 + 9) Slashing damage. If the target is a Huge or smaller creature, it has the Grappled condition (escape DC 19) from both talons, and it has the Restrained condition until the grapple ends." }
+  ],
+  "bonus_actions": [
+    { "name": "Swoop (Recharge 5-6)", "description": "If the roc has a creature Grappled, the roc flies up to half its Fly Speed without provoking Opportunity Attacks and drops that creature." }
+  ],
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 320 }
+}

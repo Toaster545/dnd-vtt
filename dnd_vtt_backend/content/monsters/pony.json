@@ -1,0 +1,29 @@
+{
+  "index": "pony",
+  "name": "Pony",
+  "size": "Medium",
+  "type": "beast",
+  "alignment": "unaligned",
+  "armor_class": 10,
+  "hit_points": 11,
+  "hit_dice": "2d8 + 2",
+  "speed": { "walk": 40 },
+  "ability_scores": {
+    "strength": 15,
+    "dexterity": 10,
+    "constitution": 13,
+    "intelligence": 2,
+    "wisdom": 11,
+    "charisma": 7
+  },
+  "initiative_bonus": 0,
+  "saving_throws": { "Strength": 4 },
+  "senses": { "passive_perception": 10 },
+  "languages": [],
+  "challenge_rating": "1/8",
+  "xp": 25,
+  "actions": [
+    { "name": "Hooves", "description": "Melee Attack Roll: +4, reach 5 ft. Hit: 4 (1d4 + 2) Bludgeoning damage." }
+  ],
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 359 }
+}

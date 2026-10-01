@@ -5,7 +5,6 @@
   "type": "fiend (demon)",
   "alignment": "chaotic evil",
   "armor_class": 17,
-  "armor_class_desc": "natural armor",
   "hit_points": 189,
   "hit_dice": "18d10 + 90",
   "speed": { "walk": 40 },
@@ -17,23 +16,26 @@
     "wisdom": 17,
     "charisma": 16
   },
-  "initiative_bonus": 2,
-  "saving_throws": { "Intelligence": 8, "Wisdom": 7, "Charisma": 7 },
-  "damage_resistances": ["cold", "fire", "lightning", "bludgeoning, piercing, and slashing from nonmagical attacks"],
+  "initiative_bonus": 6,
+  "saving_throws": { "Strength": 9, "Constitution": 9, "Wisdom": 7, "Charisma": 7 },
+  "skills": { "Deception": 7, "Perception": 7 },
+  "damage_resistances": ["cold", "fire", "lightning"],
   "damage_immunities": ["poison"],
   "condition_immunities": ["poisoned"],
-  "senses": { "truesight": 120, "passive_perception": 13 },
+  "senses": { "truesight": 120, "passive_perception": 17 },
   "languages": ["Abyssal", "telepathy 120 ft."],
   "challenge_rating": "9",
   "xp": 5000,
   "traits": [
-    { "name": "Magic Resistance", "description": "The glabrezu has advantage on saving throws against spells and other magical effects." },
-    { "name": "Spellcasting", "description": "The glabrezu casts one of the following spells, requiring no material components and using Charisma as the spellcasting ability (spell save DC 15): At will: Darkness, Detect Magic, Dispel Magic. 1/Day Each: Confusion, Fly (self only), Power Word Stun." }
+    { "name": "Demonic Restoration", "description": "If the glabrezu dies outside the Abyss, its body dissolves into ichor, and it gains a new body instantly, reviving with all its Hit Points somewhere in the Abyss." },
+    { "name": "Magic Resistance", "description": "The glabrezu has Advantage on saving throws against spells and other magical effects." }
   ],
   "actions": [
-    { "name": "Multiattack", "description": "The glabrezu makes two Pincer attacks and two Fist attacks." },
-    { "name": "Pincer", "description": "Melee Attack Roll: +9, reach 10 ft. Hit: 16 (2d10 + 5) Bludgeoning damage. If the target is a Medium or smaller creature, it is Grappled (escape DC 15) and has the Restrained condition until the grapple ends." },
-    { "name": "Fist", "description": "Melee Attack Roll: +9, reach 5 ft. Hit: 7 (1d8 + 3) Bludgeoning damage." }
+    { "name": "Multiattack", "description": "The glabrezu makes two Pincer attacks and uses Pummel or Spellcasting." },
+    { "name": "Pincer", "description": "Melee Attack Roll: +9, reach 10 ft. Hit: 16 (2d10 + 5) Slashing damage. If the target is a Medium or smaller creature, it has the Grappled condition (escape DC 15) from one of two pincers." },
+    { "name": "Pummel", "description": "Dexterity Saving Throw: DC 17, one creature Grappled by the glabrezu. Failure: 15 (3d6 + 5) Bludgeoning damage. Success: Half damage." },
+    { "name": "Spellcasting", "description": "The glabrezu casts one of the following spells, requiring no Material components and using Intelligence as the spellcasting ability (spell save DC 16):\nAt Will: Darkness, Detect Magic, Dispel Magic\n1/Day Each: Confusion, Fly, Power Word Stun" }
   ],
-  "description": "Glabrezu are cunning, four-armed demons who tempt mortals with wishes and magic granted through Spellcasting, only to crush any deal-breaker in their crushing pincers once the bargain sours."
+  "description": "Glabrezu are cunning, four-armed demons who tempt mortals with wishes and magic granted through Spellcasting, only to crush any deal-breaker in their crushing pincers once the bargain sours.",
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 289 }
 }

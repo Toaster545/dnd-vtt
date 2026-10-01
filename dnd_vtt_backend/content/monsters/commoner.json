@@ -1,0 +1,32 @@
+{
+  "index": "commoner",
+  "name": "Commoner",
+  "size": "Medium or Small",
+  "type": "humanoid",
+  "alignment": "neutral",
+  "armor_class": 10,
+  "hit_points": 4,
+  "hit_dice": "1d8",
+  "speed": { "walk": 30 },
+  "ability_scores": {
+    "strength": 10,
+    "dexterity": 10,
+    "constitution": 10,
+    "intelligence": 10,
+    "wisdom": 10,
+    "charisma": 10
+  },
+  "initiative_bonus": 0,
+  "gear": ["Club"],
+  "senses": { "passive_perception": 10 },
+  "languages": ["Common"],
+  "challenge_rating": "0",
+  "xp": 10,
+  "traits": [
+    { "name": "Training", "description": "The commoner has proficiency in one skill of the GM's choice and has Advantage whenever it makes an ability check using that skill." }
+  ],
+  "actions": [
+    { "name": "Club", "description": "Melee Attack Roll: +2, reach 5 ft. Hit: 2 (1d4) Bludgeoning damage." }
+  ],
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 275 }
+}

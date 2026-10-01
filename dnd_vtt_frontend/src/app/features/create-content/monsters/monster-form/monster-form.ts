@@ -85,6 +85,7 @@ export class MonsterFormComponent implements OnInit {
 
   traits           = signal<StatBlockEntry[]>([]);
   actions          = signal<StatBlockEntry[]>([{ name: '', description: '' }]);
+  bonusActions     = signal<StatBlockEntry[]>([]);
   reactions        = signal<StatBlockEntry[]>([]);
   legendaryActions = signal<StatBlockEntry[]>([]);
 
@@ -145,6 +146,7 @@ export class MonsterFormComponent implements OnInit {
 
     this.traits.set(m.traits ?? []);
     this.actions.set(m.actions.length ? m.actions : [{ name: '', description: '' }]);
+    this.bonusActions.set(m.bonus_actions ?? []);
     this.reactions.set(m.reactions ?? []);
     this.legendaryActions.set(m.legendary_actions ?? []);
 
@@ -221,6 +223,8 @@ export class MonsterFormComponent implements OnInit {
     if (this.conditionImmunities().trim()) monster.condition_immunities = tagsFrom(this.conditionImmunities());
     const traits = this.traits().filter(t => t.name.trim());
     if (traits.length) monster.traits = traits;
+    const bonusActions = this.bonusActions().filter(t => t.name.trim());
+    if (bonusActions.length) monster.bonus_actions = bonusActions;
     const reactions = this.reactions().filter(t => t.name.trim());
     if (reactions.length) monster.reactions = reactions;
     const legendaryActions = this.legendaryActions().filter(t => t.name.trim());

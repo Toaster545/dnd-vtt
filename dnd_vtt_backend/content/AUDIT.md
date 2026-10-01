@@ -34,7 +34,7 @@ text were all cross-checked, not just one or the other. This supersedes and corr
 | Backgrounds | 16 | 4 | **12** |
 | Races/species | 10 | 9 | **1** |
 | Items | 94 | 91 | **3** |
-| Monsters | 35 | 31 | **4** |
+| Monsters | 385 | 330 | **55** (9 MM + 46 TCE/EFA) |
 
 ## Classes & subclasses (13 classes, 53 subclasses)
 
@@ -165,25 +165,29 @@ One likely false alarm, not a violation: `healing-potion.json` ("Healing Potion"
 text-match because the SRD's own name for this item is "Potion of Healing" — same item, reversed
 name. Worth renaming for consistency, not a licensing issue.
 
-## Monsters (35 entries)
+## Monsters (385 entries)
 
-Re-checked against the SRD's full "Monsters A-Z" + "Animals" appendix (a much stronger check than
-the previous pass's mirror cross-reference — this extracted every creature stat-block header
-directly from the primary source, ~280 names). **4 of 35 are not in the SRD:**
+**Re-done on 2026-10-01: the bestiary is now generated from the SRD itself.** Every stat block in
+SRD 5.2.1's "Monsters A-Z" and "Animals" chapters (330 creatures, pp. 258-364) was extracted from
+the primary-source PDF with `pdfjs-dist` (column-aware, font-role based parsing) and written to
+`content/monsters/*.json` tagged `source.srd_5_2_1: true` and `source.srd_page`. Of the 73 SRD
+creatures that already had a file, 52 had wrong AC/HP/CR/action counts — most were 2014 stat
+blocks (e.g. Troll 84 HP with Bite/Claw instead of the 2024 94 HP with Rend). Those files were
+replaced with the SRD stats; their hand-written `description` and `color` were kept.
+`src/content/srd-monsters.spec.ts` guards the set (count, XP-by-CR, well-formed fields).
 
-- **`nothic.json`** ("Nothic") — as flagged before, confirmed absent; originates from Volo's Guide
-  to Monsters, not the SRD.
-- **`orc.json`** ("Orc") — the SRD includes Orc only as a playable *species*, not as a monster/NPC
-  stat block; no "Orc" creature entry exists in the Monsters A-Z or Animals appendix.
-- **`goblin-hexer.json`** ("Goblin Hexer") — the SRD's Goblin variants are only Goblin Minion,
-  Goblin Warrior, and Goblin Boss; no "Hexer" variant exists.
-- **`hobgoblin-warlord.json`** ("Hobgoblin Warlord") — the SRD's Hobgoblin variants are only
-  Hobgoblin Warrior and Hobgoblin Captain; no "Warlord" variant exists.
+Four creatures keep a legacy index so saved encounters/map tokens (`monster_index`) still resolve:
+`cult-fanatic` (Cultist Fanatic), `gnoll` (Gnoll Warrior), `kobold` (Kobold Warrior), `minotaur`
+(Minotaur of Baphomet).
 
-Two likely false alarms, not violations — same creature, different name: `cult-fanatic.json`
-("Cult Fanatic") is the SRD's "Cultist Fanatic"; `gnoll.json` ("Gnoll") is the SRD's "Gnoll
-Warrior" (the SRD has no bare "Gnoll" entry, only the Warrior variant). Worth renaming for
-consistency, not a licensing issue.
+Two typos in the SRD text were corrected rather than copied: Archmage's XP (printed 8,000; CR 12
+is 8,400) and Young White Dragon's Intelligence save (printed unsigned "2"; treated as no
+proficiency).
+
+**Not in SRD 5.2.1 (9), now tagged `source.srd_5_2_1: false`:** chasme, displacer-beast,
+goblin-hexer, hobgoblin-warlord, manes, nothic, orc, shadow-demon, spined-devil. These are 2024
+Monster Manual (or older) content outside the CC-BY license, and their stats were not verified
+against a primary source. The TCE/EFA creatures were already tagged non-SRD and are unchanged.
 
 ## Recommendation
 

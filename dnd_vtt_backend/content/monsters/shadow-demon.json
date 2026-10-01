@@ -33,5 +33,6 @@
   "actions": [
     { "name": "Claw", "description": "Melee Attack Roll: +5, reach 5 ft. Hit: 9 (2d6 + 2) Psychic damage. If the target is a creature, its Strength score is reduced by 1d4 until it finishes a Long Rest. The target dies if this reduces its Strength to 0." }
   ],
-  "description": "Shadow demons are cunning, incorporeal fiends that lurk in darkness on the fringes of battle, draining a victim's strength with a touch and vanishing into shadow before retaliation."
+  "description": "Shadow demons are cunning, incorporeal fiends that lurk in darkness on the fringes of battle, draining a victim's strength with a touch and vanishing into shadow before retaliation.",
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": false, "rules_text": "reference-only" }
 }

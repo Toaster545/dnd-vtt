@@ -1,0 +1,39 @@
+{
+  "index": "cloaker",
+  "name": "Cloaker",
+  "size": "Large",
+  "type": "aberration",
+  "alignment": "chaotic neutral",
+  "armor_class": 14,
+  "hit_points": 91,
+  "hit_dice": "14d10 + 14",
+  "speed": { "walk": 10, "fly": 40 },
+  "ability_scores": {
+    "strength": 17,
+    "dexterity": 15,
+    "constitution": 12,
+    "intelligence": 13,
+    "wisdom": 14,
+    "charisma": 7
+  },
+  "initiative_bonus": 5,
+  "skills": { "Stealth": 5 },
+  "condition_immunities": ["frightened"],
+  "senses": { "darkvision": 120, "passive_perception": 12 },
+  "languages": ["Deep Speech", "Undercommon"],
+  "challenge_rating": "8",
+  "xp": 3900,
+  "traits": [
+    { "name": "Light Sensitivity", "description": "While in Bright Light, the cloaker has Disadvantage on attack rolls." }
+  ],
+  "actions": [
+    { "name": "Multiattack", "description": "The cloaker makes one Attach attack and two Tail attacks." },
+    { "name": "Attach", "description": "Melee Attack Roll: +6, reach 5 ft. Hit: 13 (3d6 + 3) Piercing damage. If the target is a Large or smaller creature, the cloaker attaches to it. While the cloaker is attached, the target has the Blinded condition, and the cloaker can't make Attach attacks against other targets. In addition, the cloaker halves the damage it takes (round down), and the target takes the same amount of damage. The cloaker can detach itself by spending 5 feet of movement. The target or a creature within 5 feet of it can take an action to try to detach the cloaker, doing so by succeeding on a DC 14 Strength (Athletics) check." },
+    { "name": "Tail", "description": "Melee Attack Roll: +6, reach 10 ft. Hit: 8 (1d10 + 3) Slashing damage." }
+  ],
+  "bonus_actions": [
+    { "name": "Moan", "description": "Wisdom Saving Throw: DC 13, each creature in a 60-foot Emanation originating from the cloaker. Failure: The target has the Frightened condition until the end of the cloaker's next turn. Success: The target is immune to this cloaker's Moan for the next 24 hours." },
+    { "name": "Phantasms (Recharge after a Short or Long Rest)", "description": "The cloaker casts the Mirror Image spell, requiring no spell components and using Wisdom as the spellcasting ability. The spell ends early if the cloaker starts or ends its turn in Bright Light." }
+  ],
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 274 }
+}

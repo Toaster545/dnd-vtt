@@ -1,0 +1,32 @@
+{
+  "index": "hyena",
+  "name": "Hyena",
+  "size": "Medium",
+  "type": "beast",
+  "alignment": "unaligned",
+  "armor_class": 11,
+  "hit_points": 5,
+  "hit_dice": "1d8 + 1",
+  "speed": { "walk": 50 },
+  "ability_scores": {
+    "strength": 11,
+    "dexterity": 13,
+    "constitution": 12,
+    "intelligence": 2,
+    "wisdom": 12,
+    "charisma": 5
+  },
+  "initiative_bonus": 1,
+  "skills": { "Perception": 3 },
+  "senses": { "darkvision": 60, "passive_perception": 13 },
+  "languages": [],
+  "challenge_rating": "0",
+  "xp": 10,
+  "traits": [
+    { "name": "Pack Tactics", "description": "The hyena has Advantage on an attack roll against a creature if at least one of the hyena's allies is within 5 feet of the creature and the ally doesn't have the Incapacitated condition." }
+  ],
+  "actions": [
+    { "name": "Bite", "description": "Melee Attack Roll: +2, reach 5 ft. Hit: 3 (1d6) Piercing damage." }
+  ],
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 356 }
+}

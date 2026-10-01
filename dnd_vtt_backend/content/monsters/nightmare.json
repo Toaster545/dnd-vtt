@@ -1,0 +1,34 @@
+{
+  "index": "nightmare",
+  "name": "Nightmare",
+  "size": "Large",
+  "type": "fiend",
+  "alignment": "neutral evil",
+  "armor_class": 13,
+  "hit_points": 68,
+  "hit_dice": "8d10 + 24",
+  "speed": { "walk": 60, "fly": 90, "hover": true },
+  "ability_scores": {
+    "strength": 18,
+    "dexterity": 15,
+    "constitution": 16,
+    "intelligence": 10,
+    "wisdom": 13,
+    "charisma": 15
+  },
+  "initiative_bonus": 2,
+  "damage_immunities": ["fire"],
+  "senses": { "passive_perception": 11 },
+  "languages": ["Understands Abyssal, Common, and Infernal but can't speak"],
+  "challenge_rating": "3",
+  "xp": 700,
+  "traits": [
+    { "name": "Confer Fire Resistance", "description": "The nightmare can grant Resistance to Fire damage to a rider while it is on the nightmare." },
+    { "name": "Illumination", "description": "The nightmare sheds Bright Light in a 10-foot radius and Dim Light for an additional 10 feet." }
+  ],
+  "actions": [
+    { "name": "Hooves", "description": "Melee Attack Roll: +6, reach 5 ft. Hit: 13 (2d8 + 4) Bludgeoning damage plus 10 (3d6) Fire damage." },
+    { "name": "Ethereal Stride", "description": "The nightmare and up to three willing creatures within 5 feet of it teleport to the Ethereal Plane from the Material Plane or vice versa." }
+  ],
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 311 }
+}

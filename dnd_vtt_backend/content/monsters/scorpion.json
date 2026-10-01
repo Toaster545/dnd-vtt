@@ -1,0 +1,28 @@
+{
+  "index": "scorpion",
+  "name": "Scorpion",
+  "size": "Tiny",
+  "type": "beast",
+  "alignment": "unaligned",
+  "armor_class": 11,
+  "hit_points": 1,
+  "hit_dice": "1d4 - 1",
+  "speed": { "walk": 10 },
+  "ability_scores": {
+    "strength": 2,
+    "dexterity": 11,
+    "constitution": 8,
+    "intelligence": 1,
+    "wisdom": 8,
+    "charisma": 2
+  },
+  "initiative_bonus": 0,
+  "senses": { "blindsight": 10, "passive_perception": 9 },
+  "languages": [],
+  "challenge_rating": "0",
+  "xp": 10,
+  "actions": [
+    { "name": "Sting", "description": "Melee Attack Roll: +2, reach 5 ft. Hit: 1 Piercing damage plus 3 (1d6) Poison damage." }
+  ],
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 360 }
+}

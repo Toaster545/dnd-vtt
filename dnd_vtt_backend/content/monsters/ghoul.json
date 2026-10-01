@@ -5,7 +5,6 @@
   "type": "undead",
   "alignment": "chaotic evil",
   "armor_class": 12,
-  "armor_class_desc": "unarmored",
   "hit_points": 22,
   "hit_dice": "5d8",
   "speed": { "walk": 30 },
@@ -25,8 +24,10 @@
   "challenge_rating": "1",
   "xp": 200,
   "actions": [
-    { "name": "Bite", "description": "Melee Attack Roll: +3, reach 5 ft. Hit: 6 (2d4 + 1) Piercing damage." },
-    { "name": "Claws", "description": "Melee Attack Roll: +4, reach 5 ft. Hit: 5 (2d4) Slashing damage. If the target is a creature other than an Undead, it must succeed on a DC 10 Constitution saving throw or have the Paralyzed condition until the end of its next turn." }
+    { "name": "Multiattack", "description": "The ghoul makes two Bite attacks." },
+    { "name": "Bite", "description": "Melee Attack Roll: +4, reach 5 ft. Hit: 5 (1d6 + 2) Piercing damage plus 3 (1d6) Necrotic damage." },
+    { "name": "Claw", "description": "Melee Attack Roll: +4, reach 5 ft. Hit: 4 (1d4 + 2) Slashing damage. If the target is a creature that isn't an Undead or elf, it is subjected to the following effect. Constitution Saving Throw: DC 10. Failure: The target has the Paralyzed condition until the end of its next turn." }
   ],
-  "description": "Ghouls are ravenous undead that hunt in packs at the edge of graveyards and crypts, their claws carrying a paralyzing rot that lets them feed at leisure."
+  "description": "Ghouls are ravenous undead that hunt in packs at the edge of graveyards and crypts, their claws carrying a paralyzing rot that lets them feed at leisure.",
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 288 }
 }

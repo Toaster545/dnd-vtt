@@ -1,0 +1,31 @@
+{
+  "index": "polar-bear",
+  "name": "Polar Bear",
+  "size": "Large",
+  "type": "beast",
+  "alignment": "unaligned",
+  "armor_class": 12,
+  "hit_points": 42,
+  "hit_dice": "5d10 + 15",
+  "speed": { "walk": 40, "swim": 40 },
+  "ability_scores": {
+    "strength": 20,
+    "dexterity": 14,
+    "constitution": 16,
+    "intelligence": 2,
+    "wisdom": 13,
+    "charisma": 7
+  },
+  "initiative_bonus": 2,
+  "skills": { "Perception": 5, "Stealth": 4 },
+  "damage_resistances": ["cold"],
+  "senses": { "darkvision": 60, "passive_perception": 15 },
+  "languages": [],
+  "challenge_rating": "2",
+  "xp": 450,
+  "actions": [
+    { "name": "Multiattack", "description": "The bear makes two Rend attacks." },
+    { "name": "Rend", "description": "Melee Attack Roll: +7, reach 5 ft. Hit: 9 (1d8 + 5) Slashing damage." }
+  ],
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 359 }
+}

@@ -1,0 +1,35 @@
+{
+  "index": "centaur-trooper",
+  "name": "Centaur Trooper",
+  "size": "Large",
+  "type": "fey",
+  "alignment": "neutral good",
+  "armor_class": 16,
+  "hit_points": 45,
+  "hit_dice": "6d10 + 12",
+  "speed": { "walk": 50 },
+  "ability_scores": {
+    "strength": 18,
+    "dexterity": 14,
+    "constitution": 14,
+    "intelligence": 9,
+    "wisdom": 13,
+    "charisma": 11
+  },
+  "initiative_bonus": 2,
+  "skills": { "Athletics": 6, "Perception": 3 },
+  "gear": ["Breastplate", "Longbow", "Pike"],
+  "senses": { "passive_perception": 13 },
+  "languages": ["Elvish", "Sylvan"],
+  "challenge_rating": "2",
+  "xp": 450,
+  "actions": [
+    { "name": "Multiattack", "description": "The centaur makes two attacks, using Pike or Longbow in any combination." },
+    { "name": "Pike", "description": "Melee Attack Roll: +6, reach 10 ft. Hit: 9 (1d10 + 4) Piercing damage." },
+    { "name": "Longbow", "description": "Ranged Attack Roll: +4, range 150/600 ft. Hit: 6 (1d8 + 2) Piercing damage." }
+  ],
+  "bonus_actions": [
+    { "name": "Trampling Charge (Recharge 5-6)", "description": "The centaur moves up to its Speed without provoking Opportunity Attacks and can move through the spaces of Medium or smaller creatures. Each creature whose space the centaur enters is targeted once by the following effect. Strength Saving Throw: DC 14. Failure: 7 (1d6 + 4) Bludgeoning damage, and the target has the Prone condition." }
+  ],
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 272 }
+}

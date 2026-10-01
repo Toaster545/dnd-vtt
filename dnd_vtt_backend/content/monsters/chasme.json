@@ -32,5 +32,6 @@
   "actions": [
     { "name": "Proboscis", "description": "Melee Attack Roll: +6, reach 5 ft. Hit: 12 (2d8 + 3) Piercing damage, and the chasme attaches to the target if the target is Large or smaller. While attached, the chasme doesn't attack; instead, at the start of each of its turns, the target loses 10 (3d6) Hit Points due to blood loss, and the chasme regains that many hit points. The chasme can detach itself by spending 5 feet of movement. A creature, including the target, can take an action to detach the chasme, doing so by succeeding on a DC 13 Strength check." }
   ],
-  "description": "Chasme are gaunt, fly-headed demons that stalk battlefields for the wounded and dying, their maddening buzzing wings sapping the will of nearby foes before they drain victims dry through a long proboscis."
+  "description": "Chasme are gaunt, fly-headed demons that stalk battlefields for the wounded and dying, their maddening buzzing wings sapping the will of nearby foes before they drain victims dry through a long proboscis.",
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": false, "rules_text": "reference-only" }
 }

@@ -1,0 +1,32 @@
+{
+  "index": "minotaur-skeleton",
+  "name": "Minotaur Skeleton",
+  "size": "Large",
+  "type": "undead",
+  "alignment": "lawful evil",
+  "armor_class": 12,
+  "hit_points": 45,
+  "hit_dice": "6d10 + 12",
+  "speed": { "walk": 40 },
+  "ability_scores": {
+    "strength": 18,
+    "dexterity": 11,
+    "constitution": 15,
+    "intelligence": 6,
+    "wisdom": 8,
+    "charisma": 5
+  },
+  "initiative_bonus": 0,
+  "damage_vulnerabilities": ["bludgeoning"],
+  "damage_immunities": ["poison"],
+  "condition_immunities": ["exhaustion", "poisoned"],
+  "senses": { "darkvision": 60, "passive_perception": 9 },
+  "languages": ["Understands Abyssal but can't speak"],
+  "challenge_rating": "2",
+  "xp": 450,
+  "actions": [
+    { "name": "Gore", "description": "Melee Attack Roll: +6, reach 5 ft. Hit: 11 (2d6 + 4) Piercing damage. If the target is a Large or smaller creature and the skeleton moved 20+ feet straight toward it immediately before the hit, the target takes an extra 9 (2d8) Piercing damage and has the Prone condition." },
+    { "name": "Slam", "description": "Melee Attack Roll: +6, reach 5 ft. Hit: 15 (2d10 + 4) Bludgeoning damage." }
+  ],
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 326 }
+}

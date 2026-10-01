@@ -2,10 +2,9 @@
   "index": "worg",
   "name": "Worg",
   "size": "Large",
-  "type": "monstrosity",
+  "type": "fey",
   "alignment": "neutral evil",
   "armor_class": 13,
-  "armor_class_desc": "natural armor",
   "hit_points": 26,
   "hit_dice": "4d10 + 4",
   "speed": { "walk": 50 },
@@ -18,16 +17,14 @@
     "charisma": 8
   },
   "initiative_bonus": 1,
-  "skills": { "Perception": 3 },
-  "senses": { "passive_perception": 13 },
-  "languages": ["Common", "Goblin", "Worg"],
+  "skills": { "Perception": 4 },
+  "senses": { "darkvision": 60, "passive_perception": 14 },
+  "languages": ["Goblin", "Worg"],
   "challenge_rating": "1/2",
   "xp": 100,
-  "traits": [
-    { "name": "Keen Hearing and Smell", "description": "The worg has advantage on Wisdom (Perception) checks that rely on hearing or smell." }
-  ],
   "actions": [
-    { "name": "Bite", "description": "Melee Weapon Attack: +5 to hit, reach 5 ft., one target. Hit: 10 (2d6 + 3) piercing damage. If the target is a creature, it must succeed on a DC 13 Strength saving throw or be knocked prone." }
+    { "name": "Bite", "description": "Melee Attack Roll: +5, reach 5 ft. Hit: 7 (1d8 + 3) Piercing damage, and the next attack roll made against the target before the start of the worg's next turn has Advantage." }
   ],
-  "description": "Worgs are evil, cunning wolves of above-average intelligence that speak their own language and often serve as mounts for goblins and hobgoblins."
+  "description": "Worgs are evil, cunning wolves of above-average intelligence that speak their own language and often serve as mounts for goblins and hobgoblins.",
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 342 }
 }

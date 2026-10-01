@@ -1,0 +1,28 @@
+{
+  "index": "axe-beak",
+  "name": "Axe Beak",
+  "size": "Large",
+  "type": "monstrosity",
+  "alignment": "unaligned",
+  "armor_class": 11,
+  "hit_points": 19,
+  "hit_dice": "3d10 + 3",
+  "speed": { "walk": 50 },
+  "ability_scores": {
+    "strength": 14,
+    "dexterity": 12,
+    "constitution": 12,
+    "intelligence": 2,
+    "wisdom": 10,
+    "charisma": 5
+  },
+  "initiative_bonus": 1,
+  "senses": { "passive_perception": 10 },
+  "languages": [],
+  "challenge_rating": "1/4",
+  "xp": 50,
+  "actions": [
+    { "name": "Beak", "description": "Melee Attack Roll: +4, reach 5 ft. Hit: 6 (1d8 + 2) Slashing damage." }
+  ],
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 260 }
+}

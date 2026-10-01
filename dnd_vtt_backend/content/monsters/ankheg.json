@@ -1,0 +1,32 @@
+{
+  "index": "ankheg",
+  "name": "Ankheg",
+  "size": "Large",
+  "type": "monstrosity",
+  "alignment": "unaligned",
+  "armor_class": 14,
+  "hit_points": 45,
+  "hit_dice": "6d10 + 12",
+  "speed": { "walk": 30, "burrow": 10 },
+  "ability_scores": {
+    "strength": 17,
+    "dexterity": 11,
+    "constitution": 14,
+    "intelligence": 1,
+    "wisdom": 13,
+    "charisma": 6
+  },
+  "initiative_bonus": 0,
+  "senses": { "darkvision": 60, "tremorsense": 60, "passive_perception": 11 },
+  "languages": [],
+  "challenge_rating": "2",
+  "xp": 450,
+  "traits": [
+    { "name": "Tunneler", "description": "The ankheg can burrow through solid rock at half its Burrow Speed and leaves a 10-foot-diameter tunnel in its wake." }
+  ],
+  "actions": [
+    { "name": "Bite", "description": "Melee Attack Roll: +5 (with Advantage if the target is Grappled by the ankheg), reach 5 ft. Hit: 10 (2d6 + 3) Slashing damage plus 3 (1d6) Acid damage. If the target is a Large or smaller creature, it has the Grappled condition (escape DC 13)." },
+    { "name": "Acid Spray (Recharge 6)", "description": "Dexterity Saving Throw: DC 12, each creature in a 30-foot-long, 5-foot-wide Line. Failure: 14 (4d6) Acid damage. Success: Half damage." }
+  ],
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 259 }
+}

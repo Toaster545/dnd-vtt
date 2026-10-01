@@ -1,0 +1,30 @@
+{
+  "index": "ankylosaurus",
+  "name": "Ankylosaurus",
+  "size": "Huge",
+  "type": "beast (dinosaur)",
+  "alignment": "unaligned",
+  "armor_class": 15,
+  "hit_points": 68,
+  "hit_dice": "8d12 + 16",
+  "speed": { "walk": 30 },
+  "ability_scores": {
+    "strength": 19,
+    "dexterity": 11,
+    "constitution": 15,
+    "intelligence": 2,
+    "wisdom": 12,
+    "charisma": 5
+  },
+  "initiative_bonus": 0,
+  "saving_throws": { "Strength": 6 },
+  "senses": { "passive_perception": 11 },
+  "languages": [],
+  "challenge_rating": "3",
+  "xp": 700,
+  "actions": [
+    { "name": "Multiattack", "description": "The ankylosaurus makes two Tail attacks." },
+    { "name": "Tail", "description": "Melee Attack Roll: +6, reach 10 ft. Hit: 9 (1d10 + 4) Bludgeoning damage. If the target is a Huge or smaller creature, it has the Prone condition." }
+  ],
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 344 }
+}

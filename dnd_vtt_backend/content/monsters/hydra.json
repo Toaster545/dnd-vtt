@@ -1,0 +1,36 @@
+{
+  "index": "hydra",
+  "name": "Hydra",
+  "size": "Huge",
+  "type": "monstrosity",
+  "alignment": "unaligned",
+  "armor_class": 15,
+  "hit_points": 184,
+  "hit_dice": "16d12 + 80",
+  "speed": { "walk": 40, "swim": 40 },
+  "ability_scores": {
+    "strength": 20,
+    "dexterity": 12,
+    "constitution": 20,
+    "intelligence": 2,
+    "wisdom": 10,
+    "charisma": 7
+  },
+  "initiative_bonus": 4,
+  "skills": { "Perception": 6 },
+  "condition_immunities": ["blinded", "charmed", "deafened", "frightened", "stunned", "unconscious"],
+  "senses": { "darkvision": 60, "passive_perception": 16 },
+  "languages": [],
+  "challenge_rating": "8",
+  "xp": 3900,
+  "traits": [
+    { "name": "Hold Breath", "description": "The hydra can hold its breath for 1 hour." },
+    { "name": "Multiple Heads", "description": "The hydra has five heads. Whenever the hydra takes 25 damage or more on a single turn, one of its heads dies. The hydra dies if all its heads are dead. At the end of each of its turns when it has at least one living head, the hydra grows two heads for each of its heads that died since its last turn, unless it has taken Fire damage since its last turn. The hydra regains 20 Hit Points when it grows new heads." },
+    { "name": "Reactive Heads", "description": "For each head the hydra has beyond one, it gets an extra Reaction that can be used only for Opportunity Attacks." }
+  ],
+  "actions": [
+    { "name": "Multiattack", "description": "The hydra makes as many Bite attacks as it has heads." },
+    { "name": "Bite", "description": "Melee Attack Roll: +8, reach 10 ft. Hit: 10 (1d10 + 5) Piercing damage." }
+  ],
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 300 }
+}

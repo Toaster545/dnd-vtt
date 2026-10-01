@@ -30,5 +30,6 @@
   "actions": [
     { "name": "Bite", "description": "Melee Attack Roll: +2, reach 5 ft. Hit: 3 (1d4 + 1) Piercing damage." }
   ],
-  "description": "Manes are the lowest of demonkind, feral remnants of mortal souls consumed by the Abyss and twisted into mindless, ravenous husks that swarm in packs."
+  "description": "Manes are the lowest of demonkind, feral remnants of mortal souls consumed by the Abyss and twisted into mindless, ravenous husks that swarm in packs.",
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": false, "rules_text": "reference-only" }
 }

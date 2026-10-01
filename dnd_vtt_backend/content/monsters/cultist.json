@@ -1,0 +1,31 @@
+{
+  "index": "cultist",
+  "name": "Cultist",
+  "size": "Medium or Small",
+  "type": "humanoid",
+  "alignment": "neutral",
+  "armor_class": 12,
+  "hit_points": 9,
+  "hit_dice": "2d8",
+  "speed": { "walk": 30 },
+  "ability_scores": {
+    "strength": 11,
+    "dexterity": 12,
+    "constitution": 10,
+    "intelligence": 10,
+    "wisdom": 11,
+    "charisma": 10
+  },
+  "initiative_bonus": 1,
+  "saving_throws": { "Wisdom": 2 },
+  "skills": { "Deception": 2, "Religion": 2 },
+  "gear": ["Leather Armor", "Sickle"],
+  "senses": { "passive_perception": 10 },
+  "languages": ["Common"],
+  "challenge_rating": "1/8",
+  "xp": 25,
+  "actions": [
+    { "name": "Ritual Sickle", "description": "Melee Attack Roll: +3, reach 5 ft. Hit: 3 (1d4 + 1) Slashing damage plus 1 Necrotic damage." }
+  ],
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 278 }
+}

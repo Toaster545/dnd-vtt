@@ -7,7 +7,7 @@
   "armor_class": 12,
   "hit_points": 22,
   "hit_dice": "5d8",
-  "speed": { "walk": 0, "fly": 50, "hover": true },
+  "speed": { "walk": 30, "fly": 50, "hover": true },
   "ability_scores": {
     "strength": 1,
     "dexterity": 14,
@@ -17,19 +17,20 @@
     "charisma": 11
   },
   "initiative_bonus": 2,
-  "damage_resistances": ["acid", "cold", "fire", "lightning", "thunder", "bludgeoning, piercing, and slashing from nonmagical attacks"],
+  "damage_resistances": ["acid", "bludgeoning", "cold", "fire", "lightning", "piercing", "slashing", "thunder"],
   "damage_immunities": ["necrotic", "poison"],
-  "condition_immunities": ["charmed", "exhaustion", "grappled", "paralyzed", "petrified", "poisoned", "prone", "restrained"],
+  "condition_immunities": ["charmed", "exhaustion", "grappled", "paralyzed", "petrified", "poisoned", "prone", "restrained", "unconscious"],
   "senses": { "darkvision": 60, "passive_perception": 10 },
-  "languages": ["understands the languages it knew in life but can't speak"],
+  "languages": ["Understands Common plus one other language but can't speak"],
   "challenge_rating": "1",
   "xp": 200,
   "traits": [
     { "name": "Incorporeal Movement", "description": "The specter can move through other creatures and objects as if they were Difficult Terrain. It takes 5 (1d10) Force damage if it ends its turn inside an object." },
-    { "name": "Sunlight Sensitivity", "description": "While in sunlight, the specter has Disadvantage on ability checks and attack rolls that rely on sight." }
+    { "name": "Sunlight Sensitivity", "description": "While in sunlight, the specter has Disadvantage on ability checks and attack rolls." }
   ],
   "actions": [
-    { "name": "Life Drain", "description": "Melee Attack Roll: +4, reach 5 ft. Hit: 10 (3d6) Necrotic damage. The target's Hit Point maximum decreases by an amount equal to the damage taken, until it finishes a Long Rest. The target dies if this attack reduces its Hit Point maximum to 0." }
+    { "name": "Life Drain", "description": "Melee Attack Roll: +4, reach 5 ft. Hit: 7 (2d6) Necrotic damage. If the target is a creature, its Hit Point maximum decreases by an amount equal to the damage taken." }
   ],
-  "description": "Specters are the hateful, formless remnants of the violently slain, haunting the place of their death and lashing out with a chilling, life-draining touch."
+  "description": "Specters are the hateful, formless remnants of the violently slain, haunting the place of their death and lashing out with a chilling, life-draining touch.",
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 327 }
 }

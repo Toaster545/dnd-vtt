@@ -1,0 +1,33 @@
+{
+  "index": "reef-shark",
+  "name": "Reef Shark",
+  "size": "Medium",
+  "type": "beast",
+  "alignment": "unaligned",
+  "armor_class": 12,
+  "hit_points": 22,
+  "hit_dice": "4d8 + 4",
+  "speed": { "walk": 5, "swim": 30 },
+  "ability_scores": {
+    "strength": 14,
+    "dexterity": 15,
+    "constitution": 13,
+    "intelligence": 1,
+    "wisdom": 10,
+    "charisma": 4
+  },
+  "initiative_bonus": 2,
+  "skills": { "Perception": 2 },
+  "senses": { "blindsight": 30, "passive_perception": 12 },
+  "languages": [],
+  "challenge_rating": "1/2",
+  "xp": 100,
+  "traits": [
+    { "name": "Pack Tactics", "description": "The shark has Advantage on an attack roll against a creature if at least one of the shark's allies is within 5 feet of the creature and the ally doesn't have the Incapacitated condition." },
+    { "name": "Water Breathing", "description": "The shark can breathe only underwater." }
+  ],
+  "actions": [
+    { "name": "Bite", "description": "Melee Attack Roll: +4, reach 5 ft. Hit: 7 (2d4 + 2) Piercing damage." }
+  ],
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 360 }
+}

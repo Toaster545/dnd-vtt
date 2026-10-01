@@ -1,0 +1,35 @@
+{
+  "index": "giant-owl",
+  "name": "Giant Owl",
+  "size": "Large",
+  "type": "celestial",
+  "alignment": "neutral",
+  "armor_class": 12,
+  "hit_points": 19,
+  "hit_dice": "3d10 + 3",
+  "speed": { "walk": 5, "fly": 60 },
+  "ability_scores": {
+    "strength": 13,
+    "dexterity": 15,
+    "constitution": 12,
+    "intelligence": 10,
+    "wisdom": 14,
+    "charisma": 10
+  },
+  "initiative_bonus": 2,
+  "saving_throws": { "Wisdom": 4 },
+  "skills": { "Perception": 6, "Stealth": 6 },
+  "damage_resistances": ["necrotic", "radiant"],
+  "senses": { "darkvision": 120, "passive_perception": 16 },
+  "languages": ["Celestial", "understands Common, Elvish, and Sylvan but can't speak them"],
+  "challenge_rating": "1/4",
+  "xp": 50,
+  "traits": [
+    { "name": "Flyby", "description": "The owl doesn't provoke an Opportunity Attack when it flies out of an enemy's reach." }
+  ],
+  "actions": [
+    { "name": "Talons", "description": "Melee Attack Roll: +4, reach 5 ft. Hit: 7 (1d10 + 2) Slashing damage." },
+    { "name": "Spellcasting", "description": "The owl casts one of the following spells, requiring no spell components and using Wisdom as the spellcasting ability:\nAt Will: Detect Evil and Good, Detect Magic\n1/Day: Clairvoyance" }
+  ],
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 352 }
+}

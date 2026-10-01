@@ -5,9 +5,8 @@
   "type": "undead",
   "alignment": "neutral evil",
   "armor_class": 8,
-  "armor_class_desc": "unarmored",
-  "hit_points": 22,
-  "hit_dice": "3d8 + 9",
+  "hit_points": 15,
+  "hit_dice": "2d8 + 6",
   "speed": { "walk": 20 },
   "ability_scores": {
     "strength": 13,
@@ -18,17 +17,19 @@
     "charisma": 5
   },
   "initiative_bonus": -2,
+  "saving_throws": { "Wisdom": 0 },
   "damage_immunities": ["poison"],
-  "condition_immunities": ["poisoned"],
+  "condition_immunities": ["exhaustion", "poisoned"],
   "senses": { "darkvision": 60, "passive_perception": 8 },
-  "languages": ["understands the languages it knew in life but can't speak"],
+  "languages": ["Understands Common plus one other language but can't speak"],
   "challenge_rating": "1/4",
   "xp": 50,
   "traits": [
-    { "name": "Undead Fortitude", "description": "If damage reduces the zombie to 0 hit points, it must make a Constitution saving throw with a DC of 5 plus the damage taken, unless the damage is Radiant or from a critical hit. On a success, the zombie drops to 1 hit point instead." }
+    { "name": "Undead Fortitude", "description": "If damage reduces the zombie to 0 Hit Points, it makes a Constitution saving throw (DC 5 plus the damage taken) unless the damage is Radiant or from a Critical Hit. On a successful save, the zombie drops to 1 Hit Point instead." }
   ],
   "actions": [
-    { "name": "Slam", "description": "Melee Attack Roll: +3, reach 5 ft. Hit: 4 (1d6 + 1) Bludgeoning damage." }
+    { "name": "Slam", "description": "Melee Attack Roll: +3, reach 5 ft. Hit: 5 (1d8 + 1) Bludgeoning damage." }
   ],
-  "description": "A zombie shambles forward with grim, unthinking persistence, held together by dark magic and driven only by the last command it was given."
+  "description": "A zombie shambles forward with grim, unthinking persistence, held together by dark magic and driven only by the last command it was given.",
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 343 }
 }

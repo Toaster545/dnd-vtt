@@ -1,0 +1,30 @@
+{
+  "index": "darkmantle",
+  "name": "Darkmantle",
+  "size": "Small",
+  "type": "aberration",
+  "alignment": "unaligned",
+  "armor_class": 11,
+  "hit_points": 22,
+  "hit_dice": "5d6 + 5",
+  "speed": { "walk": 10, "fly": 30 },
+  "ability_scores": {
+    "strength": 16,
+    "dexterity": 12,
+    "constitution": 13,
+    "intelligence": 2,
+    "wisdom": 10,
+    "charisma": 5
+  },
+  "initiative_bonus": 3,
+  "skills": { "Stealth": 3 },
+  "senses": { "blindsight": 60, "passive_perception": 10 },
+  "languages": [],
+  "challenge_rating": "1/2",
+  "xp": 100,
+  "actions": [
+    { "name": "Crush", "description": "Melee Attack Roll: +5, reach 5 ft. Hit: 6 (1d6 + 3) Bludgeoning damage, and the darkmantle attaches to the target. If the target is a Medium or smaller creature and the darkmantle had Advantage on the attack roll, it covers the target, which has the Blinded condition and is suffocating while the darkmantle is attached in this way. While attached to a target, the darkmantle can attack only the target but has Advantage on its attack rolls. Its Speed becomes 0, it can't benefit from any bonus to its Speed, and it moves with the target. A creature can take an action to try to detach the darkmantle from itself, doing so with a successful DC 13 Strength (Athletics) check. On its turn, the darkmantle can detach itself by using 5 feet of movement." },
+    { "name": "Darkness Aura (1/Day)", "description": "Magical Darkness fills a 15-foot Emanation originating from the darkmantle. This effect lasts while the darkmantle maintains Concentration on it, up to 10 minutes. Darkvision can't penetrate this area, and no light can illuminate it." }
+  ],
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 278 }
+}

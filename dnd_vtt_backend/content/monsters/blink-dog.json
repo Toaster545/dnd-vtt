@@ -1,0 +1,32 @@
+{
+  "index": "blink-dog",
+  "name": "Blink Dog",
+  "size": "Medium",
+  "type": "fey",
+  "alignment": "lawful good",
+  "armor_class": 13,
+  "hit_points": 22,
+  "hit_dice": "4d8 + 4",
+  "speed": { "walk": 40 },
+  "ability_scores": {
+    "strength": 12,
+    "dexterity": 17,
+    "constitution": 12,
+    "intelligence": 10,
+    "wisdom": 13,
+    "charisma": 11
+  },
+  "initiative_bonus": 3,
+  "skills": { "Perception": 5, "Stealth": 5 },
+  "senses": { "darkvision": 60, "passive_perception": 15 },
+  "languages": ["Blink Dog", "understands Elvish and Sylvan but can't speak them"],
+  "challenge_rating": "1/4",
+  "xp": 50,
+  "actions": [
+    { "name": "Bite", "description": "Melee Attack Roll: +5, reach 5 ft. Hit: 5 (1d4 + 3) Piercing damage." }
+  ],
+  "bonus_actions": [
+    { "name": "Teleport (Recharge 4-6)", "description": "The dog teleports up to 40 feet to an unoccupied space it can see." }
+  ],
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 266 }
+}

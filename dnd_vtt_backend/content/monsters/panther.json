@@ -1,0 +1,32 @@
+{
+  "index": "panther",
+  "name": "Panther",
+  "size": "Medium",
+  "type": "beast",
+  "alignment": "unaligned",
+  "armor_class": 13,
+  "hit_points": 13,
+  "hit_dice": "3d8",
+  "speed": { "walk": 50, "climb": 40 },
+  "ability_scores": {
+    "strength": 14,
+    "dexterity": 16,
+    "constitution": 10,
+    "intelligence": 3,
+    "wisdom": 14,
+    "charisma": 7
+  },
+  "initiative_bonus": 3,
+  "skills": { "Perception": 4, "Stealth": 7 },
+  "senses": { "darkvision": 60, "passive_perception": 14 },
+  "languages": [],
+  "challenge_rating": "1/4",
+  "xp": 50,
+  "actions": [
+    { "name": "Rend", "description": "Melee Attack Roll: +5, reach 5 ft. Hit: 6 (1d6 + 3) Slashing damage." }
+  ],
+  "bonus_actions": [
+    { "name": "Nimble Escape", "description": "The panther takes the Disengage or Hide action." }
+  ],
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 358 }
+}

@@ -1,0 +1,36 @@
+{
+  "index": "knight",
+  "name": "Knight",
+  "size": "Medium or Small",
+  "type": "humanoid",
+  "alignment": "neutral",
+  "armor_class": 18,
+  "hit_points": 52,
+  "hit_dice": "8d8 + 16",
+  "speed": { "walk": 30 },
+  "ability_scores": {
+    "strength": 16,
+    "dexterity": 11,
+    "constitution": 14,
+    "intelligence": 11,
+    "wisdom": 11,
+    "charisma": 15
+  },
+  "initiative_bonus": 0,
+  "saving_throws": { "Constitution": 4, "Wisdom": 2 },
+  "condition_immunities": ["frightened"],
+  "gear": ["Greatsword", "Heavy Crossbow", "Plate Armor"],
+  "senses": { "passive_perception": 10 },
+  "languages": ["Common plus one other language"],
+  "challenge_rating": "3",
+  "xp": 700,
+  "actions": [
+    { "name": "Multiattack", "description": "The knight makes two attacks, using Greatsword or Heavy Crossbow in any combination." },
+    { "name": "Greatsword", "description": "Melee Attack Roll: +5, reach 5 ft. Hit: 10 (2d6 + 3) Slashing damage plus 4 (1d8) Radiant damage." },
+    { "name": "Heavy Crossbow", "description": "Ranged Attack Roll: +2, range 100/400 ft. Hit: 11 (2d10) Piercing damage plus 4 (1d8) Radiant damage." }
+  ],
+  "reactions": [
+    { "name": "Parry", "description": "Trigger: The knight is hit by a melee attack roll while holding a weapon. Response: The knight adds 2 to its AC against that attack, possibly causing it to miss." }
+  ],
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 302 }
+}

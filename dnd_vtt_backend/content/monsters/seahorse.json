@@ -1,0 +1,32 @@
+{
+  "index": "seahorse",
+  "name": "Seahorse",
+  "size": "Tiny",
+  "type": "beast",
+  "alignment": "unaligned",
+  "armor_class": 12,
+  "hit_points": 1,
+  "hit_dice": "1d4 - 1",
+  "speed": { "walk": 5, "swim": 20 },
+  "ability_scores": {
+    "strength": 1,
+    "dexterity": 12,
+    "constitution": 8,
+    "intelligence": 1,
+    "wisdom": 10,
+    "charisma": 2
+  },
+  "initiative_bonus": 1,
+  "skills": { "Perception": 2, "Stealth": 5 },
+  "senses": { "passive_perception": 12 },
+  "languages": [],
+  "challenge_rating": "0",
+  "xp": 0,
+  "traits": [
+    { "name": "Water Breathing", "description": "The seahorse can breathe only underwater." }
+  ],
+  "actions": [
+    { "name": "Bubble Dash", "description": "While underwater, the seahorse moves up to its Swim Speed without provoking Opportunity Attacks." }
+  ],
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 361 }
+}

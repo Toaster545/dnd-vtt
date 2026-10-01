@@ -1,0 +1,30 @@
+{
+  "index": "allosaurus",
+  "name": "Allosaurus",
+  "size": "Large",
+  "type": "beast (dinosaur)",
+  "alignment": "unaligned",
+  "armor_class": 13,
+  "hit_points": 51,
+  "hit_dice": "6d10 + 18",
+  "speed": { "walk": 60 },
+  "ability_scores": {
+    "strength": 19,
+    "dexterity": 13,
+    "constitution": 17,
+    "intelligence": 2,
+    "wisdom": 12,
+    "charisma": 5
+  },
+  "initiative_bonus": 1,
+  "skills": { "Perception": 5 },
+  "senses": { "passive_perception": 15 },
+  "languages": [],
+  "challenge_rating": "2",
+  "xp": 450,
+  "actions": [
+    { "name": "Bite", "description": "Melee Attack Roll: +6, reach 5 ft. Hit: 15 (2d10 + 4) Piercing damage." },
+    { "name": "Claws", "description": "Melee Attack Roll: +6, reach 5 ft. Hit: 8 (1d8 + 4) Slashing damage. If the target is a Large or smaller creature and the allosaurus moved 30+ feet straight toward it immediately before the hit, the target has the Prone condition, and the allosaurus can make one Bite attack against it." }
+  ],
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 344 }
+}

@@ -73,11 +73,15 @@ function capitalize(value: string): string {
   return value ? value[0].toUpperCase() + value.slice(1) : value;
 }
 
-function monsterSpeed(speed: DndMonster['speed']): string {
+function monsterSpeed(monster: DndMonster): string {
+  if (monster.speed_desc) return monster.speed_desc;
+  const { speed } = monster;
   const parts: string[] = [];
   if (speed.walk != null) parts.push(`${speed.walk} ft.`);
   for (const mode of ['burrow', 'climb', 'fly', 'swim'] as const) {
-    if (speed[mode] != null) parts.push(`${mode} ${speed[mode]} ft.`);
+    if (speed[mode] != null) {
+      parts.push(`${mode} ${speed[mode]} ft.${mode === 'fly' && speed.hover ? ' (hover)' : ''}`);
+    }
   }
   return parts.join(', ');
 }
@@ -110,7 +114,7 @@ export function monsterStatblock(monster: DndMonster): string {
     ac: monster.armor_class_desc ? `${monster.armor_class} (${monster.armor_class_desc})` : monster.armor_class,
     hp: monster.hit_points,
     hit_dice: text(monster.hit_dice),
-    speed: monsterSpeed(monster.speed),
+    speed: monsterSpeed(monster),
     stats: ABILITIES.map(ability => monster.ability_scores[ability]),
     saves: bonusList(monster.saving_throws),
     skillsaves: bonusList(monster.skills),
@@ -123,9 +127,10 @@ export function monsterStatblock(monster: DndMonster): string {
     cr: monster.challenge_rating,
     traits: blocks(monster.traits),
     actions: blocks(monster.actions),
+    bonus_actions: blocks(monster.bonus_actions),
     reactions: blocks(monster.reactions),
     legendary_description: monster.legendary_actions?.length
-      ? `The ${monster.name.toLowerCase()} can take 3 legendary actions, choosing from the options below. Only one legendary action can be used at a time and only at the end of another creature's turn. The ${monster.name.toLowerCase()} regains spent legendary actions at the start of its turn.`
+      ? monster.legendary_description ?? `The ${monster.name.toLowerCase()} can take 3 legendary actions, choosing from the options below. Only one legendary action can be used at a time and only at the end of another creature's turn. The ${monster.name.toLowerCase()} regains spent legendary actions at the start of its turn.`
       : undefined,
     legendary_actions: blocks(monster.legendary_actions),
   });

@@ -1,0 +1,29 @@
+{
+  "index": "camel",
+  "name": "Camel",
+  "size": "Large",
+  "type": "beast",
+  "alignment": "unaligned",
+  "armor_class": 10,
+  "hit_points": 17,
+  "hit_dice": "2d10 + 6",
+  "speed": { "walk": 50 },
+  "ability_scores": {
+    "strength": 15,
+    "dexterity": 8,
+    "constitution": 17,
+    "intelligence": 2,
+    "wisdom": 11,
+    "charisma": 5
+  },
+  "initiative_bonus": -1,
+  "saving_throws": { "Constitution": 5 },
+  "senses": { "darkvision": 60, "passive_perception": 10 },
+  "languages": [],
+  "challenge_rating": "1/8",
+  "xp": 25,
+  "actions": [
+    { "name": "Bite", "description": "Melee Attack Roll: +4, reach 5 ft. Hit: 4 (1d4 + 2) Bludgeoning damage." }
+  ],
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 346 }
+}

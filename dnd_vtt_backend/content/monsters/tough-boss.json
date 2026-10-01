@@ -1,0 +1,35 @@
+{
+  "index": "tough-boss",
+  "name": "Tough Boss",
+  "size": "Medium or Small",
+  "type": "humanoid",
+  "alignment": "neutral",
+  "armor_class": 16,
+  "hit_points": 82,
+  "hit_dice": "11d8 + 33",
+  "speed": { "walk": 30 },
+  "ability_scores": {
+    "strength": 17,
+    "dexterity": 14,
+    "constitution": 16,
+    "intelligence": 11,
+    "wisdom": 10,
+    "charisma": 11
+  },
+  "initiative_bonus": 2,
+  "saving_throws": { "Strength": 5, "Constitution": 5, "Charisma": 2 },
+  "gear": ["Chain Mail", "Heavy Crossbow", "Warhammer"],
+  "senses": { "passive_perception": 10 },
+  "languages": ["Common plus one other language"],
+  "challenge_rating": "4",
+  "xp": 1100,
+  "traits": [
+    { "name": "Pack Tactics", "description": "The tough has Advantage on an attack roll against a creature if at least one of the tough's allies is within 5 feet of the creature and the ally doesn't have the Incapacitated condition." }
+  ],
+  "actions": [
+    { "name": "Multiattack", "description": "The tough makes two attacks, using Warhammer or Heavy Crossbow in any combination." },
+    { "name": "Warhammer", "description": "Melee Attack Roll: +5, reach 5 ft. Hit: 12 (2d8 + 3) Bludgeoning damage. If the target is a Large or smaller creature, the tough pushes the target up to 10 feet straight away from itself." },
+    { "name": "Heavy Crossbow", "description": "Ranged Attack Roll: +4, range 100/400 ft. Hit: 13 (2d10 + 2) Piercing damage." }
+  ],
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 332 }
+}

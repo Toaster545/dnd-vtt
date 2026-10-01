@@ -1,0 +1,39 @@
+{
+  "index": "storm-giant",
+  "name": "Storm Giant",
+  "size": "Huge",
+  "type": "giant",
+  "alignment": "chaotic good",
+  "armor_class": 16,
+  "hit_points": 230,
+  "hit_dice": "20d12 + 100",
+  "speed": { "walk": 50, "fly": 25, "hover": true, "swim": 50 },
+  "ability_scores": {
+    "strength": 29,
+    "dexterity": 14,
+    "constitution": 20,
+    "intelligence": 16,
+    "wisdom": 20,
+    "charisma": 18
+  },
+  "initiative_bonus": 7,
+  "saving_throws": { "Strength": 14, "Constitution": 10, "Wisdom": 10, "Charisma": 9 },
+  "skills": { "Arcana": 8, "Athletics": 14, "History": 8, "Perception": 10 },
+  "damage_resistances": ["cold"],
+  "damage_immunities": ["lightning", "thunder"],
+  "senses": { "darkvision": 120, "truesight": 30, "passive_perception": 20 },
+  "languages": ["Common", "Giant"],
+  "challenge_rating": "13",
+  "xp": 10000,
+  "traits": [
+    { "name": "Amphibious", "description": "The giant can breathe air and water." }
+  ],
+  "actions": [
+    { "name": "Multiattack", "description": "The giant makes two attacks, using Storm Sword or Thunderbolt in any combination." },
+    { "name": "Storm Sword", "description": "Melee Attack Roll: +14, reach 10 ft. Hit: 23 (4d6 + 9) Slashing damage plus 13 (3d8) Lightning damage." },
+    { "name": "Thunderbolt", "description": "Ranged Attack Roll: +14, range 500 ft. Hit: 22 (2d12 + 9) Lightning damage, and the target has the Blinded and Deafened conditions until the start of the giant's next turn." },
+    { "name": "Lightning Storm (Recharge 5-6)", "description": "Dexterity Saving Throw: DC 18, each creature in a 10-foot-radius, 40-foot-high Cylinder originating from a point the giant can see within 500 feet. Failure: 55 (10d10) Lightning damage. Success: Half damage." },
+    { "name": "Spellcasting", "description": "The giant casts one of the following spells, requiring no Material components and using Wisdom as the spellcasting ability (spell save DC 18):\nAt Will: Detect Magic, Light\n1/Day: Control Weather" }
+  ],
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 330 }
+}

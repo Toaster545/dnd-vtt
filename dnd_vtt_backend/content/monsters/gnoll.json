@@ -1,18 +1,17 @@
 {
   "index": "gnoll",
-  "name": "Gnoll",
+  "name": "Gnoll Warrior",
   "size": "Medium",
-  "type": "fiend (gnoll)",
+  "type": "fiend",
   "alignment": "chaotic evil",
   "armor_class": 15,
-  "armor_class_desc": "hide armor, shield",
-  "hit_points": 22,
-  "hit_dice": "5d8",
+  "hit_points": 27,
+  "hit_dice": "6d8",
   "speed": { "walk": 30 },
   "ability_scores": {
     "strength": 14,
     "dexterity": 12,
-    "constitution": 13,
+    "constitution": 11,
     "intelligence": 6,
     "wisdom": 10,
     "charisma": 7
@@ -22,13 +21,13 @@
   "languages": ["Gnoll"],
   "challenge_rating": "1/2",
   "xp": 100,
-  "traits": [
-    { "name": "Rampage", "description": "When the gnoll reduces a creature to 0 hit points with a melee attack on its turn, the gnoll can make a Bite attack as a bonus action." }
-  ],
   "actions": [
-    { "name": "Multiattack", "description": "The gnoll makes two attacks, using Bite or Spear in any combination." },
-    { "name": "Bite", "description": "Melee Attack Roll: +4, reach 5 ft. Hit: 4 (1d4 + 2) Piercing damage." },
-    { "name": "Spear", "description": "Melee or Ranged Attack Roll: +4, reach 5 ft. or range 20/60 ft. Hit: 5 (1d6 + 2) Piercing damage." }
+    { "name": "Rend", "description": "Melee Attack Roll: +4, reach 5 ft. Hit: 5 (1d6 + 2) Piercing damage." },
+    { "name": "Bone Bow", "description": "Ranged Attack Roll: +3, range 150/600 ft. Hit: 6 (1d10 + 1) Piercing damage." }
   ],
-  "description": "Gnolls are ravenous, hyena-headed raiders bound to the demon lord Yeenoghu, driven by an insatiable hunger that turns every raid into a slaughter."
+  "bonus_actions": [
+    { "name": "Rampage (1/Day)", "description": "Immediately after dealing damage to a creature that is already Bloodied, the gnoll moves up to half its Speed, and it makes one Rend attack." }
+  ],
+  "description": "Gnolls are ravenous, hyena-headed raiders bound to the demon lord Yeenoghu, driven by an insatiable hunger that turns every raid into a slaughter.",
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 289 }
 }

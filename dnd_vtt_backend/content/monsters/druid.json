@@ -1,0 +1,33 @@
+{
+  "index": "druid",
+  "name": "Druid",
+  "size": "Medium or Small",
+  "type": "humanoid (druid)",
+  "alignment": "neutral",
+  "armor_class": 13,
+  "hit_points": 44,
+  "hit_dice": "8d8 + 8",
+  "speed": { "walk": 30 },
+  "ability_scores": {
+    "strength": 10,
+    "dexterity": 12,
+    "constitution": 13,
+    "intelligence": 12,
+    "wisdom": 16,
+    "charisma": 11
+  },
+  "initiative_bonus": 1,
+  "skills": { "Medicine": 5, "Nature": 3, "Perception": 5 },
+  "gear": ["Studded Leather Armor"],
+  "senses": { "passive_perception": 15 },
+  "languages": ["Common", "Druidic", "Sylvan"],
+  "challenge_rating": "2",
+  "xp": 450,
+  "actions": [
+    { "name": "Multiattack", "description": "The druid makes two attacks, using Vine Staff or Verdant Wisp in any combination." },
+    { "name": "Vine Staff", "description": "Melee Attack Roll: +5, reach 5 ft. Hit: 7 (1d8 + 3) Bludgeoning damage plus 2 (1d4) Poison damage." },
+    { "name": "Verdant Wisp", "description": "Ranged Attack Roll: +5, range 90 ft. Hit: 10 (3d6) Radiant damage." },
+    { "name": "Spellcasting", "description": "The druid casts one of the following spells, using Wisdom as the spellcasting ability (spell save DC 13):\nAt Will: Druidcraft, Speak with Animals\n2/Day Each: Entangle, Thunderwave\n1/Day Each: Animal Messenger, Longstrider, Moonbeam" }
+  ],
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 282 }
+}

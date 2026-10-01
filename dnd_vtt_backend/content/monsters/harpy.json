@@ -5,14 +5,13 @@
   "type": "monstrosity",
   "alignment": "chaotic evil",
   "armor_class": 11,
-  "armor_class_desc": "unarmored",
-  "hit_points": 33,
-  "hit_dice": "6d8 + 6",
+  "hit_points": 38,
+  "hit_dice": "7d8 + 7",
   "speed": { "walk": 20, "fly": 40 },
   "ability_scores": {
     "strength": 12,
     "dexterity": 13,
-    "constitution": 13,
+    "constitution": 12,
     "intelligence": 7,
     "wisdom": 10,
     "charisma": 13
@@ -23,9 +22,9 @@
   "challenge_rating": "1",
   "xp": 200,
   "actions": [
-    { "name": "Multiattack", "description": "The harpy makes two Claw attacks." },
-    { "name": "Claw", "description": "Melee Attack Roll: +3, reach 5 ft. Hit: 4 (1d4 + 1) Slashing damage." },
-    { "name": "Luring Song", "description": "The harpy sings a magical melody. Each Humanoid and Beast within 300 feet of the harpy that can hear the song must succeed on a DC 11 Wisdom saving throw or have the Charmed condition until the song ends. The harpy must take a bonus action on its subsequent turns to continue singing. While Charmed, a target has the Incapacitated condition and moves toward the harpy by the safest route, ignoring difficult terrain. A Charmed creature can repeat the save whenever it takes damage or when another creature takes an action to shake it out of its stupor." }
+    { "name": "Claw", "description": "Melee Attack Roll: +3, reach 5 ft. Hit: 6 (2d4 + 1) Slashing damage." },
+    { "name": "Luring Song", "description": "The harpy sings a magical melody, which lasts until the harpy's Concentration ends on it. Wisdom Saving Throw: DC 11, each Humanoid and Giant in a 300-foot Emanation originating from the harpy when the song starts. Failure: The target has the Charmed condition until the song ends and repeats the save at the end of each of its turns. While Charmed, the target has the Incapacitated condition and ignores the Luring Song of other harpies. If the target is more than 5 feet from the harpy, the target moves on its turn toward the harpy by the most direct route, trying to get within 5 feet of the harpy. It doesn't avoid Opportunity Attacks; however, before moving into damaging terrain (such as lava or a pit) and whenever it takes damage from a source other than the harpy, the target repeats the save. Success: The target is immune to this harpy's Luring Song for 24 hours." }
   ],
-  "description": "Harpies perch on sea cliffs and crags, luring sailors and travelers with an enchanting song before descending to claw apart the entranced and pick over the wreckage."
+  "description": "Harpies perch on sea cliffs and crags, luring sailors and travelers with an enchanting song before descending to claw apart the entranced and pick over the wreckage.",
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 297 }
 }

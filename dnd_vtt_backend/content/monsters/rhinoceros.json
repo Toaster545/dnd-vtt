@@ -1,0 +1,28 @@
+{
+  "index": "rhinoceros",
+  "name": "Rhinoceros",
+  "size": "Large",
+  "type": "beast",
+  "alignment": "unaligned",
+  "armor_class": 13,
+  "hit_points": 45,
+  "hit_dice": "6d10 + 12",
+  "speed": { "walk": 40 },
+  "ability_scores": {
+    "strength": 21,
+    "dexterity": 8,
+    "constitution": 15,
+    "intelligence": 2,
+    "wisdom": 12,
+    "charisma": 6
+  },
+  "initiative_bonus": -1,
+  "senses": { "passive_perception": 11 },
+  "languages": [],
+  "challenge_rating": "2",
+  "xp": 450,
+  "actions": [
+    { "name": "Gore", "description": "Melee Attack Roll: +7, reach 5 ft. Hit: 14 (2d8 + 5) Piercing damage. If target is a Large or smaller creature and the rhinoceros moved 20+ feet straight toward it immediately before the hit, the target takes an extra 9 (2d8) Piercing damage and has the Prone condition." }
+  ],
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 360 }
+}

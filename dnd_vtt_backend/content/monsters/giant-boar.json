@@ -1,0 +1,32 @@
+{
+  "index": "giant-boar",
+  "name": "Giant Boar",
+  "size": "Large",
+  "type": "beast",
+  "alignment": "unaligned",
+  "armor_class": 13,
+  "hit_points": 42,
+  "hit_dice": "5d10 + 15",
+  "speed": { "walk": 40 },
+  "ability_scores": {
+    "strength": 17,
+    "dexterity": 10,
+    "constitution": 16,
+    "intelligence": 2,
+    "wisdom": 7,
+    "charisma": 5
+  },
+  "initiative_bonus": 0,
+  "saving_throws": { "Strength": 5 },
+  "senses": { "passive_perception": 8 },
+  "languages": [],
+  "challenge_rating": "2",
+  "xp": 450,
+  "traits": [
+    { "name": "Bloodied Fury", "description": "The boar has Advantage on melee attack rolls while it is Bloodied." }
+  ],
+  "actions": [
+    { "name": "Gore", "description": "Melee Attack Roll: +5, reach 5 ft. Hit: 10 (2d6 + 3) Piercing damage. If the target is a Large or smaller creature and the boar moved 20+ feet straight toward it immediately before the hit, the target takes an extra 7 (2d6) Piercing damage and has the Prone condition." }
+  ],
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 349 }
+}

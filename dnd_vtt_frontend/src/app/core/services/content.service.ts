@@ -447,7 +447,12 @@ export interface DndMonster {
   hit_points: number;
   hit_points_formula?: string;
   hit_dice: string;
-  speed: { walk?: number; fly?: number; swim?: number; climb?: number; burrow?: number };
+  speed: {
+    walk?: number; fly?: number; swim?: number; climb?: number; burrow?: number; hover?: boolean;
+  };
+  // Full speed text when a mode has a qualifier the numbers can't carry, e.g. a lycanthrope's
+  // "40 ft. (wolf form only)".
+  speed_desc?: string;
   ability_scores: {
     strength: number; dexterity: number; constitution: number;
     intelligence: number; wisdom: number; charisma: number;
@@ -458,16 +463,23 @@ export interface DndMonster {
   damage_resistances?: string[];
   damage_immunities?: string[];
   condition_immunities?: string[];
+  gear?: string[];
   senses: {
     darkvision?: number; blindsight?: number; truesight?: number; tremorsense?: number;
     passive_perception: number;
+    notes?: string[];
   };
   languages: string[];
   challenge_rating: string;
   xp: number;
+  xp_in_lair?: number;
+  initiative_bonus?: number;
   traits?: { name: string; description: string }[];
   actions: { name: string; description: string }[];
+  bonus_actions?: { name: string; description: string }[];
   reactions?: { name: string; description: string }[];
+  // The 2024 "Legendary Action Uses: 3 (4 in Lair). ..." preamble, verbatim from the stat block.
+  legendary_description?: string;
   legendary_actions?: { name: string; description: string }[];
   description?: string;
   rules_text?: 'reference-only';

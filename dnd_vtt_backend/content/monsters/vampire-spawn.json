@@ -1,0 +1,40 @@
+{
+  "index": "vampire-spawn",
+  "name": "Vampire Spawn",
+  "size": "Medium or Small",
+  "type": "undead",
+  "alignment": "neutral evil",
+  "armor_class": 16,
+  "hit_points": 90,
+  "hit_dice": "12d8 + 36",
+  "speed": { "walk": 30 },
+  "ability_scores": {
+    "strength": 16,
+    "dexterity": 16,
+    "constitution": 16,
+    "intelligence": 11,
+    "wisdom": 10,
+    "charisma": 12
+  },
+  "initiative_bonus": 3,
+  "saving_throws": { "Dexterity": 6, "Wisdom": 3 },
+  "skills": { "Perception": 3, "Stealth": 6 },
+  "damage_resistances": ["necrotic"],
+  "senses": { "darkvision": 60, "passive_perception": 13 },
+  "languages": ["Common plus one other language"],
+  "challenge_rating": "5",
+  "xp": 1800,
+  "traits": [
+    { "name": "Spider Climb", "description": "The vampire can climb difficult surfaces, including along ceilings, without needing to make an ability check." },
+    { "name": "Vampire Weakness", "description": "The vampire has these weaknesses: Forbiddance. The vampire can't enter a residence without an invitation from an occupant. Running Water. The vampire takes 20 Acid damage if it ends its turn in running water. Stake to the Heart. The vampire is destroyed if a weapon that deals Piercing damage is driven into the vampire's heart while the vampire has the Incapacitated condition. Sunlight. The vampire takes 20 Radiant damage if it starts its turn in sunlight. While in sunlight, it has Disadvantage on attack rolls and ability checks." }
+  ],
+  "actions": [
+    { "name": "Multiattack", "description": "The vampire makes two Claw attacks and uses Bite." },
+    { "name": "Claw", "description": "Melee Attack Roll: +6, reach 5 ft. Hit: 8 (2d4 + 3) Slashing damage. If the target is a Medium or smaller creature, it has the Grappled condition (escape DC 13) from one of two claws." },
+    { "name": "Bite", "description": "Constitution Saving Throw: DC 14, one creature within 5 feet that is willing or that has the Grappled, Incapacitated, or Restrained condition. Failure: 5 (1d4 + 3) Piercing damage plus 10 (3d6) Necrotic damage. The target's Hit Point maximum decreases by an amount equal to the Necrotic damage taken, and the vampire regains Hit Points equal to that amount." }
+  ],
+  "bonus_actions": [
+    { "name": "Deathless Agility", "description": "The vampire takes the Dash or Disengage action." }
+  ],
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 334 }
+}

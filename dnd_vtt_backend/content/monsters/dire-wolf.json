@@ -5,9 +5,8 @@
   "type": "beast",
   "alignment": "unaligned",
   "armor_class": 14,
-  "armor_class_desc": "natural armor",
-  "hit_points": 37,
-  "hit_dice": "5d10 + 10",
+  "hit_points": 22,
+  "hit_dice": "3d10 + 6",
   "speed": { "walk": 50 },
   "ability_scores": {
     "strength": 17,
@@ -18,17 +17,17 @@
     "charisma": 7
   },
   "initiative_bonus": 2,
-  "skills": { "Perception": 3, "Stealth": 4 },
-  "senses": { "passive_perception": 13 },
+  "skills": { "Perception": 5, "Stealth": 4 },
+  "senses": { "darkvision": 60, "passive_perception": 15 },
   "languages": [],
   "challenge_rating": "1",
   "xp": 200,
   "traits": [
-    { "name": "Keen Hearing and Smell", "description": "The wolf has advantage on Wisdom (Perception) checks that rely on hearing or smell." },
-    { "name": "Pack Tactics", "description": "The wolf has advantage on an attack roll against a creature if at least one of the wolf's allies is within 5 feet of the creature and the ally doesn't have the Incapacitated condition." }
+    { "name": "Pack Tactics", "description": "The wolf has Advantage on an attack roll against a creature if at least one of the wolf's allies is within 5 feet of the creature and the ally doesn't have the Incapacitated condition." }
   ],
   "actions": [
-    { "name": "Bite", "description": "Melee Attack Roll: +5, reach 5 ft. Hit: 10 (2d6 + 3) Piercing damage. If the target is a creature, it must succeed on a DC 13 Strength saving throw or be knocked prone." }
+    { "name": "Bite", "description": "Melee Attack Roll: +5, reach 5 ft. Hit: 8 (1d10 + 3) Piercing damage. If the target is a Large or smaller creature, it has the Prone condition." }
   ],
-  "description": "Dire wolves hunt in coordinated packs far larger and more cunning than their common cousins, and are prized as mounts by giants and hobgoblin warlords alike."
+  "description": "Dire wolves hunt in coordinated packs far larger and more cunning than their common cousins, and are prized as mounts by giants and hobgoblin warlords alike.",
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 347 }
 }

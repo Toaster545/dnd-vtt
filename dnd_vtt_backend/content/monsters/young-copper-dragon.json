@@ -1,0 +1,34 @@
+{
+  "index": "young-copper-dragon",
+  "name": "Young Copper Dragon",
+  "size": "Large",
+  "type": "dragon (metallic)",
+  "alignment": "chaotic good",
+  "armor_class": 17,
+  "hit_points": 119,
+  "hit_dice": "14d10 + 42",
+  "speed": { "walk": 40, "climb": 40, "fly": 80 },
+  "ability_scores": {
+    "strength": 19,
+    "dexterity": 12,
+    "constitution": 17,
+    "intelligence": 16,
+    "wisdom": 13,
+    "charisma": 15
+  },
+  "initiative_bonus": 4,
+  "saving_throws": { "Dexterity": 4, "Wisdom": 4 },
+  "skills": { "Deception": 5, "Perception": 7, "Stealth": 4 },
+  "damage_immunities": ["acid"],
+  "senses": { "blindsight": 30, "darkvision": 120, "passive_perception": 17 },
+  "languages": ["Common", "Draconic"],
+  "challenge_rating": "7",
+  "xp": 2900,
+  "actions": [
+    { "name": "Multiattack", "description": "The dragon makes three Rend attacks. It can replace one attack with a use of Slowing Breath." },
+    { "name": "Rend", "description": "Melee Attack Roll: +7, reach 10 ft. Hit: 15 (2d10 + 4) Slashing damage." },
+    { "name": "Acid Breath (Recharge 5-6)", "description": "Dexterity Saving Throw: DC 14, each creature in a 40-foot-long, 5-foot-wide Line. Failure: 40 (9d8) Acid damage. Success: Half damage." },
+    { "name": "Slowing Breath", "description": "Constitution Saving Throw: DC 14, each creature in a 30-foot Cone. Failure: The target can't take Reactions; its Speed is halved; and it can take either an action or a Bonus Action on its turn, not both. This effect lasts until the end of its next turn." }
+  ],
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 276 }
+}

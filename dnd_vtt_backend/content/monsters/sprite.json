@@ -1,0 +1,32 @@
+{
+  "index": "sprite",
+  "name": "Sprite",
+  "size": "Tiny",
+  "type": "fey",
+  "alignment": "neutral good",
+  "armor_class": 15,
+  "hit_points": 10,
+  "hit_dice": "4d4",
+  "speed": { "walk": 10, "fly": 40 },
+  "ability_scores": {
+    "strength": 3,
+    "dexterity": 18,
+    "constitution": 10,
+    "intelligence": 14,
+    "wisdom": 13,
+    "charisma": 11
+  },
+  "initiative_bonus": 4,
+  "skills": { "Perception": 3, "Stealth": 8 },
+  "senses": { "passive_perception": 13 },
+  "languages": ["Common", "Elvish", "Sylvan"],
+  "challenge_rating": "1/4",
+  "xp": 50,
+  "actions": [
+    { "name": "Needle Sword", "description": "Melee Attack Roll: +6, reach 5 ft. Hit: 6 (1d4 + 4) Piercing damage." },
+    { "name": "Enchanting Bow", "description": "Ranged Attack Roll: +6, range 40/160 ft. Hit: 1 Piercing damage, and the target has the Charmed condition until the start of the sprite's next turn." },
+    { "name": "Heart Sight", "description": "Charisma Saving Throw: DC 10, one creature within 5 feet the sprite can see (Celestials, Fiends, and Undead automatically fail the save). Failure: The sprite knows the target's emotions and alignment." },
+    { "name": "Invisibility", "description": "The sprite casts Invisibility on itself, requiring no spell components and using Charisma as the spellcasting ability." }
+  ],
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 329 }
+}

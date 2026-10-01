@@ -1,0 +1,31 @@
+{
+  "index": "giant-constrictor-snake",
+  "name": "Giant Constrictor Snake",
+  "size": "Huge",
+  "type": "beast",
+  "alignment": "unaligned",
+  "armor_class": 12,
+  "hit_points": 60,
+  "hit_dice": "8d12 + 8",
+  "speed": { "walk": 30, "swim": 30 },
+  "ability_scores": {
+    "strength": 19,
+    "dexterity": 14,
+    "constitution": 12,
+    "intelligence": 1,
+    "wisdom": 10,
+    "charisma": 3
+  },
+  "initiative_bonus": 2,
+  "skills": { "Perception": 2 },
+  "senses": { "blindsight": 10, "passive_perception": 12 },
+  "languages": [],
+  "challenge_rating": "2",
+  "xp": 450,
+  "actions": [
+    { "name": "Multiattack", "description": "The snake makes one Bite attack and uses Constrict." },
+    { "name": "Bite", "description": "Melee Attack Roll: +6, reach 10 ft. Hit: 11 (2d6 + 4) Piercing damage." },
+    { "name": "Constrict", "description": "Strength Saving Throw: DC 14, one Large or smaller creature the snake can see within 10 feet. Failure: 13 (2d8 + 4) Bludgeoning damage, and the target has the Grappled condition (escape DC 14)." }
+  ],
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 350 }
+}

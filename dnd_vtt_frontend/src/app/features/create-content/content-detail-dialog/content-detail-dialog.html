@@ -122,6 +122,12 @@
             <p class="mt-3 mb-0 whitespace-pre-wrap leading-relaxed"><span class="font-semibold">{{ action.name }}.</span> {{ action.description }}</p>
           }
         }
+        @if (value.bonus_actions?.length) {
+          <h3 class="font-brand mt-5 mb-2 border-b border-gold/20 pb-2 text-sm text-gold">Bonus Actions</h3>
+          @for (action of value.bonus_actions; track action.name) {
+            <p class="mt-3 mb-0 whitespace-pre-wrap leading-relaxed"><span class="font-semibold">{{ action.name }}.</span> {{ action.description }}</p>
+          }
+        }
         @if (value.reactions?.length) {
           <h3 class="font-brand mt-5 mb-2 border-b border-gold/20 pb-2 text-sm text-gold">Reactions</h3>
           @for (reaction of value.reactions; track reaction.name) {
@@ -130,6 +136,9 @@
         }
         @if (value.legendary_actions?.length) {
           <h3 class="font-brand mt-5 mb-2 border-b border-gold/20 pb-2 text-sm text-gold">Legendary Actions</h3>
+          @if (value.legendary_description) {
+            <p class="mt-3 mb-0 text-sm italic leading-relaxed text-slate">{{ value.legendary_description }}</p>
+          }
           @for (action of value.legendary_actions; track action.name) {
             <p class="mt-3 mb-0 whitespace-pre-wrap leading-relaxed"><span class="font-semibold">{{ action.name }}.</span> {{ action.description }}</p>
           }

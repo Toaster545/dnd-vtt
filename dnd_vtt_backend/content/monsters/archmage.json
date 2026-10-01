@@ -1,0 +1,43 @@
+{
+  "index": "archmage",
+  "name": "Archmage",
+  "size": "Medium or Small",
+  "type": "humanoid (wizard)",
+  "alignment": "neutral",
+  "armor_class": 17,
+  "hit_points": 170,
+  "hit_dice": "31d8 + 31",
+  "speed": { "walk": 30 },
+  "ability_scores": {
+    "strength": 10,
+    "dexterity": 14,
+    "constitution": 12,
+    "intelligence": 20,
+    "wisdom": 15,
+    "charisma": 16
+  },
+  "initiative_bonus": 7,
+  "saving_throws": { "Intelligence": 9, "Wisdom": 6 },
+  "skills": { "Arcana": 13, "History": 9, "Perception": 6 },
+  "damage_immunities": ["psychic", "charmed (with mind blank)"],
+  "gear": ["Wand"],
+  "senses": { "passive_perception": 16 },
+  "languages": ["Common plus five other languages"],
+  "challenge_rating": "12",
+  "xp": 8400,
+  "traits": [
+    { "name": "Magic Resistance", "description": "The archmage has Advantage on saving throws against spells and other magical effects." }
+  ],
+  "actions": [
+    { "name": "Multiattack", "description": "The archmage makes four Arcane Burst attacks." },
+    { "name": "Arcane Burst", "description": "Melee or Ranged Attack Roll: +9, reach 5 ft. or range 150 ft. Hit: 27 (4d10 + 5) Force damage." },
+    { "name": "Spellcasting", "description": "The archmage casts one of the following spells, using Intelligence as the spellcasting ability (spell save DC 17):\nAt Will: Detect Magic, Detect Thoughts, Disguise Self, Invisibility, Light, Mage Armor (included in AC), Mage Hand, Prestidigitation\n2/Day Each: Fly, Lightning Bolt (level 7 version)\n1/Day Each: Cone of Cold (level 9 version), Mind Blank (cast before combat), Scrying, Teleport" }
+  ],
+  "bonus_actions": [
+    { "name": "Misty Step (3/Day)", "description": "The mage casts Misty Step, using the same spellcasting ability as Spellcasting." }
+  ],
+  "reactions": [
+    { "name": "Protective Magic (3/Day)", "description": "The archmage casts Counterspell or Shield in response to the spell's trigger, using the same spellcasting ability as Spellcasting." }
+  ],
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 305 }
+}

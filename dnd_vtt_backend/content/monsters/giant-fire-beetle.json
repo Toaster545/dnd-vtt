@@ -1,0 +1,32 @@
+{
+  "index": "giant-fire-beetle",
+  "name": "Giant Fire Beetle",
+  "size": "Small",
+  "type": "beast",
+  "alignment": "unaligned",
+  "armor_class": 13,
+  "hit_points": 4,
+  "hit_dice": "1d6 + 1",
+  "speed": { "walk": 30, "climb": 30 },
+  "ability_scores": {
+    "strength": 8,
+    "dexterity": 10,
+    "constitution": 12,
+    "intelligence": 1,
+    "wisdom": 7,
+    "charisma": 3
+  },
+  "initiative_bonus": 0,
+  "damage_resistances": ["fire"],
+  "senses": { "blindsight": 30, "passive_perception": 8 },
+  "languages": [],
+  "challenge_rating": "0",
+  "xp": 10,
+  "traits": [
+    { "name": "Illumination", "description": "The beetle sheds Bright Light in a 10-foot radius and Dim Light for an additional 10 feet." }
+  ],
+  "actions": [
+    { "name": "Bite", "description": "Melee Attack Roll: +1, reach 5 ft. Hit: 1 Fire damage." }
+  ],
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 351 }
+}

@@ -1,0 +1,41 @@
+{
+  "index": "deva",
+  "name": "Deva",
+  "size": "Medium",
+  "type": "celestial (angel)",
+  "alignment": "lawful good",
+  "armor_class": 17,
+  "hit_points": 229,
+  "hit_dice": "27d8 + 108",
+  "speed": { "walk": 30, "fly": 90, "hover": true },
+  "ability_scores": {
+    "strength": 18,
+    "dexterity": 18,
+    "constitution": 18,
+    "intelligence": 17,
+    "wisdom": 20,
+    "charisma": 20
+  },
+  "initiative_bonus": 4,
+  "saving_throws": { "Wisdom": 9, "Charisma": 9 },
+  "skills": { "Insight": 9, "Perception": 9 },
+  "damage_resistances": ["radiant"],
+  "condition_immunities": ["charmed", "exhaustion", "frightened"],
+  "senses": { "darkvision": 120, "passive_perception": 19 },
+  "languages": ["All", "telepathy 120 ft."],
+  "challenge_rating": "10",
+  "xp": 5900,
+  "traits": [
+    { "name": "Exalted Restoration", "description": "If the deva dies outside Mount Celestia, its body disappears, and it gains a new body instantly, reviving with all its Hit Points somewhere in Mount Celestia." },
+    { "name": "Magic Resistance", "description": "The deva has Advantage on saving throws against spells and other magical effects." }
+  ],
+  "actions": [
+    { "name": "Multiattack", "description": "The deva makes two Holy Mace attacks." },
+    { "name": "Holy Mace", "description": "Melee Attack Roll: +8, reach 5 ft. Hit: 7 (1d6 + 4) Bludgeoning damage plus 18 (4d8) Radiant damage." },
+    { "name": "Spellcasting", "description": "The deva casts one of the following spells, requiring no Material components and using Charisma as the spellcasting ability (spell save DC 17):\nAt Will: Detect Evil and Good, Shapechange (Beast or Humanoid form only, no Temporary Hit Points gained from the spell, and no Concentration or Temporary Hit Points required to maintain the spell)\n1/Day Each: Commune, Raise Dead" }
+  ],
+  "bonus_actions": [
+    { "name": "Divine Aid (2/Day)", "description": "The deva casts Cure Wounds, Lesser Restoration, or Remove Curse, using the same spellcasting ability as Spellcasting." }
+  ],
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 279 }
+}

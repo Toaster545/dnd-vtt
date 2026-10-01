@@ -1,0 +1,34 @@
+{
+  "index": "gibbering-mouther",
+  "name": "Gibbering Mouther",
+  "size": "Medium",
+  "type": "aberration",
+  "alignment": "chaotic neutral",
+  "armor_class": 9,
+  "hit_points": 52,
+  "hit_dice": "7d8 + 21",
+  "speed": { "walk": 20, "swim": 20 },
+  "ability_scores": {
+    "strength": 10,
+    "dexterity": 8,
+    "constitution": 16,
+    "intelligence": 3,
+    "wisdom": 10,
+    "charisma": 6
+  },
+  "initiative_bonus": -1,
+  "condition_immunities": ["prone"],
+  "senses": { "darkvision": 60, "passive_perception": 10 },
+  "languages": [],
+  "challenge_rating": "2",
+  "xp": 450,
+  "traits": [
+    { "name": "Aberrant Ground", "description": "The ground in a 10-foot Emanation originating from the mouther is Difficult Terrain." },
+    { "name": "Gibbering", "description": "The mouther babbles incoherently while it doesn't have the Incapacitated condition. Wisdom Saving Throw: DC 10, any creature that starts its turn within 20 feet of the mouther while it is babbling. Failure: The target rolls 1d8 to determine what it does during the current turn: 1-4. The target does nothing. 5-6. The target takes no action or Bonus Action and uses all its movement to move in a random direction. 7-8. The target makes a melee attack against a randomly determined creature within its reach or does nothing if it can't make such an attack." }
+  ],
+  "actions": [
+    { "name": "Bite", "description": "Melee Attack Roll: +2, reach 5 ft. Hit: 7 (2d6) Piercing damage. If the target is a Medium or smaller creature, it has the Prone condition. The target dies if it is reduced to 0 Hit Points by this attack. Its body is then absorbed into the mouther, leaving only equipment behind." },
+    { "name": "Blinding Spittle (Recharge 5-6)", "description": "Dexterity Saving Throw: DC 10, each creature in a 10-foot-radius Sphere centered on a point within 30 feet. Failure: 7 (2d6) Radiant damage, and the target has the Blinded condition until the end of the mouther's next turn." }
+  ],
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 288 }
+}

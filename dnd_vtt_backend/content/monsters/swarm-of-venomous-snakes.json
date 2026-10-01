@@ -1,0 +1,33 @@
+{
+  "index": "swarm-of-venomous-snakes",
+  "name": "Swarm of Venomous Snakes",
+  "size": "Medium",
+  "type": "swarm of tiny beasts",
+  "alignment": "unaligned",
+  "armor_class": 14,
+  "hit_points": 36,
+  "hit_dice": "8d8",
+  "speed": { "walk": 30, "swim": 30 },
+  "ability_scores": {
+    "strength": 8,
+    "dexterity": 18,
+    "constitution": 11,
+    "intelligence": 1,
+    "wisdom": 10,
+    "charisma": 3
+  },
+  "initiative_bonus": 4,
+  "damage_resistances": ["bludgeoning", "piercing", "slashing"],
+  "condition_immunities": ["charmed", "frightened", "grappled", "paralyzed", "petrified", "prone", "restrained", "stunned"],
+  "senses": { "blindsight": 10, "passive_perception": 10 },
+  "languages": [],
+  "challenge_rating": "2",
+  "xp": 450,
+  "traits": [
+    { "name": "Swarm", "description": "The swarm can occupy another creature's space and vice versa, and the swarm can move through any opening large enough for a Tiny snake. The swarm can't regain Hit Points or gain Temporary Hit Points." }
+  ],
+  "actions": [
+    { "name": "Bites", "description": "Melee Attack Roll: +6, reach 5 ft. Hit: 8 (1d8 + 4) Piercing damage—or 6 (1d4 + 4) Piercing damage if the swarm is Bloodied—plus 10 (3d6) Poison damage." }
+  ],
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 362 }
+}

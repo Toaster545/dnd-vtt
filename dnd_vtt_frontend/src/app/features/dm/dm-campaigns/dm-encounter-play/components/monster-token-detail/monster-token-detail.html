@@ -34,33 +34,20 @@
 </div>
 
 <p class="text-xs text-slate" [class.mb-3]="!savingThrows()">
-  Speed {{ monster().speed.walk ?? 0 }} ft.
+  Speed {{ speedText() }}
 </p>
 @if (savingThrows(); as saves) {
   <p class="text-xs text-slate mb-3">Saving Throws {{ saves }}</p>
 }
 
-@if (monster().traits?.length) {
-  <h4 class="text-xs font-semibold text-slate uppercase tracking-wider mb-1.5">Traits</h4>
-  <div class="flex flex-col gap-2 mb-3">
-    @for (trait of monster().traits; track trait.name) {
-      <p class="text-xs m-0"><span class="text-parchment font-medium">{{ trait.name }}.</span> <span class="text-slate">{{ trait.description }}</span></p>
-    }
-  </div>
-}
-
-<h4 class="text-xs font-semibold text-slate uppercase tracking-wider mb-1.5">Actions</h4>
-<div class="flex flex-col gap-2" [class.mb-3]="monster().legendary_actions?.length">
-  @for (action of monster().actions; track action.name) {
-    <p class="text-xs m-0"><span class="text-parchment font-medium">{{ action.name }}.</span> <span class="text-slate">{{ action.description }}</span></p>
+@for (section of sections(); track section.title; let last = $last) {
+  <h4 class="text-xs font-semibold text-slate uppercase tracking-wider mb-1.5">{{ section.title }}</h4>
+  @if (section.intro) {
+    <p class="text-xs italic text-slate m-0 mb-2">{{ section.intro }}</p>
   }
-</div>
-
-@if (monster().legendary_actions?.length) {
-  <h4 class="text-xs font-semibold text-slate uppercase tracking-wider mb-1.5">Legendary Actions</h4>
-  <div class="flex flex-col gap-2">
-    @for (action of monster().legendary_actions; track action.name) {
-      <p class="text-xs m-0"><span class="text-parchment font-medium">{{ action.name }}.</span> <span class="text-slate">{{ action.description }}</span></p>
+  <div class="flex flex-col gap-2" [class.mb-3]="!last">
+    @for (entry of section.entries; track entry.name) {
+      <p class="text-xs m-0 whitespace-pre-line"><span class="text-parchment font-medium">{{ entry.name }}.</span> <span class="text-slate">{{ entry.description }}</span></p>
     }
   </div>
 }

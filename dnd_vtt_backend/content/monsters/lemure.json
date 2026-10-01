@@ -4,12 +4,12 @@
   "size": "Medium",
   "type": "fiend (devil)",
   "alignment": "lawful evil",
-  "armor_class": 7,
-  "hit_points": 13,
-  "hit_dice": "3d8",
-  "speed": { "walk": 15 },
+  "armor_class": 9,
+  "hit_points": 9,
+  "hit_dice": "2d8",
+  "speed": { "walk": 20 },
   "ability_scores": {
-    "strength": 6,
+    "strength": 10,
     "dexterity": 5,
     "constitution": 11,
     "intelligence": 1,
@@ -20,15 +20,16 @@
   "damage_resistances": ["cold"],
   "damage_immunities": ["fire", "poison"],
   "condition_immunities": ["charmed", "frightened", "poisoned"],
-  "senses": { "darkvision": 120, "passive_perception": 10 },
-  "languages": ["understands Infernal but can't speak", "telepathy 120 ft. (works only with creatures that understand Infernal)"],
+  "senses": { "darkvision": 120, "notes": ["Darkvision unimpeded by magical Darkness"], "passive_perception": 10 },
+  "languages": ["Understands Infernal but can't speak"],
   "challenge_rating": "0",
   "xp": 10,
   "traits": [
-    { "name": "Hellish Restoration", "description": "If the lemure dies outside the Nine Hells, it disintegrates into ichor and its remains re-form within a day at the bottom of the River Styx, restored to full hit points, unless it is killed by a good-aligned creature that speaks a command word to it as it dies." }
+    { "name": "Hellish Restoration", "description": "If the lemure dies in the Nine Hells, it revives with all its Hit Points in 1d10 days unless it is killed by a creature under the effects of a Bless spell or its remains are sprinkled with Holy Water." }
   ],
   "actions": [
-    { "name": "Claw", "description": "Melee Attack Roll: +2, reach 5 ft. Hit: 2 (1d4) Slashing damage." }
+    { "name": "Vile Slime", "description": "Melee Attack Roll: +2, reach 5 ft. Hit: 2 (1d4) Poison damage." }
   ],
-  "description": "Lemures are the mindless, larval mass of the damned, mewling humanoid blobs that fill the lowest ranks of the Nine Hells and are reshaped into other devils at their masters' whim."
+  "description": "Lemures are the mindless, larval mass of the damned, mewling humanoid blobs that fill the lowest ranks of the Nine Hells and are reshaped into other devils at their masters' whim.",
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 304 }
 }

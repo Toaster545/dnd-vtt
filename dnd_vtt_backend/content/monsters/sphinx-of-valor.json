@@ -1,0 +1,46 @@
+{
+  "index": "sphinx-of-valor",
+  "name": "Sphinx of Valor",
+  "size": "Large",
+  "type": "celestial",
+  "alignment": "lawful neutral",
+  "armor_class": 17,
+  "hit_points": 199,
+  "hit_dice": "19d10 + 95",
+  "speed": { "walk": 40, "fly": 60 },
+  "ability_scores": {
+    "strength": 22,
+    "dexterity": 10,
+    "constitution": 20,
+    "intelligence": 16,
+    "wisdom": 23,
+    "charisma": 18
+  },
+  "initiative_bonus": 12,
+  "saving_throws": { "Dexterity": 6, "Constitution": 11, "Intelligence": 9, "Wisdom": 12 },
+  "skills": { "Arcana": 9, "Perception": 12, "Religion": 15 },
+  "damage_resistances": ["necrotic", "radiant"],
+  "damage_immunities": ["psychic"],
+  "condition_immunities": ["charmed", "frightened"],
+  "senses": { "truesight": 120, "passive_perception": 22 },
+  "languages": ["Celestial", "Common"],
+  "challenge_rating": "17",
+  "xp": 18000,
+  "xp_in_lair": 20000,
+  "traits": [
+    { "name": "Inscrutable", "description": "No magic can observe the sphinx remotely or detect its thoughts without its permission. Wisdom (Insight) checks made to ascertain its intentions or sincerity are made with Disadvantage." },
+    { "name": "Legendary Resistance (3/Day, or 4/Day in Lair)", "description": "If the sphinx fails a saving throw, it can choose to succeed instead." }
+  ],
+  "actions": [
+    { "name": "Multiattack", "description": "The sphinx makes two Claw attacks and uses Roar." },
+    { "name": "Claw", "description": "Melee Attack Roll: +12, reach 5 ft. Hit: 20 (4d6 + 6) Slashing damage." },
+    { "name": "Roar (3/Day)", "description": "The sphinx emits a magical roar. Whenever it roars, the roar has a different effect, as detailed below (the sequence resets when it takes a Long Rest): First Roar. Wisdom Saving Throw: DC 20, each enemy in a 500-foot Emanation originating from the sphinx. Failure: The target has the Frightened condition for 1 minute. Second Roar. Wisdom Saving Throw: DC 20, each enemy in a 500-foot Emanation originating from the sphinx. Failure: The target has the Paralyzed condition, and it repeats the save at the end of each of its turns, ending the effect on itself on a success. After 1 minute, it succeeds automatically. Third Roar. Constitution Saving Throw: DC 20, each enemy in a 500-foot Emanation originating from the sphinx. Failure: 44 (8d10) Thunder damage, and the target has the Prone condition. Success: Half damage only." },
+    { "name": "Spellcasting", "description": "The sphinx casts one of the following spells, requiring no Material components and using Wisdom as the spellcasting ability (spell save DC 20):\nAt Will: Detect Evil and Good, Thaumaturgy\n1/Day Each: Detect Magic, Dispel Magic, Greater Restoration, Heroes' Feast, Zone of Truth" }
+  ],
+  "legendary_description": "Legendary Action Uses: 3 (4 in Lair). Immediately after another creature's turn, the sphinx can expend a use to take one of the following actions. The sphinx regains all expended uses at the start of each of its turns.",
+  "legendary_actions": [
+    { "name": "Arcane Prowl", "description": "The sphinx can teleport up to 30 feet to an unoccupied space it can see, and it makes one Claw attack." },
+    { "name": "Weight of Years", "description": "Constitution Saving Throw: DC 16, one creature the sphinx can see within 120 feet. Failure: The target gains 1 Exhaustion level. While the target has any Exhaustion levels, it appears 3d10 years older. Failure or Success: The sphinx can't take this action again until the start of its next turn." }
+  ],
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 328 }
+}

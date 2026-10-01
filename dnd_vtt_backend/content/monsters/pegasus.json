@@ -1,0 +1,30 @@
+{
+  "index": "pegasus",
+  "name": "Pegasus",
+  "size": "Large",
+  "type": "celestial",
+  "alignment": "chaotic good",
+  "armor_class": 12,
+  "hit_points": 59,
+  "hit_dice": "7d10 + 21",
+  "speed": { "walk": 60, "fly": 90 },
+  "ability_scores": {
+    "strength": 18,
+    "dexterity": 15,
+    "constitution": 16,
+    "intelligence": 10,
+    "wisdom": 15,
+    "charisma": 13
+  },
+  "initiative_bonus": 2,
+  "saving_throws": { "Dexterity": 4, "Constitution": 5, "Wisdom": 4, "Charisma": 3 },
+  "skills": { "Perception": 6 },
+  "senses": { "passive_perception": 16 },
+  "languages": ["Understands Celestial, Common, Elvish, and Sylvan but can't speak"],
+  "challenge_rating": "2",
+  "xp": 450,
+  "actions": [
+    { "name": "Hooves", "description": "Melee Attack Roll: +6, reach 5 ft. Hit: 7 (1d6 + 4) Bludgeoning damage plus 5 (2d4) Radiant damage." }
+  ],
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 313 }
+}

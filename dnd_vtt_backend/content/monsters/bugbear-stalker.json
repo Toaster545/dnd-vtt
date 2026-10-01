@@ -1,0 +1,39 @@
+{
+  "index": "bugbear-stalker",
+  "name": "Bugbear Stalker",
+  "size": "Medium",
+  "type": "fey (goblinoid)",
+  "alignment": "chaotic evil",
+  "armor_class": 15,
+  "hit_points": 65,
+  "hit_dice": "10d8 + 20",
+  "speed": { "walk": 30 },
+  "ability_scores": {
+    "strength": 17,
+    "dexterity": 14,
+    "constitution": 14,
+    "intelligence": 11,
+    "wisdom": 12,
+    "charisma": 11
+  },
+  "initiative_bonus": 2,
+  "saving_throws": { "Constitution": 4, "Wisdom": 3 },
+  "skills": { "Stealth": 6, "Survival": 3 },
+  "gear": ["Chain Shirt", "Javelins (6)", "Morningstar"],
+  "senses": { "darkvision": 60, "passive_perception": 11 },
+  "languages": ["Common", "Goblin"],
+  "challenge_rating": "3",
+  "xp": 700,
+  "traits": [
+    { "name": "Abduct", "description": "The bugbear needn't spend extra movement to move a creature it is grappling." }
+  ],
+  "actions": [
+    { "name": "Multiattack", "description": "The bugbear makes two Javelin or Morningstar attacks." },
+    { "name": "Javelin", "description": "Melee or Ranged Attack Roll: +5, reach 10 ft. or range 30/120 ft. Hit: 13 (3d6 + 3) Piercing damage." },
+    { "name": "Morningstar", "description": "Melee Attack Roll: +5 (with Advantage if the target is Grappled by the bugbear), reach 10 ft. Hit: 12 (2d8 + 3) Piercing damage." }
+  ],
+  "bonus_actions": [
+    { "name": "Quick Grapple", "description": "Dexterity Saving Throw: DC 13, one Medium or smaller creature the bugbear can see within 10 feet. Failure: The target has the Grappled condition (escape DC 13)." }
+  ],
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 271 }
+}

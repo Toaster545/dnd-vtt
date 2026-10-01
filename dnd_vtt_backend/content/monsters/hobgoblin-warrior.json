@@ -5,7 +5,6 @@
   "type": "fey (goblinoid)",
   "alignment": "lawful evil",
   "armor_class": 18,
-  "armor_class_desc": "half-plate armor, shield",
   "hit_points": 11,
   "hit_dice": "2d8 + 2",
   "speed": { "walk": 30 },
@@ -18,16 +17,18 @@
     "charisma": 9
   },
   "initiative_bonus": 3,
+  "gear": ["Half Plate Armor", "Longbow", "Longsword", "Shield"],
   "senses": { "darkvision": 60, "passive_perception": 10 },
   "languages": ["Common", "Goblin"],
   "challenge_rating": "1/2",
   "xp": 100,
   "traits": [
-    { "name": "Pack Tactics", "description": "The hobgoblin has advantage on an attack roll against a creature if at least one of the hobgoblin's allies is within 5 feet of the creature and the ally doesn't have the Incapacitated condition." }
+    { "name": "Pack Tactics", "description": "The hobgoblin has Advantage on an attack roll against a creature if at least one of the hobgoblin's allies is within 5 feet of the creature and the ally doesn't have the Incapacitated condition." }
   ],
   "actions": [
     { "name": "Longsword", "description": "Melee Attack Roll: +3, reach 5 ft. Hit: 12 (2d10 + 1) Slashing damage." },
     { "name": "Longbow", "description": "Ranged Attack Roll: +3, range 150/600 ft. Hit: 5 (1d8 + 1) Piercing damage plus 7 (3d4) Poison damage." }
   ],
-  "description": "Hobgoblin warriors make up the rank and file of a disciplined warband, coating their arrowheads in a numbing poison and fighting shoulder to shoulder with practiced precision."
+  "description": "Hobgoblin warriors make up the rank and file of a disciplined warband, coating their arrowheads in a numbing poison and fighting shoulder to shoulder with practiced precision.",
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 298 }
 }

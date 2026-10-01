@@ -1,0 +1,32 @@
+{
+  "index": "plesiosaurus",
+  "name": "Plesiosaurus",
+  "size": "Large",
+  "type": "beast (dinosaur)",
+  "alignment": "unaligned",
+  "armor_class": 13,
+  "hit_points": 68,
+  "hit_dice": "8d10 + 24",
+  "speed": { "walk": 20, "swim": 40 },
+  "ability_scores": {
+    "strength": 18,
+    "dexterity": 15,
+    "constitution": 16,
+    "intelligence": 2,
+    "wisdom": 12,
+    "charisma": 5
+  },
+  "initiative_bonus": 2,
+  "skills": { "Perception": 3, "Stealth": 4 },
+  "senses": { "passive_perception": 13 },
+  "languages": [],
+  "challenge_rating": "2",
+  "xp": 450,
+  "traits": [
+    { "name": "Hold Breath", "description": "The plesiosaurus can hold its breath for 1 hour." }
+  ],
+  "actions": [
+    { "name": "Bite", "description": "Melee Attack Roll: +6, reach 10 ft. Hit: 11 (2d6 + 4) Piercing damage." }
+  ],
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 358 }
+}

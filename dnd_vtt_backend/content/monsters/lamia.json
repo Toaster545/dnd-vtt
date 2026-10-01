@@ -1,0 +1,35 @@
+{
+  "index": "lamia",
+  "name": "Lamia",
+  "size": "Large",
+  "type": "fiend",
+  "alignment": "chaotic evil",
+  "armor_class": 13,
+  "hit_points": 97,
+  "hit_dice": "13d10 + 26",
+  "speed": { "walk": 40 },
+  "ability_scores": {
+    "strength": 16,
+    "dexterity": 13,
+    "constitution": 15,
+    "intelligence": 14,
+    "wisdom": 15,
+    "charisma": 16
+  },
+  "initiative_bonus": 1,
+  "skills": { "Deception": 7, "Insight": 4, "Stealth": 5 },
+  "senses": { "darkvision": 60, "passive_perception": 12 },
+  "languages": ["Abyssal", "Common"],
+  "challenge_rating": "4",
+  "xp": 1100,
+  "actions": [
+    { "name": "Multiattack", "description": "The lamia makes two Claw attacks. It can replace one attack with a use of Corrupting Touch." },
+    { "name": "Claw", "description": "Melee Attack Roll: +5, reach 5 ft. Hit: 7 (1d8 + 3) Slashing damage plus 7 (2d6) Psychic damage." },
+    { "name": "Corrupting Touch", "description": "Wisdom Saving Throw: DC 13, one creature the lamia can see within 5 feet. Failure: 13 (3d8) Psychic damage, and the target is cursed for 1 hour. Until the curse ends, the target has the Charmed and Poisoned conditions." },
+    { "name": "Spellcasting", "description": "The lamia casts one of the following spells, requiring no Material components and using Charisma as the spellcasting ability (spell save DC 13):\nAt Will: Disguise Self (can appear as a Large or Medium biped), Minor Illusion\n1/Day Each: Geas, Major Image, Scrying" }
+  ],
+  "bonus_actions": [
+    { "name": "Leap", "description": "The lamia jumps up to 30 feet by spending 10 feet of movement." }
+  ],
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 303 }
+}

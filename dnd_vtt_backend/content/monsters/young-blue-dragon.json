@@ -1,0 +1,33 @@
+{
+  "index": "young-blue-dragon",
+  "name": "Young Blue Dragon",
+  "size": "Large",
+  "type": "dragon (chromatic)",
+  "alignment": "lawful evil",
+  "armor_class": 18,
+  "hit_points": 152,
+  "hit_dice": "16d10 + 64",
+  "speed": { "walk": 40, "burrow": 20, "fly": 80 },
+  "ability_scores": {
+    "strength": 21,
+    "dexterity": 10,
+    "constitution": 19,
+    "intelligence": 14,
+    "wisdom": 13,
+    "charisma": 17
+  },
+  "initiative_bonus": 4,
+  "saving_throws": { "Dexterity": 4, "Wisdom": 5 },
+  "skills": { "Perception": 9, "Stealth": 4 },
+  "damage_immunities": ["lightning"],
+  "senses": { "blindsight": 30, "darkvision": 120, "passive_perception": 19 },
+  "languages": ["Common", "Draconic"],
+  "challenge_rating": "9",
+  "xp": 5000,
+  "actions": [
+    { "name": "Multiattack", "description": "The dragon makes three Rend attacks." },
+    { "name": "Rend", "description": "Melee Attack Roll: +9, reach 10 ft. Hit: 12 (2d6 + 5) Slashing damage plus 5 (1d10) Lightning damage." },
+    { "name": "Lightning Breath (Recharge 5-6)", "description": "Dexterity Saving Throw: DC 16, each creature in a 60-foot-long, 5-foot-wide Line. Failure: 55 (10d10) Lightning damage. Success: Half damage." }
+  ],
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 266 }
+}

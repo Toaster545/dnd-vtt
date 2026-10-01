@@ -1,0 +1,37 @@
+{
+  "index": "shambling-mound",
+  "name": "Shambling Mound",
+  "size": "Large",
+  "type": "plant",
+  "alignment": "unaligned",
+  "armor_class": 15,
+  "hit_points": 110,
+  "hit_dice": "13d10 + 39",
+  "speed": { "walk": 30, "swim": 20 },
+  "ability_scores": {
+    "strength": 18,
+    "dexterity": 8,
+    "constitution": 16,
+    "intelligence": 5,
+    "wisdom": 10,
+    "charisma": 5
+  },
+  "initiative_bonus": -1,
+  "skills": { "Stealth": 3 },
+  "damage_resistances": ["cold", "fire"],
+  "damage_immunities": ["lightning"],
+  "condition_immunities": ["deafened", "exhaustion"],
+  "senses": { "blindsight": 60, "passive_perception": 10 },
+  "languages": [],
+  "challenge_rating": "5",
+  "xp": 1800,
+  "traits": [
+    { "name": "Lightning Absorption", "description": "Whenever the shambling mound is subjected to Lightning damage, it regains a number of Hit Points equal to the Lightning damage dealt." }
+  ],
+  "actions": [
+    { "name": "Multiattack", "description": "The shambling mound makes three Charged Tendril attacks. It can replace one attack with a use of Engulf." },
+    { "name": "Charged Tendril", "description": "Melee Attack Roll: +7, reach 10 ft. Hit: 7 (1d6 + 4) Bludgeoning damage plus 5 (2d4) Lightning damage. If the target is a Medium or smaller creature, the shambling mound pulls the target 5 feet straight toward itself." },
+    { "name": "Engulf", "description": "Strength Saving Throw: DC 15, one Medium or smaller creature within 5 feet. Failure: The target is pulled into the shambling mound's space and has the Grappled condition (escape DC 14). Until the grapple ends, the target has the Blinded and Restrained conditions, and it takes 10 (3d6) Lightning damage at the start of each of its turns. When the shambling mound moves, the Grappled target moves with it, costing it no extra movement. The shambling mound can have only one creature Grappled by this action at a time." }
+  ],
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 323 }
+}

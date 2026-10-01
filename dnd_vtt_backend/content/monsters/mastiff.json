@@ -1,0 +1,30 @@
+{
+  "index": "mastiff",
+  "name": "Mastiff",
+  "size": "Medium",
+  "type": "beast",
+  "alignment": "unaligned",
+  "armor_class": 12,
+  "hit_points": 5,
+  "hit_dice": "1d8 + 1",
+  "speed": { "walk": 40 },
+  "ability_scores": {
+    "strength": 13,
+    "dexterity": 14,
+    "constitution": 12,
+    "intelligence": 3,
+    "wisdom": 12,
+    "charisma": 7
+  },
+  "initiative_bonus": 2,
+  "saving_throws": { "Wisdom": 3 },
+  "skills": { "Perception": 5 },
+  "senses": { "darkvision": 60, "passive_perception": 15 },
+  "languages": [],
+  "challenge_rating": "1/8",
+  "xp": 25,
+  "actions": [
+    { "name": "Bite", "description": "Melee Attack Roll: +3, reach 5 ft. Hit: 4 (1d6 + 1) Piercing damage. If the target is a Medium or smaller creature, it has the Prone condition." }
+  ],
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 357 }
+}

@@ -1,0 +1,33 @@
+{
+  "index": "crocodile",
+  "name": "Crocodile",
+  "size": "Large",
+  "type": "beast",
+  "alignment": "unaligned",
+  "armor_class": 12,
+  "hit_points": 13,
+  "hit_dice": "2d10 + 2",
+  "speed": { "walk": 20, "swim": 30 },
+  "ability_scores": {
+    "strength": 15,
+    "dexterity": 10,
+    "constitution": 13,
+    "intelligence": 2,
+    "wisdom": 10,
+    "charisma": 5
+  },
+  "initiative_bonus": 0,
+  "saving_throws": { "Constitution": 3 },
+  "skills": { "Stealth": 2 },
+  "senses": { "passive_perception": 10 },
+  "languages": [],
+  "challenge_rating": "1/2",
+  "xp": 100,
+  "traits": [
+    { "name": "Hold Breath", "description": "The crocodile can hold its breath for 1 hour." }
+  ],
+  "actions": [
+    { "name": "Bite", "description": "Melee Attack Roll: +4, reach 5 ft. Hit: 6 (1d8 + 2) Piercing damage. If the target is a Medium or smaller creature, it has the Grappled condition (escape DC 12). While Grappled, the target has the Restrained condition." }
+  ],
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 347 }
+}

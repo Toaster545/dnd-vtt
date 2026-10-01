@@ -1,0 +1,36 @@
+{
+  "index": "white-dragon-wyrmling",
+  "name": "White Dragon Wyrmling",
+  "size": "Medium",
+  "type": "dragon (chromatic)",
+  "alignment": "chaotic evil",
+  "armor_class": 16,
+  "hit_points": 32,
+  "hit_dice": "5d8 + 10",
+  "speed": { "walk": 30, "burrow": 15, "fly": 60, "swim": 30 },
+  "ability_scores": {
+    "strength": 14,
+    "dexterity": 10,
+    "constitution": 14,
+    "intelligence": 5,
+    "wisdom": 10,
+    "charisma": 11
+  },
+  "initiative_bonus": 2,
+  "saving_throws": { "Dexterity": 2, "Wisdom": 2 },
+  "skills": { "Perception": 4, "Stealth": 2 },
+  "damage_immunities": ["cold"],
+  "senses": { "blindsight": 10, "darkvision": 60, "passive_perception": 14 },
+  "languages": ["Draconic"],
+  "challenge_rating": "2",
+  "xp": 450,
+  "traits": [
+    { "name": "Ice Walk", "description": "The dragon can move across and climb icy surfaces without needing to make an ability check. Additionally, Difficult Terrain composed of ice or snow doesn't cost it extra movement." }
+  ],
+  "actions": [
+    { "name": "Multiattack", "description": "The dragon makes two Rend attacks." },
+    { "name": "Rend", "description": "Melee Attack Roll: +4, reach 5 ft. Hit: 6 (1d8 + 2) Slashing damage plus 2 (1d4) Cold damage." },
+    { "name": "Cold Breath (Recharge 5-6)", "description": "Constitution Saving Throw: DC 12, each creature in a 15-foot Cone. Failure: 22 (5d8) Cold damage. Success: Half damage." }
+  ],
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 339 }
+}

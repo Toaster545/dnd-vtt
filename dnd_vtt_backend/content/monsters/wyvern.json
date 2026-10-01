@@ -1,0 +1,31 @@
+{
+  "index": "wyvern",
+  "name": "Wyvern",
+  "size": "Large",
+  "type": "dragon",
+  "alignment": "unaligned",
+  "armor_class": 14,
+  "hit_points": 127,
+  "hit_dice": "15d10 + 45",
+  "speed": { "walk": 30, "fly": 80 },
+  "ability_scores": {
+    "strength": 19,
+    "dexterity": 10,
+    "constitution": 16,
+    "intelligence": 5,
+    "wisdom": 12,
+    "charisma": 6
+  },
+  "initiative_bonus": 0,
+  "skills": { "Perception": 4 },
+  "senses": { "darkvision": 120, "passive_perception": 14 },
+  "languages": [],
+  "challenge_rating": "6",
+  "xp": 2300,
+  "actions": [
+    { "name": "Multiattack", "description": "The wyvern makes one Bite attack and one Sting attack." },
+    { "name": "Bite", "description": "Melee Attack Roll: +7, reach 5 ft. Hit: 13 (2d8 + 4) Piercing damage." },
+    { "name": "Sting", "description": "Melee Attack Roll: +7, reach 10 ft. Hit: 11 (2d6 + 4) Piercing damage plus 24 (7d6) Poison damage, and the target has the Poisoned condition until the start of the wyvern's next turn." }
+  ],
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 343 }
+}

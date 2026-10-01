@@ -1,0 +1,33 @@
+{
+  "index": "red-dragon-wyrmling",
+  "name": "Red Dragon Wyrmling",
+  "size": "Medium",
+  "type": "dragon (chromatic)",
+  "alignment": "chaotic evil",
+  "armor_class": 17,
+  "hit_points": 75,
+  "hit_dice": "10d8 + 30",
+  "speed": { "walk": 30, "climb": 30, "fly": 60 },
+  "ability_scores": {
+    "strength": 19,
+    "dexterity": 10,
+    "constitution": 17,
+    "intelligence": 12,
+    "wisdom": 11,
+    "charisma": 15
+  },
+  "initiative_bonus": 2,
+  "saving_throws": { "Dexterity": 2, "Wisdom": 2 },
+  "skills": { "Perception": 4, "Stealth": 2 },
+  "damage_immunities": ["fire"],
+  "senses": { "blindsight": 10, "darkvision": 60, "passive_perception": 14 },
+  "languages": ["Draconic"],
+  "challenge_rating": "4",
+  "xp": 1100,
+  "actions": [
+    { "name": "Multiattack", "description": "The dragon makes two Rend attacks." },
+    { "name": "Rend", "description": "Melee Attack Roll: +6, reach 5 ft. Hit: 9 (1d10 + 4) Slashing damage plus 3 (1d6) Fire damage." },
+    { "name": "Fire Breath (Recharge 5-6)", "description": "Dexterity Saving Throw: DC 13, each creature in a 15-foot Cone. Failure: 24 (7d6) Fire damage. Success: Half damage." }
+  ],
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 318 }
+}

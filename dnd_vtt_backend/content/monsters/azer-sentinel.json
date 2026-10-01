@@ -1,0 +1,35 @@
+{
+  "index": "azer-sentinel",
+  "name": "Azer Sentinel",
+  "size": "Medium",
+  "type": "elemental",
+  "alignment": "lawful neutral",
+  "armor_class": 17,
+  "hit_points": 39,
+  "hit_dice": "6d8 + 12",
+  "speed": { "walk": 30 },
+  "ability_scores": {
+    "strength": 17,
+    "dexterity": 12,
+    "constitution": 15,
+    "intelligence": 12,
+    "wisdom": 13,
+    "charisma": 10
+  },
+  "initiative_bonus": 1,
+  "saving_throws": { "Constitution": 4 },
+  "damage_immunities": ["fire", "poison"],
+  "condition_immunities": ["poisoned"],
+  "senses": { "passive_perception": 11 },
+  "languages": ["Primordial (Ignan)"],
+  "challenge_rating": "2",
+  "xp": 450,
+  "traits": [
+    { "name": "Fire Aura", "description": "At the end of each of the azer's turns, each creature of the azer's choice in a 5-foot Emanation originating from the azer takes 5 (1d10) Fire damage unless the azer has the Incapacitated condition." },
+    { "name": "Illumination", "description": "The azer sheds Bright Light in a 10-foot radius and Dim Light for an additional 10 feet." }
+  ],
+  "actions": [
+    { "name": "Burning Hammer", "description": "Melee Attack Roll: +5, reach 5 ft. Hit: 8 (1d10 + 3) Bludgeoning damage plus 3 (1d6) Fire damage." }
+  ],
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 261 }
+}

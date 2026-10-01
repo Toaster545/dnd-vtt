@@ -1,0 +1,32 @@
+{
+  "index": "scout",
+  "name": "Scout",
+  "size": "Medium or Small",
+  "type": "humanoid",
+  "alignment": "neutral",
+  "armor_class": 13,
+  "hit_points": 16,
+  "hit_dice": "3d8 + 3",
+  "speed": { "walk": 30 },
+  "ability_scores": {
+    "strength": 11,
+    "dexterity": 14,
+    "constitution": 12,
+    "intelligence": 11,
+    "wisdom": 13,
+    "charisma": 11
+  },
+  "initiative_bonus": 2,
+  "skills": { "Nature": 4, "Perception": 5, "Stealth": 6, "Survival": 5 },
+  "gear": ["Leather Armor", "Longbow", "Shortsword"],
+  "senses": { "passive_perception": 15 },
+  "languages": ["Common plus one other language"],
+  "challenge_rating": "1/2",
+  "xp": 100,
+  "actions": [
+    { "name": "Multiattack", "description": "The scout makes two attacks, using Shortsword and Longbow in any combination." },
+    { "name": "Shortsword", "description": "Melee Attack Roll: +4, reach 5 ft. Hit: 5 (1d6 + 2) Piercing damage." },
+    { "name": "Longbow", "description": "Ranged Attack Roll: +4, range 150/600 ft. Hit: 6 (1d8 + 2) Piercing damage." }
+  ],
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 322 }
+}

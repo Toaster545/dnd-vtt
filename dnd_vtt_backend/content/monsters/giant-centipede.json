@@ -1,0 +1,28 @@
+{
+  "index": "giant-centipede",
+  "name": "Giant Centipede",
+  "size": "Small",
+  "type": "beast",
+  "alignment": "unaligned",
+  "armor_class": 14,
+  "hit_points": 9,
+  "hit_dice": "2d6 + 2",
+  "speed": { "walk": 30, "climb": 30 },
+  "ability_scores": {
+    "strength": 5,
+    "dexterity": 14,
+    "constitution": 12,
+    "intelligence": 1,
+    "wisdom": 7,
+    "charisma": 3
+  },
+  "initiative_bonus": 2,
+  "senses": { "blindsight": 30, "passive_perception": 8 },
+  "languages": [],
+  "challenge_rating": "1/4",
+  "xp": 50,
+  "actions": [
+    { "name": "Bite", "description": "Melee Attack Roll: +4, reach 5 ft. Hit: 4 (1d4 + 2) Piercing damage, and the target has the Poisoned condition until the start of the centipede's next turn." }
+  ],
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 349 }
+}

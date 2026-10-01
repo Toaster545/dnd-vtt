@@ -7,7 +7,7 @@
   "armor_class": 14,
   "hit_points": 200,
   "hit_dice": "16d12 + 96",
-  "speed": { "walk": 40 },
+  "speed": { "walk": 40, "fly": 20, "hover": true },
   "ability_scores": {
     "strength": 27,
     "dexterity": 10,
@@ -16,21 +16,22 @@
     "wisdom": 16,
     "charisma": 16
   },
-  "initiative_bonus": 0,
-  "saving_throws": { "Constitution": 10, "Wisdom": 7, "Charisma": 7 },
-  "skills": { "Insight": 7, "Perception": 7, "Persuasion": 7 },
-  "senses": { "passive_perception": 17 },
+  "initiative_bonus": 4,
+  "saving_throws": { "Constitution": 10, "Wisdom": 7 },
+  "skills": { "Insight": 7, "Perception": 11 },
+  "senses": { "passive_perception": 21 },
   "languages": ["Common", "Giant"],
   "challenge_rating": "9",
   "xp": 5000,
-  "traits": [
-    { "name": "Keen Smell", "description": "The giant has advantage on Wisdom (Perception) checks that rely on smell." },
-    { "name": "Innate Spellcasting", "description": "The giant's innate spellcasting ability is Charisma. It can innately cast the following spells, requiring no material components: At will: Detect Magic, Fog Cloud, Light. 3/Day Each: Feather Fall, Fly, Misty Step. 1/Day Each: Control Weather, Telekinesis." }
-  ],
   "actions": [
-    { "name": "Multiattack", "description": "The giant makes two Morningstar attacks or two Rock attacks." },
-    { "name": "Morningstar", "description": "Melee Attack Roll: +12, reach 10 ft. Hit: 21 (3d8 + 8) Piercing damage." },
-    { "name": "Rock", "description": "Ranged Attack Roll: +12, range 60/240 ft. Hit: 30 (4d10 + 8) Bludgeoning damage." }
+    { "name": "Multiattack", "description": "The giant makes two attacks, using Thunderous Mace or Thundercloud in any combination. It can replace one attack with a use of Spellcasting to cast Fog Cloud." },
+    { "name": "Thunderous Mace", "description": "Melee Attack Roll: +12, reach 10 ft. Hit: 21 (3d8 + 8) Bludgeoning damage plus 7 (2d6) Thunder damage." },
+    { "name": "Thundercloud", "description": "Ranged Attack Roll: +12, range 240 ft. Hit: 18 (3d6 + 8) Thunder damage, and the target has the Incapacitated condition until the end of its next turn." },
+    { "name": "Spellcasting", "description": "The giant casts one of the following spells, requiring no Material components and using Charisma as the spellcasting ability (spell save DC 15):\nAt Will: Detect Magic, Fog Cloud, Light\n1/Day Each: Control Weather, Gaseous Form, Telekinesis" }
   ],
-  "description": "Cloud giants dwell in castles hidden amid the clouds, courtly and capricious hosts whose innate magic lets them vanish in a blink and shape the weather to their whims."
+  "bonus_actions": [
+    { "name": "Misty Step", "description": "The giant casts the Misty Step spell, using the same spellcasting ability as Spellcasting." }
+  ],
+  "description": "Cloud giants dwell in castles hidden amid the clouds, courtly and capricious hosts whose innate magic lets them vanish in a blink and shape the weather to their whims.",
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 275 }
 }

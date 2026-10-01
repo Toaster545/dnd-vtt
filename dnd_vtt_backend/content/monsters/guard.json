@@ -1,0 +1,30 @@
+{
+  "index": "guard",
+  "name": "Guard",
+  "size": "Medium or Small",
+  "type": "humanoid",
+  "alignment": "neutral",
+  "armor_class": 16,
+  "hit_points": 11,
+  "hit_dice": "2d8 + 2",
+  "speed": { "walk": 30 },
+  "ability_scores": {
+    "strength": 13,
+    "dexterity": 12,
+    "constitution": 12,
+    "intelligence": 10,
+    "wisdom": 11,
+    "charisma": 10
+  },
+  "initiative_bonus": 1,
+  "skills": { "Perception": 2 },
+  "gear": ["Chain Shirt", "Shield", "Spear"],
+  "senses": { "passive_perception": 12 },
+  "languages": ["Common"],
+  "challenge_rating": "1/8",
+  "xp": 25,
+  "actions": [
+    { "name": "Spear", "description": "Melee or Ranged Attack Roll: +3, reach 5 ft. or range 20/60 ft. Hit: 4 (1d6 + 1) Piercing damage." }
+  ],
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 296 }
+}

@@ -1,6 +1,7 @@
 import { Component, HostListener, input, output } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { DndItem, DndMonster, DndSpell, itemDisplayName } from '../../../core/services/content.service';
+import { monsterSpeedText } from '../../../core/utils/monster-speed';
 
 @Component({
   selector: 'app-content-detail-dialog',
@@ -18,19 +19,7 @@ export class ContentDetailDialogComponent {
     this.closed.emit();
   }
 
-  speedText(monster: DndMonster): string {
-    const labels: Record<keyof DndMonster['speed'], string> = {
-      walk: 'Walk',
-      fly: 'Fly',
-      swim: 'Swim',
-      climb: 'Climb',
-      burrow: 'Burrow',
-    };
-    return (Object.entries(monster.speed) as [keyof DndMonster['speed'], number | undefined][])
-      .filter((entry): entry is [keyof DndMonster['speed'], number] => typeof entry[1] === 'number')
-      .map(([kind, distance]) => `${labels[kind]} ${distance} ft.`)
-      .join(', ');
-  }
+  readonly speedText = monsterSpeedText;
 
   modifier(score: number): string {
     const value = Math.floor((score - 10) / 2);

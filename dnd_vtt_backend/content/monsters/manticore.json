@@ -5,7 +5,6 @@
   "type": "monstrosity",
   "alignment": "lawful evil",
   "armor_class": 14,
-  "armor_class_desc": "natural armor",
   "hit_points": 68,
   "hit_dice": "8d10 + 24",
   "speed": { "walk": 30, "fly": 50 },
@@ -22,12 +21,11 @@
   "languages": ["Common"],
   "challenge_rating": "3",
   "xp": 700,
-  "traits": [],
   "actions": [
-    { "name": "Multiattack", "description": "The manticore makes three attacks: one with its Bite and two with its Claws, or three with its Tail Spike." },
-    { "name": "Bite", "description": "Melee Attack Roll: +5, reach 5 ft. Hit: 7 (1d8 + 3) Piercing damage." },
-    { "name": "Claw", "description": "Melee Attack Roll: +5, reach 5 ft. Hit: 6 (1d6 + 3) Slashing damage." },
-    { "name": "Tail Spike", "description": "Ranged Attack Roll: +5, range 100/200 ft. Hit: 7 (1d8 + 3) Piercing damage. The manticore has 24 spikes, which regrow at a rate of 1d6 + 2 per day." }
+    { "name": "Multiattack", "description": "The manticore makes three attacks, using Rend or Tail Spike in any combination." },
+    { "name": "Rend", "description": "Melee Attack Roll: +5, reach 5 ft. Hit: 7 (1d8 + 3) Slashing damage." },
+    { "name": "Tail Spike", "description": "Ranged Attack Roll: +5, range 100/200 ft. Hit: 7 (1d8 + 3) Piercing damage." }
   ],
-  "description": "Manticores are lion-bodied, bat-winged predators with a spiked tail that hunt from the air, raining volleys of barbed spikes before closing in with bite and claw."
+  "description": "Manticores are lion-bodied, bat-winged predators with a spiked tail that hunt from the air, raining volleys of barbed spikes before closing in with bite and claw.",
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 306 }
 }

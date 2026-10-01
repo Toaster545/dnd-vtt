@@ -1,0 +1,45 @@
+{
+  "index": "ancient-silver-dragon",
+  "name": "Ancient Silver Dragon",
+  "size": "Gargantuan",
+  "type": "dragon (metallic)",
+  "alignment": "lawful good",
+  "armor_class": 22,
+  "hit_points": 468,
+  "hit_dice": "24d20 + 216",
+  "speed": { "walk": 40, "fly": 80 },
+  "ability_scores": {
+    "strength": 30,
+    "dexterity": 10,
+    "constitution": 29,
+    "intelligence": 18,
+    "wisdom": 15,
+    "charisma": 26
+  },
+  "initiative_bonus": 14,
+  "saving_throws": { "Dexterity": 7, "Wisdom": 9 },
+  "skills": { "History": 11, "Perception": 16, "Stealth": 7 },
+  "damage_immunities": ["cold"],
+  "senses": { "blindsight": 60, "darkvision": 120, "passive_perception": 26 },
+  "languages": ["Common", "Draconic"],
+  "challenge_rating": "23",
+  "xp": 50000,
+  "xp_in_lair": 62000,
+  "traits": [
+    { "name": "Legendary Resistance (4/Day, or 5/Day in Lair)", "description": "If the dragon fails a saving throw, it can choose to succeed instead." }
+  ],
+  "actions": [
+    { "name": "Multiattack", "description": "The dragon makes three Rend attacks. It can replace one attack with a use of (A) Paralyzing Breath or (B) Spellcasting to cast Ice Knife (level 2 version)." },
+    { "name": "Rend", "description": "Melee Attack Roll: +17, reach 15 ft. Hit: 19 (2d8 + 10) Slashing damage plus 9 (2d8) Cold damage." },
+    { "name": "Cold Breath (Recharge 5-6)", "description": "Constitution Saving Throw: DC 24, each creature in a 90-foot Cone. Failure: 67 (15d8) Cold damage. Success: Half damage." },
+    { "name": "Paralyzing Breath", "description": "Constitution Saving Throw: DC 24, each creature in a 90-foot Cone. First Failure: The target has the Incapacitated condition until the end of its next turn, when it repeats the save. Second Failure: The target has the Paralyzed condition, and it repeats the save at the end of each of its turns, ending the effect on itself on a success. After 1 minute, it succeeds automatically." },
+    { "name": "Spellcasting", "description": "The dragon casts one of the following spells, requiring no Material components and using Charisma as the spellcasting ability (spell save DC 23, +15 to hit with spell attacks):\nAt Will: Detect Magic, Hold Monster, Ice Knife (level 2 version), Shapechange (Beast or Humanoid form only, no Temporary Hit Points gained from the spell, and no Concentration or Temporary Hit Points required to maintain the spell)\n1/Day Each: Control Weather, Ice Storm (level 7 version), Teleport, Zone of Truth" }
+  ],
+  "legendary_description": "Legendary Action Uses: 3 (4 in Lair). Immediately after another creature's turn, the dragon can expend a use to take one of the following actions. The dragon regains all expended uses at the start of each of its turns.",
+  "legendary_actions": [
+    { "name": "Chill", "description": "The dragon uses Spellcasting to cast Hold Monster. The dragon can't take this action again until the start of its next turn." },
+    { "name": "Cold Gale", "description": "Dexterity Saving Throw: DC 23, each creature in a 60-foot-long, 10-foot-wide Line. Failure: 14 (4d6) Cold damage, and the target is pushed up to 30 feet straight away from the dragon. Success: Half damage only. Failure or Success: The dragon can't take this action again until the start of its next turn." },
+    { "name": "Pounce", "description": "The dragon moves up to half its Speed, and it makes one Rend attack." }
+  ],
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 325 }
+}
