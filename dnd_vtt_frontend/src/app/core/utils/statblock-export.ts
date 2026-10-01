@@ -54,7 +54,7 @@ function fence(doc: Record<string, YamlValue | undefined>): string {
   return '```statblock\n' + toYaml(doc) + '\n```\n';
 }
 
-type NamedBlock = { name: string; desc: string };
+interface NamedBlock { [key: string]: string; name: string; desc: string }
 
 // Empty lists are dropped rather than written as `[]` so the plugin doesn't render empty headers.
 function list<T>(items: T[] | undefined): T[] | undefined {
