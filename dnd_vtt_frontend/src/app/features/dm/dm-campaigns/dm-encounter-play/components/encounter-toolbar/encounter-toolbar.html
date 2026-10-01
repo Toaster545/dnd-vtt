@@ -13,7 +13,12 @@
         <mat-icon>skip_previous</mat-icon>
       </button>
       <span class="text-sm font-brand text-gold whitespace-nowrap px-1">
-        {{ currentTurnToken() ? currentTurnToken()!.label + '’s Turn' : 'Turn Order' }}
+        @if (currentTurnToken(); as turnToken) {
+          <span class="text-slate">Round {{ encounter().round_number ?? 1 }} ·</span>
+          {{ turnToken.label }}’s Turn
+        } @else {
+          Turn Order
+        }
       </span>
       <button class="btn-icon" [disabled]="togglingTurn()"
               (click)="nextTurn.emit()" [matTooltip]="currentTurnToken() ? 'Next turn' : 'Start turn order'">

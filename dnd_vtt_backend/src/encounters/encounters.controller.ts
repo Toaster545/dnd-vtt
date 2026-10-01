@@ -45,6 +45,11 @@ export class EncountersController {
     return this.encounters.findPlayerState(id, user);
   }
 
+  @Get(':id/turn-order')
+  turnOrder(@Param('id') id: string, @CurrentUser() user: RequestUser) {
+    return this.encounters.findTurnOrder(id, user);
+  }
+
   // Player side: which level of a multi-level encounter this player's character is on.
   @Get(':id/my-level')
   myLevel(@Param('id') id: string, @CurrentUser() user: RequestUser) {

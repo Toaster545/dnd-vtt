@@ -6,6 +6,7 @@ import {
   Encounter, EncounterStartedEvent, MyEncounterLevel, PartyLeveledEvent, PresentPlayer, TurnState,
 } from '../models/encounter.model';
 import { AvatarRecipeV1 } from '../models/avatar.model';
+import { MapToken } from '../models/campaign.model';
 import { SocketService } from './socket.service';
 
 const API = environment.apiUrl;
@@ -150,6 +151,35 @@ export class EncounterService {
 
       return () => {
         socket.off('turn_changed', handleUpdate);
+      };
+    });
+  }
+
+  // Every token across all of the encounter's levels, highest initiative first — already filtered
+  // server-side to what a player may see.
+  getTurnOrder(id: string): Promise<MapToken[]> {
+    return firstValueFrom(this.http.get<MapToken[]>(`${API}/encounters/${id}/turn-order`));
+  }
+
+  // getTurnOrder, refetched whenever a token changes on any level (or the level list itself
+  // changes) and after a reconnect. Same room caveat as watchTurnState.
+  watchTurnOrder(encounterId: string): Observable<MapToken[]> {
+    return new Observable(observer => {
+      const socket = this.socketService.socket;
+      const refetch = () => {
+        this.getTurnOrder(encounterId).then(tokens => observer.next(tokens), () => {});
+      };
+      const handleChange = (event: { encounterId: string }) => {
+        if (event.encounterId === encounterId) refetch();
+      };
+      this.socketService.connect();
+      socket.on('encounter_tokens_changed', handleChange);
+      socket.on('connect', refetch);
+      refetch();
+
+      return () => {
+        socket.off('encounter_tokens_changed', handleChange);
+        socket.off('connect', refetch);
       };
     });
   }

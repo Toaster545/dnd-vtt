@@ -52,6 +52,11 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
   readonly characterHp = input<Record<string, { hp: number; max_hp: number }>>({});
   readonly characterPortraits = input<Record<string, PortraitSource>>({});
   readonly currentTurnTokenId = input<string | null>(null);
+  // An encounter's tokens across all of its levels (see EncounterService.watchTurnOrder). When
+  // set, the turn order panel lists these instead of just this map's own tokens.
+  readonly turnOrderTokens = input<MapToken[] | null>(null);
+  // Player screens hold the turn order back until round 2 — see PlayerCampaignSessionComponent.
+  readonly showTurnOrder = input(true);
   readonly myCharacterId = input<string | null>(null);
   readonly myMoveSpeedFt = input<number | null>(null);
   // Personal, not shared — only ever set on the viewing player's own component instance (see
@@ -337,7 +342,7 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
   private moveRangeFt = computed(() => this.myMoveSpeedFt() ?? 0);
 
   turnOrder = computed(() => {
-    return [...this.tokens()].sort((a, b) => {
+    return [...(this.turnOrderTokens() ?? this.tokens())].sort((a, b) => {
       if (a.initiative == null && b.initiative == null) return 0;
       if (a.initiative == null) return 1;
       if (b.initiative == null) return -1;
@@ -345,8 +350,14 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   });
 
+  // The read-only (player-facing) turn order column: allowed by the host, and not collapsed by
+  // the player — a sheet-less viewer has no collapse control, so it's always open for them.
+  turnColumnVisible = computed(() =>
+    this.showTurnOrder() && (this.showTurnColumn() || !this.myCharacter())
+  );
+
   currentTurnToken = computed(() =>
-    this.tokens().find(t => t.id === this.currentTurnTokenId()) ?? null
+    this.turnOrder().find(t => t.id === this.currentTurnTokenId()) ?? null
   );
 
   private stage?: Konva.Stage;
@@ -860,7 +871,7 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
 
   async removeToken(token: MapToken) {
     if (!await this.confirm.confirm(`Remove "${token.label ?? 'this token'}" from the map?`, 'Remove Token', 'Remove')) return;
-    await this.mapService.deleteToken(token.id!, this.mapId);
+    await this.mapService.deleteToken(token.id!, token.map_id ?? this.mapId);
   }
 
   async setInitiative(token: MapToken, raw: string) {
@@ -872,7 +883,7 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   async rerollInitiative(token: MapToken) {
-    await this.mapService.rerollInitiative(this.mapId, token.id!);
+    await this.mapService.rerollInitiative(token.map_id ?? this.mapId, token.id!);
   }
 
   private async addTokenAt(col: number, row: number) {

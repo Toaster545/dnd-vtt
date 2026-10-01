@@ -10,6 +10,7 @@ import { DatabaseService } from '../common/database.service';
 import { CreateEncounterDto } from './dto/create-encounter.dto';
 import { EncounterPresenceGateway } from './encounter-presence.gateway';
 import type { RequestUser } from '../common/current-user.decorator';
+import { serializePlayerTokens } from '../maps/player-tokens';
 
 export interface EncounterLevel {
   map_id: string;
@@ -117,13 +118,23 @@ export class EncountersService {
     };
   }
 
-  // The DM's per-character level choices that are still valid: the level is still part of the
-  // encounter and the character still has a token on it.
+  // The level each character's player is shown: the level their token is on (a character has
+  // at most one token per encounter, see MapsService.upsertToken), unless the DM explicitly
+  // switched them to another level they also have a token on — only possible for encounters
+  // set up before that rule, which can still hold duplicates.
   private async playerLevels(
     encounterId: string,
     characterId?: string,
   ): Promise<Record<string, string>> {
-    const result = await this.db.execute(
+    const tokens = await this.db.execute(
+      `SELECT t.character_id, t.map_id FROM map_tokens t
+       JOIN encounter_levels el ON el.map_id = t.map_id
+       WHERE el.encounter_id = ? AND t.character_id IS NOT NULL
+         AND (? IS NULL OR t.character_id = ?)
+       ORDER BY el.position DESC`,
+      [encounterId, characterId ?? null, characterId ?? null],
+    );
+    const explicit = await this.db.execute(
       `SELECT pl.character_id, pl.map_id FROM encounter_player_levels pl
        JOIN encounter_levels el
          ON el.encounter_id = pl.encounter_id AND el.map_id = pl.map_id
@@ -133,8 +144,12 @@ export class EncountersService {
                      WHERE t.map_id = pl.map_id AND t.character_id = pl.character_id)`,
       [encounterId, characterId ?? null, characterId ?? null],
     );
+    // Deepest level first, so with legacy duplicates the shallowest one wins.
     return Object.fromEntries(
-      result.rows.map((r) => [r.character_id as string, r.map_id as string]),
+      [...tokens.rows, ...explicit.rows].map((r) => [
+        r.character_id as string,
+        r.map_id as string,
+      ]),
     );
   }
 
@@ -248,6 +263,7 @@ export class EncountersService {
         args: [unique[0] ?? null, encounterId],
       },
     ]);
+    this.presence.notifyTokensChanged(encounterId);
   }
 
   // The level this player is shown: the one the DM switched their campaign character to (see
@@ -314,6 +330,15 @@ export class EncountersService {
       round_number: Number(row.round_number ?? 1),
       updated_at: row.updated_at,
     };
+  }
+
+  // Every token on every level of the encounter, in turn order (see getTurnOrderIds) — the side
+  // panel's turn order shouldn't stop at whichever level the viewer happens to be looking at.
+  async findTurnOrder(id: string, user: RequestUser) {
+    const state = await this.findPlayerState(id, user); // access check
+    const isDm = 'dm_id' in state && state.dm_id === user.id;
+    const tokens = await this.turnOrderTokens(id);
+    return isDm ? tokens : serializePlayerTokens(tokens);
   }
 
   async create(dmId: string, dto: CreateEncounterDto) {
@@ -494,16 +519,35 @@ export class EncountersService {
 
   // Tokens on every level of the encounter — combat doesn't stop at the stairs — ordered the
   // same way the frontend's own `turnOrder` computed sorts them (battle-map.ts): highest
-  // initiative first, unrolled (null) tokens last.
-  private async getTurnOrderIds(encounterId: string): Promise<string[]> {
+  // initiative first, unrolled (null) tokens last. A character takes one turn no matter how many
+  // tokens it has, so only the token on its player's level counts (see playerLevels).
+  private async turnOrderTokens(encounterId: string) {
     const result = await this.db.execute(
-      `SELECT t.id FROM map_tokens t
+      `SELECT t.* FROM map_tokens t
        JOIN encounter_levels el ON el.map_id = t.map_id
        WHERE el.encounter_id = ?
        ORDER BY (t.initiative IS NULL) ASC, t.initiative DESC`,
       [encounterId],
     );
-    return result.rows.map((r) => r.id as string);
+    const levels = await this.playerLevels(encounterId);
+    const seen = new Set<string>();
+    return result.rows
+      .filter((t) => {
+        const characterId = t.character_id as string | null;
+        if (!characterId) return true;
+        if (t.map_id !== levels[characterId] || seen.has(characterId))
+          return false;
+        seen.add(characterId);
+        return true;
+      })
+      .map((t) => ({
+        ...(t as Record<string, unknown>),
+        is_player: !!t.is_player,
+      })) as (Record<string, unknown> & { is_player: boolean })[];
+  }
+
+  private async getTurnOrderIds(encounterId: string): Promise<string[]> {
+    return (await this.turnOrderTokens(encounterId)).map((t) => t.id as string);
   }
 
   async nextTurn(id: string, dmId: string) {
@@ -543,6 +587,9 @@ export class EncountersService {
     const currentId = encounter.current_turn_token_id as string | null;
     const idx = currentId ? order.indexOf(currentId) : -1;
     let round = encounter.round_number;
+    // Round 1 begins with the first turn, so stepping back from it un-starts the turn order
+    // instead of wrapping to the last token of a round that never happened.
+    if (idx <= 0 && round <= 1) return this.applyTurn(id, dmId, null, 1);
     let prevIdx: number;
     if (idx <= 0) {
       prevIdx = order.length - 1;
@@ -557,7 +604,7 @@ export class EncountersService {
   private async applyTurn(
     id: string,
     dmId: string,
-    tokenId: string,
+    tokenId: string | null,
     round: number,
   ) {
     await this.db.execute(

@@ -123,7 +123,8 @@
                   <p class="text-danger text-xs mt-1 mb-0">{{ err }}</p>
                 }
                 <p class="text-xs text-slate mt-2 mb-0">
-                  To move a player to another level, place their token there first, then click it and switch them.
+                  A character is on one level at a time — placing them on another level moves their token
+                  there, and their player follows.
                 </p>
               </div>
             } @else if (levels().length > 1) {
@@ -148,6 +149,7 @@
           <app-battle-map [mapIdInput]="mapId" [embedded]="true" [canControl]="isOwner()" [placingEntity]="armedEntity()"
             [characterHp]="characterHp()" [characterPortraits]="characterPortraits()"
             [currentTurnTokenId]="encounter.current_turn_token_id ?? null"
+            [turnOrderTokens]="turnOrderTokens()"
             (tokenClicked)="onTokenClicked($event)" (currentTurnTokenChanged)="currentTurnToken.set($event)"
             class="flex-1 min-w-0" />
         } @else {

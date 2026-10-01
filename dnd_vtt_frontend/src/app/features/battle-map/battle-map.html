@@ -84,9 +84,9 @@
            They float over the map (rather than sitting in the flex row) so a collapsed
            column gives all of its width back to the map, and sit just under the
            view-controls cluster in the same top-right corner, matching its styling. -->
-      @if (map() && myCharacter() && (!showTurnColumn() || !showSheetColumn())) {
+      @if (map() && myCharacter() && ((showTurnOrder() && !showTurnColumn()) || !showSheetColumn())) {
         <div class="absolute right-2 top-14 z-10 flex flex-col gap-1 bg-surface/90 rounded p-1 border border-white/10">
-          @if (!showTurnColumn()) {
+          @if (showTurnOrder() && !showTurnColumn()) {
             <button type="button" class="btn-icon w-8 h-8 text-slate hover:text-parchment"
                     (click)="toggleTurnColumn()" matTooltip="Show turn order">
               <mat-icon class="text-base">format_list_numbered</mat-icon>
@@ -165,15 +165,15 @@
           />
         </div>
       </aside>
-    } @else if (map() && (tokens().length > 0 || myCharacter())) {
+    } @else if (map() && ((showTurnOrder() && turnOrder().length > 0) || myCharacter())) {
       <!-- Turn order + character sheet, each with its own resize handle and persisted
            width. A collapsed column is not rendered at all, so it gives its width back
            to the map; its re-open control is a tab floating over the map's right edge
            (see the .absolute stack inside the map container above). -->
-      @if ((showTurnColumn() || !myCharacter()) || (myCharacter() && showSheetColumn())) {
+      @if (turnColumnVisible() || (myCharacter() && showSheetColumn())) {
         <aside class="border-l border-white/10 flex-shrink-0 bg-surface flex min-h-0 overflow-hidden">
 
-          @if (showTurnColumn() || !myCharacter()) {
+          @if (turnColumnVisible()) {
             <div appResizeHandle (resizeDrag)="onTurnColResize($event)"
                  class="w-1.5 flex-shrink-0 hover:bg-gold/40 active:bg-gold/60 transition-colors"></div>
             <div [style.width.px]="turnColWidth()" class="flex-shrink-0 flex flex-col min-h-0 border-r border-white/10">

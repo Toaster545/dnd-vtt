@@ -176,6 +176,14 @@ export class EncounterPresenceGateway
       .emit('turn_changed', state);
   }
 
+  // The encounter's level list changed, so its cross-level turn order did too — same event
+  // TokensGateway sends when a token changes on one of the levels.
+  notifyTokensChanged(encounterId: string) {
+    this.server
+      .to(`encounter-presence:${encounterId}`)
+      .emit('encounter_tokens_changed', { encounterId });
+  }
+
   // Global broadcast (no room) so any connected player's client can decide for itself whether the
   // encounter belongs to one of their own campaigns and surface a "join now" alert — this app is
   // single-server/self-hosted at a small scale (see CLAUDE.md), so there's no need for per-campaign

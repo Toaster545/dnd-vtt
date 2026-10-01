@@ -96,6 +96,10 @@ export class DmEncounterPlayComponent implements OnInit, OnDestroy {
   presentPlayers = signal<PresentPlayer[]>([]);
   private presenceSub?: Subscription;
 
+  // Every level's tokens, so the side panel's turn order covers the whole encounter.
+  turnOrderTokens = signal<MapToken[] | null>(null);
+  private turnOrderSub?: Subscription;
+
   private extraCharacters = signal<Record<string, Character>>({});
   private hpPollInterval?: ReturnType<typeof setInterval>;
 
@@ -185,6 +189,8 @@ export class DmEncounterPlayComponent implements OnInit, OnDestroy {
         this.presentPlayers.set(players);
         this.refreshPresentCharacters(players);
       });
+    this.turnOrderSub = this.encounterService.watchTurnOrder(encounter.id!)
+      .subscribe(tokens => this.turnOrderTokens.set(tokens));
     this.hpPollInterval = setInterval(() => this.refreshPresentCharacters(this.presentPlayers()), 6000);
   }
 
@@ -202,6 +208,7 @@ export class DmEncounterPlayComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.presenceSub?.unsubscribe();
+    this.turnOrderSub?.unsubscribe();
     clearInterval(this.hpPollInterval);
   }
 

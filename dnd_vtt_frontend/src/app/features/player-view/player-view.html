@@ -10,7 +10,8 @@
   @if (levelMapId(); as mapId) {
     <app-battle-map [mapIdInput]="mapId" [embedded]="true" [canControl]="false"
       [characterHp]="characterHp()" [characterPortraits]="characterPortraits()"
-      [currentTurnTokenId]="currentTurnTokenId()" class="block h-full w-full" />
+      [currentTurnTokenId]="currentTurnTokenId()" [turnOrderTokens]="turnOrderTokens()"
+      [showTurnOrder]="roundNumber() >= 2" class="block h-full w-full" />
   } @else {
     <div class="h-full w-full flex items-center justify-center text-slate text-sm px-4 text-center">
       No map attached to this encounter yet.

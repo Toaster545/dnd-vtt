@@ -11,6 +11,7 @@ import { DatabaseService } from '../common/database.service';
 import { ContentService } from '../content/content.service';
 import { TokensGateway } from './tokens.gateway';
 import type { RequestUser } from '../common/current-user.decorator';
+import { serializePlayerTokens } from './player-tokens';
 
 // A light-blocking wall segment, in fractional grid units (see applyV26).
 export interface MapWall {
@@ -118,7 +119,7 @@ export class MapsService {
   async getTokens(mapId: string, user: RequestUser) {
     const access = await this.resolveMapReadAccess(mapId, user);
     const tokens = await this.getTokensRaw(mapId);
-    return access.isDm ? tokens : this.serializePlayerTokens(tokens);
+    return access.isDm ? tokens : serializePlayerTokens(tokens);
   }
 
   async upsertToken(
@@ -126,9 +127,26 @@ export class MapsService {
     token: Record<string, unknown>,
     user: RequestUser,
   ) {
-    await this.assertMapAccess(mapId, user);
+    const map = await this.assertMapAccess(mapId, user);
     const isNew = !token.id;
     const id = (token.id as string) || randomUUID();
+
+    // A character is only ever in one place: placing one that already has a token on this map,
+    // or on another level of an encounter this map belongs to, moves that token here instead —
+    // keeping its initiative, so it still shows up exactly once in the turn order.
+    if (isNew && typeof token.character_id === 'string') {
+      const existing = await this.findCharacterToken(mapId, token.character_id);
+      if (existing) {
+        return this.relocateCharacterToken(
+          existing,
+          token.character_id,
+          mapId,
+          Number(token.x ?? 0),
+          Number(token.y ?? 0),
+          map.campaign_id as string,
+        );
+      }
+    }
 
     // New enemy tokens roll their own initiative on the spot; a player token is placed with no
     // initiative until the DM enters the player's roll. Explicit values (edits, rerolls) pass
@@ -177,6 +195,48 @@ export class MapsService {
     const tokens = await this.getTokensRaw(mapId);
     this.gateway.broadcastTokens(mapId, tokens);
     return tokens.find((t) => t.id === id);
+  }
+
+  // This character's token on `mapId` itself or on any other level of an encounter that
+  // `mapId` is a level of.
+  private async findCharacterToken(mapId: string, characterId: string) {
+    const result = await this.db.execute(
+      `SELECT id, map_id FROM map_tokens
+       WHERE character_id = ?
+         AND (map_id = ? OR map_id IN (
+           SELECT other.map_id FROM encounter_levels mine
+           JOIN encounter_levels other ON other.encounter_id = mine.encounter_id
+           WHERE mine.map_id = ?))
+       ORDER BY (map_id = ?) DESC
+       LIMIT 1`,
+      [characterId, mapId, mapId, mapId],
+    );
+    const row = result.rows[0];
+    return row ? { id: row.id as string, map_id: row.map_id as string } : null;
+  }
+
+  private async relocateCharacterToken(
+    existing: { id: string; map_id: string },
+    characterId: string,
+    mapId: string,
+    x: number,
+    y: number,
+    campaignId: string,
+  ) {
+    await this.db.execute(
+      'UPDATE map_tokens SET map_id = ?, x = ?, y = ? WHERE id = ?',
+      [mapId, x, y, existing.id],
+    );
+    await this.db.execute(
+      'UPDATE map_lights SET map_id = ? WHERE token_id = ?',
+      [mapId, existing.id],
+    );
+    for (const id of new Set([existing.map_id, mapId])) {
+      this.gateway.broadcastTokens(id, await this.getTokensRaw(id));
+      await this.broadcastLighting(id);
+    }
+    this.gateway.notifyCharacterLevelChanged(campaignId, characterId);
+    return this.findTokenRaw(existing.id);
   }
 
   async deleteToken(tokenId: string, mapId: string, user: RequestUser) {
@@ -422,7 +482,7 @@ export class MapsService {
     const lighting = await this.getLightingRaw(mapId);
     if (access.isDm) return lighting;
     const visibleTokenIds = new Set(
-      this.serializePlayerTokens(await this.getTokensRaw(mapId)).map(
+      serializePlayerTokens(await this.getTokensRaw(mapId)).map(
         (token) => token.id,
       ),
     );
@@ -619,7 +679,7 @@ export class MapsService {
         lighting,
       };
     }
-    const playerTokens = this.serializePlayerTokens(tokens);
+    const playerTokens = serializePlayerTokens(tokens);
     const visibleIds = new Set(playerTokens.map((token) => token.id));
     return {
       map: this.serializeMap(access.map, false),
@@ -650,23 +710,6 @@ export class MapsService {
       created_at: map.created_at,
     };
     return isDm ? { ...map, ...common } : common;
-  }
-
-  private serializePlayerTokens(tokens: Record<string, unknown>[]) {
-    return tokens
-      .filter((token) => !!token.visible_to_players)
-      .map((token) => ({
-        id: token.id as string,
-        map_id: token.map_id as string,
-        label: token.name_visible_to_players ? token.label : 'Unknown',
-        color: token.color,
-        x: Number(token.x),
-        y: Number(token.y),
-        size: Number(token.size),
-        is_player: !!token.is_player,
-        character_id: token.is_player ? token.character_id : undefined,
-        initiative: token.initiative ?? null,
-      }));
   }
 
   private async resolveMapReadAccess(mapId: string, user: RequestUser) {

@@ -115,6 +115,10 @@ export class PlayerCampaignSessionComponent implements OnInit, OnDestroy {
   currentTurnToken = signal<MapToken | null>(null);
   private turnSub?: Subscription;
 
+  // Every level's (player-visible) tokens, so the turn order isn't limited to this player's level.
+  turnOrderTokens = signal<MapToken[] | null>(null);
+  private turnOrderSub?: Subscription;
+
   // Which level of a (possibly multi-level) encounter this player sees — the one their own
   // character's token is on. Re-resolved whenever the DM places, moves, or removes that token.
   myLevel = signal<MyEncounterLevel | null>(null);
@@ -164,6 +168,7 @@ export class PlayerCampaignSessionComponent implements OnInit, OnDestroy {
     if (encounter?.id) this.encounterService.leavePresence(encounter.id);
     this.presenceSub?.unsubscribe();
     this.turnSub?.unsubscribe();
+    this.turnOrderSub?.unsubscribe();
     this.levelSub?.unsubscribe();
   }
 
@@ -337,6 +342,8 @@ export class PlayerCampaignSessionComponent implements OnInit, OnDestroy {
           // Safety net for a level switch whose broadcast was missed (e.g. a dropped connection).
           void this.refreshMyLevel(encounter.id!);
         });
+      this.turnOrderSub = this.encounterService.watchTurnOrder(encounter.id!)
+        .subscribe(tokens => this.turnOrderTokens.set(tokens));
       this.levelSub = this.encounterService.watchCharacterLevelChanged()
         .subscribe(event => {
           if (event.characterId === this.myCharacterId()) void this.refreshMyLevel(encounter.id!);
@@ -374,7 +381,9 @@ export class PlayerCampaignSessionComponent implements OnInit, OnDestroy {
     if (encounter?.id) this.encounterService.leavePresence(encounter.id);
     this.presenceSub?.unsubscribe();
     this.turnSub?.unsubscribe();
+    this.turnOrderSub?.unsubscribe();
     this.levelSub?.unsubscribe();
+    this.turnOrderTokens.set(null);
     this.myLevel.set(null);
     this.presentPlayers.set([]);
     this.currentTurnToken.set(null);

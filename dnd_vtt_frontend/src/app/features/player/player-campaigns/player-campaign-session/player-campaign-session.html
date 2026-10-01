@@ -29,7 +29,10 @@
       </div>
 
       @if (currentTurnToken(); as turnToken) {
-        <span class="text-sm font-brand text-gold whitespace-nowrap flex-shrink-0">{{ turnToken.label }}’s Turn</span>
+        <span class="text-sm font-brand text-gold whitespace-nowrap flex-shrink-0">
+          <span class="text-slate">Round {{ encounter.round_number ?? 1 }} ·</span>
+          {{ turnToken.label }}’s Turn
+        </span>
       }
 
       <div class="flex items-center gap-1 flex-1 justify-end">
@@ -55,6 +58,7 @@
           <app-battle-map [mapIdInput]="levelMapId" [embedded]="true" [canControl]="false" [characterHp]="characterHp()"
             [characterPortraits]="characterPortraits()"
             [currentTurnTokenId]="encounter.current_turn_token_id ?? null"
+            [turnOrderTokens]="turnOrderTokens()" [showTurnOrder]="(encounter.round_number ?? 1) >= 2"
             [myCharacterId]="activeCharacter()?.id ?? null" [myMoveSpeedFt]="activeCharacter()?.speed ?? null"
             [myDarkvisionFt]="myDarkvisionFt()" [myCharacter]="activeCharacter()"
             (currentTurnTokenChanged)="currentTurnToken.set($event)"

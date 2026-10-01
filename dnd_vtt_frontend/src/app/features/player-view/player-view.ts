@@ -3,6 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { EncounterService } from '../../core/services/encounter.service';
 import { Encounter, PresentPlayer } from '../../core/models/encounter.model';
+import { MapToken } from '../../core/models/campaign.model';
 import { PortraitSource } from '../../core/models/avatar.model';
 import { portraitSource } from '../../core/utils/avatar';
 import { BattleMapComponent } from '../battle-map/battle-map';
@@ -26,6 +27,8 @@ export class PlayerViewComponent implements OnInit, OnDestroy {
   loading = signal(true);
   error = signal<string | null>(null);
   currentTurnTokenId = signal<string | null>(null);
+  // The turn order stays hidden from the table until round 2.
+  roundNumber = signal(1);
   // A multi-level encounter has no single "what players see" — the table screen follows combat
   // instead, showing whichever level the current-turn token is on (the entry level until turns start).
   private currentTurnMapId = signal<string | null>(null);
@@ -39,6 +42,9 @@ export class PlayerViewComponent implements OnInit, OnDestroy {
 
   private presenceSub?: Subscription;
   private turnSub?: Subscription;
+  private turnOrderSub?: Subscription;
+  // Every level's tokens, so the table's turn order covers the whole encounter.
+  turnOrderTokens = signal<MapToken[] | null>(null);
 
   characterHp = computed(() => {
     const map: Record<string, { hp: number; max_hp: number }> = {};
@@ -65,12 +71,16 @@ export class PlayerViewComponent implements OnInit, OnDestroy {
       this.encounter.set(encounter);
       this.currentTurnTokenId.set(encounter.current_turn_token_id ?? null);
       this.currentTurnMapId.set(encounter.current_turn_map_id ?? null);
+      this.roundNumber.set(encounter.round_number ?? 1);
       this.presenceSub = this.encounterService.watchPresence(encounterId)
         .subscribe(players => this.presentPlayers.set(players));
+      this.turnOrderSub = this.encounterService.watchTurnOrder(encounterId)
+        .subscribe(tokens => this.turnOrderTokens.set(tokens));
       this.turnSub = this.encounterService.watchTurnState()
         .subscribe(state => {
           this.currentTurnTokenId.set(state.current_turn_token_id);
           this.currentTurnMapId.set(state.current_turn_map_id ?? null);
+          this.roundNumber.set(state.round_number);
         });
     } catch {
       this.error.set('Could not load this encounter.');
@@ -82,5 +92,6 @@ export class PlayerViewComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.presenceSub?.unsubscribe();
     this.turnSub?.unsubscribe();
+    this.turnOrderSub?.unsubscribe();
   }
 }
