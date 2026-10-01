@@ -200,6 +200,21 @@ export class EncounterService {
     });
   }
 
+  // Fires when a character in one of the caller's campaigns is saved (HP, spell slots, items...)
+  // — ids only, the caller refetches what it shows. Campaign-room scoped like the one above.
+  watchCharacterUpdated(): Observable<{ campaignId: string; characterId: string }> {
+    return new Observable(observer => {
+      const socket = this.socketService.socket;
+      const handleUpdate = (event: { campaignId: string; characterId: string }) => observer.next(event);
+      this.socketService.connect();
+      socket.on('character_updated', handleUpdate);
+
+      return () => {
+        socket.off('character_updated', handleUpdate);
+      };
+    });
+  }
+
   // Fires whenever any encounter goes live, regardless of campaign — the caller is responsible
   // for filtering to campaigns it actually cares about (see ShellComponent).
   watchEncounterStarted(): Observable<EncounterStartedEvent> {

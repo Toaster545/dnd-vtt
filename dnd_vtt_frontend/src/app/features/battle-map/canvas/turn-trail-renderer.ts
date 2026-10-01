@@ -50,6 +50,16 @@ export function renderTurnTrails(layer: Konva.Layer, trails: Trail[], ctx: TurnT
   if (ctx.cellSize) {
     for (const trail of trails) {
       const { token } = trail;
+      // The squares the token will occupy if dropped now — mostly for Large and bigger tokens,
+      // whose landing spot isn't obvious from the cursor alone.
+      if (trail.drag) {
+        const side = token.size * ctx.cellSize;
+        layer.add(new Konva.Rect({
+          x: trail.drag.col * ctx.cellSize, y: trail.drag.row * ctx.cellSize,
+          width: side, height: side, listening: false,
+          fill: 'rgba(245, 214, 122, 0.18)', stroke: '#f5d67a', strokeWidth: 2, dash: [6, 4],
+        }));
+      }
       if (token.turn_start_x == null || token.turn_start_y == null) continue;
       drawTrail(layer, trail, { x: token.turn_start_x, y: token.turn_start_y }, ctx);
     }

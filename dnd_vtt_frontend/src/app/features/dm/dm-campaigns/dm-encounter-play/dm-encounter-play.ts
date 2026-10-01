@@ -125,7 +125,7 @@ export class DmEncounterPlayComponent implements OnInit, OnDestroy {
   private turnOrderSub?: Subscription;
 
   private extraCharacters = signal<Record<string, Character>>({});
-  private hpPollInterval?: ReturnType<typeof setInterval>;
+  private characterUpdatedSub?: Subscription;
 
   armedEntity = signal<PlacingEntity | null>(null);
 
@@ -219,7 +219,16 @@ export class DmEncounterPlayComponent implements OnInit, OnDestroy {
       });
     this.turnOrderSub = this.encounterService.watchTurnOrder(encounter.id!)
       .subscribe(tokens => this.turnOrderTokens.set(tokens));
-    this.hpPollInterval = setInterval(() => this.refreshPresentCharacters(this.presentPlayers()), 6000);
+    // A player changing their HP (or anything else) on their own sheet — refetched so token HP
+    // badges and the roster stay current. Only characters this page already fetched for itself;
+    // the DM's own characters come from `characters()` and are updated where the DM edits them.
+    this.characterUpdatedSub = this.encounterService.watchCharacterUpdated().subscribe(event => {
+      if (event.campaignId !== this.campaignId || !this.extraCharacters()[event.characterId]) return;
+      this.characterService.getCharacter(event.characterId).then(
+        character => this.extraCharacters.update(map => ({ ...map, [event.characterId]: character })),
+        () => {},
+      );
+    });
   }
 
   backToSession() {
@@ -237,7 +246,7 @@ export class DmEncounterPlayComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.presenceSub?.unsubscribe();
     this.turnOrderSub?.unsubscribe();
-    clearInterval(this.hpPollInterval);
+    this.characterUpdatedSub?.unsubscribe();
   }
 
   // Also loads each member's character, so an absent player's token still gets its HP badge and
@@ -382,6 +391,22 @@ export class DmEncounterPlayComponent implements OnInit, OnDestroy {
     }
   }
 
+  // Only takes it off the roster — tokens of it already on the map stay where they are.
+  async removeMonsterFromEncounter(monster: DndMonster) {
+    const encounter = this.selected();
+    if (!encounter?.id || !encounter.monsters.includes(monster.index)) return;
+    const armed = this.armedEntity();
+    if (armed?.kind === 'monster' && armed.monsterIndex === monster.index) this.armedEntity.set(null);
+    this.addingMonster.set(true);
+    try {
+      this.selected.set(await this.encounterService.update(encounter.id, {
+        monsters: encounter.monsters.filter(index => index !== monster.index),
+      }));
+    } finally {
+      this.addingMonster.set(false);
+    }
+  }
+
   monsterFor(index: string): DndMonster | undefined {
     return this.monsters().find(m => m.index === index);
   }
@@ -477,24 +502,13 @@ export class DmEncounterPlayComponent implements OnInit, OnDestroy {
   }
 
   private readonly monsterPalette = ['#e74c3c', '#f97316', '#c026d3', '#7c3aed', '#0891b2', '#65a30d', '#dc2626', '#78716c'];
-  private monsterColorOverrides = signal<Record<string, string>>({});
 
   readonly colorForMonster = (monsterIndex: string): string => {
-    const override = this.monsterColorOverrides()[monsterIndex];
-    if (override) return override;
     const defined = this.monsterFor(monsterIndex)?.color;
     if (defined) return defined;
     const idx = (this.selected()?.monsters ?? []).indexOf(monsterIndex);
     return this.monsterPalette[idx >= 0 ? idx % this.monsterPalette.length : 0];
   };
-
-  setMonsterColor(monsterIndex: string, color: string) {
-    this.monsterColorOverrides.update(map => ({ ...map, [monsterIndex]: color }));
-    const armed = this.armedEntity();
-    if (armed?.kind === 'monster' && armed.monsterIndex === monsterIndex) {
-      this.armedEntity.set({ ...armed, color });
-    }
-  }
 
   private toggleArm(entity: PlacingEntity) {
     const current = this.armedEntity();

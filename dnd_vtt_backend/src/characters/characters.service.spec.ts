@@ -10,6 +10,7 @@ import { DatabaseService } from '../common/database.service';
 import { createTestDb } from '../common/test-db.util';
 import type { RequestUser } from '../common/current-user.decorator';
 import { ContentService } from '../content/content.service';
+import type { EncounterPresenceGateway } from '../encounters/encounter-presence.gateway';
 
 interface SpellcastingCharacterState {
   spell_slot_uses?: Record<string, Record<string, number>>;
@@ -35,12 +36,16 @@ describe('CharactersService', () => {
   let cleanup: () => void;
   let ownerId: string;
   let owner: RequestUser;
+  let notifyCharacterUpdated: jest.Mock;
 
   beforeEach(async () => {
     const testDb = await createTestDb();
     db = testDb.db;
     cleanup = testDb.cleanup;
-    service = new CharactersService(db, new ContentService());
+    notifyCharacterUpdated = jest.fn();
+    service = new CharactersService(db, new ContentService(), {
+      notifyCharacterUpdated,
+    } as unknown as EncounterPresenceGateway);
     ownerId = await insertProfile(db);
     owner = { id: ownerId, role: 'player' } as RequestUser;
   });
@@ -252,6 +257,21 @@ describe('CharactersService', () => {
       expect(updated.name).toBe('Renamed');
       // ...but notes is outside both whitelists and is left untouched.
       expect(blob.notes).toBe('secret DM notes');
+    });
+
+    it('tells the campaign when the player changes their HP', async () => {
+      const { created } = await makeLockedCampaignCopy(false);
+      const campaign = await db.execute(
+        'SELECT campaign_id FROM characters WHERE id = ?',
+        [created.id as string],
+      );
+
+      await service.update(created.id as string, owner, { current_hp: 5 });
+
+      expect(notifyCharacterUpdated).toHaveBeenCalledWith(
+        campaign.rows[0].campaign_id,
+        created.id,
+      );
     });
 
     it('keeps the existing name when a locked player sends a blank one', async () => {

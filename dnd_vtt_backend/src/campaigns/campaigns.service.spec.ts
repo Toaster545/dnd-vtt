@@ -40,7 +40,9 @@ describe('CampaignsService', () => {
     campaigns = new CampaignsService(db, {
       notifyPartyLeveled,
     } as unknown as ConstructorParameters<typeof CampaignsService>[1]);
-    characters = new CharactersService(db);
+    characters = new CharactersService(db, undefined as never, {
+      notifyCharacterUpdated: jest.fn(),
+    } as unknown as ConstructorParameters<typeof CharactersService>[2]);
     dmId = await insertProfile(db, 'admin');
     dm = { id: dmId, role: 'admin' } as RequestUser;
   });

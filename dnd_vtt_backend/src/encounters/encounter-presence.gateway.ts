@@ -220,6 +220,15 @@ export class EncounterPresenceGateway
       .emit('party_leveled', payload);
   }
 
+  // A character's saved data changed (HP from their own sheet, a spell slot, an item...) — the
+  // DM's encounter page refetches it so token HP badges and the roster stay current without
+  // polling. Ids only: clients that care refetch through the normal access-checked endpoint.
+  notifyCharacterUpdated(campaignId: string, characterId: string) {
+    this.server
+      .to(`campaign:${campaignId}`)
+      .emit('character_updated', { campaignId, characterId });
+  }
+
   private async assertEncounterAccess(
     client: Socket,
     encounterId: string,

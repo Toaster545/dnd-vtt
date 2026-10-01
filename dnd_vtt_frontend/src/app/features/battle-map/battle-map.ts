@@ -19,13 +19,14 @@ import { drawGrid } from './canvas/grid-renderer';
 import { renderMoveRange } from './canvas/move-range-renderer';
 import { Trail, TrailDrag, renderTurnTrails } from './canvas/turn-trail-renderer';
 import { PlanMarker, renderPlanMarker } from './canvas/plan-marker-renderer';
-import { renderTokens } from './canvas/token-renderer';
+import { renderTokens, snapToCell } from './canvas/token-renderer';
 import { isTokenLit, litAreas, renderDarkness, renderLightMarkers } from './canvas/lighting-renderer';
 import { getErrorMessage } from '../../core/utils/error-message';
 import { MeasurementTool } from './canvas/measurement-tool';
 import { FogTool } from './canvas/fog-tool';
 import { WallTool, wallIndexNear, wallPointUnderPointer } from './canvas/wall-tool';
 import { PortraitCache } from './canvas/portrait-cache';
+import { TokenImageCache } from './canvas/token-image-cache';
 import { PortraitSource } from '../../core/models/avatar.model';
 import { StagePointerTools } from './canvas/stage-pointer-tools';
 import { StageView } from './canvas/stage-view';
@@ -456,7 +457,19 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
   private loadedMapId: string | null = null;
   private cellSize = 0;
   private lastTokens: MapToken[] = [];
+  // Set from pressing a token until the button is released. Rebuilding the token layer then (a
+  // socket broadcast, an image finishing loading, an HP change...) destroys the node Konva is
+  // dragging and drops the token, so renders are held until release instead (see renderTokens).
+  private tokenHeld = false;
+  private tokenRenderPending = false;
+  // Registered after Konva's own window mouseup listener, so it runs after the drop's dragend.
+  private readonly onPointerRelease = () => {
+    if (!this.tokenHeld) return;
+    this.tokenHeld = false;
+    if (this.tokenRenderPending) this.renderTokens(this.lastTokens);
+  };
   private portraitCache = new PortraitCache();
+  private tokenImageCache = new TokenImageCache();
 
   constructor() {
     effect(() => {
@@ -566,6 +579,9 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
     this.routeMapId = this.route.snapshot.paramMap.get('id');
     document.addEventListener('fullscreenchange', this.onFullscreenChange);
     window.addEventListener('keydown', this.onKeyDown);
+    for (const type of ['mouseup', 'touchend', 'touchcancel', 'blur']) {
+      window.addEventListener(type, this.onPointerRelease);
+    }
   }
 
   ngAfterViewInit() {
@@ -575,6 +591,9 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
   ngOnDestroy() {
     document.removeEventListener('fullscreenchange', this.onFullscreenChange);
     window.removeEventListener('keydown', this.onKeyDown);
+    for (const type of ['mouseup', 'touchend', 'touchcancel', 'blur']) {
+      window.removeEventListener(type, this.onPointerRelease);
+    }
     window.removeEventListener('resize', this.onWindowResize);
     this.flushWalls();
     this.tokenSub?.unsubscribe();
@@ -929,6 +948,11 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
   private renderTokens(tokens: MapToken[]) {
     const layer = this.tokenLayer;
     if (!layer) return;
+    if (this.tokenHeld) {
+      this.tokenRenderPending = true;
+      return;
+    }
+    this.tokenRenderPending = false;
     renderTokens(layer, tokens, {
       cellSize: this.cellSize,
       fog: this.fog(),
@@ -938,14 +962,30 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
       selectedTokenId: this.selectedTokenId(),
       characterHp: this.characterHp(),
       characterPortraits: this.resolvePortraitImages(this.characterPortraits()),
+      tokenImages: this.tokenImageCache.resolve(tokens, () => this.renderTokens(this.lastTokens)),
       hiddenTokenIds: this.tokensHiddenByDarkness(),
       onTokenClick: token => {
         this.selectedTokenId.set(token.id ?? null);
         this.tokenClicked.emit(token);
       },
+      onTokenPress: () => {
+        this.tokenHeld = true;
+      },
       onTokenMoved: (token, col, row) => {
+        // Shown on its snapped square right away rather than wherever it was let go of, until
+        // the server's tokens_updated broadcast confirms (or, on failure, restores) it. The
+        // token layer itself redraws on release (onPointerRelease), right after this dragend.
+        this.lastTokens = this.lastTokens.map(t => t.id === token.id ? { ...t, x: col, y: row } : t);
+        this.tokenRenderPending = true;
         this.selectedTokenId.set(token.id ?? null);
-        return this.mapService.upsertToken({ ...token, x: col, y: row });
+        this.renderTrail();
+        this.renderDarkness();
+        this.renderLightMarkers();
+        this.mapService.upsertToken({ ...token, x: col, y: row }).catch(() => {
+          this.lastTokens = this.tokens();
+          this.renderTokens(this.lastTokens);
+          this.renderTrail();
+        });
       },
       onTokenContextMenu: token => this.removeToken(token),
       onTokenDragMove: (token, xPx, yPx) => {
@@ -961,7 +1001,9 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
         // Same snapping as the drop itself (token-renderer's dragend). `token` is the position
         // the server last saved, not the live one just written into lastTokens above.
         this.renderTrail(token, {
-          xPx, yPx, col: Math.floor(xPx / this.cellSize), row: Math.floor(yPx / this.cellSize),
+          xPx, yPx,
+          col: snapToCell(xPx, token.size, this.cellSize),
+          row: snapToCell(yPx, token.size, this.cellSize),
         });
       },
     });

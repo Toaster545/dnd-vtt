@@ -85,10 +85,10 @@
             <p class="text-coal text-xs m-0 mt-0.5">CR {{ monster.challenge_rating }} · AC {{ monster.armor_class }} · HP {{ monster.hit_points }}</p>
           </div>
         </button>
-        <input type="color" class="h-7 w-7 rounded cursor-pointer border border-white/10 bg-transparent flex-shrink-0"
-          [ngModel]="colorForMonster()(monster.index)" (ngModelChange)="monsterColorChanged.emit({ index: monster.index, color: $event })"
-          (click)="$event.stopPropagation()" name="color-monster-{{ monster.index }}"
-          [matTooltip]="'Token color for ' + monster.name" />
+        <button type="button" class="btn-icon w-7 h-7 flex-shrink-0" [disabled]="addingMonster()"
+          (click)="removeMonster.emit(monster)" [matTooltip]="'Remove ' + monster.name + ' from this encounter'">
+          <mat-icon class="text-base">close</mat-icon>
+        </button>
       </div>
     }
   </div>

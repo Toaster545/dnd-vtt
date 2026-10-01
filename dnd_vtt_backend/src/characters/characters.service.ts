@@ -9,6 +9,7 @@ import { randomUUID } from 'crypto';
 import { DatabaseService } from '../common/database.service';
 import type { RequestUser } from '../common/current-user.decorator';
 import { ContentService } from '../content/content.service';
+import { EncounterPresenceGateway } from '../encounters/encounter-presence.gateway';
 import { parseAvatarRecipe } from '../common/avatar-recipe';
 import {
   EBERRON_SOURCE_CODE,
@@ -231,6 +232,7 @@ export class CharactersService {
   constructor(
     private db: DatabaseService,
     private content: ContentService,
+    private presence: EncounterPresenceGateway,
   ) {}
 
   // Template characters only — campaign copies (campaign_id set) are DM-editable clones fetched
@@ -485,6 +487,7 @@ export class CharactersService {
         id,
       ],
     );
+    await this.notifyUpdated(id);
     return this.findOneReadable(id, user);
   }
 
@@ -1312,6 +1315,19 @@ export class CharactersService {
       'UPDATE characters SET data=?, updated_at=? WHERE id=?',
       [JSON.stringify(data), new Date().toISOString(), id],
     );
+    await this.notifyUpdated(id);
+  }
+
+  // Only campaign copies are ever on a battle map — a template character has no one to tell.
+  private async notifyUpdated(id: string) {
+    const result = await this.db.execute(
+      'SELECT campaign_id FROM characters WHERE id = ?',
+      [id],
+    );
+    const campaignId = result.rows[0]?.campaign_id;
+    if (typeof campaignId === 'string') {
+      this.presence.notifyCharacterUpdated(campaignId, id);
+    }
   }
 
   private requiredString(value: unknown, field: string): string {
@@ -1605,6 +1621,7 @@ export class CharactersService {
       `UPDATE characters SET name=?, data=?, updated_at=? WHERE id=?`,
       [name, JSON.stringify(normalized), new Date().toISOString(), id],
     );
+    await this.notifyUpdated(id);
     return this.findOneReadable(id, user);
   }
 

@@ -15,6 +15,9 @@ export interface TokenRenderContext {
   // BattleMapComponent.resolvePortraitImages), so a token with a character_id but no entry here
   // just falls back to its plain color fill for this render pass.
   characterPortraits: Record<string, HTMLImageElement>;
+  // Loaded monster token art per token id, same only-once-decoded contract as characterPortraits
+  // (see TokenImageCache).
+  tokenImages: Record<string, HTMLImageElement>;
   // Tokens this viewer can't see at all — enemies standing in darkness on a player's screen (see
   // BattleMapComponent.tokensHiddenByDarkness). Skipped like fog-hidden ones.
   hiddenTokenIds?: Set<string>;
@@ -25,6 +28,17 @@ export interface TokenRenderContext {
   // attached to this token track the drag live instead of snapping into place only once
   // tokens_updated round-trips back from the server at dragend.
   onTokenDragMove?: (token: MapToken, xPx: number, yPx: number) => void;
+  // Fires on press, before any drag has started: Konva arms the drag on mousedown but only calls
+  // it a drag on the first move after, and renderTokens() rebuilding the layer in between (or
+  // during) destroys the node it armed — the token is dropped, or never picked up. Lets the
+  // caller hold off rebuilding until the button is released.
+  onTokenPress?: (token: MapToken) => void;
+}
+
+// The top-left square a token of `size` squares covers when its center sits at `centerPx` — the
+// footprint nearest the drop point, so a Large token lands where it's held, not a square off.
+export function snapToCell(centerPx: number, size: number, cellSize: number): number {
+  return Math.round(centerPx / cellSize - size / 2);
 }
 
 function hpFor(token: MapToken, ctx: TokenRenderContext): { hp: number; max_hp: number } | null {
@@ -75,7 +89,13 @@ export function renderTokens(layer: Konva.Layer, tokens: MapToken[], ctx: TokenR
     // Character HP is party-visible (anyone with data for it in `characterHp`, players
     // included); monster HP stays DM-only intel — see hpFor.
     const hp = hpFor(token, ctx);
-    const portrait = token.character_id ? ctx.characterPortraits[token.character_id] : undefined;
+    // Monster token art comes already framed and round, so it's drawn bare at the token's full
+    // size; a character portrait is a plain square face that still needs the clip and color ring.
+    const monsterImage =
+      !token.character_id && token.id ? ctx.tokenImages[token.id] : undefined;
+    const portrait = token.character_id
+      ? ctx.characterPortraits[token.character_id]
+      : monsterImage;
 
     // One Konva.Shape drawing the token's circle, label, and HP badge itself, instead of a
     // Group with up to 4 child shapes (Circle/Text/Rect/Text) — same rationale as drawGrid:
@@ -108,7 +128,9 @@ export function renderTokens(layer: Konva.Layer, tokens: MapToken[], ctx: TokenR
         context.beginPath();
         context.arc(0, 0, r - 3, 0, Math.PI * 2);
         context.closePath();
-        if (portrait) {
+        if (monsterImage) {
+          context.drawImage(monsterImage, -r, -r, r * 2, r * 2);
+        } else if (portrait) {
           // Clip the portrait to the same circle the plain color fill would otherwise use, then
           // stroke a ring in the token's own color (in place of the plain-fill fallback's white
           // ring) so it stays identifiable at a glance even with a face now filling the token.
@@ -121,9 +143,11 @@ export function renderTokens(layer: Konva.Layer, tokens: MapToken[], ctx: TokenR
           context.fillStyle = token.color;
           context.fill();
         }
-        context.lineWidth = portrait ? 3 : 2;
-        context.strokeStyle = portrait ? token.color : '#fff';
-        context.stroke();
+        if (!monsterImage) {
+          context.lineWidth = portrait ? 3 : 2;
+          context.strokeStyle = portrait ? token.color : '#fff';
+          context.stroke();
+        }
 
         if (token.id === ctx.currentTurnTokenId) {
           context.beginPath();
@@ -188,6 +212,10 @@ export function renderTokens(layer: Konva.Layer, tokens: MapToken[], ctx: TokenR
       // rebuild the layer, so it's safe to call mid-drag without killing the drag Konva is
       // currently tracking on this exact node (a full renderTokens() rebuild here would destroy
       // and recreate the node, silently ending the drag).
+      shape.on('mousedown touchstart', e => {
+        if ('button' in e.evt && e.evt.button !== 0) return;
+        ctx.onTokenPress?.(token);
+      });
       shape.on('dragstart', () => shape.moveToTop());
       if (ctx.onTokenDragMove) {
         const onDragMove = ctx.onTokenDragMove;
@@ -198,7 +226,9 @@ export function renderTokens(layer: Konva.Layer, tokens: MapToken[], ctx: TokenR
       }
       shape.on('dragend', () => {
         const pos = shape.position();
-        ctx.onTokenMoved(token, Math.floor(pos.x / cellSize), Math.floor(pos.y / cellSize));
+        ctx.onTokenMoved(
+          token, snapToCell(pos.x, token.size, cellSize), snapToCell(pos.y, token.size, cellSize),
+        );
       });
       shape.on('contextmenu', (e) => { e.evt.preventDefault(); ctx.onTokenContextMenu(token); });
     }

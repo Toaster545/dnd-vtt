@@ -112,6 +112,9 @@ export interface MapToken {
   // actual per-instance combat HP (independent per placed copy of the same monster type).
   character_id?: string;
   monster_index?: string;
+  // Monster token art for players, sent only while the name is visible — the DM's client derives
+  // it from monster_index instead (see tokenImageUrl).
+  image_url?: string;
   // Turn-order value: 1d20 + DEX mod, auto-rolled server-side the moment a monster token is
   // placed; null for a player token until the DM types in that player's roll.
   initiative?: number | null;

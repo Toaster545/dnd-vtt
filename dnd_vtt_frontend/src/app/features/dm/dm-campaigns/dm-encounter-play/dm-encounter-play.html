@@ -81,7 +81,6 @@
               [characters]="rosterCharacters()"
               [classLabel]="classLabel"
               [colorFor]="colorFor"
-              [colorForMonster]="colorForMonster"
               [isArmedCharacter]="isArmedCharacter"
               [isArmedMonster]="isArmedMonster"
               [isArmedCustomToken]="isArmedCustomToken()"
@@ -94,11 +93,11 @@
               (armMonster)="toggleArmMonster($event)"
               (armCharacter)="toggleArmCharacter($event)"
               (characterColorChanged)="setCharacterColor($event.id, $event.color)"
-              (monsterColorChanged)="setMonsterColor($event.index, $event.color)"
               (openMonsterSearch)="openMonsterSearch()"
               (closeMonsterSearch)="closeMonsterSearch()"
               (monsterSearchQueryChanged)="monsterSearchQuery.set($event)"
               (addMonster)="addMonsterToEncounter($event)"
+              (removeMonster)="removeMonsterFromEncounter($event)"
             />
           }
 
