@@ -6,9 +6,9 @@
   <div class="h-full w-full flex items-center justify-center text-danger text-sm px-4 text-center">
     {{ error() }}
   </div>
-} @else if (encounter(); as e) {
-  @if (e.map_id) {
-    <app-battle-map [mapIdInput]="e.map_id" [embedded]="true" [canControl]="false"
+} @else if (encounter()) {
+  @if (levelMapId(); as mapId) {
+    <app-battle-map [mapIdInput]="mapId" [embedded]="true" [canControl]="false"
       [characterHp]="characterHp()" [characterPortraits]="characterPortraits()"
       [currentTurnTokenId]="currentTurnTokenId()" class="block h-full w-full" />
   } @else {

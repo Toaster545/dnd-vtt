@@ -14,6 +14,7 @@ import { Encounter, PresentPlayer } from '../../../../core/models/encounter.mode
 import { Character } from '../../../../core/models/character.model';
 import { PortraitSource } from '../../../../core/models/avatar.model';
 import { portraitSource } from '../../../../core/utils/avatar';
+import { getErrorMessage } from '../../../../core/utils/error-message';
 import { campaignContentEnabled } from '../../../../core/utils/content-sources';
 import { MapToken, PlacingEntity } from '../../../../core/models/campaign.model';
 import { BattleMapComponent } from '../../../battle-map/battle-map';
@@ -64,6 +65,33 @@ export class DmEncounterPlayComponent implements OnInit, OnDestroy {
 
   currentTurnToken = signal<MapToken | null>(null);
   togglingTurn = signal(false);
+
+  // Which level of the encounter the DM is looking at. Players each see their own character's
+  // level independently — this only drives the DM's own map.
+  levels = computed(() => this.selected()?.levels ?? []);
+  private viewMapId = signal<string | null>(null);
+  activeMapId = computed(() => {
+    const wanted = this.viewMapId();
+    return wanted && this.levels().some(l => l.map_id === wanted) ? wanted : this.selected()?.map_id ?? null;
+  });
+  movingToken = signal(false);
+  switchingPlayerLevel = signal(false);
+  playerLevelError = signal<string | null>(null);
+
+  levelName(mapId: string | null | undefined): string {
+    return this.levels().find(l => l.map_id === mapId)?.name ?? 'Unknown level';
+  }
+
+  // The level a character's player is currently shown — the DM's explicit choice, else the entry level.
+  playerLevelFor(characterId: string): string | null {
+    const encounter = this.selected();
+    return encounter?.player_levels?.[characterId] ?? encounter?.map_id ?? null;
+  }
+
+  // Whichever token's detail panel is open — the one "Move to level" acts on.
+  selectedToken = computed(() =>
+    this.viewingCustomToken() ?? this.viewingMonsterToken()?.token ?? this.viewingCharacterSummary()?.token ?? null
+  );
 
   presentPlayers = signal<PresentPlayer[]>([]);
   private presenceSub?: Subscription;
@@ -151,6 +179,7 @@ export class DmEncounterPlayComponent implements OnInit, OnDestroy {
     this.loading.set(false);
 
     this.selected.set(encounter);
+    this.viewMapId.set(encounter.current_turn_map_id ?? null);
     this.presenceSub = this.encounterService.watchPresence(encounter.id!)
       .subscribe(players => {
         this.presentPlayers.set(players);
@@ -215,7 +244,7 @@ export class DmEncounterPlayComponent implements OnInit, OnDestroy {
     if (!encounter?.id) return;
     this.togglingTurn.set(true);
     try {
-      this.selected.set(await this.encounterService.nextTurn(encounter.id));
+      this.followTurn(await this.encounterService.nextTurn(encounter.id));
     } finally {
       this.togglingTurn.set(false);
     }
@@ -226,10 +255,61 @@ export class DmEncounterPlayComponent implements OnInit, OnDestroy {
     if (!encounter?.id) return;
     this.togglingTurn.set(true);
     try {
-      this.selected.set(await this.encounterService.previousTurn(encounter.id));
+      this.followTurn(await this.encounterService.previousTurn(encounter.id));
     } finally {
       this.togglingTurn.set(false);
     }
+  }
+
+  // Combat spans every level, so stepping the turn jumps the DM's view to wherever the
+  // now-active token is.
+  private followTurn(encounter: Encounter) {
+    this.selected.set(encounter);
+    if (encounter.current_turn_map_id) this.viewMapId.set(encounter.current_turn_map_id);
+  }
+
+  showLevel(mapId: string) {
+    if (mapId === this.activeMapId()) return;
+    this.closeTokenPanels();
+    this.viewMapId.set(mapId);
+  }
+
+  // Stairs: moves the selected token (keeping its position, HP and initiative) to another level.
+  // A character token's player follows it automatically (see MapsService.moveTokenToMap).
+  async moveSelectedTokenToLevel(targetMapId: string) {
+    const token = this.selectedToken();
+    if (!token?.id || !targetMapId || targetMapId === token.map_id) return;
+    this.movingToken.set(true);
+    try {
+      await this.mapService.moveTokenToMap(token, targetMapId);
+      this.closeTokenPanels();
+    } finally {
+      this.movingToken.set(false);
+    }
+  }
+
+  // Shows the selected character token's level to that character's player. The token being on
+  // this level is what makes the switch allowed (re-checked server-side).
+  async showTokenLevelToPlayer(token: MapToken) {
+    const encounter = this.selected();
+    if (!encounter?.id || !token.character_id) return;
+    this.switchingPlayerLevel.set(true);
+    this.playerLevelError.set(null);
+    try {
+      this.selected.set(await this.encounterService.setPlayerLevel(encounter.id, token.character_id, token.map_id));
+    } catch (e) {
+      this.playerLevelError.set(getErrorMessage(e));
+    } finally {
+      this.switchingPlayerLevel.set(false);
+    }
+  }
+
+  private closeTokenPanels() {
+    this.playerLevelError.set(null);
+    this.viewingCustomToken.set(null);
+    this.viewingMonsterToken.set(null);
+    this.viewingCharacterSummary.set(null);
+    this.hpAdjustAmount.set(0);
   }
 
   openMonsterSearch() {
@@ -375,10 +455,18 @@ export class DmEncounterPlayComponent implements OnInit, OnDestroy {
     this.armedEntity.set(same ? null : entity);
   }
 
-  onTokenClicked(token: MapToken) {
+  async onTokenClicked(token: MapToken) {
+    this.playerLevelError.set(null);
     if (token.character_id) {
-      const character = this.characterFor(token.character_id);
-      if (character) this.viewingCharacterSummary.set({ token, character });
+      // A player's campaign copy isn't among the DM's own characters, and is only preloaded while
+      // that player is connected — fetch it on demand so their token always opens its panel.
+      let character = this.characterFor(token.character_id);
+      if (!character) {
+        character = await this.characterService.getCharacter(token.character_id).catch(() => undefined);
+        if (!character) return;
+        this.extraCharacters.update(map => ({ ...map, [token.character_id!]: character! }));
+      }
+      this.viewingCharacterSummary.set({ token, character });
       return;
     }
     if (token.monster_index) {

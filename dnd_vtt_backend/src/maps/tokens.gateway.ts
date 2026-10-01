@@ -95,6 +95,16 @@ export class TokensGateway implements OnGatewayInit, OnGatewayDisconnect {
     });
   }
 
+  // A character's token was moved or removed — in a multi-level encounter, a player whose token
+  // left the level they're shown falls back to the entry level (see EncountersService.findMyLevel). Sent to the
+  // campaign room (every connected member joins it on connect, see EncounterPresenceGateway);
+  // the owning player's client re-resolves its level, everyone else ignores it.
+  notifyCharacterLevelChanged(campaignId: string, characterId: string) {
+    this.server
+      .to(`campaign:${campaignId}`)
+      .emit('character_level_changed', { campaignId, characterId });
+  }
+
   // Ephemeral ruler/cone/sphere measurements — never persisted, purely relayed to everyone else
   // currently viewing the same map (already in `map:${mapId}` via join_map above). `measurement:
   // null` means the sender released the drag; relayed as-is so viewers clear it too. Tracked on
@@ -150,8 +160,10 @@ export class TokensGateway implements OnGatewayInit, OnGatewayDisconnect {
       [map.campaign_id, user.id],
     );
     const visible = await this.db.execute(
-      `SELECT e.id FROM encounters e JOIN sessions s ON s.id = e.session_id
-       WHERE e.map_id = ? AND s.campaign_id = ?
+      `SELECT e.id FROM encounters e
+       JOIN encounter_levels el ON el.encounter_id = e.id
+       JOIN sessions s ON s.id = e.session_id
+       WHERE el.map_id = ? AND s.campaign_id = ?
          AND e.visible_to_players = 1 AND s.visible_to_players = 1 LIMIT 1`,
       [mapId, map.campaign_id],
     );

@@ -19,6 +19,13 @@
           <mat-icon class="text-base">arrow_back</mat-icon> Leave
         </button>
         <span class="text-parchment font-medium text-sm ml-2 truncate">{{ encounter.name }}</span>
+        @if (myLevel(); as level) {
+          @if (level.level_count > 1 && level.name) {
+            <span class="flex items-center gap-1 text-xs text-slate truncate" matTooltip="The level your character is on">
+              <mat-icon class="text-sm">stairs</mat-icon> {{ level.name }}
+            </span>
+          }
+        }
       </div>
 
       @if (currentTurnToken(); as turnToken) {
@@ -44,8 +51,8 @@
             <app-character-play-sheet [character]="char" (saved)="onCharacterSaved($event)"
               class="block flex-1 min-h-0" />
           }
-        } @else if (encounter.map_id) {
-          <app-battle-map [mapIdInput]="encounter.map_id" [embedded]="true" [canControl]="false" [characterHp]="characterHp()"
+        } @else if (myLevel()?.map_id ?? encounter.map_id; as levelMapId) {
+          <app-battle-map [mapIdInput]="levelMapId" [embedded]="true" [canControl]="false" [characterHp]="characterHp()"
             [characterPortraits]="characterPortraits()"
             [currentTurnTokenId]="encounter.current_turn_token_id ?? null"
             [myCharacterId]="activeCharacter()?.id ?? null" [myMoveSpeedFt]="activeCharacter()?.speed ?? null"

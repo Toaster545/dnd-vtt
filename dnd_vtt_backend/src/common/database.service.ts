@@ -82,6 +82,8 @@ export class DatabaseService implements OnModuleInit {
     if (version < 24) await this.applyV24();
     if (version < 25) await this.applyV25();
     if (version < 26) await this.applyV26();
+    if (version < 27) await this.applyV27();
+    if (version < 28) await this.applyV28();
   }
 
   // ── V1: initial schema (explicit columns on characters) ─────────────────────
@@ -818,5 +820,51 @@ export class DatabaseService implements OnModuleInit {
     );
     await this.db.execute(`PRAGMA user_version = 26`);
     this.logger.log('Applied schema migration v26 (light-blocking walls)');
+  }
+
+  // ── V27: multi-level encounters ────────────────────────────────────────────
+  // An encounter can span several maps (dungeon floors), ordered by `position`. Each level is
+  // just a battle map, so tokens/fog/lighting/walls stay per-level for free. A player sees the
+  // level their own character's token is on; `encounters.map_id` is kept as the entry level
+  // (position 0) — where a player with no token yet lands, and what older readers still use.
+  private async applyV27() {
+    await this.db.execute(`
+      CREATE TABLE encounter_levels (
+        encounter_id TEXT NOT NULL REFERENCES encounters(id) ON DELETE CASCADE,
+        map_id       TEXT NOT NULL REFERENCES battle_maps(id) ON DELETE CASCADE,
+        position     INTEGER NOT NULL,
+        PRIMARY KEY (encounter_id, map_id)
+      )
+    `);
+    await this.db.execute(
+      `CREATE INDEX idx_encounter_levels_map ON encounter_levels(map_id)`,
+    );
+    await this.db.execute(`
+      INSERT INTO encounter_levels (encounter_id, map_id, position)
+      SELECT e.id, e.map_id, 0 FROM encounters e
+      JOIN battle_maps bm ON bm.id = e.map_id
+    `);
+    await this.db.execute(`PRAGMA user_version = 27`);
+    this.logger.log('Applied schema migration v27 (multi-level encounters)');
+  }
+
+  // ── V28: DM-chosen level per player ───────────────────────────────────────────
+  // Which level each player is shown is the DM's explicit call, not wherever a token happens to
+  // be: a character can have a token on several levels at once (the DM stages the next floor
+  // first), and the DM then switches the player over. Only honoured while that character still
+  // has a token on the chosen level; otherwise the player falls back to the entry level.
+  private async applyV28() {
+    await this.db.execute(`
+      CREATE TABLE encounter_player_levels (
+        encounter_id TEXT NOT NULL REFERENCES encounters(id) ON DELETE CASCADE,
+        character_id TEXT NOT NULL REFERENCES characters(id) ON DELETE CASCADE,
+        map_id       TEXT NOT NULL REFERENCES battle_maps(id) ON DELETE CASCADE,
+        PRIMARY KEY (encounter_id, character_id)
+      )
+    `);
+    await this.db.execute(`PRAGMA user_version = 28`);
+    this.logger.log(
+      'Applied schema migration v28 (per-player encounter levels)',
+    );
   }
 }

@@ -10,7 +10,7 @@ import { SessionService } from '../../../../core/services/session.service';
 import { ContentService } from '../../../../core/services/content.service';
 import { AuthService } from '../../../../core/services/auth.service';
 import { BackgroundService } from '../../../../core/services/background.service';
-import { Encounter, PresentPlayer } from '../../../../core/models/encounter.model';
+import { Encounter, MyEncounterLevel, PresentPlayer } from '../../../../core/models/encounter.model';
 import { Character } from '../../../../core/models/character.model';
 import { PortraitSource } from '../../../../core/models/avatar.model';
 import { portraitSource } from '../../../../core/utils/avatar';
@@ -115,6 +115,12 @@ export class PlayerCampaignSessionComponent implements OnInit, OnDestroy {
   currentTurnToken = signal<MapToken | null>(null);
   private turnSub?: Subscription;
 
+  // Which level of a (possibly multi-level) encounter this player sees — the one their own
+  // character's token is on. Re-resolved whenever the DM places, moves, or removes that token.
+  myLevel = signal<MyEncounterLevel | null>(null);
+  private levelSub?: Subscription;
+  private levelRequest = 0;
+
   private pendingAutojoinId: string | null = null;
 
   characterHp = computed(() => {
@@ -158,6 +164,7 @@ export class PlayerCampaignSessionComponent implements OnInit, OnDestroy {
     if (encounter?.id) this.encounterService.leavePresence(encounter.id);
     this.presenceSub?.unsubscribe();
     this.turnSub?.unsubscribe();
+    this.levelSub?.unsubscribe();
   }
 
   private async loadSession() {
@@ -303,7 +310,13 @@ export class PlayerCampaignSessionComponent implements OnInit, OnDestroy {
     if (!characterId) return;
     this.joiningId.set(encounter.id!);
     try {
-      const character = await this.characterService.getCharacter(characterId);
+      // Resolved before the map shows, so a player already on a lower level doesn't flash the
+      // entry level first.
+      const [character, level] = await Promise.all([
+        this.characterService.getCharacter(characterId),
+        this.encounterService.getMyLevel(encounter.id!),
+      ]);
+      this.myLevel.set(level);
       this.activeEncounter.set(encounter);
       // The app-wide background picked in Settings would otherwise show through around/behind
       // the battle map — fully opaque it while an encounter's up; resetEncounterState() below
@@ -317,13 +330,33 @@ export class PlayerCampaignSessionComponent implements OnInit, OnDestroy {
       this.presenceSub = this.encounterService.watchPresence(encounter.id!)
         .subscribe(players => this.presentPlayers.set(players));
       this.turnSub = this.encounterService.watchTurnState()
-        .subscribe(state => this.activeEncounter.update(e => e ? {
-          ...e, current_turn_token_id: state.current_turn_token_id, round_number: state.round_number,
-        } : e));
+        .subscribe(state => {
+          this.activeEncounter.update(e => e ? {
+            ...e, current_turn_token_id: state.current_turn_token_id, round_number: state.round_number,
+          } : e);
+          // Safety net for a level switch whose broadcast was missed (e.g. a dropped connection).
+          void this.refreshMyLevel(encounter.id!);
+        });
+      this.levelSub = this.encounterService.watchCharacterLevelChanged()
+        .subscribe(event => {
+          if (event.characterId === this.myCharacterId()) void this.refreshMyLevel(encounter.id!);
+        });
     } catch {
       this.clearStoredRejoin();
     } finally {
       this.joiningId.set(null);
+    }
+  }
+
+  // Guarded by a request counter so a slow response can't overwrite a newer one when the DM
+  // moves the token twice in quick succession.
+  private async refreshMyLevel(encounterId: string) {
+    const request = ++this.levelRequest;
+    try {
+      const level = await this.encounterService.getMyLevel(encounterId);
+      if (request === this.levelRequest && this.activeEncounter()?.id === encounterId) this.myLevel.set(level);
+    } catch {
+      // Keep showing the current level; the next token change retries.
     }
   }
 
@@ -341,6 +374,8 @@ export class PlayerCampaignSessionComponent implements OnInit, OnDestroy {
     if (encounter?.id) this.encounterService.leavePresence(encounter.id);
     this.presenceSub?.unsubscribe();
     this.turnSub?.unsubscribe();
+    this.levelSub?.unsubscribe();
+    this.myLevel.set(null);
     this.presentPlayers.set([]);
     this.currentTurnToken.set(null);
     this.activeEncounter.set(null);

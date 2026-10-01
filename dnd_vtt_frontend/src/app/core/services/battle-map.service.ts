@@ -77,6 +77,13 @@ export class BattleMapService {
     );
   }
 
+  // Moves a token to another map of the campaign — another level of a multi-level encounter.
+  async moveTokenToMap(token: MapToken, targetMapId: string): Promise<MapToken> {
+    return firstValueFrom(
+      this.http.post<MapToken>(`${API}/maps/${token.map_id}/tokens/${token.id}/move`, { target_map_id: targetMapId })
+    );
+  }
+
   async rerollInitiative(mapId: string, tokenId: string): Promise<MapToken> {
     return firstValueFrom(
       this.http.post<MapToken>(`${API}/maps/${mapId}/tokens/${tokenId}/reroll-initiative`, {})

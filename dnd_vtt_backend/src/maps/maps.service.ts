@@ -45,7 +45,8 @@ export class MapsService {
       isDm
         ? `SELECT * FROM battle_maps WHERE campaign_id = ? ORDER BY created_at DESC`
         : `SELECT DISTINCT bm.* FROM battle_maps bm
-           JOIN encounters e ON e.map_id = bm.id
+           JOIN encounter_levels el ON el.map_id = bm.id
+           JOIN encounters e ON e.id = el.encounter_id
            JOIN sessions s ON s.id = e.session_id
            WHERE bm.campaign_id = ? AND s.visible_to_players = 1
              AND e.visible_to_players = 1
@@ -179,14 +180,78 @@ export class MapsService {
   }
 
   async deleteToken(tokenId: string, mapId: string, user: RequestUser) {
-    await this.assertMapAccess(mapId, user);
+    const map = await this.assertMapAccess(mapId, user);
+    const existing = await this.db.execute(
+      'SELECT character_id FROM map_tokens WHERE id = ?',
+      [tokenId],
+    );
     await this.db.execute('DELETE FROM map_tokens WHERE id = ?', [tokenId]);
     const tokens = await this.getTokensRaw(mapId);
     this.gateway.broadcastTokens(mapId, tokens);
     // A light attached to this token cascades away with it (map_lights.token_id ON DELETE
     // CASCADE) — tell already-connected clients so an attached torch doesn't linger on screen.
     await this.broadcastLighting(mapId);
+    const characterId = existing.rows[0]?.character_id;
+    if (typeof characterId === 'string') {
+      this.gateway.notifyCharacterLevelChanged(
+        map.campaign_id as string,
+        characterId,
+      );
+    }
     return { deleted: true };
+  }
+
+  // Moves a token to another map of the same campaign — a multi-level encounter's stairs. Keeps
+  // its position, HP, initiative etc.; any light attached to it moves along. Both maps' viewers
+  // get a fresh token/lighting list, and a moved character token tells its player to follow it.
+  async moveTokenToMap(
+    tokenId: string,
+    mapId: string,
+    targetMapId: string,
+    user: RequestUser,
+  ) {
+    const map = await this.assertMapAccess(mapId, user);
+    const target = await this.findOneRaw(targetMapId);
+    if (target.campaign_id !== map.campaign_id) {
+      throw new BadRequestException('Target map belongs to another campaign');
+    }
+    const result = await this.db.execute(
+      'SELECT character_id FROM map_tokens WHERE id = ? AND map_id = ?',
+      [tokenId, mapId],
+    );
+    const token = result.rows[0];
+    if (!token) throw new NotFoundException('Token not found');
+    if (targetMapId === mapId) return this.findTokenRaw(tokenId);
+
+    await this.db.execute('UPDATE map_tokens SET map_id = ? WHERE id = ?', [
+      targetMapId,
+      tokenId,
+    ]);
+    await this.db.execute(
+      'UPDATE map_lights SET map_id = ? WHERE token_id = ?',
+      [targetMapId, tokenId],
+    );
+    for (const id of [mapId, targetMapId]) {
+      this.gateway.broadcastTokens(id, await this.getTokensRaw(id));
+      await this.broadcastLighting(id);
+    }
+    if (typeof token.character_id === 'string') {
+      this.gateway.notifyCharacterLevelChanged(
+        map.campaign_id as string,
+        token.character_id,
+      );
+    }
+    return this.findTokenRaw(tokenId);
+  }
+
+  private async findTokenRaw(tokenId: string) {
+    const result = await this.db.execute(
+      'SELECT * FROM map_tokens WHERE id = ?',
+      [tokenId],
+    );
+    const row = result.rows[0];
+    if (!row) throw new NotFoundException('Token not found');
+    return { ...row, is_player: !!row.is_player };
   }
 
   // Narrow carve-out alongside the DM-only upsertToken above: a player may recolor their own
@@ -536,6 +601,7 @@ export class MapsService {
   private async assertMapAccess(mapId: string, user: RequestUser) {
     const map = await this.findOneRaw(mapId);
     await this.assertCampaignAccess(map.campaign_id as string, user);
+    return map;
   }
 
   async getPlayerState(mapId: string, user: RequestUser) {
@@ -617,8 +683,9 @@ export class MapsService {
     if (!membership.rows[0]) throw new ForbiddenException();
     const visibleReference = await this.db.execute(
       `SELECT e.id FROM encounters e
+       JOIN encounter_levels el ON el.encounter_id = e.id
        JOIN sessions s ON s.id = e.session_id
-       WHERE e.map_id = ? AND s.campaign_id = ?
+       WHERE el.map_id = ? AND s.campaign_id = ?
          AND s.visible_to_players = 1 AND e.visible_to_players = 1
        LIMIT 1`,
       [mapId, campaignId],

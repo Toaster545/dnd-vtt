@@ -106,6 +106,16 @@ export class MapsController {
     return this.maps.deleteToken(tokenId, mapId, user);
   }
 
+  @Post(':id/tokens/:tokenId/move')
+  moveToken(
+    @Param('id') mapId: string,
+    @Param('tokenId') tokenId: string,
+    @Body() body: { target_map_id: string },
+    @CurrentUser() user: RequestUser,
+  ) {
+    return this.maps.moveTokenToMap(tokenId, mapId, body.target_map_id, user);
+  }
+
   @Post(':id/tokens/:tokenId/reroll-initiative')
   rerollInitiative(
     @Param('id') mapId: string,

@@ -26,6 +26,15 @@ export class PlayerViewComponent implements OnInit, OnDestroy {
   loading = signal(true);
   error = signal<string | null>(null);
   currentTurnTokenId = signal<string | null>(null);
+  // A multi-level encounter has no single "what players see" — the table screen follows combat
+  // instead, showing whichever level the current-turn token is on (the entry level until turns start).
+  private currentTurnMapId = signal<string | null>(null);
+  levelMapId = computed(() => {
+    const encounter = this.encounter();
+    const turnMap = this.currentTurnMapId();
+    const isLevel = !!turnMap && !!encounter?.levels?.some(l => l.map_id === turnMap);
+    return isLevel ? turnMap : encounter?.map_id ?? null;
+  });
   presentPlayers = signal<PresentPlayer[]>([]);
 
   private presenceSub?: Subscription;
@@ -55,10 +64,14 @@ export class PlayerViewComponent implements OnInit, OnDestroy {
       const encounter = await this.encounterService.getById(encounterId);
       this.encounter.set(encounter);
       this.currentTurnTokenId.set(encounter.current_turn_token_id ?? null);
+      this.currentTurnMapId.set(encounter.current_turn_map_id ?? null);
       this.presenceSub = this.encounterService.watchPresence(encounterId)
         .subscribe(players => this.presentPlayers.set(players));
       this.turnSub = this.encounterService.watchTurnState()
-        .subscribe(state => this.currentTurnTokenId.set(state.current_turn_token_id));
+        .subscribe(state => {
+          this.currentTurnTokenId.set(state.current_turn_token_id);
+          this.currentTurnMapId.set(state.current_turn_map_id ?? null);
+        });
     } catch {
       this.error.set('Could not load this encounter.');
     } finally {

@@ -165,7 +165,11 @@ export class EncounterPresenceGateway
   // both the DM's own other tabs and every joined player pick it up without a separate room/join.
   broadcastTurnState(
     encounterId: string,
-    state: { current_turn_token_id: string | null; round_number: number },
+    state: {
+      current_turn_token_id: string | null;
+      current_turn_map_id: string | null;
+      round_number: number;
+    },
   ) {
     this.server
       .to(`encounter-presence:${encounterId}`)
@@ -185,6 +189,14 @@ export class EncounterPresenceGateway
     this.server
       .to(`campaign:${payload.campaignId}`)
       .emit('encounter_started', payload);
+  }
+
+  // The DM switched which level a character's player is shown — the owning player's client
+  // re-resolves its level (see EncountersService.findMyLevel), everyone else ignores it.
+  notifyCharacterLevelChanged(campaignId: string, characterId: string) {
+    this.server
+      .to(`campaign:${campaignId}`)
+      .emit('character_level_changed', { campaignId, characterId });
   }
 
   // Same campaign-room broadcast as encounter_started: the DM levelled the party, so every
