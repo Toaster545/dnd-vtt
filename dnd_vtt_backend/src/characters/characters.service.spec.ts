@@ -138,6 +138,39 @@ describe('CharactersService', () => {
     ).rejects.toThrow(BadRequestException);
   });
 
+  it('stores a validated token border and rejects malformed ones', async () => {
+    const tokenBorder = {
+      color: '#C9A227',
+      width: 7,
+      pattern: 'dashed',
+      gradientColor: '#3B82F6',
+    };
+    const created = await service.create(ownerId, {
+      name: 'Aria',
+      token_border: tokenBorder,
+    });
+    expect((created as Record<string, unknown>).token_border).toEqual({
+      ...tokenBorder,
+      color: '#c9a227',
+      gradientColor: '#3b82f6',
+    });
+
+    for (const bad of [
+      { ...tokenBorder, color: 'red' },
+      { ...tokenBorder, pattern: 'zigzag' },
+      { ...tokenBorder, width: 11 },
+      { ...tokenBorder, width: 2.5 },
+      { ...tokenBorder, gradientColor: 'blue' },
+    ]) {
+      await expect(
+        service.update(created.id as string, owner, {
+          ...created,
+          token_border: bad,
+        }),
+      ).rejects.toThrow(BadRequestException);
+    }
+  });
+
   it('rejects reading a character owned by someone else', async () => {
     const created = await service.create(ownerId, { name: 'Aria' });
     const otherId = await insertProfile(db);

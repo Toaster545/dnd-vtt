@@ -4,18 +4,24 @@ import { vi } from 'vitest';
 import { CharacterService } from '../../core/services/character.service';
 import { legacySeedToAvatarRecipe, portraitDataUri, portraitSource } from '../../core/utils/avatar';
 import { AvatarCreatorDialogComponent } from './avatar-creator-dialog';
+import { TokenBorder } from '../../core/models/token-border.model';
+import { DEFAULT_TOKEN_BORDER } from '../../core/utils/token-border';
 
 const UPLOADED = '/uploads/portraits/user-1/2f1c0f3e-0000-4000-8000-000000000000.webp';
 
 describe('AvatarCreatorDialogComponent', () => {
   let close: ReturnType<typeof vi.fn>;
 
-  function create(seed = 'legacy-avatar', image: string | null = null) {
+  function create(
+    seed = 'legacy-avatar',
+    image: string | null = null,
+    tokenBorder: TokenBorder | null = null,
+  ) {
     close = vi.fn();
     TestBed.configureTestingModule({
       imports: [AvatarCreatorDialogComponent],
       providers: [
-        { provide: MAT_DIALOG_DATA, useValue: { seed, recipe: null, image } },
+        { provide: MAT_DIALOG_DATA, useValue: { seed, recipe: null, image, tokenBorder } },
         { provide: MatDialogRef, useValue: { close } },
         { provide: CharacterService, useValue: { uploadPortrait: vi.fn() } },
       ],
@@ -86,7 +92,11 @@ describe('AvatarCreatorDialogComponent', () => {
     expect(component.previewUri()).toBe(UPLOADED);
 
     await component.apply();
-    expect(close).toHaveBeenCalledWith({ recipe: component.recipe(), image: UPLOADED });
+    expect(close).toHaveBeenCalledWith({
+      recipe: component.recipe(),
+      image: UPLOADED,
+      tokenBorder: null,
+    });
   });
 
   it('clears the uploaded portrait when the built avatar is applied', async () => {
@@ -97,7 +107,55 @@ describe('AvatarCreatorDialogComponent', () => {
     );
 
     await component.apply();
-    expect(close).toHaveBeenCalledWith({ recipe: component.recipe(), image: null });
+    expect(close).toHaveBeenCalledWith({
+      recipe: component.recipe(),
+      image: null,
+      tokenBorder: null,
+    });
+  });
+
+  it('starts a custom token border from the default and returns it on apply', async () => {
+    const component = create();
+    expect(component.tokenBorder()).toBeNull();
+
+    component.setBorderPattern('dotted');
+    component.setBorderWidth(9);
+    component.setBorderWidth(42);
+    component.updateBorder({ color: '#3B82F6' });
+    component.setGradient(true);
+    expect(component.tokenBorder()?.gradientColor).not.toBe('#3b82f6');
+    component.updateBorder({ gradientColor: '#EC4899' });
+    component.updateBorder({ color: 'blue' });
+    const expected: TokenBorder = {
+      ...DEFAULT_TOKEN_BORDER,
+      pattern: 'dotted',
+      width: 9,
+      color: '#3b82f6',
+      gradientColor: '#ec4899',
+    };
+    expect(component.tokenBorder()).toEqual(expected);
+
+    await component.apply();
+    expect(close).toHaveBeenCalledWith({
+      recipe: component.recipe(),
+      image: null,
+      tokenBorder: expected,
+    });
+  });
+
+  it('keeps an existing token border and can reset it to the default ring', () => {
+    const border: TokenBorder = {
+      color: '#e05252',
+      width: 8,
+      pattern: 'double',
+      gradientColor: null,
+    };
+    const component = create('legacy-avatar', null, border);
+    expect(component.tokenBorder()).toEqual(border);
+    component.setGradient(false);
+    expect(component.tokenBorder()?.gradientColor).toBeNull();
+    component.resetBorder();
+    expect(component.tokenBorder()).toBeNull();
   });
 
   it('cannot apply the upload tab before an image is chosen', async () => {

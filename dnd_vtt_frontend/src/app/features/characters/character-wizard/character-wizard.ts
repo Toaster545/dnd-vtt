@@ -21,6 +21,8 @@ import { CharacterService } from '../../../core/services/character.service';
 import { CampaignService } from '../../../core/services/campaign.service';
 import { Character, Ability, ABILITIES, ScoreMethod, POINT_BUY_MIN, defaultCharacter, abilityModifier } from '../../../core/models/character.model';
 import { AvatarRecipeV1 } from '../../../core/models/avatar.model';
+import { TokenBorder } from '../../../core/models/token-border.model';
+import { normalizeTokenBorder } from '../../../core/utils/token-border';
 import { AvatarCreatorDialogComponent, AvatarCreatorResult } from '../../../shared/avatar-creator-dialog/avatar-creator-dialog';
 import { ContentSourceDialogComponent } from '../../../shared/components/content-source-dialog/content-source-dialog';
 import { characterContentEnabled } from '../../../core/utils/content-sources';
@@ -203,6 +205,7 @@ export class CharacterWizardComponent implements OnInit, OnDestroy {
   portraitSeed  = signal(this.initialPortraitSeed);
   avatarRecipe  = signal<AvatarRecipeV1 | null>(randomAvatarRecipe(this.initialPortraitSeed));
   portraitImage = signal<string | null>(null);
+  tokenBorder   = signal<TokenBorder | null>(null);
   portraitUri   = computed(() =>
     portraitDataUri(portraitSource(this.portraitSeed(), this.avatarRecipe(), this.portraitImage())),
   );
@@ -623,6 +626,7 @@ export class CharacterWizardComponent implements OnInit, OnDestroy {
       portrait_seed: this.portraitSeed(),
       avatar_recipe: this.avatarRecipe() ?? undefined,
       portrait_image: this.portraitImage(),
+      token_border: this.tokenBorder(),
       race: this.selectedRace()?.name ?? '',
       subrace: this.selectedSubrace()?.name ?? '',
       race_choices: this.raceTraits(),
@@ -688,7 +692,7 @@ export class CharacterWizardComponent implements OnInit, OnDestroy {
     });
 
     effect(() => {
-      this.characterName(); this.portraitSeed(); this.avatarRecipe(); this.portraitImage(); this.level(); this.alignment();
+      this.characterName(); this.portraitSeed(); this.avatarRecipe(); this.portraitImage(); this.tokenBorder(); this.level(); this.alignment();
       this.selectedRace(); this.selectedSubrace(); this.raceTraits(); this.selectedClasses();
       this.selectedBackground(); this.backgroundTraits();
       this.assignments(); this.selectedItemIndices(); this.spellChoices();
@@ -757,6 +761,7 @@ export class CharacterWizardComponent implements OnInit, OnDestroy {
       this.portraitSeed.set(existing.portrait_seed ?? randomPortraitSeed());
       this.avatarRecipe.set(normalizeAvatarRecipe(existing.avatar_recipe));
       this.portraitImage.set(isPortraitImageUrl(existing.portrait_image) ? existing.portrait_image : null);
+      this.tokenBorder.set(normalizeTokenBorder(existing.token_border));
       this.level.set(existing.level);
       this.alignment.set(existing.alignment);
       this.currentHp.set(existing.current_hp);
@@ -903,7 +908,12 @@ export class CharacterWizardComponent implements OnInit, OnDestroy {
 
   openPortraitPicker() {
     this.dialog.open(AvatarCreatorDialogComponent, {
-      data: { seed: this.portraitSeed(), recipe: this.avatarRecipe(), image: this.portraitImage() },
+      data: {
+        seed: this.portraitSeed(),
+        recipe: this.avatarRecipe(),
+        image: this.portraitImage(),
+        tokenBorder: this.tokenBorder(),
+      },
       width: '960px',
       maxWidth: 'calc(100vw - 16px)',
       maxHeight: 'calc(100vh - 16px)',
@@ -914,6 +924,7 @@ export class CharacterWizardComponent implements OnInit, OnDestroy {
       this.portraitSeed.set(recipe.seed);
       this.avatarRecipe.set(recipe);
       this.portraitImage.set(result.image);
+      this.tokenBorder.set(result.tokenBorder);
     });
   }
 

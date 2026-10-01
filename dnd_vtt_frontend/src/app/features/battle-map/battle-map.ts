@@ -28,6 +28,7 @@ import { WallTool, wallIndexNear, wallPointUnderPointer } from './canvas/wall-to
 import { PortraitCache } from './canvas/portrait-cache';
 import { TokenImageCache } from './canvas/token-image-cache';
 import { PortraitSource } from '../../core/models/avatar.model';
+import { TokenBorder } from '../../core/models/token-border.model';
 import { StagePointerTools } from './canvas/stage-pointer-tools';
 import { StageView } from './canvas/stage-view';
 import { MapToolbarComponent } from './components/map-toolbar/map-toolbar';
@@ -54,6 +55,8 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
   readonly placingEntity = input<PlacingEntity | null>(null);
   readonly characterHp = input<Record<string, { hp: number; max_hp: number }>>({});
   readonly characterPortraits = input<Record<string, PortraitSource>>({});
+  // Each character's portrait-dialog ring style, by character_id (see TokenRenderContext).
+  readonly characterTokenBorders = input<Record<string, TokenBorder>>({});
   readonly currentTurnTokenId = input<string | null>(null);
   // An encounter's tokens across all of its levels (see EncounterService.watchTurnOrder). When
   // set, the turn order panel lists these instead of just this map's own tokens.
@@ -483,6 +486,7 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
     effect(() => {
       this.characterHp();
       this.characterPortraits();
+      this.characterTokenBorders();
       this.currentTurnTokenId();
       this.activeMeasureTool();
       this.fog();
@@ -962,6 +966,7 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
       selectedTokenId: this.selectedTokenId(),
       characterHp: this.characterHp(),
       characterPortraits: this.resolvePortraitImages(this.characterPortraits()),
+      characterTokenBorders: this.characterTokenBorders(),
       tokenImages: this.tokenImageCache.resolve(tokens, () => this.renderTokens(this.lastTokens)),
       hiddenTokenIds: this.tokensHiddenByDarkness(),
       onTokenClick: token => {
@@ -1083,14 +1088,6 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
     const layer = this.measureLayer;
     if (!layer) return;
     this.measurementTool.render(layer, this.cellSize);
-  }
-
-  // Uses the narrower setTokenColor endpoint rather than upsertToken: works for a player who
-  // doesn't otherwise have write access to this map, as long as it's their own character's token.
-  async setMyTokenColor(color: string) {
-    const token = this.myToken();
-    if (!token?.id) return;
-    await this.mapService.setTokenColor(this.mapId, token.id, color);
   }
 
   async removeToken(token: MapToken) {

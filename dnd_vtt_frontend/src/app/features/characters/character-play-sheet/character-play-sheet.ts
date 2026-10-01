@@ -1256,7 +1256,7 @@ export class CharacterPlaySheetComponent {
   });
 
   // Picking a portrait is player agency we keep even when the DM has locked the wizard — the
-  // backend whitelists portrait_seed/avatar_recipe/portrait_image on a locked campaign copy
+  // backend whitelists portrait_seed/avatar_recipe/portrait_image/token_border on a locked campaign copy
   // (PLAYER_EDITABLE_FIELDS).
   changePortrait() {
     const char = this.localChar();
@@ -1266,6 +1266,7 @@ export class CharacterPlaySheetComponent {
         seed: char.portrait_seed || char.id || '',
         recipe: char.avatar_recipe,
         image: char.portrait_image,
+        tokenBorder: char.token_border,
       },
       width: '960px',
       maxWidth: 'calc(100vw - 16px)',
@@ -1280,6 +1281,7 @@ export class CharacterPlaySheetComponent {
         portrait_seed: recipe.seed,
         avatar_recipe: recipe,
         portrait_image: result.image,
+        token_border: result.tokenBorder,
       });
     });
   }

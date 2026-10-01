@@ -14,6 +14,8 @@ import { Encounter, MyEncounterLevel, PresentPlayer } from '../../../../core/mod
 import { Character } from '../../../../core/models/character.model';
 import { PortraitSource } from '../../../../core/models/avatar.model';
 import { portraitSource } from '../../../../core/utils/avatar';
+import { TokenBorder } from '../../../../core/models/token-border.model';
+import { normalizeTokenBorder } from '../../../../core/utils/token-border';
 import { CampaignMember, MapToken } from '../../../../core/models/campaign.model';
 import { Session } from '../../../../core/models/session.model';
 import { BattleMapComponent } from '../../../battle-map/battle-map';
@@ -143,6 +145,15 @@ export class PlayerCampaignSessionComponent implements OnInit, OnDestroy {
       if (p.characterId) {
         map[p.characterId] = portraitSource(p.portraitSeed || p.characterId, p.avatarRecipe, p.portraitImage);
       }
+    }
+    return map;
+  });
+
+  characterTokenBorders = computed(() => {
+    const map: Record<string, TokenBorder> = {};
+    for (const p of this.presentPlayers()) {
+      const border = normalizeTokenBorder(p.tokenBorder);
+      if (p.characterId && border) map[p.characterId] = border;
     }
     return map;
   });

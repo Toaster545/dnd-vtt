@@ -57,6 +57,7 @@
         } @else if (myLevel()?.map_id ?? encounter.map_id; as levelMapId) {
           <app-battle-map [mapIdInput]="levelMapId" [embedded]="true" [canControl]="false" [characterHp]="characterHp()"
             [characterPortraits]="characterPortraits()"
+            [characterTokenBorders]="characterTokenBorders()"
             [currentTurnTokenId]="encounter.current_turn_token_id ?? null"
             [turnOrderTokens]="turnOrderTokens()" [showTurnOrder]="(encounter.round_number ?? 1) >= 2"
             [myCharacterId]="activeCharacter()?.id ?? null" [myMoveSpeedFt]="activeCharacter()?.speed ?? null"

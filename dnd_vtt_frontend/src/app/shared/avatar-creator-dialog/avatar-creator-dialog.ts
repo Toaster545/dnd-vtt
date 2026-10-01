@@ -1,4 +1,5 @@
 import { Component, computed, inject, signal, viewChild } from '@angular/core';
+import { NgTemplateOutlet } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
@@ -23,23 +24,46 @@ import {
 import { CharacterService } from '../../core/services/character.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { PortraitCropperComponent } from './portrait-cropper';
+import { TokenBorderPreviewComponent } from './token-border-preview';
+import { TokenBorder, TokenBorderPattern } from '../../core/models/token-border.model';
+import {
+  DEFAULT_TOKEN_BORDER,
+  normalizeTokenBorder,
+  TOKEN_BORDER_PALETTE,
+  TOKEN_BORDER_PATTERNS,
+  TOKEN_BORDER_MAX_WIDTH,
+  TOKEN_BORDER_MIN_WIDTH,
+} from '../../core/utils/token-border';
 
 export interface AvatarCreatorDialogData {
   seed: string;
   recipe?: AvatarRecipeV1 | null;
   image?: string | null;
+  tokenBorder?: TokenBorder | null;
 }
 
 // `recipe` is always the builder's current design (kept even while an upload is in use, so
 // switching back restores it); `image` is the uploaded portrait URL, or null for the built avatar.
+type BorderColorKey = 'color' | 'gradientColor';
+
+// `tokenBorder` is null when the player keeps (or resets to) the default battle-map ring.
 export interface AvatarCreatorResult {
   recipe: AvatarRecipeV1;
   image: string | null;
+  tokenBorder: TokenBorder | null;
 }
 
 @Component({
   selector: 'app-avatar-creator-dialog',
-  imports: [FormsModule, MatDialogModule, MatIconModule, MatMenuModule, PortraitCropperComponent],
+  imports: [
+    FormsModule,
+    NgTemplateOutlet,
+    MatDialogModule,
+    MatIconModule,
+    MatMenuModule,
+    PortraitCropperComponent,
+    TokenBorderPreviewComponent,
+  ],
   templateUrl: './avatar-creator-dialog.html',
   styleUrl: './avatar-creator-dialog.scss',
 })
@@ -53,6 +77,15 @@ export class AvatarCreatorDialogComponent {
   // Live crop preview once a new file is loaded; until then the previously uploaded portrait.
   readonly uploadPreview = signal<string | null>(null);
   readonly saving = signal(false);
+  readonly tab = signal<'portrait' | 'token'>('portrait');
+  // null = the default ring (drawn in the token's per-map color); any edit on the Token tab
+  // starts a custom style from DEFAULT_TOKEN_BORDER.
+  readonly tokenBorder = signal<TokenBorder | null>(normalizeTokenBorder(this.data.tokenBorder));
+  readonly borderShown = computed(() => this.tokenBorder() ?? DEFAULT_TOKEN_BORDER);
+  readonly borderPalette = TOKEN_BORDER_PALETTE;
+  readonly minBorderWidth = TOKEN_BORDER_MIN_WIDTH;
+  readonly maxBorderWidth = TOKEN_BORDER_MAX_WIDTH;
+  readonly borderPatterns = TOKEN_BORDER_PATTERNS;
   readonly saveError = signal('');
   readonly styles = AVATAR_STYLE_DEFINITIONS;
   readonly recipe = signal(
@@ -103,14 +136,11 @@ export class AvatarCreatorDialogComponent {
   async apply() {
     if (!this.canApply()) return;
     if (this.mode() === 'build') {
-      this.dialogRef.close({ recipe: this.recipe(), image: null } satisfies AvatarCreatorResult);
+      this.dialogRef.close(this.result(null));
       return;
     }
     if (!this.uploadPreview()) {
-      this.dialogRef.close({
-        recipe: this.recipe(),
-        image: this.existingImage,
-      } satisfies AvatarCreatorResult);
+      this.dialogRef.close(this.result(this.existingImage));
       return;
     }
     this.saving.set(true);
@@ -119,7 +149,7 @@ export class AvatarCreatorDialogComponent {
       const blob = await this.cropper()?.export();
       if (!blob) throw new Error('The cropped portrait could not be created.');
       const image = await this.characters.uploadPortrait(blob);
-      this.dialogRef.close({ recipe: this.recipe(), image } satisfies AvatarCreatorResult);
+      this.dialogRef.close(this.result(image));
     } catch (error) {
       // Prefer the backend's reason (wrong type, too large) over HttpClient's generic message.
       const reason =
@@ -134,6 +164,63 @@ export class AvatarCreatorDialogComponent {
     } finally {
       this.saving.set(false);
     }
+  }
+
+  private result(image: string | null): AvatarCreatorResult {
+    return { recipe: this.recipe(), image, tokenBorder: this.tokenBorder() };
+  }
+
+  updateBorder(patch: Partial<TokenBorder>) {
+    const next = normalizeTokenBorder({ ...this.borderShown(), ...patch });
+    if (next) this.tokenBorder.set(next);
+  }
+
+  borderColor(key: BorderColorKey): string {
+    return this.borderShown()[key] ?? '';
+  }
+
+  // Only the custom style's own value counts as selected — the default ring has no swatch.
+  isBorderSwatch(key: BorderColorKey, swatch: string): boolean {
+    return this.tokenBorder()?.[key] === swatch;
+  }
+
+  setBorderColor(key: BorderColorKey, color: string) {
+    this.updateBorder({ [key]: color });
+  }
+
+  setBorderColorInput(key: BorderColorKey, event: Event) {
+    const input = event.target as HTMLInputElement;
+    if (!/^#[0-9a-f]{6}$/i.test(input.value)) {
+      input.value = this.borderColor(key);
+      return;
+    }
+    this.setBorderColor(key, input.value);
+  }
+
+  // Turning the gradient on picks a second color distinct from the first, so the change is
+  // visible right away instead of blending between two identical colors.
+  setGradient(on: boolean) {
+    if (!on) {
+      this.updateBorder({ gradientColor: null });
+      return;
+    }
+    const color = this.borderShown().color;
+    const index = Math.max(0, this.borderPalette.indexOf(color));
+    // A few swatches along the palette is a different hue, not a near-neighbor shade.
+    const gradientColor = this.borderPalette[(index + 4) % this.borderPalette.length];
+    this.updateBorder({ gradientColor });
+  }
+
+  setBorderWidth(width: number) {
+    this.updateBorder({ width });
+  }
+
+  setBorderPattern(pattern: TokenBorderPattern) {
+    this.updateBorder({ pattern });
+  }
+
+  resetBorder() {
+    this.tokenBorder.set(null);
   }
 
   isSelected(categoryId: string, partId: string): boolean {

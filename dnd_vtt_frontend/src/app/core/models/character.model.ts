@@ -1,4 +1,5 @@
 import { AvatarRecipeV1 } from './avatar.model';
+import { TokenBorder } from './token-border.model';
 
 export interface AbilityScores {
   strength: number;
@@ -214,6 +215,7 @@ export interface Character {
   portrait_seed?: string; // DiceBear (Lorelei style) seed for the generated portrait shown next to the character's name
   avatar_recipe?: AvatarRecipeV1; // Versioned, explicit avatar choices; portrait_seed remains the legacy/failure fallback
   portrait_image?: string | null; // Uploaded, pre-cropped square portrait (/uploads/portraits/...); wins over avatar_recipe when set
+  token_border?: TokenBorder | null; // Battle-map token ring style picked in the portrait dialog; unset keeps the default ring
   created_at?: string;
   updated_at?: string;
 }

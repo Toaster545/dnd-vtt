@@ -17,7 +17,12 @@ describe('adjustCurrency', () => {
 
   it('cascades through multiple denominations when the nearest one is also short', () => {
     // 1 pp on hand, no gp/sp — withdrawing 5 sp should break the pp all the way down.
-    expect(adjustCurrency({ ...empty, pp: 1 }, 'sp', -5)).toEqual({ ...empty, pp: 0, gp: 9, sp: 5 });
+    expect(adjustCurrency({ ...empty, pp: 1 }, 'sp', -5)).toEqual({
+      ...empty,
+      pp: 0,
+      gp: 9,
+      sp: 5,
+    });
   });
 
   it('skips empty denominations while borrowing', () => {

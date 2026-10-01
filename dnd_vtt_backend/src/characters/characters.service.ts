@@ -14,6 +14,7 @@ import { ContentService } from '../content/content.service';
 import { EncounterPresenceGateway } from '../encounters/encounter-presence.gateway';
 import { parseAvatarRecipe } from '../common/avatar-recipe';
 import { parsePortraitImage } from '../common/portrait-image';
+import { parseTokenBorder } from '../common/token-border';
 import {
   EBERRON_SOURCE_CODE,
   disallowedSources,
@@ -194,6 +195,7 @@ const PLAYER_EDITABLE_FIELDS = [
   'portrait_seed',
   'avatar_recipe',
   'portrait_image',
+  'token_border',
   // Not itself an independent player choice — the frontend recomputes this from whatever's
   // equipped every time it persists (see CharacterPlaySheetComponent.persist), so it has to ride
   // along with the equipment toggle that changed it or campaign-hub/roster views relying on the
@@ -567,7 +569,9 @@ export class CharactersService {
       }
 
       const normalized =
-        'avatar_recipe' in body || 'portrait_image' in body
+        'avatar_recipe' in body ||
+        'portrait_image' in body ||
+        'token_border' in body
           ? this.normalizeCharacterAvatar(data)
           : data;
       normalized.applied_level = level;
@@ -1618,7 +1622,9 @@ export class CharactersService {
     // update path does, without risking a throw on a pre-existing recipe during an unrelated
     // (HP, rest, ...) locked save.
     const normalized =
-      'avatar_recipe' in body || 'portrait_image' in body
+      'avatar_recipe' in body ||
+      'portrait_image' in body ||
+      'token_border' in body
         ? this.normalizeCharacterAvatar(data)
         : data;
 
@@ -1720,6 +1726,15 @@ export class CharactersService {
         const image = parsePortraitImage(normalized.portrait_image);
         if (!image) throw new BadRequestException('Invalid portrait image');
         normalized.portrait_image = image;
+      }
+    }
+    if (Object.prototype.hasOwnProperty.call(normalized, 'token_border')) {
+      if (normalized.token_border == null) {
+        delete normalized.token_border;
+      } else {
+        const border = parseTokenBorder(normalized.token_border);
+        if (!border) throw new BadRequestException('Invalid token border');
+        normalized.token_border = border;
       }
     }
     return normalized;

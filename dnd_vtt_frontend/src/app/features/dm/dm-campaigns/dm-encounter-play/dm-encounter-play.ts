@@ -14,6 +14,8 @@ import { Encounter, PresentPlayer } from '../../../../core/models/encounter.mode
 import { Character } from '../../../../core/models/character.model';
 import { PortraitSource } from '../../../../core/models/avatar.model';
 import { portraitSource } from '../../../../core/utils/avatar';
+import { TokenBorder } from '../../../../core/models/token-border.model';
+import { normalizeTokenBorder } from '../../../../core/utils/token-border';
 import { getErrorMessage } from '../../../../core/utils/error-message';
 import { campaignContentEnabled } from '../../../../core/utils/content-sources';
 import { CampaignMember, MapToken, PlacingEntity } from '../../../../core/models/campaign.model';
@@ -154,6 +156,15 @@ export class DmEncounterPlayComponent implements OnInit, OnDestroy {
     const map: Record<string, PortraitSource> = {};
     for (const c of Object.values(this.allCharactersById())) {
       if (c.id) map[c.id] = portraitSource(c.portrait_seed || c.id, c.avatar_recipe, c.portrait_image);
+    }
+    return map;
+  });
+
+  characterTokenBorders = computed(() => {
+    const map: Record<string, TokenBorder> = {};
+    for (const c of Object.values(this.allCharactersById())) {
+      const border = normalizeTokenBorder(c.token_border);
+      if (c.id && border) map[c.id] = border;
     }
     return map;
   });

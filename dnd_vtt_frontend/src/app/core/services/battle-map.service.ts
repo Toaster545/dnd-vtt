@@ -69,14 +69,6 @@ export class BattleMapService {
     await firstValueFrom(this.http.delete(`${API}/maps/${mapId}/tokens/${tokenId}`));
   }
 
-  // Narrower than upsertToken: lets a player recolor their own character's token without the
-  // DM-only map-mutation access upsertToken requires (see MapsService.setTokenColor).
-  async setTokenColor(mapId: string, tokenId: string, color: string): Promise<MapToken> {
-    return firstValueFrom(
-      this.http.post<MapToken>(`${API}/maps/${mapId}/tokens/${tokenId}/color`, { color })
-    );
-  }
-
   // A move made during the token's turn only counts toward its distance once the DM confirms it;
   // undo sends the token back to its last confirmed square.
   async confirmTokenMove(mapId: string, tokenId: string) {
@@ -88,7 +80,7 @@ export class BattleMapService {
   }
 
   // The square a player would like their own token moved to — the DM sees it on that token's
-  // turn. Owner-or-DM only, like setTokenColor.
+  // turn. Owner-or-DM only.
   getTokenPlan(mapId: string, tokenId: string): Promise<{ x: number; y: number } | null> {
     return firstValueFrom(
       this.http.get<{ x: number; y: number } | null>(`${API}/maps/${mapId}/tokens/${tokenId}/plan`)

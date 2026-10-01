@@ -10,33 +10,53 @@ export interface ResolvedEquipment {
 // just with its own key namespace so it can't collide with a grant key.
 const MODE_KEY = 'mode';
 const groupKey = (key: string) => `group:${key}`;
-const catKey   = (key: string) => `cat:${key}`;
+const catKey = (key: string) => `cat:${key}`;
 
 export function equipmentMode(choices: Record<string, string[]>): 'gear' | 'gold' {
   return choices[MODE_KEY]?.[0] === 'gold' ? 'gold' : 'gear';
 }
 
-export function withMode(choices: Record<string, string[]>, mode: 'gear' | 'gold'): Record<string, string[]> {
+export function withMode(
+  choices: Record<string, string[]>,
+  mode: 'gear' | 'gold',
+): Record<string, string[]> {
   return { ...choices, [MODE_KEY]: [mode] };
 }
 
-export function groupOptionKey(choices: Record<string, string[]>, group: { key: string }): string | null {
+export function groupOptionKey(
+  choices: Record<string, string[]>,
+  group: { key: string },
+): string | null {
   return choices[groupKey(group.key)]?.[0] ?? null;
 }
 
-export function withGroupOption(choices: Record<string, string[]>, group: { key: string }, optionKey: string): Record<string, string[]> {
+export function withGroupOption(
+  choices: Record<string, string[]>,
+  group: { key: string },
+  optionKey: string,
+): Record<string, string[]> {
   return { ...choices, [groupKey(group.key)]: [optionKey] };
 }
 
-export function categoryPick(choices: Record<string, string[]>, ref: { key: string }): string | null {
+export function categoryPick(
+  choices: Record<string, string[]>,
+  ref: { key: string },
+): string | null {
   return choices[catKey(ref.key)]?.[0] ?? null;
 }
 
-export function withCategoryPick(choices: Record<string, string[]>, ref: { key: string }, itemIndex: string): Record<string, string[]> {
+export function withCategoryPick(
+  choices: Record<string, string[]>,
+  ref: { key: string },
+  itemIndex: string,
+): Record<string, string[]> {
   return { ...choices, [catKey(ref.key)]: [itemIndex] };
 }
 
-function resolveRef(ref: EquipmentItemRef, choices: Record<string, string[]>): { itemIndex: string; quantity: number } | null {
+function resolveRef(
+  ref: EquipmentItemRef,
+  choices: Record<string, string[]>,
+): { itemIndex: string; quantity: number } | null {
   if ('item' in ref) return { itemIndex: ref.item, quantity: ref.quantity ?? 1 };
   const picked = categoryPick(choices, ref);
   return picked ? { itemIndex: picked, quantity: ref.quantity ?? 1 } : null;
@@ -45,7 +65,10 @@ function resolveRef(ref: EquipmentItemRef, choices: Record<string, string[]>): {
 // What a class/background actually contributes to the character right now: either the
 // gold alternative (option "b"), or the fixed items plus whichever option was picked in each
 // group (option "a") — category refs left unpicked are simply omitted rather than guessed.
-export function resolveStartingEquipment(equip: StartingEquipment, choices: Record<string, string[]>): ResolvedEquipment {
+export function resolveStartingEquipment(
+  equip: StartingEquipment,
+  choices: Record<string, string[]>,
+): ResolvedEquipment {
   if (equipmentMode(choices) === 'gold') return { items: [], gold: equip.goldAlternative };
 
   const items: { itemIndex: string; quantity: number }[] = [];
@@ -56,7 +79,7 @@ export function resolveStartingEquipment(equip: StartingEquipment, choices: Reco
   }
   for (const group of equip.groups) {
     const optionKey = groupOptionKey(choices, group);
-    const option = group.options.find(o => o.key === optionKey);
+    const option = group.options.find((o) => o.key === optionKey);
     if (!option) continue;
     gold += option.gold ?? 0;
     for (const ref of option.items) {
@@ -70,13 +93,17 @@ export function resolveStartingEquipment(equip: StartingEquipment, choices: Reco
 // Every choice needed to fully resolve this source has been made — a group option picked, and
 // any category ref within it (or in `fixed`) resolved to a specific item. Gold mode is always
 // complete (nothing left to pick).
-export function isEquipmentComplete(equip: StartingEquipment, choices: Record<string, string[]>): boolean {
+export function isEquipmentComplete(
+  equip: StartingEquipment,
+  choices: Record<string, string[]>,
+): boolean {
   if (equipmentMode(choices) === 'gold') return true;
-  const needsCategoryPick = (ref: EquipmentItemRef) => !('item' in ref) && !categoryPick(choices, ref);
+  const needsCategoryPick = (ref: EquipmentItemRef) =>
+    !('item' in ref) && !categoryPick(choices, ref);
   if (equip.fixed.some(needsCategoryPick)) return false;
   for (const group of equip.groups) {
     const optionKey = groupOptionKey(choices, group);
-    const option = group.options.find(o => o.key === optionKey);
+    const option = group.options.find((o) => o.key === optionKey);
     if (!option || option.items.some(needsCategoryPick)) return false;
   }
   return true;
@@ -90,5 +117,5 @@ export function isStructuredEquipment(value: unknown): value is StartingEquipmen
 }
 
 export function categoryOptions(items: DndItem[], ref: { category: string }): DndItem[] {
-  return items.filter(it => it.category.startsWith(ref.category));
+  return items.filter((it) => it.category.startsWith(ref.category));
 }

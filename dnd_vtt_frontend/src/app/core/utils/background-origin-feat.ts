@@ -10,5 +10,9 @@ export function resolveBackgroundOriginFeat(
     .replace(/\s*\([^)]*\)\s*$/, '')
     .trim()
     .toLocaleLowerCase();
-  return feats.find(feat => feat.category === 'origin' && feat.name.toLocaleLowerCase() === featureName) ?? null;
+  return (
+    feats.find(
+      (feat) => feat.category === 'origin' && feat.name.toLocaleLowerCase() === featureName,
+    ) ?? null
+  );
 }

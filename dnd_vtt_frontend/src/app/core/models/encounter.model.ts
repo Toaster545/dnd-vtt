@@ -1,4 +1,5 @@
 import { AvatarRecipeV1 } from './avatar.model';
+import { TokenBorder } from './token-border.model';
 
 export interface Encounter {
   id?: string;
@@ -81,4 +82,5 @@ export interface PresentPlayer {
   portraitSeed?: string;
   avatarRecipe?: AvatarRecipeV1;
   portraitImage?: string;
+  tokenBorder?: TokenBorder;
 }

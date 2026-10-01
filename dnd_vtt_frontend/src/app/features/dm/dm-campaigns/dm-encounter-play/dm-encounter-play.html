@@ -147,6 +147,7 @@
         @if (activeMapId(); as mapId) {
           <app-battle-map [mapIdInput]="mapId" [embedded]="true" [canControl]="isOwner()" [placingEntity]="armedEntity()"
             [characterHp]="characterHp()" [characterPortraits]="characterPortraits()"
+            [characterTokenBorders]="characterTokenBorders()"
             [currentTurnTokenId]="encounter.current_turn_token_id ?? null"
             [turnOrderTokens]="turnOrderTokens()"
             (tokenClicked)="onTokenClicked($event)" (currentTurnTokenChanged)="currentTurnToken.set($event)"

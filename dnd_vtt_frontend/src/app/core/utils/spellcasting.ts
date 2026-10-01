@@ -1,4 +1,9 @@
-import { abilityModifier, proficiencyBonus, type Ability, type AbilityScores } from '../models/character.model';
+import {
+  abilityModifier,
+  proficiencyBonus,
+  type Ability,
+  type AbilityScores,
+} from '../models/character.model';
 import type {
   ClassLevel,
   DndBackground,
@@ -139,7 +144,12 @@ export interface SpellUpcastEffect {
 }
 
 const NUMBER_WORDS: Record<string, number> = {
-  one: 1, two: 2, three: 3, four: 4, five: 5, six: 6,
+  one: 1,
+  two: 2,
+  three: 3,
+  four: 4,
+  five: 5,
+  six: 6,
 };
 
 function pluralize(noun: string, count: number): string {
@@ -174,7 +184,9 @@ export function describeSpellUpcast(spell: DndSpell, slotLevel: number): SpellUp
     };
   }
 
-  const additional = rule.match(/\b(one|two|three|four|five|six|\d+) additional ([\w'-]+(?: [\w'-]+){0,2}?) for each spell slot level/i);
+  const additional = rule.match(
+    /\b(one|two|three|four|five|six|\d+) additional ([\w'-]+(?: [\w'-]+){0,2}?) for each spell slot level/i,
+  );
   if (additional) {
     const perLevel = NUMBER_WORDS[additional[1].toLowerCase()] ?? Number(additional[1]);
     const total = perLevel * levelsAbove;
@@ -187,7 +199,9 @@ export function describeSpellUpcast(spell: DndSpell, slotLevel: number): SpellUp
     };
   }
 
-  const measurement = rule.match(/\b(duration|radius|size|Cube)(?:[^.]{0,100}?)increases? by (\d+) (feet|foot|hours?|days?|gallons?)/i);
+  const measurement = rule.match(
+    /\b(duration|radius|size|Cube)(?:[^.]{0,100}?)increases? by (\d+) (feet|foot|hours?|days?|gallons?)/i,
+  );
   if (measurement) {
     const total = Number(measurement[2]) * levelsAbove;
     return {
@@ -201,9 +215,10 @@ export function describeSpellUpcast(spell: DndSpell, slotLevel: number): SpellUp
   return {
     slotLevel,
     levelsAbove,
-    summary: levelsAbove === 1
-      ? 'Applies the spell’s higher-level benefit once.'
-      : `Applies the spell’s higher-level benefit across ${levelsAbove} additional slot levels.`,
+    summary:
+      levelsAbove === 1
+        ? 'Applies the spell’s higher-level benefit once.'
+        : `Applies the spell’s higher-level benefit across ${levelsAbove} additional slot levels.`,
     rule,
   };
 }
@@ -236,19 +251,20 @@ export function resolveSpellAttackDamage(
   if (scaling) {
     const threshold = Object.keys(scaling)
       .map(Number)
-      .filter(level => level <= characterLevel)
+      .filter((level) => level <= characterLevel)
       .sort((a, b) => b - a)[0];
     formula = scaling[String(threshold)] ?? '';
   }
   if (!formula) {
-    formula = spell.description.match(/\b(\d+d\d+(?:\s*[+-]\s*\d+)?)\s+(?:\w+\s+)?damage\b/i)?.[1]
-      ?? spell.description.match(/\b\d+d\d+(?:\s*[+-]\s*\d+)?\b/i)?.[0]
-      ?? '';
+    formula =
+      spell.description.match(/\b(\d+d\d+(?:\s*[+-]\s*\d+)?)\s+(?:\w+\s+)?damage\b/i)?.[1] ??
+      spell.description.match(/\b\d+d\d+(?:\s*[+-]\s*\d+)?\b/i)?.[0] ??
+      '';
   }
   if (!formula) return null;
-  if (abilityDamageModifier) formula += abilityDamageModifier > 0
-    ? `+${abilityDamageModifier}`
-    : String(abilityDamageModifier);
+  if (abilityDamageModifier)
+    formula +=
+      abilityDamageModifier > 0 ? `+${abilityDamageModifier}` : String(abilityDamageModifier);
   return formula.replace(/\s+/g, '');
 }
 
@@ -340,10 +356,12 @@ interface SpellAcquisitionOwner {
 function spellGrantProvider(context: GrantContext): string {
   if (context.subclassName) return context.subclassName;
 
-  const provider = context.grant.sourceName
-    ?? (context.origin === 'class' ? context.grant.name : context.sourceName);
+  const provider =
+    context.grant.sourceName ??
+    (context.origin === 'class' ? context.grant.name : context.sourceName);
   if (context.origin === 'race') return /\btrait$/i.test(provider) ? provider : `${provider} trait`;
-  if (context.origin === 'background') return /\bbackground$/i.test(provider) ? provider : `${provider} background`;
+  if (context.origin === 'background')
+    return /\bbackground$/i.test(provider) ? provider : `${provider} background`;
   if (context.origin === 'feat') return /\bfeat$/i.test(provider) ? provider : `${provider} feat`;
   return provider;
 }
@@ -383,17 +401,44 @@ function resolveAbility(
   ability: SpellcastingAbility | undefined,
   choices: Record<string, string[]>,
 ): Ability | null {
-  const value = typeof ability === 'string' ? ability : ability ? choices[ability.choiceKey]?.[0] : undefined;
+  const value =
+    typeof ability === 'string' ? ability : ability ? choices[ability.choiceKey]?.[0] : undefined;
   if (!value) return null;
   const normalized = normalize(value) as Ability;
-  return ['strength', 'dexterity', 'constitution', 'intelligence', 'wisdom', 'charisma'].includes(normalized)
+  return ['strength', 'dexterity', 'constitution', 'intelligence', 'wisdom', 'charisma'].includes(
+    normalized,
+  )
     ? normalized
     : null;
 }
 
 function publicSource(source: ActiveSource): ResolvedSpellcastingSource {
-  const { key, name, subclassName, origin, list, mode, progression, castingAbility, spellAttackBonus, spellSaveDc, maxSpellLevel } = source;
-  return { key, name, subclassName, origin, list, mode, progression, castingAbility, spellAttackBonus, spellSaveDc, maxSpellLevel };
+  const {
+    key,
+    name,
+    subclassName,
+    origin,
+    list,
+    mode,
+    progression,
+    castingAbility,
+    spellAttackBonus,
+    spellSaveDc,
+    maxSpellLevel,
+  } = source;
+  return {
+    key,
+    name,
+    subclassName,
+    origin,
+    list,
+    mode,
+    progression,
+    castingAbility,
+    spellAttackBonus,
+    spellSaveDc,
+    maxSpellLevel,
+  };
 }
 
 function createSource(
@@ -429,12 +474,13 @@ function createSource(
     spellSlots,
     pactMagic,
     cantripLimit: levelContent?.cantrips_known ?? 0,
-    spellLimit: definition?.mode === 'spellbook'
-      ? levelContent?.spells_known ?? 0
-      : definition?.mode === 'known'
-        ? levelContent?.spells_known ?? 0
-        : levelContent?.prepared_spells ?? 0,
-    preparedLimit: definition?.mode === 'spellbook' ? levelContent?.prepared_spells ?? 0 : 0,
+    spellLimit:
+      definition?.mode === 'spellbook'
+        ? (levelContent?.spells_known ?? 0)
+        : definition?.mode === 'known'
+          ? (levelContent?.spells_known ?? 0)
+          : (levelContent?.prepared_spells ?? 0),
+    preparedLimit: definition?.mode === 'spellbook' ? (levelContent?.prepared_spells ?? 0) : 0,
     maxSpellLevel: maxSlotLevel(spellSlots, pactMagic?.slot_level),
   };
 }
@@ -445,20 +491,24 @@ function activeClassSources(input: SpellcastingResolverInput): ActiveSource[] {
     const choices = selection.choices ?? {};
     const classLevel = selection.cls.levels.find((level) => level.level === selection.level);
     if (selection.cls.spellcasting && classLevel) {
-      sources.push(createSource(
-        selection.cls.spellcasting.key,
-        selection.cls.spellcasting.name ?? selection.cls.name,
-        'class',
-        selection.cls.spellcasting,
-        selection.level,
-        classLevel,
-        choices,
-        input.abilityScores,
-        input.characterLevel,
-      ));
+      sources.push(
+        createSource(
+          selection.cls.spellcasting.key,
+          selection.cls.spellcasting.name ?? selection.cls.name,
+          'class',
+          selection.cls.spellcasting,
+          selection.level,
+          classLevel,
+          choices,
+          input.abilityScores,
+          input.characterLevel,
+        ),
+      );
     }
 
-    const subclass = selection.cls.subclasses.find((candidate) => candidate.name === selection.subclass);
+    const subclass = selection.cls.subclasses.find(
+      (candidate) => candidate.name === selection.subclass,
+    );
     const subclassLevel = subclass?.levels.find((level) => level.level === selection.level);
     if (subclass?.spellcasting && subclassLevel) {
       const source = createSource(
@@ -491,11 +541,13 @@ function optionSpellGrants(
     const selected = new Set(choices[grant.key] ?? []);
     for (const option of grant.options) {
       if (!selected.has(option.name)) continue;
-      out.push(...optionSpellGrants(option.grants ?? [], choices, {
-        ...context,
-        scope: `${context.scope}:option:${grant.key}:${normalize(option.name).replace(/\s+/g, '-')}`,
-        sourceName: option.name,
-      }));
+      out.push(
+        ...optionSpellGrants(option.grants ?? [], choices, {
+          ...context,
+          scope: `${context.scope}:option:${grant.key}:${normalize(option.name).replace(/\s+/g, '-')}`,
+          sourceName: option.name,
+        }),
+      );
     }
   }
   return out;
@@ -527,73 +579,94 @@ function activeSpellListExpansions(
   const out: SpellListExpansionContext[] = [];
   for (const selection of input.classes) {
     const choices = selection.choices ?? {};
-    const classSource = sources.find(source => source.definition === selection.cls.spellcasting);
-    for (const level of selection.cls.levels.filter(level => level.level <= selection.level)) {
+    const classSource = sources.find((source) => source.definition === selection.cls.spellcasting);
+    for (const level of selection.cls.levels.filter((level) => level.level <= selection.level)) {
       out.push(...optionSpellListExpansions(level.grants ?? [], choices, classSource?.key));
     }
-    const subclass = selection.cls.subclasses.find(candidate => candidate.name === selection.subclass);
-    const subclassSource = sources.find(source => source.definition === subclass?.spellcasting) ?? classSource;
-    for (const level of subclass?.levels.filter(level => level.level <= selection.level) ?? []) {
+    const subclass = selection.cls.subclasses.find(
+      (candidate) => candidate.name === selection.subclass,
+    );
+    const subclassSource =
+      sources.find((source) => source.definition === subclass?.spellcasting) ?? classSource;
+    for (const level of subclass?.levels.filter((level) => level.level <= selection.level) ?? []) {
       out.push(...optionSpellListExpansions(level.grants ?? [], choices, subclassSource?.key));
     }
   }
   return out;
 }
 
-function activeSpellGrants(input: SpellcastingResolverInput, sources: ActiveSource[]): GrantContext[] {
+function activeSpellGrants(
+  input: SpellcastingResolverInput,
+  sources: ActiveSource[],
+): GrantContext[] {
   const contexts: GrantContext[] = [];
   if (input.race) {
     const choices = input.race.choices ?? {};
-    contexts.push(...optionSpellGrants(input.race.race.grants ?? [], choices, {
-      scope: `race:${input.race.race.index}`,
-      origin: 'race',
-      sourceName: input.race.race.name,
-      choices,
-    }));
-    if (input.race.subrace) {
-      contexts.push(...optionSpellGrants(input.race.subrace.grants ?? [], choices, {
-        scope: `race:${input.race.race.index}:subrace:${input.race.subrace.index}`,
+    contexts.push(
+      ...optionSpellGrants(input.race.race.grants ?? [], choices, {
+        scope: `race:${input.race.race.index}`,
         origin: 'race',
-        sourceName: input.race.subrace.name,
+        sourceName: input.race.race.name,
         choices,
-      }));
+      }),
+    );
+    if (input.race.subrace) {
+      contexts.push(
+        ...optionSpellGrants(input.race.subrace.grants ?? [], choices, {
+          scope: `race:${input.race.race.index}:subrace:${input.race.subrace.index}`,
+          origin: 'race',
+          sourceName: input.race.subrace.name,
+          choices,
+        }),
+      );
     }
   }
   if (input.background) {
     const choices = input.background.choices ?? {};
-    contexts.push(...optionSpellGrants(input.background.background.grants ?? [], choices, {
-      scope: `background:${input.background.background.index}`,
-      origin: 'background',
-      sourceName: input.background.background.name,
-      choices,
-    }));
+    contexts.push(
+      ...optionSpellGrants(input.background.background.grants ?? [], choices, {
+        scope: `background:${input.background.background.index}`,
+        origin: 'background',
+        sourceName: input.background.background.name,
+        choices,
+      }),
+    );
   }
   for (const selection of input.classes) {
     const choices = selection.choices ?? {};
     const classSource = sources.find((source) => source.definition === selection.cls.spellcasting);
     const classLevels = selection.cls.levels.filter((level) => level.level <= selection.level);
     for (const level of classLevels) {
-      contexts.push(...optionSpellGrants(level.grants ?? [], choices, {
-        scope: `class:${selection.cls.index}:level:${level.level}`,
-        origin: 'class',
-        sourceName: selection.cls.name,
-      choices,
-      sourceLevel: selection.level,
-      inheritedSourceKey: classSource?.key,
-      }));
+      contexts.push(
+        ...optionSpellGrants(level.grants ?? [], choices, {
+          scope: `class:${selection.cls.index}:level:${level.level}`,
+          origin: 'class',
+          sourceName: selection.cls.name,
+          choices,
+          sourceLevel: selection.level,
+          inheritedSourceKey: classSource?.key,
+        }),
+      );
     }
-    const subclass = selection.cls.subclasses.find((candidate) => candidate.name === selection.subclass);
-    const subclassSource = sources.find((source) => source.definition === subclass?.spellcasting) ?? classSource;
-    for (const level of subclass?.levels.filter((candidate) => candidate.level <= selection.level) ?? []) {
-      contexts.push(...optionSpellGrants(level.grants ?? [], choices, {
-        scope: `class:${selection.cls.index}:subclass:${subclass!.index}:level:${level.level}`,
-        origin: 'subclass',
-        sourceName: subclass!.name,
-        subclassName: subclass!.name,
-        choices,
-        sourceLevel: selection.level,
-        inheritedSourceKey: subclassSource?.key,
-      }));
+    const subclass = selection.cls.subclasses.find(
+      (candidate) => candidate.name === selection.subclass,
+    );
+    const subclassSource =
+      sources.find((source) => source.definition === subclass?.spellcasting) ?? classSource;
+    for (const level of subclass?.levels.filter(
+      (candidate) => candidate.level <= selection.level,
+    ) ?? []) {
+      contexts.push(
+        ...optionSpellGrants(level.grants ?? [], choices, {
+          scope: `class:${selection.cls.index}:subclass:${subclass!.index}:level:${level.level}`,
+          origin: 'subclass',
+          sourceName: subclass!.name,
+          subclassName: subclass!.name,
+          choices,
+          sourceLevel: selection.level,
+          inheritedSourceKey: subclassSource?.key,
+        }),
+      );
     }
   }
   for (const selection of input.feats ?? []) {
@@ -601,29 +674,45 @@ function activeSpellGrants(input: SpellcastingResolverInput, sources: ActiveSour
       ...(selection.choices ?? {}),
       ...(selection.ability ? { __feat_ability__: [selection.ability] } : {}),
     };
-    contexts.push(...optionSpellGrants(selection.feat.grants ?? [], choices, {
-      scope: `feat:${selection.scope}:${selection.feat.index}`,
-      origin: 'feat',
-      sourceName: selection.feat.name,
-      choices,
-    }));
+    contexts.push(
+      ...optionSpellGrants(selection.feat.grants ?? [], choices, {
+        scope: `feat:${selection.scope}:${selection.feat.index}`,
+        origin: 'feat',
+        sourceName: selection.feat.name,
+        choices,
+      }),
+    );
   }
-  return contexts.filter((context) =>
-    (!context.grant.characterLevel || input.characterLevel >= context.grant.characterLevel)
-    && (!context.grant.classLevel || (context.sourceLevel ?? 0) >= context.grant.classLevel));
+  return contexts.filter(
+    (context) =>
+      (!context.grant.characterLevel || input.characterLevel >= context.grant.characterLevel) &&
+      (!context.grant.classLevel || (context.sourceLevel ?? 0) >= context.grant.classLevel),
+  );
 }
 
-function activeFeatSpellListExpansions(input: SpellcastingResolverInput): FeatSpellListExpansionContext[] {
+function activeFeatSpellListExpansions(
+  input: SpellcastingResolverInput,
+): FeatSpellListExpansionContext[] {
   const expansions: FeatSpellListExpansionContext[] = [];
   const visit = (
-    grants: TraitGrant[], choices: Record<string, string[]>, scope: string, sourceName: string,
+    grants: TraitGrant[],
+    choices: Record<string, string[]>,
+    scope: string,
+    sourceName: string,
   ) => {
     for (const grant of grants) {
-      if (grant.type === 'spell_list_expansion') expansions.push({ grant, scope, sourceName, choices });
+      if (grant.type === 'spell_list_expansion')
+        expansions.push({ grant, scope, sourceName, choices });
       if (grant.type !== 'choice') continue;
       const selected = new Set(choices[grant.key] ?? []);
       for (const option of grant.options) {
-        if (selected.has(option.name)) visit(option.grants ?? [], choices, `${scope}:option:${grant.key}:${normalize(option.name)}`, sourceName);
+        if (selected.has(option.name))
+          visit(
+            option.grants ?? [],
+            choices,
+            `${scope}:option:${grant.key}:${normalize(option.name)}`,
+            sourceName,
+          );
       }
     }
   };
@@ -632,16 +721,17 @@ function activeFeatSpellListExpansions(input: SpellcastingResolverInput): FeatSp
       ...(selection.choices ?? {}),
       ...(selection.ability ? { __feat_ability__: [selection.ability] } : {}),
     };
-    visit(selection.feat.grants ?? [], choices, `feat:${selection.scope}:${selection.feat.index}`, selection.feat.name);
+    visit(
+      selection.feat.grants ?? [],
+      choices,
+      `feat:${selection.scope}:${selection.feat.index}`,
+      selection.feat.name,
+    );
   }
   return expansions;
 }
 
-function spellOnList(
-  spell: DndSpell,
-  list: string,
-  spellLists: Record<string, string[]>,
-): boolean {
+function spellOnList(spell: DndSpell, list: string, spellLists: Record<string, string[]>): boolean {
   const match = Object.entries(spellLists).find(
     ([candidate]) => normalize(candidate) === normalize(list),
   );
@@ -654,17 +744,28 @@ function eligibleForGrant(
   source: ActiveSource,
   spellLists: Record<string, string[]>,
 ): boolean {
-  const lists = grant.filter?.lists ?? (grant.list ? [grant.list] : source.list ? [source.list] : []);
+  const lists =
+    grant.filter?.lists ?? (grant.list ? [grant.list] : source.list ? [source.list] : []);
   if (lists.length && !lists.some((list) => spellOnList(spell, list, spellLists))) return false;
-  if (grant.filter?.schools?.length && !grant.filter.schools.some((school) => normalize(school) === normalize(spell.school))) return false;
+  if (
+    grant.filter?.schools?.length &&
+    !grant.filter.schools.some((school) => normalize(school) === normalize(spell.school))
+  )
+    return false;
   if (grant.filter?.minLevel !== undefined && spell.level < grant.filter.minLevel) return false;
   if (grant.filter?.maxLevel !== undefined && spell.level > grant.filter.maxLevel) return false;
-  if (grant.filter?.exactLevels?.length && !grant.filter.exactLevels.includes(spell.level)) return false;
+  if (grant.filter?.exactLevels?.length && !grant.filter.exactLevels.includes(spell.level))
+    return false;
   if (grant.filter?.ritual !== undefined && spell.ritual !== grant.filter.ritual) return false;
   if (grant.filter?.spellAttack && !spell.mechanics?.spell_attacks?.length) return false;
   if (grant.filter?.castingTimes?.length) {
     const castingTime = normalize(spell.casting_time).replace(/^1\s+/, '');
-    if (!grant.filter.castingTimes.some((time) => castingTime === normalize(time).replace(/^1\s+/, ''))) return false;
+    if (
+      !grant.filter.castingTimes.some(
+        (time) => castingTime === normalize(time).replace(/^1\s+/, ''),
+      )
+    )
+      return false;
   }
   return true;
 }
@@ -674,7 +775,8 @@ function grantSource(
   sourceByKey: Map<string, ActiveSource>,
   input: SpellcastingResolverInput,
 ): ActiveSource {
-  if (context.inheritedSourceKey && !context.grant.sourceKey) return sourceByKey.get(context.inheritedSourceKey)!;
+  if (context.inheritedSourceKey && !context.grant.sourceKey)
+    return sourceByKey.get(context.inheritedSourceKey)!;
   const key = `grant:${context.scope}:${context.grant.sourceKey ?? context.grant.key}`;
   const existing = sourceByKey.get(key);
   if (existing) return existing;
@@ -700,16 +802,26 @@ function grantSource(
   );
   source.mode = 'granted';
   source.progression = 'none';
-  source.maxSpellLevel = context.grant.filter?.maxLevel ?? Math.max(0, ...(context.grant.spells ?? [])
-    .map((index) => input.spells.find((spell) => spell.index === index)?.level ?? 0));
+  source.maxSpellLevel =
+    context.grant.filter?.maxLevel ??
+    Math.max(
+      0,
+      ...(context.grant.spells ?? []).map(
+        (index) => input.spells.find((spell) => spell.index === index)?.level ?? 0,
+      ),
+    );
   sourceByKey.set(key, source);
   return source;
 }
 
 function reasonIneligible(spell: DndSpell, pending: PendingRequirement): string {
   if (pending.kind === 'cantrips' && spell.level !== 0) return `${spell.name} is not a cantrip.`;
-  if (pending.kind !== 'cantrips' && spell.level === 0) return `${spell.name} is a cantrip and belongs in the Cantrips section.`;
-  if (pending.source.definition?.spells.length && !pending.source.definition.spells.includes(spell.index)) {
+  if (pending.kind !== 'cantrips' && spell.level === 0)
+    return `${spell.name} is a cantrip and belongs in the Cantrips section.`;
+  if (
+    pending.source.definition?.spells.length &&
+    !pending.source.definition.spells.includes(spell.index)
+  ) {
     return `${spell.name} is not on the ${pending.source.list} spell list.`;
   }
   if (spell.level > pending.source.maxSpellLevel && pending.kind !== 'bonus') {
@@ -735,18 +847,33 @@ function validateRequirement(
     const spell = spellByIndex.get(index);
     if (!spell) {
       invalid.add(index);
-      errors.push({ code: 'unknown_spell', requirementKey: pending.key, spellIndex: index, message: `Unknown spell "${index}" is selected.` });
+      errors.push({
+        code: 'unknown_spell',
+        requirementKey: pending.key,
+        spellIndex: index,
+        message: `Unknown spell "${index}" is selected.`,
+      });
       continue;
     }
     if (local.has(index)) {
       invalid.add(index);
-      errors.push({ code: 'duplicate_spell', requirementKey: pending.key, spellIndex: index, message: `${spell.name} is selected more than once.` });
+      errors.push({
+        code: 'duplicate_spell',
+        requirementKey: pending.key,
+        spellIndex: index,
+        message: `${spell.name} is selected more than once.`,
+      });
       continue;
     }
     local.add(index);
     if (!eligible.has(index)) {
       invalid.add(index);
-      errors.push({ code: 'ineligible_spell', requirementKey: pending.key, spellIndex: index, message: reasonIneligible(spell, pending) });
+      errors.push({
+        code: 'ineligible_spell',
+        requirementKey: pending.key,
+        spellIndex: index,
+        message: reasonIneligible(spell, pending),
+      });
       continue;
     }
     const owner = pending.usesGlobalUniqueness ? acquisitionOwners.get(index) : undefined;
@@ -762,7 +889,12 @@ function validateRequirement(
     }
     if (valid.length >= pending.required) {
       invalid.add(index);
-      errors.push({ code: 'too_many_selections', requirementKey: pending.key, spellIndex: index, message: `${pending.name} allows ${pending.required} selection${pending.required === 1 ? '' : 's'}.` });
+      errors.push({
+        code: 'too_many_selections',
+        requirementKey: pending.key,
+        spellIndex: index,
+        message: `${pending.name} allows ${pending.required} selection${pending.required === 1 ? '' : 's'}.`,
+      });
       continue;
     }
     valid.push(index);
@@ -814,7 +946,10 @@ function addResolved(
   freeCast?: ResolvedFreeCast,
   providedBy?: string,
 ): void {
-  const existing = target.find((entry) => entry.spellIndex === index && entry.sourceKey === source.key && entry.category === category);
+  const existing = target.find(
+    (entry) =>
+      entry.spellIndex === index && entry.sourceKey === source.key && entry.category === category,
+  );
   if (existing) {
     existing.freeCast ??= freeCast;
     existing.providedBy ??= providedBy;
@@ -848,9 +983,10 @@ function resolveFreeCast(
   let maxUses = typeof definition.uses === 'number' ? definition.uses : 1;
   if (definition.uses === 'proficiency_bonus') maxUses = proficiencyBonus(characterLevel);
   if (definition.uses === 'spellcasting_ability_modifier') {
-    maxUses = source.spellAttackBonus === null
-      ? 1
-      : source.spellAttackBonus - proficiencyBonus(characterLevel);
+    maxUses =
+      source.spellAttackBonus === null
+        ? 1
+        : source.spellAttackBonus - proficiencyBonus(characterLevel);
   }
   if (definition.usesByClassLevel) {
     for (const [level, uses] of Object.entries(definition.usesByClassLevel)
@@ -863,17 +999,20 @@ function resolveFreeCast(
   return {
     key: `free:${keyBase}:${spellIndex}`,
     maxUses,
-    recovery: atWill ? null : definition.recovery ?? 'long_rest',
+    recovery: atWill ? null : (definition.recovery ?? 'long_rest'),
     atWill,
     slotLevel: definition.slotLevel,
   };
 }
 
 function dragonmarkSlotPool(input: SpellcastingResolverInput): ResolvedSpellSlotPool | null {
-  const potent = (input.feats ?? []).find(selection => selection.feat.index === 'potent-dragonmark');
+  const potent = (input.feats ?? []).find(
+    (selection) => selection.feat.index === 'potent-dragonmark',
+  );
   if (!potent) return null;
   const definition = (potent.feat.grants ?? []).find(
-    (grant): grant is Extract<TraitGrant, { type: 'dragonmark_slot' }> => grant.type === 'dragonmark_slot',
+    (grant): grant is Extract<TraitGrant, { type: 'dragonmark_slot' }> =>
+      grant.type === 'dragonmark_slot',
   );
   if (!definition) return null;
 
@@ -882,9 +1021,9 @@ function dragonmarkSlotPool(input: SpellcastingResolverInput): ResolvedSpellSlot
     if (!selection.feat.tags?.includes('dragonmark')) continue;
     for (const grant of selection.feat.grants ?? []) {
       if (grant.type === 'spell_list_expansion') {
-        (grant.spells ?? []).forEach(spell => allowed.add(spell));
+        (grant.spells ?? []).forEach((spell) => allowed.add(spell));
       }
-      if (grant.type === 'spell_grant') (grant.spells ?? []).forEach(spell => allowed.add(spell));
+      if (grant.type === 'spell_grant') (grant.spells ?? []).forEach((spell) => allowed.add(spell));
     }
   }
   if (!allowed.size) return null;
@@ -899,21 +1038,42 @@ function dragonmarkSlotPool(input: SpellcastingResolverInput): ResolvedSpellSlot
   };
 }
 
-function slotPools(input: SpellcastingResolverInput, sources: ActiveSource[]): ResolvedSpellSlotPool[] {
+function slotPools(
+  input: SpellcastingResolverInput,
+  sources: ActiveSource[],
+): ResolvedSpellSlotPool[] {
   const pools: ResolvedSpellSlotPool[] = [];
-  const normal = sources.filter((source) => source.progression !== 'pact' && Object.keys(source.spellSlots).length);
+  const normal = sources.filter(
+    (source) => source.progression !== 'pact' && Object.keys(source.spellSlots).length,
+  );
   if (normal.length === 1) {
-    pools.push({ key: 'spellcasting', name: 'Spell Slots', type: 'normal', slots: { ...normal[0].spellSlots } });
+    pools.push({
+      key: 'spellcasting',
+      name: 'Spell Slots',
+      type: 'normal',
+      slots: { ...normal[0].spellSlots },
+    });
   } else if (normal.length > 1) {
-    const casterLevel = Math.min(20, normal.reduce((total, source) => {
-      if (source.progression === 'full') return total + source.level;
-      if (source.progression === 'half') return total + Math.ceil(source.level / 2);
-      if (source.progression === 'third') return total + Math.floor(source.level / 3);
-      return total;
-    }, 0));
-    if (casterLevel > 0) pools.push({ key: 'spellcasting', name: 'Spell Slots', type: 'normal', slots: { ...MULTICLASS_SLOTS[casterLevel] } });
+    const casterLevel = Math.min(
+      20,
+      normal.reduce((total, source) => {
+        if (source.progression === 'full') return total + source.level;
+        if (source.progression === 'half') return total + Math.ceil(source.level / 2);
+        if (source.progression === 'third') return total + Math.floor(source.level / 3);
+        return total;
+      }, 0),
+    );
+    if (casterLevel > 0)
+      pools.push({
+        key: 'spellcasting',
+        name: 'Spell Slots',
+        type: 'normal',
+        slots: { ...MULTICLASS_SLOTS[casterLevel] },
+      });
   }
-  for (const source of sources.filter((candidate) => candidate.progression === 'pact' && candidate.pactMagic)) {
+  for (const source of sources.filter(
+    (candidate) => candidate.progression === 'pact' && candidate.pactMagic,
+  )) {
     pools.push({
       key: `pact:${source.key}`,
       name: `${source.name} Pact Magic`,
@@ -938,21 +1098,33 @@ export function resolveSpellcasting(input: SpellcastingResolverInput): Spellcast
   const grants = activeSpellGrants(input, sources);
   const listExpansions = activeSpellListExpansions(input, sources);
   const featExpansions = activeFeatSpellListExpansions(input);
-  const activeFeatIndexes = new Set((input.feats ?? []).map(selection => selection.feat.index));
+  const activeFeatIndexes = new Set((input.feats ?? []).map((selection) => selection.feat.index));
   for (const context of featExpansions) {
-    if (!context.grant.alwaysPreparedIfFeat || !activeFeatIndexes.has(context.grant.alwaysPreparedIfFeat)) continue;
+    if (
+      !context.grant.alwaysPreparedIfFeat ||
+      !activeFeatIndexes.has(context.grant.alwaysPreparedIfFeat)
+    )
+      continue;
     grants.push({
       grant: {
-        type: 'spell_grant', key: `${context.grant.key}:always-prepared`, name: context.grant.name,
-        destination: 'always_prepared', spells: context.grant.spells ?? [], countsAgainstLimit: false,
-        sourceKey: context.grant.sourceKey, sourceName: context.grant.sourceName,
+        type: 'spell_grant',
+        key: `${context.grant.key}:always-prepared`,
+        name: context.grant.name,
+        destination: 'always_prepared',
+        spells: context.grant.spells ?? [],
+        countsAgainstLimit: false,
+        sourceKey: context.grant.sourceKey,
+        sourceName: context.grant.sourceName,
         ability: context.grant.ability,
       },
-      scope: `${context.scope}:potent`, origin: 'feat', sourceName: context.sourceName, choices: context.choices,
+      scope: `${context.scope}:potent`,
+      origin: 'feat',
+      sourceName: context.sourceName,
+      choices: context.choices,
     });
   }
   const featExpandedSpellIndexes = new Set(
-    featExpansions.flatMap(context => context.grant.spells ?? []),
+    featExpansions.flatMap((context) => context.grant.spells ?? []),
   );
   const pending: PendingRequirement[] = [];
   const known: ResolvedSpellOrigin[] = [];
@@ -976,10 +1148,15 @@ export function resolveSpellcasting(input: SpellcastingResolverInput): Spellcast
     }
     const destination = grant.destination;
     const providedBy = spellGrantProvider(context);
-    const target = destination === 'known' ? known : destination === 'spellbook' ? spellbook : alwaysPrepared;
+    const target =
+      destination === 'known' ? known : destination === 'spellbook' ? spellbook : alwaysPrepared;
     for (const index of grant.spells ?? []) {
       if (!spellByIndex.has(index)) {
-        validationErrors.push({ code: 'unknown_spell', spellIndex: index, message: `${grant.name} references unknown spell "${index}".` });
+        validationErrors.push({
+          code: 'unknown_spell',
+          spellIndex: index,
+          message: `${grant.name} references unknown spell "${index}".`,
+        });
         continue;
       }
       addResolved(
@@ -990,7 +1167,13 @@ export function resolveSpellcasting(input: SpellcastingResolverInput): Spellcast
         true,
         grant.countsAgainstLimit ?? false,
         context.subclassName,
-        resolveFreeCast(grant.freeCast, `${context.scope}:${grant.key}`, index, source, input.characterLevel),
+        resolveFreeCast(
+          grant.freeCast,
+          `${context.scope}:${grant.key}`,
+          index,
+          source,
+          input.characterLevel,
+        ),
         providedBy,
       );
       acquisitionOwners.set(index, { sourceName: providedBy });
@@ -1016,7 +1199,9 @@ export function resolveSpellcasting(input: SpellcastingResolverInput): Spellcast
         kind: 'bonus',
         destination,
         required: grant.choose!,
-        eligible: input.spells.filter((spell) => eligibleForGrant(spell, grant, source, input.spellLists)),
+        eligible: input.spells.filter((spell) =>
+          eligibleForGrant(spell, grant, source, input.spellLists),
+        ),
         countsAgainstLimit: grant.countsAgainstLimit ?? false,
         granted: true,
         providedBy,
@@ -1027,42 +1212,62 @@ export function resolveSpellcasting(input: SpellcastingResolverInput): Spellcast
     }
   }
 
-  for (const source of sources.filter((candidate) => candidate.definition && candidate.progression !== 'none')) {
+  for (const source of sources.filter(
+    (candidate) => candidate.definition && candidate.progression !== 'none',
+  )) {
     const sourceSpellIndexes = new Set(source.definition?.spells ?? []);
     for (const expansion of listExpansions.filter(
-      candidate => !candidate.sourceKey || candidate.sourceKey === source.key,
+      (candidate) => !candidate.sourceKey || candidate.sourceKey === source.key,
     )) {
       for (const spell of expansion.grant.spells ?? []) sourceSpellIndexes.add(spell);
       if (expansion.grant.list) {
-        const list = Object.entries(input.spellLists).find(
-          ([name]) => normalize(name) === normalize(expansion.grant.list!),
-        )?.[1] ?? [];
+        const list =
+          Object.entries(input.spellLists).find(
+            ([name]) => normalize(name) === normalize(expansion.grant.list!),
+          )?.[1] ?? [];
         for (const spell of list) sourceSpellIndexes.add(spell);
       }
     }
-    const listSpells = input.spells.filter((spell) =>
-      sourceSpellIndexes.has(spell.index) || featExpandedSpellIndexes.has(spell.index));
+    const listSpells = input.spells.filter(
+      (spell) => sourceSpellIndexes.has(spell.index) || featExpandedSpellIndexes.has(spell.index),
+    );
     if (source.cantripLimit > 0) {
       pending.push({
-        key: `${source.key}:cantrips`, source, name: `${source.name} Cantrips`, kind: 'cantrips', destination: 'known',
+        key: `${source.key}:cantrips`,
+        source,
+        name: `${source.name} Cantrips`,
+        kind: 'cantrips',
+        destination: 'known',
         subclassName: source.subclassName,
         required: Math.max(0, source.cantripLimit - (fixedCount.get(`${source.key}:known`) ?? 0)),
-        eligible: listSpells.filter((spell) => spell.level === 0), countsAgainstLimit: true, granted: false,
+        eligible: listSpells.filter((spell) => spell.level === 0),
+        countsAgainstLimit: true,
+        granted: false,
         usesGlobalUniqueness: true,
       });
     }
     if (source.spellLimit > 0) {
-      const destination = source.mode === 'spellbook' ? 'spellbook' : source.mode === 'known' ? 'known' : 'prepared';
+      const destination =
+        source.mode === 'spellbook' ? 'spellbook' : source.mode === 'known' ? 'known' : 'prepared';
       pending.push({
         key: `${source.key}:${destination}`,
         source,
-        name: source.mode === 'spellbook' ? `${source.name} Spellbook` : source.mode === 'known' ? `${source.name} Known Spells` : `${source.name} Prepared Spells`,
+        name:
+          source.mode === 'spellbook'
+            ? `${source.name} Spellbook`
+            : source.mode === 'known'
+              ? `${source.name} Known Spells`
+              : `${source.name} Prepared Spells`,
         subclassName: source.subclassName,
         kind: destination,
         destination,
-        required: Math.max(0, source.spellLimit - (fixedCount.get(`${source.key}:${destination}`) ?? 0)),
-        eligible: listSpells.filter((spell) => spell.level > 0
-          && spell.level <= source.maxSpellLevel),
+        required: Math.max(
+          0,
+          source.spellLimit - (fixedCount.get(`${source.key}:${destination}`) ?? 0),
+        ),
+        eligible: listSpells.filter(
+          (spell) => spell.level > 0 && spell.level <= source.maxSpellLevel,
+        ),
         countsAgainstLimit: true,
         granted: false,
         usesGlobalUniqueness: true,
@@ -1101,12 +1306,22 @@ export function resolveSpellcasting(input: SpellcastingResolverInput): Spellcast
       preparedLimit: 0,
       maxSpellLevel: spell.level,
     };
-    addResolved(known, grantedSpell.spellIndex, source, 'known', true, false, undefined, {
-      key: `free:${key}`,
-      maxUses: 0,
-      recovery: null,
-      atWill: true,
-    }, grantedSpell.sourceName);
+    addResolved(
+      known,
+      grantedSpell.spellIndex,
+      source,
+      'known',
+      true,
+      false,
+      undefined,
+      {
+        key: `free:${key}`,
+        maxUses: 0,
+        recovery: null,
+        atWill: true,
+      },
+      grantedSpell.sourceName,
+    );
     acquisitionOwners.set(grantedSpell.spellIndex, { sourceName: grantedSpell.sourceName });
   }
 
@@ -1115,7 +1330,14 @@ export function resolveSpellcasting(input: SpellcastingResolverInput): Spellcast
     const requirement = validateRequirement(item, choices, spellByIndex, acquisitionOwners);
     requirements.push(requirement);
     validationErrors.push(...requirement.errors);
-    const target = item.destination === 'known' ? known : item.destination === 'spellbook' ? spellbook : item.destination === 'prepared' ? prepared : alwaysPrepared;
+    const target =
+      item.destination === 'known'
+        ? known
+        : item.destination === 'spellbook'
+          ? spellbook
+          : item.destination === 'prepared'
+            ? prepared
+            : alwaysPrepared;
     for (const index of requirement.validSelectedSpellIndices) {
       addResolved(
         target,
@@ -1125,7 +1347,13 @@ export function resolveSpellcasting(input: SpellcastingResolverInput): Spellcast
         item.granted,
         item.countsAgainstLimit,
         item.subclassName,
-        resolveFreeCast(item.freeCast, item.freeCastKeyBase ?? item.key, index, item.source, input.characterLevel),
+        resolveFreeCast(
+          item.freeCast,
+          item.freeCastKeyBase ?? item.key,
+          index,
+          item.source,
+          input.characterLevel,
+        ),
         item.providedBy,
       );
     }
@@ -1133,12 +1361,15 @@ export function resolveSpellcasting(input: SpellcastingResolverInput): Spellcast
 
   for (const { context, source } of dependentGrants) {
     const grant = context.grant;
-    const acquired = grant.fromDestination === 'known' ? known
-      : grant.fromDestination === 'spellbook' ? spellbook
-        : prepared;
-    const acquiredIndexes = new Set(acquired
-      .filter(entry => entry.sourceKey === source.key)
-      .map(entry => entry.spellIndex));
+    const acquired =
+      grant.fromDestination === 'known'
+        ? known
+        : grant.fromDestination === 'spellbook'
+          ? spellbook
+          : prepared;
+    const acquiredIndexes = new Set(
+      acquired.filter((entry) => entry.sourceKey === source.key).map((entry) => entry.spellIndex),
+    );
     const item: PendingRequirement = {
       key: `${context.scope}:grant:${grant.key}`,
       source,
@@ -1147,7 +1378,11 @@ export function resolveSpellcasting(input: SpellcastingResolverInput): Spellcast
       kind: 'bonus',
       destination: grant.destination,
       required: grant.choose!,
-      eligible: input.spells.filter(spell => acquiredIndexes.has(spell.index) && eligibleForGrant(spell, grant, source, input.spellLists)),
+      eligible: input.spells.filter(
+        (spell) =>
+          acquiredIndexes.has(spell.index) &&
+          eligibleForGrant(spell, grant, source, input.spellLists),
+      ),
       countsAgainstLimit: grant.countsAgainstLimit ?? false,
       granted: true,
       providedBy: spellGrantProvider(context),
@@ -1158,9 +1393,12 @@ export function resolveSpellcasting(input: SpellcastingResolverInput): Spellcast
     const requirement = validateRequirement(item, choices, spellByIndex, acquisitionOwners);
     requirements.push(requirement);
     validationErrors.push(...requirement.errors);
-    const target = grant.destination === 'known' ? known
-      : grant.destination === 'spellbook' ? spellbook
-        : alwaysPrepared;
+    const target =
+      grant.destination === 'known'
+        ? known
+        : grant.destination === 'spellbook'
+          ? spellbook
+          : alwaysPrepared;
     for (const index of requirement.validSelectedSpellIndices) {
       addResolved(
         target,
@@ -1170,14 +1408,24 @@ export function resolveSpellcasting(input: SpellcastingResolverInput): Spellcast
         true,
         grant.countsAgainstLimit ?? false,
         context.subclassName,
-        resolveFreeCast(grant.freeCast, `${context.scope}:${grant.key}`, index, source, input.characterLevel),
+        resolveFreeCast(
+          grant.freeCast,
+          `${context.scope}:${grant.key}`,
+          index,
+          source,
+          input.characterLevel,
+        ),
         spellGrantProvider(context),
       );
     }
   }
 
-  for (const source of sources.filter((candidate) => candidate.mode === 'spellbook' && candidate.preparedLimit > 0)) {
-    const eligibleIndexes = new Set(spellbook.filter((entry) => entry.sourceKey === source.key).map((entry) => entry.spellIndex));
+  for (const source of sources.filter(
+    (candidate) => candidate.mode === 'spellbook' && candidate.preparedLimit > 0,
+  )) {
+    const eligibleIndexes = new Set(
+      spellbook.filter((entry) => entry.sourceKey === source.key).map((entry) => entry.spellIndex),
+    );
     for (const entry of alwaysPrepared.filter((candidate) => candidate.sourceKey === source.key)) {
       eligibleIndexes.delete(entry.spellIndex);
     }
@@ -1188,7 +1436,13 @@ export function resolveSpellcasting(input: SpellcastingResolverInput): Spellcast
       subclassName: source.subclassName,
       kind: 'prepared',
       destination: 'prepared',
-      required: Math.max(0, source.preparedLimit - alwaysPrepared.filter((entry) => entry.sourceKey === source.key && entry.countsAgainstLimit).length),
+      required: Math.max(
+        0,
+        source.preparedLimit -
+          alwaysPrepared.filter(
+            (entry) => entry.sourceKey === source.key && entry.countsAgainstLimit,
+          ).length,
+      ),
       eligible: input.spells.filter((spell) => eligibleIndexes.has(spell.index)),
       countsAgainstLimit: true,
       granted: false,
@@ -1197,10 +1451,13 @@ export function resolveSpellcasting(input: SpellcastingResolverInput): Spellcast
     const requirement = validateRequirement(item, choices, spellByIndex, acquisitionOwners);
     requirements.push(requirement);
     validationErrors.push(...requirement.errors);
-    for (const index of requirement.validSelectedSpellIndices) addResolved(prepared, index, source, 'prepared', false, true);
+    for (const index of requirement.validSelectedSpellIndices)
+      addResolved(prepared, index, source, 'prepared', false, true);
   }
 
-  const uniquenessByRequirement = new Map(pending.map(item => [item.key, item.usesGlobalUniqueness]));
+  const uniquenessByRequirement = new Map(
+    pending.map((item) => [item.key, item.usesGlobalUniqueness]),
+  );
   for (const requirement of requirements) {
     if (!uniquenessByRequirement.get(requirement.key)) continue;
     for (const index of requirement.eligibleSpellIndices) {
@@ -1212,10 +1469,24 @@ export function resolveSpellcasting(input: SpellcastingResolverInput): Spellcast
   }
 
   for (const source of sources) {
-    if (source.castingAbility || source.mode === 'granted' && ![...known, ...spellbook, ...alwaysPrepared]
-      .some((entry) => entry.sourceKey === source.key)) continue;
-    if (!validationErrors.some((error) => error.code === 'missing_casting_ability' && error.message.startsWith(source.name))) {
-      validationErrors.push({ code: 'missing_casting_ability', message: `${source.name} needs a spellcasting ability choice.` });
+    if (
+      source.castingAbility ||
+      (source.mode === 'granted' &&
+        ![...known, ...spellbook, ...alwaysPrepared].some(
+          (entry) => entry.sourceKey === source.key,
+        ))
+    )
+      continue;
+    if (
+      !validationErrors.some(
+        (error) =>
+          error.code === 'missing_casting_ability' && error.message.startsWith(source.name),
+      )
+    ) {
+      validationErrors.push({
+        code: 'missing_casting_ability',
+        message: `${source.name} needs a spellcasting ability choice.`,
+      });
     }
   }
 
@@ -1249,8 +1520,10 @@ export function resolveSpellcasting(input: SpellcastingResolverInput): Spellcast
     validationErrors.push(...errors);
   }
 
-  const isComplete = requirements.every((requirement) => requirement.remaining === 0 && requirement.errors.length === 0)
-    && validationErrors.length === 0;
+  const isComplete =
+    requirements.every(
+      (requirement) => requirement.remaining === 0 && requirement.errors.length === 0,
+    ) && validationErrors.length === 0;
   return {
     sources: sources.map(publicSource),
     requirements,

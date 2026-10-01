@@ -1,5 +1,7 @@
 import Konva from 'konva';
 import { MapFog, MapToken, MeasureShape } from '../../../core/models/campaign.model';
+import { TokenBorder } from '../../../core/models/token-border.model';
+import { strokeTokenBorder, tokenBorderInnerRadius } from '../../../core/utils/token-border';
 
 export interface TokenRenderContext {
   cellSize: number;
@@ -15,6 +17,9 @@ export interface TokenRenderContext {
   // BattleMapComponent.resolvePortraitImages), so a token with a character_id but no entry here
   // just falls back to its plain color fill for this render pass.
   characterPortraits: Record<string, HTMLImageElement>;
+  // The ring style each character's player picked in the portrait dialog, by character_id. A
+  // character token without an entry keeps the default ring in its per-map `token.color`.
+  characterTokenBorders?: Record<string, TokenBorder>;
   // Loaded monster token art per token id, same only-once-decoded contract as characterPortraits
   // (see TokenImageCache).
   tokenImages: Record<string, HTMLImageElement>;
@@ -96,6 +101,8 @@ export function renderTokens(layer: Konva.Layer, tokens: MapToken[], ctx: TokenR
     const portrait = token.character_id
       ? ctx.characterPortraits[token.character_id]
       : monsterImage;
+    const border = token.character_id ? ctx.characterTokenBorders?.[token.character_id] : undefined;
+    const faceR = border ? tokenBorderInnerRadius(r, border) : r - 3;
 
     // One Konva.Shape drawing the token's circle, label, and HP badge itself, instead of a
     // Group with up to 4 child shapes (Circle/Text/Rect/Text) — same rationale as drawGrid:
@@ -126,7 +133,7 @@ export function renderTokens(layer: Konva.Layer, tokens: MapToken[], ctx: TokenR
       },
       sceneFunc: context => {
         context.beginPath();
-        context.arc(0, 0, r - 3, 0, Math.PI * 2);
+        context.arc(0, 0, faceR, 0, Math.PI * 2);
         context.closePath();
         if (monsterImage) {
           context.drawImage(monsterImage, -r, -r, r * 2, r * 2);
@@ -136,14 +143,17 @@ export function renderTokens(layer: Konva.Layer, tokens: MapToken[], ctx: TokenR
           // ring) so it stays identifiable at a glance even with a face now filling the token.
           context.save();
           context.clip();
-          const d = (r - 3) * 2;
-          context.drawImage(portrait, -(r - 3), -(r - 3), d, d);
+          context.drawImage(portrait, -faceR, -faceR, faceR * 2, faceR * 2);
           context.restore();
         } else {
           context.fillStyle = token.color;
           context.fill();
         }
-        if (!monsterImage) {
+        if (border) {
+          // Raw 2D context: the ring needs setLineDash/createConicGradient, and sharing one
+          // drawing function with the portrait dialog's preview keeps the two identical.
+          strokeTokenBorder(context._context, r, border);
+        } else if (!monsterImage) {
           context.lineWidth = portrait ? 3 : 2;
           context.strokeStyle = portrait ? token.color : '#fff';
           context.stroke();

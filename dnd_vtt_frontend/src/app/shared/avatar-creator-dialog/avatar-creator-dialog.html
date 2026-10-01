@@ -4,7 +4,32 @@
 </h2>
 
 <mat-dialog-content class="avatar-dialog-content !p-0">
-  <div class="avatar-layout">
+  <div class="dialog-tabs" role="tablist" aria-label="Portrait dialog sections">
+    <button
+      type="button"
+      role="tab"
+      [class.active]="tab() === 'portrait'"
+      [attr.aria-selected]="tab() === 'portrait'"
+      (click)="tab.set('portrait')"
+    >
+      <mat-icon class="text-base">face</mat-icon>
+      Portrait
+    </button>
+    <button
+      type="button"
+      role="tab"
+      [class.active]="tab() === 'token'"
+      [attr.aria-selected]="tab() === 'token'"
+      (click)="tab.set('token')"
+    >
+      <mat-icon class="text-base">radio_button_checked</mat-icon>
+      Token Border
+    </button>
+  </div>
+
+  <!-- Hidden rather than destroyed on the Token Border tab, so the upload cropper keeps its
+       loaded image and crop. -->
+  <div class="avatar-layout" [hidden]="tab() !== 'portrait'">
     <section class="preview-panel" aria-label="Avatar preview">
       <div class="preview-frame">
         @if (previewUri()) {
@@ -177,6 +202,163 @@
       </section>
     }
   </div>
+
+  @if (tab() === 'token') {
+    <div class="token-layout">
+      <section class="token-preview-panel" aria-label="Token preview">
+        <app-token-border-preview
+          [imageSrc]="previewUri()"
+          [border]="borderShown()"
+          [size]="200"
+          [cells]="1.5"
+          label="Your token, up close"
+        />
+        <div class="flex items-center gap-3">
+          <app-token-border-preview
+            [imageSrc]="previewUri()"
+            [border]="borderShown()"
+            [size]="96"
+            [cells]="3"
+            label="Your token at map scale"
+          />
+          <p class="text-xs text-slate m-0">At map scale</p>
+        </div>
+      </section>
+
+      <section class="token-options" aria-label="Token border options">
+        <div class="flex items-start justify-between gap-3">
+          <div>
+            <h3 class="font-brand text-parchment m-0">Token Border</h3>
+            <p class="text-xs text-slate m-0 mt-1">
+              @if (tokenBorder()) {
+                Shown around your token on the battle map, for everyone at the table.
+              } @else {
+                Using the default ring in your token's map color. Change anything below to customize
+                it.
+              }
+            </p>
+          </div>
+          @if (tokenBorder()) {
+            <button type="button" class="btn-ghost px-3 shrink-0" (click)="resetBorder()">
+              <mat-icon class="text-base">restart_alt</mat-icon>
+              Default
+            </button>
+          }
+        </div>
+
+        <div>
+          <p class="field-label m-0 mb-2">Gradient</p>
+          <div class="segmented" role="group" aria-label="Border gradient">
+            <button
+              type="button"
+              [class.active]="tokenBorder() && !tokenBorder()!.gradientColor"
+              [attr.aria-pressed]="!!tokenBorder() && !tokenBorder()!.gradientColor"
+              (click)="setGradient(false)"
+            >
+              Single color
+            </button>
+            <button
+              type="button"
+              [class.active]="!!tokenBorder()?.gradientColor"
+              [attr.aria-pressed]="!!tokenBorder()?.gradientColor"
+              (click)="setGradient(true)"
+            >
+              <mat-icon class="text-base">gradient</mat-icon>
+              Gradient
+            </button>
+          </div>
+        </div>
+
+        <ng-template #colorPicker let-key="key" let-label="label">
+          <div>
+            <p class="field-label m-0">{{ label }}</p>
+            <div
+              class="mt-2 mb-2.5 flex flex-wrap gap-2"
+              role="group"
+              [attr.aria-label]="label + ' swatches'"
+            >
+              @for (swatch of borderPalette; track swatch) {
+                <button
+                  type="button"
+                  class="color-swatch"
+                  [class.selected]="isBorderSwatch(key, swatch)"
+                  [style.background-color]="swatch"
+                  [attr.aria-label]="label + ' ' + swatch"
+                  [attr.aria-pressed]="isBorderSwatch(key, swatch)"
+                  (click)="setBorderColor(key, swatch)"
+                ></button>
+              }
+            </div>
+            <label class="custom-color-control !ml-0">
+              <span class="sr-only">Custom {{ label.toLowerCase() }}</span>
+              <input
+                type="color"
+                [ngModel]="borderColor(key)"
+                (ngModelChange)="setBorderColor(key, $event)"
+              />
+              <input
+                class="field-input color-hex"
+                type="text"
+                maxlength="7"
+                pattern="#[0-9a-fA-F]{6}"
+                [ngModel]="borderColor(key)"
+                (change)="setBorderColorInput(key, $event)"
+                [attr.aria-label]="label + ' hex'"
+              />
+            </label>
+          </div>
+        </ng-template>
+
+        <ng-container
+          *ngTemplateOutlet="
+            colorPicker;
+            context: {
+              key: 'color',
+              label: tokenBorder()?.gradientColor ? 'Outer color' : 'Color',
+            }
+          "
+        />
+        @if (tokenBorder()?.gradientColor) {
+          <ng-container
+            *ngTemplateOutlet="colorPicker; context: { key: 'gradientColor', label: 'Inner color' }"
+          />
+        }
+
+        <div>
+          <label class="field-label m-0 mb-2 flex justify-between" for="token-border-width">
+            <span>Thickness</span>
+            <span class="text-parchment">{{ borderShown().width }}</span>
+          </label>
+          <input
+            id="token-border-width"
+            class="thickness-slider"
+            type="range"
+            step="1"
+            [min]="minBorderWidth"
+            [max]="maxBorderWidth"
+            [value]="borderShown().width"
+            (input)="setBorderWidth(+$any($event.target).value)"
+          />
+        </div>
+
+        <div>
+          <p class="field-label m-0 mb-2">Pattern</p>
+          <div class="segmented" role="group" aria-label="Border pattern">
+            @for (option of borderPatterns; track option.id) {
+              <button
+                type="button"
+                [class.active]="tokenBorder()?.pattern === option.id"
+                [attr.aria-pressed]="tokenBorder()?.pattern === option.id"
+                (click)="setBorderPattern(option.id)"
+              >
+                {{ option.label }}
+              </button>
+            }
+          </div>
+        </div>
+      </section>
+    </div>
+  }
 </mat-dialog-content>
 
 <mat-menu #colorMenu="matMenu" class="avatar-color-menu">
@@ -227,6 +409,6 @@
   }
   <button type="button" class="btn-ghost" [mat-dialog-close]="null">Cancel</button>
   <button type="button" class="btn-primary" [disabled]="!canApply()" (click)="apply()">
-    {{ saving() ? 'Uploading…' : 'Apply Portrait' }}
+    {{ saving() ? 'Uploading…' : 'Apply' }}
   </button>
 </mat-dialog-actions>

@@ -9,7 +9,12 @@ const CP_VALUE: Record<keyof Currency, number> = { cp: 1, sp: 10, ep: 50, gp: 10
 // of the standard cp/sp/gp/pp ladder — most 5e tables never touch it — so borrowing for sp breaks
 // a gp directly (1 gp = 10 sp) rather than routing through ep; ep itself still converts against
 // gp (1 gp = 2 ep) when it's the denomination actually being spent.
-const LENDER: Partial<Record<keyof Currency, keyof Currency>> = { cp: 'sp', sp: 'gp', ep: 'gp', gp: 'pp' };
+const LENDER: Partial<Record<keyof Currency, keyof Currency>> = {
+  cp: 'sp',
+  sp: 'gp',
+  ep: 'gp',
+  gp: 'pp',
+};
 
 // Removes `amount` coins of `denom` value from the purse, breaking coins from `LENDER[denom]`
 // (and, transitively, its own lender) as needed to cover a shortfall, and returning the leftover
@@ -33,7 +38,11 @@ function withdraw(currency: Currency, denom: keyof Currency, amount: number): Cu
 // across denominations when a removal would take `denom` below zero — e.g. removing 2 sp with
 // none on hand breaks a gp into 10 sp and keeps the 8 sp left over. Returns null if the purse
 // can't cover a removal.
-export function adjustCurrency(currency: Currency, denom: keyof Currency, delta: number): Currency | null {
+export function adjustCurrency(
+  currency: Currency,
+  denom: keyof Currency,
+  delta: number,
+): Currency | null {
   if (delta >= 0) return { ...currency, [denom]: currency[denom] + delta };
   return withdraw(currency, denom, -delta);
 }

@@ -7,8 +7,8 @@ const MODES = ['walk', 'burrow', 'climb', 'fly', 'swim'] as const;
 export function monsterSpeedText(monster: Pick<DndMonster, 'speed' | 'speed_desc'>): string {
   if (monster.speed_desc) return monster.speed_desc;
   const { speed } = monster;
-  return MODES.filter(mode => speed[mode] != null)
-    .map(mode => {
+  return MODES.filter((mode) => speed[mode] != null)
+    .map((mode) => {
       const label = mode === 'walk' ? '' : `${mode[0].toUpperCase()}${mode.slice(1)} `;
       const hover = mode === 'fly' && speed.hover ? ' (hover)' : '';
       return `${label}${speed[mode]} ft.${hover}`;

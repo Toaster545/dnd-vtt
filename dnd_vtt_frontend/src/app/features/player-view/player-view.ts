@@ -6,6 +6,8 @@ import { Encounter, PresentPlayer } from '../../core/models/encounter.model';
 import { MapToken } from '../../core/models/campaign.model';
 import { PortraitSource } from '../../core/models/avatar.model';
 import { portraitSource } from '../../core/utils/avatar';
+import { TokenBorder } from '../../core/models/token-border.model';
+import { normalizeTokenBorder } from '../../core/utils/token-border';
 import { BattleMapComponent } from '../battle-map/battle-map';
 
 // A read-only, chrome-free window showing exactly what players see on the battle map — meant to be
@@ -60,6 +62,15 @@ export class PlayerViewComponent implements OnInit, OnDestroy {
       if (p.characterId) {
         map[p.characterId] = portraitSource(p.portraitSeed || p.characterId, p.avatarRecipe, p.portraitImage);
       }
+    }
+    return map;
+  });
+
+  characterTokenBorders = computed(() => {
+    const map: Record<string, TokenBorder> = {};
+    for (const p of this.presentPlayers()) {
+      const border = normalizeTokenBorder(p.tokenBorder);
+      if (p.characterId && border) map[p.characterId] = border;
     }
     return map;
   });

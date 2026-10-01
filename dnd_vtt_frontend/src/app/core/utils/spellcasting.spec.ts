@@ -1,9 +1,20 @@
 import { describe, expect, it } from 'vitest';
 import type { AbilityScores } from '../models/character.model';
-import type { DndClass, DndFeat, DndRace, DndSpell, SpellcastingDefinition, TraitGrant } from '../services/content.service';
+import type {
+  DndClass,
+  DndFeat,
+  DndRace,
+  DndSpell,
+  SpellcastingDefinition,
+  TraitGrant,
+} from '../services/content.service';
 import {
-  describeSpellUpcast, isSpellAttack, isSpellAttackAction, resolveSpellAttackDamage,
-  resolveSpellAttackNote, resolveSpellcasting as resolveSpellcastingImpl,
+  describeSpellUpcast,
+  isSpellAttack,
+  isSpellAttackAction,
+  resolveSpellAttackDamage,
+  resolveSpellAttackNote,
+  resolveSpellcasting as resolveSpellcastingImpl,
 } from './spellcasting';
 import type { SpellcastingResolverInput } from './spellcasting';
 
@@ -18,9 +29,22 @@ const scores: AbilityScores = {
 
 const testSpellLists: Record<string, string[]> = {};
 
-function spell(index: string, name: string, level: number, school: string, lists: string[]): DndSpell {
+function spell(
+  index: string,
+  name: string,
+  level: number,
+  school: string,
+  lists: string[],
+): DndSpell {
   for (const list of lists) (testSpellLists[list] ??= []).push(index);
-  return { index, name, level, school, casting_time: '1 action', access: [] } as unknown as DndSpell;
+  return {
+    index,
+    name,
+    level,
+    school,
+    casting_time: '1 action',
+    access: [],
+  } as unknown as DndSpell;
 }
 
 function resolveSpellcasting(input: Omit<SpellcastingResolverInput, 'spellLists'>) {
@@ -28,17 +52,41 @@ function resolveSpellcasting(input: Omit<SpellcastingResolverInput, 'spellLists'
 }
 
 const spells = [
-  spell('minor-illusion', 'Minor Illusion', 0, 'Illusion', ['Bard', 'Sorcerer', 'Warlock', 'Wizard']),
+  spell('minor-illusion', 'Minor Illusion', 0, 'Illusion', [
+    'Bard',
+    'Sorcerer',
+    'Warlock',
+    'Wizard',
+  ]),
   spell('acid-splash', 'Acid Splash', 0, 'Evocation', ['Sorcerer', 'Wizard']),
   spell('magic-missile', 'Magic Missile', 1, 'Evocation', ['Sorcerer', 'Wizard']),
   spell('burning-hands', 'Burning Hands', 1, 'Evocation', ['Sorcerer', 'Wizard']),
-  spell('detect-magic', 'Detect Magic', 1, 'Divination', ['Bard', 'Cleric', 'Druid', 'Paladin', 'Ranger', 'Sorcerer', 'Wizard']),
-  spell('speak-with-animals', 'Speak with Animals', 1, 'Divination', ['Bard', 'Druid', 'Ranger', 'Warlock']),
+  spell('detect-magic', 'Detect Magic', 1, 'Divination', [
+    'Bard',
+    'Cleric',
+    'Druid',
+    'Paladin',
+    'Ranger',
+    'Sorcerer',
+    'Wizard',
+  ]),
+  spell('speak-with-animals', 'Speak with Animals', 1, 'Divination', [
+    'Bard',
+    'Druid',
+    'Ranger',
+    'Warlock',
+  ]),
   spell('shield-of-faith', 'Shield of Faith', 1, 'Abjuration', ['Cleric', 'Paladin']),
   spell('scorching-ray', 'Scorching Ray', 2, 'Evocation', ['Sorcerer', 'Wizard']),
   spell('shatter', 'Shatter', 2, 'Evocation', ['Bard', 'Sorcerer', 'Warlock', 'Wizard']),
   spell('fireball', 'Fireball', 3, 'Evocation', ['Sorcerer', 'Wizard']),
-  spell('cure-wounds', 'Cure Wounds', 1, 'Evocation', ['Bard', 'Cleric', 'Druid', 'Paladin', 'Ranger']),
+  spell('cure-wounds', 'Cure Wounds', 1, 'Evocation', [
+    'Bard',
+    'Cleric',
+    'Druid',
+    'Paladin',
+    'Ranger',
+  ]),
 ];
 
 type TestSpellcastingDefinition = Omit<SpellcastingDefinition, 'spells'> & { spells?: string[] };
@@ -111,7 +159,9 @@ describe('resolveSpellcasting', () => {
       spellAttackBonus: 5,
       spellSaveDc: 13,
     });
-    expect(result.requirements.map((requirement) => [requirement.kind, requirement.required])).toEqual([
+    expect(
+      result.requirements.map((requirement) => [requirement.kind, requirement.required]),
+    ).toEqual([
       ['cantrips', 1],
       ['spellbook', 2],
       ['prepared', 1],
@@ -119,10 +169,12 @@ describe('resolveSpellcasting', () => {
     expect(result.requirements[1].selectedSpellIndices).toContain('fireball');
     expect(result.requirements[1].invalidSelectedSpellIndices).toEqual(['fireball']);
     expect(result.requirements[1].remaining).toBe(1);
-    expect(result.validationErrors).toContainEqual(expect.objectContaining({
-      code: 'ineligible_spell',
-      spellIndex: 'fireball',
-    }));
+    expect(result.validationErrors).toContainEqual(
+      expect.objectContaining({
+        code: 'ineligible_spell',
+        spellIndex: 'fireball',
+      }),
+    );
     expect(result.isComplete).toBe(false);
   });
 
@@ -147,7 +199,10 @@ describe('resolveSpellcasting', () => {
 
     expect(result.isComplete).toBe(true);
     expect(result.known.map((entry) => entry.spellIndex)).toEqual(['minor-illusion']);
-    expect(result.spellbook.map((entry) => entry.spellIndex)).toEqual(['magic-missile', 'detect-magic']);
+    expect(result.spellbook.map((entry) => entry.spellIndex)).toEqual([
+      'magic-missile',
+      'detect-magic',
+    ]);
     expect(result.prepared.map((entry) => entry.spellIndex)).toEqual(['magic-missile']);
     expect(result.slotPools).toEqual([
       { key: 'spellcasting', name: 'Spell Slots', type: 'normal', slots: { '1': 4, '2': 2 } },
@@ -155,21 +210,42 @@ describe('resolveSpellcasting', () => {
   });
 
   it('adds a selected subclass spell-list expansion to its class source', () => {
-    const sorcerer = classContent('sorcerer', 'Sorcerer', {
-      key: 'class:sorcerer', list: 'Sorcerer', ability: 'charisma',
-      mode: 'known', progression: 'full',
-    }, 3, {
-      spells_known: 1,
-      spell_slots: { '1': 4, '2': 2 },
-    });
-    sorcerer.subclasses = [{
-      index: 'divine-soul', name: 'Divine Soul',
-      levels: [{
-        level: 3, features: ['Divine Magic'], grants: [{
-          type: 'spell_list_expansion', key: 'divine_magic', name: 'Divine Magic', list: 'Cleric',
-        }],
-      }],
-    }];
+    const sorcerer = classContent(
+      'sorcerer',
+      'Sorcerer',
+      {
+        key: 'class:sorcerer',
+        list: 'Sorcerer',
+        ability: 'charisma',
+        mode: 'known',
+        progression: 'full',
+      },
+      3,
+      {
+        spells_known: 1,
+        spell_slots: { '1': 4, '2': 2 },
+      },
+    );
+    sorcerer.subclasses = [
+      {
+        index: 'divine-soul',
+        name: 'Divine Soul',
+        levels: [
+          {
+            level: 3,
+            features: ['Divine Magic'],
+            grants: [
+              {
+                type: 'spell_list_expansion',
+                key: 'divine_magic',
+                name: 'Divine Magic',
+                list: 'Cleric',
+              },
+            ],
+          },
+        ],
+      },
+    ];
 
     const result = resolveSpellcasting({
       characterLevel: 3,
@@ -179,7 +255,9 @@ describe('resolveSpellcasting', () => {
       spellChoices: { 'class:sorcerer:known': ['cure-wounds'] },
     });
 
-    const knownRequirement = result.requirements.find(requirement => requirement.kind === 'known');
+    const knownRequirement = result.requirements.find(
+      (requirement) => requirement.kind === 'known',
+    );
     expect(knownRequirement?.eligibleSpellIndices).toContain('cure-wounds');
     expect(knownRequirement?.invalidSelectedSpellIndices).toEqual([]);
   });
@@ -187,33 +265,57 @@ describe('resolveSpellcasting', () => {
   it('activates option grants and resolves a choice-based racial casting ability', () => {
     const forestGrants: TraitGrant[] = [
       {
-        type: 'spell_grant', key: 'minor', name: 'Forest Magic', destination: 'known',
-        spells: ['minor-illusion'], sourceKey: 'forest-gnome', sourceName: 'Forest Gnome',
+        type: 'spell_grant',
+        key: 'minor',
+        name: 'Forest Magic',
+        destination: 'known',
+        spells: ['minor-illusion'],
+        sourceKey: 'forest-gnome',
+        sourceName: 'Forest Gnome',
         ability: { choiceKey: 'gnomish_spellcasting_ability' },
       },
       {
-        type: 'spell_grant', key: 'animals', name: 'Forest Magic', destination: 'always_prepared',
-        spells: ['speak-with-animals'], sourceKey: 'forest-gnome', sourceName: 'Forest Gnome',
+        type: 'spell_grant',
+        key: 'animals',
+        name: 'Forest Magic',
+        destination: 'always_prepared',
+        spells: ['speak-with-animals'],
+        sourceKey: 'forest-gnome',
+        sourceName: 'Forest Gnome',
         ability: { choiceKey: 'gnomish_spellcasting_ability' },
       },
     ];
     const race = {
-      index: 'gnome', name: 'Gnome', subraces: [], grants: [{
-        type: 'choice', key: 'lineage', name: 'Lineage', choose: 1,
-        options: [{ name: 'Forest Gnome', grants: forestGrants }, { name: 'Rock Gnome' }],
-      }],
+      index: 'gnome',
+      name: 'Gnome',
+      subraces: [],
+      grants: [
+        {
+          type: 'choice',
+          key: 'lineage',
+          name: 'Lineage',
+          choose: 1,
+          options: [{ name: 'Forest Gnome', grants: forestGrants }, { name: 'Rock Gnome' }],
+        },
+      ],
     } as unknown as DndRace;
     const result = resolveSpellcasting({
       characterLevel: 1,
       abilityScores: scores,
       spells,
       classes: [],
-      race: { race, choices: { lineage: ['Forest Gnome'], gnomish_spellcasting_ability: ['Wisdom'] } },
+      race: {
+        race,
+        choices: { lineage: ['Forest Gnome'], gnomish_spellcasting_ability: ['Wisdom'] },
+      },
     });
 
     expect(result.sources).toHaveLength(1);
     expect(result.sources[0]).toMatchObject({
-      name: 'Forest Gnome', castingAbility: 'wisdom', spellAttackBonus: 4, spellSaveDc: 12,
+      name: 'Forest Gnome',
+      castingAbility: 'wisdom',
+      spellAttackBonus: 4,
+      spellSaveDc: 12,
     });
     expect(result.known.map((entry) => entry.spellIndex)).toEqual(['minor-illusion']);
     expect(result.alwaysPrepared.map((entry) => entry.spellIndex)).toEqual(['speak-with-animals']);
@@ -226,10 +328,19 @@ describe('resolveSpellcasting', () => {
       spell_slots: { '1': 2 },
     });
     const race = {
-      index: 'gnome', name: 'Gnome', subraces: [], grants: [{
-        type: 'spell_grant', key: 'forest-magic', name: 'Forest Gnome Magic', destination: 'known',
-        spells: ['minor-illusion'], ability: 'intelligence',
-      }],
+      index: 'gnome',
+      name: 'Gnome',
+      subraces: [],
+      grants: [
+        {
+          type: 'spell_grant',
+          key: 'forest-magic',
+          name: 'Forest Gnome Magic',
+          destination: 'known',
+          spells: ['minor-illusion'],
+          ability: 'intelligence',
+        },
+      ],
     } as unknown as DndRace;
 
     const conflict = resolveSpellcasting({
@@ -240,13 +351,18 @@ describe('resolveSpellcasting', () => {
       race: { race },
       spellChoices: { 'class:wizard:cantrips': ['minor-illusion'] },
     });
-    const conflictingCantrips = conflict.requirements.find(requirement => requirement.kind === 'cantrips')!;
+    const conflictingCantrips = conflict.requirements.find(
+      (requirement) => requirement.kind === 'cantrips',
+    )!;
     expect(conflictingCantrips.invalidSelectedSpellIndices).toContain('minor-illusion');
     expect(conflictingCantrips.unavailableSpellIndices).toContain('minor-illusion');
     expect(conflictingCantrips.unavailableSpellSources['minor-illusion']).toBe('Gnome trait');
-    expect(conflict.validationErrors).toContainEqual(expect.objectContaining({
-      code: 'duplicate_spell', spellIndex: 'minor-illusion',
-    }));
+    expect(conflict.validationErrors).toContainEqual(
+      expect.objectContaining({
+        code: 'duplicate_spell',
+        spellIndex: 'minor-illusion',
+      }),
+    );
 
     const repaired = resolveSpellcasting({
       characterLevel: 1,
@@ -256,7 +372,9 @@ describe('resolveSpellcasting', () => {
       race: { race },
       spellChoices: { 'class:wizard:cantrips': ['acid-splash'] },
     });
-    const repairedCantrips = repaired.requirements.find(requirement => requirement.kind === 'cantrips')!;
+    const repairedCantrips = repaired.requirements.find(
+      (requirement) => requirement.kind === 'cantrips',
+    )!;
     expect(repairedCantrips.validSelectedSpellIndices).toEqual(['acid-splash']);
     expect(repairedCantrips.unavailableSpellIndices).toContain('minor-illusion');
     expect(repaired.isComplete).toBe(true);
@@ -264,8 +382,12 @@ describe('resolveSpellcasting', () => {
 
   it('enforces school/list/level filters for bonus spells without consuming normal limits', () => {
     const evocationGrant: TraitGrant = {
-      type: 'spell_grant', key: 'evocation_savant_3', name: 'Evocation Savant',
-      destination: 'spellbook', choose: 2, countsAgainstLimit: false,
+      type: 'spell_grant',
+      key: 'evocation_savant_3',
+      name: 'Evocation Savant',
+      destination: 'spellbook',
+      choose: 2,
+      countsAgainstLimit: false,
       filter: { lists: ['Wizard'], schools: ['Evocation'], minLevel: 1, maxLevel: 2 },
     };
     const wizard = classContent('wizard', 'Wizard', wizardDefinition, 3, {
@@ -274,9 +396,13 @@ describe('resolveSpellcasting', () => {
       prepared_spells: 0,
       spell_slots: { '1': 4, '2': 2 },
     });
-    wizard.subclasses = [{
-      index: 'evoker', name: 'Evoker', levels: [{ level: 3, features: [], grants: [evocationGrant] }],
-    }];
+    wizard.subclasses = [
+      {
+        index: 'evoker',
+        name: 'Evoker',
+        levels: [{ level: 3, features: [], grants: [evocationGrant] }],
+      },
+    ];
     const result = resolveSpellcasting({
       characterLevel: 3,
       abilityScores: scores,
@@ -284,16 +410,19 @@ describe('resolveSpellcasting', () => {
       classes: [{ cls: wizard, level: 3, subclass: 'Evoker' }],
       spellChoices: {
         'class:wizard:spellbook': ['detect-magic'],
-        'class:wizard:subclass:evoker:level:3:grant:evocation_savant_3': ['burning-hands', 'scorching-ray'],
+        'class:wizard:subclass:evoker:level:3:grant:evocation_savant_3': [
+          'burning-hands',
+          'scorching-ray',
+        ],
       },
     });
     const savant = result.requirements.find((requirement) => requirement.kind === 'bonus')!;
 
     expect(savant.required).toBe(2);
     expect(savant.subclassName).toBe('Evoker');
-    expect(savant.eligibleSpellIndices).toEqual(expect.arrayContaining([
-      'magic-missile', 'burning-hands', 'scorching-ray', 'shatter',
-    ]));
+    expect(savant.eligibleSpellIndices).toEqual(
+      expect.arrayContaining(['magic-missile', 'burning-hands', 'scorching-ray', 'shatter']),
+    );
     expect(savant.eligibleSpellIndices).not.toContain('fireball');
     expect(savant.eligibleSpellIndices).not.toContain('cure-wounds');
     expect(result.spellbook).toHaveLength(3);
@@ -302,62 +431,134 @@ describe('resolveSpellcasting', () => {
 
   it('resolves nested feat spell sources with their own list and casting ability', () => {
     const feat = {
-      index: 'magic-initiate', name: 'Magic Initiate', category: 'origin', description: '',
-      grants: [{
-        type: 'choice', key: 'magic_initiate_list', name: 'Spell List', choose: 1,
-        options: [{ name: 'Wizard', grants: [
-          {
-            type: 'spell_grant', key: 'initiate_cantrips', name: 'Magic Initiate Cantrips',
-            destination: 'known', choose: 2, countsAgainstLimit: false,
-            ability: { choiceKey: 'magic_initiate_ability' }, filter: { lists: ['Wizard'], exactLevels: [0] },
-          },
-          {
-            type: 'spell_grant', key: 'initiate_spell', name: 'Magic Initiate Spell',
-            destination: 'always_prepared', choose: 1, countsAgainstLimit: false,
-            ability: { choiceKey: 'magic_initiate_ability' }, filter: { lists: ['Wizard'], exactLevels: [1] },
-          },
-        ] }],
-      }],
+      index: 'magic-initiate',
+      name: 'Magic Initiate',
+      category: 'origin',
+      description: '',
+      grants: [
+        {
+          type: 'choice',
+          key: 'magic_initiate_list',
+          name: 'Spell List',
+          choose: 1,
+          options: [
+            {
+              name: 'Wizard',
+              grants: [
+                {
+                  type: 'spell_grant',
+                  key: 'initiate_cantrips',
+                  name: 'Magic Initiate Cantrips',
+                  destination: 'known',
+                  choose: 2,
+                  countsAgainstLimit: false,
+                  ability: { choiceKey: 'magic_initiate_ability' },
+                  filter: { lists: ['Wizard'], exactLevels: [0] },
+                },
+                {
+                  type: 'spell_grant',
+                  key: 'initiate_spell',
+                  name: 'Magic Initiate Spell',
+                  destination: 'always_prepared',
+                  choose: 1,
+                  countsAgainstLimit: false,
+                  ability: { choiceKey: 'magic_initiate_ability' },
+                  filter: { lists: ['Wizard'], exactLevels: [1] },
+                },
+              ],
+            },
+          ],
+        },
+      ],
     } as DndFeat;
     const initial = resolveSpellcasting({
-      characterLevel: 1, abilityScores: scores, spells, classes: [],
-      feats: [{
-        feat, scope: 'background:sage',
-        choices: { magic_initiate_list: ['Wizard'], magic_initiate_ability: ['Charisma'] },
-      }],
+      characterLevel: 1,
+      abilityScores: scores,
+      spells,
+      classes: [],
+      feats: [
+        {
+          feat,
+          scope: 'background:sage',
+          choices: { magic_initiate_list: ['Wizard'], magic_initiate_ability: ['Charisma'] },
+        },
+      ],
     });
-    expect(initial.requirements.map(requirement => [requirement.name, requirement.required])).toEqual([
-      ['Magic Initiate Cantrips', 2], ['Magic Initiate Spell', 1],
+    expect(
+      initial.requirements.map((requirement) => [requirement.name, requirement.required]),
+    ).toEqual([
+      ['Magic Initiate Cantrips', 2],
+      ['Magic Initiate Spell', 1],
     ]);
     expect(initial.sources[0]).toMatchObject({ origin: 'feat', castingAbility: 'charisma' });
 
-    const choices = Object.fromEntries(initial.requirements.map(requirement => [
-      requirement.key,
-      requirement.name.endsWith('Cantrips') ? ['minor-illusion', 'acid-splash'] : ['magic-missile'],
-    ]));
+    const choices = Object.fromEntries(
+      initial.requirements.map((requirement) => [
+        requirement.key,
+        requirement.name.endsWith('Cantrips')
+          ? ['minor-illusion', 'acid-splash']
+          : ['magic-missile'],
+      ]),
+    );
     const complete = resolveSpellcasting({
-      characterLevel: 1, abilityScores: scores, spells, classes: [],
-      feats: [{
-        feat, scope: 'background:sage',
-        choices: { magic_initiate_list: ['Wizard'], magic_initiate_ability: ['Charisma'] },
-      }],
+      characterLevel: 1,
+      abilityScores: scores,
+      spells,
+      classes: [],
+      feats: [
+        {
+          feat,
+          scope: 'background:sage',
+          choices: { magic_initiate_list: ['Wizard'], magic_initiate_ability: ['Charisma'] },
+        },
+      ],
       spellChoices: choices,
     });
-    expect(complete.known.map(entry => entry.spellIndex)).toEqual(['minor-illusion', 'acid-splash']);
-    expect(complete.alwaysPrepared.map(entry => entry.spellIndex)).toEqual(['magic-missile']);
+    expect(complete.known.map((entry) => entry.spellIndex)).toEqual([
+      'minor-illusion',
+      'acid-splash',
+    ]);
+    expect(complete.alwaysPrepared.map((entry) => entry.spellIndex)).toEqual(['magic-missile']);
     expect(complete.isComplete).toBe(true);
   });
 
   it('gates subclass spells by class level rather than total character level', () => {
-    const paladin = classContent('paladin', 'Paladin', {
-      key: 'class:paladin', list: 'Paladin', ability: 'charisma', mode: 'prepared', progression: 'half',
-    }, 3, { prepared_spells: 0, spell_slots: { '1': 3 } });
-    paladin.subclasses = [{
-      index: 'devotion', name: 'Oath of Devotion', levels: [{ level: 3, features: [], grants: [{
-        type: 'spell_grant', key: 'devotion_5', name: 'Oath Spells', destination: 'always_prepared',
-        spells: ['aid'], countsAgainstLimit: false, classLevel: 5,
-      }] }],
-    }];
+    const paladin = classContent(
+      'paladin',
+      'Paladin',
+      {
+        key: 'class:paladin',
+        list: 'Paladin',
+        ability: 'charisma',
+        mode: 'prepared',
+        progression: 'half',
+      },
+      3,
+      { prepared_spells: 0, spell_slots: { '1': 3 } },
+    );
+    paladin.subclasses = [
+      {
+        index: 'devotion',
+        name: 'Oath of Devotion',
+        levels: [
+          {
+            level: 3,
+            features: [],
+            grants: [
+              {
+                type: 'spell_grant',
+                key: 'devotion_5',
+                name: 'Oath Spells',
+                destination: 'always_prepared',
+                spells: ['aid'],
+                countsAgainstLimit: false,
+                classLevel: 5,
+              },
+            ],
+          },
+        ],
+      },
+    ];
 
     const result = resolveSpellcasting({
       characterLevel: 10,
@@ -370,62 +571,123 @@ describe('resolveSpellcasting', () => {
 
   it('limits dependent feature choices to spells already acquired in the spellbook', () => {
     const mastery: TraitGrant = {
-      type: 'spell_grant', key: 'spell_mastery_1', name: 'Spell Mastery',
-      destination: 'always_prepared', choose: 1, countsAgainstLimit: false,
-      fromDestination: 'spellbook', filter: { exactLevels: [1] },
+      type: 'spell_grant',
+      key: 'spell_mastery_1',
+      name: 'Spell Mastery',
+      destination: 'always_prepared',
+      choose: 1,
+      countsAgainstLimit: false,
+      fromDestination: 'spellbook',
+      filter: { exactLevels: [1] },
     };
-    const wizard = classContent('wizard', 'Wizard', wizardDefinition, 18, {
-      spells_known: 2, prepared_spells: 0, spell_slots: { '1': 4, '2': 3, '3': 3 },
-    }, [mastery]);
+    const wizard = classContent(
+      'wizard',
+      'Wizard',
+      wizardDefinition,
+      18,
+      {
+        spells_known: 2,
+        prepared_spells: 0,
+        spell_slots: { '1': 4, '2': 3, '3': 3 },
+      },
+      [mastery],
+    );
     const baseChoices = { 'class:wizard:spellbook': ['magic-missile', 'detect-magic'] };
     const first = resolveSpellcasting({
-      characterLevel: 18, abilityScores: scores, spells,
-      classes: [{ cls: wizard, level: 18 }], spellChoices: baseChoices,
+      characterLevel: 18,
+      abilityScores: scores,
+      spells,
+      classes: [{ cls: wizard, level: 18 }],
+      spellChoices: baseChoices,
     });
-    const requirement = first.requirements.find(candidate => candidate.name === 'Spell Mastery')!;
+    const requirement = first.requirements.find((candidate) => candidate.name === 'Spell Mastery')!;
     expect(requirement.eligibleSpellIndices).toEqual(['magic-missile', 'detect-magic']);
 
     const complete = resolveSpellcasting({
-      characterLevel: 18, abilityScores: scores, spells,
+      characterLevel: 18,
+      abilityScores: scores,
+      spells,
       classes: [{ cls: wizard, level: 18 }],
       spellChoices: { ...baseChoices, [requirement.key]: ['detect-magic'] },
     });
-    expect(complete.alwaysPrepared).toContainEqual(expect.objectContaining({
-      spellIndex: 'detect-magic', sourceName: 'Wizard',
-    }));
+    expect(complete.alwaysPrepared).toContainEqual(
+      expect.objectContaining({
+        spellIndex: 'detect-magic',
+        sourceName: 'Wizard',
+      }),
+    );
   });
 
   it('matches Action grants exactly without admitting Bonus Action spells', () => {
     const mastery: TraitGrant = {
-      type: 'spell_grant', key: 'spell_mastery_1', name: 'Spell Mastery',
-      destination: 'always_prepared', choose: 1, countsAgainstLimit: false,
-      fromDestination: 'spellbook', filter: { exactLevels: [1], castingTimes: ['action'] },
+      type: 'spell_grant',
+      key: 'spell_mastery_1',
+      name: 'Spell Mastery',
+      destination: 'always_prepared',
+      choose: 1,
+      countsAgainstLimit: false,
+      fromDestination: 'spellbook',
+      filter: { exactLevels: [1], castingTimes: ['action'] },
     };
-    const wizard = classContent('wizard', 'Wizard', wizardDefinition, 18, {
-      spells_known: 2, prepared_spells: 0, spell_slots: { '1': 4 },
-    }, [mastery]);
+    const wizard = classContent(
+      'wizard',
+      'Wizard',
+      wizardDefinition,
+      18,
+      {
+        spells_known: 2,
+        prepared_spells: 0,
+        spell_slots: { '1': 4 },
+      },
+      [mastery],
+    );
     const timedSpells = [
-      { ...spell('action-spell', 'Action Spell', 1, 'Evocation', ['Wizard']), casting_time: '1 action' },
-      { ...spell('bonus-spell', 'Bonus Spell', 1, 'Evocation', ['Wizard']), casting_time: '1 bonus action' },
+      {
+        ...spell('action-spell', 'Action Spell', 1, 'Evocation', ['Wizard']),
+        casting_time: '1 action',
+      },
+      {
+        ...spell('bonus-spell', 'Bonus Spell', 1, 'Evocation', ['Wizard']),
+        casting_time: '1 bonus action',
+      },
     ] as DndSpell[];
     const result = resolveSpellcasting({
-      characterLevel: 18, abilityScores: scores, spells: timedSpells,
+      characterLevel: 18,
+      abilityScores: scores,
+      spells: timedSpells,
       classes: [{ cls: wizard, level: 18 }],
       spellChoices: { 'class:wizard:spellbook': ['action-spell', 'bonus-spell'] },
     });
 
-    expect(result.requirements.find(candidate => candidate.name === 'Spell Mastery')?.eligibleSpellIndices)
-      .toEqual(['action-spell']);
+    expect(
+      result.requirements.find((candidate) => candidate.name === 'Spell Mastery')
+        ?.eligibleSpellIndices,
+    ).toEqual(['action-spell']);
   });
 
   it('keeps always-prepared spells outside the limit and rejects preparing them twice', () => {
     const alwaysPrepared: TraitGrant = {
-      type: 'spell_grant', key: 'devotion-spells', name: 'Devotion Spells',
-      destination: 'always_prepared', spells: ['shield-of-faith'], countsAgainstLimit: false,
+      type: 'spell_grant',
+      key: 'devotion-spells',
+      name: 'Devotion Spells',
+      destination: 'always_prepared',
+      spells: ['shield-of-faith'],
+      countsAgainstLimit: false,
     };
-    const paladin = classContent('paladin', 'Paladin', {
-      key: 'class:paladin', list: 'Paladin', ability: 'charisma', mode: 'prepared', progression: 'half',
-    }, 3, { prepared_spells: 1, spell_slots: { '1': 3 } }, [alwaysPrepared]);
+    const paladin = classContent(
+      'paladin',
+      'Paladin',
+      {
+        key: 'class:paladin',
+        list: 'Paladin',
+        ability: 'charisma',
+        mode: 'prepared',
+        progression: 'half',
+      },
+      3,
+      { prepared_spells: 1, spell_slots: { '1': 3 } },
+      [alwaysPrepared],
+    );
 
     const duplicate = resolveSpellcasting({
       characterLevel: 3,
@@ -437,7 +699,9 @@ describe('resolveSpellcasting', () => {
     expect(duplicate.requirements[0].invalidSelectedSpellIndices).toEqual(['shield-of-faith']);
     expect(duplicate.requirements[0].eligibleSpellIndices).toContain('shield-of-faith');
     expect(duplicate.requirements[0].unavailableSpellIndices).toContain('shield-of-faith');
-    expect(duplicate.requirements[0].unavailableSpellSources['shield-of-faith']).toBe('Devotion Spells');
+    expect(duplicate.requirements[0].unavailableSpellSources['shield-of-faith']).toBe(
+      'Devotion Spells',
+    );
     expect(duplicate.requirements[0].remaining).toBe(1);
 
     const valid = resolveSpellcasting({
@@ -453,22 +717,42 @@ describe('resolveSpellcasting', () => {
   });
 
   it('keeps subclass-granted class spells visible and identifies the subclass provider', () => {
-    const artificer = classContent('artificer', 'Artificer', {
-      key: 'class:artificer', list: 'Wizard', spells: ['magic-missile', 'burning-hands'],
-      ability: 'intelligence', mode: 'prepared', progression: 'half',
-    }, 3, { prepared_spells: 1, spell_slots: { '1': 3 } });
-    artificer.subclasses = [{
-      index: 'cartographer',
-      name: 'Cartographer',
-      levels: [{
-        level: 3,
-        features: [],
-        grants: [{
-          type: 'spell_grant', key: 'cartographer-spells', name: 'Cartographer Spells',
-          destination: 'always_prepared', spells: ['magic-missile'], countsAgainstLimit: false,
-        }],
-      }],
-    }] as DndClass['subclasses'];
+    const artificer = classContent(
+      'artificer',
+      'Artificer',
+      {
+        key: 'class:artificer',
+        list: 'Wizard',
+        spells: ['magic-missile', 'burning-hands'],
+        ability: 'intelligence',
+        mode: 'prepared',
+        progression: 'half',
+      },
+      3,
+      { prepared_spells: 1, spell_slots: { '1': 3 } },
+    );
+    artificer.subclasses = [
+      {
+        index: 'cartographer',
+        name: 'Cartographer',
+        levels: [
+          {
+            level: 3,
+            features: [],
+            grants: [
+              {
+                type: 'spell_grant',
+                key: 'cartographer-spells',
+                name: 'Cartographer Spells',
+                destination: 'always_prepared',
+                spells: ['magic-missile'],
+                countsAgainstLimit: false,
+              },
+            ],
+          },
+        ],
+      },
+    ] as DndClass['subclasses'];
 
     const result = resolveSpellcasting({
       characterLevel: 3,
@@ -476,27 +760,49 @@ describe('resolveSpellcasting', () => {
       spells,
       classes: [{ cls: artificer, level: 3, subclass: 'Cartographer' }],
     });
-    const prepared = result.requirements.find(requirement => requirement.kind === 'prepared')!;
+    const prepared = result.requirements.find((requirement) => requirement.kind === 'prepared')!;
 
     expect(prepared.eligibleSpellIndices).toContain('magic-missile');
     expect(prepared.unavailableSpellIndices).toContain('magic-missile');
     expect(prepared.unavailableSpellSources['magic-missile']).toBe('Cartographer');
-    expect(result.alwaysPrepared).toContainEqual(expect.objectContaining({
-      spellIndex: 'magic-missile',
-      providedBy: 'Cartographer',
-    }));
+    expect(result.alwaysPrepared).toContainEqual(
+      expect.objectContaining({
+        spellIndex: 'magic-missile',
+        providedBy: 'Cartographer',
+      }),
+    );
   });
 
   it('combines normal multiclass slots and keeps Pact Magic separate', () => {
     const wizard = classContent('wizard', 'Wizard', wizardDefinition, 3, {
       spell_slots: { '1': 4, '2': 2 },
     });
-    const paladin = classContent('paladin', 'Paladin', {
-      key: 'class:paladin', list: 'Paladin', ability: 'charisma', mode: 'prepared', progression: 'half',
-    }, 2, { spell_slots: { '1': 2 } });
-    const warlock = classContent('warlock', 'Warlock', {
-      key: 'class:warlock', list: 'Warlock', ability: 'charisma', mode: 'known', progression: 'pact',
-    }, 3, { pact_magic: { slots: 2, slot_level: 2 } });
+    const paladin = classContent(
+      'paladin',
+      'Paladin',
+      {
+        key: 'class:paladin',
+        list: 'Paladin',
+        ability: 'charisma',
+        mode: 'prepared',
+        progression: 'half',
+      },
+      2,
+      { spell_slots: { '1': 2 } },
+    );
+    const warlock = classContent(
+      'warlock',
+      'Warlock',
+      {
+        key: 'class:warlock',
+        list: 'Warlock',
+        ability: 'charisma',
+        mode: 'known',
+        progression: 'pact',
+      },
+      3,
+      { pact_magic: { slots: 2, slot_level: 2 } },
+    );
     const result = resolveSpellcasting({
       characterLevel: 8,
       abilityScores: scores,
@@ -510,7 +816,13 @@ describe('resolveSpellcasting', () => {
 
     expect(result.slotPools).toEqual([
       { key: 'spellcasting', name: 'Spell Slots', type: 'normal', slots: { '1': 4, '2': 3 } },
-      { key: 'pact:class:warlock', name: 'Warlock Pact Magic', type: 'pact', slots: { '2': 2 }, pactSlotLevel: 2 },
+      {
+        key: 'pact:class:warlock',
+        name: 'Warlock Pact Magic',
+        type: 'pact',
+        slots: { '2': 2 },
+        pactSlotLevel: 2,
+      },
     ]);
   });
 
@@ -523,16 +835,20 @@ describe('resolveSpellcasting', () => {
       spellChoices: { 'class:wizard:spellbook': ['fireball'] },
     });
 
-    expect(result.requirements).toContainEqual(expect.objectContaining({
-      key: 'class:wizard:spellbook',
-      sourceName: 'Unassigned Spells',
-      selectedSpellIndices: ['fireball'],
-      invalidSelectedSpellIndices: ['fireball'],
-    }));
-    expect(result.validationErrors).toContainEqual(expect.objectContaining({
-      code: 'ineligible_spell',
-      spellIndex: 'fireball',
-    }));
+    expect(result.requirements).toContainEqual(
+      expect.objectContaining({
+        key: 'class:wizard:spellbook',
+        sourceName: 'Unassigned Spells',
+        selectedSpellIndices: ['fireball'],
+        invalidSelectedSpellIndices: ['fireball'],
+      }),
+    );
+    expect(result.validationErrors).toContainEqual(
+      expect.objectContaining({
+        code: 'ineligible_spell',
+        spellIndex: 'fireball',
+      }),
+    );
     expect(result.isComplete).toBe(false);
   });
 
@@ -540,19 +856,23 @@ describe('resolveSpellcasting', () => {
     const race = {
       index: 'gnome',
       name: 'Gnome',
-      grants: [{
-        type: 'spell_grant',
-        key: 'forest_magic',
-        name: 'Forest Gnome Magic',
-        destination: 'always_prepared',
-        spells: ['speak-with-animals'],
-        countsAgainstLimit: false,
-        sourceKey: 'forest-gnome',
-        sourceName: 'Forest Gnome',
-        ability: 'wisdom',
-        freeCast: { uses: 'proficiency_bonus', recovery: 'long_rest' },
-      }],
-      traits: [], subraces: [], languages: [],
+      grants: [
+        {
+          type: 'spell_grant',
+          key: 'forest_magic',
+          name: 'Forest Gnome Magic',
+          destination: 'always_prepared',
+          spells: ['speak-with-animals'],
+          countsAgainstLimit: false,
+          sourceKey: 'forest-gnome',
+          sourceName: 'Forest Gnome',
+          ability: 'wisdom',
+          freeCast: { uses: 'proficiency_bonus', recovery: 'long_rest' },
+        },
+      ],
+      traits: [],
+      subraces: [],
+      languages: [],
     } as unknown as DndRace;
     const result = resolveSpellcasting({
       characterLevel: 5,
@@ -581,12 +901,18 @@ describe('resolveSpellcasting', () => {
       tags: ['dragonmark'],
       grants: [
         {
-          type: 'spell_grant', key: 'mark-spell', name: 'Mark Spell',
-          destination: 'always_prepared', spells: ['magic-missile'],
+          type: 'spell_grant',
+          key: 'mark-spell',
+          name: 'Mark Spell',
+          destination: 'always_prepared',
+          spells: ['magic-missile'],
         },
         {
-          type: 'spell_list_expansion', key: 'mark-list', name: 'Spells of the Mark',
-          spells: ['fireball'], alwaysPreparedIfFeat: 'potent-dragonmark',
+          type: 'spell_list_expansion',
+          key: 'mark-list',
+          name: 'Spells of the Mark',
+          spells: ['fireball'],
+          alwaysPreparedIfFeat: 'potent-dragonmark',
         },
       ],
     } as unknown as DndFeat;
@@ -594,10 +920,15 @@ describe('resolveSpellcasting', () => {
       index: 'potent-dragonmark',
       name: 'Potent Dragonmark',
       category: 'general',
-      grants: [{
-        type: 'dragonmark_slot', key: 'potent_dragonmark_slot',
-        name: 'Dragonmark Spell Slot', maxLevel: 5, recovery: 'short_rest',
-      }],
+      grants: [
+        {
+          type: 'dragonmark_slot',
+          key: 'potent_dragonmark_slot',
+          name: 'Dragonmark Spell Slot',
+          maxLevel: 5,
+          recovery: 'short_rest',
+        },
+      ],
     } as unknown as DndFeat;
 
     const result = resolveSpellcasting({
@@ -625,7 +956,8 @@ describe('resolveSpellcasting', () => {
 describe('describeSpellUpcast', () => {
   it('calculates Scorching Ray totals for each higher slot', () => {
     const scorchingRay = {
-      index: 'scorching-ray', level: 2,
+      index: 'scorching-ray',
+      level: 2,
       higher_levels: 'You create one additional ray for each spell slot level above 2.',
     } as DndSpell;
 
@@ -633,13 +965,13 @@ describe('describeSpellUpcast', () => {
       levelsAbove: 1,
       summary: 'Creates 4 rays total (+1).',
     });
-    expect(describeSpellUpcast(scorchingRay, 5)?.summary)
-      .toBe('Creates 6 rays total (+3).');
+    expect(describeSpellUpcast(scorchingRay, 5)?.summary).toBe('Creates 6 rays total (+3).');
   });
 
   it('summarizes dice scaling and rejects slots with no upcast benefit', () => {
     const fireball = {
-      index: 'fireball', level: 3,
+      index: 'fireball',
+      level: 3,
       higher_levels: 'The damage increases by 1d6 for each spell slot level above 3.',
     } as DndSpell;
     const detectMagic = { index: 'detect-magic', level: 1 } as DndSpell;
@@ -668,12 +1000,17 @@ describe('spell action summaries', () => {
       index: 'fire-bolt',
       description: 'On a hit, the target takes 1d10 Fire damage.',
       mechanics: {
-        spell_attacks: ['ranged'], damage_types: ['fire'],
-        scaling: { label: 'Fire damage', values: { '1': '1d10', '5': '2d10', '11': '3d10', '17': '4d10' } },
+        spell_attacks: ['ranged'],
+        damage_types: ['fire'],
+        scaling: {
+          label: 'Fire damage',
+          values: { '1': '1d10', '5': '2d10', '11': '3d10', '17': '4d10' },
+        },
       },
     } as unknown as DndSpell;
     const minorIllusion = {
-      index: 'minor-illusion', description: 'Create a sound or image.',
+      index: 'minor-illusion',
+      description: 'Create a sound or image.',
       mechanics: { spell_attacks: [], damage_types: [] },
     } as unknown as DndSpell;
 
