@@ -8,9 +8,9 @@ export function resolveBackgroundSkills(
 ): string[] {
   const customized = choices?.[BACKGROUND_SKILLS_KEY];
   if (
-    customized?.length === 2
-    && new Set(customized).size === 2
-    && customized.every(skill => Object.hasOwn(SKILLS, skill))
+    customized?.length === 2 &&
+    new Set(customized).size === 2 &&
+    customized.every((skill) => Object.hasOwn(SKILLS, skill))
   ) {
     return customized;
   }

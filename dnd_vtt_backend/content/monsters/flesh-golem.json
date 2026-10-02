@@ -1,0 +1,38 @@
+{
+  "index": "flesh-golem",
+  "name": "Flesh Golem",
+  "size": "Medium",
+  "type": "construct",
+  "alignment": "neutral",
+  "armor_class": 9,
+  "hit_points": 127,
+  "hit_dice": "15d8 + 60",
+  "speed": { "walk": 30 },
+  "ability_scores": {
+    "strength": 19,
+    "dexterity": 9,
+    "constitution": 18,
+    "intelligence": 6,
+    "wisdom": 10,
+    "charisma": 5
+  },
+  "initiative_bonus": -1,
+  "damage_immunities": ["lightning", "poison"],
+  "condition_immunities": ["charmed", "exhaustion", "frightened", "paralyzed", "petrified", "poisoned"],
+  "senses": { "darkvision": 60, "passive_perception": 10 },
+  "languages": ["Understands Common plus one other language but can't speak"],
+  "challenge_rating": "5",
+  "xp": 1800,
+  "traits": [
+    { "name": "Aversion to Fire", "description": "If the golem takes Fire damage, it has Disadvantage on attack rolls and ability checks until the end of its next turn." },
+    { "name": "Berserk", "description": "Whenever the golem starts its turn Bloodied, roll 1d6. On a 6, the golem goes berserk. On each of its turns while berserk, the golem attacks the nearest creature it can see. If no creature is near enough to move to and attack, the golem attacks an object. Once the golem goes berserk, it remains so until it is destroyed or it is no longer Bloodied. The golem's creator, if within 60 feet of the berserk golem, can try to calm it by taking an action to make a DC 15 Charisma (Persuasion) check; the golem must be able to hear its creator. If this check succeeds, the golem ceases being berserk until the start of its next turn, at which point it resumes rolling for the Berserk trait again if it is still Bloodied." },
+    { "name": "Immutable Form", "description": "The golem can't shape-shift." },
+    { "name": "Lightning Absorption", "description": "Whenever the golem is subjected to Lightning damage, it regains a number of Hit Points equal to the Lightning damage dealt." },
+    { "name": "Magic Resistance", "description": "The golem has Advantage on saving throws against spells and other magical effects." }
+  ],
+  "actions": [
+    { "name": "Multiattack", "description": "The golem makes two Slam attacks." },
+    { "name": "Slam", "description": "Melee Attack Roll: +7, reach 5 ft. Hit: 13 (2d8 + 4) Bludgeoning damage plus 4 (1d8) Lightning damage." }
+  ],
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 285 }
+}

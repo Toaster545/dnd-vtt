@@ -1,0 +1,36 @@
+{
+  "index": "young-white-dragon",
+  "name": "Young White Dragon",
+  "size": "Large",
+  "type": "dragon (chromatic)",
+  "alignment": "chaotic evil",
+  "armor_class": 17,
+  "hit_points": 123,
+  "hit_dice": "13d10 + 52",
+  "speed": { "walk": 40, "burrow": 20, "fly": 80, "swim": 40 },
+  "ability_scores": {
+    "strength": 18,
+    "dexterity": 10,
+    "constitution": 18,
+    "intelligence": 6,
+    "wisdom": 11,
+    "charisma": 12
+  },
+  "initiative_bonus": 3,
+  "saving_throws": { "Dexterity": 3, "Wisdom": 3 },
+  "skills": { "Perception": 6, "Stealth": 3 },
+  "damage_immunities": ["cold"],
+  "senses": { "blindsight": 30, "darkvision": 120, "passive_perception": 16 },
+  "languages": ["Common", "Draconic"],
+  "challenge_rating": "6",
+  "xp": 2300,
+  "traits": [
+    { "name": "Ice Walk", "description": "The dragon can move across and climb icy surfaces without needing to make an ability check. Additionally, Difficult Terrain composed of ice or snow doesn't cost it extra movement." }
+  ],
+  "actions": [
+    { "name": "Multiattack", "description": "The dragon makes three Rend attacks." },
+    { "name": "Rend", "description": "Melee Attack Roll: +7, reach 10 ft. Hit: 9 (2d4 + 4) Slashing damage plus 2 (1d4) Cold damage." },
+    { "name": "Cold Breath (Recharge 5-6)", "description": "Constitution Saving Throw: DC 15, each creature in a 30-foot Cone. Failure: 40 (9d8) Cold damage. Success: Half damage." }
+  ],
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 340 }
+}

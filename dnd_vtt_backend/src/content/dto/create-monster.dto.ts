@@ -106,6 +106,11 @@ export class CreateMonsterDto {
   @ValidateNested({ each: true })
   @Type(() => MonsterEntryDto)
   @IsOptional()
+  bonus_actions?: MonsterEntryDto[];
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => MonsterEntryDto)
+  @IsOptional()
   reactions?: MonsterEntryDto[];
   @IsArray()
   @ValidateNested({ each: true })

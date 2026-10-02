@@ -1,0 +1,41 @@
+{
+  "index": "oni",
+  "name": "Oni",
+  "size": "Large",
+  "type": "fiend",
+  "alignment": "lawful evil",
+  "armor_class": 17,
+  "hit_points": 119,
+  "hit_dice": "14d10 + 42",
+  "speed": { "walk": 30, "fly": 30, "hover": true },
+  "ability_scores": {
+    "strength": 19,
+    "dexterity": 11,
+    "constitution": 16,
+    "intelligence": 14,
+    "wisdom": 12,
+    "charisma": 15
+  },
+  "initiative_bonus": 0,
+  "saving_throws": { "Dexterity": 3, "Constitution": 6, "Wisdom": 4, "Charisma": 5 },
+  "skills": { "Arcana": 5, "Deception": 8, "Perception": 4 },
+  "damage_resistances": ["cold"],
+  "senses": { "darkvision": 60, "passive_perception": 14 },
+  "languages": ["Common", "Giant"],
+  "challenge_rating": "7",
+  "xp": 2900,
+  "traits": [
+    { "name": "Regeneration", "description": "The oni regains 10 Hit Points at the start of each of its turns if it has at least 1 Hit Point." }
+  ],
+  "actions": [
+    { "name": "Multiattack", "description": "The oni makes two Claw or Nightmare Ray attacks. It can replace one attack with a use of Spellcasting." },
+    { "name": "Claw", "description": "Melee Attack Roll: +7, reach 10 ft. Hit: 10 (1d12 + 4) Slashing damage plus 9 (2d8) Necrotic damage." },
+    { "name": "Nightmare Ray", "description": "Ranged Attack Roll: +5, range 60 ft. Hit: 9 (2d6 + 2) Psychic damage, and the target has the Frightened condition until the start of the oni's next turn." },
+    { "name": "Shape-Shift", "description": "The oni shape-shifts into a Small or Medium Humanoid or a Large Giant, or it returns to its true form. Other than its size, its game statistics are the same in each form. Any equipment it is wearing or carrying isn't transformed." },
+    { "name": "Spellcasting", "description": "The oni casts one of the following spells, requiring no Material components and using Charisma as the spellcasting ability (spell save DC 13):\n1/Day Each: Charm Person (level 2 version), Darkness, Gaseous Form, Sleep" }
+  ],
+  "bonus_actions": [
+    { "name": "Invisibility", "description": "The oni casts Invisibility on itself, requiring no spell components and using the same spellcasting ability as Spellcasting." }
+  ],
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 312 }
+}

@@ -8,17 +8,23 @@ describe('resolveBackgroundSkills', () => {
   });
 
   it('uses two saved custom skills', () => {
-    expect(resolveBackgroundSkills(merchant, {
-      [BACKGROUND_SKILLS_KEY]: ['Nature', 'Persuasion'],
-    })).toEqual(['Nature', 'Persuasion']);
+    expect(
+      resolveBackgroundSkills(merchant, {
+        [BACKGROUND_SKILLS_KEY]: ['Nature', 'Persuasion'],
+      }),
+    ).toEqual(['Nature', 'Persuasion']);
   });
 
   it('rejects duplicate or unknown custom skills', () => {
-    expect(resolveBackgroundSkills(merchant, {
-      [BACKGROUND_SKILLS_KEY]: ['Nature', 'Nature'],
-    })).toEqual(['Animal Handling', 'Persuasion']);
-    expect(resolveBackgroundSkills(merchant, {
-      [BACKGROUND_SKILLS_KEY]: ['Nature', 'Rice Trading'],
-    })).toEqual(['Animal Handling', 'Persuasion']);
+    expect(
+      resolveBackgroundSkills(merchant, {
+        [BACKGROUND_SKILLS_KEY]: ['Nature', 'Nature'],
+      }),
+    ).toEqual(['Animal Handling', 'Persuasion']);
+    expect(
+      resolveBackgroundSkills(merchant, {
+        [BACKGROUND_SKILLS_KEY]: ['Nature', 'Rice Trading'],
+      }),
+    ).toEqual(['Animal Handling', 'Persuasion']);
   });
 });

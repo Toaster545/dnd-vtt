@@ -1,0 +1,32 @@
+{
+  "index": "guard-captain",
+  "name": "Guard Captain",
+  "size": "Medium or Small",
+  "type": "humanoid",
+  "alignment": "neutral",
+  "armor_class": 18,
+  "hit_points": 75,
+  "hit_dice": "10d8 + 30",
+  "speed": { "walk": 30 },
+  "ability_scores": {
+    "strength": 18,
+    "dexterity": 14,
+    "constitution": 16,
+    "intelligence": 12,
+    "wisdom": 14,
+    "charisma": 13
+  },
+  "initiative_bonus": 4,
+  "skills": { "Athletics": 6, "Perception": 4 },
+  "gear": ["Breastplate", "Javelins (6)", "Longsword", "Shield"],
+  "senses": { "passive_perception": 14 },
+  "languages": ["Common"],
+  "challenge_rating": "4",
+  "xp": 1100,
+  "actions": [
+    { "name": "Multiattack", "description": "The guard makes two attacks, using Javelin or Longsword in any combination." },
+    { "name": "Javelin", "description": "Melee or Ranged Attack Roll: +6, reach 5 ft. or range 30/120 ft. Hit: 14 (3d6 + 4) Piercing damage." },
+    { "name": "Longsword", "description": "Melee Attack Roll: +6, reach 5 ft. Hit: 15 (2d10 + 4) Slashing damage." }
+  ],
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 296 }
+}

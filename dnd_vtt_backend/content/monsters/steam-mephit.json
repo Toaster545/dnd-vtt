@@ -1,0 +1,36 @@
+{
+  "index": "steam-mephit",
+  "name": "Steam Mephit",
+  "size": "Small",
+  "type": "elemental",
+  "alignment": "neutral evil",
+  "armor_class": 10,
+  "hit_points": 17,
+  "hit_dice": "5d6",
+  "speed": { "walk": 30, "fly": 30 },
+  "ability_scores": {
+    "strength": 5,
+    "dexterity": 11,
+    "constitution": 10,
+    "intelligence": 11,
+    "wisdom": 10,
+    "charisma": 12
+  },
+  "initiative_bonus": 0,
+  "skills": { "Stealth": 2 },
+  "damage_immunities": ["fire", "poison"],
+  "condition_immunities": ["exhaustion", "poisoned"],
+  "senses": { "darkvision": 60, "passive_perception": 10 },
+  "languages": ["Primordial (Aquan, Ignan)"],
+  "challenge_rating": "1/4",
+  "xp": 50,
+  "traits": [
+    { "name": "Blurred Form", "description": "Attack rolls against the mephit are made with Disadvantage unless the mephit has the Incapacitated condition." },
+    { "name": "Death Burst", "description": "The mephit explodes when it dies. Dexterity Saving Throw: DC 10, each creature in a 5-foot Emanation originating from the mephit. Failure: 5 (2d4) Fire damage. Success: Half damage." }
+  ],
+  "actions": [
+    { "name": "Claw", "description": "Melee Attack Roll: +2, reach 5 ft. Hit: 2 (1d4) Slashing damage plus 2 (1d4) Fire damage." },
+    { "name": "Steam Breath (Recharge 6)", "description": "Constitution Saving Throw: DC 10, each creature in a 15-foot Cone. Failure: 5 (2d4) Fire damage, and the target's Speed decreases by 10 feet until the end of the mephit's next turn. Success: Half damage only. Failure or Success: Being underwater doesn't grant Resistance to this Fire damage." }
+  ],
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 308 }
+}

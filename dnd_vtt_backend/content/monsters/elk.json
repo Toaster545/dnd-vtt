@@ -1,0 +1,29 @@
+{
+  "index": "elk",
+  "name": "Elk",
+  "size": "Large",
+  "type": "beast",
+  "alignment": "unaligned",
+  "armor_class": 10,
+  "hit_points": 11,
+  "hit_dice": "2d10",
+  "speed": { "walk": 50 },
+  "ability_scores": {
+    "strength": 16,
+    "dexterity": 10,
+    "constitution": 11,
+    "intelligence": 2,
+    "wisdom": 10,
+    "charisma": 6
+  },
+  "initiative_bonus": 0,
+  "skills": { "Perception": 2 },
+  "senses": { "darkvision": 60, "passive_perception": 12 },
+  "languages": [],
+  "challenge_rating": "1/4",
+  "xp": 50,
+  "actions": [
+    { "name": "Ram", "description": "Melee Attack Roll: +5, reach 5 ft. Hit: 6 (1d6 + 3) Bludgeoning damage. If the target is a Large or smaller creature and the elk moved 20+ feet straight toward it immediately before the hit, the target takes an extra 3 (1d6) Bludgeoning damage and has the Prone condition." }
+  ],
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 348 }
+}

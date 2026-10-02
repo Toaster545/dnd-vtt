@@ -1,0 +1,37 @@
+{
+  "index": "young-green-dragon",
+  "name": "Young Green Dragon",
+  "size": "Large",
+  "type": "dragon (chromatic)",
+  "alignment": "lawful evil",
+  "armor_class": 18,
+  "hit_points": 136,
+  "hit_dice": "16d10 + 48",
+  "speed": { "walk": 40, "fly": 80, "swim": 40 },
+  "ability_scores": {
+    "strength": 19,
+    "dexterity": 12,
+    "constitution": 17,
+    "intelligence": 16,
+    "wisdom": 13,
+    "charisma": 15
+  },
+  "initiative_bonus": 4,
+  "saving_throws": { "Dexterity": 4, "Wisdom": 4 },
+  "skills": { "Deception": 5, "Perception": 7, "Stealth": 4 },
+  "damage_immunities": ["poison"],
+  "condition_immunities": ["poisoned"],
+  "senses": { "blindsight": 30, "darkvision": 120, "passive_perception": 17 },
+  "languages": ["Common", "Draconic"],
+  "challenge_rating": "8",
+  "xp": 3900,
+  "traits": [
+    { "name": "Amphibious", "description": "The dragon can breathe air and water." }
+  ],
+  "actions": [
+    { "name": "Multiattack", "description": "The dragon makes three Rend attacks." },
+    { "name": "Rend", "description": "Melee Attack Roll: +7, reach 10 ft. Hit: 11 (2d6 + 4) Slashing damage plus 7 (2d6) Poison damage." },
+    { "name": "Poison Breath (Recharge 5-6)", "description": "Constitution Saving Throw: DC 14, each creature in a 30-foot Cone. Failure: 42 (12d6) Poison damage. Success: Half damage." }
+  ],
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 293 }
+}

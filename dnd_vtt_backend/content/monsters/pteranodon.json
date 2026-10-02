@@ -1,0 +1,32 @@
+{
+  "index": "pteranodon",
+  "name": "Pteranodon",
+  "size": "Medium",
+  "type": "beast (dinosaur)",
+  "alignment": "unaligned",
+  "armor_class": 13,
+  "hit_points": 13,
+  "hit_dice": "3d8",
+  "speed": { "walk": 10, "fly": 60 },
+  "ability_scores": {
+    "strength": 12,
+    "dexterity": 15,
+    "constitution": 10,
+    "intelligence": 2,
+    "wisdom": 9,
+    "charisma": 5
+  },
+  "initiative_bonus": 2,
+  "skills": { "Perception": 1 },
+  "senses": { "passive_perception": 11 },
+  "languages": [],
+  "challenge_rating": "1/4",
+  "xp": 50,
+  "traits": [
+    { "name": "Flyby", "description": "The pteranodon doesn't provoke an Opportunity Attack when it flies out of an enemy's reach." }
+  ],
+  "actions": [
+    { "name": "Bite", "description": "Melee Attack Roll: +4, reach 5 ft. Hit: 6 (1d8 + 2) Piercing damage." }
+  ],
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 359 }
+}

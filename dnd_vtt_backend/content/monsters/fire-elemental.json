@@ -5,8 +5,8 @@
   "type": "elemental",
   "alignment": "neutral",
   "armor_class": 13,
-  "hit_points": 102,
-  "hit_dice": "12d10 + 36",
+  "hit_points": 93,
+  "hit_dice": "11d10 + 33",
   "speed": { "walk": 50 },
   "ability_scores": {
     "strength": 10,
@@ -17,20 +17,23 @@
     "charisma": 7
   },
   "initiative_bonus": 3,
-  "damage_resistances": ["bludgeoning, piercing, and slashing from nonmagical attacks"],
+  "damage_resistances": ["bludgeoning", "piercing", "slashing"],
   "damage_immunities": ["fire", "poison"],
   "condition_immunities": ["exhaustion", "grappled", "paralyzed", "petrified", "poisoned", "prone", "restrained", "unconscious"],
   "senses": { "darkvision": 60, "passive_perception": 10 },
-  "languages": ["Ignan"],
+  "languages": ["Primordial (Ignan)"],
   "challenge_rating": "5",
   "xp": 1800,
   "traits": [
-    { "name": "Fire Form", "description": "The elemental can move through a space as narrow as 1 inch without squeezing. A creature that touches the elemental or hits it with a melee attack while within 5 feet of it takes 5 (1d10) Fire damage. If it deals fire damage to a flammable object that isn't being worn or carried, the object ignites." },
-    { "name": "Illumination", "description": "The elemental sheds bright light in a 30-foot radius and dim light for an additional 30 feet." },
-    { "name": "Water Susceptibility", "description": "For every 5 feet the elemental moves in water, or for every gallon of water splashed on it, it takes 1 Cold damage." }
+    { "name": "Fire Aura", "description": "At the end of each of the elemental's turns, each creature in a 10-foot Emanation originating from the elemental takes 5 (1d10) Fire damage. Creatures and flammable objects in the Emanation start burning." },
+    { "name": "Fire Form", "description": "The elemental can move through a space as narrow as 1 inch without expending extra movement to do so, and it can enter a creature's space and stop there. The first time it enters a creature's space on a turn, that creature takes 5 (1d10) Fire damage." },
+    { "name": "Illumination", "description": "The elemental sheds Bright Light in a 30-foot radius and Dim Light for an additional 30 feet." },
+    { "name": "Water Susceptibility", "description": "The elemental takes 3 (1d6) Cold damage for every 5 feet the elemental moves in water or for every gallon of water splashed on it." }
   ],
   "actions": [
-    { "name": "Touch", "description": "Melee Attack Roll: +8, reach 5 ft. Hit: 10 (2d6 + 3) Fire damage. If the target is a creature or a flammable object that isn't being worn or carried, it ignites." }
+    { "name": "Multiattack", "description": "The elemental makes two Burn attacks." },
+    { "name": "Burn", "description": "Melee Attack Roll: +6, reach 5 ft. Hit: 10 (2d6 + 3) Fire damage. If the target is a creature or a flammable object, it starts burning." }
   ],
-  "description": "Fire elementals are living blazes summoned from the Elemental Plane of Fire, wreathing anything they touch in flame and leaving only scorched earth in their wake."
+  "description": "Fire elementals are living blazes summoned from the Elemental Plane of Fire, wreathing anything they touch in flame and leaving only scorched earth in their wake.",
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 284 }
 }

@@ -93,6 +93,6 @@ export class CharactersComponent implements OnInit {
   // Falls back to the character id as the DiceBear seed for characters created before portraits
   // existed — still deterministic per-character, just not one the player ever explicitly picked.
   portraitFor(c: CharacterListItem): string {
-    return portraitDataUri(portraitSource(c.portrait_seed || c.id!, c.avatar_recipe));
+    return portraitDataUri(portraitSource(c.portrait_seed || c.id!, c.avatar_recipe, c.portrait_image));
   }
 }

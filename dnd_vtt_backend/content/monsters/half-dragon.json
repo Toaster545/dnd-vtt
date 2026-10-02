@@ -1,0 +1,39 @@
+{
+  "index": "half-dragon",
+  "name": "Half-Dragon",
+  "size": "Medium",
+  "type": "dragon",
+  "alignment": "neutral",
+  "armor_class": 18,
+  "hit_points": 105,
+  "hit_dice": "14d8 + 42",
+  "speed": { "walk": 40 },
+  "ability_scores": {
+    "strength": 19,
+    "dexterity": 14,
+    "constitution": 16,
+    "intelligence": 10,
+    "wisdom": 15,
+    "charisma": 14
+  },
+  "initiative_bonus": 5,
+  "saving_throws": { "Dexterity": 5, "Wisdom": 5 },
+  "skills": { "Athletics": 7, "Perception": 5, "Stealth": 5 },
+  "damage_resistances": ["damage type chosen for the draconic origin trait below"],
+  "senses": { "blindsight": 10, "darkvision": 60, "passive_perception": 15 },
+  "languages": ["Common", "Draconic"],
+  "challenge_rating": "5",
+  "xp": 1800,
+  "traits": [
+    { "name": "Draconic Origin", "description": "The half-dragon is related to a type of dragon associated with one of the following damage types (GM's choice): Acid, Cold, Fire, Lightning, or Poison. This choice affects other aspects of the stat block." }
+  ],
+  "actions": [
+    { "name": "Multiattack", "description": "The half-dragon makes two Claw attacks." },
+    { "name": "Claw", "description": "Melee Attack Roll: +7, reach 10 ft. Hit: 6 (1d4 + 4) Slashing damage plus 7 (2d6) damage of the type chosen for the Draconic Origin trait." },
+    { "name": "Dragon's Breath (Recharge 5-6)", "description": "Dexterity Saving Throw: DC 14, each creature in a 30-foot Cone. Failure: 28 (8d6) damage of the type chosen for the Draconic Origin trait. Success: Half damage." }
+  ],
+  "bonus_actions": [
+    { "name": "Leap", "description": "The half-dragon jumps up to 30 feet by spending 10 feet of movement." }
+  ],
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 297 }
+}

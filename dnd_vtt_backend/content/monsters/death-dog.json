@@ -1,0 +1,31 @@
+{
+  "index": "death-dog",
+  "name": "Death Dog",
+  "size": "Medium",
+  "type": "monstrosity",
+  "alignment": "neutral evil",
+  "armor_class": 12,
+  "hit_points": 39,
+  "hit_dice": "6d8 + 12",
+  "speed": { "walk": 40 },
+  "ability_scores": {
+    "strength": 15,
+    "dexterity": 14,
+    "constitution": 14,
+    "intelligence": 3,
+    "wisdom": 13,
+    "charisma": 6
+  },
+  "initiative_bonus": 2,
+  "skills": { "Perception": 5, "Stealth": 4 },
+  "condition_immunities": ["blinded", "charmed", "deafened", "frightened", "stunned", "unconscious"],
+  "senses": { "darkvision": 120, "passive_perception": 15 },
+  "languages": [],
+  "challenge_rating": "1",
+  "xp": 200,
+  "actions": [
+    { "name": "Multiattack", "description": "The death dog makes two Bite attacks." },
+    { "name": "Bite", "description": "Melee Attack Roll: +4, reach 5 ft. Hit: 4 (1d4 + 2) Piercing damage. If the target is a creature, it is subjected to the following effect. Constitution Saving Throw: DC 12. First Failure: The target has the Poisoned condition. While Poisoned, the target's Hit Point maximum doesn't return to normal when finishing a Long Rest, and it repeats the save every 24 hours that elapse, ending the effect on itself on a success. Subsequent Failures: The Poisoned target's Hit Point maximum decreases by 5 (1d10)." }
+  ],
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 279 }
+}

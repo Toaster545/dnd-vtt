@@ -1,0 +1,32 @@
+{
+  "index": "rat",
+  "name": "Rat",
+  "size": "Tiny",
+  "type": "beast",
+  "alignment": "unaligned",
+  "armor_class": 10,
+  "hit_points": 1,
+  "hit_dice": "1d4 - 1",
+  "speed": { "walk": 20, "climb": 20 },
+  "ability_scores": {
+    "strength": 2,
+    "dexterity": 11,
+    "constitution": 9,
+    "intelligence": 2,
+    "wisdom": 10,
+    "charisma": 4
+  },
+  "initiative_bonus": 0,
+  "skills": { "Perception": 2 },
+  "senses": { "darkvision": 30, "passive_perception": 12 },
+  "languages": [],
+  "challenge_rating": "0",
+  "xp": 10,
+  "traits": [
+    { "name": "Agile", "description": "The rat doesn't provoke an Opportunity Attack when it moves out of an enemy's reach." }
+  ],
+  "actions": [
+    { "name": "Bite", "description": "Melee Attack Roll: +2, reach 5 ft. Hit: 1 Piercing damage." }
+  ],
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 359 }
+}

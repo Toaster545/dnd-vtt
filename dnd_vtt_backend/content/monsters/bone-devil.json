@@ -5,7 +5,6 @@
   "type": "fiend (devil)",
   "alignment": "lawful evil",
   "armor_class": 16,
-  "armor_class_desc": "natural armor",
   "hit_points": 161,
   "hit_dice": "17d10 + 68",
   "speed": { "walk": 40, "fly": 40 },
@@ -17,23 +16,25 @@
     "wisdom": 14,
     "charisma": 16
   },
-  "initiative_bonus": 3,
-  "skills": { "Deception": 6, "Insight": 5 },
+  "initiative_bonus": 7,
+  "saving_throws": { "Strength": 8, "Intelligence": 5, "Wisdom": 6, "Charisma": 7 },
+  "skills": { "Deception": 7, "Insight": 6 },
   "damage_resistances": ["cold"],
   "damage_immunities": ["fire", "poison"],
   "condition_immunities": ["poisoned"],
-  "senses": { "darkvision": 120, "passive_perception": 12 },
+  "senses": { "darkvision": 120, "notes": ["Darkvision unimpeded by magical Darkness"], "passive_perception": 12 },
   "languages": ["Infernal", "telepathy 120 ft."],
   "challenge_rating": "9",
   "xp": 5000,
   "traits": [
-    { "name": "Devil's Sight", "description": "Magical darkness doesn't impede the devil's darkvision." },
-    { "name": "Magic Resistance", "description": "The devil has advantage on saving throws against spells and other magical effects." }
+    { "name": "Diabolical Restoration", "description": "If the devil dies outside the Nine Hells, its body disappears in sulfurous smoke, and it gains a new body instantly, reviving with all its Hit Points somewhere in the Nine Hells." },
+    { "name": "Magic Resistance", "description": "The devil has Advantage on saving throws against spells and other magical effects." }
   ],
   "actions": [
-    { "name": "Multiattack", "description": "The devil makes two Claw attacks and one Sting attack." },
-    { "name": "Claw", "description": "Melee Attack Roll: +8, reach 10 ft. Hit: 12 (2d6 + 5) Slashing damage." },
-    { "name": "Sting", "description": "Melee Attack Roll: +8, reach 10 ft. Hit: 10 (1d8 + 6) Piercing damage plus 17 (5d6) Poison damage, and the target's Hit Point maximum decreases by an amount equal to the Poison damage taken." }
+    { "name": "Multiattack", "description": "The devil makes two Claw attacks and one Infernal Sting attack." },
+    { "name": "Claw", "description": "Melee Attack Roll: +8, reach 10 ft. Hit: 13 (2d8 + 4) Slashing damage." },
+    { "name": "Infernal Sting", "description": "Melee Attack Roll: +8, reach 10 ft. Hit: 15 (2d10 + 4) Piercing damage plus 18 (4d8) Poison damage, and the target has the Poisoned condition until the start of the devil's next turn. While Poisoned, the target can't regain Hit Points." }
   ],
-  "description": "Bone devils are skeletal, scorpion-tailed torturers who serve as interrogators and taskmasters in the Nine Hells, delighting in the slow, wasting agony of their poisoned sting."
+  "description": "Bone devils are skeletal, scorpion-tailed torturers who serve as interrogators and taskmasters in the Nine Hells, delighting in the slow, wasting agony of their poisoned sting.",
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 267 }
 }

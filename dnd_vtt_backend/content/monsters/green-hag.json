@@ -1,0 +1,36 @@
+{
+  "index": "green-hag",
+  "name": "Green Hag",
+  "size": "Medium",
+  "type": "fey",
+  "alignment": "neutral evil",
+  "armor_class": 17,
+  "hit_points": 82,
+  "hit_dice": "11d8 + 33",
+  "speed": { "walk": 30, "swim": 30 },
+  "ability_scores": {
+    "strength": 18,
+    "dexterity": 12,
+    "constitution": 16,
+    "intelligence": 13,
+    "wisdom": 14,
+    "charisma": 14
+  },
+  "initiative_bonus": 1,
+  "skills": { "Arcana": 5, "Deception": 4, "Perception": 4, "Stealth": 3 },
+  "senses": { "darkvision": 60, "passive_perception": 14 },
+  "languages": ["Common", "Elvish", "Sylvan"],
+  "challenge_rating": "3",
+  "xp": 700,
+  "traits": [
+    { "name": "Amphibious", "description": "The hag can breathe air and water." },
+    { "name": "Coven Magic", "description": "While within 30 feet of at least two hag allies, the hag can cast one of the following spells, requiring no Material components, using the spell's normal casting time, and using Intelligence as the spellcasting ability (spell save DC 11): Augury, Find Familiar, Identify, Locate Object, Scrying, or Unseen Servant. The hag must finish a Long Rest before using this trait to cast that spell again." },
+    { "name": "Mimicry", "description": "The hag can mimic animal sounds and humanoid voices. A creature that hears the sounds can tell they are imitations only with a successful DC 14 Wisdom (Insight) check." }
+  ],
+  "actions": [
+    { "name": "Multiattack", "description": "The hag makes two Claw attacks." },
+    { "name": "Claw", "description": "Melee Attack Roll: +6, reach 5 ft. Hit: 8 (1d8 + 4) Slashing damage plus 3 (1d6) Poison damage." },
+    { "name": "Spellcasting", "description": "The hag casts one of the following spells, requiring no Material components and using Wisdom as the spellcasting ability (spell save DC 12, +4 to hit with spell attacks):\nAt Will: Dancing Lights, Disguise Self (24-hour duration), Invisibility (self only, and the hag leaves no tracks while Invisible), Minor Illusion, Ray of Sickness (level 3 version)" }
+  ],
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 295 }
+}

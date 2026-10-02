@@ -1,0 +1,33 @@
+{
+  "index": "blue-dragon-wyrmling",
+  "name": "Blue Dragon Wyrmling",
+  "size": "Medium",
+  "type": "dragon (chromatic)",
+  "alignment": "lawful evil",
+  "armor_class": 17,
+  "hit_points": 65,
+  "hit_dice": "10d8 + 20",
+  "speed": { "walk": 30, "burrow": 15, "fly": 60 },
+  "ability_scores": {
+    "strength": 17,
+    "dexterity": 10,
+    "constitution": 15,
+    "intelligence": 12,
+    "wisdom": 11,
+    "charisma": 15
+  },
+  "initiative_bonus": 2,
+  "saving_throws": { "Dexterity": 2, "Wisdom": 2 },
+  "skills": { "Perception": 4, "Stealth": 2 },
+  "damage_immunities": ["lightning"],
+  "senses": { "blindsight": 10, "darkvision": 60, "passive_perception": 14 },
+  "languages": ["Draconic"],
+  "challenge_rating": "3",
+  "xp": 700,
+  "actions": [
+    { "name": "Multiattack", "description": "The dragon makes two Rend attacks." },
+    { "name": "Rend", "description": "Melee Attack Roll: +5, reach 5 ft. Hit: 8 (1d10 + 3) Slashing damage plus 3 (1d6) Lightning damage." },
+    { "name": "Lightning Breath (Recharge 5-6)", "description": "Dexterity Saving Throw: DC 12, each creature in a 30-foot-long, 5-foot-wide Line. Failure: 21 (6d6) Lightning damage. Success: Half damage." }
+  ],
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 266 }
+}

@@ -7,8 +7,11 @@ import {
   Patch,
   Post,
   Put,
+  UploadedFile,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { CharactersService } from './characters.service';
 import { JwtGuard } from '../auth/jwt.guard';
 import { CurrentUser } from '../common/current-user.decorator';
@@ -33,6 +36,18 @@ export class CharactersController {
   @Get(':id')
   findOne(@Param('id') id: string, @CurrentUser() user: RequestUser) {
     return this.characters.findOneReadable(id, user);
+  }
+
+  // The client crops and downscales before uploading, so 2 MB is plenty for a token-sized image.
+  @Post('portrait')
+  @UseInterceptors(
+    FileInterceptor('file', { limits: { fileSize: 2 * 1024 * 1024 } }),
+  )
+  uploadPortrait(
+    @UploadedFile() file: Express.Multer.File,
+    @CurrentUser() user: RequestUser,
+  ) {
+    return this.characters.uploadPortrait(user.id, file);
   }
 
   @Post()

@@ -1,0 +1,37 @@
+{
+  "index": "bronze-dragon-wyrmling",
+  "name": "Bronze Dragon Wyrmling",
+  "size": "Medium",
+  "type": "dragon (metallic)",
+  "alignment": "lawful good",
+  "armor_class": 15,
+  "hit_points": 39,
+  "hit_dice": "6d8 + 12",
+  "speed": { "walk": 30, "fly": 60, "swim": 30 },
+  "ability_scores": {
+    "strength": 17,
+    "dexterity": 10,
+    "constitution": 15,
+    "intelligence": 12,
+    "wisdom": 11,
+    "charisma": 15
+  },
+  "initiative_bonus": 2,
+  "saving_throws": { "Dexterity": 2, "Wisdom": 2 },
+  "skills": { "Perception": 4, "Stealth": 2 },
+  "damage_immunities": ["lightning"],
+  "senses": { "blindsight": 10, "darkvision": 60, "passive_perception": 14 },
+  "languages": ["Draconic"],
+  "challenge_rating": "2",
+  "xp": 450,
+  "traits": [
+    { "name": "Amphibious", "description": "The dragon can breathe air and water." }
+  ],
+  "actions": [
+    { "name": "Multiattack", "description": "The dragon makes two Rend attacks." },
+    { "name": "Rend", "description": "Melee Attack Roll: +5, reach 5 ft. Hit: 8 (1d10 + 3) Slashing damage." },
+    { "name": "Lightning Breath (Recharge 5-6)", "description": "Dexterity Saving Throw: DC 12, each creature in a 40-foot-long, 5-foot-wide Line. Failure: 16 (3d10) Lightning damage. Success: Half damage." },
+    { "name": "Repulsion Breath", "description": "Strength Saving Throw: DC 12, each creature in a 30-foot Cone. Failure: The target is pushed up to 30 feet straight away from the dragon and has the Prone condition." }
+  ],
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 269 }
+}

@@ -1,0 +1,32 @@
+{
+  "index": "otyugh",
+  "name": "Otyugh",
+  "size": "Large",
+  "type": "aberration",
+  "alignment": "neutral",
+  "armor_class": 14,
+  "hit_points": 104,
+  "hit_dice": "11d10 + 44",
+  "speed": { "walk": 30 },
+  "ability_scores": {
+    "strength": 16,
+    "dexterity": 11,
+    "constitution": 19,
+    "intelligence": 6,
+    "wisdom": 13,
+    "charisma": 6
+  },
+  "initiative_bonus": 0,
+  "saving_throws": { "Constitution": 7 },
+  "senses": { "darkvision": 120, "passive_perception": 11 },
+  "languages": ["Otyugh", "telepathy 120 ft. (doesn't allow the receiving creature to respond telepathically)"],
+  "challenge_rating": "5",
+  "xp": 1800,
+  "actions": [
+    { "name": "Multiattack", "description": "The otyugh makes one Bite attack and two Tentacle attacks." },
+    { "name": "Bite", "description": "Melee Attack Roll: +6, reach 5 ft. Hit: 12 (2d8 + 3) Piercing damage, and the target has the Poisoned condition. Whenever the Poisoned target finishes a Long Rest, it is subjected to the following effect. Constitution Saving Throw: DC 15. Failure: The target's Hit Point maximum decreases by 5 (1d10) and doesn't return to normal until the Poisoned condition ends on the target. Success: The Poisoned condition ends." },
+    { "name": "Tentacle", "description": "Melee Attack Roll: +6, reach 10 ft. Hit: 12 (2d8 + 3) Piercing damage. If the target is a Medium or smaller creature, it has the Grappled condition (escape DC 13) from one of two tentacles." },
+    { "name": "Tentacle Slam", "description": "Constitution Saving Throw: DC 14, each creature Grappled by the otyugh. Failure: 16 (3d8 + 3) Bludgeoning damage, and the target has the Stunned condition until the start of the otyugh's next turn. Success: Half damage only." }
+  ],
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 313 }
+}

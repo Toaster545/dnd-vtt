@@ -1,0 +1,32 @@
+{
+  "index": "crab",
+  "name": "Crab",
+  "size": "Tiny",
+  "type": "beast",
+  "alignment": "unaligned",
+  "armor_class": 11,
+  "hit_points": 3,
+  "hit_dice": "1d4 + 1",
+  "speed": { "walk": 20, "swim": 20 },
+  "ability_scores": {
+    "strength": 6,
+    "dexterity": 11,
+    "constitution": 12,
+    "intelligence": 1,
+    "wisdom": 8,
+    "charisma": 2
+  },
+  "initiative_bonus": 0,
+  "skills": { "Stealth": 2 },
+  "senses": { "blindsight": 30, "passive_perception": 9 },
+  "languages": [],
+  "challenge_rating": "0",
+  "xp": 10,
+  "traits": [
+    { "name": "Amphibious", "description": "The crab can breathe air and water." }
+  ],
+  "actions": [
+    { "name": "Claw", "description": "Melee Attack Roll: +2, reach 5 ft. Hit: 1 Bludgeoning damage." }
+  ],
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 347 }
+}

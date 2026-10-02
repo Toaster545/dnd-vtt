@@ -153,7 +153,7 @@ export class DashboardComponent implements OnInit {
   }
 
   portraitFor(character: Character): string {
-    return portraitDataUri(portraitSource(character.portrait_seed || character.id!, character.avatar_recipe));
+    return portraitDataUri(portraitSource(character.portrait_seed || character.id!, character.avatar_recipe, character.portrait_image));
   }
 
   formatDate(iso?: string): string {

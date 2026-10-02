@@ -1,0 +1,37 @@
+{
+  "index": "werebear",
+  "name": "Werebear",
+  "size": "Medium or Small",
+  "type": "monstrosity (lycanthrope)",
+  "alignment": "neutral good",
+  "armor_class": 15,
+  "hit_points": 135,
+  "hit_dice": "18d8 + 54",
+  "speed": { "walk": 30, "climb": 30 },
+  "speed_desc": "30 ft., 40 ft. (bear form only), Climb 30 ft. (bear form only)",
+  "ability_scores": {
+    "strength": 19,
+    "dexterity": 10,
+    "constitution": 17,
+    "intelligence": 11,
+    "wisdom": 12,
+    "charisma": 12
+  },
+  "initiative_bonus": 3,
+  "skills": { "Perception": 7 },
+  "gear": ["Handaxes (4)"],
+  "senses": { "darkvision": 60, "passive_perception": 17 },
+  "languages": ["Common (can't speak in bear form)"],
+  "challenge_rating": "5",
+  "xp": 1800,
+  "actions": [
+    { "name": "Multiattack", "description": "The werebear makes two attacks, using Handaxe or Rend in any combination. It can replace one attack with a Bite attack." },
+    { "name": "Bite (Bear or Hybrid Form Only)", "description": "Melee Attack Roll: +7, reach 5 ft. Hit: 17 (2d12 + 4) Piercing damage. If the target is a Humanoid, it is subjected to the following effect. Constitution Saving Throw: DC 14. Failure: The target is cursed. If the cursed target drops to 0 Hit Points, it instead becomes a Werebear under the GM's control and has 10 Hit Points. Success: The target is immune to this werebear's curse for 24 hours." },
+    { "name": "Handaxe (Humanoid or Hybrid Form Only)", "description": "Melee or Ranged Attack Roll: +7, reach 5 ft or range 20/60 ft. Hit: 14 (3d6 + 4) Slashing damage." },
+    { "name": "Rend (Bear or Hybrid Form Only)", "description": "Melee Attack Roll: +7, reach 5 ft. Hit: 13 (2d8 + 4) Slashing damage." }
+  ],
+  "bonus_actions": [
+    { "name": "Shape-Shift", "description": "The werebear shape-shifts into a Large bear-humanoid hybrid form or a Large bear, or it returns to its true humanoid form. Its game statistics, other than its size, are the same in each form. Any equipment it is wearing or carrying isn't transformed." }
+  ],
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 337 }
+}

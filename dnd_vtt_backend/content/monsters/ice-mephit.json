@@ -1,0 +1,37 @@
+{
+  "index": "ice-mephit",
+  "name": "Ice Mephit",
+  "size": "Small",
+  "type": "elemental",
+  "alignment": "neutral evil",
+  "armor_class": 11,
+  "hit_points": 21,
+  "hit_dice": "6d6",
+  "speed": { "walk": 30, "fly": 30 },
+  "ability_scores": {
+    "strength": 7,
+    "dexterity": 13,
+    "constitution": 10,
+    "intelligence": 9,
+    "wisdom": 11,
+    "charisma": 12
+  },
+  "initiative_bonus": 1,
+  "skills": { "Perception": 2, "Stealth": 3 },
+  "damage_vulnerabilities": ["fire"],
+  "damage_immunities": ["cold", "poison"],
+  "condition_immunities": ["exhaustion", "poisoned"],
+  "senses": { "darkvision": 60, "passive_perception": 12 },
+  "languages": ["Primordial (Aquan, Auran)"],
+  "challenge_rating": "1/2",
+  "xp": 100,
+  "traits": [
+    { "name": "Death Burst", "description": "The mephit explodes when it dies. Constitution Saving Throw: DC 10, each creature in a 5-foot Emanation originating from the mephit. Failure: 5 (2d4) Cold damage. Success: Half damage." }
+  ],
+  "actions": [
+    { "name": "Claw", "description": "Melee Attack Roll: +3, reach 5 ft. Hit: 3 (1d4 + 1) Slashing damage plus 2 (1d4) Cold damage." },
+    { "name": "Fog Cloud (1/Day)", "description": "The mephit casts Fog Cloud, requiring no spell components and using Charisma as the spellcasting ability." },
+    { "name": "Frost Breath (Recharge 6)", "description": "Constitution Saving Throw: DC 10, each creature in a 15-foot Cone. Failure: 7 (3d4) Cold damage. Success: Half damage." }
+  ],
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 307 }
+}

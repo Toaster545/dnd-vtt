@@ -34,5 +34,6 @@
   "reactions": [
     { "name": "Parry", "description": "The hobgoblin adds 3 to its AC against one melee attack that would hit it, provided it can see the attacker and is wielding a melee weapon." }
   ],
-  "description": "Hobgoblin warlords lead entire legions, commanding the ebb and flow of battle with a strategic mind honed by decades of war and an aura of command that steels every ally within earshot."
+  "description": "Hobgoblin warlords lead entire legions, commanding the ebb and flow of battle with a strategic mind honed by decades of war and an aura of command that steels every ally within earshot.",
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": false, "rules_text": "reference-only" }
 }

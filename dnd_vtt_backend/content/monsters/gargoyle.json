@@ -1,0 +1,35 @@
+{
+  "index": "gargoyle",
+  "name": "Gargoyle",
+  "size": "Medium",
+  "type": "elemental",
+  "alignment": "chaotic evil",
+  "armor_class": 15,
+  "hit_points": 67,
+  "hit_dice": "9d8 + 27",
+  "speed": { "walk": 30, "fly": 60 },
+  "ability_scores": {
+    "strength": 15,
+    "dexterity": 11,
+    "constitution": 16,
+    "intelligence": 6,
+    "wisdom": 11,
+    "charisma": 7
+  },
+  "initiative_bonus": 2,
+  "skills": { "Stealth": 4 },
+  "damage_immunities": ["poison"],
+  "condition_immunities": ["exhaustion", "petrified", "poisoned"],
+  "senses": { "darkvision": 60, "passive_perception": 10 },
+  "languages": ["Primordial (Terran)"],
+  "challenge_rating": "2",
+  "xp": 450,
+  "traits": [
+    { "name": "Flyby", "description": "The gargoyle doesn't provoke an Opportunity Attack when it flies out of an enemy's reach." }
+  ],
+  "actions": [
+    { "name": "Multiattack", "description": "The gargoyle makes two Claw attacks." },
+    { "name": "Claw", "description": "Melee Attack Roll: +4, reach 5 ft. Hit: 7 (2d4 + 2) Slashing damage." }
+  ],
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 286 }
+}

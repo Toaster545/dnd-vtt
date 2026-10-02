@@ -1,0 +1,32 @@
+{
+  "index": "hunter-shark",
+  "name": "Hunter Shark",
+  "size": "Large",
+  "type": "beast",
+  "alignment": "unaligned",
+  "armor_class": 12,
+  "hit_points": 45,
+  "hit_dice": "6d10 + 12",
+  "speed": { "walk": 5, "swim": 40 },
+  "ability_scores": {
+    "strength": 18,
+    "dexterity": 14,
+    "constitution": 15,
+    "intelligence": 1,
+    "wisdom": 10,
+    "charisma": 4
+  },
+  "initiative_bonus": 2,
+  "skills": { "Perception": 2 },
+  "senses": { "blindsight": 60, "passive_perception": 12 },
+  "languages": [],
+  "challenge_rating": "2",
+  "xp": 450,
+  "traits": [
+    { "name": "Water Breathing", "description": "The shark can breathe only underwater." }
+  ],
+  "actions": [
+    { "name": "Bite", "description": "Melee Attack Roll: +6 (with Advantage if the target doesn't have all its Hit Points), reach 5 ft. Hit: 14 (3d6 + 4) Piercing damage." }
+  ],
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 356 }
+}

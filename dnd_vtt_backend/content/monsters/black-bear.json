@@ -1,0 +1,30 @@
+{
+  "index": "black-bear",
+  "name": "Black Bear",
+  "size": "Medium",
+  "type": "beast",
+  "alignment": "unaligned",
+  "armor_class": 11,
+  "hit_points": 19,
+  "hit_dice": "3d8 + 6",
+  "speed": { "walk": 30, "climb": 30, "swim": 30 },
+  "ability_scores": {
+    "strength": 15,
+    "dexterity": 12,
+    "constitution": 14,
+    "intelligence": 2,
+    "wisdom": 12,
+    "charisma": 7
+  },
+  "initiative_bonus": 1,
+  "skills": { "Perception": 5 },
+  "senses": { "darkvision": 60, "passive_perception": 15 },
+  "languages": [],
+  "challenge_rating": "1/2",
+  "xp": 100,
+  "actions": [
+    { "name": "Multiattack", "description": "The bear makes two Rend attacks." },
+    { "name": "Rend", "description": "Melee Attack Roll: +4, reach 5 ft. Hit: 5 (1d6 + 2) Slashing damage." }
+  ],
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 345 }
+}

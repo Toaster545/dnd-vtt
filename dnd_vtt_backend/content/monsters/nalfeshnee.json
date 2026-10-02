@@ -5,7 +5,6 @@
   "type": "fiend (demon)",
   "alignment": "chaotic evil",
   "armor_class": 18,
-  "armor_class_desc": "natural armor",
   "hit_points": 184,
   "hit_dice": "16d10 + 96",
   "speed": { "walk": 20, "fly": 30 },
@@ -17,23 +16,30 @@
     "wisdom": 12,
     "charisma": 15
   },
-  "initiative_bonus": 0,
-  "damage_resistances": ["cold", "fire", "lightning", "bludgeoning, piercing, and slashing from nonmagical attacks"],
+  "initiative_bonus": 5,
+  "saving_throws": { "Constitution": 11, "Intelligence": 9, "Wisdom": 6, "Charisma": 7 },
+  "damage_resistances": ["cold", "fire", "lightning"],
   "damage_immunities": ["poison"],
-  "condition_immunities": ["poisoned"],
+  "condition_immunities": ["frightened", "poisoned"],
   "senses": { "truesight": 120, "passive_perception": 11 },
   "languages": ["Abyssal", "telepathy 120 ft."],
   "challenge_rating": "13",
   "xp": 10000,
   "traits": [
-    { "name": "Magic Resistance", "description": "The nalfeshnee has advantage on saving throws against spells and other magical effects." }
+    { "name": "Demonic Restoration", "description": "If the nalfeshnee dies outside the Abyss, its body dissolves into ichor, and it gains a new body instantly, reviving with all its Hit Points somewhere in the Abyss." },
+    { "name": "Magic Resistance", "description": "The nalfeshnee has Advantage on saving throws against spells and other magical effects." }
   ],
   "actions": [
-    { "name": "Multiattack", "description": "The nalfeshnee makes one Bite attack and two Claw attacks." },
-    { "name": "Bite", "description": "Melee Attack Roll: +10, reach 5 ft. Hit: 32 (5d10 + 5) Piercing damage." },
-    { "name": "Claw", "description": "Melee Attack Roll: +10, reach 10 ft. Hit: 12 (2d6 + 5) Slashing damage." },
-    { "name": "Teleport", "description": "The nalfeshnee magically teleports itself, along with any equipment it is wearing or carrying, up to 120 feet to an unoccupied space it can see." },
-    { "name": "Horror Nimbus (Recharge 5-6)", "description": "The nalfeshnee magically emits scintillating, multicolored light. Each creature within 15 feet of the nalfeshnee that can see the light must succeed on a DC 17 Wisdom saving throw or have the Frightened condition for 1 minute. A creature can repeat the saving throw at the end of each of its turns, ending the effect on itself on a success." }
+    { "name": "Multiattack", "description": "The nalfeshnee makes three Rend attacks." },
+    { "name": "Rend", "description": "Melee Attack Roll: +10, reach 10 ft. Hit: 16 (2d10 + 5) Slashing damage plus 11 (2d10) Force damage." },
+    { "name": "Teleport", "description": "The nalfeshnee teleports up to 120 feet to an unoccupied space it can see." }
   ],
-  "description": "Nalfeshnee are gluttonous, boar-tusked demon lords, corrupt masterminds who orchestrate the Blood War from behind the lines, teleporting away from danger while their horrific presence breaks enemy nerve."
+  "bonus_actions": [
+    { "name": "Horror Nimbus (Recharge 5-6)", "description": "Wisdom Saving Throw: DC 15, each creature in a 15-foot Emanation originating from the nalfeshnee. Failure: 28 (8d6) Psychic damage, and the target has the Frightened condition for 1 minute, until it takes damage, or until it ends its turn with the nalfeshnee out of line of sight. Success: The target is immune to this nalfeshnee's Horror Nimbus for 24 hours." }
+  ],
+  "reactions": [
+    { "name": "Pursuit", "description": "Trigger: Another creature the nalfeshnee can see ends its move within 120 feet of the nalfeshnee. Response: The nalfeshnee uses Teleport, but its destination space must be within 10 feet of the triggering creature." }
+  ],
+  "description": "Nalfeshnee are gluttonous, boar-tusked demon lords, corrupt masterminds who orchestrate the Blood War from behind the lines, teleporting away from danger while their horrific presence breaks enemy nerve.",
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 310 }
 }

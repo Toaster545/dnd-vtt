@@ -10,6 +10,7 @@ import { DatabaseService } from '../common/database.service';
 import { createTestDb } from '../common/test-db.util';
 import type { RequestUser } from '../common/current-user.decorator';
 import { ContentService } from '../content/content.service';
+import type { EncounterPresenceGateway } from '../encounters/encounter-presence.gateway';
 
 interface SpellcastingCharacterState {
   spell_slot_uses?: Record<string, Record<string, number>>;
@@ -35,12 +36,16 @@ describe('CharactersService', () => {
   let cleanup: () => void;
   let ownerId: string;
   let owner: RequestUser;
+  let notifyCharacterUpdated: jest.Mock;
 
   beforeEach(async () => {
     const testDb = await createTestDb();
     db = testDb.db;
     cleanup = testDb.cleanup;
-    service = new CharactersService(db, new ContentService());
+    notifyCharacterUpdated = jest.fn();
+    service = new CharactersService(db, new ContentService(), {
+      notifyCharacterUpdated,
+    } as unknown as EncounterPresenceGateway);
     ownerId = await insertProfile(db);
     owner = { id: ownerId, role: 'player' } as RequestUser;
   });
@@ -131,6 +136,63 @@ describe('CharactersService', () => {
         },
       }),
     ).rejects.toThrow(BadRequestException);
+  });
+
+  it('stores a validated token border and rejects malformed ones', async () => {
+    const tokenBorder = {
+      color: '#C9A227',
+      width: 7,
+      pattern: 'dashed',
+      gradientColor: '#3B82F6',
+      bandColor: '#FFFFFF',
+      material: 'studded',
+      faceScale: 120,
+    };
+    const created = await service.create(ownerId, {
+      name: 'Aria',
+      token_border: tokenBorder,
+    });
+    expect((created as Record<string, unknown>).token_border).toEqual({
+      ...tokenBorder,
+      color: '#c9a227',
+      gradientColor: '#3b82f6',
+      bandColor: '#ffffff',
+      backgroundColor: null,
+    });
+
+    // A border saved before band/background/material/zoom existed still loads, with defaults.
+    const legacy = await service.create(ownerId, {
+      name: 'Bram',
+      token_border: { color: '#e05252', width: 'thick', pattern: 'solid' },
+    });
+    expect((legacy as Record<string, unknown>).token_border).toEqual({
+      color: '#e05252',
+      width: 8,
+      pattern: 'solid',
+      gradientColor: null,
+      bandColor: null,
+      backgroundColor: null,
+      material: 'flat',
+      faceScale: 100,
+    });
+
+    for (const bad of [
+      { ...tokenBorder, color: 'red' },
+      { ...tokenBorder, pattern: 'zigzag' },
+      { ...tokenBorder, width: 11 },
+      { ...tokenBorder, width: 2.5 },
+      { ...tokenBorder, material: 'glass' },
+      { ...tokenBorder, faceScale: 200 },
+      { ...tokenBorder, backgroundColor: 'url(x)' },
+      { ...tokenBorder, gradientColor: 'blue' },
+    ]) {
+      await expect(
+        service.update(created.id as string, owner, {
+          ...created,
+          token_border: bad,
+        }),
+      ).rejects.toThrow(BadRequestException);
+    }
   });
 
   it('rejects reading a character owned by someone else', async () => {
@@ -252,6 +314,21 @@ describe('CharactersService', () => {
       expect(updated.name).toBe('Renamed');
       // ...but notes is outside both whitelists and is left untouched.
       expect(blob.notes).toBe('secret DM notes');
+    });
+
+    it('tells the campaign when the player changes their HP', async () => {
+      const { created } = await makeLockedCampaignCopy(false);
+      const campaign = await db.execute(
+        'SELECT campaign_id FROM characters WHERE id = ?',
+        [created.id as string],
+      );
+
+      await service.update(created.id as string, owner, { current_hp: 5 });
+
+      expect(notifyCharacterUpdated).toHaveBeenCalledWith(
+        campaign.rows[0].campaign_id,
+        created.id,
+      );
     });
 
     it('keeps the existing name when a locked player sends a blank one', async () => {

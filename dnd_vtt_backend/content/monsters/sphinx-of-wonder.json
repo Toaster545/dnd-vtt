@@ -1,0 +1,36 @@
+{
+  "index": "sphinx-of-wonder",
+  "name": "Sphinx of Wonder",
+  "size": "Tiny",
+  "type": "celestial",
+  "alignment": "lawful good",
+  "armor_class": 13,
+  "hit_points": 24,
+  "hit_dice": "7d4 + 7",
+  "speed": { "walk": 20, "fly": 40 },
+  "ability_scores": {
+    "strength": 6,
+    "dexterity": 17,
+    "constitution": 13,
+    "intelligence": 15,
+    "wisdom": 12,
+    "charisma": 11
+  },
+  "initiative_bonus": 3,
+  "skills": { "Arcana": 4, "Religion": 4, "Stealth": 5 },
+  "damage_resistances": ["necrotic", "psychic", "radiant"],
+  "senses": { "darkvision": 60, "passive_perception": 11 },
+  "languages": ["Celestial", "Common"],
+  "challenge_rating": "1",
+  "xp": 200,
+  "traits": [
+    { "name": "Magic Resistance", "description": "The sphinx has Advantage on saving throws against spells and other magical effects." }
+  ],
+  "actions": [
+    { "name": "Rend", "description": "Melee Attack Roll: +5, reach 5 ft. Hit: 5 (1d4 + 3) Slashing damage plus 7 (2d6) Radiant damage." }
+  ],
+  "reactions": [
+    { "name": "Burst of Ingenuity (2/Day)", "description": "Trigger: The sphinx or another creature within 30 feet makes an ability check or a saving throw. Response: The sphinx adds 2 to the roll." }
+  ],
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 327 }
+}

@@ -1,0 +1,32 @@
+{
+  "index": "berserker",
+  "name": "Berserker",
+  "size": "Medium or Small",
+  "type": "humanoid",
+  "alignment": "neutral",
+  "armor_class": 13,
+  "hit_points": 67,
+  "hit_dice": "9d8 + 27",
+  "speed": { "walk": 30 },
+  "ability_scores": {
+    "strength": 16,
+    "dexterity": 12,
+    "constitution": 17,
+    "intelligence": 9,
+    "wisdom": 11,
+    "charisma": 9
+  },
+  "initiative_bonus": 1,
+  "gear": ["Greataxe", "Hide Armor"],
+  "senses": { "passive_perception": 10 },
+  "languages": ["Common"],
+  "challenge_rating": "2",
+  "xp": 450,
+  "traits": [
+    { "name": "Bloodied Frenzy", "description": "While Bloodied, the berserker has Advantage on attack rolls and saving throws." }
+  ],
+  "actions": [
+    { "name": "Greataxe", "description": "Melee Attack Roll: +5, reach 5 ft. Hit: 9 (1d12 + 3) Slashing damage." }
+  ],
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 263 }
+}

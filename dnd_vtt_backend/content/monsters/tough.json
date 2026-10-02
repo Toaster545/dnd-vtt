@@ -1,0 +1,33 @@
+{
+  "index": "tough",
+  "name": "Tough",
+  "size": "Medium or Small",
+  "type": "humanoid",
+  "alignment": "neutral",
+  "armor_class": 12,
+  "hit_points": 32,
+  "hit_dice": "5d8 + 10",
+  "speed": { "walk": 30 },
+  "ability_scores": {
+    "strength": 15,
+    "dexterity": 12,
+    "constitution": 14,
+    "intelligence": 10,
+    "wisdom": 10,
+    "charisma": 11
+  },
+  "initiative_bonus": 1,
+  "gear": ["Heavy Crossbow", "Leather Armor", "Mace"],
+  "senses": { "passive_perception": 10 },
+  "languages": ["Common"],
+  "challenge_rating": "1/2",
+  "xp": 100,
+  "traits": [
+    { "name": "Pack Tactics", "description": "The tough has Advantage on an attack roll against a creature if at least one of the tough's allies is within 5 feet of the creature and the ally doesn't have the Incapacitated condition." }
+  ],
+  "actions": [
+    { "name": "Mace", "description": "Melee Attack Roll: +4, reach 5 ft. Hit: 5 (1d6 + 2) Bludgeoning damage." },
+    { "name": "Heavy Crossbow", "description": "Ranged Attack Roll: +3, range 100/400 ft. Hit: 6 (1d10 + 1) Piercing damage." }
+  ],
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 332 }
+}

@@ -5,9 +5,8 @@
   "type": "elemental",
   "alignment": "neutral",
   "armor_class": 17,
-  "armor_class_desc": "natural armor",
-  "hit_points": 126,
-  "hit_dice": "12d10 + 60",
+  "hit_points": 147,
+  "hit_dice": "14d10 + 70",
   "speed": { "walk": 30, "burrow": 30 },
   "ability_scores": {
     "strength": 20,
@@ -19,20 +18,21 @@
   },
   "initiative_bonus": -1,
   "damage_vulnerabilities": ["thunder"],
-  "damage_resistances": ["bludgeoning, piercing, and slashing from nonmagical attacks"],
   "damage_immunities": ["poison"],
   "condition_immunities": ["exhaustion", "paralyzed", "petrified", "poisoned", "unconscious"],
   "senses": { "darkvision": 60, "tremorsense": 60, "passive_perception": 10 },
-  "languages": ["Terran"],
+  "languages": ["Primordial (Terran)"],
   "challenge_rating": "5",
   "xp": 1800,
   "traits": [
-    { "name": "Earth Glide", "description": "The elemental can burrow through nonmagical, unworked earth and stone without disturbing the material it moves through." },
+    { "name": "Earth Glide", "description": "The elemental can burrow through nonmagical, unworked earth and stone. While doing so, the elemental doesn't disturb the material it moves through." },
     { "name": "Siege Monster", "description": "The elemental deals double damage to objects and structures." }
   ],
   "actions": [
-    { "name": "Multiattack", "description": "The elemental makes two Slam attacks." },
-    { "name": "Slam", "description": "Melee Attack Roll: +8, reach 5 ft. Hit: 14 (2d8 + 5) Bludgeoning damage." }
+    { "name": "Multiattack", "description": "The elemental makes two attacks, using Slam or Rock Launch in any combination." },
+    { "name": "Slam", "description": "Melee Attack Roll: +8, reach 10 ft. Hit: 14 (2d8 + 5) Bludgeoning damage." },
+    { "name": "Rock Launch", "description": "Ranged Attack Roll: +8, range 60 ft. Hit: 8 (1d6 + 5) Bludgeoning damage. If the target is a Large or smaller creature, it has the Prone condition." }
   ],
-  "description": "Earth elementals are slow, hulking masses of living stone and soil, plowing through walls and burrowing through solid ground to crush intruders beneath crumbling fists."
+  "description": "Earth elementals are slow, hulking masses of living stone and soil, plowing through walls and burrowing through solid ground to crush intruders beneath crumbling fists.",
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 282 }
 }

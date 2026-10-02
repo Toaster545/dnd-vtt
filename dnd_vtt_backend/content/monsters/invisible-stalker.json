@@ -1,0 +1,38 @@
+{
+  "index": "invisible-stalker",
+  "name": "Invisible Stalker",
+  "size": "Large",
+  "type": "elemental",
+  "alignment": "neutral",
+  "armor_class": 14,
+  "hit_points": 97,
+  "hit_dice": "13d10 + 26",
+  "speed": { "walk": 50, "fly": 50, "hover": true },
+  "ability_scores": {
+    "strength": 16,
+    "dexterity": 19,
+    "constitution": 14,
+    "intelligence": 10,
+    "wisdom": 15,
+    "charisma": 11
+  },
+  "initiative_bonus": 7,
+  "skills": { "Perception": 8, "Stealth": 10 },
+  "damage_resistances": ["bludgeoning", "piercing", "slashing"],
+  "damage_immunities": ["poison"],
+  "condition_immunities": ["exhaustion", "grappled", "paralyzed", "petrified", "poisoned", "prone", "restrained", "unconscious"],
+  "senses": { "darkvision": 60, "passive_perception": 18 },
+  "languages": ["Common", "Primordial (Auran)"],
+  "challenge_rating": "6",
+  "xp": 2300,
+  "traits": [
+    { "name": "Air Form", "description": "The stalker can enter an enemy's space and stop there. It can move through a space as narrow as 1 inch without expending extra movement to do so." },
+    { "name": "Invisibility", "description": "The stalker has the Invisible condition." }
+  ],
+  "actions": [
+    { "name": "Multiattack", "description": "The stalker makes three Wind Swipe attacks. It can replace one attack with a use of Vortex." },
+    { "name": "Wind Swipe", "description": "Melee Attack Roll: +7, reach 5 ft. Hit: 11 (2d6 + 4) Force damage." },
+    { "name": "Vortex", "description": "Constitution Saving Throw: DC 14, one Large or smaller creature in the stalker's space. Failure: 7 (1d8 + 3) Thunder damage, and the target has the Grappled condition (escape DC 13). Until the grapple ends, the target can't cast spells with a Verbal component and takes 7 (2d6) Thunder damage at the start of each of the stalker's turns." }
+  ],
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 301 }
+}

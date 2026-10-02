@@ -10,14 +10,18 @@ import { Character } from '../models/character.model';
 // current level (or an explicit player override) means the sheet was last saved *at* this level,
 // so nothing is pending; a mismatch means the level changed since the last wizard save, so treat
 // exactly one level as pending.
-export function levelUpBaseline(char: Pick<Character,
-  'level' | 'applied_level' | 'max_hp' | 'max_hp_overridden'>, suggestedMaxHp: number): number {
+export function levelUpBaseline(
+  char: Pick<Character, 'level' | 'applied_level' | 'max_hp' | 'max_hp_overridden'>,
+  suggestedMaxHp: number,
+): number {
   if (char.applied_level != null) return char.applied_level;
   const caughtUp = char.max_hp_overridden || suggestedMaxHp === char.max_hp;
   return caughtUp ? char.level : Math.max(1, char.level - 1);
 }
 
-export function levelUpPending(char: Pick<Character,
-  'level' | 'applied_level' | 'max_hp' | 'max_hp_overridden'>, suggestedMaxHp: number): boolean {
+export function levelUpPending(
+  char: Pick<Character, 'level' | 'applied_level' | 'max_hp' | 'max_hp_overridden'>,
+  suggestedMaxHp: number,
+): boolean {
   return levelUpBaseline(char, suggestedMaxHp) < char.level;
 }

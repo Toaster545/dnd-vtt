@@ -1,0 +1,38 @@
+{
+  "index": "incubus",
+  "name": "Incubus",
+  "size": "Medium",
+  "type": "fiend",
+  "alignment": "neutral evil",
+  "armor_class": 15,
+  "hit_points": 66,
+  "hit_dice": "12d8 + 12",
+  "speed": { "walk": 30, "fly": 60 },
+  "ability_scores": {
+    "strength": 8,
+    "dexterity": 17,
+    "constitution": 13,
+    "intelligence": 15,
+    "wisdom": 12,
+    "charisma": 20
+  },
+  "initiative_bonus": 3,
+  "skills": { "Deception": 9, "Insight": 5, "Perception": 5, "Persuasion": 9, "Stealth": 7 },
+  "damage_resistances": ["cold", "fire", "poison", "psychic"],
+  "senses": { "darkvision": 60, "passive_perception": 15 },
+  "languages": ["Abyssal", "Common", "Infernal", "telepathy 60 ft."],
+  "challenge_rating": "4",
+  "xp": 1100,
+  "traits": [
+    { "name": "Succubus Form", "description": "When the incubus finishes a Long Rest, it can shape-shift into a Succubus, using that stat block instead of this one. Any equipment it is wearing or carrying isn't transformed." }
+  ],
+  "actions": [
+    { "name": "Multiattack", "description": "The incubus makes two Restless Touch attacks." },
+    { "name": "Restless Touch", "description": "Melee Attack Roll: +7, reach 5 ft. Hit: 15 (3d6 + 5) Psychic damage, and the target is cursed for 24 hours or until the incubus dies. Until the curse ends, the target gains no benefit from finishing Short Rests." },
+    { "name": "Spellcasting", "description": "The incubus casts one of the following spells, requiring no Material components and using Charisma as the spellcasting ability (spell save DC 15):\nAt Will: Disguise Self, Etherealness\n1/Day Each: Dream, Hypnotic Pattern" }
+  ],
+  "bonus_actions": [
+    { "name": "Nightmare (Recharge 6)", "description": "Wisdom Saving Throw: DC 15, one creature the incubus can see within 60 feet. Failure: If the target has 20 Hit Points or fewer, it has the Unconscious condition for 1 hour, until it takes damage, or until a creature within 5 feet of it takes an action to wake it. Otherwise, the target takes 18 (4d8) Psychic damage." }
+  ],
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 301 }
+}

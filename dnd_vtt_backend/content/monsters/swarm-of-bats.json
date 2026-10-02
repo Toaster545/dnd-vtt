@@ -1,0 +1,33 @@
+{
+  "index": "swarm-of-bats",
+  "name": "Swarm of Bats",
+  "size": "Large",
+  "type": "swarm of tiny beasts",
+  "alignment": "unaligned",
+  "armor_class": 12,
+  "hit_points": 11,
+  "hit_dice": "2d10",
+  "speed": { "walk": 5, "fly": 30 },
+  "ability_scores": {
+    "strength": 5,
+    "dexterity": 15,
+    "constitution": 10,
+    "intelligence": 2,
+    "wisdom": 12,
+    "charisma": 4
+  },
+  "initiative_bonus": 2,
+  "damage_resistances": ["bludgeoning", "piercing", "slashing"],
+  "condition_immunities": ["charmed", "frightened", "grappled", "paralyzed", "petrified", "prone", "restrained", "stunned"],
+  "senses": { "blindsight": 60, "passive_perception": 11 },
+  "languages": [],
+  "challenge_rating": "1/4",
+  "xp": 50,
+  "traits": [
+    { "name": "Swarm", "description": "The swarm can occupy another creature's space and vice versa, and the swarm can move through any opening large enough for a Tiny bat. The swarm can't regain Hit Points or gain Temporary Hit Points." }
+  ],
+  "actions": [
+    { "name": "Bites", "description": "Melee Attack Roll: +4, reach 5 ft. Hit: 5 (2d4) Piercing damage, or 2 (1d4) Piercing damage if the swarm is Bloodied." }
+  ],
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 361 }
+}

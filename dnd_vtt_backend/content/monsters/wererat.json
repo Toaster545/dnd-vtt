@@ -1,0 +1,36 @@
+{
+  "index": "wererat",
+  "name": "Wererat",
+  "size": "Medium or Small",
+  "type": "monstrosity (lycanthrope)",
+  "alignment": "lawful evil",
+  "armor_class": 13,
+  "hit_points": 60,
+  "hit_dice": "11d8 + 11",
+  "speed": { "walk": 30, "climb": 30 },
+  "ability_scores": {
+    "strength": 10,
+    "dexterity": 16,
+    "constitution": 12,
+    "intelligence": 11,
+    "wisdom": 10,
+    "charisma": 8
+  },
+  "initiative_bonus": 3,
+  "skills": { "Perception": 4, "Stealth": 5 },
+  "gear": ["Hand Crossbow"],
+  "senses": { "darkvision": 60, "passive_perception": 14 },
+  "languages": ["Common (can't speak in rat form)"],
+  "challenge_rating": "2",
+  "xp": 450,
+  "actions": [
+    { "name": "Multiattack", "description": "The wererat makes two attacks, using Scratch or Hand Crossbow in any combination. It can replace one attack with a Bite attack." },
+    { "name": "Bite (Rat or Hybrid Form Only)", "description": "Melee Attack Roll: +5, reach 5 ft. Hit: 8 (2d4 + 3) Piercing damage. If the target is a Humanoid, it is subjected to the following effect. Constitution Saving Throw: DC 11. Failure: The target is cursed. If the cursed target drops to 0 Hit Points, it instead becomes a Wererat under the GM's control and has 10 Hit Points. Success: The target is immune to this wererat's curse for 24 hours." },
+    { "name": "Scratch", "description": "Melee Attack Roll: +5, reach 5 ft. Hit: 6 (1d6 + 3) Slashing damage." },
+    { "name": "Hand Crossbow (Humanoid or Hybrid Form Only)", "description": "Ranged Attack Roll: +5, range 30/120 ft. Hit: 6 (1d6 + 3) Piercing damage." }
+  ],
+  "bonus_actions": [
+    { "name": "Shape-Shift", "description": "The wererat shape-shifts into a Medium rat-humanoid hybrid or a Small rat, or it returns to its true humanoid form. Its game statistics, other than its size, are the same in each form. Any equipment it is wearing or carrying isn't transformed." }
+  ],
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 338 }
+}

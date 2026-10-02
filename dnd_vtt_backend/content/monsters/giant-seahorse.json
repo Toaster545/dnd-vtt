@@ -1,0 +1,34 @@
+{
+  "index": "giant-seahorse",
+  "name": "Giant Seahorse",
+  "size": "Large",
+  "type": "beast",
+  "alignment": "unaligned",
+  "armor_class": 14,
+  "hit_points": 16,
+  "hit_dice": "3d10",
+  "speed": { "walk": 5, "swim": 40 },
+  "ability_scores": {
+    "strength": 15,
+    "dexterity": 12,
+    "constitution": 11,
+    "intelligence": 2,
+    "wisdom": 12,
+    "charisma": 5
+  },
+  "initiative_bonus": 1,
+  "senses": { "passive_perception": 11 },
+  "languages": [],
+  "challenge_rating": "1/2",
+  "xp": 100,
+  "traits": [
+    { "name": "Water Breathing", "description": "The seahorse can breathe only underwater." }
+  ],
+  "actions": [
+    { "name": "Ram", "description": "Melee Attack Roll: +4, reach 5 ft. Hit: 9 (2d6 + 2) Bludgeoning damage, or 11 (2d8 + 2) Bludgeoning damage if the seahorse moved 20+ feet straight toward the target immediately before the hit." }
+  ],
+  "bonus_actions": [
+    { "name": "Bubble Dash", "description": "While underwater, the seahorse moves up to half its Swim Speed without provoking Opportunity Attacks." }
+  ],
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 353 }
+}

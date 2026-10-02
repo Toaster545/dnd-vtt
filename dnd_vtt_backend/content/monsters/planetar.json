@@ -1,0 +1,43 @@
+{
+  "index": "planetar",
+  "name": "Planetar",
+  "size": "Large",
+  "type": "celestial (angel)",
+  "alignment": "lawful good",
+  "armor_class": 19,
+  "hit_points": 262,
+  "hit_dice": "21d10 + 147",
+  "speed": { "walk": 40, "fly": 120, "hover": true },
+  "ability_scores": {
+    "strength": 24,
+    "dexterity": 20,
+    "constitution": 24,
+    "intelligence": 19,
+    "wisdom": 22,
+    "charisma": 25
+  },
+  "initiative_bonus": 10,
+  "saving_throws": { "Strength": 12, "Constitution": 12, "Wisdom": 11, "Charisma": 12 },
+  "skills": { "Perception": 11 },
+  "damage_resistances": ["radiant"],
+  "condition_immunities": ["charmed", "exhaustion", "frightened"],
+  "senses": { "truesight": 120, "passive_perception": 21 },
+  "languages": ["All", "telepathy 120 ft."],
+  "challenge_rating": "16",
+  "xp": 15000,
+  "traits": [
+    { "name": "Divine Awareness", "description": "The planetar knows if it hears a lie." },
+    { "name": "Exalted Restoration", "description": "If the planetar dies outside Mount Celestia, its body disappears, and it gains a new body instantly, reviving with all its Hit Points somewhere in Mount Celestia." },
+    { "name": "Magic Resistance", "description": "The planetar has Advantage on saving throws against spells and other magical effects." }
+  ],
+  "actions": [
+    { "name": "Multiattack", "description": "The planetar makes three Radiant Sword attacks or uses Holy Burst twice." },
+    { "name": "Radiant Sword", "description": "Melee Attack Roll: +12, reach 10 ft. Hit: 14 (2d6 + 7) Slashing damage plus 18 (4d8) Radiant damage." },
+    { "name": "Holy Burst", "description": "Dexterity Saving Throw: DC 20, each enemy in a 20-foot-radius Sphere centered on a point the planetar can see within 120 feet. Failure: 24 (7d6) Radiant damage. Success: Half damage." },
+    { "name": "Spellcasting", "description": "The planetar casts one of the following spells, requiring no Material components and using Charisma as spellcasting ability (spell save DC 20):\nAt Will: Detect Evil and Good\n1/Day Each: Commune, Control Weather, Dispel Evil and Good, Raise Dead" }
+  ],
+  "bonus_actions": [
+    { "name": "Divine Aid (2/Day)", "description": "The planetar casts Cure Wounds, Invisibility, Lesser Restoration, or Remove Curse, using the same spellcasting ability as Spellcasting." }
+  ],
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 315 }
+}

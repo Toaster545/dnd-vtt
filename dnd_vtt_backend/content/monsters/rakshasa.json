@@ -1,0 +1,38 @@
+{
+  "index": "rakshasa",
+  "name": "Rakshasa",
+  "size": "Medium",
+  "type": "fiend",
+  "alignment": "lawful evil",
+  "armor_class": 17,
+  "hit_points": 221,
+  "hit_dice": "26d8 + 104",
+  "speed": { "walk": 40 },
+  "ability_scores": {
+    "strength": 14,
+    "dexterity": 17,
+    "constitution": 18,
+    "intelligence": 13,
+    "wisdom": 16,
+    "charisma": 20
+  },
+  "initiative_bonus": 8,
+  "skills": { "Deception": 10, "Insight": 8, "Perception": 8 },
+  "damage_vulnerabilities": ["piercing damage from weapons wielded by creatures under the effect of a bless spell"],
+  "condition_immunities": ["charmed", "frightened"],
+  "senses": { "truesight": 60, "passive_perception": 18 },
+  "languages": ["Common", "Infernal"],
+  "challenge_rating": "13",
+  "xp": 10000,
+  "traits": [
+    { "name": "Greater Magic Resistance", "description": "The rakshasa automatically succeeds on saving throws against spells and other magical effects, and the attack rolls of spells automatically miss it. Without the rakshasa's permission, no spell can observe the rakshasa remotely or detect its thoughts, creature type, or alignment." },
+    { "name": "Fiendish Restoration", "description": "If the rakshasa dies outside the Nine Hells, its body turns to ichor, and it gains a new body instantly, reviving with all its Hit Points somewhere in the Nine Hells." }
+  ],
+  "actions": [
+    { "name": "Multiattack", "description": "The rakshasa makes three Cursed Touch attacks." },
+    { "name": "Cursed Touch", "description": "Melee Attack Roll: +10, reach 5 ft. Hit: 12 (2d6 + 5) Slashing damage plus 19 (3d12) Necrotic damage. If the target is a creature, it is cursed. While cursed, the target gains no benefit from finishing a Short or Long Rest." },
+    { "name": "Baleful Command (Recharge 5-6)", "description": "Wisdom Saving Throw: DC 18, each enemy in a 30-foot Emanation originating from the rakshasa. Failure: 28 (8d6) Psychic damage, and the target has the Frightened and Incapacitated conditions until the start of the rakshasa's next turn." },
+    { "name": "Spellcasting", "description": "The rakshasa casts one of the following spells, requiring no Material components and using Charisma as the spellcasting ability (spell save DC 18):\nAt Will: Detect Magic, Detect Thoughts, Disguise Self, Mage Hand, Minor Illusion\n1/Day Each: Fly, Invisibility, Major Image, Plane Shift" }
+  ],
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 317 }
+}

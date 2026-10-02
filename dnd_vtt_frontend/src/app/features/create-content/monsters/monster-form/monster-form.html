@@ -232,6 +232,8 @@
         [entries]="traits()" (entriesChange)="traits.set($event)" />
       <app-monster-entry-list title="Actions" placeholder="e.g. Bite" [required]="true"
         [entries]="actions()" (entriesChange)="actions.set($event)" />
+      <app-monster-entry-list title="Bonus Actions" placeholder="e.g. Nimble Escape"
+        [entries]="bonusActions()" (entriesChange)="bonusActions.set($event)" />
       <app-monster-entry-list title="Reactions" placeholder="e.g. Parry"
         [entries]="reactions()" (entriesChange)="reactions.set($event)" />
       <app-monster-entry-list title="Legendary Actions" placeholder="e.g. Tail Attack"

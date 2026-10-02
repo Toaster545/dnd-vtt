@@ -1,0 +1,31 @@
+{
+  "index": "warhorse-skeleton",
+  "name": "Warhorse Skeleton",
+  "size": "Large",
+  "type": "undead",
+  "alignment": "lawful evil",
+  "armor_class": 13,
+  "hit_points": 22,
+  "hit_dice": "3d10 + 6",
+  "speed": { "walk": 60 },
+  "ability_scores": {
+    "strength": 18,
+    "dexterity": 12,
+    "constitution": 15,
+    "intelligence": 2,
+    "wisdom": 8,
+    "charisma": 5
+  },
+  "initiative_bonus": 1,
+  "damage_vulnerabilities": ["bludgeoning"],
+  "damage_immunities": ["poison"],
+  "condition_immunities": ["exhaustion", "poisoned"],
+  "senses": { "darkvision": 60, "passive_perception": 9 },
+  "languages": [],
+  "challenge_rating": "1/2",
+  "xp": 100,
+  "actions": [
+    { "name": "Hooves", "description": "Melee Attack Roll: +6, reach 5 ft. Hit: 7 (1d6 + 4) Bludgeoning damage. If the target is a Large or smaller creature and the skeleton moved 20+ feet straight toward it immediately before the hit, the target has the Prone condition." }
+  ],
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 326 }
+}

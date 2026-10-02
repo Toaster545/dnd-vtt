@@ -1,0 +1,35 @@
+{
+  "index": "warrior-veteran",
+  "name": "Warrior Veteran",
+  "size": "Medium or Small",
+  "type": "humanoid",
+  "alignment": "neutral",
+  "armor_class": 17,
+  "hit_points": 65,
+  "hit_dice": "10d8 + 20",
+  "speed": { "walk": 30 },
+  "ability_scores": {
+    "strength": 16,
+    "dexterity": 13,
+    "constitution": 14,
+    "intelligence": 10,
+    "wisdom": 11,
+    "charisma": 10
+  },
+  "initiative_bonus": 3,
+  "skills": { "Athletics": 5, "Perception": 2 },
+  "gear": ["Greatsword", "Heavy Crossbow", "Splint Armor"],
+  "senses": { "passive_perception": 12 },
+  "languages": ["Common plus one other language"],
+  "challenge_rating": "3",
+  "xp": 700,
+  "actions": [
+    { "name": "Multiattack", "description": "The warrior makes two Greatsword or Heavy Crossbow attacks." },
+    { "name": "Greatsword", "description": "Melee Attack Roll: +5, reach 5 ft. Hit: 10 (2d6 + 3) Slashing damage." },
+    { "name": "Heavy Crossbow", "description": "Ranged Attack Roll: +3, range 100/400 ft. Hit: 12 (2d10 + 1) Piercing damage." }
+  ],
+  "reactions": [
+    { "name": "Parry", "description": "Trigger: The warrior is hit by a melee attack roll while holding a weapon. Response: The warrior adds 2 to its AC against that attack, possibly causing it to miss." }
+  ],
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 337 }
+}

@@ -2,12 +2,11 @@
   "index": "stirge",
   "name": "Stirge",
   "size": "Tiny",
-  "type": "beast",
+  "type": "monstrosity",
   "alignment": "unaligned",
-  "armor_class": 14,
-  "armor_class_desc": "natural armor",
-  "hit_points": 2,
-  "hit_dice": "1d4",
+  "armor_class": 13,
+  "hit_points": 5,
+  "hit_dice": "2d4",
   "speed": { "walk": 10, "fly": 40 },
   "ability_scores": {
     "strength": 4,
@@ -23,7 +22,8 @@
   "challenge_rating": "1/8",
   "xp": 25,
   "actions": [
-    { "name": "Blood Drain", "description": "Melee Attack Roll: +5, reach 5 ft. Hit: 5 (1d4 + 3) Piercing damage, and the stirge attaches to the target. While attached, the stirge doesn't attack; instead, at the start of each of its turns it deals 5 (1d4 + 3) Necrotic damage to the target and regains hit points equal to the damage dealt. A creature, including the target, can take an action to detach the stirge, which then has to land on the ground or fly away." }
+    { "name": "Proboscis", "description": "Melee Attack Roll: +5, reach 5 ft. Hit: 6 (1d6 + 3) Piercing damage, and the stirge attaches to the target. While attached, the stirge can't make Proboscis attacks, and the target takes 5 (2d4) Necrotic damage at the start of each of the stirge's turns. The stirge can detach itself by spending 5 feet of its movement. The target or a creature within 5 feet of it can detach the stirge as an action." }
   ],
-  "description": "Stirges are winged, bloodsucking parasites that drift on the wind until they catch the scent of a warm-blooded creature, then dive to latch on and gorge."
+  "description": "Stirges are winged, bloodsucking parasites that drift on the wind until they catch the scent of a warm-blooded creature, then dive to latch on and gorge.",
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 329 }
 }

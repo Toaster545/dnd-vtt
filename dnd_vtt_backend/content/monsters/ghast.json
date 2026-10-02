@@ -1,0 +1,36 @@
+{
+  "index": "ghast",
+  "name": "Ghast",
+  "size": "Medium",
+  "type": "undead",
+  "alignment": "chaotic evil",
+  "armor_class": 13,
+  "hit_points": 36,
+  "hit_dice": "8d8",
+  "speed": { "walk": 30 },
+  "ability_scores": {
+    "strength": 16,
+    "dexterity": 17,
+    "constitution": 10,
+    "intelligence": 11,
+    "wisdom": 10,
+    "charisma": 8
+  },
+  "initiative_bonus": 3,
+  "saving_throws": { "Wisdom": 2 },
+  "damage_resistances": ["necrotic"],
+  "damage_immunities": ["poison"],
+  "condition_immunities": ["charmed", "exhaustion", "poisoned"],
+  "senses": { "darkvision": 60, "passive_perception": 10 },
+  "languages": ["Common"],
+  "challenge_rating": "2",
+  "xp": 450,
+  "traits": [
+    { "name": "Stench", "description": "Constitution Saving Throw: DC 10, any creature that starts its turn in a 5-foot Emanation originating from the ghast. Failure: The target has the Poisoned condition until the start of its next turn. Success: The target is immune to this ghast's Stench for 24 hours." }
+  ],
+  "actions": [
+    { "name": "Bite", "description": "Melee Attack Roll: +5, reach 5 ft. Hit: 7 (1d8 + 3) Piercing damage plus 9 (2d8) Necrotic damage." },
+    { "name": "Claw", "description": "Melee Attack Roll: +5, reach 5 ft. Hit: 10 (2d6 + 3) Slashing damage. If the target is a non-Undead creature, it is subjected to the following effect. Constitution Saving Throw: DC 10. Failure: The target has the Paralyzed condition until the end of its next turn." }
+  ],
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 287 }
+}

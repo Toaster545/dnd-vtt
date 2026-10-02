@@ -17,14 +17,18 @@ import { ConfirmService } from '../../shared/confirm.service';
 import { ResizeHandleDirective } from '../../shared/directives/resize-handle.directive';
 import { drawGrid } from './canvas/grid-renderer';
 import { renderMoveRange } from './canvas/move-range-renderer';
-import { renderTokens } from './canvas/token-renderer';
-import { renderDarkness, renderLightMarkers } from './canvas/lighting-renderer';
+import { Trail, TrailDrag, renderTurnTrails } from './canvas/turn-trail-renderer';
+import { PlanMarker, renderPlanMarker } from './canvas/plan-marker-renderer';
+import { renderTokens, snapToCell } from './canvas/token-renderer';
+import { isTokenLit, litAreas, renderDarkness, renderLightMarkers } from './canvas/lighting-renderer';
 import { getErrorMessage } from '../../core/utils/error-message';
 import { MeasurementTool } from './canvas/measurement-tool';
 import { FogTool } from './canvas/fog-tool';
 import { WallTool, wallIndexNear, wallPointUnderPointer } from './canvas/wall-tool';
 import { PortraitCache } from './canvas/portrait-cache';
+import { TokenImageCache } from './canvas/token-image-cache';
 import { PortraitSource } from '../../core/models/avatar.model';
+import { TokenBorder } from '../../core/models/token-border.model';
 import { StagePointerTools } from './canvas/stage-pointer-tools';
 import { StageView } from './canvas/stage-view';
 import { MapToolbarComponent } from './components/map-toolbar/map-toolbar';
@@ -51,7 +55,14 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
   readonly placingEntity = input<PlacingEntity | null>(null);
   readonly characterHp = input<Record<string, { hp: number; max_hp: number }>>({});
   readonly characterPortraits = input<Record<string, PortraitSource>>({});
+  // Each character's portrait-dialog ring style, by character_id (see TokenRenderContext).
+  readonly characterTokenBorders = input<Record<string, TokenBorder>>({});
   readonly currentTurnTokenId = input<string | null>(null);
+  // An encounter's tokens across all of its levels (see EncounterService.watchTurnOrder). When
+  // set, the turn order panel lists these instead of just this map's own tokens.
+  readonly turnOrderTokens = input<MapToken[] | null>(null);
+  // Player screens hold the turn order back until round 2 — see PlayerCampaignSessionComponent.
+  readonly showTurnOrder = input(true);
   readonly myCharacterId = input<string | null>(null);
   readonly myMoveSpeedFt = input<number | null>(null);
   // Personal, not shared — only ever set on the viewing player's own component instance (see
@@ -162,6 +173,7 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
 
   toggleMeasureTool(shape: MeasureShape) {
     this.activeMeasureTool.update(current => current === shape ? null : shape);
+    this.pickingDestination.set(false);
     if (this.activeMeasureTool()) { this.activeFogTool.set(null); this.activeLightTool.set(null); }
   }
 
@@ -236,7 +248,55 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
     this.flushWalls();
   }
 
+  // Player side: picking the square they'd like the DM to move their token to. Their own pick is
+  // fetched separately (the shared player token broadcast never carries it — see
+  // MapsService.getTokenPlan) and refetched on every turn change, which is when the server clears it.
+  pickingDestination = signal(false);
+  myPlan = signal<{ x: number; y: number } | null>(null);
+
+  togglePickDestination() {
+    const picking = !this.pickingDestination();
+    this.selectPointerTool();
+    this.pickingDestination.set(picking);
+  }
+
+  async clearMyPlan() {
+    const token = this.myToken();
+    if (!token?.id) return;
+    this.myPlan.set(null);
+    await this.mapService.setTokenPlan(this.mapId, token.id, null);
+  }
+
+  private async setMyPlan(x: number, y: number) {
+    const token = this.myToken();
+    if (!token?.id) return;
+    this.myPlan.set({ x, y });
+    try {
+      await this.mapService.setTokenPlan(this.mapId, token.id, { x, y });
+    } catch (e) {
+      this.myPlan.set(null);
+      // Same brief over-the-map notice as a failed wall save (see flushWalls).
+      const message = `Couldn't save your destination: ${getErrorMessage(e)}`;
+      this.error.set(message);
+      setTimeout(() => { if (this.error() === message) this.error.set(null); }, 5000);
+    }
+  }
+
+  // What the plan layer shows: a player always sees their own pick; the DM only sees the pick of
+  // the token whose turn it is.
+  private planMarker = computed<PlanMarker | null>(() => {
+    if (!this.controlsMap()) {
+      const token = this.myToken();
+      const plan = this.myPlan();
+      return token && plan ? { token, ...plan } : null;
+    }
+    const token = this.tokens().find(t => t.id === this.currentTurnTokenId());
+    if (!token || token.planned_x == null || token.planned_y == null) return null;
+    return { token, x: token.planned_x, y: token.planned_y };
+  });
+
   private readonly onKeyDown = (e: KeyboardEvent) => {
+    if (e.key === 'Escape') this.pickingDestination.set(false);
     if (e.key === 'Escape' && this.wallTool.isChaining) {
       this.wallTool.endChain();
       this.renderWalls();
@@ -244,6 +304,7 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
   };
 
   selectPointerTool() {
+    this.pickingDestination.set(false);
     this.activeMeasureTool.set(null);
     this.activeFogTool.set(null);
     this.activeLightTool.set(null);
@@ -334,10 +395,19 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
   showMoveRange = signal(false);
 
   myToken = computed(() => this.tokens().find(t => t.character_id === this.myCharacterId()) ?? null);
+  // Just the id, so effects keyed on it don't rerun on every token broadcast.
+  private myTokenId = computed(() => this.myToken()?.id ?? null);
   private moveRangeFt = computed(() => this.myMoveSpeedFt() ?? 0);
+  // During the player's turn the range is drawn from where the turn began, not from wherever the
+  // token has moved since — it shows the whole turn's reach, which doesn't shrink as they move.
+  private moveRangeOrigin = computed(() => {
+    const token = this.myToken();
+    if (!token || token.turn_start_x == null || token.turn_start_y == null) return token;
+    return { ...token, x: token.turn_start_x, y: token.turn_start_y };
+  });
 
   turnOrder = computed(() => {
-    return [...this.tokens()].sort((a, b) => {
+    return [...(this.turnOrderTokens() ?? this.tokens())].sort((a, b) => {
       if (a.initiative == null && b.initiative == null) return 0;
       if (a.initiative == null) return 1;
       if (b.initiative == null) return -1;
@@ -345,8 +415,14 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   });
 
+  // The read-only (player-facing) turn order column: allowed by the host, and not collapsed by
+  // the player — a sheet-less viewer has no collapse control, so it's always open for them.
+  turnColumnVisible = computed(() =>
+    this.showTurnOrder() && (this.showTurnColumn() || !this.myCharacter())
+  );
+
   currentTurnToken = computed(() =>
-    this.tokens().find(t => t.id === this.currentTurnTokenId()) ?? null
+    this.turnOrder().find(t => t.id === this.currentTurnTokenId()) ?? null
   );
 
   private stage?: Konva.Stage;
@@ -359,6 +435,8 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
   private wallLayer?: Konva.Layer;
   private measureLayer?: Konva.Layer;
   private moveRangeLayer?: Konva.Layer;
+  private trailLayer?: Konva.Layer;
+  private planLayer?: Konva.Layer;
   private konvaImg?: Konva.Image;
   private img?: HTMLImageElement;
   private gridSize = 50;
@@ -382,7 +460,19 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
   private loadedMapId: string | null = null;
   private cellSize = 0;
   private lastTokens: MapToken[] = [];
+  // Set from pressing a token until the button is released. Rebuilding the token layer then (a
+  // socket broadcast, an image finishing loading, an HP change...) destroys the node Konva is
+  // dragging and drops the token, so renders are held until release instead (see renderTokens).
+  private tokenHeld = false;
+  private tokenRenderPending = false;
+  // Registered after Konva's own window mouseup listener, so it runs after the drop's dragend.
+  private readonly onPointerRelease = () => {
+    if (!this.tokenHeld) return;
+    this.tokenHeld = false;
+    if (this.tokenRenderPending) this.renderTokens(this.lastTokens);
+  };
   private portraitCache = new PortraitCache();
+  private tokenImageCache = new TokenImageCache();
 
   constructor() {
     effect(() => {
@@ -396,6 +486,7 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
     effect(() => {
       this.characterHp();
       this.characterPortraits();
+      this.characterTokenBorders();
       this.currentTurnTokenId();
       this.activeMeasureTool();
       this.fog();
@@ -407,10 +498,44 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
 
     effect(() => {
       this.showMoveRange();
-      this.myToken();
+      this.moveRangeOrigin();
       if (this.moveRangeLayer && this.cellSize && this.stage) {
-        renderMoveRange(this.moveRangeLayer, this.cellSize, this.showMoveRange(), this.myToken(), this.moveRangeFt());
+        renderMoveRange(this.moveRangeLayer, this.cellSize, this.showMoveRange(), this.moveRangeOrigin(), this.moveRangeFt());
       }
+    });
+
+    effect(() => {
+      this.planMarker();
+      this.renderPlan();
+    });
+
+    effect(() => {
+      const picking = this.pickingDestination();
+      if (this.stage) this.stage.container().style.cursor = picking ? 'crosshair' : '';
+    });
+
+    // Refetch the player's own destination whenever their token or the turn changes.
+    effect(() => {
+      const tokenId = this.myTokenId();
+      this.currentTurnTokenId();
+      if (this.controlsMap() || !tokenId) {
+        this.myPlan.set(null);
+        return;
+      }
+      const mapId = this.mapId;
+      this.mapService.getTokenPlan(mapId, tokenId).then(
+        plan => { if (this.myTokenId() === tokenId) this.myPlan.set(plan); },
+        () => {
+          // No plan to show is the same as no plan set — nothing to surface.
+        },
+      );
+    });
+
+    effect(() => {
+      this.currentTurnTokenId();
+      this.fog();
+      this.myMoveSpeedFt();
+      this.renderTrail();
     });
 
     effect(() => {
@@ -427,6 +552,9 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
       this.myDarkvisionFt();
       this.myToken();
       if (this.darknessLayer && this.cellSize) {
+        // Torches moving, walls changing, or darkness toggling change which enemies a player sees.
+        this.renderTokens(this.lastTokens);
+        this.renderTrail();
         this.renderDarkness();
         this.renderLightMarkers();
         this.renderWalls();
@@ -457,6 +585,9 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
     this.routeMapId = this.route.snapshot.paramMap.get('id');
     document.addEventListener('fullscreenchange', this.onFullscreenChange);
     window.addEventListener('keydown', this.onKeyDown);
+    for (const type of ['mouseup', 'touchend', 'touchcancel', 'blur']) {
+      window.addEventListener(type, this.onPointerRelease);
+    }
   }
 
   ngAfterViewInit() {
@@ -466,6 +597,9 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
   ngOnDestroy() {
     document.removeEventListener('fullscreenchange', this.onFullscreenChange);
     window.removeEventListener('keydown', this.onKeyDown);
+    for (const type of ['mouseup', 'touchend', 'touchcancel', 'blur']) {
+      window.removeEventListener(type, this.onPointerRelease);
+    }
     window.removeEventListener('resize', this.onWindowResize);
     this.flushWalls();
     this.tokenSub?.unsubscribe();
@@ -560,6 +694,8 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
     this.fogLayer = new Konva.Layer();
     this.darknessLayer = new Konva.Layer();
     this.moveRangeLayer = new Konva.Layer();
+    this.trailLayer = new Konva.Layer();
+    this.planLayer = new Konva.Layer();
     this.tokenLayer = new Konva.Layer();
     this.lightMarkerLayer = new Konva.Layer();
     this.wallLayer = new Konva.Layer();
@@ -567,7 +703,7 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
     // Darkness (and each torch's glow) sits under the fog, so fogged areas hide lighting too.
     this.stage.add(
       this.mapLayer, this.gridLayer, this.darknessLayer, this.fogLayer, this.moveRangeLayer,
-      this.tokenLayer, this.lightMarkerLayer, this.wallLayer, this.measureLayer,
+      this.trailLayer, this.planLayer, this.tokenLayer, this.lightMarkerLayer, this.wallLayer, this.measureLayer,
     );
     this.fogLayer.listening(false);
     this.darknessLayer.listening(false);
@@ -586,6 +722,13 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
       // button whose down/up land on the same target, so without this a middle-click would also
       // place a torch or drop a new token here.
       if ('button' in e.evt && (e.evt as MouseEvent).button === 1) return;
+      if (this.pickingDestination()) {
+        // Anywhere on the map, including on top of another token's square. The tool stays armed
+        // so the player can keep adjusting their pick; the flag button or Escape turns it off.
+        const pos = this.stage!.getRelativePointerPosition()!;
+        this.setMyPlan(Math.floor(pos.x / this.cellSize), Math.floor(pos.y / this.cellSize));
+        return;
+      }
       if (this.activeLightTool() === 'wall' && this.controlsMap()) {
         const point = wallPointUnderPointer(this.stage!, this.cellSize, !!(e.evt as MouseEvent).shiftKey);
         const wall = point && this.wallTool.addVertex(point);
@@ -662,6 +805,7 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
       this.tokens.set(tokens);
       this.lastTokens = tokens;
       this.renderTokens(tokens);
+      this.renderTrail();
       // Also re-render darkness/markers — an attached light's position is derived from its
       // token, so a token move (broadcast here) needs to move its light too.
       this.renderDarkness();
@@ -727,7 +871,9 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
     this.renderDarkness();
     this.renderLightMarkers();
     this.renderWalls();
-    renderMoveRange(this.moveRangeLayer!, this.cellSize, this.showMoveRange(), this.myToken(), this.moveRangeFt());
+    renderMoveRange(this.moveRangeLayer!, this.cellSize, this.showMoveRange(), this.moveRangeOrigin(), this.moveRangeFt());
+    this.renderTrail();
+    this.renderPlan();
   }
 
   // The map container changed size without the window resizing (a side panel was resized or
@@ -808,6 +954,11 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
   private renderTokens(tokens: MapToken[]) {
     const layer = this.tokenLayer;
     if (!layer) return;
+    if (this.tokenHeld) {
+      this.tokenRenderPending = true;
+      return;
+    }
+    this.tokenRenderPending = false;
     renderTokens(layer, tokens, {
       cellSize: this.cellSize,
       fog: this.fog(),
@@ -817,13 +968,31 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
       selectedTokenId: this.selectedTokenId(),
       characterHp: this.characterHp(),
       characterPortraits: this.resolvePortraitImages(this.characterPortraits()),
+      characterTokenBorders: this.characterTokenBorders(),
+      tokenImages: this.tokenImageCache.resolve(tokens, () => this.renderTokens(this.lastTokens)),
+      hiddenTokenIds: this.tokensHiddenByDarkness(),
       onTokenClick: token => {
         this.selectedTokenId.set(token.id ?? null);
         this.tokenClicked.emit(token);
       },
+      onTokenPress: () => {
+        this.tokenHeld = true;
+      },
       onTokenMoved: (token, col, row) => {
+        // Shown on its snapped square right away rather than wherever it was let go of, until
+        // the server's tokens_updated broadcast confirms (or, on failure, restores) it. The
+        // token layer itself redraws on release (onPointerRelease), right after this dragend.
+        this.lastTokens = this.lastTokens.map(t => t.id === token.id ? { ...t, x: col, y: row } : t);
+        this.tokenRenderPending = true;
         this.selectedTokenId.set(token.id ?? null);
-        return this.mapService.upsertToken({ ...token, x: col, y: row });
+        this.renderTrail();
+        this.renderDarkness();
+        this.renderLightMarkers();
+        this.mapService.upsertToken({ ...token, x: col, y: row }).catch(() => {
+          this.lastTokens = this.tokens();
+          this.renderTokens(this.lastTokens);
+          this.renderTrail();
+        });
       },
       onTokenContextMenu: token => this.removeToken(token),
       onTokenDragMove: (token, xPx, yPx) => {
@@ -836,8 +1005,81 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
         this.lastTokens = this.lastTokens.map(t => t.id === token.id ? { ...t, x: gx, y: gy } : t);
         this.renderDarkness();
         this.renderLightMarkers();
+        // Same snapping as the drop itself (token-renderer's dragend). `token` is the position
+        // the server last saved, not the live one just written into lastTokens above.
+        this.renderTrail(token, {
+          xPx, yPx,
+          col: snapToCell(xPx, token.size, this.cellSize),
+          row: snapToCell(yPx, token.size, this.cellSize),
+        });
       },
     });
+  }
+
+  // The current-turn token's starting square and distance moved this turn, when it's on this map,
+  // plus — while `dragged` is mid-drag — a preview of that move. A token that isn't taking its
+  // turn (or any token outside an encounter) is measured from where it was picked up.
+  private renderTrail(dragged?: MapToken, drag?: TrailDrag) {
+    const layer = this.trailLayer;
+    if (!layer || !this.cellSize) return;
+    const speedFor = (token: MapToken) =>
+      token.character_id && token.character_id === this.myCharacterId() ? this.myMoveSpeedFt() : null;
+    const trails: Trail[] = [];
+    const current = this.tokens().find(t => t.id === this.currentTurnTokenId());
+    // An enemy in the dark leaves no visible trail either.
+    if (current && current.id !== dragged?.id && !this.tokensHiddenByDarkness().has(current.id!)) {
+      trails.push({ token: current, speedFt: speedFor(current), ...this.moveActions(current) });
+    }
+    if (dragged && drag) {
+      const onTurn = dragged.id === this.currentTurnTokenId() && dragged.turn_start_x != null;
+      const token = onTurn ? dragged : {
+        ...dragged, turn_start_x: dragged.x, turn_start_y: dragged.y,
+        turn_anchor_x: dragged.x, turn_anchor_y: dragged.y, turn_moved_ft: 0, turn_diagonals: 0,
+      };
+      trails.push({ token, drag, speedFt: speedFor(dragged) });
+    }
+    renderTurnTrails(layer, trails, {
+      cellSize: this.cellSize,
+      fog: this.fog(),
+      isAdmin: this.controlsMap(),
+    });
+  }
+
+  // The DM's Confirm/Undo buttons for the current-turn token's pending move.
+  private moveActions(token: MapToken): Pick<Trail, 'onConfirm' | 'onUndo'> {
+    if (!this.controlsMap() || !token.id) return {};
+    const mapId = token.map_id ?? this.mapId;
+    return {
+      onConfirm: () => this.mapService.confirmTokenMove(mapId, token.id!),
+      onUndo: () => this.mapService.undoTokenMove(mapId, token.id!),
+    };
+  }
+
+  private renderPlan() {
+    const layer = this.planLayer;
+    if (!layer || !this.cellSize) return;
+    const plan = this.planMarker();
+    // The DM accepts a player's pick by clicking it: the token moves there like a normal drag.
+    const accept = plan && this.controlsMap()
+      ? () => this.mapService.upsertToken({ ...plan.token, x: plan.x, y: plan.y })
+      : undefined;
+    renderPlanMarker(layer, this.cellSize, plan, accept);
+  }
+
+  // With darkness on, a player only sees an enemy standing in light — a torch's reach or their own
+  // darkvision, stopped by walls, the same areas renderDarkness reveals. Party members are always
+  // shown, like with fog. The DM sees everything.
+  private tokensHiddenByDarkness(): Set<string> {
+    const hidden = new Set<string>();
+    const lighting = this.lighting();
+    if (this.controlsMap() || !lighting.enabled || !this.cellSize) return hidden;
+    const personal = this.personalDarkvisionLight();
+    const lights = personal ? [...lighting.lights, personal] : lighting.lights;
+    const areas = litAreas({ ...lighting, lights }, this.lastTokens, this.cellSize);
+    for (const token of this.lastTokens) {
+      if (!token.is_player && token.id && !isTokenLit(token, areas, this.cellSize)) hidden.add(token.id);
+    }
+    return hidden;
   }
 
   private resolvePortraitImages(sources: Record<string, PortraitSource>): Record<string, HTMLImageElement> {
@@ -850,17 +1092,9 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
     this.measurementTool.render(layer, this.cellSize);
   }
 
-  // Uses the narrower setTokenColor endpoint rather than upsertToken: works for a player who
-  // doesn't otherwise have write access to this map, as long as it's their own character's token.
-  async setMyTokenColor(color: string) {
-    const token = this.myToken();
-    if (!token?.id) return;
-    await this.mapService.setTokenColor(this.mapId, token.id, color);
-  }
-
   async removeToken(token: MapToken) {
     if (!await this.confirm.confirm(`Remove "${token.label ?? 'this token'}" from the map?`, 'Remove Token', 'Remove')) return;
-    await this.mapService.deleteToken(token.id!, this.mapId);
+    await this.mapService.deleteToken(token.id!, token.map_id ?? this.mapId);
   }
 
   async setInitiative(token: MapToken, raw: string) {
@@ -872,7 +1106,7 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   async rerollInitiative(token: MapToken) {
-    await this.mapService.rerollInitiative(this.mapId, token.id!);
+    await this.mapService.rerollInitiative(token.map_id ?? this.mapId, token.id!);
   }
 
   private async addTokenAt(col: number, row: number) {

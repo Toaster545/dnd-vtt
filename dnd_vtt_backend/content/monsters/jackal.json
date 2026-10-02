@@ -1,0 +1,29 @@
+{
+  "index": "jackal",
+  "name": "Jackal",
+  "size": "Small",
+  "type": "beast",
+  "alignment": "unaligned",
+  "armor_class": 12,
+  "hit_points": 3,
+  "hit_dice": "1d6",
+  "speed": { "walk": 40 },
+  "ability_scores": {
+    "strength": 8,
+    "dexterity": 15,
+    "constitution": 11,
+    "intelligence": 3,
+    "wisdom": 12,
+    "charisma": 6
+  },
+  "initiative_bonus": 2,
+  "skills": { "Perception": 5, "Stealth": 4 },
+  "senses": { "darkvision": 90, "passive_perception": 15 },
+  "languages": [],
+  "challenge_rating": "0",
+  "xp": 10,
+  "actions": [
+    { "name": "Bite", "description": "Melee Attack Roll: +1, reach 5 ft. Hit: 1 (1d4 - 1) Piercing damage." }
+  ],
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 356 }
+}

@@ -5,9 +5,8 @@
   "type": "undead",
   "alignment": "neutral evil",
   "armor_class": 14,
-  "armor_class_desc": "studded leather armor",
-  "hit_points": 45,
-  "hit_dice": "6d8 + 18",
+  "hit_points": 82,
+  "hit_dice": "11d8 + 33",
   "speed": { "walk": 30 },
   "ability_scores": {
     "strength": 15,
@@ -17,22 +16,25 @@
     "wisdom": 13,
     "charisma": 15
   },
-  "initiative_bonus": 2,
+  "initiative_bonus": 4,
+  "skills": { "Perception": 3, "Stealth": 4 },
   "damage_resistances": ["necrotic"],
   "damage_immunities": ["poison"],
   "condition_immunities": ["exhaustion", "poisoned"],
-  "senses": { "darkvision": 60, "passive_perception": 11 },
-  "languages": ["the languages it knew in life"],
+  "gear": ["Studded Leather Armor"],
+  "senses": { "darkvision": 60, "passive_perception": 13 },
+  "languages": ["Common plus one other language"],
   "challenge_rating": "3",
   "xp": 700,
   "traits": [
-    { "name": "Sunlight Sensitivity", "description": "While in sunlight, the wight has disadvantage on ability checks and attack rolls that rely on sight." }
+    { "name": "Sunlight Sensitivity", "description": "While in sunlight, the wight has Disadvantage on ability checks and attack rolls." }
   ],
   "actions": [
-    { "name": "Multiattack", "description": "The wight makes two attacks, only one of which can be with Life Drain." },
-    { "name": "Longsword", "description": "Melee Attack Roll: +4, reach 5 ft. Hit: 6 (1d8 + 2) Slashing damage." },
-    { "name": "Life Drain", "description": "Melee Attack Roll: +4, reach 5 ft. Hit: 6 (1d6 + 3) Necrotic damage. The target's hit point maximum decreases by an amount equal to the damage taken, and the wight regains hit points equal to that amount. The target dies if this reduces its hit point maximum to 0. The reduction lasts until the target finishes a Long Rest." },
-    { "name": "Longbow", "description": "Ranged Attack Roll: +3, range 150/600 ft. Hit: 5 (1d8 + 1) Piercing damage." }
+    { "name": "Multiattack", "description": "The wight makes two attacks, using Necrotic Sword or Necrotic Bow in any combination. It can replace one attack with a use of Life Drain." },
+    { "name": "Necrotic Sword", "description": "Melee Attack Roll: +4, reach 5 ft. Hit: 6 (1d8 + 2) Slashing damage plus 4 (1d8) Necrotic damage." },
+    { "name": "Necrotic Bow", "description": "Ranged Attack Roll: +4, range 150/600 ft. Hit: 6 (1d8 + 2) Piercing damage plus 4 (1d8) Necrotic damage." },
+    { "name": "Life Drain", "description": "Constitution Saving Throw: DC 13, one creature within 5 feet. Failure: 6 (1d8 + 2) Necrotic damage, and the target's Hit Point maximum decreases by an amount equal to the damage taken. A Humanoid slain by this attack rises 24 hours later as a Zombie under the wight's control, unless the Humanoid is restored to life or its body is destroyed. The wight can have no more than twelve zombies under its control at a time." }
   ],
-  "description": "Wights are cold, calculating undead that retain the cunning of the mortal they once were, draining the life from victims to sustain their own withered existence."
+  "description": "Wights are cold, calculating undead that retain the cunning of the mortal they once were, draining the life from victims to sustain their own withered existence.",
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 341 }
 }

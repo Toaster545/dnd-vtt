@@ -35,6 +35,16 @@ const API = environment.apiUrl;
 export class CharacterService {
   private http = inject(HttpClient);
 
+  // Uploads an already-cropped square portrait; the returned URL goes in `portrait_image`.
+  async uploadPortrait(image: Blob): Promise<string> {
+    const form = new FormData();
+    form.append('file', image, `portrait.${image.type === 'image/png' ? 'png' : 'webp'}`);
+    const { url } = await firstValueFrom(
+      this.http.post<{ url: string }>(`${API}/characters/portrait`, form),
+    );
+    return url;
+  }
+
   async getMyCharacters(): Promise<Character[]> {
     return firstValueFrom(this.http.get<Character[]>(`${API}/characters`));
   }

@@ -9,7 +9,8 @@ export interface AvatarRecipeV1 {
 
 export type PortraitSource =
   | { kind: 'legacy'; seed: string }
-  | { kind: 'recipe'; recipe: AvatarRecipeV1; fallbackSeed: string };
+  | { kind: 'recipe'; recipe: AvatarRecipeV1; fallbackSeed: string }
+  | { kind: 'image'; url: string; fallbackSeed: string };
 
 export interface AvatarPartDefinition {
   id: string;

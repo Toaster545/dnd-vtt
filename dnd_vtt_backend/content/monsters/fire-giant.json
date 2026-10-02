@@ -5,7 +5,6 @@
   "type": "giant",
   "alignment": "lawful evil",
   "armor_class": 18,
-  "armor_class_desc": "plate armor",
   "hit_points": 162,
   "hit_dice": "13d12 + 78",
   "speed": { "walk": 30 },
@@ -17,19 +16,19 @@
     "wisdom": 14,
     "charisma": 13
   },
-  "initiative_bonus": -1,
-  "saving_throws": { "Dexterity": 3, "Constitution": 10, "Wisdom": 6, "Charisma": 5 },
+  "initiative_bonus": 3,
+  "saving_throws": { "Dexterity": 3, "Constitution": 10, "Charisma": 5 },
   "skills": { "Athletics": 11, "Perception": 6 },
   "damage_immunities": ["fire"],
   "senses": { "passive_perception": 16 },
   "languages": ["Giant"],
   "challenge_rating": "9",
   "xp": 5000,
-  "traits": [],
   "actions": [
-    { "name": "Multiattack", "description": "The giant makes two Greatsword attacks." },
-    { "name": "Greatsword", "description": "Melee Attack Roll: +11, reach 10 ft. Hit: 28 (6d6 + 7) Slashing damage." },
-    { "name": "Rock", "description": "Ranged Attack Roll: +11, range 60/240 ft. Hit: 30 (5d8 + 7) Bludgeoning damage." }
+    { "name": "Multiattack", "description": "The giant makes two attacks, using Flame Sword or Hammer Throw in any combination." },
+    { "name": "Flame Sword", "description": "Melee Attack Roll: +11, reach 10 ft. Hit: 21 (4d6 + 7) Slashing damage plus 10 (3d6) Fire damage." },
+    { "name": "Hammer Throw", "description": "Ranged Attack Roll: +11, range 60/240 ft. Hit: 23 (3d10 + 7) Bludgeoning damage plus 4 (1d8) Fire damage, and the target is pushed up to 15 feet straight away from the giant and has Disadvantage on the next attack roll it makes before the end of its next turn." }
   ],
-  "description": "Fire giants are disciplined, militaristic smiths who forge weapons of ruin in volcanic forges, marching to war in ranks as ordered as any mortal army."
+  "description": "Fire giants are disciplined, militaristic smiths who forge weapons of ruin in volcanic forges, marching to war in ranks as ordered as any mortal army.",
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 285 }
 }

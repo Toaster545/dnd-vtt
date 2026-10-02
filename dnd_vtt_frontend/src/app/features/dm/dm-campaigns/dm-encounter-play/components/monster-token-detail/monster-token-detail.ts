@@ -5,6 +5,13 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { DndMonster } from '../../../../../../core/services/content.service';
 import { MapToken } from '../../../../../../core/models/campaign.model';
 import { ABILITY_SHORT, Ability } from '../../../../../../core/models/character.model';
+import { monsterSpeedText } from '../../../../../../core/utils/monster-speed';
+
+interface StatBlockSection {
+  title: string;
+  intro?: string;
+  entries: { name: string; description: string }[];
+}
 
 @Component({
   selector: 'app-monster-token-detail',
@@ -37,5 +44,25 @@ export class MonsterTokenDetailComponent {
         return `${short} ${bonus >= 0 ? '+' : ''}${bonus}`;
       })
       .join(', ');
+  }
+
+  speedText(): string {
+    return monsterSpeedText(this.monster()) || '0 ft.';
+  }
+
+  sections(): StatBlockSection[] {
+    const m = this.monster();
+    const sections: StatBlockSection[] = [
+      { title: 'Traits', entries: m.traits ?? [] },
+      { title: 'Actions', entries: m.actions },
+      { title: 'Bonus Actions', entries: m.bonus_actions ?? [] },
+      { title: 'Reactions', entries: m.reactions ?? [] },
+      {
+        title: 'Legendary Actions',
+        intro: m.legendary_description,
+        entries: m.legendary_actions ?? [],
+      },
+    ];
+    return sections.filter(section => section.entries.length);
   }
 }

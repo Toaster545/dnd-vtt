@@ -1,0 +1,33 @@
+{
+  "index": "cat",
+  "name": "Cat",
+  "size": "Tiny",
+  "type": "beast",
+  "alignment": "unaligned",
+  "armor_class": 12,
+  "hit_points": 2,
+  "hit_dice": "1d4",
+  "speed": { "walk": 40, "climb": 40 },
+  "ability_scores": {
+    "strength": 3,
+    "dexterity": 15,
+    "constitution": 10,
+    "intelligence": 3,
+    "wisdom": 12,
+    "charisma": 7
+  },
+  "initiative_bonus": 2,
+  "saving_throws": { "Dexterity": 4 },
+  "skills": { "Perception": 3, "Stealth": 4 },
+  "senses": { "darkvision": 60, "passive_perception": 13 },
+  "languages": [],
+  "challenge_rating": "0",
+  "xp": 10,
+  "traits": [
+    { "name": "Jumper", "description": "The cat's jump distance is determined using its Dexterity rather than its Strength." }
+  ],
+  "actions": [
+    { "name": "Scratch", "description": "Melee Attack Roll: +4, reach 5 ft. Hit: 1 Slashing damage." }
+  ],
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 346 }
+}

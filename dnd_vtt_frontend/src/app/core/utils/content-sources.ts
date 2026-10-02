@@ -1,6 +1,8 @@
 import { DndContentSource, DndSourceReference } from '../services/content.service';
 
-export interface SourcedContent { source?: Pick<DndSourceReference, 'code'> }
+export interface SourcedContent {
+  source?: Pick<DndSourceReference, 'code'>;
+}
 
 export function sourceCode(entry: SourcedContent, fallback = 'XPHB'): string {
   return entry.source?.code || fallback;
@@ -15,7 +17,7 @@ export function characterContentEnabled(
 ): boolean {
   const code = sourceCode(entry);
   if (code === 'HOMEBREW') return true;
-  const definition = sources.find(source => source.code === code);
+  const definition = sources.find((source) => source.code === code);
   return definition?.locked === true || enabledCodes.has(code);
 }
 
@@ -29,6 +31,8 @@ export function campaignContentEnabled(
 ): boolean {
   const code = sourceCode(entry, 'XMM');
   if (code === 'HOMEBREW') return true;
-  const definition = sources.find(source => source.code === code);
-  return definition?.player_options === false || definition?.locked === true || allowedCodes.has(code);
+  const definition = sources.find((source) => source.code === code);
+  return (
+    definition?.player_options === false || definition?.locked === true || allowedCodes.has(code)
+  );
 }

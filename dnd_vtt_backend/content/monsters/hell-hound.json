@@ -1,0 +1,35 @@
+{
+  "index": "hell-hound",
+  "name": "Hell Hound",
+  "size": "Medium",
+  "type": "fiend",
+  "alignment": "lawful evil",
+  "armor_class": 15,
+  "hit_points": 58,
+  "hit_dice": "9d8 + 18",
+  "speed": { "walk": 50 },
+  "ability_scores": {
+    "strength": 17,
+    "dexterity": 12,
+    "constitution": 14,
+    "intelligence": 6,
+    "wisdom": 13,
+    "charisma": 6
+  },
+  "initiative_bonus": 1,
+  "skills": { "Perception": 5 },
+  "damage_immunities": ["fire"],
+  "senses": { "darkvision": 60, "passive_perception": 15 },
+  "languages": ["Understands Infernal but can't speak"],
+  "challenge_rating": "3",
+  "xp": 700,
+  "traits": [
+    { "name": "Pack Tactics", "description": "The hound has Advantage on an attack roll against a creature if at least one of the hound's allies is within 5 feet of the creature and the ally doesn't have the Incapacitated condition." }
+  ],
+  "actions": [
+    { "name": "Multiattack", "description": "The hound makes two Bite attacks." },
+    { "name": "Bite", "description": "Melee Attack Roll: +5, reach 5 ft. Hit: 7 (1d8 + 3) Piercing damage plus 3 (1d6) Fire damage." },
+    { "name": "Fire Breath (Recharge 5-6)", "description": "Dexterity Saving Throw: DC 12, each creature in a 15-foot Cone. Failure: 17 (5d6) Fire damage. Success: Half damage." }
+  ],
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 297 }
+}

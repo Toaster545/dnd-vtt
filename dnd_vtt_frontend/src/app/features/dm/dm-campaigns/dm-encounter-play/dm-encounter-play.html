@@ -30,6 +30,20 @@
         (openPlayerView)="openPlayerView()"
       />
 
+      @if (levels().length > 1) {
+        <div class="hide-in-fullscreen flex items-center gap-1 px-4 py-1.5 border-b border-white/10 flex-shrink-0 overflow-x-auto">
+          <mat-icon class="text-slate text-base flex-shrink-0" matTooltip="Levels — each player sees the level their own token is on">stairs</mat-icon>
+          @for (level of levels(); track level.map_id) {
+            <button class="btn-ghost text-xs px-2 py-1 whitespace-nowrap"
+                    [class.bg-white/10]="level.map_id === activeMapId()"
+                    [class.text-gold]="level.map_id === activeMapId()"
+                    (click)="showLevel(level.map_id)">
+              {{ level.name }}
+            </button>
+          }
+        </div>
+      }
+
       <div class="flex flex-1 overflow-hidden">
         <aside [style.width.px]="rosterWidth()" class="border-r border-white/10 overflow-y-auto flex-shrink-0 p-4">
           @if (viewingCustomToken(); as tok) {
@@ -62,12 +76,11 @@
             />
           } @else {
             <app-roster-panel
-              [presentPlayers]="presentPlayers()"
+              [players]="partyPlayers()"
               [monsters]="rosterMonsters()"
               [characters]="rosterCharacters()"
               [classLabel]="classLabel"
               [colorFor]="colorFor"
-              [colorForMonster]="colorForMonster"
               [isArmedCharacter]="isArmedCharacter"
               [isArmedMonster]="isArmedMonster"
               [isArmedCustomToken]="isArmedCustomToken()"
@@ -76,26 +89,67 @@
               [availableMonstersToAdd]="availableMonstersToAdd()"
               [addingMonster]="addingMonster()"
               (armCustomToken)="toggleArmCustomToken()"
-              (armPlayer)="toggleArmPresentPlayer($event)"
+              (armPlayer)="toggleArmPartyPlayer($event)"
               (armMonster)="toggleArmMonster($event)"
               (armCharacter)="toggleArmCharacter($event)"
               (characterColorChanged)="setCharacterColor($event.id, $event.color)"
-              (monsterColorChanged)="setMonsterColor($event.index, $event.color)"
               (openMonsterSearch)="openMonsterSearch()"
               (closeMonsterSearch)="closeMonsterSearch()"
               (monsterSearchQueryChanged)="monsterSearchQuery.set($event)"
               (addMonster)="addMonsterToEncounter($event)"
+              (removeMonster)="removeMonsterFromEncounter($event)"
             />
+          }
+
+          @if (selectedToken(); as tok) {
+            @if (levels().length > 1 && tok.character_id) {
+              <div class="field mt-4 pt-4 border-t border-white/10">
+                <label class="field-label">Player's level</label>
+                @if (playerLevelFor(tok.character_id) === tok.map_id) {
+                  <p class="flex items-center gap-1 text-sm text-gold m-0">
+                    <mat-icon class="text-base">visibility</mat-icon> {{ tok.label }} is seeing this level
+                  </p>
+                } @else {
+                  <p class="text-xs text-slate mt-0 mb-2">
+                    {{ tok.label }} is currently on <span class="text-parchment">{{ levelName(playerLevelFor(tok.character_id)) }}</span>.
+                  </p>
+                  <button class="btn-primary text-xs px-2 py-1 w-full" [disabled]="switchingPlayerLevel()"
+                          (click)="showTokenLevelToPlayer(tok)">
+                    <mat-icon class="text-base">stairs</mat-icon> Show {{ levelName(tok.map_id) }} to {{ tok.label }}
+                  </button>
+                }
+                @if (playerLevelError(); as err) {
+                  <p class="text-danger text-xs mt-1 mb-0">{{ err }}</p>
+                }
+                <p class="text-xs text-slate mt-2 mb-0">
+                  A character is on one level at a time — placing them on another level moves their token
+                  there, and their player follows.
+                </p>
+              </div>
+            } @else if (levels().length > 1) {
+              <div class="field mt-4 pt-4 border-t border-white/10">
+                <label class="field-label">Move to level</label>
+                <select class="field-input" [disabled]="movingToken()"
+                        [ngModel]="tok.map_id" (ngModelChange)="moveSelectedTokenToLevel($event)">
+                  @for (level of levels(); track level.map_id) {
+                    <option [value]="level.map_id">{{ level.name }}{{ level.map_id === tok.map_id ? ' (here)' : '' }}</option>
+                  }
+                </select>
+                <p class="text-xs text-slate mt-1 mb-0">Keeps its position, HP and initiative.</p>
+              </div>
+            }
           }
         </aside>
 
         <div appResizeHandle (resizeDrag)="onRosterResize($event)"
              class="w-1.5 flex-shrink-0 hover:bg-gold/40 active:bg-gold/60 transition-colors"></div>
 
-        @if (encounter.map_id) {
-          <app-battle-map [mapIdInput]="encounter.map_id" [embedded]="true" [canControl]="isOwner()" [placingEntity]="armedEntity()"
+        @if (activeMapId(); as mapId) {
+          <app-battle-map [mapIdInput]="mapId" [embedded]="true" [canControl]="isOwner()" [placingEntity]="armedEntity()"
             [characterHp]="characterHp()" [characterPortraits]="characterPortraits()"
+            [characterTokenBorders]="characterTokenBorders()"
             [currentTurnTokenId]="encounter.current_turn_token_id ?? null"
+            [turnOrderTokens]="turnOrderTokens()"
             (tokenClicked)="onTokenClicked($event)" (currentTurnTokenChanged)="currentTurnToken.set($event)"
             class="flex-1 min-w-0" />
         } @else {

@@ -1,0 +1,33 @@
+{
+  "index": "hippogriff",
+  "name": "Hippogriff",
+  "size": "Large",
+  "type": "monstrosity",
+  "alignment": "unaligned",
+  "armor_class": 11,
+  "hit_points": 26,
+  "hit_dice": "4d10 + 4",
+  "speed": { "walk": 40, "fly": 60 },
+  "ability_scores": {
+    "strength": 17,
+    "dexterity": 13,
+    "constitution": 13,
+    "intelligence": 2,
+    "wisdom": 12,
+    "charisma": 8
+  },
+  "initiative_bonus": 1,
+  "skills": { "Perception": 5 },
+  "senses": { "passive_perception": 15 },
+  "languages": [],
+  "challenge_rating": "1",
+  "xp": 200,
+  "traits": [
+    { "name": "Flyby", "description": "The hippogriff doesn't provoke an Opportunity Attack when it flies out of an enemy's reach." }
+  ],
+  "actions": [
+    { "name": "Multiattack", "description": "The hippogriff makes two Rend attacks." },
+    { "name": "Rend", "description": "Melee Attack Roll: +5, reach 5 ft. Hit: 7 (1d8 + 3) Slashing damage." }
+  ],
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 298 }
+}

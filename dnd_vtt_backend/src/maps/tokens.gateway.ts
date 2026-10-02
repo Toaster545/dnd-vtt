@@ -10,6 +10,7 @@ import {
 import { Server, Socket } from 'socket.io';
 import { DatabaseService } from '../common/database.service';
 import { SocketAuthService } from '../auth/socket-auth.service';
+import { serializePlayerTokens } from './player-tokens';
 
 interface Measurement {
   shape: 'line' | 'cone' | 'sphere';
@@ -62,7 +63,24 @@ export class TokensGateway implements OnGatewayInit, OnGatewayDisconnect {
     this.server.to(`map:${mapId}:dm`).emit('tokens_updated', tokens);
     this.server
       .to(`map:${mapId}:player`)
-      .emit('tokens_updated', this.playerTokens(tokens));
+      .emit('tokens_updated', serializePlayerTokens(tokens));
+    void this.notifyEncounterTokensChanged(mapId);
+  }
+
+  // An encounter's turn order spans all of its levels, so a token change on any one level map
+  // nudges everyone in the encounter (DM and players alike, via EncounterPresenceGateway's
+  // room) to refetch it — see EncountersService.findTurnOrder, which applies the player filter.
+  private async notifyEncounterTokensChanged(mapId: string) {
+    const encounters = await this.db.execute(
+      `SELECT encounter_id FROM encounter_levels WHERE map_id = ?`,
+      [mapId],
+    );
+    for (const row of encounters.rows) {
+      const encounterId = row.encounter_id as string;
+      this.server
+        .to(`encounter-presence:${encounterId}`)
+        .emit('encounter_tokens_changed', { encounterId });
+    }
   }
 
   broadcastFog(mapId: string, fog: unknown) {
@@ -93,6 +111,16 @@ export class TokensGateway implements OnGatewayInit, OnGatewayDisconnect {
         .map((light) => ({ ...light, label: '' })),
       walls: lighting.walls,
     });
+  }
+
+  // A character's token was moved or removed — in a multi-level encounter, a player whose token
+  // left the level they're shown falls back to the entry level (see EncountersService.findMyLevel). Sent to the
+  // campaign room (every connected member joins it on connect, see EncounterPresenceGateway);
+  // the owning player's client re-resolves its level, everyone else ignores it.
+  notifyCharacterLevelChanged(campaignId: string, characterId: string) {
+    this.server
+      .to(`campaign:${campaignId}`)
+      .emit('character_level_changed', { campaignId, characterId });
   }
 
   // Ephemeral ruler/cone/sphere measurements — never persisted, purely relayed to everyone else
@@ -150,29 +178,14 @@ export class TokensGateway implements OnGatewayInit, OnGatewayDisconnect {
       [map.campaign_id, user.id],
     );
     const visible = await this.db.execute(
-      `SELECT e.id FROM encounters e JOIN sessions s ON s.id = e.session_id
-       WHERE e.map_id = ? AND s.campaign_id = ?
+      `SELECT e.id FROM encounters e
+       JOIN encounter_levels el ON el.encounter_id = e.id
+       JOIN sessions s ON s.id = e.session_id
+       WHERE el.map_id = ? AND s.campaign_id = ?
          AND e.visible_to_players = 1 AND s.visible_to_players = 1 LIMIT 1`,
       [mapId, map.campaign_id],
     );
     if (!membership.rows[0] || !visible.rows[0]) throw new Error('Forbidden');
     return 'player';
-  }
-
-  private playerTokens(tokens: Record<string, unknown>[]) {
-    return tokens
-      .filter((token) => !!token.visible_to_players)
-      .map((token) => ({
-        id: token.id,
-        map_id: token.map_id,
-        label: token.name_visible_to_players ? token.label : 'Unknown',
-        color: token.color,
-        x: token.x,
-        y: token.y,
-        size: token.size,
-        is_player: !!token.is_player,
-        character_id: token.is_player ? token.character_id : undefined,
-        initiative: token.initiative ?? null,
-      }));
   }
 }

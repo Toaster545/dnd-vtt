@@ -1,0 +1,30 @@
+{
+  "index": "animated-rug-of-smothering",
+  "name": "Animated Rug of Smothering",
+  "size": "Large",
+  "type": "construct",
+  "alignment": "unaligned",
+  "armor_class": 12,
+  "hit_points": 27,
+  "hit_dice": "5d10",
+  "speed": { "walk": 10 },
+  "ability_scores": {
+    "strength": 17,
+    "dexterity": 14,
+    "constitution": 10,
+    "intelligence": 1,
+    "wisdom": 3,
+    "charisma": 1
+  },
+  "initiative_bonus": 4,
+  "damage_immunities": ["poison", "psychic"],
+  "condition_immunities": ["charmed", "deafened", "exhaustion", "frightened", "paralyzed", "petrified", "poisoned"],
+  "senses": { "blindsight": 60, "passive_perception": 6 },
+  "languages": [],
+  "challenge_rating": "2",
+  "xp": 450,
+  "actions": [
+    { "name": "Smother", "description": "Melee Attack Roll: +5, reach 5 ft. Hit: 10 (2d6 + 3) Bludgeoning damage. If the target is a Medium or smaller creature, the rug can give it the Grappled condition (escape DC 13) instead of dealing damage. Until the grapple ends, the target has the Blinded and Restrained conditions, is suffocating, and takes 10 (2d6 + 3) Bludgeoning damage at the start of each of its turns. The rug can smother only one creature at a time. While grappling the target, the rug can't take this action, the rug halves the damage it takes (round down), and the target takes the same amount of damage." }
+  ],
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 259 }
+}

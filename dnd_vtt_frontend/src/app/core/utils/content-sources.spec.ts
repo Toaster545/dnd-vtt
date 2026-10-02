@@ -33,21 +33,30 @@ const sources: DndContentSource[] = [
 describe('content source gates', () => {
   it('always includes locked core and homebrew character content', () => {
     expect(characterContentEnabled({ source: { code: 'XPHB' } }, new Set(), sources)).toBe(true);
-    expect(characterContentEnabled({ source: { code: 'HOMEBREW' } }, new Set(), sources)).toBe(true);
+    expect(characterContentEnabled({ source: { code: 'HOMEBREW' } }, new Set(), sources)).toBe(
+      true,
+    );
   });
 
-  it.each(['EFA', 'XGE', 'TCE'])('only includes optional %s character content when selected', (code) => {
-    expect(characterContentEnabled({ source: { code } }, new Set(), sources)).toBe(false);
-    expect(characterContentEnabled({ source: { code } }, new Set([code]), sources)).toBe(true);
-  });
+  it.each(['EFA', 'XGE', 'TCE'])(
+    'only includes optional %s character content when selected',
+    (code) => {
+      expect(characterContentEnabled({ source: { code } }, new Set(), sources)).toBe(false);
+      expect(characterContentEnabled({ source: { code } }, new Set([code]), sources)).toBe(true);
+    },
+  );
 
   it('keeps DM-only and homebrew encounter content available while gating player books', () => {
     expect(campaignContentEnabled({ source: { code: 'XMM' } }, new Set(), sources)).toBe(true);
     expect(campaignContentEnabled({ source: { code: 'HOMEBREW' } }, new Set(), sources)).toBe(true);
     expect(campaignContentEnabled({ source: { code: 'EFA' } }, new Set(), sources)).toBe(false);
-    expect(campaignContentEnabled({ source: { code: 'EFA' } }, new Set(['EFA']), sources)).toBe(true);
+    expect(campaignContentEnabled({ source: { code: 'EFA' } }, new Set(['EFA']), sources)).toBe(
+      true,
+    );
     expect(campaignContentEnabled({ source: { code: 'XGE' } }, new Set(), sources)).toBe(false);
     expect(campaignContentEnabled({ source: { code: 'TCE' } }, new Set(), sources)).toBe(false);
-    expect(campaignContentEnabled({ source: { code: 'TCE' } }, new Set(['TCE']), sources)).toBe(true);
+    expect(campaignContentEnabled({ source: { code: 'TCE' } }, new Set(['TCE']), sources)).toBe(
+      true,
+    );
   });
 });

@@ -36,6 +36,7 @@ export interface CampaignMember {
   character_armor_class?: number | null;
   character_portrait_seed?: string | null;
   character_avatar_recipe?: AvatarRecipeV1 | null;
+  character_portrait_image?: string | null;
   source_character_id?: string | null;
   status?: 'active' | 'removed';
   joined_at?: string;
@@ -112,11 +113,29 @@ export interface MapToken {
   // actual per-instance combat HP (independent per placed copy of the same monster type).
   character_id?: string;
   monster_index?: string;
+  // Monster token art for players, sent only while the name is visible — the DM's client derives
+  // it from monster_index instead (see tokenImageUrl).
+  image_url?: string;
   // Turn-order value: 1d20 + DEX mod, auto-rolled server-side the moment a monster token is
   // placed; null for a player token until the DM types in that player's roll.
   initiative?: number | null;
   visible_to_players?: boolean;
   name_visible_to_players?: boolean;
+  // Where the token stood when its current turn began — null whenever it isn't its turn — and the
+  // distance it has moved since (server-tracked, see EncountersService.applyTurn).
+  // turn_diagonals is the running diagonal-step count behind the 5/10/5 diagonal rule.
+  turn_start_x?: number | null;
+  turn_start_y?: number | null;
+  // The last square the DM confirmed this turn; a move from it counts toward turn_moved_ft only
+  // once confirmed (see BattleMapService.confirmTokenMove).
+  turn_anchor_x?: number | null;
+  turn_anchor_y?: number | null;
+  turn_moved_ft?: number;
+  turn_diagonals?: number;
+  // The square the token's player asked to be moved to (DM payloads only — a player reads their
+  // own through BattleMapService.getTokenPlan). Cleared when the token's turn ends.
+  planned_x?: number | null;
+  planned_y?: number | null;
 }
 
 // Manual reveal-brush fog of war. `hidden_cells` is a set of "col,row" keys — everything else on

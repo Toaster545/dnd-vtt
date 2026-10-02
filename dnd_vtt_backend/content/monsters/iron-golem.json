@@ -1,0 +1,38 @@
+{
+  "index": "iron-golem",
+  "name": "Iron Golem",
+  "size": "Large",
+  "type": "construct",
+  "alignment": "unaligned",
+  "armor_class": 20,
+  "hit_points": 252,
+  "hit_dice": "24d10 + 120",
+  "speed": { "walk": 30 },
+  "ability_scores": {
+    "strength": 24,
+    "dexterity": 9,
+    "constitution": 20,
+    "intelligence": 3,
+    "wisdom": 11,
+    "charisma": 1
+  },
+  "initiative_bonus": 9,
+  "damage_immunities": ["fire", "poison", "psychic"],
+  "condition_immunities": ["charmed", "exhaustion", "frightened", "paralyzed", "petrified", "poisoned"],
+  "senses": { "darkvision": 120, "passive_perception": 10 },
+  "languages": ["Understands Common plus two other languages but can't speak"],
+  "challenge_rating": "16",
+  "xp": 15000,
+  "traits": [
+    { "name": "Fire Absorption", "description": "Whenever the golem is subjected to Fire damage, it regains a number of Hit Points equal to the Fire damage dealt." },
+    { "name": "Immutable Form", "description": "The golem can't shape-shift." },
+    { "name": "Magic Resistance", "description": "The golem has Advantage on saving throws against spells and other magical effects." }
+  ],
+  "actions": [
+    { "name": "Multiattack", "description": "The golem makes two attacks, using Bladed Arm or Fiery Bolt in any combination." },
+    { "name": "Bladed Arm", "description": "Melee Attack Roll: +12, reach 10 ft. Hit: 20 (3d8 + 7) Slashing damage plus 10 (3d6) Fire damage." },
+    { "name": "Fiery Bolt", "description": "Ranged Attack Roll: +10, range 120 ft. Hit: 36 (8d8) Fire damage." },
+    { "name": "Poison Breath (Recharge 6)", "description": "Constitution Saving Throw: DC 18, each creature in a 60-foot Cone. Failure: 55 (10d10) Poison damage. Success: Half damage." }
+  ],
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 302 }
+}

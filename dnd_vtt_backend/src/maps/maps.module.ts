@@ -9,5 +9,6 @@ import { ContentModule } from '../content/content.module';
   imports: [AuthModule, ContentModule],
   controllers: [MapsController],
   providers: [MapsService, TokensGateway],
+  exports: [TokensGateway],
 })
 export class MapsModule {}

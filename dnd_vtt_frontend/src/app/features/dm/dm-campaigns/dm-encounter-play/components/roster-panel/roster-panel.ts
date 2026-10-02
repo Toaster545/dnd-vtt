@@ -4,7 +4,14 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { DndMonster } from '../../../../../../core/services/content.service';
 import { Character } from '../../../../../../core/models/character.model';
-import { PresentPlayer } from '../../../../../../core/models/encounter.model';
+
+// A party member's character, placeable whether or not their player has joined the encounter.
+export interface RosterPlayer {
+  characterId: string;
+  characterName: string;
+  username: string;
+  present: boolean;
+}
 
 @Component({
   selector: 'app-roster-panel',
@@ -12,13 +19,12 @@ import { PresentPlayer } from '../../../../../../core/models/encounter.model';
   templateUrl: './roster-panel.html',
 })
 export class RosterPanelComponent {
-  readonly presentPlayers = input.required<PresentPlayer[]>();
+  readonly players = input.required<RosterPlayer[]>();
   readonly monsters = input.required<DndMonster[]>();
   readonly characters = input.required<Character[]>();
 
   readonly classLabel = input.required<(c: Character) => string>();
   readonly colorFor = input.required<(id: string) => string>();
-  readonly colorForMonster = input.required<(index: string) => string>();
   readonly isArmedCharacter = input.required<(id: string) => boolean>();
   readonly isArmedMonster = input.required<(index: string) => boolean>();
   readonly isArmedCustomToken = input(false);
@@ -29,13 +35,13 @@ export class RosterPanelComponent {
   readonly addingMonster = input(false);
 
   readonly armCustomToken = output<void>();
-  readonly armPlayer = output<PresentPlayer>();
+  readonly armPlayer = output<RosterPlayer>();
   readonly armMonster = output<DndMonster>();
   readonly armCharacter = output<Character>();
   readonly characterColorChanged = output<{ id: string; color: string }>();
-  readonly monsterColorChanged = output<{ index: string; color: string }>();
   readonly openMonsterSearch = output<void>();
   readonly closeMonsterSearch = output<void>();
   readonly monsterSearchQueryChanged = output<string>();
   readonly addMonster = output<DndMonster>();
+  readonly removeMonster = output<DndMonster>();
 }

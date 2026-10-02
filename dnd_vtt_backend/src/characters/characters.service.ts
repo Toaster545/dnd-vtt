@@ -6,10 +6,15 @@ import {
   ForbiddenException,
 } from '@nestjs/common';
 import { randomUUID } from 'crypto';
+import { mkdirSync, writeFileSync } from 'fs';
+import { join } from 'path';
 import { DatabaseService } from '../common/database.service';
 import type { RequestUser } from '../common/current-user.decorator';
 import { ContentService } from '../content/content.service';
+import { EncounterPresenceGateway } from '../encounters/encounter-presence.gateway';
 import { parseAvatarRecipe } from '../common/avatar-recipe';
+import { parsePortraitImage } from '../common/portrait-image';
+import { parseTokenBorder } from '../common/token-border';
 import {
   EBERRON_SOURCE_CODE,
   disallowedSources,
@@ -164,6 +169,12 @@ const MULTICLASS_SLOTS: Record<number, Record<string, number>> = {
 // access — everything the character play sheet's in-encounter controls touch (HP, resource/spell
 // slot uses from actions and rests, equipment toggles, and their coin purse). Anything else in
 // the data blob (abilities, class, background, etc.) is left untouched even if present in the body.
+const PORTRAIT_UPLOAD_TYPES: Record<string, string> = {
+  'image/png': 'png',
+  'image/jpeg': 'jpg',
+  'image/webp': 'webp',
+};
+
 const PLAYER_EDITABLE_FIELDS = [
   'current_hp',
   'resource_uses',
@@ -183,6 +194,8 @@ const PLAYER_EDITABLE_FIELDS = [
   // recipe is re-validated below via normalizeCharacterAvatar before it's written.
   'portrait_seed',
   'avatar_recipe',
+  'portrait_image',
+  'token_border',
   // Not itself an independent player choice — the frontend recomputes this from whatever's
   // equipped every time it persists (see CharacterPlaySheetComponent.persist), so it has to ride
   // along with the equipment toggle that changed it or campaign-hub/roster views relying on the
@@ -231,6 +244,7 @@ export class CharactersService {
   constructor(
     private db: DatabaseService,
     private content: ContentService,
+    private presence: EncounterPresenceGateway,
   ) {}
 
   // Template characters only — campaign copies (campaign_id set) are DM-editable clones fetched
@@ -485,6 +499,7 @@ export class CharactersService {
         id,
       ],
     );
+    await this.notifyUpdated(id);
     return this.findOneReadable(id, user);
   }
 
@@ -554,7 +569,11 @@ export class CharactersService {
       }
 
       const normalized =
-        'avatar_recipe' in body ? this.normalizeCharacterAvatar(data) : data;
+        'avatar_recipe' in body ||
+        'portrait_image' in body ||
+        'token_border' in body
+          ? this.normalizeCharacterAvatar(data)
+          : data;
       normalized.applied_level = level;
 
       await this.writeCharacterData(id, normalized);
@@ -1312,6 +1331,19 @@ export class CharactersService {
       'UPDATE characters SET data=?, updated_at=? WHERE id=?',
       [JSON.stringify(data), new Date().toISOString(), id],
     );
+    await this.notifyUpdated(id);
+  }
+
+  // Only campaign copies are ever on a battle map — a template character has no one to tell.
+  private async notifyUpdated(id: string) {
+    const result = await this.db.execute(
+      'SELECT campaign_id FROM characters WHERE id = ?',
+      [id],
+    );
+    const campaignId = result.rows[0]?.campaign_id;
+    if (typeof campaignId === 'string') {
+      this.presence.notifyCharacterUpdated(campaignId, id);
+    }
   }
 
   private requiredString(value: unknown, field: string): string {
@@ -1590,7 +1622,11 @@ export class CharactersService {
     // update path does, without risking a throw on a pre-existing recipe during an unrelated
     // (HP, rest, ...) locked save.
     const normalized =
-      'avatar_recipe' in body ? this.normalizeCharacterAvatar(data) : data;
+      'avatar_recipe' in body ||
+      'portrait_image' in body ||
+      'token_border' in body
+        ? this.normalizeCharacterAvatar(data)
+        : data;
 
     // `name` is a characters-table column, not a data-blob key, so it can't ride through
     // PLAYER_EDITABLE_FIELDS like the rest of this whitelist — handled separately here. It's the
@@ -1605,6 +1641,7 @@ export class CharactersService {
       `UPDATE characters SET name=?, data=?, updated_at=? WHERE id=?`,
       [name, JSON.stringify(normalized), new Date().toISOString(), id],
     );
+    await this.notifyUpdated(id);
     return this.findOneReadable(id, user);
   }
 
@@ -1670,16 +1707,52 @@ export class CharactersService {
   private normalizeCharacterAvatar(
     data: Record<string, unknown>,
   ): Record<string, unknown> {
-    if (!Object.prototype.hasOwnProperty.call(data, 'avatar_recipe'))
-      return data;
-    if (data.avatar_recipe == null) {
-      const withoutRecipe = { ...data };
-      delete withoutRecipe.avatar_recipe;
-      return withoutRecipe;
+    const normalized = { ...data };
+    if (Object.prototype.hasOwnProperty.call(normalized, 'avatar_recipe')) {
+      if (normalized.avatar_recipe == null) {
+        delete normalized.avatar_recipe;
+      } else {
+        const recipe = parseAvatarRecipe(normalized.avatar_recipe);
+        if (!recipe) throw new BadRequestException('Invalid avatar recipe');
+        normalized.avatar_recipe = recipe;
+      }
     }
-    const recipe = parseAvatarRecipe(data.avatar_recipe);
-    if (!recipe) throw new BadRequestException('Invalid avatar recipe');
-    return { ...data, avatar_recipe: recipe };
+    // An uploaded portrait takes precedence over the recipe when both are present; the recipe is
+    // kept so switching back to the built avatar restores the player's last design.
+    if (Object.prototype.hasOwnProperty.call(normalized, 'portrait_image')) {
+      if (normalized.portrait_image == null) {
+        delete normalized.portrait_image;
+      } else {
+        const image = parsePortraitImage(normalized.portrait_image);
+        if (!image) throw new BadRequestException('Invalid portrait image');
+        normalized.portrait_image = image;
+      }
+    }
+    if (Object.prototype.hasOwnProperty.call(normalized, 'token_border')) {
+      if (normalized.token_border == null) {
+        delete normalized.token_border;
+      } else {
+        const border = parseTokenBorder(normalized.token_border);
+        if (!border) throw new BadRequestException('Invalid token border');
+        normalized.token_border = border;
+      }
+    }
+    return normalized;
+  }
+
+  uploadPortrait(userId: string, file: Express.Multer.File | undefined) {
+    const extension = file && PORTRAIT_UPLOAD_TYPES[file.mimetype];
+    if (!file?.buffer?.length || !extension) {
+      throw new BadRequestException(
+        'Portrait must be a PNG, JPEG, or WebP image',
+      );
+    }
+    const owner = userId.replace(/[^A-Za-z0-9-]/g, '').slice(0, 64);
+    const dir = join(process.cwd(), 'uploads', 'portraits', owner);
+    mkdirSync(dir, { recursive: true });
+    const filename = `${randomUUID()}.${extension}`;
+    writeFileSync(join(dir, filename), file.buffer);
+    return { url: `/uploads/portraits/${owner}/${filename}` };
   }
 
   private async assertCampaignSources(

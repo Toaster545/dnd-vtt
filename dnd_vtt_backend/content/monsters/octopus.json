@@ -1,0 +1,36 @@
+{
+  "index": "octopus",
+  "name": "Octopus",
+  "size": "Small",
+  "type": "beast",
+  "alignment": "unaligned",
+  "armor_class": 12,
+  "hit_points": 3,
+  "hit_dice": "1d6",
+  "speed": { "walk": 5, "swim": 30 },
+  "ability_scores": {
+    "strength": 4,
+    "dexterity": 15,
+    "constitution": 11,
+    "intelligence": 3,
+    "wisdom": 10,
+    "charisma": 4
+  },
+  "initiative_bonus": 2,
+  "skills": { "Perception": 2, "Stealth": 6 },
+  "senses": { "darkvision": 30, "passive_perception": 12 },
+  "languages": [],
+  "challenge_rating": "0",
+  "xp": 10,
+  "traits": [
+    { "name": "Compression", "description": "The octopus can move through a space as narrow as 1 inch without expending extra movement to do so." },
+    { "name": "Water Breathing", "description": "The octopus can breathe only underwater." }
+  ],
+  "actions": [
+    { "name": "Tentacles", "description": "Melee Attack Roll: +4, reach 5 ft. Hit: 1 Bludgeoning damage." }
+  ],
+  "reactions": [
+    { "name": "Ink Cloud (1/Day)", "description": "Trigger: A creature ends its turn within 5 feet of the octopus while underwater. Response: The octopus releases ink that fills a 5-foot Cube centered on itself, and the octopus moves up to its Swim Speed. The Cube is Heavily Obscured for 1 minute or until a strong current or similar effect disperses the ink." }
+  ],
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 357 }
+}

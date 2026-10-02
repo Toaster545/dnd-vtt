@@ -1,0 +1,35 @@
+{
+  "index": "gray-ooze",
+  "name": "Gray Ooze",
+  "size": "Medium",
+  "type": "ooze",
+  "alignment": "unaligned",
+  "armor_class": 9,
+  "hit_points": 22,
+  "hit_dice": "3d8 + 9",
+  "speed": { "walk": 10, "climb": 10 },
+  "ability_scores": {
+    "strength": 12,
+    "dexterity": 6,
+    "constitution": 16,
+    "intelligence": 1,
+    "wisdom": 6,
+    "charisma": 2
+  },
+  "initiative_bonus": -2,
+  "skills": { "Stealth": 2 },
+  "damage_resistances": ["acid", "cold", "fire"],
+  "condition_immunities": ["blinded", "charmed", "deafened", "exhaustion", "frightened", "grappled", "prone", "restrained"],
+  "senses": { "blindsight": 60, "passive_perception": 8 },
+  "languages": [],
+  "challenge_rating": "1/2",
+  "xp": 100,
+  "traits": [
+    { "name": "Amorphous", "description": "The ooze can move through a space as narrow as 1 inch without expending extra movement to do so." },
+    { "name": "Corrosive Form", "description": "Nonmagical ammunition is destroyed immediately after hitting the ooze and dealing any damage. Any nonmagical weapon takes a cumulative -1 penalty to attack rolls immediately after dealing damage to the ooze and coming into contact with it. The weapon is destroyed if the penalty reaches -5. The penalty can be removed by casting the Mending spell on the weapon. The ooze can eat through 2-inch-thick, nonmagical metal or wood in 1 round." }
+  ],
+  "actions": [
+    { "name": "Pseudopod", "description": "Melee Attack Roll: +3, reach 5 ft. Hit: 10 (2d8 + 1) Acid damage. Nonmagical armor worn by the target takes a -1 penalty to the AC it offers. The armor is destroyed if the penalty reduces its AC to 10. The penalty can be removed by casting the Mending spell on the armor." }
+  ],
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 293 }
+}

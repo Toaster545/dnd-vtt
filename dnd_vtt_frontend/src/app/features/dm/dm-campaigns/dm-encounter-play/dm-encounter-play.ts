@@ -14,8 +14,12 @@ import { Encounter, PresentPlayer } from '../../../../core/models/encounter.mode
 import { Character } from '../../../../core/models/character.model';
 import { PortraitSource } from '../../../../core/models/avatar.model';
 import { portraitSource } from '../../../../core/utils/avatar';
+import { TokenBorder } from '../../../../core/models/token-border.model';
+import { normalizeTokenBorder } from '../../../../core/utils/token-border';
+import { getErrorMessage } from '../../../../core/utils/error-message';
 import { campaignContentEnabled } from '../../../../core/utils/content-sources';
-import { MapToken, PlacingEntity } from '../../../../core/models/campaign.model';
+import { CampaignMember, MapToken, PlacingEntity } from '../../../../core/models/campaign.model';
+import { RosterPlayer } from './components/roster-panel/roster-panel';
 import { BattleMapComponent } from '../../../battle-map/battle-map';
 import { CharacterPlaySheetComponent } from '../../../characters/character-play-sheet/character-play-sheet';
 import { ResizeHandleDirective } from '../../../../shared/directives/resize-handle.directive';
@@ -65,11 +69,65 @@ export class DmEncounterPlayComponent implements OnInit, OnDestroy {
   currentTurnToken = signal<MapToken | null>(null);
   togglingTurn = signal(false);
 
+  // Which level of the encounter the DM is looking at. Players each see their own character's
+  // level independently — this only drives the DM's own map.
+  levels = computed(() => this.selected()?.levels ?? []);
+  private viewMapId = signal<string | null>(null);
+  activeMapId = computed(() => {
+    const wanted = this.viewMapId();
+    return wanted && this.levels().some(l => l.map_id === wanted) ? wanted : this.selected()?.map_id ?? null;
+  });
+  movingToken = signal(false);
+  switchingPlayerLevel = signal(false);
+  playerLevelError = signal<string | null>(null);
+
+  levelName(mapId: string | null | undefined): string {
+    return this.levels().find(l => l.map_id === mapId)?.name ?? 'Unknown level';
+  }
+
+  // The level a character's player is currently shown — the DM's explicit choice, else the entry level.
+  playerLevelFor(characterId: string): string | null {
+    const encounter = this.selected();
+    return encounter?.player_levels?.[characterId] ?? encounter?.map_id ?? null;
+  }
+
+  // Whichever token's detail panel is open — the one "Move to level" acts on.
+  selectedToken = computed(() =>
+    this.viewingCustomToken() ?? this.viewingMonsterToken()?.token ?? this.viewingCharacterSummary()?.token ?? null
+  );
+
   presentPlayers = signal<PresentPlayer[]>([]);
+  private members = signal<CampaignMember[]>([]);
+
+  // The whole party, connected or not — the DM can place a member's token before they join.
+  // Connected players first; anyone present who isn't (yet) in the member list still shows.
+  partyPlayers = computed<RosterPlayer[]>(() => {
+    const present = new Set(this.presentPlayers().map(p => p.characterId));
+    const rows = new Map<string, RosterPlayer>();
+    for (const m of this.members()) {
+      if (m.status === 'removed' || !m.character_id) continue;
+      rows.set(m.character_id, {
+        characterId: m.character_id, characterName: m.character_name, username: m.username,
+        present: present.has(m.character_id),
+      });
+    }
+    for (const p of this.presentPlayers()) {
+      if (!rows.has(p.characterId)) {
+        rows.set(p.characterId, {
+          characterId: p.characterId, characterName: p.characterName, username: p.username, present: true,
+        });
+      }
+    }
+    return [...rows.values()].sort((a, b) => Number(b.present) - Number(a.present));
+  });
   private presenceSub?: Subscription;
 
+  // Every level's tokens, so the side panel's turn order covers the whole encounter.
+  turnOrderTokens = signal<MapToken[] | null>(null);
+  private turnOrderSub?: Subscription;
+
   private extraCharacters = signal<Record<string, Character>>({});
-  private hpPollInterval?: ReturnType<typeof setInterval>;
+  private characterUpdatedSub?: Subscription;
 
   armedEntity = signal<PlacingEntity | null>(null);
 
@@ -97,7 +155,16 @@ export class DmEncounterPlayComponent implements OnInit, OnDestroy {
   characterPortraits = computed(() => {
     const map: Record<string, PortraitSource> = {};
     for (const c of Object.values(this.allCharactersById())) {
-      if (c.id) map[c.id] = portraitSource(c.portrait_seed || c.id, c.avatar_recipe);
+      if (c.id) map[c.id] = portraitSource(c.portrait_seed || c.id, c.avatar_recipe, c.portrait_image);
+    }
+    return map;
+  });
+
+  characterTokenBorders = computed(() => {
+    const map: Record<string, TokenBorder> = {};
+    for (const c of Object.values(this.allCharactersById())) {
+      const border = normalizeTokenBorder(c.token_border);
+      if (c.id && border) map[c.id] = border;
     }
     return map;
   });
@@ -151,12 +218,30 @@ export class DmEncounterPlayComponent implements OnInit, OnDestroy {
     this.loading.set(false);
 
     this.selected.set(encounter);
+    this.viewMapId.set(encounter.current_turn_map_id ?? null);
+    void this.loadMembers();
     this.presenceSub = this.encounterService.watchPresence(encounter.id!)
       .subscribe(players => {
         this.presentPlayers.set(players);
         this.refreshPresentCharacters(players);
+        // Someone who joined the campaign after this page loaded.
+        const known = new Set(this.members().map(m => m.character_id));
+        if (players.some(p => !known.has(p.characterId))) void this.loadMembers();
       });
-    this.hpPollInterval = setInterval(() => this.refreshPresentCharacters(this.presentPlayers()), 6000);
+    this.turnOrderSub = this.encounterService.watchTurnOrder(encounter.id!)
+      .subscribe(tokens => this.turnOrderTokens.set(tokens));
+    // A player changing their HP (or anything else) on their own sheet — refetched so token HP
+    // badges and the roster stay current. Only characters this page already fetched for itself;
+    // the DM's own characters come from `characters()` and are updated where the DM edits them.
+    this.characterUpdatedSub = this.encounterService.watchCharacterUpdated().subscribe(event => {
+      if (event.campaignId !== this.campaignId || !this.extraCharacters()[event.characterId]) return;
+      this.characterService.getCharacter(event.characterId).then(
+        character => this.extraCharacters.update(map => ({ ...map, [event.characterId]: character })),
+        () => {
+          // Keep the last-known copy; the next character_updated push retries the fetch.
+        },
+      );
+    });
   }
 
   backToSession() {
@@ -173,11 +258,25 @@ export class DmEncounterPlayComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.presenceSub?.unsubscribe();
-    clearInterval(this.hpPollInterval);
+    this.turnOrderSub?.unsubscribe();
+    this.characterUpdatedSub?.unsubscribe();
   }
 
-  private async refreshPresentCharacters(players: PresentPlayer[]) {
-    const ids = [...new Set(players.map(p => p.characterId).filter(Boolean))]
+  // Also loads each member's character, so an absent player's token still gets its HP badge and
+  // portrait once placed.
+  private async loadMembers() {
+    const members = await this.campaignService.getMembers(this.campaignId).catch(() => null);
+    if (!members) return;
+    this.members.set(members);
+    await this.loadCharacters(members.filter(m => m.status !== 'removed').map(m => m.character_id));
+  }
+
+  private refreshPresentCharacters(players: PresentPlayer[]) {
+    return this.loadCharacters(players.map(p => p.characterId));
+  }
+
+  private async loadCharacters(characterIds: string[]) {
+    const ids = [...new Set(characterIds.filter(Boolean))]
       .filter(id => !this.characters().some(c => c.id === id));
     if (!ids.length) return;
     const fetched = await Promise.all(ids.map(id => this.characterService.getCharacter(id).catch(() => null)));
@@ -215,7 +314,7 @@ export class DmEncounterPlayComponent implements OnInit, OnDestroy {
     if (!encounter?.id) return;
     this.togglingTurn.set(true);
     try {
-      this.selected.set(await this.encounterService.nextTurn(encounter.id));
+      this.followTurn(await this.encounterService.nextTurn(encounter.id));
     } finally {
       this.togglingTurn.set(false);
     }
@@ -226,10 +325,61 @@ export class DmEncounterPlayComponent implements OnInit, OnDestroy {
     if (!encounter?.id) return;
     this.togglingTurn.set(true);
     try {
-      this.selected.set(await this.encounterService.previousTurn(encounter.id));
+      this.followTurn(await this.encounterService.previousTurn(encounter.id));
     } finally {
       this.togglingTurn.set(false);
     }
+  }
+
+  // Combat spans every level, so stepping the turn jumps the DM's view to wherever the
+  // now-active token is.
+  private followTurn(encounter: Encounter) {
+    this.selected.set(encounter);
+    if (encounter.current_turn_map_id) this.viewMapId.set(encounter.current_turn_map_id);
+  }
+
+  showLevel(mapId: string) {
+    if (mapId === this.activeMapId()) return;
+    this.closeTokenPanels();
+    this.viewMapId.set(mapId);
+  }
+
+  // Stairs: moves the selected token (keeping its position, HP and initiative) to another level.
+  // A character token's player follows it automatically (see MapsService.moveTokenToMap).
+  async moveSelectedTokenToLevel(targetMapId: string) {
+    const token = this.selectedToken();
+    if (!token?.id || !targetMapId || targetMapId === token.map_id) return;
+    this.movingToken.set(true);
+    try {
+      await this.mapService.moveTokenToMap(token, targetMapId);
+      this.closeTokenPanels();
+    } finally {
+      this.movingToken.set(false);
+    }
+  }
+
+  // Shows the selected character token's level to that character's player. The token being on
+  // this level is what makes the switch allowed (re-checked server-side).
+  async showTokenLevelToPlayer(token: MapToken) {
+    const encounter = this.selected();
+    if (!encounter?.id || !token.character_id) return;
+    this.switchingPlayerLevel.set(true);
+    this.playerLevelError.set(null);
+    try {
+      this.selected.set(await this.encounterService.setPlayerLevel(encounter.id, token.character_id, token.map_id));
+    } catch (e) {
+      this.playerLevelError.set(getErrorMessage(e));
+    } finally {
+      this.switchingPlayerLevel.set(false);
+    }
+  }
+
+  private closeTokenPanels() {
+    this.playerLevelError.set(null);
+    this.viewingCustomToken.set(null);
+    this.viewingMonsterToken.set(null);
+    this.viewingCharacterSummary.set(null);
+    this.hpAdjustAmount.set(0);
   }
 
   openMonsterSearch() {
@@ -248,6 +398,22 @@ export class DmEncounterPlayComponent implements OnInit, OnDestroy {
     try {
       this.selected.set(await this.encounterService.update(encounter.id, {
         monsters: [...encounter.monsters, monster.index],
+      }));
+    } finally {
+      this.addingMonster.set(false);
+    }
+  }
+
+  // Only takes it off the roster — tokens of it already on the map stay where they are.
+  async removeMonsterFromEncounter(monster: DndMonster) {
+    const encounter = this.selected();
+    if (!encounter?.id || !encounter.monsters.includes(monster.index)) return;
+    const armed = this.armedEntity();
+    if (armed?.kind === 'monster' && armed.monsterIndex === monster.index) this.armedEntity.set(null);
+    this.addingMonster.set(true);
+    try {
+      this.selected.set(await this.encounterService.update(encounter.id, {
+        monsters: encounter.monsters.filter(index => index !== monster.index),
       }));
     } finally {
       this.addingMonster.set(false);
@@ -314,7 +480,7 @@ export class DmEncounterPlayComponent implements OnInit, OnDestroy {
     });
   }
 
-  toggleArmPresentPlayer(player: PresentPlayer) {
+  toggleArmPartyPlayer(player: RosterPlayer) {
     this.toggleArm({
       kind: 'character',
       label: player.characterName,
@@ -336,7 +502,7 @@ export class DmEncounterPlayComponent implements OnInit, OnDestroy {
 
   private rosterIds(): string[] {
     const fromRoster = this.selected()?.character_ids ?? [];
-    const fromPresence = this.presentPlayers().map(p => p.characterId);
+    const fromPresence = this.partyPlayers().map(p => p.characterId);
     return [...new Set([...fromRoster, ...fromPresence])];
   }
 
@@ -349,24 +515,13 @@ export class DmEncounterPlayComponent implements OnInit, OnDestroy {
   }
 
   private readonly monsterPalette = ['#e74c3c', '#f97316', '#c026d3', '#7c3aed', '#0891b2', '#65a30d', '#dc2626', '#78716c'];
-  private monsterColorOverrides = signal<Record<string, string>>({});
 
   readonly colorForMonster = (monsterIndex: string): string => {
-    const override = this.monsterColorOverrides()[monsterIndex];
-    if (override) return override;
     const defined = this.monsterFor(monsterIndex)?.color;
     if (defined) return defined;
     const idx = (this.selected()?.monsters ?? []).indexOf(monsterIndex);
     return this.monsterPalette[idx >= 0 ? idx % this.monsterPalette.length : 0];
   };
-
-  setMonsterColor(monsterIndex: string, color: string) {
-    this.monsterColorOverrides.update(map => ({ ...map, [monsterIndex]: color }));
-    const armed = this.armedEntity();
-    if (armed?.kind === 'monster' && armed.monsterIndex === monsterIndex) {
-      this.armedEntity.set({ ...armed, color });
-    }
-  }
 
   private toggleArm(entity: PlacingEntity) {
     const current = this.armedEntity();
@@ -375,10 +530,25 @@ export class DmEncounterPlayComponent implements OnInit, OnDestroy {
     this.armedEntity.set(same ? null : entity);
   }
 
-  onTokenClicked(token: MapToken) {
+  // Bumped on every token click, so a slow character fetch can't open its panel over a token
+  // clicked after it.
+  private tokenClickSeq = 0;
+
+  async onTokenClicked(token: MapToken) {
+    // Only one token panel at a time — the template shows custom > monster > character, so a
+    // panel left open from the previous click would hide this one.
+    this.closeTokenPanels();
+    const seq = ++this.tokenClickSeq;
     if (token.character_id) {
-      const character = this.characterFor(token.character_id);
-      if (character) this.viewingCharacterSummary.set({ token, character });
+      // A player's campaign copy isn't among the DM's own characters, and is only preloaded while
+      // that player is connected — fetch it on demand so their token always opens its panel.
+      let character = this.characterFor(token.character_id);
+      if (!character) {
+        character = await this.characterService.getCharacter(token.character_id).catch(() => undefined);
+        if (!character || seq !== this.tokenClickSeq) return;
+        this.extraCharacters.update(map => ({ ...map, [token.character_id!]: character! }));
+      }
+      this.viewingCharacterSummary.set({ token, character });
       return;
     }
     if (token.monster_index) {

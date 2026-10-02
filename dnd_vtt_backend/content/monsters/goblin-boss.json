@@ -6,12 +6,9 @@
   "alignment": "chaotic neutral",
   "color": "#40e754",
   "armor_class": 17,
-  "armor_class_desc": "chain shirt, shield",
   "hit_points": 21,
   "hit_dice": "6d6",
-  "speed": {
-    "walk": 30
-  },
+  "speed": { "walk": 30 },
   "ability_scores": {
     "strength": 10,
     "dexterity": 15,
@@ -20,48 +17,24 @@
     "wisdom": 8,
     "charisma": 10
   },
-  "saving_throws": {
-    "Dexterity": 2,
-    "Wisdom": -1
-  },
-  "skills": {
-    "Stealth": 6
-  },
-  "senses": {
-    "darkvision": 60,
-    "passive_perception": 9
-  },
-  "languages": [
-    "Common",
-    "Goblin"
-  ],
+  "initiative_bonus": 2,
+  "skills": { "Stealth": 6 },
+  "gear": ["Chain Shirt", "Scimitar", "Shield", "Shortbow"],
+  "senses": { "darkvision": 60, "passive_perception": 9 },
+  "languages": ["Common", "Goblin"],
   "challenge_rating": "1",
   "xp": 200,
-  "traits": [
-    {
-      "name": "Nimble Escape",
-      "description": "As a bonus action, the goblin can take the Disengage or Hide action."
-    }
-  ],
   "actions": [
-    {
-      "name": "Multiattack",
-      "description": "The goblin makes two attacks, using Scimitar or Shortbow in any combination."
-    },
-    {
-      "name": "Scimitar",
-      "description": "Melee Attack Roll: +4, reach 5 ft. Hit: 5 (1d6 + 2) Slashing damage. If the attack roll had advantage, add another 2 (1d4) Slashing damage."
-    },
-    {
-      "name": "Shortbow",
-      "description": "Ranged Attack Roll: +4, range 80/320 ft. Hit: 5 (1d6 + 2) Piercing damage. If the attack roll had advantage, add another 2 (1d4) Piercing damage."
-    }
+    { "name": "Multiattack", "description": "The goblin makes two attacks, using Scimitar or Shortbow in any combination." },
+    { "name": "Scimitar", "description": "Melee Attack Roll: +4, reach 5 ft. Hit: 5 (1d6 + 2) Slashing damage, plus 2 (1d4) Slashing damage if the attack roll had Advantage." },
+    { "name": "Shortbow", "description": "Ranged Attack Roll: +4, range 80/320 ft. Hit: 5 (1d6 + 2) Piercing damage, plus 2 (1d4) Piercing damage if the attack roll had Advantage." }
+  ],
+  "bonus_actions": [
+    { "name": "Nimble Escape", "description": "The goblin takes the Disengage or Hide action." }
   ],
   "reactions": [
-    {
-      "name": "Redirect Attack",
-      "description": "When a creature the goblin can see hits it with an attack roll, the goblin swaps places with a Small or Medium ally within 5 feet of it that isn't incapacitated, and that ally becomes the target of the attack instead."
-    }
+    { "name": "Redirect Attack", "description": "Trigger: A creature the goblin can see makes an attack roll against it. Response: The goblin chooses a Small or Medium ally within 5 feet of itself. The goblin and that ally swap places, and the ally becomes the target of the attack instead." }
   ],
-  "description": "Goblin bosses lead their warband's raiding parties, staying just behind the front line while directing the battle and rewarding the boldest of their underlings."
+  "description": "Goblin bosses lead their warband's raiding parties, staying just behind the front line while directing the battle and rewarding the boldest of their underlings.",
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 290 }
 }

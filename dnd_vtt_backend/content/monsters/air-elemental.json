@@ -7,7 +7,7 @@
   "armor_class": 15,
   "hit_points": 90,
   "hit_dice": "12d10 + 24",
-  "speed": { "walk": 0, "fly": 90, "hover": true },
+  "speed": { "walk": 10, "fly": 90, "hover": true },
   "ability_scores": {
     "strength": 14,
     "dexterity": 20,
@@ -17,20 +17,21 @@
     "charisma": 6
   },
   "initiative_bonus": 5,
-  "damage_resistances": ["lightning", "thunder", "bludgeoning, piercing, and slashing from nonmagical attacks"],
-  "damage_immunities": ["poison"],
+  "damage_resistances": ["bludgeoning", "lightning", "piercing", "slashing"],
+  "damage_immunities": ["poison", "thunder"],
   "condition_immunities": ["exhaustion", "grappled", "paralyzed", "petrified", "poisoned", "prone", "restrained", "unconscious"],
   "senses": { "darkvision": 60, "passive_perception": 10 },
-  "languages": ["Auran"],
+  "languages": ["Primordial (Auran)"],
   "challenge_rating": "5",
   "xp": 1800,
   "traits": [
-    { "name": "Air Form", "description": "The elemental can enter a hostile creature's space and stop there. It can move through a space as narrow as 1 inch without squeezing." }
+    { "name": "Air Form", "description": "The elemental can enter a creature's space and stop there. It can move through a space as narrow as 1 inch without expending extra movement to do so." }
   ],
   "actions": [
-    { "name": "Multiattack", "description": "The elemental makes two Slam attacks." },
-    { "name": "Slam", "description": "Melee Attack Roll: +8, reach 5 ft. Hit: 14 (2d8 + 5) Bludgeoning damage." },
-    { "name": "Whirlwind (Recharge 4-6)", "description": "Each Huge or smaller creature in the elemental's space must succeed on a DC 15 Strength saving throw or take 15 (3d6 + 5) Bludgeoning damage and be flung up to 20 feet away from the elemental in a random direction and knocked prone. If a thrown target strikes an object, such as a wall or floor, it takes 3 (1d6) Bludgeoning damage for every 10 feet it was thrown. If the target is thrown at another creature, that creature must succeed on a DC 15 Dexterity saving throw or take the same damage and be knocked prone. If the saving throw against this action is successful, the target takes half the damage and isn't flung away or knocked prone. Only one target can be affected by this action at a time." }
+    { "name": "Multiattack", "description": "The elemental makes two Thunderous Slam attacks." },
+    { "name": "Thunderous Slam", "description": "Melee Attack Roll: +8, reach 10 ft. Hit: 14 (2d8 + 5) Thunder damage." },
+    { "name": "Whirlwind (Recharge 4-6)", "description": "Strength Saving Throw: DC 13, one Medium or smaller creature in the elemental's space. Failure: 24 (4d10 + 2) Thunder damage, and the target is pushed up to 20 feet straight away from the elemental and has the Prone condition. Success: Half damage only." }
   ],
-  "description": "Air elementals are gaseous, ever-shifting vortices summoned from the Elemental Plane of Air, howling wind-shapes that batter foes with slamming gusts and catch stragglers in a whirlwind."
+  "description": "Air elementals are gaseous, ever-shifting vortices summoned from the Elemental Plane of Air, howling wind-shapes that batter foes with slamming gusts and catch stragglers in a whirlwind.",
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 258 }
 }

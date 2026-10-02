@@ -1,0 +1,30 @@
+{
+  "index": "violet-fungus",
+  "name": "Violet Fungus",
+  "size": "Medium",
+  "type": "plant",
+  "alignment": "unaligned",
+  "armor_class": 5,
+  "hit_points": 18,
+  "hit_dice": "4d8",
+  "speed": { "walk": 5 },
+  "ability_scores": {
+    "strength": 3,
+    "dexterity": 1,
+    "constitution": 10,
+    "intelligence": 1,
+    "wisdom": 3,
+    "charisma": 1
+  },
+  "initiative_bonus": -5,
+  "condition_immunities": ["blinded", "charmed", "deafened", "frightened"],
+  "senses": { "blindsight": 30, "passive_perception": 6 },
+  "languages": [],
+  "challenge_rating": "1/4",
+  "xp": 50,
+  "actions": [
+    { "name": "Multiattack", "description": "The fungus makes two Rotting Touch attacks." },
+    { "name": "Rotting Touch", "description": "Melee Attack Roll: +2, reach 10 ft. Hit: 4 (1d8) Necrotic damage." }
+  ],
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 286 }
+}

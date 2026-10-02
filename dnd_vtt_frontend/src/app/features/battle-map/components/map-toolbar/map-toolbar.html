@@ -20,9 +20,18 @@
             (click)="moveRangeToggled.emit()" matTooltip="Show my movement range">
       <mat-icon class="text-base">directions_walk</mat-icon>
     </button>
-    <input type="color" class="w-8 h-8 rounded cursor-pointer border border-white/10 bg-transparent p-0.5"
-           [ngModel]="myTokenColor()" (ngModelChange)="myTokenColorChanged.emit($event)"
-           matTooltip="My token color" />
+    @if (!isAdmin()) {
+      <button class="btn-icon w-8 h-8" [class.border-gold/50]="pickingDestination()" [class.bg-gold/5]="pickingDestination()"
+              (click)="destinationToolToggled.emit()"
+              matTooltip="Pick where you'd like to move — the DM sees it on your turn">
+        <mat-icon class="text-base">flag</mat-icon>
+      </button>
+      @if (hasDestination()) {
+        <button class="btn-icon w-8 h-8" (click)="clearDestination.emit()" matTooltip="Clear my planned destination">
+          <mat-icon class="text-base">outlined_flag</mat-icon>
+        </button>
+      }
+    }
   }
 
   @if (isAdmin()) {

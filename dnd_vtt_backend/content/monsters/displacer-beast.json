@@ -30,5 +30,6 @@
     { "name": "Multiattack", "description": "The beast makes two Tentacle attacks." },
     { "name": "Tentacle", "description": "Melee Attack Roll: +6, reach 10 ft. Hit: 7 (1d6 + 4) Bludgeoning damage plus 3 (1d6) Piercing damage." }
   ],
-  "description": "Displacer beasts are sleek, panther-like predators with a pair of barbed tentacles, their innate illusion magic making them appear to stand a few feet from where they truly are."
+  "description": "Displacer beasts are sleek, panther-like predators with a pair of barbed tentacles, their innate illusion magic making them appear to stand a few feet from where they truly are.",
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": false, "rules_text": "reference-only" }
 }

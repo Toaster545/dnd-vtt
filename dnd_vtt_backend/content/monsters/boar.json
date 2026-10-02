@@ -1,0 +1,31 @@
+{
+  "index": "boar",
+  "name": "Boar",
+  "size": "Medium",
+  "type": "beast",
+  "alignment": "unaligned",
+  "armor_class": 11,
+  "hit_points": 13,
+  "hit_dice": "2d8 + 4",
+  "speed": { "walk": 40 },
+  "ability_scores": {
+    "strength": 13,
+    "dexterity": 11,
+    "constitution": 14,
+    "intelligence": 2,
+    "wisdom": 9,
+    "charisma": 5
+  },
+  "initiative_bonus": 0,
+  "senses": { "passive_perception": 9 },
+  "languages": [],
+  "challenge_rating": "1/4",
+  "xp": 50,
+  "traits": [
+    { "name": "Bloodied Fury", "description": "While Bloodied, the boar has Advantage on attack rolls." }
+  ],
+  "actions": [
+    { "name": "Gore", "description": "Melee Attack Roll: +3, reach 5 ft. Hit: 4 (1d6 + 1) Piercing damage. If the target is a Medium or smaller creature and the boar moved 20+ feet straight toward it immediately before the hit, the target takes an extra 3 (1d6) Piercing damage and has the Prone condition." }
+  ],
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 346 }
+}

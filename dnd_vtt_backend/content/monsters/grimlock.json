@@ -1,0 +1,29 @@
+{
+  "index": "grimlock",
+  "name": "Grimlock",
+  "size": "Medium",
+  "type": "aberration",
+  "alignment": "neutral evil",
+  "armor_class": 11,
+  "hit_points": 11,
+  "hit_dice": "2d8 + 2",
+  "speed": { "walk": 30, "climb": 30 },
+  "ability_scores": {
+    "strength": 16,
+    "dexterity": 12,
+    "constitution": 12,
+    "intelligence": 9,
+    "wisdom": 8,
+    "charisma": 6
+  },
+  "initiative_bonus": 1,
+  "skills": { "Athletics": 5, "Perception": 3, "Stealth": 5 },
+  "senses": { "blindsight": 30, "passive_perception": 13 },
+  "languages": [],
+  "challenge_rating": "1/4",
+  "xp": 50,
+  "actions": [
+    { "name": "Bone Cudgel", "description": "Melee Attack Roll: +5, reach 5 ft. Hit: 6 (1d6 + 3) Bludgeoning damage plus 2 (1d4) Psychic damage." }
+  ],
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 296 }
+}

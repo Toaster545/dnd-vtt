@@ -12,6 +12,8 @@ import { Server, Socket } from 'socket.io';
 import { DatabaseService } from '../common/database.service';
 import { SocketAuthService } from '../auth/socket-auth.service';
 import { AvatarRecipeV1, parseAvatarRecipe } from '../common/avatar-recipe';
+import { parsePortraitImage } from '../common/portrait-image';
+import { parseTokenBorder, TokenBorder } from '../common/token-border';
 
 interface PresentPlayer {
   socketId: string;
@@ -24,6 +26,8 @@ interface PresentPlayer {
   max_hp?: number;
   portraitSeed?: string;
   avatarRecipe?: AvatarRecipeV1;
+  portraitImage?: string;
+  tokenBorder?: TokenBorder;
 }
 
 // Tracks which players currently have an encounter open (for the DM's "Players" roster section) —
@@ -129,6 +133,9 @@ export class EncounterPresenceGateway
           ? characterData.portrait_seed
           : undefined,
       avatarRecipe: parseAvatarRecipe(characterData.avatar_recipe) ?? undefined,
+      portraitImage:
+        parsePortraitImage(characterData.portrait_image) ?? undefined,
+      tokenBorder: parseTokenBorder(characterData.token_border) ?? undefined,
     });
     this.broadcast(data.encounterId);
   }
@@ -165,11 +172,23 @@ export class EncounterPresenceGateway
   // both the DM's own other tabs and every joined player pick it up without a separate room/join.
   broadcastTurnState(
     encounterId: string,
-    state: { current_turn_token_id: string | null; round_number: number },
+    state: {
+      current_turn_token_id: string | null;
+      current_turn_map_id: string | null;
+      round_number: number;
+    },
   ) {
     this.server
       .to(`encounter-presence:${encounterId}`)
       .emit('turn_changed', state);
+  }
+
+  // The encounter's level list changed, so its cross-level turn order did too — same event
+  // TokensGateway sends when a token changes on one of the levels.
+  notifyTokensChanged(encounterId: string) {
+    this.server
+      .to(`encounter-presence:${encounterId}`)
+      .emit('encounter_tokens_changed', { encounterId });
   }
 
   // Global broadcast (no room) so any connected player's client can decide for itself whether the
@@ -187,6 +206,14 @@ export class EncounterPresenceGateway
       .emit('encounter_started', payload);
   }
 
+  // The DM switched which level a character's player is shown — the owning player's client
+  // re-resolves its level (see EncountersService.findMyLevel), everyone else ignores it.
+  notifyCharacterLevelChanged(campaignId: string, characterId: string) {
+    this.server
+      .to(`campaign:${campaignId}`)
+      .emit('character_level_changed', { campaignId, characterId });
+  }
+
   // Same campaign-room broadcast as encounter_started: the DM levelled the party, so every
   // connected member's client can surface a "you have a level-up to apply" banner. The client
   // resolves which of its own characters is affected (one per campaign) — see ShellComponent.
@@ -198,6 +225,15 @@ export class EncounterPresenceGateway
     this.server
       .to(`campaign:${payload.campaignId}`)
       .emit('party_leveled', payload);
+  }
+
+  // A character's saved data changed (HP from their own sheet, a spell slot, an item...) — the
+  // DM's encounter page refetches it so token HP badges and the roster stay current without
+  // polling. Ids only: clients that care refetch through the normal access-checked endpoint.
+  notifyCharacterUpdated(campaignId: string, characterId: string) {
+    this.server
+      .to(`campaign:${campaignId}`)
+      .emit('character_updated', { campaignId, characterId });
   }
 
   private async assertEncounterAccess(

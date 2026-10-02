@@ -1,0 +1,44 @@
+{
+  "index": "adult-red-dragon",
+  "name": "Adult Red Dragon",
+  "size": "Huge",
+  "type": "dragon (chromatic)",
+  "alignment": "chaotic evil",
+  "armor_class": 19,
+  "hit_points": 256,
+  "hit_dice": "19d12 + 133",
+  "speed": { "walk": 40, "climb": 40, "fly": 80 },
+  "ability_scores": {
+    "strength": 27,
+    "dexterity": 10,
+    "constitution": 25,
+    "intelligence": 16,
+    "wisdom": 13,
+    "charisma": 23
+  },
+  "initiative_bonus": 12,
+  "saving_throws": { "Dexterity": 6, "Wisdom": 7 },
+  "skills": { "Perception": 13, "Stealth": 6 },
+  "damage_immunities": ["fire"],
+  "senses": { "blindsight": 60, "darkvision": 120, "passive_perception": 23 },
+  "languages": ["Common", "Draconic"],
+  "challenge_rating": "17",
+  "xp": 18000,
+  "xp_in_lair": 20000,
+  "traits": [
+    { "name": "Legendary Resistance (3/Day, or 4/Day in Lair)", "description": "If the dragon fails a saving throw, it can choose to succeed instead." }
+  ],
+  "actions": [
+    { "name": "Multiattack", "description": "The dragon makes three Rend attacks. It can replace one attack with a use of Spellcasting to cast Scorching Ray." },
+    { "name": "Rend", "description": "Melee Attack Roll: +14, reach 10 ft. Hit: 13 (1d10 + 8) Slashing damage plus 5 (2d4) Fire damage." },
+    { "name": "Fire Breath (Recharge 5-6)", "description": "Dexterity Saving Throw: DC 21, each creature in a 60-foot Cone. Failure: 59 (17d6) Fire damage. Success: Half damage." },
+    { "name": "Spellcasting", "description": "The dragon casts one of the following spells, requiring no Material components and using Charisma as the spellcasting ability (spell save DC 20, +12 to hit with spell attacks):\nAt Will: Command (level 2 version), Detect Magic, Scorching Ray\n1/Day: Fireball" }
+  ],
+  "legendary_description": "Legendary Action Uses: 3 (4 in Lair). Immediately after another creature's turn, the dragon can expend a use to take one of the following actions. The dragon regains all expended uses at the start of each of its turns.",
+  "legendary_actions": [
+    { "name": "Commanding Presence", "description": "The dragon uses Spellcasting to cast Command (level 2 version). The dragon can't take this action again until the start of its next turn." },
+    { "name": "Fiery Rays", "description": "The dragon uses Spellcasting to cast Scorching Ray. The dragon can't take this action again until the start of its next turn." },
+    { "name": "Pounce", "description": "The dragon moves up to half its Speed, and it makes one Rend attack." }
+  ],
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 318 }
+}

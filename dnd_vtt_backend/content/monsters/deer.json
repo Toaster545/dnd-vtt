@@ -1,0 +1,32 @@
+{
+  "index": "deer",
+  "name": "Deer",
+  "size": "Medium",
+  "type": "beast",
+  "alignment": "unaligned",
+  "armor_class": 13,
+  "hit_points": 4,
+  "hit_dice": "1d8",
+  "speed": { "walk": 50 },
+  "ability_scores": {
+    "strength": 11,
+    "dexterity": 16,
+    "constitution": 11,
+    "intelligence": 2,
+    "wisdom": 14,
+    "charisma": 5
+  },
+  "initiative_bonus": 3,
+  "skills": { "Perception": 4 },
+  "senses": { "darkvision": 60, "passive_perception": 14 },
+  "languages": [],
+  "challenge_rating": "0",
+  "xp": 10,
+  "traits": [
+    { "name": "Agile", "description": "The deer doesn't provoke an Opportunity Attack when it moves out of an enemy's reach." }
+  ],
+  "actions": [
+    { "name": "Ram", "description": "Melee Attack Roll: +2, reach 5 ft. Hit: 2 (1d4) Bludgeoning damage." }
+  ],
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 347 }
+}

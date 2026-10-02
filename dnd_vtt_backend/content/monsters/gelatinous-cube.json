@@ -5,8 +5,8 @@
   "type": "ooze",
   "alignment": "unaligned",
   "armor_class": 6,
-  "hit_points": 84,
-  "hit_dice": "8d10 + 40",
+  "hit_points": 63,
+  "hit_dice": "6d10 + 30",
   "speed": { "walk": 15 },
   "ability_scores": {
     "strength": 14,
@@ -17,19 +17,20 @@
     "charisma": 1
   },
   "initiative_bonus": -4,
-  "damage_immunities": ["acid", "cold"],
+  "damage_immunities": ["acid"],
   "condition_immunities": ["blinded", "charmed", "deafened", "exhaustion", "frightened", "prone"],
   "senses": { "blindsight": 60, "passive_perception": 8 },
   "languages": [],
   "challenge_rating": "2",
   "xp": 450,
   "traits": [
-    { "name": "Ooze Cube", "description": "The cube takes up its entire 10-foot space. Other creatures can enter the space, but a creature that does so is subjected to the cube's Engulf and has Disadvantage on the saving throw." },
-    { "name": "Transparent", "description": "Even when the cube is in plain sight, it takes a successful DC 15 Wisdom (Perception) check to spot a cube that hasn't moved or attacked. A creature that tries to enter the cube's space while unaware of the cube is Surprised by the cube." }
+    { "name": "Ooze Cube", "description": "The cube fills its entire space and is transparent. Other creatures can enter that space, but a creature that does so is subjected to the cube's Engulf and has Disadvantage on the saving throw. Creatures inside the cube have Total Cover, and the cube can hold one Large creature or up to four Medium or Small creatures inside itself at a time. As an action, a creature within 5 feet of the cube can pull a creature or an object out of the cube by succeeding on a DC 12 Strength (Athletics) check, and the puller takes 10 (3d6) Acid damage." },
+    { "name": "Transparent", "description": "Even when the cube is in plain sight, a creature must succeed on a DC 15 Wisdom (Perception) check to notice the cube if the creature hasn't witnessed the cube move or otherwise act." }
   ],
   "actions": [
-    { "name": "Pseudopod", "description": "Melee Attack Roll: +4, reach 5 ft. Hit: 10 (3d6) Acid damage." },
-    { "name": "Engulf", "description": "The cube moves up to its Speed without provoking Opportunity Attacks. It can move through the spaces of Large or smaller creatures if it has room. Whenever the cube enters a creature's space, that creature must make a DC 12 Dexterity saving throw. On a successful save, the creature can choose to be pushed or move to an unoccupied space within 5 feet of the cube. A creature that chooses not to be pushed suffers the consequences of a failed saving throw. On a failed save, the cube enters the creature's space, and the creature takes 10 (3d6) Acid damage and is Engulfed. The Engulfed creature can't breathe, is Restrained, and takes 10 (3d6) Acid damage at the start of each of the cube's turns. When the cube moves, the Engulfed creature moves with it. An Engulfed creature can try to escape by taking an action to make a DC 12 Strength (Athletics) check. On a success, the creature escapes and enters a space of its choice within 5 feet of the cube." }
+    { "name": "Pseudopod", "description": "Melee Attack Roll: +4, reach 5 ft. Hit: 12 (3d6 + 2) Acid damage." },
+    { "name": "Engulf", "description": "The cube moves up to its Speed without provoking Opportunity Attacks. The cube can move through the spaces of Large or smaller creatures if it has room inside itself to contain them (see the Ooze Cube trait). Dexterity Saving Throw: DC 12, each creature whose space the cube enters for the first time during this move. Failure: 10 (3d6) Acid damage, and the target is engulfed. An engulfed target is suffocating, can't cast spells with a Verbal component, has the Restrained condition, and takes 10 (3d6) Acid damage at the start of each of the cube's turns. When the cube moves, the engulfed target moves with it. An engulfed target can try to escape by taking an action to make a DC 12 Strength (Athletics) check. On a successful check, the target escapes and enters the nearest unoccupied space. Success: Half damage, and the target moves to an unoccupied space within 5 feet of the cube. If there is no unoccupied space, the target fails the save instead." }
   ],
-  "description": "Gelatinous cubes are near-transparent scavenger oozes that scour dungeon corridors, dissolving forgotten refuse and unwary adventurers alike inside their acidic bulk."
+  "description": "Gelatinous cubes are near-transparent scavenger oozes that scour dungeon corridors, dissolving forgotten refuse and unwary adventurers alike inside their acidic bulk.",
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 286 }
 }

@@ -1,34 +1,36 @@
 {
   "index": "cult-fanatic",
-  "name": "Cult Fanatic",
-  "size": "Medium",
-  "type": "humanoid (any race)",
-  "alignment": "any alignment",
+  "name": "Cultist Fanatic",
+  "size": "Medium or Small",
+  "type": "humanoid",
+  "alignment": "neutral",
   "armor_class": 13,
-  "armor_class_desc": "leather armor",
-  "hit_points": 33,
-  "hit_dice": "6d8 + 6",
+  "hit_points": 44,
+  "hit_dice": "8d8 + 8",
   "speed": { "walk": 30 },
   "ability_scores": {
     "strength": 11,
     "dexterity": 14,
     "constitution": 12,
     "intelligence": 10,
-    "wisdom": 13,
-    "charisma": 14
+    "wisdom": 14,
+    "charisma": 13
   },
   "initiative_bonus": 2,
-  "senses": { "passive_perception": 11 },
-  "languages": ["any one language"],
+  "saving_throws": { "Wisdom": 4 },
+  "skills": { "Deception": 3, "Persuasion": 3, "Religion": 2 },
+  "gear": ["Holy Symbol", "Leather Armor"],
+  "senses": { "passive_perception": 12 },
+  "languages": ["Common"],
   "challenge_rating": "2",
   "xp": 450,
-  "traits": [
-    { "name": "Dark Devotion", "description": "The fanatic has advantage on saving throws against being Charmed or Frightened." },
-    { "name": "Spellcasting", "description": "The fanatic casts one of the following spells, using Wisdom as the spellcasting ability (spell save DC 11): At will: Light, Thaumaturgy. 1/Day Each: Command, Inflict Wounds, Shield of Faith." }
-  ],
   "actions": [
-    { "name": "Multiattack", "description": "The fanatic makes two Dagger attacks. It can replace one attack with a use of Spellcasting." },
-    { "name": "Dagger", "description": "Melee or Ranged Attack Roll: +4, reach 5 ft. or range 20/60 ft. Hit: 4 (1d4 + 2) Piercing damage." }
+    { "name": "Pact Blade", "description": "Melee Attack Roll: +4, reach 5 ft. Hit: 6 (1d8 + 2) Slashing damage plus 7 (2d6) Necrotic damage." },
+    { "name": "Spellcasting", "description": "The cultist casts one of the following spells, using Wisdom as the spellcasting ability (spell save DC 12, +4 to hit with spell attacks):\nAt Will: Light, Thaumaturgy\n2/Day: Command\n1/Day: Hold Person" }
   ],
-  "description": "Cult fanatics whip their fellow believers into a frenzy, backing up their zealotry with dark blessings and a blade in each hand."
+  "bonus_actions": [
+    { "name": "Spiritual Weapon (2/Day)", "description": "The cultist casts the Spiritual Weapon spell, using the same spellcasting ability as Spellcasting." }
+  ],
+  "description": "Cult fanatics whip their fellow believers into a frenzy, backing up their zealotry with dark blessings and a blade in each hand.",
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 278 }
 }

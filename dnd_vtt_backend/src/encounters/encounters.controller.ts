@@ -45,6 +45,33 @@ export class EncountersController {
     return this.encounters.findPlayerState(id, user);
   }
 
+  @Get(':id/turn-order')
+  turnOrder(@Param('id') id: string, @CurrentUser() user: RequestUser) {
+    return this.encounters.findTurnOrder(id, user);
+  }
+
+  // Player side: which level of a multi-level encounter this player's character is on.
+  @Get(':id/my-level')
+  myLevel(@Param('id') id: string, @CurrentUser() user: RequestUser) {
+    return this.encounters.findMyLevel(id, user);
+  }
+
+  // DM side: switch the level a character's player is shown (they need a token there).
+  @Put(':id/player-levels/:characterId')
+  setPlayerLevel(
+    @Param('id') id: string,
+    @Param('characterId') characterId: string,
+    @Body() body: { map_id: string },
+    @CurrentUser() user: RequestUser,
+  ) {
+    return this.encounters.setPlayerLevel(
+      id,
+      user.id,
+      characterId,
+      body.map_id,
+    );
+  }
+
   @Post()
   create(@Body() dto: CreateEncounterDto, @CurrentUser() user: RequestUser) {
     return this.encounters.create(user.id, dto);

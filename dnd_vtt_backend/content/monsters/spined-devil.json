@@ -35,5 +35,6 @@
     { "name": "Fork Tail", "description": "Melee Attack Roll: +4, reach 5 ft. Hit: 5 (1d4 + 3) Piercing damage." },
     { "name": "Spine Volley", "description": "Ranged Attack Roll: +4, range 20/80 ft., up to three targets. Hit: 5 (1d4 + 3) Piercing damage." }
   ],
-  "description": "Spined devils are winged, gargoyle-like fiends who serve as messengers and airborne skirmishers, raining barbed tail spines on their foes from above."
+  "description": "Spined devils are winged, gargoyle-like fiends who serve as messengers and airborne skirmishers, raining barbed tail spines on their foes from above.",
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": false, "rules_text": "reference-only" }
 }

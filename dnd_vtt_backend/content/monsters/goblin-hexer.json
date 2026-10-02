@@ -32,5 +32,6 @@
   "reactions": [
     { "name": "Jinx", "description": "When a creature the goblin can see hits it with an attack roll, the goblin can force that creature to make a DC 13 Wisdom saving throw. On a failed save, the attack misses instead." }
   ],
-  "description": "Goblin hexers are flashy, theatrical spellcasters who dress in exaggerated mimicry of archmages, disrupting foes with illusions and curses while the warband closes in."
+  "description": "Goblin hexers are flashy, theatrical spellcasters who dress in exaggerated mimicry of archmages, disrupting foes with illusions and curses while the warband closes in.",
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": false, "rules_text": "reference-only" }
 }

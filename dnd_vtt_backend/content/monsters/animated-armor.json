@@ -1,0 +1,31 @@
+{
+  "index": "animated-armor",
+  "name": "Animated Armor",
+  "size": "Medium",
+  "type": "construct",
+  "alignment": "unaligned",
+  "armor_class": 18,
+  "hit_points": 33,
+  "hit_dice": "6d8 + 6",
+  "speed": { "walk": 25 },
+  "ability_scores": {
+    "strength": 14,
+    "dexterity": 11,
+    "constitution": 13,
+    "intelligence": 1,
+    "wisdom": 3,
+    "charisma": 1
+  },
+  "initiative_bonus": 2,
+  "damage_immunities": ["poison", "psychic"],
+  "condition_immunities": ["charmed", "deafened", "exhaustion", "frightened", "paralyzed", "petrified", "poisoned"],
+  "senses": { "blindsight": 60, "passive_perception": 6 },
+  "languages": [],
+  "challenge_rating": "1",
+  "xp": 200,
+  "actions": [
+    { "name": "Multiattack", "description": "The armor makes two Slam attacks." },
+    { "name": "Slam", "description": "Melee Attack Roll: +4, reach 5 ft. Hit: 5 (1d6 + 2) Bludgeoning damage." }
+  ],
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 259 }
+}

@@ -1,5 +1,13 @@
 import { EquipmentEntry } from '../models/character.model';
-import { DndClass, DndFeat, DndItem, DndRace, EffectCondition, TraitEffect, TraitGrant } from '../services/content.service';
+import {
+  DndClass,
+  DndFeat,
+  DndItem,
+  DndRace,
+  EffectCondition,
+  TraitEffect,
+  TraitGrant,
+} from '../services/content.service';
 
 // One selected class's data paired with its stored trait picks — the minimal shape needed to
 // walk `grants` and resolve what a character actually chose, shared between the wizard's live
@@ -17,13 +25,17 @@ export interface ClassChoiceSource {
 // the single place that decides "is this grant currently part of the character." A subclass's
 // levels never start below its class's `subclass_level`, so a level below that threshold already
 // excludes every subclass grant here without needing a separate check.
-export function reachableGrants(cls: DndClass, subclassName: string | undefined, level: number): TraitGrant[] {
-  const subclass = subclassName ? cls.subclasses.find(s => s.name === subclassName) : undefined;
+export function reachableGrants(
+  cls: DndClass,
+  subclassName: string | undefined,
+  level: number,
+): TraitGrant[] {
+  const subclass = subclassName ? cls.subclasses.find((s) => s.name === subclassName) : undefined;
   const levels = [
-    ...cls.levels.filter(l => l.level <= level),
-    ...(subclass ? subclass.levels.filter(l => l.level <= level) : []),
+    ...cls.levels.filter((l) => l.level <= level),
+    ...(subclass ? subclass.levels.filter((l) => l.level <= level) : []),
   ];
-  return levels.flatMap(l => l.grants ?? []);
+  return levels.flatMap((l) => l.grants ?? []);
 }
 
 export interface RaceChoiceSource {
@@ -44,17 +56,24 @@ export interface FeatPick {
   ability?: string;
 }
 
-function featChoices(feat: DndFeat, parentKey: string, choices: Record<string, string[]>): Record<string, string[]> {
-  return Object.fromEntries((feat.grants ?? [])
-    .filter(grant => 'key' in grant)
-    .map(grant => [grant.key, choices[`${parentKey}:feat:${grant.key}`] ?? []]));
+function featChoices(
+  feat: DndFeat,
+  parentKey: string,
+  choices: Record<string, string[]>,
+): Record<string, string[]> {
+  return Object.fromEntries(
+    (feat.grants ?? [])
+      .filter((grant) => 'key' in grant)
+      .map((grant) => [grant.key, choices[`${parentKey}:feat:${grant.key}`] ?? []]),
+  );
 }
 
 // A feat can carry effects directly (Alert, Tough, Fighting Styles) or through one of its own
 // selected options. Keeping both shapes here lets class-, race-, and background-granted feats
 // use the same mechanical path.
 export function collectFeatEffects(
-  feat: DndFeat | null | undefined, choices: Record<string, string[]> = {},
+  feat: DndFeat | null | undefined,
+  choices: Record<string, string[]> = {},
 ): TraitEffect[] {
   if (!feat) return [];
   const effects = [...(feat.effects ?? [])];
@@ -76,38 +95,44 @@ export function collectFeatEffects(
 // resolvers (effects, save proficiency, repeatable-feat gating) build on.
 function activeRaceGrants(source: RaceChoiceSource): TraitGrant[] {
   const subrace = source.subrace
-    ? source.data.subraces.find(sub => sub.name === source.subrace || sub.index === source.subrace)
+    ? source.data.subraces.find(
+        (sub) => sub.name === source.subrace || sub.index === source.subrace,
+      )
     : null;
   const grants = [...(source.data.grants ?? []), ...(subrace?.grants ?? [])];
   const level = source.characterLevel ?? 1;
-  return grants.filter(g => g.type !== 'feature' || (g.level ?? 1) <= level);
+  return grants.filter((g) => g.type !== 'feature' || (g.level ?? 1) <= level);
 }
 
 export function resolveCharacterFeatPicks(
-  classes: ClassChoiceSource[], feats: DndFeat[], race: RaceChoiceSource | null = null,
+  classes: ClassChoiceSource[],
+  feats: DndFeat[],
+  race: RaceChoiceSource | null = null,
 ): FeatPick[] {
   const out: FeatPick[] = [];
-  const byIndex = (index: string) => feats.find(f => f.index === index);
+  const byIndex = (index: string) => feats.find((f) => f.index === index);
   for (const { data, choices, level, subclass } of classes) {
     for (const grant of reachableGrants(data, subclass, level)) {
       if (grant.type === 'ability_choice') {
         const featIndex = choices[`${grant.key}:feat`]?.[0];
         const feat = featIndex ? byIndex(featIndex) : undefined;
-        if (feat) out.push({
-          feat,
-          scope: `class:${data.index}:${grant.key}`,
-          choices: featChoices(feat, grant.key, choices),
-          ability: choices[`${grant.key}:feat_ability`]?.[0],
-        });
-      } else if (grant.type === 'feat_pick') {
-        for (const featIndex of choices[grant.key] ?? []) {
-          const feat = byIndex(featIndex);
-          if (feat) out.push({
+        if (feat)
+          out.push({
             feat,
             scope: `class:${data.index}:${grant.key}`,
             choices: featChoices(feat, grant.key, choices),
             ability: choices[`${grant.key}:feat_ability`]?.[0],
           });
+      } else if (grant.type === 'feat_pick') {
+        for (const featIndex of choices[grant.key] ?? []) {
+          const feat = byIndex(featIndex);
+          if (feat)
+            out.push({
+              feat,
+              scope: `class:${data.index}:${grant.key}`,
+              choices: featChoices(feat, grant.key, choices),
+              ability: choices[`${grant.key}:feat_ability`]?.[0],
+            });
         }
       }
     }
@@ -117,12 +142,13 @@ export function resolveCharacterFeatPicks(
       if (grant.type !== 'feat_pick') continue;
       for (const featIndex of race.choices[grant.key] ?? []) {
         const feat = byIndex(featIndex);
-        if (feat) out.push({
-          feat,
-          scope: `race:${race.data.index}:${grant.key}`,
-          choices: featChoices(feat, grant.key, race.choices),
-          ability: race.choices[`${grant.key}:feat_ability`]?.[0],
-        });
+        if (feat)
+          out.push({
+            feat,
+            scope: `race:${race.data.index}:${grant.key}`,
+            choices: featChoices(feat, grant.key, race.choices),
+            ability: race.choices[`${grant.key}:feat_ability`]?.[0],
+          });
       }
     }
   }
@@ -132,7 +158,12 @@ export function resolveCharacterFeatPicks(
 // Average hit-die progression: max Hit Die + CON at level 1, then average roll (die/2 + 1) + CON
 // per level after — the formula behind a character's HP, extracted so the wizard's live preview
 // and the stats service's suggested_max_hp read off the same math and can't drift apart.
-export function averageHpFormula(level: number, hitDie: number, conMod: number, perLevelBonus = 0): number {
+export function averageHpFormula(
+  level: number,
+  hitDie: number,
+  conMod: number,
+  perLevelBonus = 0,
+): number {
   const base = Math.max(1, hitDie + conMod + (level - 1) * (Math.floor(hitDie / 2) + 1 + conMod));
   return base + perLevelBonus * level;
 }
@@ -142,7 +173,9 @@ export function averageHpFormula(level: number, hitDie: number, conMod: number, 
 // Effects with a `condition` are included unfiltered here; callers that care whether the
 // condition currently holds should filter with `evaluateCondition`/`activeEffects` below.
 export function collectTraitEffects(
-  classes: ClassChoiceSource[], feats: DndFeat[], race: RaceChoiceSource | null = null,
+  classes: ClassChoiceSource[],
+  feats: DndFeat[],
+  race: RaceChoiceSource | null = null,
 ): TraitEffect[] {
   const out: TraitEffect[] = [];
   const collectGrantEffects = (grants: TraitGrant[], choices: Record<string, string[]>) => {
@@ -172,12 +205,16 @@ export function collectTraitEffects(
 // Languages selected through class features are represented as ordinary choice effects so the
 // generic class-choice UI can persist them without introducing a Ranger-specific save field.
 export function resolveLanguageProficiencies(
-  raceLanguages: string[], effects: TraitEffect[],
+  raceLanguages: string[],
+  effects: TraitEffect[],
 ): string[] {
   const classLanguages = effects
-    .filter(effect => effect.type === 'language_proficiency')
-    .flatMap(effect => effect.tags ?? []);
-  return ['Common', ...new Set([...raceLanguages, ...classLanguages].filter(language => language !== 'Common'))];
+    .filter((effect) => effect.type === 'language_proficiency')
+    .flatMap((effect) => effect.tags ?? []);
+  return [
+    'Common',
+    ...new Set([...raceLanguages, ...classLanguages].filter((language) => language !== 'Common')),
+  ];
 }
 
 // What's actually equipped right now, resolved against the item catalog — the shared basis for
@@ -185,8 +222,8 @@ export function resolveLanguageProficiencies(
 // "wearing armor" means.
 export function equippedItems(equipment: EquipmentEntry[], items: DndItem[]): DndItem[] {
   return equipment
-    .filter(e => e.equipped)
-    .map(e => items.find(it => it.index === e.itemIndex))
+    .filter((e) => e.equipped)
+    .map((e) => items.find((it) => it.index === e.itemIndex))
     .filter((it): it is DndItem => !!it);
 }
 
@@ -196,53 +233,65 @@ export function equippedItems(equipment: EquipmentEntry[], items: DndItem[]): Dn
 // you've taken off, but a worn-but-unattuned item that requires attunement is mechanically inert).
 export function attunementActive(item: DndItem, equipment: EquipmentEntry[]): boolean {
   if (!item.requires_attunement) return true;
-  return !!equipment.find(e => e.itemIndex === item.index)?.attuned;
+  return !!equipment.find((e) => e.itemIndex === item.index)?.attuned;
 }
 
 // Equipped items whose magic is actually switched on right now — the basis for effects that
 // come from gear (see collectTraitEffects's caller in character-stats.service.ts), so an
 // unattuned item requiring attunement never contributes effects just for being worn.
 export function activeMagicItems(equipment: EquipmentEntry[], items: DndItem[]): DndItem[] {
-  return equippedItems(equipment, items).filter(item => attunementActive(item, equipment));
+  return equippedItems(equipment, items).filter((item) => attunementActive(item, equipment));
 }
 
 export const isShieldItem = (it: DndItem) => it.category === 'Shield';
-export const isArmorItem  = (it: DndItem) => it.type === 'armor' && !isShieldItem(it);
+export const isArmorItem = (it: DndItem) => it.type === 'armor' && !isShieldItem(it);
 
 // Checks a condition against what's actually equipped right now — the only place that decides
 // what "wearing armor"/"wielding a shield"/etc. means, so every caller agrees.
-export function evaluateCondition(condition: EffectCondition, equipment: EquipmentEntry[], items: DndItem[]): boolean {
+export function evaluateCondition(
+  condition: EffectCondition,
+  equipment: EquipmentEntry[],
+  items: DndItem[],
+): boolean {
   const equipped = equippedItems(equipment, items);
 
-  const isWeapon    = (it: DndItem) => it.type === 'weapon';
-  const isMelee     = (it: DndItem) => it.category.includes('Melee');
+  const isWeapon = (it: DndItem) => it.type === 'weapon';
+  const isMelee = (it: DndItem) => it.category.includes('Melee');
   const isTwoHanded = (it: DndItem) => it.properties.includes('Two-Handed');
 
   switch (condition) {
-    case 'wearing_armor':   return equipped.some(isArmorItem);
+    case 'wearing_armor':
+      return equipped.some(isArmorItem);
     case 'wearing_heavy_armor':
-      return equipped.some(it => isArmorItem(it) && it.category.includes('Heavy'));
-    case 'no_armor':        return !equipped.some(isArmorItem);
+      return equipped.some((it) => isArmorItem(it) && it.category.includes('Heavy'));
+    case 'no_armor':
+      return !equipped.some(isArmorItem);
     case 'no_armor_or_shield':
-      return !equipped.some(it => isArmorItem(it) || isShieldItem(it));
-    case 'no_heavy_armor':  return !equipped.some(it => isArmorItem(it) && it.category.includes('Heavy'));
-    case 'wielding_shield': return equipped.some(isShieldItem);
+      return !equipped.some((it) => isArmorItem(it) || isShieldItem(it));
+    case 'no_heavy_armor':
+      return !equipped.some((it) => isArmorItem(it) && it.category.includes('Heavy'));
+    case 'wielding_shield':
+      return equipped.some(isShieldItem);
     case 'two_handed_melee':
-      return equipped.some(it => isWeapon(it) && isMelee(it) && isTwoHanded(it));
+      return equipped.some((it) => isWeapon(it) && isMelee(it) && isTwoHanded(it));
     case 'one_handed_melee_no_offhand': {
       const weapons = equipped.filter(isWeapon);
       return weapons.length === 1 && isMelee(weapons[0]) && !isTwoHanded(weapons[0]);
     }
     case 'dual_wielding_melee': {
       const weapons = equipped.filter(isWeapon);
-      return weapons.length === 2 && weapons.every(w => isMelee(w) && !isTwoHanded(w));
+      return weapons.length === 2 && weapons.every((w) => isMelee(w) && !isTwoHanded(w));
     }
   }
 }
 
 // Effects with no condition, plus conditioned effects whose condition currently holds.
-export function activeEffects(effects: TraitEffect[], equipment: EquipmentEntry[], items: DndItem[]): TraitEffect[] {
-  return effects.filter(e => !e.condition || evaluateCondition(e.condition, equipment, items));
+export function activeEffects(
+  effects: TraitEffect[],
+  equipment: EquipmentEntry[],
+  items: DndItem[],
+): TraitEffect[] {
+  return effects.filter((e) => !e.condition || evaluateCondition(e.condition, equipment, items));
 }
 
 // The leading number in a DndItem.armor_class string — "16" → 16, "11 + DEX" → 11, "+2" → 2.
@@ -264,12 +313,18 @@ function armorDexBonus(category: string, dexMod: number): number {
 // nothing's worn) plus its own enhancement bonus, plus a shield's flat bonus and its own
 // enhancement bonus — live off `equipment`, not baked in once at character creation, so putting
 // on/taking off Chain Mail (or a +1 suit of it) actually changes displayed AC.
-export function baseArmorClass(equipment: EquipmentEntry[], items: DndItem[], dexMod: number): number {
+export function baseArmorClass(
+  equipment: EquipmentEntry[],
+  items: DndItem[],
+  dexMod: number,
+): number {
   const equipped = equippedItems(equipment, items);
-  const armor  = equipped.find(isArmorItem);
+  const armor = equipped.find(isArmorItem);
   const shield = equipped.find(isShieldItem);
-  const armorBonus  = armor && attunementActive(armor, equipment) ? (armor.enhancement_bonus ?? 0) : 0;
-  const shieldBonus = shield && attunementActive(shield, equipment) ? (shield.enhancement_bonus ?? 0) : 0;
+  const armorBonus =
+    armor && attunementActive(armor, equipment) ? (armor.enhancement_bonus ?? 0) : 0;
+  const shieldBonus =
+    shield && attunementActive(shield, equipment) ? (shield.enhancement_bonus ?? 0) : 0;
   const base = armor
     ? armorClassBase(armor.armor_class) + armorDexBonus(armor.category, dexMod) + armorBonus
     : 10 + dexMod;
@@ -278,8 +333,11 @@ export function baseArmorClass(equipment: EquipmentEntry[], items: DndItem[], de
 
 // An unarmored-defense feature contributes the modifier named by its first tag (Constitution
 // for Barbarian). The caller has already filtered out the effect whenever armor is equipped.
-export function unarmoredDefenseBonus(effects: TraitEffect[], abilityModifiers: Record<string, number>): number {
-  const bonuses = effects.map(effect => {
+export function unarmoredDefenseBonus(
+  effects: TraitEffect[],
+  abilityModifiers: Record<string, number>,
+): number {
+  const bonuses = effects.map((effect) => {
     const ability = effect.tags?.[0];
     return ability ? (abilityModifiers[ability] ?? 0) : 0;
   });

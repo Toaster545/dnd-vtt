@@ -11,6 +11,8 @@ import { DatabaseService } from '../common/database.service';
 import { ContentService } from '../content/content.service';
 import { TokensGateway } from './tokens.gateway';
 import type { RequestUser } from '../common/current-user.decorator';
+import { serializePlayerTokens } from './player-tokens';
+import { moveCost } from './movement';
 
 // A light-blocking wall segment, in fractional grid units (see applyV26).
 export interface MapWall {
@@ -45,7 +47,8 @@ export class MapsService {
       isDm
         ? `SELECT * FROM battle_maps WHERE campaign_id = ? ORDER BY created_at DESC`
         : `SELECT DISTINCT bm.* FROM battle_maps bm
-           JOIN encounters e ON e.map_id = bm.id
+           JOIN encounter_levels el ON el.map_id = bm.id
+           JOIN encounters e ON e.id = el.encounter_id
            JOIN sessions s ON s.id = e.session_id
            WHERE bm.campaign_id = ? AND s.visible_to_players = 1
              AND e.visible_to_players = 1
@@ -117,7 +120,7 @@ export class MapsService {
   async getTokens(mapId: string, user: RequestUser) {
     const access = await this.resolveMapReadAccess(mapId, user);
     const tokens = await this.getTokensRaw(mapId);
-    return access.isDm ? tokens : this.serializePlayerTokens(tokens);
+    return access.isDm ? tokens : serializePlayerTokens(tokens);
   }
 
   async upsertToken(
@@ -125,9 +128,26 @@ export class MapsService {
     token: Record<string, unknown>,
     user: RequestUser,
   ) {
-    await this.assertMapAccess(mapId, user);
+    const map = await this.assertMapAccess(mapId, user);
     const isNew = !token.id;
     const id = (token.id as string) || randomUUID();
+
+    // A character is only ever in one place: placing one that already has a token on this map,
+    // or on another level of an encounter this map belongs to, moves that token here instead —
+    // keeping its initiative, so it still shows up exactly once in the turn order.
+    if (isNew && typeof token.character_id === 'string') {
+      const existing = await this.findCharacterToken(mapId, token.character_id);
+      if (existing) {
+        return this.relocateCharacterToken(
+          existing,
+          token.character_id,
+          mapId,
+          Number(token.x ?? 0),
+          Number(token.y ?? 0),
+          map.campaign_id as string,
+        );
+      }
+    }
 
     // New enemy tokens roll their own initiative on the spot; a player token is placed with no
     // initiative until the DM enters the player's roll. Explicit values (edits, rerolls) pass
@@ -178,15 +198,129 @@ export class MapsService {
     return tokens.find((t) => t.id === id);
   }
 
+  // This character's token on `mapId` itself or on any other level of an encounter that
+  // `mapId` is a level of.
+  private async findCharacterToken(mapId: string, characterId: string) {
+    const result = await this.db.execute(
+      `SELECT id, map_id FROM map_tokens
+       WHERE character_id = ?
+         AND (map_id = ? OR map_id IN (
+           SELECT other.map_id FROM encounter_levels mine
+           JOIN encounter_levels other ON other.encounter_id = mine.encounter_id
+           WHERE mine.map_id = ?))
+       ORDER BY (map_id = ?) DESC
+       LIMIT 1`,
+      [characterId, mapId, mapId, mapId],
+    );
+    const row = result.rows[0];
+    return row ? { id: row.id as string, map_id: row.map_id as string } : null;
+  }
+
+  private async relocateCharacterToken(
+    existing: { id: string; map_id: string },
+    characterId: string,
+    mapId: string,
+    x: number,
+    y: number,
+    campaignId: string,
+  ) {
+    await this.db.execute(
+      // Mid-turn, the trail restarts on the new level (a ghost on another map would point
+      // nowhere) but the confirmed distance already traveled this turn is kept.
+      `UPDATE map_tokens SET map_id = ?, x = ?, y = ?,
+         turn_start_x = CASE WHEN turn_start_x IS NULL THEN NULL ELSE ? END,
+         turn_start_y = CASE WHEN turn_start_y IS NULL THEN NULL ELSE ? END,
+         turn_anchor_x = CASE WHEN turn_anchor_x IS NULL THEN NULL ELSE ? END,
+         turn_anchor_y = CASE WHEN turn_anchor_y IS NULL THEN NULL ELSE ? END,
+         planned_x = NULL, planned_y = NULL
+       WHERE id = ?`,
+      [mapId, x, y, x, y, x, y, existing.id],
+    );
+    await this.db.execute(
+      'UPDATE map_lights SET map_id = ? WHERE token_id = ?',
+      [mapId, existing.id],
+    );
+    for (const id of new Set([existing.map_id, mapId])) {
+      this.gateway.broadcastTokens(id, await this.getTokensRaw(id));
+      await this.broadcastLighting(id);
+    }
+    this.gateway.notifyCharacterLevelChanged(campaignId, characterId);
+    return this.findTokenRaw(existing.id);
+  }
+
   async deleteToken(tokenId: string, mapId: string, user: RequestUser) {
-    await this.assertMapAccess(mapId, user);
+    const map = await this.assertMapAccess(mapId, user);
+    const existing = await this.db.execute(
+      'SELECT character_id FROM map_tokens WHERE id = ?',
+      [tokenId],
+    );
     await this.db.execute('DELETE FROM map_tokens WHERE id = ?', [tokenId]);
     const tokens = await this.getTokensRaw(mapId);
     this.gateway.broadcastTokens(mapId, tokens);
     // A light attached to this token cascades away with it (map_lights.token_id ON DELETE
     // CASCADE) — tell already-connected clients so an attached torch doesn't linger on screen.
     await this.broadcastLighting(mapId);
+    const characterId = existing.rows[0]?.character_id;
+    if (typeof characterId === 'string') {
+      this.gateway.notifyCharacterLevelChanged(
+        map.campaign_id as string,
+        characterId,
+      );
+    }
     return { deleted: true };
+  }
+
+  // Moves a token to another map of the same campaign — a multi-level encounter's stairs. Keeps
+  // its position, HP, initiative etc.; any light attached to it moves along. Both maps' viewers
+  // get a fresh token/lighting list, and a moved character token tells its player to follow it.
+  async moveTokenToMap(
+    tokenId: string,
+    mapId: string,
+    targetMapId: string,
+    user: RequestUser,
+  ) {
+    const map = await this.assertMapAccess(mapId, user);
+    const target = await this.findOneRaw(targetMapId);
+    if (target.campaign_id !== map.campaign_id) {
+      throw new BadRequestException('Target map belongs to another campaign');
+    }
+    const result = await this.db.execute(
+      'SELECT character_id FROM map_tokens WHERE id = ? AND map_id = ?',
+      [tokenId, mapId],
+    );
+    const token = result.rows[0];
+    if (!token) throw new NotFoundException('Token not found');
+    if (targetMapId === mapId) return this.findTokenRaw(tokenId);
+
+    await this.db.execute('UPDATE map_tokens SET map_id = ? WHERE id = ?', [
+      targetMapId,
+      tokenId,
+    ]);
+    await this.db.execute(
+      'UPDATE map_lights SET map_id = ? WHERE token_id = ?',
+      [targetMapId, tokenId],
+    );
+    for (const id of [mapId, targetMapId]) {
+      this.gateway.broadcastTokens(id, await this.getTokensRaw(id));
+      await this.broadcastLighting(id);
+    }
+    if (typeof token.character_id === 'string') {
+      this.gateway.notifyCharacterLevelChanged(
+        map.campaign_id as string,
+        token.character_id,
+      );
+    }
+    return this.findTokenRaw(tokenId);
+  }
+
+  private async findTokenRaw(tokenId: string) {
+    const result = await this.db.execute(
+      'SELECT * FROM map_tokens WHERE id = ?',
+      [tokenId],
+    );
+    const row = result.rows[0];
+    if (!row) throw new NotFoundException('Token not found');
+    return { ...row, is_player: !!row.is_player };
   }
 
   // Narrow carve-out alongside the DM-only upsertToken above: a player may recolor their own
@@ -201,6 +335,62 @@ export class MapsService {
     if (typeof color !== 'string' || !/^#[0-9a-fA-F]{6}$/.test(color)) {
       throw new BadRequestException('Color must be a hex string like #a1b2c3');
     }
+    await this.assertOwnTokenOrDm(mapId, tokenId, user);
+    await this.db.execute('UPDATE map_tokens SET color = ? WHERE id = ?', [
+      color,
+      tokenId,
+    ]);
+    const tokens = await this.getTokensRaw(mapId);
+    this.gateway.broadcastTokens(mapId, tokens);
+    return tokens.find((t) => t.id === tokenId);
+  }
+
+  // The square this player would like their token moved to (see applyV30). Readable by the
+  // token's owner (or the DM) only — the shared player broadcast never carries it, so other
+  // players can't see it, and the DM's screen only shows it on that token's turn.
+  async getTokenPlan(mapId: string, tokenId: string, user: RequestUser) {
+    const token = await this.assertOwnTokenOrDm(mapId, tokenId, user);
+    return this.planOf(token);
+  }
+
+  async setTokenPlan(
+    mapId: string,
+    tokenId: string,
+    plan: { x: number; y: number } | null,
+    user: RequestUser,
+  ) {
+    if (
+      plan &&
+      !(
+        Number.isInteger(plan.x) &&
+        Number.isInteger(plan.y) &&
+        plan.x >= 0 &&
+        plan.y >= 0
+      )
+    ) {
+      throw new BadRequestException('Destination must be a grid square');
+    }
+    await this.assertOwnTokenOrDm(mapId, tokenId, user);
+    await this.db.execute(
+      'UPDATE map_tokens SET planned_x = ?, planned_y = ? WHERE id = ?',
+      [plan?.x ?? null, plan?.y ?? null, tokenId],
+    );
+    this.gateway.broadcastTokens(mapId, await this.getTokensRaw(mapId));
+    return plan;
+  }
+
+  private planOf(token: Record<string, unknown>) {
+    return token.planned_x == null || token.planned_y == null
+      ? null
+      : { x: Number(token.planned_x), y: Number(token.planned_y) };
+  }
+
+  // A player may act on their own character's token; the campaign's DM on any token.
+  private async assertOwnTokenOrDm(
+    mapId: string,
+    tokenId: string,
+    user: RequestUser,
+  ) {
     const map = await this.findOneRaw(mapId);
     const result = await this.db.execute(
       'SELECT * FROM map_tokens WHERE id = ? AND map_id = ?',
@@ -219,14 +409,57 @@ export class MapsService {
       );
       if (!owns.rows[0]) throw new ForbiddenException();
     }
+    return token as Record<string, unknown>;
+  }
 
-    await this.db.execute('UPDATE map_tokens SET color = ? WHERE id = ?', [
-      color,
-      tokenId,
-    ]);
+  // A move during a token's turn stays pending — the token sits on its new square, but the
+  // distance isn't counted — until the DM confirms it here: the cost from the last confirmed
+  // square (turn_anchor) to where it stands now joins turn_moved_ft. Several drags before a
+  // confirm count as one straight move from the anchor, so a misplaced drop costs nothing.
+  async confirmTokenMove(mapId: string, tokenId: string, user: RequestUser) {
+    await this.assertMapAccess(mapId, user);
+    const token = await this.findTurnToken(mapId, tokenId);
+    const cost = moveCost(
+      { x: Number(token.turn_anchor_x), y: Number(token.turn_anchor_y) },
+      { x: Number(token.x), y: Number(token.y) },
+      Number(token.turn_diagonals),
+    );
+    await this.db.execute(
+      `UPDATE map_tokens SET turn_moved_ft = ?, turn_diagonals = ?,
+         turn_anchor_x = x, turn_anchor_y = y
+       WHERE id = ?`,
+      [Number(token.turn_moved_ft) + cost.feet, cost.diagonals, tokenId],
+    );
     const tokens = await this.getTokensRaw(mapId);
     this.gateway.broadcastTokens(mapId, tokens);
     return tokens.find((t) => t.id === tokenId);
+  }
+
+  // Throws away a pending move: the token goes back to its last confirmed square.
+  async undoTokenMove(mapId: string, tokenId: string, user: RequestUser) {
+    await this.assertMapAccess(mapId, user);
+    await this.findTurnToken(mapId, tokenId);
+    await this.db.execute(
+      'UPDATE map_tokens SET x = turn_anchor_x, y = turn_anchor_y WHERE id = ?',
+      [tokenId],
+    );
+    const tokens = await this.getTokensRaw(mapId);
+    this.gateway.broadcastTokens(mapId, tokens);
+    return tokens.find((t) => t.id === tokenId);
+  }
+
+  // The token, which must be taking its turn (only then does it have a confirmed anchor).
+  private async findTurnToken(mapId: string, tokenId: string) {
+    const result = await this.db.execute(
+      'SELECT * FROM map_tokens WHERE id = ? AND map_id = ?',
+      [tokenId, mapId],
+    );
+    const token = result.rows[0];
+    if (!token) throw new NotFoundException('Token not found');
+    if (token.turn_anchor_x == null || token.turn_anchor_y == null) {
+      throw new BadRequestException("It isn't this token's turn");
+    }
+    return token;
   }
 
   async rerollInitiative(mapId: string, tokenId: string, user: RequestUser) {
@@ -357,7 +590,7 @@ export class MapsService {
     const lighting = await this.getLightingRaw(mapId);
     if (access.isDm) return lighting;
     const visibleTokenIds = new Set(
-      this.serializePlayerTokens(await this.getTokensRaw(mapId)).map(
+      serializePlayerTokens(await this.getTokensRaw(mapId)).map(
         (token) => token.id,
       ),
     );
@@ -536,6 +769,7 @@ export class MapsService {
   private async assertMapAccess(mapId: string, user: RequestUser) {
     const map = await this.findOneRaw(mapId);
     await this.assertCampaignAccess(map.campaign_id as string, user);
+    return map;
   }
 
   async getPlayerState(mapId: string, user: RequestUser) {
@@ -553,7 +787,7 @@ export class MapsService {
         lighting,
       };
     }
-    const playerTokens = this.serializePlayerTokens(tokens);
+    const playerTokens = serializePlayerTokens(tokens);
     const visibleIds = new Set(playerTokens.map((token) => token.id));
     return {
       map: this.serializeMap(access.map, false),
@@ -586,23 +820,6 @@ export class MapsService {
     return isDm ? { ...map, ...common } : common;
   }
 
-  private serializePlayerTokens(tokens: Record<string, unknown>[]) {
-    return tokens
-      .filter((token) => !!token.visible_to_players)
-      .map((token) => ({
-        id: token.id as string,
-        map_id: token.map_id as string,
-        label: token.name_visible_to_players ? token.label : 'Unknown',
-        color: token.color,
-        x: Number(token.x),
-        y: Number(token.y),
-        size: Number(token.size),
-        is_player: !!token.is_player,
-        character_id: token.is_player ? token.character_id : undefined,
-        initiative: token.initiative ?? null,
-      }));
-  }
-
   private async resolveMapReadAccess(mapId: string, user: RequestUser) {
     const map = await this.findOneRaw(mapId);
     const campaignId = map.campaign_id as string;
@@ -617,8 +834,9 @@ export class MapsService {
     if (!membership.rows[0]) throw new ForbiddenException();
     const visibleReference = await this.db.execute(
       `SELECT e.id FROM encounters e
+       JOIN encounter_levels el ON el.encounter_id = e.id
        JOIN sessions s ON s.id = e.session_id
-       WHERE e.map_id = ? AND s.campaign_id = ?
+       WHERE el.map_id = ? AND s.campaign_id = ?
          AND s.visible_to_players = 1 AND e.visible_to_players = 1
        LIMIT 1`,
       [mapId, campaignId],

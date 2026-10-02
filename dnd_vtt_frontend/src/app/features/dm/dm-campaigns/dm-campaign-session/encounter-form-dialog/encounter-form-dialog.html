@@ -26,7 +26,7 @@
           Copies its monsters, characters and map into a new encounter for this session — the original is left as is.
         </p>
         @if (templateMapDropped()) {
-          <p class="text-xs text-gold mt-1 mb-0">That encounter's map belongs to another campaign — pick or upload one below.</p>
+          <p class="text-xs text-gold mt-1 mb-0">Some of that encounter's maps belong to another campaign — pick or upload replacements below.</p>
         }
       </div>
     }
@@ -39,6 +39,39 @@
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
       <!-- Left: map -->
       <div class="field">
+        <label class="field-label">Levels</label>
+        <div class="flex flex-wrap items-center gap-1 mb-1">
+          @for (draft of levelDrafts(); track $index; let i = $index) {
+            <div class="flex items-center rounded border text-xs"
+                 [class]="i === activeLevel() ? 'border-gold/50 bg-gold/5' : 'border-white/10'">
+              <button type="button" class="px-2 py-1 cursor-pointer bg-transparent border-0 text-left max-w-40 truncate"
+                      [class]="i === activeLevel() ? 'text-gold' : 'text-parchment'"
+                      style="font-family: inherit;" (click)="selectLevel(i)">
+                {{ i + 1 }}. {{ levelLabel(i) }}
+              </button>
+              @if (i === activeLevel() && levelDrafts().length > 1) {
+                <button type="button" class="btn-icon !w-6 !h-6" [disabled]="i === 0" (click)="moveLevel(i, -1)" matTooltip="Move up">
+                  <mat-icon class="text-sm">chevron_left</mat-icon>
+                </button>
+                <button type="button" class="btn-icon !w-6 !h-6" [disabled]="i === levelDrafts().length - 1"
+                        (click)="moveLevel(i, 1)" matTooltip="Move down">
+                  <mat-icon class="text-sm">chevron_right</mat-icon>
+                </button>
+                <button type="button" class="btn-icon !w-6 !h-6" (click)="removeLevel(i)" matTooltip="Remove level">
+                  <mat-icon class="text-sm">close</mat-icon>
+                </button>
+              }
+            </div>
+          }
+          <button type="button" class="btn-ghost text-xs px-2 py-1" (click)="addLevel()"
+                  matTooltip="Add another dungeon level — each player sees the level their own token is on">
+            <mat-icon class="text-sm">add</mat-icon> Level
+          </button>
+        </div>
+        <p class="text-xs text-slate mt-0 mb-3">
+          Level 1 is where players start. Move tokens between levels during play.
+        </p>
+
         <label class="field-label">
           {{ existingMap() ? 'Replace map' : 'Map (optional)' }} — PNG, JPEG, WebP, or DungeonDraft (.dd2vtt) export
         </label>
@@ -63,15 +96,18 @@
                     (ngModelChange)="onExistingMapSelect($event)" [ngModelOptions]="{ standalone: true }">
               <option value="">— none —</option>
               @for (map of campaignMaps(); track map.id) {
-                <option [value]="map.id">{{ map.name }} — {{ map.grid_size }}px/cell</option>
+                <option [value]="map.id" [disabled]="otherLevelMapIds().has(map.id!)">{{ map.name }} — {{ map.grid_size }}px/cell</option>
               }
             </select>
           </div>
         }
 
         <p class="text-xs text-slate mb-1">…or upload a new one</p>
-        <input class="field-input" type="file" accept=".dd2vtt,image/png,image/jpeg,image/webp"
-               [disabled]="parsingFile()" (change)="onFileChange($event)" />
+        <!-- Re-created per level so a file picked for one level doesn't stay shown on another. -->
+        @for (level of [activeLevel()]; track level) {
+          <input class="field-input" type="file" accept=".dd2vtt,image/png,image/jpeg,image/webp"
+                 [disabled]="parsingFile()" (change)="onFileChange($event)" />
+        }
 
         @if (parsingFile()) {
           <p class="text-slate text-xs mt-1"><span class="spinner-sm"></span> Processing map file…</p>

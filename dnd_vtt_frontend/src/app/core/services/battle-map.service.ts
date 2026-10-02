@@ -69,11 +69,33 @@ export class BattleMapService {
     await firstValueFrom(this.http.delete(`${API}/maps/${mapId}/tokens/${tokenId}`));
   }
 
-  // Narrower than upsertToken: lets a player recolor their own character's token without the
-  // DM-only map-mutation access upsertToken requires (see MapsService.setTokenColor).
-  async setTokenColor(mapId: string, tokenId: string, color: string): Promise<MapToken> {
+  // A move made during the token's turn only counts toward its distance once the DM confirms it;
+  // undo sends the token back to its last confirmed square.
+  async confirmTokenMove(mapId: string, tokenId: string) {
+    await firstValueFrom(this.http.post(`${API}/maps/${mapId}/tokens/${tokenId}/move/confirm`, {}));
+  }
+
+  async undoTokenMove(mapId: string, tokenId: string) {
+    await firstValueFrom(this.http.post(`${API}/maps/${mapId}/tokens/${tokenId}/move/undo`, {}));
+  }
+
+  // The square a player would like their own token moved to — the DM sees it on that token's
+  // turn. Owner-or-DM only.
+  getTokenPlan(mapId: string, tokenId: string): Promise<{ x: number; y: number } | null> {
     return firstValueFrom(
-      this.http.post<MapToken>(`${API}/maps/${mapId}/tokens/${tokenId}/color`, { color })
+      this.http.get<{ x: number; y: number } | null>(`${API}/maps/${mapId}/tokens/${tokenId}/plan`)
+    );
+  }
+
+  async setTokenPlan(mapId: string, tokenId: string, plan: { x: number; y: number } | null) {
+    const url = `${API}/maps/${mapId}/tokens/${tokenId}/plan`;
+    await firstValueFrom(plan ? this.http.put(url, plan) : this.http.delete(url));
+  }
+
+  // Moves a token to another map of the campaign — another level of a multi-level encounter.
+  async moveTokenToMap(token: MapToken, targetMapId: string): Promise<MapToken> {
+    return firstValueFrom(
+      this.http.post<MapToken>(`${API}/maps/${token.map_id}/tokens/${token.id}/move`, { target_map_id: targetMapId })
     );
   }
 

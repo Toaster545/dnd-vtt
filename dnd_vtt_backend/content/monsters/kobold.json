@@ -1,13 +1,12 @@
 {
   "index": "kobold",
-  "name": "Kobold",
+  "name": "Kobold Warrior",
   "size": "Small",
-  "type": "humanoid (kobold)",
-  "alignment": "lawful evil",
-  "armor_class": 12,
-  "armor_class_desc": "unarmored",
-  "hit_points": 5,
-  "hit_dice": "2d6 - 2",
+  "type": "dragon",
+  "alignment": "neutral",
+  "armor_class": 14,
+  "hit_points": 7,
+  "hit_dice": "3d6 - 3",
   "speed": { "walk": 30 },
   "ability_scores": {
     "strength": 7,
@@ -18,17 +17,18 @@
     "charisma": 8
   },
   "initiative_bonus": 2,
+  "gear": ["Daggers (3)"],
   "senses": { "darkvision": 60, "passive_perception": 8 },
-  "languages": ["Draconic"],
+  "languages": ["Common", "Draconic"],
   "challenge_rating": "1/8",
   "xp": 25,
   "traits": [
-    { "name": "Pack Tactics", "description": "The kobold has advantage on an attack roll against a creature if at least one of the kobold's allies is within 5 feet of the creature and the ally doesn't have the Incapacitated condition." },
-    { "name": "Sunlight Sensitivity", "description": "While in sunlight, the kobold has disadvantage on ability checks and attack rolls that rely on sight." }
+    { "name": "Pack Tactics", "description": "The kobold has Advantage on an attack roll against a creature if at least one of the kobold's allies is within 5 feet of the creature and the ally doesn't have the Incapacitated condition." },
+    { "name": "Sunlight Sensitivity", "description": "While in sunlight, the kobold has Disadvantage on ability checks and attack rolls." }
   ],
   "actions": [
-    { "name": "Dagger", "description": "Melee or Ranged Attack Roll: +4, reach 5 ft. or range 20/60 ft. Hit: 4 (1d4 + 2) Piercing damage." },
-    { "name": "Sling", "description": "Ranged Attack Roll: +4, range 30/120 ft. Hit: 4 (1d4 + 2) Bludgeoning damage." }
+    { "name": "Dagger", "description": "Melee or Ranged Attack Roll: +4, reach 5 ft. or range 20/60 ft. Hit: 4 (1d4 + 2) Piercing damage." }
   ],
-  "description": "Kobolds are small, cowardly reptilian humanoids who rely on numbers, traps, and pack tactics to overwhelm foes they'd never dare face one-on-one."
+  "description": "Kobolds are small, cowardly reptilian humanoids who rely on numbers, traps, and pack tactics to overwhelm foes they'd never dare face one-on-one.",
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 302 }
 }

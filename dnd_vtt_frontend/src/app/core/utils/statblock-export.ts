@@ -34,7 +34,7 @@ function entry(name: string, value: YamlValue, indent: string): string[] {
 function block(value: YamlValue, indent: string): string[] {
   if (isScalar(value)) return [`${indent}${scalar(value)}`];
   if (Array.isArray(value)) {
-    return value.flatMap(item => {
+    return value.flatMap((item) => {
       if (isScalar(item)) return [`${indent}- ${scalar(item)}`];
       const lines = block(item, `${indent}  `);
       lines[0] = `${indent}- ${lines[0].slice(indent.length + 2)}`;
@@ -54,7 +54,11 @@ function fence(doc: Record<string, YamlValue | undefined>): string {
   return '```statblock\n' + toYaml(doc) + '\n```\n';
 }
 
-interface NamedBlock { [key: string]: string; name: string; desc: string }
+interface NamedBlock {
+  [key: string]: string;
+  name: string;
+  desc: string;
+}
 
 // Empty lists are dropped rather than written as `[]` so the plugin doesn't render empty headers.
 function list<T>(items: T[] | undefined): T[] | undefined {
@@ -73,11 +77,15 @@ function capitalize(value: string): string {
   return value ? value[0].toUpperCase() + value.slice(1) : value;
 }
 
-function monsterSpeed(speed: DndMonster['speed']): string {
+function monsterSpeed(monster: DndMonster): string {
+  if (monster.speed_desc) return monster.speed_desc;
+  const { speed } = monster;
   const parts: string[] = [];
   if (speed.walk != null) parts.push(`${speed.walk} ft.`);
   for (const mode of ['burrow', 'climb', 'fly', 'swim'] as const) {
-    if (speed[mode] != null) parts.push(`${mode} ${speed[mode]} ft.`);
+    if (speed[mode] != null) {
+      parts.push(`${mode} ${speed[mode]} ft.${mode === 'fly' && speed.hover ? ' (hover)' : ''}`);
+    }
   }
   return parts.join(', ');
 }
@@ -93,12 +101,18 @@ function monsterSenses(senses: DndMonster['senses']): string {
 
 // {"Constitution": 6} → [{constitution: 6}] — the plugin's saves/skillsaves are lists of
 // single-key maps, keyed lowercase.
-function bonusList(bonuses: Record<string, number> | undefined): Record<string, number>[] | undefined {
-  return list(Object.entries(bonuses ?? {}).map(([name, value]) => ({ [name.toLowerCase()]: value })));
+function bonusList(
+  bonuses: Record<string, number> | undefined,
+): Record<string, number>[] | undefined {
+  return list(
+    Object.entries(bonuses ?? {}).map(([name, value]) => ({ [name.toLowerCase()]: value })),
+  );
 }
 
-function blocks(entries: { name: string; description: string }[] | undefined): NamedBlock[] | undefined {
-  return list(entries?.map(e => ({ name: e.name, desc: e.description })));
+function blocks(
+  entries: { name: string; description: string }[] | undefined,
+): NamedBlock[] | undefined {
+  return list(entries?.map((e) => ({ name: e.name, desc: e.description })));
 }
 
 export function monsterStatblock(monster: DndMonster): string {
@@ -107,11 +121,13 @@ export function monsterStatblock(monster: DndMonster): string {
     size: monster.size,
     type: monster.type,
     alignment: monster.alignment,
-    ac: monster.armor_class_desc ? `${monster.armor_class} (${monster.armor_class_desc})` : monster.armor_class,
+    ac: monster.armor_class_desc
+      ? `${monster.armor_class} (${monster.armor_class_desc})`
+      : monster.armor_class,
     hp: monster.hit_points,
     hit_dice: text(monster.hit_dice),
-    speed: monsterSpeed(monster.speed),
-    stats: ABILITIES.map(ability => monster.ability_scores[ability]),
+    speed: monsterSpeed(monster),
+    stats: ABILITIES.map((ability) => monster.ability_scores[ability]),
     saves: bonusList(monster.saving_throws),
     skillsaves: bonusList(monster.skills),
     damage_vulnerabilities: text(monster.damage_vulnerabilities?.join(', ')),
@@ -123,9 +139,11 @@ export function monsterStatblock(monster: DndMonster): string {
     cr: monster.challenge_rating,
     traits: blocks(monster.traits),
     actions: blocks(monster.actions),
+    bonus_actions: blocks(monster.bonus_actions),
     reactions: blocks(monster.reactions),
     legendary_description: monster.legendary_actions?.length
-      ? `The ${monster.name.toLowerCase()} can take 3 legendary actions, choosing from the options below. Only one legendary action can be used at a time and only at the end of another creature's turn. The ${monster.name.toLowerCase()} regains spent legendary actions at the start of its turn.`
+      ? (monster.legendary_description ??
+        `The ${monster.name.toLowerCase()} can take 3 legendary actions, choosing from the options below. Only one legendary action can be used at a time and only at the end of another creature's turn. The ${monster.name.toLowerCase()} regains spent legendary actions at the start of its turn.`)
       : undefined,
     legendary_actions: blocks(monster.legendary_actions),
   });
@@ -160,7 +178,9 @@ export interface CharacterStatblockInput {
 
 function attackDesc(attack: WeaponAttack): string {
   const kind = attack.distance.includes('reach') ? 'Melee' : 'Ranged';
-  const distance = attack.distance.replace(/(\d+) ft\. reach/, 'reach $1 ft.').replace(/ · /g, ' or range ');
+  const distance = attack.distance
+    .replace(/(\d+) ft\. reach/, 'reach $1 ft.')
+    .replace(/ · /g, ' or range ');
   const damageType = attack.damage_type ? ` ${capitalize(attack.damage_type)}` : '';
   const damage = attack.damage_dice
     ? `${attack.damage_dice}${attack.damage_bonus ? ` ${attack.damage_bonus > 0 ? '+' : '−'} ${Math.abs(attack.damage_bonus)}` : ''}`
@@ -186,36 +206,49 @@ export function characterStatblock(input: CharacterStatblockInput): string {
   const { character: char, stats } = input;
   const raceLabel = char.subrace ? `${char.race} (${char.subrace})` : char.race;
   const classLabel = char.classes?.length
-    ? char.classes.map(c => `${c.subclass ? `${c.name} (${c.subclass})` : c.name} ${c.level}`).join(' / ')
+    ? char.classes
+        .map((c) => `${c.subclass ? `${c.name} (${c.subclass})` : c.name} ${c.level}`)
+        .join(' / ')
     : `${char.subclass ? `${char.class} (${char.subclass})` : char.class} ${char.level}`;
 
-  const proficientSkills = Object.keys(SKILLS).filter(skill => char.skills?.[skill] || char.expertise?.[skill]);
+  const proficientSkills = Object.keys(SKILLS).filter(
+    (skill) => char.skills?.[skill] || char.expertise?.[skill],
+  );
   const senses = [
     input.darkvisionFt ? `darkvision ${input.darkvisionFt} ft.` : '',
     `passive Perception ${stats.passive_perception}`,
-  ].filter(Boolean).join(', ');
+  ]
+    .filter(Boolean)
+    .join(', ');
 
-  const traits: NamedBlock[] = input.features.map(feature => ({
+  const traits: NamedBlock[] = input.features.map((feature) => ({
     name: feature.name,
     desc: feature.detail || (feature.source ? `${feature.source} feature.` : ''),
   }));
 
   const attacks = [stats.unarmed_attack, ...stats.weapon_attacks].filter(Boolean);
   const actions: NamedBlock[] = [
-    ...(attacks.length > 1 ? [{
-      name: 'Attack',
-      desc: `${char.name} makes an attack with a weapon or an Unarmed Strike.`,
-    }] : []),
-    ...attacks.map(attack => ({ name: attack.name, desc: attackDesc(attack) })),
-    ...input.actions.filter(a => a.activation === 'action' || a.activation === 'free').map(actionBlock),
+    ...(attacks.length > 1
+      ? [
+          {
+            name: 'Attack',
+            desc: `${char.name} makes an attack with a weapon or an Unarmed Strike.`,
+          },
+        ]
+      : []),
+    ...attacks.map((attack) => ({ name: attack.name, desc: attackDesc(attack) })),
+    ...input.actions
+      .filter((a) => a.activation === 'action' || a.activation === 'free')
+      .map(actionBlock),
   ];
 
-  const spellcasting = input.spellcasting?.groups.length && stats.spell_save_dc != null
-    ? [
-        `${char.name} is a spellcaster. Its spellcasting ability is ${input.spellcasting.ability} (spell save DC ${stats.spell_save_dc}, ${signed(stats.spell_attack_bonus ?? 0)} to hit with spell attacks).`,
-        ...input.spellcasting.groups.map(group => ({ [group.label]: group.spells.join(', ') })),
-      ]
-    : undefined;
+  const spellcasting =
+    input.spellcasting?.groups.length && stats.spell_save_dc != null
+      ? [
+          `${char.name} is a spellcaster. Its spellcasting ability is ${input.spellcasting.ability} (spell save DC ${stats.spell_save_dc}, ${signed(stats.spell_attack_bonus ?? 0)} to hit with spell attacks).`,
+          ...input.spellcasting.groups.map((group) => ({ [group.label]: group.spells.join(', ') })),
+        ]
+      : undefined;
 
   return fence({
     name: char.name,
@@ -229,18 +262,24 @@ export function characterStatblock(input: CharacterStatblockInput): string {
     hp: char.max_hp,
     hit_dice: text(input.hitDice),
     speed: `${char.speed} ft.`,
-    stats: ABILITIES.map(ability => char.ability_scores[ability]),
-    saves: list(ABILITIES
-      .filter(ability => stats.saving_throw_proficient.has(ability))
-      .map(ability => ({ [ability]: stats.saving_throw_bonuses[ability] }))),
-    skillsaves: list(proficientSkills.map(skill => ({ [skill.toLowerCase()]: stats.skill_bonuses[skill] }))),
+    stats: ABILITIES.map((ability) => char.ability_scores[ability]),
+    saves: list(
+      ABILITIES.filter((ability) => stats.saving_throw_proficient.has(ability)).map((ability) => ({
+        [ability]: stats.saving_throw_bonuses[ability],
+      })),
+    ),
+    skillsaves: list(
+      proficientSkills.map((skill) => ({ [skill.toLowerCase()]: stats.skill_bonuses[skill] })),
+    ),
     senses,
     languages: (char.languages ?? []).join(', ') || '—',
     traits: list(traits),
     spells: spellcasting,
     actions: list(actions),
-    bonus_actions: list(input.actions.filter(a => a.activation === 'bonus_action').map(actionBlock)),
-    reactions: list(input.actions.filter(a => a.activation === 'reaction').map(actionBlock)),
+    bonus_actions: list(
+      input.actions.filter((a) => a.activation === 'bonus_action').map(actionBlock),
+    ),
+    reactions: list(input.actions.filter((a) => a.activation === 'reaction').map(actionBlock)),
   });
 }
 

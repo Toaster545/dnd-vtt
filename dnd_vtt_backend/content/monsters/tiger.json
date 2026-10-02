@@ -4,31 +4,30 @@
   "size": "Large",
   "type": "beast",
   "alignment": "unaligned",
-  "armor_class": 12,
-  "hit_points": 37,
-  "hit_dice": "5d10 + 10",
+  "armor_class": 13,
+  "hit_points": 30,
+  "hit_dice": "4d10 + 8",
   "speed": { "walk": 40 },
   "ability_scores": {
     "strength": 17,
-    "dexterity": 15,
+    "dexterity": 16,
     "constitution": 14,
     "intelligence": 3,
     "wisdom": 12,
     "charisma": 8
   },
-  "initiative_bonus": 2,
-  "skills": { "Perception": 3, "Stealth": 6 },
-  "senses": { "passive_perception": 13 },
+  "initiative_bonus": 3,
+  "skills": { "Perception": 3, "Stealth": 7 },
+  "senses": { "darkvision": 60, "passive_perception": 13 },
   "languages": [],
   "challenge_rating": "1",
   "xp": 200,
-  "traits": [
-    { "name": "Pounce", "description": "If the tiger moves at least 20 feet straight toward a creature and then hits it with a Claw attack on the same turn, that target must succeed on a DC 13 Strength saving throw or be knocked prone. If the target is prone, the tiger can make one Bite attack against it as a Bonus Action." }
-  ],
   "actions": [
-    { "name": "Multiattack", "description": "The tiger makes one Bite attack and one Claw attack." },
-    { "name": "Bite", "description": "Melee Attack Roll: +5, reach 5 ft. Hit: 10 (1d10 + 3) Piercing damage." },
-    { "name": "Claw", "description": "Melee Attack Roll: +5, reach 5 ft. Hit: 7 (1d6 + 3) Slashing damage." }
+    { "name": "Rend", "description": "Melee Attack Roll: +5, reach 5 ft. Hit: 10 (2d6 + 3) Slashing damage. If the target is a Large or smaller creature, it has the Prone condition." }
   ],
-  "description": "Tigers are solitary, powerful ambush hunters whose sudden pounce can flatten prey before it ever gets a chance to flee."
+  "bonus_actions": [
+    { "name": "Nimble Escape", "description": "The tiger takes the Disengage or Hide action." }
+  ],
+  "description": "Tigers are solitary, powerful ambush hunters whose sudden pounce can flatten prey before it ever gets a chance to flee.",
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 363 }
 }

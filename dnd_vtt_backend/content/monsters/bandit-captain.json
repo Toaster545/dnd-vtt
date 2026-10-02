@@ -1,13 +1,12 @@
 {
   "index": "bandit-captain",
   "name": "Bandit Captain",
-  "size": "Medium",
-  "type": "humanoid (any race)",
-  "alignment": "any non-lawful alignment",
+  "size": "Medium or Small",
+  "type": "humanoid",
+  "alignment": "neutral",
   "armor_class": 15,
-  "armor_class_desc": "studded leather armor",
-  "hit_points": 58,
-  "hit_dice": "9d8 + 18",
+  "hit_points": 52,
+  "hit_dice": "8d8 + 16",
   "speed": { "walk": 30 },
   "ability_scores": {
     "strength": 15,
@@ -20,17 +19,19 @@
   "initiative_bonus": 3,
   "saving_throws": { "Strength": 4, "Dexterity": 5, "Wisdom": 2 },
   "skills": { "Athletics": 4, "Deception": 4 },
+  "gear": ["Pistol", "Scimitar", "Studded Leather Armor"],
   "senses": { "passive_perception": 10 },
-  "languages": ["any two languages"],
+  "languages": ["Common", "Thieves' Cant"],
   "challenge_rating": "2",
   "xp": 450,
   "actions": [
-    { "name": "Multiattack", "description": "The captain makes two attacks, using Scimitar or Dagger in any combination." },
+    { "name": "Multiattack", "description": "The bandit makes two attacks, using Scimitar and Pistol in any combination." },
     { "name": "Scimitar", "description": "Melee Attack Roll: +5, reach 5 ft. Hit: 6 (1d6 + 3) Slashing damage." },
-    { "name": "Dagger", "description": "Melee or Ranged Attack Roll: +5, reach 5 ft. or range 20/60 ft. Hit: 5 (1d4 + 3) Piercing damage." }
+    { "name": "Pistol", "description": "Ranged Attack Roll: +5, range 30/90 ft. Hit: 8 (1d10 + 3) Piercing damage." }
   ],
   "reactions": [
-    { "name": "Parry", "description": "The captain adds 2 to its AC against one melee attack that would hit it, provided it can see the attacker and is wielding a melee weapon." }
+    { "name": "Parry", "description": "Trigger: The bandit is hit by a melee attack roll while holding a weapon. Response: The bandit adds 2 to its AC against that attack, possibly causing it to miss." }
   ],
-  "description": "A bandit captain leads their gang with equal parts charisma and cruelty, quick to talk their way past trouble and quicker still to cut down anyone who calls the bluff."
+  "description": "A bandit captain leads their gang with equal parts charisma and cruelty, quick to talk their way past trouble and quicker still to cut down anyone who calls the bluff.",
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 261 }
 }

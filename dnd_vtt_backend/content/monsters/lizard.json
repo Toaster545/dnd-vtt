@@ -1,0 +1,31 @@
+{
+  "index": "lizard",
+  "name": "Lizard",
+  "size": "Tiny",
+  "type": "beast",
+  "alignment": "unaligned",
+  "armor_class": 10,
+  "hit_points": 2,
+  "hit_dice": "1d4",
+  "speed": { "walk": 20, "climb": 20 },
+  "ability_scores": {
+    "strength": 2,
+    "dexterity": 11,
+    "constitution": 10,
+    "intelligence": 1,
+    "wisdom": 8,
+    "charisma": 3
+  },
+  "initiative_bonus": 0,
+  "senses": { "darkvision": 30, "passive_perception": 9 },
+  "languages": [],
+  "challenge_rating": "0",
+  "xp": 10,
+  "traits": [
+    { "name": "Spider Climb", "description": "The lizard can climb difficult surfaces, including along ceilings, without needing to make an ability check." }
+  ],
+  "actions": [
+    { "name": "Bite", "description": "Melee Attack Roll: +2, reach 5 ft. Hit: 1 Piercing damage." }
+  ],
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 357 }
+}

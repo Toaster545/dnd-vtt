@@ -5,7 +5,6 @@
   "type": "giant",
   "alignment": "neutral",
   "armor_class": 17,
-  "armor_class_desc": "natural armor",
   "hit_points": 126,
   "hit_dice": "11d12 + 55",
   "speed": { "walk": 40 },
@@ -17,19 +16,21 @@
     "wisdom": 12,
     "charisma": 9
   },
-  "initiative_bonus": 2,
-  "skills": { "Athletics": 9, "Perception": 4 },
+  "initiative_bonus": 5,
+  "saving_throws": { "Dexterity": 5, "Constitution": 8, "Wisdom": 4 },
+  "skills": { "Athletics": 12, "Perception": 4, "Stealth": 5 },
   "senses": { "darkvision": 60, "passive_perception": 14 },
   "languages": ["Giant"],
   "challenge_rating": "7",
   "xp": 2900,
-  "traits": [
-    { "name": "Stone Camouflage", "description": "The giant has advantage on Dexterity (Stealth) checks made to hide in rocky terrain." }
-  ],
   "actions": [
-    { "name": "Multiattack", "description": "The giant makes two Greatclub attacks." },
-    { "name": "Greatclub", "description": "Melee Attack Roll: +9, reach 15 ft. Hit: 19 (3d8 + 6) Bludgeoning damage." },
-    { "name": "Rock", "description": "Ranged Attack Roll: +9, range 60/240 ft. Hit: 28 (4d10 + 6) Bludgeoning damage. If the target is a creature, it must succeed on a DC 17 Strength saving throw or be knocked prone." }
+    { "name": "Multiattack", "description": "The giant makes two attacks, using Stone Club or Boulder in any combination." },
+    { "name": "Stone Club", "description": "Melee Attack Roll: +9, reach 15 ft. Hit: 22 (3d10 + 6) Bludgeoning damage." },
+    { "name": "Boulder", "description": "Ranged Attack Roll: +9, range 60/240 ft. Hit: 15 (2d8 + 6) Bludgeoning damage. If the target is a Large or smaller creature, it has the Prone condition." }
   ],
-  "description": "Stone giants are reclusive artisans who dwell in cavern halls beneath the mountains, hurling boulders with uncanny accuracy at any who disturb their solitude."
+  "reactions": [
+    { "name": "Deflect Missile (Recharge 5-6)", "description": "Trigger: The giant is hit by a ranged attack roll and takes Bludgeoning, Piercing, or Slashing damage from it. Response: The giant reduces the damage it takes from the attack by 11 (1d10 + 6), and if that damage is reduced to 0, the giant can redirect some of the attack's force. Dexterity Saving Throw: DC 17, one creature the giant can see within 60 feet. Failure: 11 (1d10 + 6) Force damage." }
+  ],
+  "description": "Stone giants are reclusive artisans who dwell in cavern halls beneath the mountains, hurling boulders with uncanny accuracy at any who disturb their solitude.",
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 330 }
 }

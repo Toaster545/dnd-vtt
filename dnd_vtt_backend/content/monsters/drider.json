@@ -1,0 +1,39 @@
+{
+  "index": "drider",
+  "name": "Drider",
+  "size": "Large",
+  "type": "monstrosity",
+  "alignment": "chaotic evil",
+  "armor_class": 19,
+  "hit_points": 123,
+  "hit_dice": "13d10 + 52",
+  "speed": { "walk": 30, "climb": 30 },
+  "ability_scores": {
+    "strength": 16,
+    "dexterity": 19,
+    "constitution": 18,
+    "intelligence": 13,
+    "wisdom": 16,
+    "charisma": 12
+  },
+  "initiative_bonus": 4,
+  "skills": { "Perception": 6, "Stealth": 10 },
+  "senses": { "darkvision": 120, "passive_perception": 16 },
+  "languages": ["Elvish", "Undercommon"],
+  "challenge_rating": "6",
+  "xp": 2300,
+  "traits": [
+    { "name": "Spider Climb", "description": "The drider can climb difficult surfaces, including along ceilings, without needing to make an ability check." },
+    { "name": "Sunlight Sensitivity", "description": "While in sunlight, the drider has Disadvantage on ability checks and attack rolls." },
+    { "name": "Web Walker", "description": "The drider ignores movement restrictions caused by webs, and the drider knows the location of any other creature in contact with the same web." }
+  ],
+  "actions": [
+    { "name": "Multiattack", "description": "The drider makes three attacks, using Foreleg or Poison Burst in any combination." },
+    { "name": "Foreleg", "description": "Melee Attack Roll: +7, reach 10 ft. Hit: 13 (2d8 + 4) Piercing damage." },
+    { "name": "Poison Burst", "description": "Ranged Attack Roll: +6, range 120 ft. Hit: 13 (3d6 + 3) Poison damage." }
+  ],
+  "bonus_actions": [
+    { "name": "Magic of the Spider Queen (Recharge 5-6)", "description": "The drider casts Darkness, Faerie Fire, or Web, requiring no Material components and using Wisdom as the spellcasting ability (spell save DC 14)." }
+  ],
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 281 }
+}

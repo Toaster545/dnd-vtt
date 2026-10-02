@@ -1,0 +1,35 @@
+{
+  "index": "remorhaz",
+  "name": "Remorhaz",
+  "size": "Huge",
+  "type": "monstrosity",
+  "alignment": "unaligned",
+  "armor_class": 17,
+  "hit_points": 195,
+  "hit_dice": "17d12 + 85",
+  "speed": { "walk": 40, "burrow": 30 },
+  "ability_scores": {
+    "strength": 24,
+    "dexterity": 13,
+    "constitution": 21,
+    "intelligence": 4,
+    "wisdom": 10,
+    "charisma": 5
+  },
+  "initiative_bonus": 5,
+  "damage_immunities": ["cold", "fire"],
+  "senses": { "darkvision": 60, "tremorsense": 60, "passive_perception": 10 },
+  "languages": [],
+  "challenge_rating": "11",
+  "xp": 7200,
+  "traits": [
+    { "name": "Heat Aura", "description": "At the end of each of the remorhaz's turns, each creature in a 5-foot Emanation originating from the remorhaz takes 16 (3d10) Fire damage." }
+  ],
+  "actions": [
+    { "name": "Bite", "description": "Melee Attack Roll: +11, reach 10 ft. Hit: 18 (2d10 + 7) Piercing damage plus 14 (4d6) Fire damage. If the target is a Large or smaller creature, it has the Grappled condition (escape DC 17), and it has the Restrained condition until the grapple ends." }
+  ],
+  "bonus_actions": [
+    { "name": "Swallow", "description": "Strength Saving Throw: DC 19, one Large or smaller creature Grappled by the remorhaz (it can have up to two creatures swallowed at a time). Failure: The target is swallowed by the remorhaz, and the Grappled condition ends. A swallowed creature has the Blinded and Restrained conditions, it has Total Cover against attacks and other effects outside the remorhaz, and it takes 10 (3d6) Acid damage plus 10 (3d6) Fire damage at the start of each of the remorhaz's turns. If the remorhaz takes 30 damage or more on a single turn from a creature inside it, the remorhaz must succeed on a DC 15 Constitution saving throw at the end of that turn or regurgitate all swallowed creatures, each of which falls in a space within 5 feet of the remorhaz and has the Prone condition. If the remorhaz dies, any swallowed creature no longer has the Restrained condition and can escape from the corpse by using 15 feet of movement, exiting Prone." }
+  ],
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 319 }
+}

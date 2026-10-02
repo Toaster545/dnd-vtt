@@ -1,0 +1,33 @@
+{
+  "index": "giant-vulture",
+  "name": "Giant Vulture",
+  "size": "Large",
+  "type": "monstrosity",
+  "alignment": "neutral evil",
+  "armor_class": 10,
+  "hit_points": 25,
+  "hit_dice": "3d10 + 9",
+  "speed": { "walk": 10, "fly": 60 },
+  "ability_scores": {
+    "strength": 15,
+    "dexterity": 10,
+    "constitution": 16,
+    "intelligence": 6,
+    "wisdom": 12,
+    "charisma": 7
+  },
+  "initiative_bonus": 0,
+  "skills": { "Perception": 3 },
+  "damage_resistances": ["necrotic"],
+  "senses": { "darkvision": 60, "passive_perception": 13 },
+  "languages": ["Understands Common but can't speak"],
+  "challenge_rating": "1",
+  "xp": 200,
+  "traits": [
+    { "name": "Pack Tactics", "description": "The vulture has Advantage on an attack roll against a creature if at least one of the vulture's allies is within 5 feet of the creature and the ally doesn't have the Incapacitated condition." }
+  ],
+  "actions": [
+    { "name": "Gouge", "description": "Melee Attack Roll: +4, reach 5 ft. Hit: 9 (2d6 + 2) Piercing damage, and the target has the Poisoned condition until the end of its next turn." }
+  ],
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 354 }
+}

@@ -30,5 +30,6 @@
     { "name": "Greataxe", "description": "Melee Weapon Attack: +5 to hit, reach 5 ft., one target. Hit: 9 (1d12 + 3) slashing damage." },
     { "name": "Javelin", "description": "Melee or Ranged Weapon Attack: +5 to hit, reach 5 ft. or range 30/120 ft., one target. Hit: 6 (1d6 + 3) piercing damage." }
   ],
-  "description": "Orcs are savage raiders who worship the war-god Gruumsh, throwing themselves into melee combat with reckless abandon."
+  "description": "Orcs are savage raiders who worship the war-god Gruumsh, throwing themselves into melee combat with reckless abandon.",
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": false, "rules_text": "reference-only" }
 }

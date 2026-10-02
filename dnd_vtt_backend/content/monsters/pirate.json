@@ -1,0 +1,32 @@
+{
+  "index": "pirate",
+  "name": "Pirate",
+  "size": "Medium or Small",
+  "type": "humanoid",
+  "alignment": "neutral",
+  "armor_class": 14,
+  "hit_points": 33,
+  "hit_dice": "6d8 + 6",
+  "speed": { "walk": 30 },
+  "ability_scores": {
+    "strength": 10,
+    "dexterity": 16,
+    "constitution": 12,
+    "intelligence": 8,
+    "wisdom": 12,
+    "charisma": 14
+  },
+  "initiative_bonus": 5,
+  "saving_throws": { "Dexterity": 5, "Charisma": 4 },
+  "gear": ["Daggers (6)", "Leather Armor"],
+  "senses": { "passive_perception": 11 },
+  "languages": ["Common plus one other language"],
+  "challenge_rating": "1",
+  "xp": 200,
+  "actions": [
+    { "name": "Multiattack", "description": "The pirate makes two Dagger attacks. It can replace one attack with a use of Enthralling Panache." },
+    { "name": "Dagger", "description": "Melee or Ranged Attack Roll: +5, reach 5 ft. or range 20/60 ft. Hit: 5 (1d4 + 3) Piercing damage." },
+    { "name": "Enthralling Panache", "description": "Wisdom Saving Throw: DC 12, one creature the pirate can see within 30 feet. Failure: The target has the Charmed condition until the start of the pirate's next turn." }
+  ],
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 314 }
+}

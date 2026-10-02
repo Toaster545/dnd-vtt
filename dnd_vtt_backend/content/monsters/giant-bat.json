@@ -1,0 +1,28 @@
+{
+  "index": "giant-bat",
+  "name": "Giant Bat",
+  "size": "Large",
+  "type": "beast",
+  "alignment": "unaligned",
+  "armor_class": 13,
+  "hit_points": 22,
+  "hit_dice": "4d10",
+  "speed": { "walk": 10, "fly": 60 },
+  "ability_scores": {
+    "strength": 15,
+    "dexterity": 16,
+    "constitution": 11,
+    "intelligence": 2,
+    "wisdom": 12,
+    "charisma": 6
+  },
+  "initiative_bonus": 3,
+  "senses": { "blindsight": 120, "passive_perception": 11 },
+  "languages": [],
+  "challenge_rating": "1/4",
+  "xp": 50,
+  "actions": [
+    { "name": "Bite", "description": "Melee Attack Roll: +5, reach 5 ft. Hit: 6 (1d6 + 3) Piercing damage." }
+  ],
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 349 }
+}

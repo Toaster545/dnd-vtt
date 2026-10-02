@@ -3,11 +3,10 @@
   "name": "Chuul",
   "size": "Large",
   "type": "aberration",
-  "alignment": "lawful evil",
+  "alignment": "chaotic evil",
   "armor_class": 16,
-  "armor_class_desc": "natural armor",
-  "hit_points": 93,
-  "hit_dice": "11d10 + 33",
+  "hit_points": 76,
+  "hit_dice": "9d10 + 27",
   "speed": { "walk": 30, "swim": 30 },
   "ability_scores": {
     "strength": 19,
@@ -18,22 +17,22 @@
     "charisma": 5
   },
   "initiative_bonus": 0,
-  "saving_throws": { "Strength": 7, "Constitution": 6 },
   "skills": { "Perception": 4 },
   "damage_immunities": ["poison"],
   "condition_immunities": ["poisoned"],
   "senses": { "darkvision": 60, "passive_perception": 14 },
-  "languages": ["understands Deep Speech but can't speak"],
+  "languages": ["Understands Deep Speech but can't speak"],
   "challenge_rating": "4",
   "xp": 1100,
   "traits": [
     { "name": "Amphibious", "description": "The chuul can breathe air and water." },
-    { "name": "Sense Magic", "description": "The chuul magically senses the presence of magic within 120 feet of it at will. This trait otherwise works like the Detect Magic spell but isn't itself magical." }
+    { "name": "Sense Magic", "description": "The chuul senses magic within 120 feet of itself. This trait otherwise works like the Detect Magic spell but isn't itself magical." }
   ],
   "actions": [
-    { "name": "Multiattack", "description": "The chuul makes two Pincer attacks. If the chuul is grappling a creature, it can also use its Tentacles once." },
-    { "name": "Pincer", "description": "Melee Attack Roll: +7, reach 5 ft. Hit: 11 (2d6 + 4) Bludgeoning damage, and the target is grappled (escape DC 14). The chuul has two pincers, each of which can grapple only one target." },
-    { "name": "Tentacles", "description": "One creature grappled by the chuul must succeed on a DC 13 Constitution saving throw or be poisoned for 1 minute. Until this poison ends, the target is paralyzed. The target can repeat the saving throw at the end of each of its turns, ending the effect on itself on a success." }
+    { "name": "Multiattack", "description": "The chuul makes two Pincer attacks and uses Paralyzing Tentacles." },
+    { "name": "Pincer", "description": "Melee Attack Roll: +6, reach 10 ft. Hit: 9 (1d10 + 4) Bludgeoning damage. If the target is a Large or smaller creature, it has the Grappled condition (escape DC 14) from one of two pincers." },
+    { "name": "Paralyzing Tentacles", "description": "Constitution Saving Throw: DC 13, one creature Grappled by the chuul. Failure: The target has the Poisoned condition and repeats the save at the end of each of its turns, ending the effect on itself on a success. After 1 minute, it succeeds automatically. While Poisoned, the target has the Paralyzed condition." }
   ],
-  "description": "Chuuls are lobster-like aberrations bred by ancient masters to guard sunken ruins, hunting by scent for magic and stunning prey with the paralytic sting of their whip-like tentacles."
+  "description": "Chuuls are lobster-like aberrations bred by ancient masters to guard sunken ruins, hunting by scent for magic and stunning prey with the paralytic sting of their whip-like tentacles.",
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 273 }
 }

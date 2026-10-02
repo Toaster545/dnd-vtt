@@ -1,0 +1,31 @@
+{
+  "index": "giant-elk",
+  "name": "Giant Elk",
+  "size": "Huge",
+  "type": "celestial",
+  "alignment": "neutral good",
+  "armor_class": 14,
+  "hit_points": 42,
+  "hit_dice": "5d12 + 10",
+  "speed": { "walk": 60 },
+  "ability_scores": {
+    "strength": 19,
+    "dexterity": 18,
+    "constitution": 14,
+    "intelligence": 7,
+    "wisdom": 14,
+    "charisma": 10
+  },
+  "initiative_bonus": 6,
+  "saving_throws": { "Strength": 6, "Dexterity": 6 },
+  "skills": { "Perception": 4 },
+  "damage_resistances": ["necrotic", "radiant"],
+  "senses": { "darkvision": 90, "passive_perception": 14 },
+  "languages": ["Celestial", "understands Common, Elvish, and Sylvan but can't speak them"],
+  "challenge_rating": "2",
+  "xp": 450,
+  "actions": [
+    { "name": "Ram", "description": "Melee Attack Roll: +6, reach 10 ft. Hit: 11 (2d6 + 4) Bludgeoning damage plus 5 (2d4) Radiant damage. If the target is a Huge or smaller creature and the elk moved 20+ feet straight toward it immediately before the hit, the target takes an extra 5 (2d4) Bludgeoning damage and has the Prone condition." }
+  ],
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 351 }
+}

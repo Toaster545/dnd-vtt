@@ -1,0 +1,32 @@
+{
+  "index": "blood-hawk",
+  "name": "Blood Hawk",
+  "size": "Small",
+  "type": "beast",
+  "alignment": "unaligned",
+  "armor_class": 12,
+  "hit_points": 7,
+  "hit_dice": "2d6",
+  "speed": { "walk": 10, "fly": 60 },
+  "ability_scores": {
+    "strength": 6,
+    "dexterity": 14,
+    "constitution": 10,
+    "intelligence": 3,
+    "wisdom": 14,
+    "charisma": 5
+  },
+  "initiative_bonus": 2,
+  "skills": { "Perception": 6 },
+  "senses": { "passive_perception": 16 },
+  "languages": [],
+  "challenge_rating": "1/8",
+  "xp": 25,
+  "traits": [
+    { "name": "Pack Tactics", "description": "The hawk has Advantage on an attack roll against a creature if at least one of the hawk's allies is within 5 feet of the creature and the ally doesn't have the Incapacitated condition." }
+  ],
+  "actions": [
+    { "name": "Beak", "description": "Melee Attack Roll: +4, reach 5 ft. Hit: 4 (1d4 + 2) Piercing damage, or 6 (1d8 + 2) Piercing damage if the target is Bloodied." }
+  ],
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 345 }
+}

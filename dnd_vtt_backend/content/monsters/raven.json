@@ -1,0 +1,32 @@
+{
+  "index": "raven",
+  "name": "Raven",
+  "size": "Tiny",
+  "type": "beast",
+  "alignment": "unaligned",
+  "armor_class": 12,
+  "hit_points": 2,
+  "hit_dice": "1d4",
+  "speed": { "walk": 10, "fly": 50 },
+  "ability_scores": {
+    "strength": 2,
+    "dexterity": 14,
+    "constitution": 10,
+    "intelligence": 5,
+    "wisdom": 13,
+    "charisma": 6
+  },
+  "initiative_bonus": 2,
+  "skills": { "Perception": 3 },
+  "senses": { "passive_perception": 13 },
+  "languages": [],
+  "challenge_rating": "0",
+  "xp": 10,
+  "traits": [
+    { "name": "Mimicry", "description": "The raven can mimic simple sounds it has heard, such as a whisper or chitter. A hearer can discern the sounds are imitations with a successful DC 10 Wisdom (Insight) check." }
+  ],
+  "actions": [
+    { "name": "Beak", "description": "Melee Attack Roll: +4, reach 5 ft. Hit: 1 Piercing damage." }
+  ],
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 359 }
+}

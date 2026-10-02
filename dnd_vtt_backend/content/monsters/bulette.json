@@ -1,0 +1,34 @@
+{
+  "index": "bulette",
+  "name": "Bulette",
+  "size": "Large",
+  "type": "monstrosity",
+  "alignment": "unaligned",
+  "armor_class": 17,
+  "hit_points": 94,
+  "hit_dice": "9d10 + 45",
+  "speed": { "walk": 40, "burrow": 40 },
+  "ability_scores": {
+    "strength": 19,
+    "dexterity": 11,
+    "constitution": 21,
+    "intelligence": 2,
+    "wisdom": 10,
+    "charisma": 5
+  },
+  "initiative_bonus": 0,
+  "skills": { "Perception": 6 },
+  "senses": { "darkvision": 60, "tremorsense": 120, "passive_perception": 16 },
+  "languages": [],
+  "challenge_rating": "5",
+  "xp": 1800,
+  "actions": [
+    { "name": "Multiattack", "description": "The bulette makes two Bite attacks." },
+    { "name": "Bite", "description": "Melee Attack Roll: +7, reach 5 ft. Hit: 17 (2d12 + 4) Piercing damage." },
+    { "name": "Deadly Leap", "description": "The bulette spends 5 feet of movement to jump to a space within 15 feet that contains one or more Large or smaller creatures. Dexterity Saving Throw: DC 15, each creature in the bulette's destination space. Failure: 19 (3d12) Bludgeoning damage, and the target has the Prone condition. Success: Half damage, and the target is pushed 5 feet straight away from the bulette." }
+  ],
+  "bonus_actions": [
+    { "name": "Leap", "description": "The bulette jumps up to 30 feet by spending 10 feet of movement." }
+  ],
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 272 }
+}

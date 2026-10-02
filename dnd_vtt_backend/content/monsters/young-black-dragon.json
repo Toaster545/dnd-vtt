@@ -1,0 +1,36 @@
+{
+  "index": "young-black-dragon",
+  "name": "Young Black Dragon",
+  "size": "Large",
+  "type": "dragon (chromatic)",
+  "alignment": "chaotic evil",
+  "armor_class": 18,
+  "hit_points": 127,
+  "hit_dice": "15d10 + 45",
+  "speed": { "walk": 40, "fly": 80, "swim": 40 },
+  "ability_scores": {
+    "strength": 19,
+    "dexterity": 14,
+    "constitution": 17,
+    "intelligence": 12,
+    "wisdom": 11,
+    "charisma": 15
+  },
+  "initiative_bonus": 5,
+  "saving_throws": { "Dexterity": 5, "Wisdom": 3 },
+  "skills": { "Perception": 6, "Stealth": 5 },
+  "damage_immunities": ["acid"],
+  "senses": { "blindsight": 30, "darkvision": 120, "passive_perception": 16 },
+  "languages": ["Common", "Draconic"],
+  "challenge_rating": "7",
+  "xp": 2900,
+  "traits": [
+    { "name": "Amphibious", "description": "The dragon can breathe air and water." }
+  ],
+  "actions": [
+    { "name": "Multiattack", "description": "The dragon makes three Rend attacks." },
+    { "name": "Rend", "description": "Melee Attack Roll: +7, reach 10 ft. Hit: 9 (2d4 + 4) Slashing damage plus 3 (1d6) Acid damage." },
+    { "name": "Acid Breath (Recharge 5-6)", "description": "Dexterity Saving Throw: DC 14, each creature in a 30-foot-long, 5-foot-wide Line. Failure: 49 (14d6) Acid damage. Success: Half damage." }
+  ],
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 264 }
+}

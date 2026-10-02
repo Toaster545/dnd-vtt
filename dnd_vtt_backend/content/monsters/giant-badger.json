@@ -1,0 +1,30 @@
+{
+  "index": "giant-badger",
+  "name": "Giant Badger",
+  "size": "Medium",
+  "type": "beast",
+  "alignment": "unaligned",
+  "armor_class": 13,
+  "hit_points": 15,
+  "hit_dice": "2d8 + 6",
+  "speed": { "walk": 30, "burrow": 10 },
+  "ability_scores": {
+    "strength": 13,
+    "dexterity": 10,
+    "constitution": 17,
+    "intelligence": 2,
+    "wisdom": 12,
+    "charisma": 5
+  },
+  "initiative_bonus": 0,
+  "skills": { "Perception": 3 },
+  "damage_resistances": ["poison"],
+  "senses": { "darkvision": 60, "passive_perception": 13 },
+  "languages": [],
+  "challenge_rating": "1/4",
+  "xp": 50,
+  "actions": [
+    { "name": "Bite", "description": "Melee Attack Roll: +3, reach 5 ft. Hit: 6 (2d4 + 1) Piercing damage." }
+  ],
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 349 }
+}

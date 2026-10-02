@@ -1,0 +1,31 @@
+{
+  "index": "ape",
+  "name": "Ape",
+  "size": "Medium",
+  "type": "beast",
+  "alignment": "unaligned",
+  "armor_class": 12,
+  "hit_points": 19,
+  "hit_dice": "3d8 + 6",
+  "speed": { "walk": 30, "climb": 30 },
+  "ability_scores": {
+    "strength": 16,
+    "dexterity": 14,
+    "constitution": 14,
+    "intelligence": 6,
+    "wisdom": 12,
+    "charisma": 7
+  },
+  "initiative_bonus": 2,
+  "skills": { "Athletics": 5, "Perception": 3 },
+  "senses": { "passive_perception": 13 },
+  "languages": [],
+  "challenge_rating": "1/2",
+  "xp": 100,
+  "actions": [
+    { "name": "Multiattack", "description": "The ape makes two Fist attacks." },
+    { "name": "Fist", "description": "Melee Attack Roll: +5, reach 5 ft. Hit: 5 (1d4 + 3) Bludgeoning damage." },
+    { "name": "Rock (Recharge 6)", "description": "Ranged Attack Roll: +5, range 25/50 ft. Hit: 10 (2d6 + 3) Bludgeoning damage." }
+  ],
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 344 }
+}

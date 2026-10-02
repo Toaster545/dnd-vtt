@@ -1,0 +1,34 @@
+{
+  "index": "giant-frog",
+  "name": "Giant Frog",
+  "size": "Medium",
+  "type": "beast",
+  "alignment": "unaligned",
+  "armor_class": 11,
+  "hit_points": 18,
+  "hit_dice": "4d8",
+  "speed": { "walk": 30, "swim": 30 },
+  "ability_scores": {
+    "strength": 12,
+    "dexterity": 13,
+    "constitution": 11,
+    "intelligence": 2,
+    "wisdom": 10,
+    "charisma": 3
+  },
+  "initiative_bonus": 1,
+  "skills": { "Perception": 2, "Stealth": 4 },
+  "senses": { "darkvision": 30, "passive_perception": 12 },
+  "languages": [],
+  "challenge_rating": "1/4",
+  "xp": 50,
+  "traits": [
+    { "name": "Amphibious", "description": "The frog can breathe air and water." },
+    { "name": "Standing Leap", "description": "The frog's Long Jump is up to 20 feet and its High Jump is up to 10 feet with or without a running start." }
+  ],
+  "actions": [
+    { "name": "Bite", "description": "Melee Attack Roll: +3, reach 5 ft. Hit: 5 (1d6 + 2) Piercing damage. If the target is a Medium or smaller creature, it has the Grappled condition (escape DC 11)." },
+    { "name": "Swallow", "description": "The frog swallows a Small or smaller target it is grappling. While swallowed, the target isn't Grappled but has the Blinded and Restrained conditions, and it has Total Cover against attacks and other effects outside the frog. While swallowing the target, the frog can't use Bite, and if the frog dies, the swallowed target is no longer Restrained and can escape from the corpse using 5 feet of movement, exiting with the Prone condition. At the end of the frog's next turn, the swallowed target takes 5 (2d4) Acid damage. If that damage doesn't kill it, the frog disgorges it, causing it to exit Prone." }
+  ],
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 351 }
+}

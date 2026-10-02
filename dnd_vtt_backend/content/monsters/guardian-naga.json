@@ -1,0 +1,38 @@
+{
+  "index": "guardian-naga",
+  "name": "Guardian Naga",
+  "size": "Large",
+  "type": "celestial",
+  "alignment": "lawful good",
+  "armor_class": 18,
+  "hit_points": 136,
+  "hit_dice": "16d10 + 48",
+  "speed": { "walk": 40, "climb": 40, "swim": 40 },
+  "ability_scores": {
+    "strength": 19,
+    "dexterity": 18,
+    "constitution": 16,
+    "intelligence": 16,
+    "wisdom": 19,
+    "charisma": 18
+  },
+  "initiative_bonus": 4,
+  "saving_throws": { "Dexterity": 8, "Constitution": 7, "Intelligence": 7, "Wisdom": 8, "Charisma": 8 },
+  "skills": { "Arcana": 11, "History": 11, "Religion": 11 },
+  "damage_immunities": ["poison"],
+  "condition_immunities": ["charmed", "paralyzed", "poisoned", "restrained"],
+  "senses": { "darkvision": 60, "passive_perception": 14 },
+  "languages": ["Celestial", "Common"],
+  "challenge_rating": "10",
+  "xp": 5900,
+  "traits": [
+    { "name": "Celestial Restoration", "description": "If the naga dies, it returns to life in 1d6 days and regains all its Hit Points unless Dispel Evil and Good is cast on its remains." }
+  ],
+  "actions": [
+    { "name": "Multiattack", "description": "The naga makes two Bite attacks. It can replace any attack with a use of Poisonous Spittle." },
+    { "name": "Bite", "description": "Melee Attack Roll: +8, reach 10 ft. Hit: 17 (2d12 + 4) Piercing damage plus 22 (4d10) Poison damage." },
+    { "name": "Poisonous Spittle", "description": "Constitution Saving Throw: DC 16, one creature the naga can see within 60 feet. Failure: 31 (7d8) Poison damage, and the target has the Blinded condition until the start of the naga's next turn. Success: Half damage only." },
+    { "name": "Spellcasting", "description": "The naga casts one of the following spells, requiring no Somatic or Material components and using Wisdom as the spellcasting ability (spell save DC 16):\nAt Will: Thaumaturgy\n1/Day Each: Clairvoyance, Cure Wounds (level 6 version), Flame Strike (level 6 version), Geas, True Seeing" }
+  ],
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 296 }
+}

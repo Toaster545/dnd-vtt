@@ -1,7 +1,7 @@
 import Konva from 'konva';
 import { MapLight, MapLighting, MapToken } from '../../../core/models/campaign.model';
 import { FEET_PER_SQUARE } from './measurement-tool';
-import { Point, Segment, visibilityPolygon } from './visibility';
+import { Point, Segment, pointInPolygon, visibilityPolygon } from './visibility';
 
 // A standalone light's x/y are fractional grid units (like the measure tool, not floored like
 // tokens/fog cells); an attached light's x/y are always null — its position is derived from the
@@ -27,6 +27,53 @@ export function resolveLightPosition(
   }
   if (light.x == null || light.y == null) return null;
   return { x: light.x * cellSize, y: light.y * cellSize };
+}
+
+export interface LitArea {
+  light: MapLight;
+  pos: Point;
+  outerPx: number;
+  // The light's wall-clipped visibility polygon, or null when no wall is in reach.
+  clip: Point[] | null;
+}
+
+// Every enabled light's reach, in pixels, clipped by walls — what renderDarkness punches out of
+// the darkness, and what isTokenLit checks a token against.
+export function litAreas(lighting: MapLighting, tokens: MapToken[], cellSize: number): LitArea[] {
+  const wallSegments: Segment[] = (lighting.walls ?? []).map(w => ({
+    a: { x: w.x1 * cellSize, y: w.y1 * cellSize },
+    b: { x: w.x2 * cellSize, y: w.y2 * cellSize },
+  }));
+  return lighting.lights.filter(l => l.enabled).flatMap(light => {
+    const pos = resolveLightPosition(light, tokens, cellSize);
+    if (!pos) return [];
+    const outerPx = ((light.bright_radius_ft + light.dim_radius_ft) / FEET_PER_SQUARE) * cellSize;
+    if (outerPx <= 0) return [];
+    return [{ light, pos, outerPx, clip: visibilityPolygon(pos, outerPx, wallSegments) }];
+  });
+}
+
+// Whether any part of the token's circle is within reach of a light (dim light included) with no
+// wall in the way — one lit sliver is enough to reveal it. Sampled: the center, two rings across
+// the disc, and the light itself sitting on the token.
+export function isTokenLit(token: MapToken, areas: LitArea[], cellSize: number): boolean {
+  const r = (token.size * cellSize) / 2;
+  const cx = token.x * cellSize + r;
+  const cy = token.y * cellSize + r;
+  // Same radius the token renderer draws the circle at.
+  const outer = Math.max(1, r - 3);
+  const samples: Point[] = [{ x: cx, y: cy }];
+  const steps = 16 * Math.max(1, Math.ceil(token.size));
+  for (const ringR of [outer, outer / 2]) {
+    for (let i = 0; i < steps; i++) {
+      const a = (i / steps) * Math.PI * 2;
+      samples.push({ x: cx + Math.cos(a) * ringR, y: cy + Math.sin(a) * ringR });
+    }
+  }
+  return areas.some(({ pos, outerPx, clip }) =>
+    Math.hypot(pos.x - cx, pos.y - cy) <= outer ||
+    samples.some(p => Math.hypot(p.x - pos.x, p.y - pos.y) < outerPx && (!clip || pointInPolygon(p, clip)))
+  );
 }
 
 function hexToRgb(hex: string): [number, number, number] {
@@ -73,20 +120,9 @@ export function renderDarkness(
     // Distinct hue from fog's rgba(215,220,225,0.4) tint so a DM can tell "seeing through
     // darkness" apart from "seeing through fog" when both overlays are active at once.
     const baseFill = isAdmin ? 'rgba(10,10,20,0.55)' : '#000';
-    const lights = lighting.lights.filter(l => l.enabled);
-    const wallSegments: Segment[] = (lighting.walls ?? []).map(w => ({
-      a: { x: w.x1 * cellSize, y: w.y1 * cellSize },
-      b: { x: w.x2 * cellSize, y: w.y2 * cellSize },
-    }));
     // Resolved up front (position, outer radius, visibility polygon) so both passes below and
     // every redraw Konva does of this shape reuse the same ray-cast work.
-    const resolved = lights.flatMap(light => {
-      const pos = resolveLightPosition(light, tokens, cellSize);
-      if (!pos) return [];
-      const outerPx = ((light.bright_radius_ft + light.dim_radius_ft) / FEET_PER_SQUARE) * cellSize;
-      if (outerPx <= 0) return [];
-      return [{ light, pos, outerPx, clip: visibilityPolygon(pos, outerPx, wallSegments) }];
-    });
+    const resolved = litAreas(lighting, tokens, cellSize);
 
     const darknessShape = new Konva.Shape({
       listening: false,

@@ -1,0 +1,35 @@
+{
+  "index": "giant-octopus",
+  "name": "Giant Octopus",
+  "size": "Large",
+  "type": "beast",
+  "alignment": "unaligned",
+  "armor_class": 11,
+  "hit_points": 45,
+  "hit_dice": "7d10 + 7",
+  "speed": { "walk": 10, "swim": 60 },
+  "ability_scores": {
+    "strength": 17,
+    "dexterity": 13,
+    "constitution": 13,
+    "intelligence": 5,
+    "wisdom": 10,
+    "charisma": 4
+  },
+  "initiative_bonus": 1,
+  "skills": { "Perception": 4, "Stealth": 5 },
+  "senses": { "darkvision": 60, "passive_perception": 14 },
+  "languages": [],
+  "challenge_rating": "1",
+  "xp": 200,
+  "traits": [
+    { "name": "Water Breathing", "description": "The octopus can breathe only underwater. It can hold its breath for 1 hour outside water." }
+  ],
+  "actions": [
+    { "name": "Tentacles", "description": "Melee Attack Roll: +5, reach 10 ft. Hit: 10 (2d6 + 3) Bludgeoning damage. If the target is a Medium or smaller creature, it has the Grappled condition (escape DC 13) from all eight tentacles. While Grappled, the target has the Restrained condition." }
+  ],
+  "reactions": [
+    { "name": "Ink Cloud (1/Day)", "description": "Trigger: The octopus takes damage while underwater. Response: The octopus releases ink that fills a 10-foot Cube centered on itself, and the octopus moves up to its Swim Speed. The Cube is Heavily Obscured for 1 minute or until a strong current or similar effect disperses the ink." }
+  ],
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 352 }
+}

@@ -1,0 +1,30 @@
+{
+  "index": "goat",
+  "name": "Goat",
+  "size": "Medium",
+  "type": "beast",
+  "alignment": "unaligned",
+  "armor_class": 10,
+  "hit_points": 4,
+  "hit_dice": "1d8",
+  "speed": { "walk": 40, "climb": 30 },
+  "ability_scores": {
+    "strength": 11,
+    "dexterity": 10,
+    "constitution": 11,
+    "intelligence": 2,
+    "wisdom": 10,
+    "charisma": 5
+  },
+  "initiative_bonus": 0,
+  "saving_throws": { "Strength": 2 },
+  "skills": { "Perception": 2 },
+  "senses": { "darkvision": 60, "passive_perception": 12 },
+  "languages": [],
+  "challenge_rating": "0",
+  "xp": 10,
+  "actions": [
+    { "name": "Ram", "description": "Melee Attack Roll: +2, reach 5 ft. Hit: 1 Bludgeoning damage, or 2 (1d4) Bludgeoning damage if the goat moved 20+ feet straight toward the target immediately before the hit." }
+  ],
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 355 }
+}

@@ -1,0 +1,30 @@
+{
+  "index": "griffon",
+  "name": "Griffon",
+  "size": "Large",
+  "type": "monstrosity",
+  "alignment": "unaligned",
+  "armor_class": 12,
+  "hit_points": 59,
+  "hit_dice": "7d10 + 21",
+  "speed": { "walk": 30, "fly": 80 },
+  "ability_scores": {
+    "strength": 18,
+    "dexterity": 15,
+    "constitution": 16,
+    "intelligence": 2,
+    "wisdom": 13,
+    "charisma": 8
+  },
+  "initiative_bonus": 2,
+  "skills": { "Perception": 5 },
+  "senses": { "darkvision": 60, "passive_perception": 15 },
+  "languages": [],
+  "challenge_rating": "2",
+  "xp": 450,
+  "actions": [
+    { "name": "Multiattack", "description": "The griffon makes two Rend attacks." },
+    { "name": "Rend", "description": "Melee Attack Roll: +6, reach 5 ft. Hit: 8 (1d8 + 4) Piercing damage. If the target is a Medium or smaller creature, it has the Grappled condition (escape DC 14) from both of the griffon's front claws." }
+  ],
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 295 }
+}

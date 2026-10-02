@@ -1,0 +1,37 @@
+{
+  "index": "spirit-naga",
+  "name": "Spirit Naga",
+  "size": "Large",
+  "type": "fiend",
+  "alignment": "chaotic evil",
+  "armor_class": 17,
+  "hit_points": 135,
+  "hit_dice": "18d10 + 36",
+  "speed": { "walk": 40 },
+  "ability_scores": {
+    "strength": 18,
+    "dexterity": 17,
+    "constitution": 14,
+    "intelligence": 16,
+    "wisdom": 15,
+    "charisma": 16
+  },
+  "initiative_bonus": 3,
+  "saving_throws": { "Dexterity": 6, "Constitution": 5, "Wisdom": 5, "Charisma": 6 },
+  "damage_immunities": ["poison"],
+  "condition_immunities": ["charmed", "poisoned"],
+  "senses": { "darkvision": 60, "passive_perception": 12 },
+  "languages": ["Abyssal", "Common"],
+  "challenge_rating": "8",
+  "xp": 3900,
+  "traits": [
+    { "name": "Fiendish Restoration", "description": "If it dies, the naga returns to life in 1d6 days and regains all its Hit Points. Only a Wish spell can prevent this trait from functioning." }
+  ],
+  "actions": [
+    { "name": "Multiattack", "description": "The naga makes three attacks, using Bite or Necrotic Ray in any combination." },
+    { "name": "Bite", "description": "Melee Attack Roll: +7, reach 10 ft. Hit: 7 (1d6 + 4) Piercing damage plus 14 (4d6) Poison damage." },
+    { "name": "Necrotic Ray", "description": "Ranged Attack Roll: +6, range 60 ft. Hit: 21 (6d6) Necrotic damage." },
+    { "name": "Spellcasting", "description": "The naga casts one of the following spells, requiring no Somatic or Material components and using Intelligence as the spellcasting ability (spell save DC 14):\nAt Will: Detect Magic, Mage Hand, Minor Illusion, Water Breathing\n2/Day Each: Detect Thoughts, Dimension Door, Hold Person (level 3 version), Lightning Bolt (level 4 version)" }
+  ],
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 329 }
+}

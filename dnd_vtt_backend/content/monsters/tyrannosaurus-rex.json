@@ -1,0 +1,32 @@
+{
+  "index": "tyrannosaurus-rex",
+  "name": "Tyrannosaurus Rex",
+  "size": "Huge",
+  "type": "beast (dinosaur)",
+  "alignment": "unaligned",
+  "armor_class": 13,
+  "hit_points": 136,
+  "hit_dice": "13d12 + 52",
+  "speed": { "walk": 50 },
+  "ability_scores": {
+    "strength": 25,
+    "dexterity": 10,
+    "constitution": 19,
+    "intelligence": 2,
+    "wisdom": 12,
+    "charisma": 9
+  },
+  "initiative_bonus": 3,
+  "saving_throws": { "Strength": 10, "Wisdom": 4 },
+  "skills": { "Perception": 4 },
+  "senses": { "passive_perception": 14 },
+  "languages": [],
+  "challenge_rating": "8",
+  "xp": 3900,
+  "actions": [
+    { "name": "Multiattack", "description": "The tyrannosaurus makes one Bite attack and one Tail attack." },
+    { "name": "Bite", "description": "Melee Attack Roll: +10, reach 10 ft. Hit: 33 (4d12 + 7) Piercing damage. If the target is a Large or smaller creature, it has the Grappled condition (escape DC 17). While Grappled, the target has the Restrained condition and can't be targeted by the tyrannosaurus's Tail." },
+    { "name": "Tail", "description": "Melee Attack Roll: +10, reach 15 ft. Hit: 25 (4d8 + 7) Bludgeoning damage. If the target is a Huge or smaller creature, it has the Prone condition." }
+  ],
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 363 }
+}

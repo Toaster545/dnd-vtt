@@ -1,0 +1,44 @@
+{
+  "index": "ancient-blue-dragon",
+  "name": "Ancient Blue Dragon",
+  "size": "Gargantuan",
+  "type": "dragon (chromatic)",
+  "alignment": "lawful evil",
+  "armor_class": 22,
+  "hit_points": 481,
+  "hit_dice": "26d20 + 208",
+  "speed": { "walk": 40, "burrow": 40, "fly": 80 },
+  "ability_scores": {
+    "strength": 29,
+    "dexterity": 10,
+    "constitution": 27,
+    "intelligence": 18,
+    "wisdom": 17,
+    "charisma": 25
+  },
+  "initiative_bonus": 14,
+  "saving_throws": { "Dexterity": 7, "Wisdom": 10 },
+  "skills": { "Perception": 17, "Stealth": 7 },
+  "damage_immunities": ["lightning"],
+  "senses": { "blindsight": 60, "darkvision": 120, "passive_perception": 27 },
+  "languages": ["Common", "Draconic"],
+  "challenge_rating": "23",
+  "xp": 50000,
+  "xp_in_lair": 62000,
+  "traits": [
+    { "name": "Legendary Resistance (4/Day, or 5/Day in Lair)", "description": "If the dragon fails a saving throw, it can choose to succeed instead." }
+  ],
+  "actions": [
+    { "name": "Multiattack", "description": "The dragon makes three Rend attacks. It can replace one attack with a use of Spellcasting to cast Shatter (level 3 version)." },
+    { "name": "Rend", "description": "Melee Attack Roll: +16, reach 15 ft. Hit: 18 (2d8 + 9) Slashing damage plus 11 (2d10) Lightning damage." },
+    { "name": "Lightning Breath (Recharge 5-6)", "description": "Dexterity Saving Throw: DC 23, each creature in a 120-foot-long, 10-foot-wide Line. Failure: 88 (16d10) Lightning damage. Success: Half damage." },
+    { "name": "Spellcasting", "description": "The dragon casts one of the following spells, requiring no Material components and using Charisma as the spellcasting ability (spell save DC 22):\nAt Will: Detect Magic, Invisibility, Mage Hand, Shatter (level 3 version)\n1/Day Each: Scrying, Sending" }
+  ],
+  "legendary_description": "Legendary Action Uses: 3 (4 in Lair). Immediately after another creature's turn, the dragon can expend a use to take one of the following actions. The dragon regains all expended uses at the start of each of its turns.",
+  "legendary_actions": [
+    { "name": "Cloaked Flight", "description": "The dragon uses Spellcasting to cast Invisibility on itself, and it can fly up to half its Fly Speed. The dragon can't take this action again until the start of its next turn." },
+    { "name": "Sonic Boom", "description": "The dragon uses Spellcasting to cast Shatter (level 3 version). The dragon can't take this action again until the start of its next turn." },
+    { "name": "Tail Swipe", "description": "The dragon makes one Rend attack." }
+  ],
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 267 }
+}

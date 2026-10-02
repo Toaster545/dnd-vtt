@@ -1,0 +1,36 @@
+{
+  "index": "treant",
+  "name": "Treant",
+  "size": "Huge",
+  "type": "plant",
+  "alignment": "chaotic good",
+  "armor_class": 16,
+  "hit_points": 138,
+  "hit_dice": "12d12 + 60",
+  "speed": { "walk": 30 },
+  "ability_scores": {
+    "strength": 23,
+    "dexterity": 8,
+    "constitution": 21,
+    "intelligence": 12,
+    "wisdom": 16,
+    "charisma": 12
+  },
+  "initiative_bonus": 3,
+  "damage_vulnerabilities": ["fire"],
+  "damage_resistances": ["bludgeoning", "piercing"],
+  "senses": { "passive_perception": 13 },
+  "languages": ["Common", "Druidic", "Elvish", "Sylvan"],
+  "challenge_rating": "9",
+  "xp": 5000,
+  "traits": [
+    { "name": "Siege Monster", "description": "The treant deals double damage to objects and structures." }
+  ],
+  "actions": [
+    { "name": "Multiattack", "description": "The treant makes two Slam attacks." },
+    { "name": "Slam", "description": "Melee Attack Roll: +10, reach 5 ft. Hit: 16 (3d6 + 6) Bludgeoning damage." },
+    { "name": "Hail of Bark", "description": "Ranged Attack Roll: +10, range 180 ft. Hit: 28 (4d10 + 6) Piercing damage." },
+    { "name": "Animate Trees (1/Day)", "description": "The treant magically animates up to two trees it can see within 60 feet of itself. Each tree uses the Treant stat block, except it has Intelligence and Charisma scores of 1, it can't speak, and it lacks this action. The tree takes its turn immediately after the treant on the same Initiative count, and it obeys the treant. A tree remains animate for 1 day or until it dies, the treant dies, or it is more than 120 feet from the treant. The tree then takes root if possible." }
+  ],
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 333 }
+}

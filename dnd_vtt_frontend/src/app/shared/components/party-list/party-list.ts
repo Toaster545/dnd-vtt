@@ -50,6 +50,7 @@ export class PartyListComponent {
     return portraitDataUri(portraitSource(
       member.character_portrait_seed || member.character_id,
       member.character_avatar_recipe,
+      member.character_portrait_image,
     ));
   }
 

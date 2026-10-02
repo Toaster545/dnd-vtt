@@ -1,11 +1,10 @@
 {
   "index": "bandit",
   "name": "Bandit",
-  "size": "Medium",
-  "type": "humanoid (any race)",
-  "alignment": "any non-lawful alignment",
+  "size": "Medium or Small",
+  "type": "humanoid",
+  "alignment": "neutral",
   "armor_class": 12,
-  "armor_class_desc": "leather armor",
   "hit_points": 11,
   "hit_dice": "2d8 + 2",
   "speed": { "walk": 30 },
@@ -18,13 +17,15 @@
     "charisma": 10
   },
   "initiative_bonus": 1,
+  "gear": ["Leather Armor", "Light Crossbow", "Scimitar"],
   "senses": { "passive_perception": 10 },
-  "languages": ["any one language (usually Common)"],
+  "languages": ["Common", "Thieves' Cant"],
   "challenge_rating": "1/8",
   "xp": 25,
   "actions": [
-    { "name": "Scimitar", "description": "Melee Weapon Attack: +3 to hit, reach 5 ft., one target. Hit: 4 (1d6 + 1) slashing damage." },
-    { "name": "Light Crossbow", "description": "Ranged Weapon Attack: +3 to hit, range 80/320 ft., one target. Hit: 5 (1d8 + 1) piercing damage." }
+    { "name": "Scimitar", "description": "Melee Attack Roll: +3, reach 5 ft. Hit: 4 (1d6 + 1) Slashing damage." },
+    { "name": "Light Crossbow", "description": "Ranged Attack Roll: +3, range 80/320 ft. Hit: 5 (1d8 + 1) Piercing damage." }
   ],
-  "description": "Bandits are lawless thugs and highwaymen more interested in coin and treasure than a fair fight."
+  "description": "Bandits are lawless thugs and highwaymen more interested in coin and treasure than a fair fight.",
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 261 }
 }

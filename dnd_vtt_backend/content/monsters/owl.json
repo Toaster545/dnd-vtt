@@ -1,0 +1,32 @@
+{
+  "index": "owl",
+  "name": "Owl",
+  "size": "Tiny",
+  "type": "beast",
+  "alignment": "unaligned",
+  "armor_class": 11,
+  "hit_points": 1,
+  "hit_dice": "1d4 - 1",
+  "speed": { "walk": 5, "fly": 60 },
+  "ability_scores": {
+    "strength": 3,
+    "dexterity": 13,
+    "constitution": 8,
+    "intelligence": 2,
+    "wisdom": 12,
+    "charisma": 7
+  },
+  "initiative_bonus": 1,
+  "skills": { "Perception": 5, "Stealth": 5 },
+  "senses": { "darkvision": 120, "passive_perception": 15 },
+  "languages": [],
+  "challenge_rating": "0",
+  "xp": 10,
+  "traits": [
+    { "name": "Flyby", "description": "The owl doesn't provoke an Opportunity Attack when it flies out of an enemy's reach." }
+  ],
+  "actions": [
+    { "name": "Talons", "description": "Melee Attack Roll: +3, reach 5 ft. Hit: 1 Slashing damage." }
+  ],
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 358 }
+}

@@ -1,0 +1,33 @@
+{
+  "index": "archelon",
+  "name": "Archelon",
+  "size": "Huge",
+  "type": "beast (dinosaur)",
+  "alignment": "unaligned",
+  "armor_class": 17,
+  "hit_points": 90,
+  "hit_dice": "12d12 + 12",
+  "speed": { "walk": 20, "swim": 80 },
+  "ability_scores": {
+    "strength": 18,
+    "dexterity": 16,
+    "constitution": 13,
+    "intelligence": 4,
+    "wisdom": 14,
+    "charisma": 6
+  },
+  "initiative_bonus": 3,
+  "skills": { "Stealth": 5 },
+  "senses": { "passive_perception": 12 },
+  "languages": [],
+  "challenge_rating": "4",
+  "xp": 1100,
+  "traits": [
+    { "name": "Amphibious", "description": "The archelon can breathe air and water." }
+  ],
+  "actions": [
+    { "name": "Multiattack", "description": "The archelon makes two Bite attacks." },
+    { "name": "Bite", "description": "Melee Attack Roll: +6, reach 5 ft. Hit: 14 (3d6 + 4) Piercing damage." }
+  ],
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 344 }
+}

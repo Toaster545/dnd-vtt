@@ -5,37 +5,36 @@
   "type": "fiend (devil)",
   "alignment": "lawful evil",
   "armor_class": 18,
-  "armor_class_desc": "natural armor",
-  "hit_points": 199,
-  "hit_dice": "19d10 + 95",
+  "hit_points": 228,
+  "hit_dice": "24d10 + 96",
   "speed": { "walk": 40 },
   "ability_scores": {
     "strength": 21,
     "dexterity": 14,
-    "constitution": 21,
+    "constitution": 18,
     "intelligence": 18,
     "wisdom": 15,
     "charisma": 18
   },
-  "initiative_bonus": 2,
-  "saving_throws": { "Intelligence": 8, "Wisdom": 6 },
-  "damage_resistances": ["cold"],
-  "damage_immunities": ["fire", "poison"],
+  "initiative_bonus": 7,
+  "saving_throws": { "Dexterity": 7, "Constitution": 9, "Wisdom": 7, "Charisma": 9 },
+  "skills": { "Insight": 7, "Perception": 7, "Persuasion": 9 },
+  "damage_immunities": ["cold", "fire", "poison"],
   "condition_immunities": ["poisoned"],
-  "senses": { "darkvision": 120, "passive_perception": 12 },
+  "senses": { "blindsight": 120, "passive_perception": 17 },
   "languages": ["Infernal", "telepathy 120 ft."],
   "challenge_rating": "14",
   "xp": 11500,
   "traits": [
-    { "name": "Devil's Sight", "description": "Magical darkness doesn't impede the devil's darkvision." },
-    { "name": "Magic Resistance", "description": "The devil has advantage on saving throws against spells and other magical effects." },
-    { "name": "Wall of Ice", "description": "As a Bonus Action, the devil can create a permanent, opaque wall of ice up to 30 feet long, 10 feet high, and 1 foot thick, anchored at a point it can see within 60 feet of it. The wall lasts until it is destroyed (AC 5, 15 hit points per 10-foot section, immunity to Cold, Poison, and Psychic damage)." }
+    { "name": "Diabolical Restoration", "description": "If the devil dies outside the Nine Hells, its body disappears in sulfurous smoke, and it gains a new body instantly, reviving with all its Hit Points somewhere in the Nine Hells." },
+    { "name": "Magic Resistance", "description": "The devil has Advantage on saving throws against spells and other magical effects." }
   ],
   "actions": [
-    { "name": "Multiattack", "description": "The devil makes two Claw attacks and one Tail attack." },
-    { "name": "Claw", "description": "Melee Attack Roll: +10, reach 10 ft. Hit: 14 (2d8 + 5) Cold damage." },
-    { "name": "Tail", "description": "Melee Attack Roll: +10, reach 10 ft. Hit: 14 (2d8 + 5) Piercing damage. If the target is Medium or smaller, it has the Poisoned condition until the end of the devil's next turn." },
-    { "name": "Ice Storm (Recharge 6)", "description": "The devil casts a barrage of ice in a 20-foot-radius Sphere centered on a point it can see within 120 feet. Each creature in that area makes a DC 16 Dexterity saving throw, taking 27 (6d8) Bludgeoning damage and 27 (6d8) Cold damage on a failed save, or half as much damage on a successful one." }
+    { "name": "Multiattack", "description": "The devil makes three Ice Spear attacks. It can replace one attack with a Tail attack." },
+    { "name": "Ice Spear", "description": "Melee or Ranged Attack Roll: +10, reach 5 ft. or range 30/120 ft. Hit: 14 (2d8 + 5) Piercing damage plus 10 (3d6) Cold damage. Until the end of its next turn, the target can't take a Bonus Action or Reaction, its Speed decreases by 10 feet, and it can move or take one action on its turn, not both. Hit or Miss: The spear magically returns to the devil's hand immediately after a ranged attack." },
+    { "name": "Tail", "description": "Melee Attack Roll: +10, reach 10 ft. Hit: 15 (3d6 + 5) Bludgeoning damage plus 18 (4d8) Cold damage." },
+    { "name": "Ice Wall (Recharge 6)", "description": "The devil casts Wall of Ice (level 8 version), requiring no spell components and using Intelligence as the spellcasting ability (spell save DC 17)." }
   ],
-  "description": "Ice devils, or gelugons, are hulking insectoid tacticians who patrol the frozen wastes of Stygia, encasing their foes in wall of ice and impaling stragglers on their poisoned tail."
+  "description": "Ice devils, or gelugons, are hulking insectoid tacticians who patrol the frozen wastes of Stygia, encasing their foes in wall of ice and impaling stragglers on their poisoned tail.",
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 300 }
 }

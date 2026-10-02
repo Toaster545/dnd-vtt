@@ -1,0 +1,34 @@
+{
+  "index": "giant-ape",
+  "name": "Giant Ape",
+  "size": "Huge",
+  "type": "beast",
+  "alignment": "unaligned",
+  "armor_class": 12,
+  "hit_points": 168,
+  "hit_dice": "16d12 + 64",
+  "speed": { "walk": 40, "climb": 40 },
+  "ability_scores": {
+    "strength": 23,
+    "dexterity": 14,
+    "constitution": 18,
+    "intelligence": 5,
+    "wisdom": 12,
+    "charisma": 7
+  },
+  "initiative_bonus": 5,
+  "skills": { "Athletics": 9, "Perception": 4, "Survival": 4 },
+  "senses": { "passive_perception": 14 },
+  "languages": [],
+  "challenge_rating": "7",
+  "xp": 2900,
+  "actions": [
+    { "name": "Multiattack", "description": "The ape makes two Fist attacks." },
+    { "name": "Fist", "description": "Melee Attack Roll: +9, reach 10 ft. Hit: 22 (3d10 + 6) Bludgeoning damage." },
+    { "name": "Boulder Toss (Recharge 6)", "description": "The ape hurls a boulder at a point it can see within 90 feet. Dexterity Saving Throw: DC 17, each creature in a 5-foot-radius Sphere centered on that point. Failure: 24 (7d6) Bludgeoning damage. If the target is a Large or smaller creature, it has the Prone condition. Success: Half damage only." }
+  ],
+  "bonus_actions": [
+    { "name": "Leap", "description": "The ape jumps up to 30 feet by spending 10 feet of movement." }
+  ],
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 349 }
+}

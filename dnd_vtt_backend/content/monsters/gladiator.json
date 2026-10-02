@@ -1,0 +1,36 @@
+{
+  "index": "gladiator",
+  "name": "Gladiator",
+  "size": "Medium or Small",
+  "type": "humanoid",
+  "alignment": "neutral",
+  "armor_class": 16,
+  "hit_points": 112,
+  "hit_dice": "15d8 + 45",
+  "speed": { "walk": 30 },
+  "ability_scores": {
+    "strength": 18,
+    "dexterity": 15,
+    "constitution": 16,
+    "intelligence": 10,
+    "wisdom": 12,
+    "charisma": 15
+  },
+  "initiative_bonus": 5,
+  "saving_throws": { "Strength": 7, "Dexterity": 5, "Constitution": 6, "Wisdom": 4 },
+  "skills": { "Athletics": 10, "Performance": 5 },
+  "gear": ["Shield", "Spears (3)", "Studded Leather Armor"],
+  "senses": { "passive_perception": 11 },
+  "languages": ["Common"],
+  "challenge_rating": "5",
+  "xp": 1800,
+  "actions": [
+    { "name": "Multiattack", "description": "The gladiator makes three Spear attacks. It can replace one attack with a use of Shield Bash." },
+    { "name": "Spear", "description": "Melee or Ranged Attack Roll: +7, reach 5 ft. or range 20/60 ft. Hit: 11 (2d6 + 4) Piercing damage." },
+    { "name": "Shield Bash", "description": "Strength Saving Throw: DC 15, one creature within 5 feet that the gladiator can see. Failure: 9 (2d4 + 4) Bludgeoning damage. If the target is a Medium or smaller creature, it has the Prone condition." }
+  ],
+  "reactions": [
+    { "name": "Parry", "description": "Trigger: The gladiator is hit by a melee attack roll while holding a weapon. Response: The gladiator adds 3 to its AC against that attack, possibly causing it to miss." }
+  ],
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 289 }
+}

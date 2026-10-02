@@ -29,6 +29,7 @@ npm test              # jest unit tests (*.spec.ts, colocated in src/)
 npm test -- characters/characters.service.spec  # run a single test file
 npm run test:e2e      # jest e2e tests, config in test/jest-e2e.json
 node scripts/make-admin.mjs <email>   # promote a registered user to admin/DM
+node scripts/download-monster-tokens.mjs   # fetch 5etools monster token art into uploads/monster-tokens/ (gitignored)
 ```
 
 Frontend (`dnd_vtt_frontend/`):

@@ -1,0 +1,39 @@
+{
+  "index": "mage",
+  "name": "Mage",
+  "size": "Medium or Small",
+  "type": "humanoid (wizard)",
+  "alignment": "neutral",
+  "armor_class": 15,
+  "hit_points": 81,
+  "hit_dice": "18d8",
+  "speed": { "walk": 30 },
+  "ability_scores": {
+    "strength": 9,
+    "dexterity": 14,
+    "constitution": 11,
+    "intelligence": 17,
+    "wisdom": 12,
+    "charisma": 11
+  },
+  "initiative_bonus": 2,
+  "saving_throws": { "Intelligence": 6, "Wisdom": 4 },
+  "skills": { "Arcana": 6, "History": 6, "Perception": 4 },
+  "gear": ["Wand"],
+  "senses": { "passive_perception": 14 },
+  "languages": ["Common plus three other languages"],
+  "challenge_rating": "6",
+  "xp": 2300,
+  "actions": [
+    { "name": "Multiattack", "description": "The mage makes three Arcane Burst attacks." },
+    { "name": "Arcane Burst", "description": "Melee or Ranged Attack Roll: +6, reach 5 ft. or range 120 ft. Hit: 16 (3d8 + 3) Force damage." },
+    { "name": "Spellcasting", "description": "The mage casts one of the following spells, using Intelligence as the spellcasting ability (spell save DC 14):\nAt Will: Detect Magic, Light, Mage Armor (included in AC), Mage Hand, Prestidigitation\n2/Day Each: Fireball (level 4 version), Invisibility\n1/Day Each: Cone of Cold, Fly" }
+  ],
+  "bonus_actions": [
+    { "name": "Misty Step (3/Day)", "description": "The mage casts Misty Step, using the same spellcasting ability as Spellcasting." }
+  ],
+  "reactions": [
+    { "name": "Protective Magic (3/Day)", "description": "The mage casts Counterspell or Shield in response to the spell's trigger, using the same spellcasting ability as Spellcasting." }
+  ],
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 305 }
+}

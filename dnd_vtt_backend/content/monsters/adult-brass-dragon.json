@@ -1,0 +1,45 @@
+{
+  "index": "adult-brass-dragon",
+  "name": "Adult Brass Dragon",
+  "size": "Huge",
+  "type": "dragon (metallic)",
+  "alignment": "chaotic good",
+  "armor_class": 18,
+  "hit_points": 172,
+  "hit_dice": "15d12 + 75",
+  "speed": { "walk": 40, "burrow": 30, "fly": 80 },
+  "ability_scores": {
+    "strength": 23,
+    "dexterity": 10,
+    "constitution": 21,
+    "intelligence": 14,
+    "wisdom": 13,
+    "charisma": 17
+  },
+  "initiative_bonus": 10,
+  "saving_throws": { "Dexterity": 5, "Wisdom": 6 },
+  "skills": { "History": 7, "Perception": 11, "Persuasion": 8, "Stealth": 5 },
+  "damage_immunities": ["fire"],
+  "senses": { "blindsight": 60, "darkvision": 120, "passive_perception": 21 },
+  "languages": ["Common", "Draconic"],
+  "challenge_rating": "13",
+  "xp": 10000,
+  "xp_in_lair": 11500,
+  "traits": [
+    { "name": "Legendary Resistance (3/Day, or 4/Day in Lair)", "description": "If the dragon fails a saving throw, it can choose to succeed instead." }
+  ],
+  "actions": [
+    { "name": "Multiattack", "description": "The dragon makes three Rend attacks. It can replace one attack with a use of (A) Sleep Breath or (B) Spellcasting to cast Scorching Ray." },
+    { "name": "Rend", "description": "Melee Attack Roll: +11, reach 10 ft. Hit: 17 (2d10 + 6) Slashing damage plus 4 (1d8) Fire damage." },
+    { "name": "Fire Breath (Recharge 5-6)", "description": "Dexterity Saving Throw: DC 18, each creature in a 60-foot-long, 5-foot-wide Line. Failure: 45 (10d8) Fire damage. Success: Half damage." },
+    { "name": "Sleep Breath", "description": "Constitution Saving Throw: DC 18, each creature in a 60-foot Cone. Failure: The target has the Incapacitated condition until the end of its next turn, at which point it repeats the save. Second Failure: The target has the Unconscious condition for 10 minutes. This effect ends for the target if it takes damage or a creature within 5 feet of it takes an action to wake it." },
+    { "name": "Spellcasting", "description": "The dragon casts one of the following spells, requiring no Material components and using Charisma as the spellcasting ability (spell save DC 16):\nAt Will: Detect Magic, Minor Illusion, Scorching Ray, Shapechange (Beast or Humanoid form only, no Temporary Hit Points gained from the spell, and no Concentration or Temporary Hit Points required to maintain the spell), Speak with Animals\n1/Day Each: Detect Thoughts, Control Weather" }
+  ],
+  "legendary_description": "Legendary Action Uses: 3 (4 in Lair). Immediately after another creature's turn, the dragon can expend a use to take one of the following actions. The dragon regains all expended uses at the start of each of its turns.",
+  "legendary_actions": [
+    { "name": "Blazing Light", "description": "The dragon uses Spellcasting to cast Scorching Ray." },
+    { "name": "Pounce", "description": "The dragon moves up to half its Speed, and it makes one Rend attack." },
+    { "name": "Scorching Sands", "description": "Dexterity Saving Throw: DC 16, one creature the dragon can see within 120 feet. Failure: 27 (6d8) Fire damage, and the target's Speed is halved until the end of its next turn. Failure or Success: The dragon can't take this action again until the start of its next turn." }
+  ],
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 268 }
+}

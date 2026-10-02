@@ -4,6 +4,8 @@ export class CreateEncounterDto {
   @IsString() @IsNotEmpty() name: string;
   @IsString() @IsNotEmpty() session_id: string;
   @IsString() @IsOptional() map_id?: string;
+  // Ordered dungeon levels, entry level first — supersedes map_id when present.
+  @IsArray() @IsString({ each: true }) @IsOptional() map_ids?: string[];
   @IsArray() @IsOptional() monsters?: string[];
   @IsArray() @IsOptional() character_ids?: string[];
 }

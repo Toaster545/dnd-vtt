@@ -1,0 +1,35 @@
+{
+  "index": "priest-acolyte",
+  "name": "Priest Acolyte",
+  "size": "Medium or Small",
+  "type": "humanoid (cleric)",
+  "alignment": "neutral",
+  "armor_class": 13,
+  "hit_points": 11,
+  "hit_dice": "2d8 + 2",
+  "speed": { "walk": 30 },
+  "ability_scores": {
+    "strength": 14,
+    "dexterity": 10,
+    "constitution": 12,
+    "intelligence": 10,
+    "wisdom": 14,
+    "charisma": 11
+  },
+  "initiative_bonus": 0,
+  "skills": { "Medicine": 4, "Religion": 2 },
+  "gear": ["Chain Shirt", "Holy Symbol", "Mace"],
+  "senses": { "passive_perception": 12 },
+  "languages": ["Common"],
+  "challenge_rating": "1/4",
+  "xp": 50,
+  "actions": [
+    { "name": "Mace", "description": "Melee Attack Roll: +4, reach 5 ft. Hit: 5 (1d6 + 2) Bludgeoning damage plus 2 (1d4) Radiant damage." },
+    { "name": "Radiant Flame", "description": "Ranged Attack Roll: +4, range 60 ft. Hit: 7 (2d6) Radiant damage." },
+    { "name": "Spellcasting", "description": "The priest casts one of the following spells, using Wisdom as the spellcasting ability:\nAt Will: Light, Thaumaturgy" }
+  ],
+  "bonus_actions": [
+    { "name": "Divine Aid (1/Day)", "description": "The priest casts Bless, Healing Word, or Sanctuary, using the same spellcasting ability as Spellcasting." }
+  ],
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 316 }
+}

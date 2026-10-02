@@ -22,6 +22,29 @@ export interface EncounterFormDialogData {
   encounter?: Encounter | null;
 }
 
+// One level (dungeon floor) of the encounter as edited in the form — a snapshot of the map
+// editor's signals below. Only the selected level lives in those signals; the rest wait here.
+interface LevelDraft {
+  existingMap: BattleMap | null;
+  mapFile: File | null;
+  mapKind: 'dd2vtt' | 'image' | null;
+  pixelsPerGrid: number;
+  mapCols: number;
+  mapRows: number;
+  imagePreviewUrl: string | null;
+  verticalSquares: number;
+  dd2vttWalls: MapWall[];
+  imgNaturalWidth: number;
+  imgNaturalHeight: number;
+}
+
+function emptyLevel(): LevelDraft {
+  return {
+    existingMap: null, mapFile: null, mapKind: null, pixelsPerGrid: 0, mapCols: 0, mapRows: 0,
+    imagePreviewUrl: null, verticalSquares: 20, dd2vttWalls: [], imgNaturalWidth: 0, imgNaturalHeight: 0,
+  };
+}
+
 // Popup counterpart of what used to be DmCampaignSessionComponent's inline "showForm" card —
 // moved wholesale into a MatDialog so opening it doesn't shove the encounter list down the page.
 // Closes with `true` (something was saved, the caller should refetch its encounter list) or
@@ -66,6 +89,18 @@ export class EncounterFormDialogComponent implements OnInit, OnDestroy {
   mapFile = signal<File | null>(null);
   private imgNaturalWidth = 0;
   private imgNaturalHeight = 0;
+
+  // Every level of the encounter, entry level first. The entry at activeLevel() is stale while
+  // selected — its live state is the map editor signals above (see snapshotLevel/selectLevel).
+  levelDrafts = signal<LevelDraft[]>([emptyLevel()]);
+  activeLevel = signal(0);
+  // Maps already used by another level, so the same floor can't be picked twice.
+  otherLevelMapIds = computed(() => new Set(
+    this.levelDrafts()
+      .filter((_, i) => i !== this.activeLevel())
+      .map(d => d.existingMap?.id)
+      .filter((id): id is string => !!id),
+  ));
 
   selectedMonsterIndices = signal<Set<string>>(new Set(this.data.encounter?.monsters ?? []));
   selectedCharacterIds   = signal<Set<string>>(new Set(this.data.encounter?.character_ids ?? []));
@@ -121,12 +156,118 @@ export class EncounterFormDialogComponent implements OnInit, OnDestroy {
       this.sessionNames.set(past.sessionNames);
       this.pastEncounters.set(past.encounters);
     }
-    const mapId = this.data.encounter?.map_id;
-    if (mapId) {
-      // Reuse the picker's logic so an encounter's already-attached map renders in the visualizer
-      // immediately, the same as freshly selecting it from the "uploaded maps" list would.
-      await this.selectExistingMap(await this.mapService.getMap(mapId));
-    }
+    const encounter = this.data.encounter;
+    const levelIds = encounter?.levels?.length
+      ? encounter.levels.map(l => l.map_id)
+      : encounter?.map_id ? [encounter.map_id] : [];
+    await this.loadLevels(levelIds);
+  }
+
+  // Seeds the level tabs from existing map ids (edit mode, or a template). Returns whether any
+  // of them couldn't be found among this campaign's maps.
+  private async loadLevels(mapIds: string[]): Promise<boolean> {
+    const maps = mapIds.map(id => this.campaignMaps().find(m => m.id === id));
+    const found = maps.filter((m): m is BattleMap => !!m);
+    this.levelDrafts.set(found.length
+      ? found.map(map => ({ ...emptyLevel(), existingMap: map, pixelsPerGrid: map.grid_size, imagePreviewUrl: map.image_url }))
+      : [emptyLevel()]);
+    this.activeLevel.set(0);
+    this.clearMapSelection();
+    // Reuse the picker's logic so the entry level renders in the visualizer immediately, the
+    // same as freshly selecting it from the "uploaded maps" list would.
+    if (found[0]) await this.selectExistingMap(found[0]);
+    return found.length < mapIds.length;
+  }
+
+  private snapshotLevel(): LevelDraft {
+    return {
+      existingMap: this.existingMap(),
+      mapFile: this.mapFile(),
+      mapKind: this.mapKind(),
+      pixelsPerGrid: this.pixelsPerGrid(),
+      mapCols: this.mapCols(),
+      mapRows: this.mapRows(),
+      imagePreviewUrl: this.imagePreviewUrl(),
+      verticalSquares: this.verticalSquares,
+      dd2vttWalls: this.dd2vttWalls,
+      imgNaturalWidth: this.imgNaturalWidth,
+      imgNaturalHeight: this.imgNaturalHeight,
+    };
+  }
+
+  private storeActiveLevel() {
+    const draft = this.snapshotLevel();
+    this.levelDrafts.update(list => list.map((d, i) => i === this.activeLevel() ? draft : d));
+  }
+
+  private restoreLevel(draft: LevelDraft) {
+    this.clearMapSelection();
+    this.uploadError.set(null);
+    this.existingMap.set(draft.existingMap);
+    this.mapFile.set(draft.mapFile);
+    this.mapKind.set(draft.mapKind);
+    this.mapCols.set(draft.mapCols);
+    this.mapRows.set(draft.mapRows);
+    this.verticalSquares = draft.verticalSquares;
+    this.dd2vttWalls = draft.dd2vttWalls;
+    this.imgNaturalWidth = draft.imgNaturalWidth;
+    this.imgNaturalHeight = draft.imgNaturalHeight;
+    this.pixelsPerGrid.set(draft.pixelsPerGrid);
+    this.imagePreviewUrl.set(draft.imagePreviewUrl);
+  }
+
+  selectLevel(index: number) {
+    if (index === this.activeLevel()) return;
+    this.storeActiveLevel();
+    this.activeLevel.set(index);
+    this.showLevel(this.levelDrafts()[index]);
+  }
+
+  private showLevel(draft: LevelDraft) {
+    // Existing maps re-run the picker so the cell count gets measured (seeded levels skip it).
+    if (draft.existingMap && !draft.mapFile) void this.selectExistingMap(draft.existingMap);
+    else this.restoreLevel(draft);
+  }
+
+  addLevel() {
+    this.storeActiveLevel();
+    this.levelDrafts.update(list => [...list, emptyLevel()]);
+    this.activeLevel.set(this.levelDrafts().length - 1);
+    this.restoreLevel(emptyLevel());
+  }
+
+  removeLevel(index: number) {
+    if (this.levelDrafts().length === 1) { this.clearMapSelection(); return; }
+    this.storeActiveLevel();
+    const remaining = this.levelDrafts().filter((_, i) => i !== index);
+    this.levelDrafts.set(remaining);
+    const next = Math.min(this.activeLevel() > index ? this.activeLevel() - 1 : this.activeLevel(), remaining.length - 1);
+    this.activeLevel.set(next);
+    this.showLevel(remaining[next]);
+  }
+
+  // Swaps a level with its neighbour — the order is the stacking order (and the first is the
+  // entry level players start on). The selection stays on the same level as it moves.
+  moveLevel(index: number, delta: -1 | 1) {
+    const target = index + delta;
+    if (target < 0 || target >= this.levelDrafts().length) return;
+    this.storeActiveLevel();
+    this.levelDrafts.update(list => {
+      const next = [...list];
+      [next[index], next[target]] = [next[target], next[index]];
+      return next;
+    });
+    const active = this.activeLevel();
+    if (active === index) this.activeLevel.set(target);
+    else if (active === target) this.activeLevel.set(index);
+  }
+
+  levelLabel(index: number): string {
+    const isActive = index === this.activeLevel();
+    const map = isActive ? this.existingMap() : this.levelDrafts()[index].existingMap;
+    const file = isActive ? this.mapFile() : this.levelDrafts()[index].mapFile;
+    if (file) return 'New upload';
+    return map?.name ?? 'No map';
   }
 
   ngOnDestroy() {
@@ -154,13 +295,8 @@ export class EncounterFormDialogComponent implements OnInit, OnDestroy {
     this.selectedMonsterIndices.set(new Set(source.monsters.filter(i => monsterIndices.has(i))));
     const characterIds = new Set(this.data.characters.map(c => c.id));
     this.selectedCharacterIds.set(new Set(source.character_ids.filter(i => characterIds.has(i))));
-    const map = source.map_id ? this.campaignMaps().find(m => m.id === source.map_id) : undefined;
-    if (map) {
-      await this.selectExistingMap(map);
-    } else {
-      this.clearMapSelection();
-      this.templateMapDropped.set(!!source.map_id);
-    }
+    const levelIds = source.levels?.length ? source.levels.map(l => l.map_id) : source.map_id ? [source.map_id] : [];
+    this.templateMapDropped.set(await this.loadLevels(levelIds));
   }
 
   cancel() {
@@ -377,27 +513,34 @@ export class EncounterFormDialogComponent implements OnInit, OnDestroy {
     if (!this.name.trim()) return;
     this.saving.set(true);
     try {
-      let map_id = this.existingMap()?.id;
-      if (this.mapFile()) {
-        const image_url = await this.mapService.uploadMapImage(this.mapFile()!, this.data.campaignId);
+      this.storeActiveLevel();
+      const drafts = this.levelDrafts().filter(d => d.existingMap || d.mapFile);
+      const map_ids: string[] = [];
+      for (const [i, draft] of drafts.entries()) {
+        if (!draft.mapFile) {
+          map_ids.push(draft.existingMap!.id!);
+          continue;
+        }
+        const image_url = await this.mapService.uploadMapImage(draft.mapFile, this.data.campaignId);
         const map = await this.mapService.createMap({
           campaign_id: this.data.campaignId,
-          name: this.name.trim(),
+          // Level names are what the DM's level tabs (and a player's "you are here") show.
+          name: drafts.length > 1 ? `${this.name.trim()} — Level ${i + 1}` : this.name.trim(),
           image_url,
-          grid_size: this.pixelsPerGrid() || 50,
+          grid_size: draft.pixelsPerGrid || 50,
         });
-        map_id = map.id;
         // A .dd2vtt export carries the map's walls — bring them in so light is blocked out of
         // the box instead of the DM re-tracing every wall by hand.
-        if (map.id && this.mapKind() === 'dd2vtt' && this.dd2vttWalls.length) {
-          await this.mapService.setWalls(map.id, this.dd2vttWalls);
+        if (map.id && draft.mapKind === 'dd2vtt' && draft.dd2vttWalls.length) {
+          await this.mapService.setWalls(map.id, draft.dd2vttWalls);
         }
+        if (map.id) map_ids.push(map.id);
       }
 
       const payload = {
         name: this.name.trim(),
         session_id: this.data.sessionId,
-        map_id,
+        map_ids,
         monsters: [...this.selectedMonsterIndices()],
         character_ids: [...this.selectedCharacterIds()],
         summary: this.summary.trim(),

@@ -1,0 +1,33 @@
+{
+  "index": "satyr",
+  "name": "Satyr",
+  "size": "Medium",
+  "type": "fey",
+  "alignment": "chaotic neutral",
+  "armor_class": 13,
+  "hit_points": 31,
+  "hit_dice": "7d8",
+  "speed": { "walk": 40 },
+  "ability_scores": {
+    "strength": 12,
+    "dexterity": 16,
+    "constitution": 11,
+    "intelligence": 12,
+    "wisdom": 10,
+    "charisma": 14
+  },
+  "initiative_bonus": 3,
+  "skills": { "Perception": 2, "Performance": 6, "Stealth": 5 },
+  "senses": { "passive_perception": 12 },
+  "languages": ["Common", "Elvish", "Sylvan"],
+  "challenge_rating": "1/2",
+  "xp": 100,
+  "traits": [
+    { "name": "Magic Resistance", "description": "The satyr has Advantage on saving throws against spells and other magical effects." }
+  ],
+  "actions": [
+    { "name": "Hooves", "description": "Melee Attack Roll: +5, reach 5 ft. Hit: 5 (1d4 + 3) Bludgeoning damage. If the target is a Medium or smaller creature, the satyr pushes the target up to 10 feet straight away from itself." },
+    { "name": "Mockery", "description": "Wisdom Saving Throw: DC 12, one creature the satyr can see within 90 feet. Failure: 5 (1d6 + 2) Psychic damage." }
+  ],
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 321 }
+}

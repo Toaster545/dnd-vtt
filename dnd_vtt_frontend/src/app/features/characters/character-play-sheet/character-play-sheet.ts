@@ -23,8 +23,7 @@ import {
 } from '../../../core/models/character.model';
 import { adjustCurrency, CURRENCY_ORDER } from '../../../core/utils/currency';
 import { normalizeAvatarRecipe, portraitDataUri, portraitSource } from '../../../core/utils/avatar';
-import { AvatarRecipeV1 } from '../../../core/models/avatar.model';
-import { AvatarCreatorDialogComponent } from '../../../shared/avatar-creator-dialog/avatar-creator-dialog';
+import { AvatarCreatorDialogComponent, AvatarCreatorResult } from '../../../shared/avatar-creator-dialog/avatar-creator-dialog';
 import { reachableGrants, resolveCharacterFeatPicks } from '../../../core/utils/character-effects';
 import { characterContentEnabled } from '../../../core/utils/content-sources';
 import { resolveBackgroundOriginFeat } from '../../../core/utils/background-origin-feat';
@@ -1253,24 +1252,37 @@ export class CharacterPlaySheetComponent {
   portraitUri = computed(() => {
     const char = this.localChar();
     if (!char) return '';
-    return portraitDataUri(portraitSource(char.portrait_seed || char.id!, char.avatar_recipe));
+    return portraitDataUri(portraitSource(char.portrait_seed || char.id!, char.avatar_recipe, char.portrait_image));
   });
 
   // Picking a portrait is player agency we keep even when the DM has locked the wizard — the
-  // backend whitelists portrait_seed/avatar_recipe on a locked campaign copy (PLAYER_EDITABLE_FIELDS).
+  // backend whitelists portrait_seed/avatar_recipe/portrait_image/token_border on a locked campaign copy
+  // (PLAYER_EDITABLE_FIELDS).
   changePortrait() {
     const char = this.localChar();
     if (!char) return;
     this.dialog.open(AvatarCreatorDialogComponent, {
-      data: { seed: char.portrait_seed || char.id || '', recipe: char.avatar_recipe },
+      data: {
+        seed: char.portrait_seed || char.id || '',
+        recipe: char.avatar_recipe,
+        image: char.portrait_image,
+        tokenBorder: char.token_border,
+      },
       width: '960px',
       maxWidth: 'calc(100vw - 16px)',
       maxHeight: 'calc(100vh - 16px)',
       autoFocus: false,
-    }).afterClosed().subscribe((result: AvatarRecipeV1 | null | undefined) => {
-      const recipe = normalizeAvatarRecipe(result);
-      if (!recipe) return;
-      this.persist({ ...char, portrait_seed: recipe.seed, avatar_recipe: recipe });
+    }).afterClosed().subscribe((result: AvatarCreatorResult | null | undefined) => {
+      const recipe = normalizeAvatarRecipe(result?.recipe);
+      if (!result || !recipe) return;
+      // null (not undefined) so a locked copy's whitelist save actually clears a previous upload.
+      this.persist({
+        ...char,
+        portrait_seed: recipe.seed,
+        avatar_recipe: recipe,
+        portrait_image: result.image,
+        token_border: result.tokenBorder,
+      });
     });
   }
 

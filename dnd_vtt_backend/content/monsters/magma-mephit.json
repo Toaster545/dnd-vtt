@@ -1,0 +1,36 @@
+{
+  "index": "magma-mephit",
+  "name": "Magma Mephit",
+  "size": "Small",
+  "type": "elemental",
+  "alignment": "neutral evil",
+  "armor_class": 11,
+  "hit_points": 18,
+  "hit_dice": "4d6 + 4",
+  "speed": { "walk": 30, "fly": 30 },
+  "ability_scores": {
+    "strength": 8,
+    "dexterity": 12,
+    "constitution": 12,
+    "intelligence": 7,
+    "wisdom": 10,
+    "charisma": 10
+  },
+  "initiative_bonus": 1,
+  "skills": { "Stealth": 3 },
+  "damage_vulnerabilities": ["cold"],
+  "damage_immunities": ["fire", "poison"],
+  "condition_immunities": ["exhaustion", "poisoned"],
+  "senses": { "darkvision": 60, "passive_perception": 10 },
+  "languages": ["Primordial (Ignan, Terran)"],
+  "challenge_rating": "1/2",
+  "xp": 100,
+  "traits": [
+    { "name": "Death Burst", "description": "The mephit explodes when it dies. Dexterity Saving Throw: DC 11, each creature in a 5-foot Emanation originating from the mephit. Failure: 7 (2d6) Fire damage. Success: Half damage." }
+  ],
+  "actions": [
+    { "name": "Claw", "description": "Melee Attack Roll: +3, reach 5 ft. Hit: 3 (1d4 + 1) Slashing damage plus 3 (1d6) Fire damage." },
+    { "name": "Fire Breath (Recharge 6)", "description": "Dexterity Saving Throw: DC 11, each creature in a 15-foot Cone. Failure: 7 (2d6) Fire damage. Success: Half damage." }
+  ],
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 307 }
+}

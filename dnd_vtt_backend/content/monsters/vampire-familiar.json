@@ -1,0 +1,40 @@
+{
+  "index": "vampire-familiar",
+  "name": "Vampire Familiar",
+  "size": "Medium or Small",
+  "type": "humanoid",
+  "alignment": "neutral evil",
+  "armor_class": 15,
+  "hit_points": 65,
+  "hit_dice": "10d8 + 20",
+  "speed": { "walk": 30, "climb": 30 },
+  "ability_scores": {
+    "strength": 17,
+    "dexterity": 16,
+    "constitution": 15,
+    "intelligence": 10,
+    "wisdom": 10,
+    "charisma": 14
+  },
+  "initiative_bonus": 5,
+  "saving_throws": { "Dexterity": 5, "Wisdom": 2 },
+  "skills": { "Perception": 4, "Persuasion": 4, "Stealth": 7 },
+  "damage_resistances": ["necrotic"],
+  "damage_immunities": ["charmed (except from its vampire master)"],
+  "gear": ["Daggers (10)"],
+  "senses": { "darkvision": 60, "passive_perception": 14 },
+  "languages": ["Common plus one other language"],
+  "challenge_rating": "3",
+  "xp": 700,
+  "traits": [
+    { "name": "Vampiric Connection", "description": "While the familiar and its vampire master are on the same plane of existence, the vampire can communicate with the familiar telepathically, and the vampire can perceive through the familiar's senses." }
+  ],
+  "actions": [
+    { "name": "Multiattack", "description": "The familiar makes two Umbral Dagger attacks." },
+    { "name": "Umbral Dagger", "description": "Melee or Ranged Attack Roll: +5, reach 5 ft. or range 20/60 ft. Hit: 5 (1d4 + 3) Piercing damage plus 7 (3d4) Necrotic damage. If the target is reduced to 0 Hit Points by this attack, the target becomes Stable but has the Poisoned condition for 1 hour. While it has the Poisoned condition, the target has the Paralyzed condition." }
+  ],
+  "bonus_actions": [
+    { "name": "Deathless Agility", "description": "The familiar takes the Dash or Disengage action." }
+  ],
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 334 }
+}

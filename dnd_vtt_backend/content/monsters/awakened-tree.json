@@ -1,0 +1,30 @@
+{
+  "index": "awakened-tree",
+  "name": "Awakened Tree",
+  "size": "Huge",
+  "type": "plant",
+  "alignment": "neutral",
+  "armor_class": 13,
+  "hit_points": 59,
+  "hit_dice": "7d12 + 14",
+  "speed": { "walk": 20 },
+  "ability_scores": {
+    "strength": 19,
+    "dexterity": 6,
+    "constitution": 15,
+    "intelligence": 10,
+    "wisdom": 10,
+    "charisma": 7
+  },
+  "initiative_bonus": -2,
+  "damage_vulnerabilities": ["fire"],
+  "damage_resistances": ["bludgeoning", "piercing"],
+  "senses": { "passive_perception": 10 },
+  "languages": ["Common plus one other language"],
+  "challenge_rating": "2",
+  "xp": 450,
+  "actions": [
+    { "name": "Slam", "description": "Melee Attack Roll: +6, reach 10 ft. Hit: 14 (3d6 + 4) Bludgeoning damage." }
+  ],
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 260 }
+}

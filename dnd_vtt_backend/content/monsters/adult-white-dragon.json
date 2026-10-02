@@ -1,0 +1,44 @@
+{
+  "index": "adult-white-dragon",
+  "name": "Adult White Dragon",
+  "size": "Huge",
+  "type": "dragon (chromatic)",
+  "alignment": "chaotic evil",
+  "armor_class": 18,
+  "hit_points": 200,
+  "hit_dice": "16d12 + 96",
+  "speed": { "walk": 40, "burrow": 30, "fly": 80, "swim": 40 },
+  "ability_scores": {
+    "strength": 22,
+    "dexterity": 10,
+    "constitution": 22,
+    "intelligence": 8,
+    "wisdom": 12,
+    "charisma": 12
+  },
+  "initiative_bonus": 10,
+  "saving_throws": { "Dexterity": 5, "Wisdom": 6 },
+  "skills": { "Perception": 11, "Stealth": 5 },
+  "damage_immunities": ["cold"],
+  "senses": { "blindsight": 60, "darkvision": 120, "passive_perception": 21 },
+  "languages": ["Common", "Draconic"],
+  "challenge_rating": "13",
+  "xp": 10000,
+  "xp_in_lair": 11500,
+  "traits": [
+    { "name": "Ice Walk", "description": "The dragon can move across and climb icy surfaces without needing to make an ability check. Additionally, Difficult Terrain composed of ice or snow doesn't cost it extra movement." },
+    { "name": "Legendary Resistance (3/Day, or 4/Day in Lair)", "description": "If the dragon fails a saving throw, it can choose to succeed instead." }
+  ],
+  "actions": [
+    { "name": "Multiattack", "description": "The dragon makes three Rend attacks." },
+    { "name": "Rend", "description": "Melee Attack Roll: +11, reach 10 ft. Hit: 13 (2d6 + 6) Slashing damage plus 4 (1d8) Cold damage." },
+    { "name": "Cold Breath (Recharge 5-6)", "description": "Constitution Saving Throw: DC 19, each creature in a 60-foot Cone. Failure: 54 (12d8) Cold damage. Success: Half damage." }
+  ],
+  "legendary_description": "Legendary Action Uses: 3 (4 in Lair). Immediately after another creature's turn, the dragon can expend a use to take one of the following actions. The dragon regains all expended uses at the start of each of its turns.",
+  "legendary_actions": [
+    { "name": "Freezing Burst", "description": "Constitution Saving Throw: DC 14, each creature in a 30-foot-radius Sphere centered on a point the dragon can see within 120 feet. Failure: 7 (2d6) Cold damage, and the target's Speed is 0 until the end of the target's next turn. Failure or Success: The dragon can't take this action again until the start of its next turn." },
+    { "name": "Frightful Presence", "description": "The dragon casts Fear, requiring no Material components and using Charisma as the spellcasting ability (spell save DC 14). The dragon can't take this action again until the start of its next turn." },
+    { "name": "Pounce", "description": "The dragon moves up to half its Speed, and it makes one Rend attack." }
+  ],
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 340 }
+}

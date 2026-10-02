@@ -1,0 +1,36 @@
+{
+  "index": "dragon-turtle",
+  "name": "Dragon Turtle",
+  "size": "Gargantuan",
+  "type": "dragon",
+  "alignment": "neutral",
+  "armor_class": 20,
+  "hit_points": 356,
+  "hit_dice": "23d20 + 115",
+  "speed": { "walk": 20, "swim": 50 },
+  "ability_scores": {
+    "strength": 25,
+    "dexterity": 10,
+    "constitution": 20,
+    "intelligence": 10,
+    "wisdom": 12,
+    "charisma": 12
+  },
+  "initiative_bonus": 6,
+  "saving_throws": { "Constitution": 11, "Wisdom": 7 },
+  "damage_resistances": ["fire"],
+  "senses": { "darkvision": 120, "passive_perception": 11 },
+  "languages": ["Draconic", "Primordial (Aquan)"],
+  "challenge_rating": "17",
+  "xp": 18000,
+  "traits": [
+    { "name": "Amphibious", "description": "The dragon can breathe air and water." }
+  ],
+  "actions": [
+    { "name": "Multiattack", "description": "The dragon makes three Bite attacks. It can replace one attack with a Tail attack." },
+    { "name": "Bite", "description": "Melee Attack Roll: +13, reach 15 ft. Hit: 23 (3d10 + 7) Piercing damage plus 7 (2d6) Fire damage. Being underwater doesn't grant Resistance to this Fire damage." },
+    { "name": "Tail", "description": "Melee Attack Roll: +13, reach 15 ft. Hit: 18 (2d10 + 7) Bludgeoning damage. If the target is a Huge or smaller creature, it has the Prone condition." },
+    { "name": "Steam Breath (Recharge 5-6)", "description": "Constitution Saving Throw: DC 19, each creature in a 60-foot Cone. Failure: 56 (16d6) Fire damage. Success: Half damage. Failure or Success: Being underwater doesn't grant Resistance to this Fire damage." }
+  ],
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 281 }
+}

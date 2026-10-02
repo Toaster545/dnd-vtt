@@ -1,0 +1,39 @@
+{
+  "index": "dryad",
+  "name": "Dryad",
+  "size": "Medium",
+  "type": "fey",
+  "alignment": "neutral",
+  "armor_class": 16,
+  "hit_points": 22,
+  "hit_dice": "5d8",
+  "speed": { "walk": 30 },
+  "ability_scores": {
+    "strength": 10,
+    "dexterity": 12,
+    "constitution": 11,
+    "intelligence": 14,
+    "wisdom": 15,
+    "charisma": 18
+  },
+  "initiative_bonus": 1,
+  "skills": { "Perception": 4, "Stealth": 5 },
+  "senses": { "darkvision": 60, "passive_perception": 14 },
+  "languages": ["Elvish", "Sylvan"],
+  "challenge_rating": "1",
+  "xp": 200,
+  "traits": [
+    { "name": "Magic Resistance", "description": "The dryad has Advantage on saving throws against spells and other magical effects." },
+    { "name": "Speak with Beasts and Plants", "description": "The dryad can communicate with Beasts and Plants as if they shared a language." }
+  ],
+  "actions": [
+    { "name": "Multiattack", "description": "The dryad makes one Vine Lash or Thorn Burst attack, and it can use Spellcasting to cast Charm Monster." },
+    { "name": "Vine Lash", "description": "Melee Attack Roll: +6, reach 10 ft. Hit: 8 (1d8 + 4) Slashing damage." },
+    { "name": "Thorn Burst", "description": "Ranged Attack Roll: +6, range 60 ft. Hit: 7 (1d6 + 4) Piercing damage." },
+    { "name": "Spellcasting", "description": "The dryad casts one of the following spells, requiring no Material components and using Charisma as the spellcasting ability (spell save DC 14):\nAt Will: Animal Friendship, Charm Monster (lasts 24 hours; ends early if the dryad casts the spell again), Druidcraft\n1/Day Each: Entangle, Pass without Trace" }
+  ],
+  "bonus_actions": [
+    { "name": "Tree Stride", "description": "If within 5 feet of a Large or bigger tree, the dryad teleports to an unoccupied space within 5 feet of a second Large or bigger tree that is within 60 feet of the previous tree." }
+  ],
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 282 }
+}

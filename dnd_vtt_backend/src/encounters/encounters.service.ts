@@ -10,12 +10,21 @@ import { DatabaseService } from '../common/database.service';
 import { CreateEncounterDto } from './dto/create-encounter.dto';
 import { EncounterPresenceGateway } from './encounter-presence.gateway';
 import type { RequestUser } from '../common/current-user.decorator';
+import { serializePlayerTokens } from '../maps/player-tokens';
+import { TokensGateway } from '../maps/tokens.gateway';
+
+export interface EncounterLevel {
+  map_id: string;
+  name: string;
+  position: number;
+}
 
 @Injectable()
 export class EncountersService {
   constructor(
     private db: DatabaseService,
     private presence: EncounterPresenceGateway,
+    private tokensGateway: TokensGateway,
   ) {}
 
   async findAllForUser(dmId: string) {
@@ -23,7 +32,7 @@ export class EncountersService {
       'SELECT * FROM encounters WHERE dm_id = ? ORDER BY created_at DESC',
       [dmId],
     );
-    return result.rows.map((r) => this.deserialize(r));
+    return this.withLevels(result.rows.map((r) => this.deserialize(r)));
   }
 
   // Encounters within a session, for whoever the caller is: the owning DM sees everything
@@ -49,7 +58,10 @@ export class EncountersService {
         : `SELECT * FROM encounters WHERE session_id = ? AND visible_to_players = 1 ORDER BY created_at DESC`,
       [sessionId],
     );
-    return result.rows.map((r) => this.deserialize(r));
+    const encounters = result.rows.map((r) => this.deserialize(r));
+    // Players don't get the level list — which floors exist (and their names) is DM knowledge
+    // until the party actually gets there.
+    return isOwner ? this.withLevels(encounters) : encounters;
   }
 
   // The currently-active encounter anywhere in a campaign, regardless of which session it belongs
@@ -71,7 +83,7 @@ export class EncountersService {
       [campaignId],
     );
     const row = result.rows[0];
-    return row ? this.deserialize(row) : null;
+    return row ? (await this.withLevels([this.deserialize(row)]))[0] : null;
   }
 
   private async assertActiveMember(campaignId: string, userId: string) {
@@ -90,7 +102,202 @@ export class EncountersService {
     const row = result.rows[0];
     if (!row) throw new NotFoundException('Encounter not found');
     if (row.dm_id !== dmId) throw new ForbiddenException();
-    return this.deserialize(row);
+    const [encounter] = await this.withLevels([this.deserialize(row)]);
+    const turnMap = encounter.current_turn_token_id
+      ? await this.db.execute('SELECT map_id FROM map_tokens WHERE id = ?', [
+          encounter.current_turn_token_id,
+        ])
+      : null;
+    return {
+      ...encounter,
+      // Which level the active turn is on, so the DM's view (and the popped-out table view) can
+      // follow combat between floors.
+      current_turn_map_id:
+        (turnMap?.rows[0]?.map_id as string | undefined) ?? null,
+      // character_id -> level the DM has switched that player to. Characters missing here see
+      // the entry level.
+      player_levels: await this.playerLevels(id),
+    };
+  }
+
+  // The level each character's player is shown: the level their token is on (a character has
+  // at most one token per encounter, see MapsService.upsertToken), unless the DM explicitly
+  // switched them to another level they also have a token on — only possible for encounters
+  // set up before that rule, which can still hold duplicates.
+  private async playerLevels(
+    encounterId: string,
+    characterId?: string,
+  ): Promise<Record<string, string>> {
+    const tokens = await this.db.execute(
+      `SELECT t.character_id, t.map_id FROM map_tokens t
+       JOIN encounter_levels el ON el.map_id = t.map_id
+       WHERE el.encounter_id = ? AND t.character_id IS NOT NULL
+         AND (? IS NULL OR t.character_id = ?)
+       ORDER BY el.position DESC`,
+      [encounterId, characterId ?? null, characterId ?? null],
+    );
+    const explicit = await this.db.execute(
+      `SELECT pl.character_id, pl.map_id FROM encounter_player_levels pl
+       JOIN encounter_levels el
+         ON el.encounter_id = pl.encounter_id AND el.map_id = pl.map_id
+       WHERE pl.encounter_id = ?
+         AND (? IS NULL OR pl.character_id = ?)
+         AND EXISTS (SELECT 1 FROM map_tokens t
+                     WHERE t.map_id = pl.map_id AND t.character_id = pl.character_id)`,
+      [encounterId, characterId ?? null, characterId ?? null],
+    );
+    // Deepest level first, so with legacy duplicates the shallowest one wins.
+    return Object.fromEntries(
+      [...tokens.rows, ...explicit.rows].map((r) => [
+        r.character_id as string,
+        r.map_id as string,
+      ]),
+    );
+  }
+
+  // DM switches the level a character's player is shown. Only allowed onto a level where that
+  // character already has a token — the DM places it there first, then sends the player over.
+  async setPlayerLevel(
+    id: string,
+    dmId: string,
+    characterId: string,
+    mapId: string,
+  ) {
+    const encounter = await this.findOne(id, dmId);
+    if (!encounter.levels.some((l) => l.map_id === mapId)) {
+      throw new BadRequestException(
+        'That map is not a level of this encounter',
+      );
+    }
+    const token = await this.db.execute(
+      'SELECT id FROM map_tokens WHERE map_id = ? AND character_id = ? LIMIT 1',
+      [mapId, characterId],
+    );
+    if (!token.rows[0]) {
+      throw new BadRequestException(
+        'Place this character on that level before moving them there',
+      );
+    }
+    await this.db.execute(
+      `INSERT INTO encounter_player_levels (encounter_id, character_id, map_id)
+       VALUES (?, ?, ?)
+       ON CONFLICT(encounter_id, character_id) DO UPDATE SET map_id = excluded.map_id`,
+      [id, characterId, mapId],
+    );
+    const campaign = await this.db.execute(
+      'SELECT campaign_id FROM sessions WHERE id = ?',
+      [encounter.session_id],
+    );
+    const campaignId = campaign.rows[0]?.campaign_id as string | undefined;
+    if (campaignId)
+      this.presence.notifyCharacterLevelChanged(campaignId, characterId);
+    return this.findOne(id, dmId);
+  }
+
+  // Ordered levels for each encounter, in one query. `map_id` is normalised to the entry level
+  // (position 0) — it can only drift when the entry map itself was deleted, in which case the
+  // next level down takes over.
+  private async withLevels<T extends { id: unknown; map_id: unknown }>(
+    encounters: T[],
+  ) {
+    if (encounters.length === 0) return [];
+    const ids = encounters.map((e) => e.id as string);
+    const result = await this.db.execute(
+      `SELECT el.encounter_id, el.map_id, el.position, bm.name
+       FROM encounter_levels el JOIN battle_maps bm ON bm.id = el.map_id
+       WHERE el.encounter_id IN (${ids.map(() => '?').join(',')})
+       ORDER BY el.position`,
+      ids,
+    );
+    const byEncounter = new Map<string, EncounterLevel[]>();
+    for (const row of result.rows) {
+      const list = byEncounter.get(row.encounter_id as string) ?? [];
+      list.push({
+        map_id: row.map_id as string,
+        name: row.name as string,
+        position: Number(row.position),
+      });
+      byEncounter.set(row.encounter_id as string, list);
+    }
+    return encounters.map((e) => {
+      const levels = byEncounter.get(e.id as string) ?? [];
+      return { ...e, map_id: levels[0]?.map_id ?? null, levels };
+    });
+  }
+
+  private async levelMapIds(encounterId: string): Promise<string[]> {
+    const result = await this.db.execute(
+      'SELECT map_id FROM encounter_levels WHERE encounter_id = ? ORDER BY position',
+      [encounterId],
+    );
+    return result.rows.map((r) => r.map_id as string);
+  }
+
+  // Replaces an encounter's whole level list. Every map must belong to the encounter's campaign
+  // (maps are campaign-scoped); `encounters.map_id` follows the new entry level.
+  private async setLevels(encounterId: string, mapIds: string[]) {
+    const unique = [...new Set(mapIds.filter((id) => typeof id === 'string'))];
+    if (unique.length) {
+      const owned = await this.db.execute(
+        `SELECT bm.id FROM battle_maps bm
+         JOIN sessions s ON s.campaign_id = bm.campaign_id
+         JOIN encounters e ON e.session_id = s.id
+         WHERE e.id = ? AND bm.id IN (${unique.map(() => '?').join(',')})`,
+        [encounterId, ...unique],
+      );
+      if (owned.rows.length !== unique.length) {
+        throw new BadRequestException(
+          'Every level must be a map from this campaign',
+        );
+      }
+    }
+    await this.db.executeMany([
+      {
+        sql: 'DELETE FROM encounter_levels WHERE encounter_id = ?',
+        args: [encounterId],
+      },
+      ...unique.map((mapId, position) => ({
+        sql: 'INSERT INTO encounter_levels (encounter_id, map_id, position) VALUES (?, ?, ?)',
+        args: [encounterId, mapId, position],
+      })),
+      {
+        sql: 'UPDATE encounters SET map_id = ? WHERE id = ?',
+        args: [unique[0] ?? null, encounterId],
+      },
+    ]);
+    this.presence.notifyTokensChanged(encounterId);
+  }
+
+  // The level this player is shown: the one the DM switched their campaign character to (see
+  // setPlayerLevel), else the entry level. The level count lets the client decide whether
+  // naming the floor is worth showing.
+  async findMyLevel(id: string, user: RequestUser) {
+    await this.findPlayerState(id, user); // access check
+    const levelIds = await this.levelMapIds(id);
+    const member = await this.db.execute(
+      `SELECT cm.character_id FROM campaign_members cm
+       JOIN sessions s ON s.campaign_id = cm.campaign_id
+       JOIN encounters e ON e.session_id = s.id
+       WHERE e.id = ? AND cm.user_id = ? AND cm.status = 'active'`,
+      [id, user.id],
+    );
+    const characterId = member.rows[0]?.character_id as string | undefined;
+    let mapId = levelIds[0] ?? null;
+    if (characterId) {
+      mapId = (await this.playerLevels(id, characterId))[characterId] ?? mapId;
+    }
+    const name = mapId
+      ? (
+          await this.db.execute('SELECT name FROM battle_maps WHERE id = ?', [
+            mapId,
+          ])
+        ).rows[0]?.name
+      : null;
+    return {
+      map_id: mapId,
+      name: (name as string | undefined) ?? null,
+      level_count: levelIds.length,
+    };
   }
 
   async findPlayerState(id: string, user: RequestUser) {
@@ -127,6 +334,15 @@ export class EncountersService {
     };
   }
 
+  // Every token on every level of the encounter, in turn order (see getTurnOrderIds) — the side
+  // panel's turn order shouldn't stop at whichever level the viewer happens to be looking at.
+  async findTurnOrder(id: string, user: RequestUser) {
+    const state = await this.findPlayerState(id, user); // access check
+    const isDm = 'dm_id' in state && state.dm_id === user.id;
+    const tokens = await this.turnOrderTokens(id);
+    return isDm ? tokens : serializePlayerTokens(tokens);
+  }
+
   async create(dmId: string, dto: CreateEncounterDto) {
     const session = await this.db.execute(
       'SELECT dm_id FROM sessions WHERE id = ?',
@@ -138,28 +354,35 @@ export class EncountersService {
 
     const id = randomUUID();
     await this.db.execute(
-      `INSERT INTO encounters (id, dm_id, session_id, name, map_id, monsters, character_ids)
-       VALUES (?, ?, ?, ?, ?, ?, ?)`,
+      `INSERT INTO encounters (id, dm_id, session_id, name, monsters, character_ids)
+       VALUES (?, ?, ?, ?, ?, ?)`,
       [
         id,
         dmId,
         dto.session_id,
         dto.name,
-        dto.map_id ?? null,
         JSON.stringify(dto.monsters ?? []),
         JSON.stringify(dto.character_ids ?? []),
       ],
     );
+    await this.setLevels(id, dto.map_ids ?? (dto.map_id ? [dto.map_id] : []));
     return this.findOne(id, dmId);
   }
 
   async update(id: string, dmId: string, body: Record<string, unknown>) {
     const current = await this.findOne(id, dmId);
     const name = (body.name as string | undefined) ?? current.name;
-    const map_id =
-      body.map_id !== undefined
-        ? (body.map_id as string | null)
-        : current.map_id;
+    if (Array.isArray(body.map_ids)) {
+      await this.setLevels(id, body.map_ids as string[]);
+    } else if (body.map_id !== undefined) {
+      // Older single-map callers: swap the entry level, keep any levels below it.
+      const below = current.levels
+        .slice(1)
+        .map((l) => l.map_id)
+        .filter((m) => m !== body.map_id);
+      const entry = body.map_id as string | null;
+      await this.setLevels(id, entry ? [entry, ...below] : below);
+    }
     const monsters =
       body.monsters !== undefined ? body.monsters : current.monsters;
     const character_ids =
@@ -168,10 +391,9 @@ export class EncountersService {
         : current.character_ids;
     const summary = (body.summary as string | undefined) ?? current.summary;
     await this.db.execute(
-      `UPDATE encounters SET name=?, map_id=?, monsters=?, character_ids=?, summary=?, updated_at=? WHERE id=?`,
+      `UPDATE encounters SET name=?, monsters=?, character_ids=?, summary=?, updated_at=? WHERE id=?`,
       [
         name,
-        map_id,
         JSON.stringify(monsters),
         JSON.stringify(character_ids),
         summary,
@@ -297,21 +519,44 @@ export class EncountersService {
     };
   }
 
-  // Tokens on the encounter's map, ordered the same way the frontend's own `turnOrder` computed
-  // sorts them (battle-map.ts): highest initiative first, unrolled (null) tokens last.
-  private async getTurnOrderIds(mapId: string): Promise<string[]> {
+  // Tokens on every level of the encounter — combat doesn't stop at the stairs — ordered the
+  // same way the frontend's own `turnOrder` computed sorts them (battle-map.ts): highest
+  // initiative first, unrolled (null) tokens last. A character takes one turn no matter how many
+  // tokens it has, so only the token on its player's level counts (see playerLevels).
+  private async turnOrderTokens(encounterId: string) {
     const result = await this.db.execute(
-      `SELECT id FROM map_tokens WHERE map_id = ? ORDER BY (initiative IS NULL) ASC, initiative DESC`,
-      [mapId],
+      `SELECT t.* FROM map_tokens t
+       JOIN encounter_levels el ON el.map_id = t.map_id
+       WHERE el.encounter_id = ?
+       ORDER BY (t.initiative IS NULL) ASC, t.initiative DESC`,
+      [encounterId],
     );
-    return result.rows.map((r) => r.id as string);
+    const levels = await this.playerLevels(encounterId);
+    const seen = new Set<string>();
+    return result.rows
+      .filter((t) => {
+        const characterId = t.character_id as string | null;
+        if (!characterId) return true;
+        if (t.map_id !== levels[characterId] || seen.has(characterId))
+          return false;
+        seen.add(characterId);
+        return true;
+      })
+      .map((t) => ({
+        ...(t as Record<string, unknown>),
+        is_player: !!t.is_player,
+      })) as (Record<string, unknown> & { is_player: boolean })[];
+  }
+
+  private async getTurnOrderIds(encounterId: string): Promise<string[]> {
+    return (await this.turnOrderTokens(encounterId)).map((t) => t.id as string);
   }
 
   async nextTurn(id: string, dmId: string) {
     const encounter = await this.findOne(id, dmId);
-    if (!encounter.map_id)
+    if (!encounter.levels.length)
       throw new BadRequestException('Encounter has no map attached');
-    const order = await this.getTurnOrderIds(encounter.map_id as string);
+    const order = await this.getTurnOrderIds(id);
     if (order.length === 0)
       throw new BadRequestException('No tokens on the map yet');
 
@@ -335,15 +580,18 @@ export class EncountersService {
 
   async previousTurn(id: string, dmId: string) {
     const encounter = await this.findOne(id, dmId);
-    if (!encounter.map_id)
+    if (!encounter.levels.length)
       throw new BadRequestException('Encounter has no map attached');
-    const order = await this.getTurnOrderIds(encounter.map_id as string);
+    const order = await this.getTurnOrderIds(id);
     if (order.length === 0)
       throw new BadRequestException('No tokens on the map yet');
 
     const currentId = encounter.current_turn_token_id as string | null;
     const idx = currentId ? order.indexOf(currentId) : -1;
     let round = encounter.round_number;
+    // Round 1 begins with the first turn, so stepping back from it un-starts the turn order
+    // instead of wrapping to the last token of a round that never happened.
+    if (idx <= 0 && round <= 1) return this.applyTurn(id, dmId, null, 1);
     let prevIdx: number;
     if (idx <= 0) {
       prevIdx = order.length - 1;
@@ -358,16 +606,51 @@ export class EncountersService {
   private async applyTurn(
     id: string,
     dmId: string,
-    tokenId: string,
+    tokenId: string | null,
     round: number,
   ) {
-    await this.db.execute(
-      `UPDATE encounters SET current_turn_token_id=?, round_number=?, updated_at=? WHERE id=?`,
-      [tokenId, round, new Date().toISOString(), id],
-    );
+    await this.db.executeMany([
+      // The token whose turn just ended is done with the destination it asked for.
+      {
+        sql: `UPDATE map_tokens SET planned_x = NULL, planned_y = NULL
+              WHERE id = (SELECT current_turn_token_id FROM encounters WHERE id = ?)
+                AND id IS NOT ?`,
+        args: [id, tokenId],
+      },
+      {
+        sql: `UPDATE encounters SET current_turn_token_id=?, round_number=?, updated_at=? WHERE id=?`,
+        args: [tokenId, round, new Date().toISOString(), id],
+      },
+      // Movement is tracked per turn: only the token whose turn it now is gets a starting point
+      // (which is also its first confirmed square), pinned where it stands right now, with
+      // nothing traveled yet (see MapsService.confirmTokenMove).
+      {
+        sql: `UPDATE map_tokens SET
+                turn_start_x = CASE WHEN id = ? THEN x END,
+                turn_start_y = CASE WHEN id = ? THEN y END,
+                turn_anchor_x = CASE WHEN id = ? THEN x END,
+                turn_anchor_y = CASE WHEN id = ? THEN y END,
+                turn_moved_ft = 0, turn_diagonals = 0
+              WHERE map_id IN (SELECT map_id FROM encounter_levels WHERE encounter_id = ?)`,
+        args: [tokenId, tokenId, tokenId, tokenId, id],
+      },
+    ]);
     const updated = await this.findOne(id, dmId);
+    // Every level's tokens carry the reset turn_start/turn_moved_ft — push them out so each map
+    // drops the previous token's trail and draws the new one's starting point.
+    for (const level of updated.levels) {
+      const tokens = await this.db.execute(
+        'SELECT * FROM map_tokens WHERE map_id = ?',
+        [level.map_id],
+      );
+      this.tokensGateway.broadcastTokens(
+        level.map_id,
+        tokens.rows.map((r) => ({ ...r, is_player: !!r.is_player })),
+      );
+    }
     this.presence.broadcastTurnState(id, {
       current_turn_token_id: updated.current_turn_token_id as string | null,
+      current_turn_map_id: updated.current_turn_map_id,
       round_number: updated.round_number,
     });
     return updated;

@@ -1,0 +1,38 @@
+{
+  "index": "efreeti",
+  "name": "Efreeti",
+  "size": "Large",
+  "type": "elemental (genie)",
+  "alignment": "neutral",
+  "armor_class": 17,
+  "hit_points": 212,
+  "hit_dice": "17d10 + 119",
+  "speed": { "walk": 40, "fly": 60, "hover": true },
+  "ability_scores": {
+    "strength": 22,
+    "dexterity": 12,
+    "constitution": 24,
+    "intelligence": 16,
+    "wisdom": 15,
+    "charisma": 19
+  },
+  "initiative_bonus": 1,
+  "saving_throws": { "Wisdom": 6, "Charisma": 8 },
+  "damage_immunities": ["fire"],
+  "senses": { "darkvision": 120, "passive_perception": 12 },
+  "languages": ["Primordial (Ignan)"],
+  "challenge_rating": "11",
+  "xp": 7200,
+  "traits": [
+    { "name": "Elemental Restoration", "description": "If the efreeti dies outside the Elemental Plane of Fire, its body dissolves into ash, and it gains a new body in 1d4 days, reviving with all its Hit Points somewhere on the Plane of Fire." },
+    { "name": "Magic Resistance", "description": "The efreeti has Advantage on saving throws against spells and other magical effects." },
+    { "name": "Wishes", "description": "The efreeti has a 30 percent chance of knowing the Wish spell. If the efreeti knows it, the efreeti can cast it only on behalf of a non-genie creature who communicates a wish in a way the efreeti can understand. If the efreeti casts the spell for the creature, the efreeti suffers none of the spell's stress. Once the efreeti has cast it three times, the efreeti can't do so again for 365 days." }
+  ],
+  "actions": [
+    { "name": "Multiattack", "description": "The efreeti makes three attacks, using Heated Blade or Hurl Flame in any combination." },
+    { "name": "Heated Blade", "description": "Melee Attack Roll: +10, reach 5 ft. Hit: 13 (2d6 + 6) Slashing damage plus 13 (2d12) Fire damage." },
+    { "name": "Hurl Flame", "description": "Ranged Attack Roll: +8, range 120 ft. Hit: 24 (7d6) Fire damage." },
+    { "name": "Spellcasting", "description": "The efreeti casts one of the following spells, requiring no Material components and using Charisma as the spellcasting ability (spell save DC 16):\nAt Will: Detect Magic, Elementalism\n1/Day Each: Gaseous Form, Invisibility, Major Image, Plane Shift, Tongues, Wall of Fire (level 7 version)" }
+  ],
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 283 }
+}

@@ -1,0 +1,46 @@
+{
+  "index": "ancient-gold-dragon",
+  "name": "Ancient Gold Dragon",
+  "size": "Gargantuan",
+  "type": "dragon (metallic)",
+  "alignment": "lawful good",
+  "armor_class": 22,
+  "hit_points": 546,
+  "hit_dice": "28d20 + 252",
+  "speed": { "walk": 40, "fly": 80, "swim": 40 },
+  "ability_scores": {
+    "strength": 30,
+    "dexterity": 14,
+    "constitution": 29,
+    "intelligence": 18,
+    "wisdom": 17,
+    "charisma": 28
+  },
+  "initiative_bonus": 16,
+  "saving_throws": { "Dexterity": 9, "Wisdom": 10 },
+  "skills": { "Insight": 10, "Perception": 17, "Persuasion": 16, "Stealth": 9 },
+  "damage_immunities": ["fire"],
+  "senses": { "blindsight": 60, "darkvision": 120, "passive_perception": 27 },
+  "languages": ["Common", "Draconic"],
+  "challenge_rating": "24",
+  "xp": 62000,
+  "xp_in_lair": 75000,
+  "traits": [
+    { "name": "Amphibious", "description": "The dragon can breathe air and water." },
+    { "name": "Legendary Resistance (4/Day, or 5/Day in Lair)", "description": "If the dragon fails a saving throw, it can choose to succeed instead." }
+  ],
+  "actions": [
+    { "name": "Multiattack", "description": "The dragon makes three Rend attacks. It can replace one attack with a use of (A) Spellcasting to cast Guiding Bolt (level 4 version) or (B) Weakening Breath." },
+    { "name": "Rend", "description": "Melee Attack Roll: +17 to hit, reach 15 ft. Hit: 19 (2d8 + 10) Slashing damage plus 9 (2d8) Fire damage." },
+    { "name": "Fire Breath (Recharge 5-6)", "description": "Dexterity Saving Throw: DC 24, each creature in a 90-foot Cone. Failure: 71 (13d10) Fire damage. Success: Half damage." },
+    { "name": "Spellcasting", "description": "The dragon casts one of the following spells, requiring no Material components and using Charisma as the spellcasting ability (spell save DC 24, +16 to hit with spell attacks):\nAt Will: Detect Magic, Guiding Bolt (level 4 version), Shapechange (Beast or Humanoid form only, no Temporary Hit Points gained from the spell, and no Concentration or Temporary Hit Points required to maintain the spell)\n1/Day Each: Flame Strike (level 6 version), Word of Recall, Zone of Truth" },
+    { "name": "Weakening Breath", "description": "Strength Saving Throw: DC 24, each creature that isn't currently affected by this breath in a 90-foot Cone. Failure: The target has Disadvantage on Strength-based D20 Tests and subtracts 5 (1d10) from its damage rolls. It repeats the save at the end of each of its turns, ending the effect on itself on a success. After 1 minute, it succeeds automatically." }
+  ],
+  "legendary_description": "Legendary Action Uses: 3 (4 in Lair). Immediately after another creature's turn, the dragon can expend a use to take one of the following actions. The dragon regains all expended uses at the start of each of its turns.",
+  "legendary_actions": [
+    { "name": "Banish", "description": "Charisma Saving Throw: DC 24, one creature the dragon can see within 120 feet. Failure: 24 (7d6) Force damage, and the target has the Incapacitated condition and is transported to a harmless demiplane until the start of the dragon's next turn, at which point it reappears in an unoccupied space of the dragon's choice within 120 feet of the dragon. Failure or Success: The dragon can't take this action again until the start of its next turn." },
+    { "name": "Guiding Light", "description": "The dragon uses Spellcasting to cast Guiding Bolt (level 4 version)." },
+    { "name": "Pounce", "description": "The dragon moves up to half its Speed, and it makes one Rend attack." }
+  ],
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 292 }
+}

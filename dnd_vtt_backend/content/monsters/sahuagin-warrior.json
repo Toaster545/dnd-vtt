@@ -1,0 +1,39 @@
+{
+  "index": "sahuagin-warrior",
+  "name": "Sahuagin Warrior",
+  "size": "Medium",
+  "type": "fiend",
+  "alignment": "lawful evil",
+  "armor_class": 12,
+  "hit_points": 22,
+  "hit_dice": "4d8 + 4",
+  "speed": { "walk": 30, "swim": 40 },
+  "ability_scores": {
+    "strength": 13,
+    "dexterity": 11,
+    "constitution": 12,
+    "intelligence": 12,
+    "wisdom": 13,
+    "charisma": 9
+  },
+  "initiative_bonus": 0,
+  "skills": { "Perception": 5 },
+  "damage_resistances": ["acid", "cold"],
+  "senses": { "darkvision": 120, "passive_perception": 15 },
+  "languages": ["Sahuagin"],
+  "challenge_rating": "1/2",
+  "xp": 100,
+  "traits": [
+    { "name": "Blood Frenzy", "description": "The sahuagin has Advantage on attack rolls against any creature that doesn't have all its Hit Points." },
+    { "name": "Limited Amphibiousness", "description": "The sahuagin can breathe air and water, but it must be submerged at least once every 4 hours to avoid suffocating outside water." },
+    { "name": "Shark Telepathy", "description": "The sahuagin can magically control sharks within 120 feet of itself, using a special telepathy." }
+  ],
+  "actions": [
+    { "name": "Multiattack", "description": "The sahuagin makes two Claw attacks." },
+    { "name": "Claw", "description": "Melee Attack Roll: +3, reach 5 ft. Hit: 4 (1d6 + 1) Slashing damage." }
+  ],
+  "bonus_actions": [
+    { "name": "Aquatic Charge", "description": "The sahuagin swims up to its Swim Speed straight toward an enemy it can see." }
+  ],
+  "source": { "code": "XMM", "book": "Monster Manual", "edition": 2024, "srd_5_2_1": true, "rules_text": "SRD 5.2.1", "srd_page": 321 }
+}
