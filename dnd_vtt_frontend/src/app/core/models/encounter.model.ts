@@ -13,6 +13,8 @@ export interface Encounter {
   levels?: EncounterLevel[];
   // Write-only on create/update: the ordered level map ids, replacing `levels` wholesale.
   map_ids?: string[];
+  // Write-only alongside map_ids: each level's name by map id; blank shows the map's own name.
+  level_names?: Record<string, string>;
   monsters: string[];
   character_ids: string[];
   status: 'draft' | 'active' | 'ended';
@@ -33,7 +35,10 @@ export interface Encounter {
 
 export interface EncounterLevel {
   map_id: string;
+  // What's shown for the level: its own name if the DM gave it one, else the map's name.
   name: string;
+  // The DM-given name alone, null when the level just shows the map's name.
+  custom_name?: string | null;
   position: number;
 }
 

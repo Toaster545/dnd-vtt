@@ -8,7 +8,7 @@
   "properties": [],
   "weight": 0,
   "cost": "—",
-  "image_url": "/icons/charm.svg",
+  "image_url": "/icons/clockwork.svg",
   "description": "An amulet that can replace one attack roll with a fixed, reliable result once per day.",
   "rarity": "common",
   "source": {

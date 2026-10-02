@@ -7,7 +7,7 @@
   "properties": ["Requires Strength 15", "Stealth Disadvantage"],
   "weight": 65,
   "cost": "Magic item",
-  "image_url": "/icons/spiked-armor.svg",
+  "image_url": "/icons/breastplate.svg",
   "description": "You have a +2 bonus to Armor Class while wearing this armor.",
   "rarity": "very rare",
   "requires_attunement": false,

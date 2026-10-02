@@ -7,11 +7,6 @@
         <button class="btn-icon" (click)="closeCharacterView()" [matTooltip]="'Back to ' + encounter.name">
           <mat-icon>arrow_back</mat-icon>
         </button>
-        @if (viewingCharacterToken(); as tok) {
-          <input type="color" class="h-7 w-7 rounded cursor-pointer border border-white/10 bg-transparent flex-shrink-0"
-            [ngModel]="tok.color" (ngModelChange)="setCharacterTokenColor($event)"
-            name="characterTokenColor" matTooltip="Token color" />
-        }
       </div>
     </app-character-play-sheet>
   } @else {
@@ -22,6 +17,9 @@
         [currentTurnToken]="currentTurnToken()"
         [togglingStatus]="togglingStatus()"
         [togglingTurn]="togglingTurn()"
+        [levels]="levels()"
+        [activeMapId]="activeMapId()"
+        (levelSelected)="showLevel($event)"
         (back)="backToSession()"
         (previousTurn)="previousTurn()"
         (nextTurn)="nextTurn()"
@@ -29,20 +27,6 @@
         (stop)="stopEncounter()"
         (openPlayerView)="openPlayerView()"
       />
-
-      @if (levels().length > 1) {
-        <div class="hide-in-fullscreen flex items-center gap-1 px-4 py-1.5 border-b border-white/10 flex-shrink-0 overflow-x-auto">
-          <mat-icon class="text-slate text-base flex-shrink-0" matTooltip="Levels — each player sees the level their own token is on">stairs</mat-icon>
-          @for (level of levels(); track level.map_id) {
-            <button class="btn-ghost text-xs px-2 py-1 whitespace-nowrap"
-                    [class.bg-white/10]="level.map_id === activeMapId()"
-                    [class.text-gold]="level.map_id === activeMapId()"
-                    (click)="showLevel(level.map_id)">
-              {{ level.name }}
-            </button>
-          }
-        </div>
-      }
 
       <div class="flex flex-1 overflow-hidden">
         <aside [style.width.px]="rosterWidth()" class="border-r border-white/10 overflow-y-auto flex-shrink-0 p-4">
@@ -70,7 +54,6 @@
               [token]="csel.token"
               [character]="csel.character"
               (back)="closeCharacterSummary()"
-              (colorChanged)="setCharacterSummaryTokenColor($event)"
               (openSheet)="openCharacterSheetFromSummary()"
               (darkvisionChanged)="setCharacterSummaryDarkvision($event)"
             />
@@ -80,7 +63,6 @@
               [monsters]="rosterMonsters()"
               [characters]="rosterCharacters()"
               [classLabel]="classLabel"
-              [colorFor]="colorFor"
               [isArmedCharacter]="isArmedCharacter"
               [isArmedMonster]="isArmedMonster"
               [isArmedCustomToken]="isArmedCustomToken()"
@@ -92,7 +74,6 @@
               (armPlayer)="toggleArmPartyPlayer($event)"
               (armMonster)="toggleArmMonster($event)"
               (armCharacter)="toggleArmCharacter($event)"
-              (characterColorChanged)="setCharacterColor($event.id, $event.color)"
               (openMonsterSearch)="openMonsterSearch()"
               (closeMonsterSearch)="closeMonsterSearch()"
               (monsterSearchQueryChanged)="monsterSearchQuery.set($event)"

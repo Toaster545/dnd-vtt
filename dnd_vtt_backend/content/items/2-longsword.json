@@ -8,7 +8,7 @@
   "properties": ["Versatile (1d10)"],
   "weight": 3,
   "cost": "Magic item",
-  "image_url": "/icons/ancient-sword.svg",
+  "image_url": "/icons/broadsword.svg",
   "description": "You have a +2 bonus to attack and damage rolls made with this magic weapon.",
   "rarity": "rare",
   "requires_attunement": false,

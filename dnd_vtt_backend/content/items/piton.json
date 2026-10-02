@@ -8,6 +8,6 @@
   "properties": [],
   "weight": 0.25,
   "cost": "5 cp",
-  "image_url": "/icons/meat-hook.svg",
+  "image_url": "/icons/coiled-nail.svg",
   "description": "A metal spike that can be driven into a surface to anchor a rope."
 }

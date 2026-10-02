@@ -87,6 +87,7 @@ export class DatabaseService implements OnModuleInit {
     if (version < 29) await this.applyV29();
     if (version < 30) await this.applyV30();
     if (version < 31) await this.applyV31();
+    if (version < 32) await this.applyV32();
   }
 
   // ── V1: initial schema (explicit columns on characters) ─────────────────────
@@ -917,5 +918,14 @@ export class DatabaseService implements OnModuleInit {
     );
     await this.db.execute(`PRAGMA user_version = 31`);
     this.logger.log('Applied schema migration v31 (confirmed token movement)');
+  }
+
+  // ── V32: named encounter levels ─────────────────────────────────────────────
+  // A per-encounter label for each level ("Crypt", "Upper Floor"). NULL keeps showing the map's
+  // own name — renaming the level never renames the map, which other encounters may share.
+  private async applyV32() {
+    await this.db.execute(`ALTER TABLE encounter_levels ADD COLUMN name TEXT`);
+    await this.db.execute(`PRAGMA user_version = 32`);
+    this.logger.log('Applied schema migration v32 (named encounter levels)');
   }
 }

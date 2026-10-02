@@ -8,7 +8,7 @@
   "properties": [],
   "weight": 6,
   "cost": "—",
-  "image_url": "/icons/acid-shield.svg",
+  "image_url": "/icons/skull-shield.svg",
   "description": "A shield whose face can display a chosen facial expression.",
   "rarity": "common",
   "source": {

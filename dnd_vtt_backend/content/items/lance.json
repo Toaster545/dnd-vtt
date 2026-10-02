@@ -11,7 +11,7 @@
   ],
   "weight": 6,
   "cost": "10 gp",
-  "image_url": "/icons/barbed-spear.svg",
+  "image_url": "/icons/spear-feather.svg",
   "description": "A long thrusting weapon designed for mounted combat.",
   "mastery": {
     "property": "Sap",

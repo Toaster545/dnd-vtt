@@ -27,12 +27,13 @@ export class IconPickerDialogComponent implements OnInit {
     return [...seen.entries()].map(([value, label]) => ({ value, label })).sort((a, b) => a.label.localeCompare(b.label));
   });
 
+  // Spaces and hyphens are ignored so "battleaxe" (the item's spelling) still finds "Battle Axe".
   filtered = computed(() => {
-    const q = this.search().trim().toLowerCase();
+    const q = normalize(this.search());
     const category = this.categoryFilter();
     return this.icons().filter(icon =>
       (!category || icon.category === category) &&
-      (!q || icon.label.toLowerCase().includes(q) || icon.author.toLowerCase().includes(q)),
+      (!q || normalize(icon.label).includes(q) || normalize(icon.author).includes(q)),
     );
   });
 
@@ -54,4 +55,8 @@ export class IconPickerDialogComponent implements OnInit {
   resetToDefault() {
     this.resetRequested.emit();
   }
+}
+
+function normalize(text: string): string {
+  return text.toLowerCase().replace(/[^a-z0-9]/g, '');
 }

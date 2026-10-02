@@ -8,7 +8,7 @@
   "properties": [],
   "weight": 4,
   "cost": "5 gp",
-  "image_url": "/icons/bone-mace.svg",
+  "image_url": "/icons/flanged-mace.svg",
   "description": "A heavy metal head on a sturdy haft.",
   "mastery": {
     "property": "Sap",

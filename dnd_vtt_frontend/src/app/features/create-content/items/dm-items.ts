@@ -25,6 +25,11 @@ export class DmItemsComponent implements OnInit {
   private confirm = inject(ConfirmService);
 
   readonly itemDisplayName = itemDisplayName;
+  // Bundled game-icons are dark gray, recolored white for the dark list. Item art and uploaded
+  // images are shown as-is.
+  isLibraryIcon(url: string): boolean {
+    return url.startsWith('/icons/');
+  }
 
   items          = signal<DndItem[]>([]);
   officialItems  = signal<DndItem[]>([]);

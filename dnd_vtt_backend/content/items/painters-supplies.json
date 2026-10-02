@@ -8,6 +8,6 @@
   "properties": [],
   "weight": 5,
   "cost": "10 gp",
-  "image_url": "/icons/anvil.svg",
+  "image_url": "/icons/palette.svg",
   "description": "Brushes, pigments, and a palette used to create paintings."
 }

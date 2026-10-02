@@ -8,6 +8,6 @@
   "properties": [],
   "weight": 1.5,
   "cost": "4 cp",
-  "image_url": "/icons/sling.svg",
+  "image_url": "/icons/stone-pile.svg",
   "description": "A pouch of 20 lead bullets for use with a sling."
 }

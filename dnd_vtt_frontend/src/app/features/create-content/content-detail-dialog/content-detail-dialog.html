@@ -11,6 +11,14 @@
     (click)="$event.stopPropagation()"
   >
     <header class="z-10 flex flex-shrink-0 items-start gap-4 border-b border-white/10 bg-elevated/95 px-5 py-4 backdrop-blur-sm">
+      @if (monster(); as value) {
+        @if (artFailedFor() !== value.index) {
+          <img [src]="tokenUrl(value.index)" alt="" class="h-20 w-20 flex-shrink-0 object-contain" (error)="artFailedFor.set(value.index)" />
+        }
+      }
+      @if (item()?.art_url; as url) {
+        <img [src]="url" alt="" class="h-20 w-20 flex-shrink-0 object-contain" />
+      }
       <div class="min-w-0 flex-1">
         @if (spell(); as value) {
           <div class="mb-1 flex flex-wrap items-center gap-2">

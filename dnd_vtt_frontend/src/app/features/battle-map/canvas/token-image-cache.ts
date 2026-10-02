@@ -1,13 +1,12 @@
 import { MapToken } from '../../../core/models/campaign.model';
+import { monsterTokenUrl } from '../../../core/utils/monster-token';
 
 // Monster token art, downloaded by the backend's scripts/download-monster-tokens.mjs. The DM's
 // tokens carry monster_index; players only ever get image_url, and only while the token's name
 // is visible to them (see the backend's serializePlayerTokens).
 export function tokenImageUrl(token: MapToken): string | undefined {
   if (token.image_url) return token.image_url;
-  return token.monster_index
-    ? `/uploads/monster-tokens/${encodeURIComponent(token.monster_index)}.webp`
-    : undefined;
+  return token.monster_index ? monsterTokenUrl(token.monster_index) : undefined;
 }
 
 export class TokenImageCache {

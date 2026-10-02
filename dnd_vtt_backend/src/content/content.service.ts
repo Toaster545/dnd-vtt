@@ -24,6 +24,8 @@ import {
 } from './spell-access';
 
 const CONTENT_PATH = join(process.cwd(), 'content');
+// Illustrations from scripts/download-item-art.mjs (personal use, gitignored like monster tokens).
+const ITEM_ART_PATH = join(process.cwd(), 'uploads', 'item-art');
 
 export type CustomContentKind = 'monsters' | 'items' | 'spells';
 
@@ -88,12 +90,41 @@ export class ContentService {
   // one — see content/icons/manifest.json and /icons/*.svg (served statically, see main.ts).
   getIconLibrary(): unknown[] {
     const key = 'icon-library';
-    if (this.cache.has(key)) return this.cache.get(key) as unknown[];
-    const manifest = JSON.parse(
-      readFileSync(join(CONTENT_PATH, 'icons', 'manifest.json'), 'utf-8'),
-    ) as unknown[];
-    this.cache.set(key, manifest);
-    return manifest;
+    if (!this.cache.has(key)) {
+      this.cache.set(
+        key,
+        JSON.parse(
+          readFileSync(join(CONTENT_PATH, 'icons', 'manifest.json'), 'utf-8'),
+        ),
+      );
+    }
+    return [...(this.cache.get(key) as unknown[]), ...this.itemArtLibrary()];
+  }
+
+  // Downloaded item illustrations as picker entries too, so a DM can give any item (homebrew
+  // included) the Battleaxe art. One entry per item name — the +1/+2/+3 variants share their
+  // base item's art.
+  private itemArtLibrary() {
+    const byName = new Map<string, { index: string; url: string }>();
+    for (const item of this.withItemArt(
+      this.loadAll<Record<string, unknown>>('items'),
+    )) {
+      const { index, name, art_url } = item as Record<string, string>;
+      const existing = byName.get(name);
+      if (art_url && (!existing || /^\d-/.test(existing.index))) {
+        byName.set(name, { index, url: art_url });
+      }
+    }
+    return [...byName.entries()]
+      .sort(([a], [b]) => a.localeCompare(b))
+      .map(([name, { index, url }]) => ({
+        name: `item-art-${index}`,
+        label: name,
+        category: 'item-art',
+        categoryLabel: 'Item Art',
+        url,
+        author: 'Wizards of the Coast (via 5etools)',
+      }));
   }
 
   private fallbackSource(type: string): string {
@@ -291,6 +322,7 @@ export class ContentService {
     user?: RequestUser,
   ): Promise<T[]> {
     let srd = this.loadAll<T>(kind);
+    if (kind === 'items') srd = this.withItemArt(srd);
     if (!campaignId || !user) {
       if (kind === 'items' && user) {
         srd = await this.applyItemImageOverrides(srd, user.id);
@@ -330,7 +362,27 @@ export class ContentService {
         typeof record.index === 'string'
           ? overrides.get(record.index)
           : undefined;
-      return override ? ({ ...record, image_url: override } as T) : item;
+      // The DM's pick wins over downloaded art too, not just over the default icon.
+      return override
+        ? ({ ...record, image_url: override, art_url: undefined } as T)
+        : item;
+    });
+  }
+
+  // Adds `art_url` to SRD items that have a downloaded illustration. The folder is read per call
+  // rather than cached, so running the download script doesn't need a backend restart.
+  private withItemArt<T>(items: T[]): T[] {
+    let files: Set<string>;
+    try {
+      files = new Set(readdirSync(ITEM_ART_PATH));
+    } catch {
+      return items;
+    }
+    return items.map((item) => {
+      const index = (item as Record<string, unknown>).index;
+      return typeof index === 'string' && files.has(`${index}.webp`)
+        ? { ...item, art_url: `/uploads/item-art/${index}.webp` }
+        : item;
     });
   }
 
@@ -550,7 +602,9 @@ export class ContentService {
       `DELETE FROM item_image_overrides WHERE item_index = ? AND created_by = ?`,
       [index, user.id],
     );
-    return this.loadOne<Record<string, unknown>>('items', index);
+    return this.withItemArt([
+      this.loadOne<Record<string, unknown>>('items', index),
+    ])[0];
   }
 
   async deleteCustom(

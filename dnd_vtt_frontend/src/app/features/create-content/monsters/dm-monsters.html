@@ -41,6 +41,13 @@
         <ul class="divide-y divide-white/8 mb-5">
           @for (m of filteredMonsters(); track m.index) {
             <li class="flex items-center p-3 gap-3 cursor-pointer hover:bg-white/5" (click)="openEdit(m)">
+              <div class="w-14 h-14 flex items-center justify-center flex-shrink-0">
+                @if (tokenUrl(m); as url) {
+                  <img [src]="url" alt="" loading="lazy" class="w-full h-full object-contain" (error)="onArtError(m)" />
+                } @else {
+                  <mat-icon class="text-slate">pets</mat-icon>
+                }
+              </div>
               <div class="flex-1 min-w-0">
                 <p class="text-parchment font-medium truncate m-0">{{ m.name }}</p>
                 <p class="text-slate text-xs m-0 mt-0.5">{{ m.size }} {{ m.type }} · {{ m.alignment }}</p>
@@ -73,6 +80,13 @@
           <ul class="divide-y divide-white/8">
             @for (m of filteredOfficial(); track m.index) {
               <li class="flex items-center p-3 gap-3 cursor-pointer hover:bg-white/5" (click)="openDetails(m)">
+                <div class="w-14 h-14 flex items-center justify-center flex-shrink-0">
+                  @if (tokenUrl(m); as url) {
+                    <img [src]="url" alt="" loading="lazy" class="w-full h-full object-contain" (error)="onArtError(m)" />
+                  } @else {
+                    <mat-icon class="text-slate">pets</mat-icon>
+                  }
+                </div>
                 <div class="flex-1 min-w-0">
                   <p class="text-parchment font-medium truncate m-0">{{ m.name }}</p>
                   <p class="text-slate text-xs m-0 mt-0.5">{{ m.size }} {{ m.type }} · {{ m.alignment }}</p>

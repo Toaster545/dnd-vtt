@@ -373,6 +373,10 @@ export interface DndItem {
   effects?: TraitEffect[];
   artificer_plan?: { name: string; itemIndex: string };
   image_url?: string;
+  // A downloaded 5etools illustration (backend's scripts/download-item-art.mjs) — only on SRD
+  // items that have one and no DM image override. Shown in place of the `image_url` icon on
+  // screen; print cards keep the icon.
+  art_url?: string;
   source?: DndSourceReference;
 }
 

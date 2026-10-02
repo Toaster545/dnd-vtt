@@ -76,8 +76,10 @@
                 <input type="checkbox" class="flex-shrink-0" [checked]="isSelectedForPrint(i)" (click)="$event.stopPropagation()" (change)="toggleSelectedForPrint(i)" />
               }
               <div class="w-9 h-9 flex items-center justify-center flex-shrink-0">
-                @if (i.image_url) {
-                  <img [src]="i.image_url" alt="" class="w-full h-full object-contain brightness-0 invert" />
+                @if (i.art_url) {
+                  <img [src]="i.art_url" alt="" loading="lazy" class="w-full h-full object-contain" />
+                } @else if (i.image_url) {
+                  <img [src]="i.image_url" alt="" class="w-full h-full object-contain" [class.brightness-0]="isLibraryIcon(i.image_url)" [class.invert]="isLibraryIcon(i.image_url)" />
                 } @else {
                   <mat-icon class="text-base text-slate">inventory_2</mat-icon>
                 }
@@ -119,8 +121,10 @@
                 }
                 <div class="relative w-9 h-9 flex-shrink-0 group/thumb">
                   <div class="w-9 h-9 flex items-center justify-center">
-                    @if (i.image_url) {
-                      <img [src]="i.image_url" alt="" class="w-full h-full object-contain brightness-0 invert" />
+                    @if (i.art_url) {
+                      <img [src]="i.art_url" alt="" loading="lazy" class="w-full h-full object-contain" />
+                    } @else if (i.image_url) {
+                      <img [src]="i.image_url" alt="" class="w-full h-full object-contain" [class.brightness-0]="isLibraryIcon(i.image_url)" [class.invert]="isLibraryIcon(i.image_url)" />
                     } @else {
                       <mat-icon class="text-base text-slate">inventory_2</mat-icon>
                     }

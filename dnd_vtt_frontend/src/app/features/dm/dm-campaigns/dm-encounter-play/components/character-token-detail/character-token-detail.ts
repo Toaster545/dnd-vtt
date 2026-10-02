@@ -1,5 +1,4 @@
 import { Component, input, output } from '@angular/core';
-import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { Character } from '../../../../../../core/models/character.model';
@@ -8,7 +7,7 @@ import { portraitDataUri, portraitSource } from '../../../../../../core/utils/av
 
 @Component({
   selector: 'app-character-token-detail',
-  imports: [FormsModule, MatIconModule, MatTooltipModule],
+  imports: [MatIconModule, MatTooltipModule],
   templateUrl: './character-token-detail.html',
 })
 export class CharacterTokenDetailComponent {
@@ -16,7 +15,6 @@ export class CharacterTokenDetailComponent {
   readonly character = input.required<Character>();
 
   readonly back = output<void>();
-  readonly colorChanged = output<string>();
   readonly openSheet = output<void>();
   // null = clear the override (fall back to whatever the character's race grants); an explicit
   // number — including 0 — overrides it. See Character.darkvision_ft.

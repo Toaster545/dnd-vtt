@@ -8,6 +8,6 @@
   "properties": [],
   "weight": 0,
   "cost": "1 cp",
-  "image_url": "/icons/backpack.svg",
+  "image_url": "/icons/pencil.svg",
   "description": "A stick of chalk for marking surfaces."
 }

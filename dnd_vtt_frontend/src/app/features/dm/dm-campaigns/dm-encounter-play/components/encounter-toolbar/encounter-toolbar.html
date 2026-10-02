@@ -4,6 +4,15 @@
       <mat-icon class="text-base">arrow_back</mat-icon> Session
     </button>
     <span class="text-parchment font-medium text-sm ml-2 truncate">{{ encounter().name }}</span>
+    @if (levels().length > 1) {
+      <select class="field-input !w-auto max-w-48 !py-1 !pl-2 text-xs flex-shrink-0"
+              aria-label="Level shown on the map" matTooltip="Level shown on the map"
+              (change)="onLevelChange($event)">
+        @for (level of levels(); track level.map_id) {
+          <option [value]="level.map_id" [selected]="level.map_id === activeMapId()">{{ level.name }}</option>
+        }
+      </select>
+    }
   </div>
 
   @if (encounter().status === 'active') {

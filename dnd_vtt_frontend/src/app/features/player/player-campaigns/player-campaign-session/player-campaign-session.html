@@ -22,7 +22,7 @@
         @if (myLevel(); as level) {
           @if (level.level_count > 1 && level.name) {
             <span class="flex items-center gap-1 text-xs text-slate truncate" matTooltip="The level your character is on">
-              <mat-icon class="text-sm">stairs</mat-icon> {{ level.name }}
+              {{ level.name }}
             </span>
           }
         }

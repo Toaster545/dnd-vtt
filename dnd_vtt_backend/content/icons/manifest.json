@@ -16,6 +16,22 @@
     "author": "Delapouite"
   },
   {
+    "name": "accordion",
+    "label": "Accordion",
+    "category": "instrument",
+    "categoryLabel": "Instruments",
+    "url": "/icons/accordion.svg",
+    "author": "Caro Asercion"
+  },
+  {
+    "name": "acid-blob",
+    "label": "Acid Blob",
+    "category": "magic-item",
+    "categoryLabel": "Magic Items",
+    "url": "/icons/acid-blob.svg",
+    "author": "Lorc"
+  },
+  {
     "name": "acid-shield",
     "label": "Acid Shield",
     "category": "armor",
@@ -24,11 +40,27 @@
     "author": "SeregaCthtuf"
   },
   {
+    "name": "all-seeing-eye",
+    "label": "All Seeing Eye",
+    "category": "magic-item",
+    "categoryLabel": "Magic Items",
+    "url": "/icons/all-seeing-eye.svg",
+    "author": "Delapouite"
+  },
+  {
     "name": "american-shield",
     "label": "American Shield",
     "category": "armor",
     "categoryLabel": "Armor & Shields",
     "url": "/icons/american-shield.svg",
+    "author": "Delapouite"
+  },
+  {
+    "name": "amphora",
+    "label": "Amphora",
+    "category": "tool",
+    "categoryLabel": "Tools",
+    "url": "/icons/amphora.svg",
     "author": "Delapouite"
   },
   {
@@ -184,6 +216,14 @@
     "author": "Delapouite"
   },
   {
+    "name": "atlas",
+    "label": "Atlas",
+    "category": "book",
+    "categoryLabel": "Books & Scrolls",
+    "url": "/icons/atlas.svg",
+    "author": "Delapouite"
+  },
+  {
     "name": "attached-shield",
     "label": "Attached Shield",
     "category": "armor",
@@ -320,6 +360,14 @@
     "author": "Delapouite"
   },
   {
+    "name": "beer-stein",
+    "label": "Beer Stein",
+    "category": "magic-item",
+    "categoryLabel": "Magic Items",
+    "url": "/icons/beer-stein.svg",
+    "author": "Lorc"
+  },
+  {
     "name": "bell-pepper",
     "label": "Bell Pepper",
     "category": "instrument",
@@ -350,6 +398,14 @@
     "categoryLabel": "Jewelry & Treasure",
     "url": "/icons/big-diamond-ring.svg",
     "author": "Skoll"
+  },
+  {
+    "name": "bird-twitter",
+    "label": "Bird Twitter",
+    "category": "magic-item",
+    "categoryLabel": "Magic Items",
+    "url": "/icons/bird-twitter.svg",
+    "author": "Lorc"
   },
   {
     "name": "black-book",
@@ -397,6 +453,22 @@
     "category": "weapon-melee",
     "categoryLabel": "Melee Weapons",
     "url": "/icons/blade-fall.svg",
+    "author": "Lorc"
+  },
+  {
+    "name": "blanket",
+    "label": "Blanket",
+    "category": "misc-gear",
+    "categoryLabel": "Misc Gear",
+    "url": "/icons/blanket.svg",
+    "author": "Delapouite"
+  },
+  {
+    "name": "bleeding-heart",
+    "label": "Bleeding Heart",
+    "category": "magic-item",
+    "categoryLabel": "Magic Items",
+    "url": "/icons/bleeding-heart.svg",
     "author": "Lorc"
   },
   {
@@ -461,6 +533,14 @@
     "category": "book",
     "categoryLabel": "Books & Scrolls",
     "url": "/icons/book-storm.svg",
+    "author": "Lorc"
+  },
+  {
+    "name": "bookmarklet",
+    "label": "Bookmarklet",
+    "category": "book",
+    "categoryLabel": "Books & Scrolls",
+    "url": "/icons/bookmarklet.svg",
     "author": "Lorc"
   },
   {
@@ -568,6 +648,14 @@
     "author": "Lorc"
   },
   {
+    "name": "brain",
+    "label": "Brain",
+    "category": "magic-item",
+    "categoryLabel": "Magic Items",
+    "url": "/icons/brain.svg",
+    "author": "Lorc"
+  },
+  {
     "name": "branch-arrow",
     "label": "Branch Arrow",
     "category": "weapon-ranged",
@@ -582,6 +670,14 @@
     "categoryLabel": "Potions & Alchemy",
     "url": "/icons/brandy-bottle.svg",
     "author": "Lorc"
+  },
+  {
+    "name": "bread",
+    "label": "Bread",
+    "category": "misc-gear",
+    "categoryLabel": "Misc Gear",
+    "url": "/icons/bread.svg",
+    "author": "Delapouite"
   },
   {
     "name": "breastplate",
@@ -605,6 +701,14 @@
     "category": "weapon-ranged",
     "categoryLabel": "Ranged Weapons",
     "url": "/icons/broadhead-arrow.svg",
+    "author": "Lorc"
+  },
+  {
+    "name": "broadsword",
+    "label": "Broadsword",
+    "category": "weapon-melee",
+    "categoryLabel": "Melee Weapons",
+    "url": "/icons/broadsword.svg",
     "author": "Lorc"
   },
   {
@@ -680,6 +784,14 @@
     "author": "Delapouite"
   },
   {
+    "name": "caltrops",
+    "label": "Caltrops",
+    "category": "misc-gear",
+    "categoryLabel": "Misc Gear",
+    "url": "/icons/caltrops.svg",
+    "author": "Delapouite"
+  },
+  {
     "name": "camping-tent",
     "label": "Camping Tent",
     "category": "misc-gear",
@@ -734,6 +846,14 @@
     "categoryLabel": "Melee Weapons",
     "url": "/icons/card-pick.svg",
     "author": "Faithtoken"
+  },
+  {
+    "name": "carnival-mask",
+    "label": "Carnival Mask",
+    "category": "clothing",
+    "categoryLabel": "Clothing",
+    "url": "/icons/carnival-mask.svg",
+    "author": "Delapouite"
   },
   {
     "name": "cauldron",
@@ -848,6 +968,14 @@
     "author": "Lorc"
   },
   {
+    "name": "claw-slashes",
+    "label": "Claw Slashes",
+    "category": "magic-item",
+    "categoryLabel": "Magic Items",
+    "url": "/icons/claw-slashes.svg",
+    "author": "Lorc"
+  },
+  {
     "name": "claymore-explosive",
     "label": "Claymore Explosive",
     "category": "weapon-melee",
@@ -872,6 +1000,14 @@
     "author": "Lucas"
   },
   {
+    "name": "clockwork",
+    "label": "Clockwork",
+    "category": "jewelry",
+    "categoryLabel": "Jewelry & Treasure",
+    "url": "/icons/clockwork.svg",
+    "author": "Lorc"
+  },
+  {
     "name": "closed-barbute",
     "label": "Closed Barbute",
     "category": "armor",
@@ -886,6 +1022,14 @@
     "categoryLabel": "Tools",
     "url": "/icons/cog-lock.svg",
     "author": "Lorc"
+  },
+  {
+    "name": "coiled-nail",
+    "label": "Coiled Nail",
+    "category": "misc-gear",
+    "categoryLabel": "Misc Gear",
+    "url": "/icons/coiled-nail.svg",
+    "author": "Delapouite"
   },
   {
     "name": "coins",
@@ -933,6 +1077,14 @@
     "category": "container",
     "categoryLabel": "Containers",
     "url": "/icons/concrete-bag.svg",
+    "author": "Delapouite"
+  },
+  {
+    "name": "cooking-pot",
+    "label": "Cooking Pot",
+    "category": "container",
+    "categoryLabel": "Containers",
+    "url": "/icons/cooking-pot.svg",
     "author": "Delapouite"
   },
   {
@@ -1024,12 +1176,28 @@
     "author": "Carl Olsen"
   },
   {
+    "name": "crossed-chains",
+    "label": "Crossed Chains",
+    "category": "misc-gear",
+    "categoryLabel": "Misc Gear",
+    "url": "/icons/crossed-chains.svg",
+    "author": "Lorc"
+  },
+  {
     "name": "crosshair-arrow",
     "label": "Crosshair Arrow",
     "category": "weapon-ranged",
     "categoryLabel": "Ranged Weapons",
     "url": "/icons/crosshair-arrow.svg",
     "author": "Lorc"
+  },
+  {
+    "name": "crowbar",
+    "label": "Crowbar",
+    "category": "tool",
+    "categoryLabel": "Tools",
+    "url": "/icons/crowbar.svg",
+    "author": "Delapouite"
   },
   {
     "name": "crown",
@@ -1048,11 +1216,59 @@
     "author": "Lorc"
   },
   {
+    "name": "crystal-bars",
+    "label": "Crystal Bars",
+    "category": "magic-item",
+    "categoryLabel": "Magic Items",
+    "url": "/icons/crystal-bars.svg",
+    "author": "Lorc"
+  },
+  {
+    "name": "crystal-cluster",
+    "label": "Crystal Cluster",
+    "category": "magic-item",
+    "categoryLabel": "Magic Items",
+    "url": "/icons/crystal-cluster.svg",
+    "author": "Lorc"
+  },
+  {
+    "name": "crystal-eye",
+    "label": "Crystal Eye",
+    "category": "magic-item",
+    "categoryLabel": "Magic Items",
+    "url": "/icons/crystal-eye.svg",
+    "author": "Lorc"
+  },
+  {
+    "name": "crystal-growth",
+    "label": "Crystal Growth",
+    "category": "magic-item",
+    "categoryLabel": "Magic Items",
+    "url": "/icons/crystal-growth.svg",
+    "author": "Lorc"
+  },
+  {
+    "name": "crystal-shine",
+    "label": "Crystal Shine",
+    "category": "magic-item",
+    "categoryLabel": "Magic Items",
+    "url": "/icons/crystal-shine.svg",
+    "author": "Lorc"
+  },
+  {
     "name": "crystal-wand",
     "label": "Crystal Wand",
     "category": "jewelry",
     "categoryLabel": "Jewelry & Treasure",
     "url": "/icons/crystal-wand.svg",
+    "author": "Lorc"
+  },
+  {
+    "name": "crystalize",
+    "label": "Crystalize",
+    "category": "magic-item",
+    "categoryLabel": "Magic Items",
+    "url": "/icons/crystalize.svg",
     "author": "Lorc"
   },
   {
@@ -1069,6 +1285,14 @@
     "category": "weapon-melee",
     "categoryLabel": "Melee Weapons",
     "url": "/icons/curvy-knife.svg",
+    "author": "Lorc"
+  },
+  {
+    "name": "cut-diamond",
+    "label": "Cut Diamond",
+    "category": "jewelry",
+    "categoryLabel": "Jewelry & Treasure",
+    "url": "/icons/cut-diamond.svg",
     "author": "Lorc"
   },
   {
@@ -1120,6 +1344,14 @@
     "author": "Lorc"
   },
   {
+    "name": "domino-mask",
+    "label": "Domino Mask",
+    "category": "tool",
+    "categoryLabel": "Tools",
+    "url": "/icons/domino-mask.svg",
+    "author": "Lorc"
+  },
+  {
     "name": "double-necklace",
     "label": "Double Necklace",
     "category": "jewelry",
@@ -1150,6 +1382,14 @@
     "categoryLabel": "Armor & Shields",
     "url": "/icons/dragon-shield.svg",
     "author": "Delapouite"
+  },
+  {
+    "name": "dread-skull",
+    "label": "Dread Skull",
+    "category": "magic-item",
+    "categoryLabel": "Magic Items",
+    "url": "/icons/dread-skull.svg",
+    "author": "Lorc"
   },
   {
     "name": "dripping-blade",
@@ -1190,6 +1430,14 @@
     "categoryLabel": "Instruments",
     "url": "/icons/drum-kit.svg",
     "author": "Caro Asercion"
+  },
+  {
+    "name": "duality-mask",
+    "label": "Duality Mask",
+    "category": "magic-item",
+    "categoryLabel": "Magic Items",
+    "url": "/icons/duality-mask.svg",
+    "author": "Lorc"
   },
   {
     "name": "duffel-bag",
@@ -1248,6 +1496,14 @@
     "author": "Lorc"
   },
   {
+    "name": "empty-wood-bucket-handle",
+    "label": "Empty Wood Bucket Handle",
+    "category": "container",
+    "categoryLabel": "Containers",
+    "url": "/icons/empty-wood-bucket-handle.svg",
+    "author": "Delapouite"
+  },
+  {
     "name": "energy-arrow",
     "label": "Energy Arrow",
     "category": "weapon-ranged",
@@ -1302,6 +1558,14 @@
     "categoryLabel": "Magic Items",
     "url": "/icons/fairy-wand.svg",
     "author": "Lorc"
+  },
+  {
+    "name": "fangs",
+    "label": "Fangs",
+    "category": "misc-gear",
+    "categoryLabel": "Misc Gear",
+    "url": "/icons/fangs.svg",
+    "author": "Skoll"
   },
   {
     "name": "fast-arrow",
@@ -1360,12 +1624,28 @@
     "author": "Lorc"
   },
   {
+    "name": "fire-ring",
+    "label": "Fire Ring",
+    "category": "magic-item",
+    "categoryLabel": "Magic Items",
+    "url": "/icons/fire-ring.svg",
+    "author": "Lorc"
+  },
+  {
     "name": "fire-shield",
     "label": "Fire Shield",
     "category": "armor",
     "categoryLabel": "Armor & Shields",
     "url": "/icons/fire-shield.svg",
     "author": "Lorc"
+  },
+  {
+    "name": "first-aid-kit",
+    "label": "First Aid Kit",
+    "category": "tool",
+    "categoryLabel": "Tools",
+    "url": "/icons/first-aid-kit.svg",
+    "author": "Delapouite"
   },
   {
     "name": "fishing-hook",
@@ -1382,6 +1662,14 @@
     "categoryLabel": "Misc Gear",
     "url": "/icons/fishing-net.svg",
     "author": "Lorc"
+  },
+  {
+    "name": "fishing-pole",
+    "label": "Fishing Pole",
+    "category": "magic-item",
+    "categoryLabel": "Magic Items",
+    "url": "/icons/fishing-pole.svg",
+    "author": "Delapouite"
   },
   {
     "name": "fizzing-flask",
@@ -1432,6 +1720,38 @@
     "author": "Lorc"
   },
   {
+    "name": "flint-spark",
+    "label": "Flint Spark",
+    "category": "misc-gear",
+    "categoryLabel": "Misc Gear",
+    "url": "/icons/flint-spark.svg",
+    "author": "Delapouite"
+  },
+  {
+    "name": "floating-crystal",
+    "label": "Floating Crystal",
+    "category": "magic-item",
+    "categoryLabel": "Magic Items",
+    "url": "/icons/floating-crystal.svg",
+    "author": "Lorc"
+  },
+  {
+    "name": "flower-pot",
+    "label": "Flower Pot",
+    "category": "magic-item",
+    "categoryLabel": "Magic Items",
+    "url": "/icons/flower-pot.svg",
+    "author": "Lorc"
+  },
+  {
+    "name": "flowers",
+    "label": "Flowers",
+    "category": "magic-item",
+    "categoryLabel": "Magic Items",
+    "url": "/icons/flowers.svg",
+    "author": "Lorc"
+  },
+  {
     "name": "flute",
     "label": "Flute",
     "category": "instrument",
@@ -1456,12 +1776,28 @@
     "author": "DarkZaitzev"
   },
   {
+    "name": "footsteps",
+    "label": "Footsteps",
+    "category": "clothing",
+    "categoryLabel": "Clothing",
+    "url": "/icons/footsteps.svg",
+    "author": "Skoll"
+  },
+  {
     "name": "fork-knife-spoon",
     "label": "Fork Knife Spoon",
     "category": "weapon-melee",
     "categoryLabel": "Melee Weapons",
     "url": "/icons/fork-knife-spoon.svg",
     "author": "Delapouite"
+  },
+  {
+    "name": "fountain-pen",
+    "label": "Fountain Pen",
+    "category": "tool",
+    "categoryLabel": "Tools",
+    "url": "/icons/fountain-pen.svg",
+    "author": "Lorc"
   },
   {
     "name": "fragmented-sword",
@@ -1552,12 +1888,44 @@
     "author": "Lorc"
   },
   {
+    "name": "gem-pendant",
+    "label": "Gem Pendant",
+    "category": "jewelry",
+    "categoryLabel": "Jewelry & Treasure",
+    "url": "/icons/gem-pendant.svg",
+    "author": "Lorc"
+  },
+  {
+    "name": "ghost",
+    "label": "Ghost",
+    "category": "magic-item",
+    "categoryLabel": "Magic Items",
+    "url": "/icons/ghost.svg",
+    "author": "Lorc"
+  },
+  {
+    "name": "gladius",
+    "label": "Gladius",
+    "category": "weapon-melee",
+    "categoryLabel": "Melee Weapons",
+    "url": "/icons/gladius.svg",
+    "author": "Skoll"
+  },
+  {
     "name": "glaive",
     "label": "Glaive",
     "category": "weapon-melee",
     "categoryLabel": "Melee Weapons",
     "url": "/icons/glaive.svg",
     "author": "Delapouite"
+  },
+  {
+    "name": "glowing-hands",
+    "label": "Glowing Hands",
+    "category": "magic-item",
+    "categoryLabel": "Magic Items",
+    "url": "/icons/glowing-hands.svg",
+    "author": "Lorc"
   },
   {
     "name": "gooey-sword",
@@ -1648,6 +2016,22 @@
     "author": "Delapouite"
   },
   {
+    "name": "hand-saw",
+    "label": "Hand Saw",
+    "category": "tool",
+    "categoryLabel": "Tools",
+    "url": "/icons/hand-saw.svg",
+    "author": "Delapouite"
+  },
+  {
+    "name": "handcuffs",
+    "label": "Handcuffs",
+    "category": "misc-gear",
+    "categoryLabel": "Misc Gear",
+    "url": "/icons/handcuffs.svg",
+    "author": "Lorc"
+  },
+  {
     "name": "harp",
     "label": "Harp",
     "category": "instrument",
@@ -1720,6 +2104,14 @@
     "author": "Delapouite"
   },
   {
+    "name": "heart-plus",
+    "label": "Heart Plus",
+    "category": "magic-item",
+    "categoryLabel": "Magic Items",
+    "url": "/icons/heart-plus.svg",
+    "author": "Zeromancer"
+  },
+  {
     "name": "heart-shield",
     "label": "Heart Shield",
     "category": "armor",
@@ -1757,6 +2149,30 @@
     "category": "armor",
     "categoryLabel": "Armor & Shields",
     "url": "/icons/helmet-head-shot.svg",
+    "author": "Lorc"
+  },
+  {
+    "name": "herbs-bundle",
+    "label": "Herbs Bundle",
+    "category": "tool",
+    "categoryLabel": "Tools",
+    "url": "/icons/herbs-bundle.svg",
+    "author": "Delapouite"
+  },
+  {
+    "name": "holy-symbol",
+    "label": "Holy Symbol",
+    "category": "magic-item",
+    "categoryLabel": "Magic Items",
+    "url": "/icons/holy-symbol.svg",
+    "author": "Lorc"
+  },
+  {
+    "name": "hood",
+    "label": "Hood",
+    "category": "clothing",
+    "categoryLabel": "Clothing",
+    "url": "/icons/hood.svg",
     "author": "Lorc"
   },
   {
@@ -1824,6 +2240,14 @@
     "author": "Lorc"
   },
   {
+    "name": "incense",
+    "label": "Incense",
+    "category": "magic-item",
+    "categoryLabel": "Magic Items",
+    "url": "/icons/incense.svg",
+    "author": "Lorc"
+  },
+  {
     "name": "intricate-necklace",
     "label": "Intricate Necklace",
     "category": "jewelry",
@@ -1856,6 +2280,14 @@
     "author": "Lorc"
   },
   {
+    "name": "knapsack",
+    "label": "Knapsack",
+    "category": "container",
+    "categoryLabel": "Containers",
+    "url": "/icons/knapsack.svg",
+    "author": "Lorc"
+  },
+  {
     "name": "knife-fork",
     "label": "Knife Fork",
     "category": "weapon-melee",
@@ -1870,6 +2302,22 @@
     "categoryLabel": "Melee Weapons",
     "url": "/icons/knife-thrust.svg",
     "author": "Lorc"
+  },
+  {
+    "name": "knot",
+    "label": "Knot",
+    "category": "magic-item",
+    "categoryLabel": "Magic Items",
+    "url": "/icons/knot.svg",
+    "author": "Delapouite"
+  },
+  {
+    "name": "ladder",
+    "label": "Ladder",
+    "category": "misc-gear",
+    "categoryLabel": "Misc Gear",
+    "url": "/icons/ladder.svg",
+    "author": "Delapouite"
   },
   {
     "name": "lantern",
@@ -1888,6 +2336,14 @@
     "author": "Lorc"
   },
   {
+    "name": "large-dress",
+    "label": "Large Dress",
+    "category": "clothing",
+    "categoryLabel": "Clothing",
+    "url": "/icons/large-dress.svg",
+    "author": "Delapouite"
+  },
+  {
     "name": "layered-armor",
     "label": "Layered Armor",
     "category": "armor",
@@ -1902,6 +2358,14 @@
     "categoryLabel": "Armor & Shields",
     "url": "/icons/leather-armor.svg",
     "author": "Delapouite"
+  },
+  {
+    "name": "leather-boot",
+    "label": "Leather Boot",
+    "category": "tool",
+    "categoryLabel": "Tools",
+    "url": "/icons/leather-boot.svg",
+    "author": "Lorc"
   },
   {
     "name": "leather-vest",
@@ -1944,6 +2408,14 @@
     "author": "Lorc"
   },
   {
+    "name": "lightning-helix",
+    "label": "Lightning Helix",
+    "category": "magic-item",
+    "categoryLabel": "Magic Items",
+    "url": "/icons/lightning-helix.svg",
+    "author": "Lorc"
+  },
+  {
     "name": "lightning-saber",
     "label": "Lightning Saber",
     "category": "weapon-melee",
@@ -1974,6 +2446,14 @@
     "categoryLabel": "Containers",
     "url": "/icons/locked-chest.svg",
     "author": "Lorc"
+  },
+  {
+    "name": "lockpicks",
+    "label": "Lockpicks",
+    "category": "tool",
+    "categoryLabel": "Tools",
+    "url": "/icons/lockpicks.svg",
+    "author": "Delapouite"
   },
   {
     "name": "lunar-wand",
@@ -2016,6 +2496,22 @@
     "author": "Delapouite"
   },
   {
+    "name": "magic-hat",
+    "label": "Magic Hat",
+    "category": "clothing",
+    "categoryLabel": "Clothing",
+    "url": "/icons/magic-hat.svg",
+    "author": "Delapouite"
+  },
+  {
+    "name": "magic-lamp",
+    "label": "Magic Lamp",
+    "category": "misc-gear",
+    "categoryLabel": "Misc Gear",
+    "url": "/icons/magic-lamp.svg",
+    "author": "Lorc"
+  },
+  {
     "name": "magic-potion",
     "label": "Magic Potion",
     "category": "potion",
@@ -2032,12 +2528,28 @@
     "author": "Lorc"
   },
   {
+    "name": "magic-swirl",
+    "label": "Magic Swirl",
+    "category": "magic-item",
+    "categoryLabel": "Magic Items",
+    "url": "/icons/magic-swirl.svg",
+    "author": "Lorc"
+  },
+  {
     "name": "magic-trident",
     "label": "Magic Trident",
     "category": "weapon-melee",
     "categoryLabel": "Melee Weapons",
     "url": "/icons/magic-trident.svg",
     "author": "Delapouite"
+  },
+  {
+    "name": "magnifying-glass",
+    "label": "Magnifying Glass",
+    "category": "misc-gear",
+    "categoryLabel": "Misc Gear",
+    "url": "/icons/magnifying-glass.svg",
+    "author": "Lorc"
   },
   {
     "name": "mail-shirt",
@@ -2096,6 +2608,54 @@
     "author": "Delapouite"
   },
   {
+    "name": "mineral-pearls",
+    "label": "Mineral Pearls",
+    "category": "misc-gear",
+    "categoryLabel": "Misc Gear",
+    "url": "/icons/mineral-pearls.svg",
+    "author": "Delapouite"
+  },
+  {
+    "name": "mining",
+    "label": "Mining",
+    "category": "tool",
+    "categoryLabel": "Tools",
+    "url": "/icons/mining.svg",
+    "author": "Lorc"
+  },
+  {
+    "name": "mirror-mirror",
+    "label": "Mirror Mirror",
+    "category": "misc-gear",
+    "categoryLabel": "Misc Gear",
+    "url": "/icons/mirror-mirror.svg",
+    "author": "Lorc"
+  },
+  {
+    "name": "mountain-climbing",
+    "label": "Mountain Climbing",
+    "category": "tool",
+    "categoryLabel": "Tools",
+    "url": "/icons/mountain-climbing.svg",
+    "author": "Caro Asercion"
+  },
+  {
+    "name": "musket",
+    "label": "Musket",
+    "category": "weapon-ranged",
+    "categoryLabel": "Ranged Weapons",
+    "url": "/icons/musket.svg",
+    "author": "Skoll"
+  },
+  {
+    "name": "nails",
+    "label": "Nails",
+    "category": "misc-gear",
+    "categoryLabel": "Misc Gear",
+    "url": "/icons/nails.svg",
+    "author": "Lorc"
+  },
+  {
     "name": "necklace",
     "label": "Necklace",
     "category": "jewelry",
@@ -2126,6 +2686,14 @@
     "categoryLabel": "Ranged Weapons",
     "url": "/icons/north-star-shuriken.svg",
     "author": "DarkZaitzev"
+  },
+  {
+    "name": "oak-leaf",
+    "label": "Oak Leaf",
+    "category": "magic-item",
+    "categoryLabel": "Magic Items",
+    "url": "/icons/oak-leaf.svg",
+    "author": "Delapouite"
   },
   {
     "name": "oil-drum",
@@ -2192,12 +2760,28 @@
     "author": "Delapouite"
   },
   {
+    "name": "palette",
+    "label": "Palette",
+    "category": "tool",
+    "categoryLabel": "Tools",
+    "url": "/icons/palette.svg",
+    "author": "Delapouite"
+  },
+  {
     "name": "pan-flute",
     "label": "Pan Flute",
     "category": "instrument",
     "categoryLabel": "Instruments",
     "url": "/icons/pan-flute.svg",
     "author": "Delapouite"
+  },
+  {
+    "name": "paper",
+    "label": "Paper",
+    "category": "book",
+    "categoryLabel": "Books & Scrolls",
+    "url": "/icons/paper.svg",
+    "author": "John Redman"
   },
   {
     "name": "paper-arrow",
@@ -2248,6 +2832,30 @@
     "author": "Delapouite"
   },
   {
+    "name": "pencil",
+    "label": "Pencil",
+    "category": "misc-gear",
+    "categoryLabel": "Misc Gear",
+    "url": "/icons/pencil.svg",
+    "author": "Delapouite"
+  },
+  {
+    "name": "pencil-brush",
+    "label": "Pencil Brush",
+    "category": "magic-item",
+    "categoryLabel": "Magic Items",
+    "url": "/icons/pencil-brush.svg",
+    "author": "Delapouite"
+  },
+  {
+    "name": "pencil-ruler",
+    "label": "Pencil Ruler",
+    "category": "tool",
+    "categoryLabel": "Tools",
+    "url": "/icons/pencil-ruler.svg",
+    "author": "Delapouite"
+  },
+  {
     "name": "pendant-key",
     "label": "Pendant Key",
     "category": "jewelry",
@@ -2262,6 +2870,22 @@
     "categoryLabel": "Potions & Alchemy",
     "url": "/icons/perfume-bottle.svg",
     "author": "Lorc"
+  },
+  {
+    "name": "perspective-dice-six-faces-random",
+    "label": "Perspective Dice Six Faces Random",
+    "category": "misc-gear",
+    "categoryLabel": "Misc Gear",
+    "url": "/icons/perspective-dice-six-faces-random.svg",
+    "author": "Delapouite"
+  },
+  {
+    "name": "pestle-mortar",
+    "label": "Pestle Mortar",
+    "category": "magic-item",
+    "categoryLabel": "Magic Items",
+    "url": "/icons/pestle-mortar.svg",
+    "author": "Skoll"
   },
   {
     "name": "pick-of-destiny",
@@ -2294,6 +2918,14 @@
     "categoryLabel": "Tools",
     "url": "/icons/pirate-hook.svg",
     "author": "Delapouite"
+  },
+  {
+    "name": "pistol-gun",
+    "label": "Pistol Gun",
+    "category": "weapon-ranged",
+    "categoryLabel": "Ranged Weapons",
+    "url": "/icons/pistol-gun.svg",
+    "author": "John Colburn"
   },
   {
     "name": "pitchfork",
@@ -2349,6 +2981,14 @@
     "category": "potion",
     "categoryLabel": "Potions & Alchemy",
     "url": "/icons/poison-bottle.svg",
+    "author": "Lorc"
+  },
+  {
+    "name": "poison-gas",
+    "label": "Poison Gas",
+    "category": "magic-item",
+    "categoryLabel": "Magic Items",
+    "url": "/icons/poison-gas.svg",
     "author": "Lorc"
   },
   {
@@ -2432,6 +3072,14 @@
     "author": "Delapouite"
   },
   {
+    "name": "psychic-waves",
+    "label": "Psychic Waves",
+    "category": "magic-item",
+    "categoryLabel": "Magic Items",
+    "url": "/icons/psychic-waves.svg",
+    "author": "Lorc"
+  },
+  {
     "name": "pulley-hook",
     "label": "Pulley Hook",
     "category": "tool",
@@ -2456,6 +3104,14 @@
     "author": "Delapouite"
   },
   {
+    "name": "puppet",
+    "label": "Puppet",
+    "category": "magic-item",
+    "categoryLabel": "Magic Items",
+    "url": "/icons/puppet.svg",
+    "author": "Lorc"
+  },
+  {
     "name": "quill",
     "label": "Quill",
     "category": "misc-gear",
@@ -2478,6 +3134,14 @@
     "categoryLabel": "Ranged Weapons",
     "url": "/icons/quiver.svg",
     "author": "Delapouite"
+  },
+  {
+    "name": "rank-3",
+    "label": "Rank 3",
+    "category": "jewelry",
+    "categoryLabel": "Jewelry & Treasure",
+    "url": "/icons/rank-3.svg",
+    "author": "Skoll"
   },
   {
     "name": "rapidshare-arrow",
@@ -2520,6 +3184,14 @@
     "author": "Lorc"
   },
   {
+    "name": "revolver",
+    "label": "Revolver",
+    "category": "weapon-ranged",
+    "categoryLabel": "Ranged Weapons",
+    "url": "/icons/revolver.svg",
+    "author": "Delapouite"
+  },
+  {
     "name": "rhinoceros-horn",
     "label": "Rhinoceros Horn",
     "category": "instrument",
@@ -2560,6 +3232,22 @@
     "author": "Delapouite"
   },
   {
+    "name": "ringed-planet",
+    "label": "Ringed Planet",
+    "category": "magic-item",
+    "categoryLabel": "Magic Items",
+    "url": "/icons/ringed-planet.svg",
+    "author": "Lorc"
+  },
+  {
+    "name": "ringing-bell",
+    "label": "Ringing Bell",
+    "category": "misc-gear",
+    "categoryLabel": "Misc Gear",
+    "url": "/icons/ringing-bell.svg",
+    "author": "Lorc"
+  },
+  {
     "name": "riot-shield",
     "label": "Riot Shield",
     "category": "armor",
@@ -2584,11 +3272,27 @@
     "author": "Delapouite"
   },
   {
+    "name": "robot-golem",
+    "label": "Robot Golem",
+    "category": "magic-item",
+    "categoryLabel": "Magic Items",
+    "url": "/icons/robot-golem.svg",
+    "author": "Lorc"
+  },
+  {
     "name": "rod-of-asclepius",
     "label": "Rod Of Asclepius",
     "category": "magic-item",
     "categoryLabel": "Magic Items",
     "url": "/icons/rod-of-asclepius.svg",
+    "author": "Delapouite"
+  },
+  {
+    "name": "rolling-dices",
+    "label": "Rolling Dices",
+    "category": "magic-item",
+    "categoryLabel": "Magic Items",
+    "url": "/icons/rolling-dices.svg",
     "author": "Delapouite"
   },
   {
@@ -2760,6 +3464,14 @@
     "author": "Lorc"
   },
   {
+    "name": "scales",
+    "label": "Scales",
+    "category": "misc-gear",
+    "categoryLabel": "Misc Gear",
+    "url": "/icons/scales.svg",
+    "author": "Lorc"
+  },
+  {
     "name": "school-bag",
     "label": "School Bag",
     "category": "container",
@@ -2798,6 +3510,38 @@
     "categoryLabel": "Books & Scrolls",
     "url": "/icons/secret-book.svg",
     "author": "Delapouite"
+  },
+  {
+    "name": "sewing-needle",
+    "label": "Sewing Needle",
+    "category": "clothing",
+    "categoryLabel": "Clothing",
+    "url": "/icons/sewing-needle.svg",
+    "author": "Lorc"
+  },
+  {
+    "name": "sewing-string",
+    "label": "Sewing String",
+    "category": "tool",
+    "categoryLabel": "Tools",
+    "url": "/icons/sewing-string.svg",
+    "author": "Delapouite"
+  },
+  {
+    "name": "sextant",
+    "label": "Sextant",
+    "category": "tool",
+    "categoryLabel": "Tools",
+    "url": "/icons/sextant.svg",
+    "author": "Delapouite"
+  },
+  {
+    "name": "shadow-follower",
+    "label": "Shadow Follower",
+    "category": "magic-item",
+    "categoryLabel": "Magic Items",
+    "url": "/icons/shadow-follower.svg",
+    "author": "Lorc"
   },
   {
     "name": "shard-sword",
@@ -2936,6 +3680,14 @@
     "author": "Delapouite"
   },
   {
+    "name": "shirt",
+    "label": "Shirt",
+    "category": "clothing",
+    "categoryLabel": "Clothing",
+    "url": "/icons/shirt.svg",
+    "author": "Lucas"
+  },
+  {
     "name": "shopping-bag",
     "label": "Shopping Bag",
     "category": "container",
@@ -2974,6 +3726,22 @@
     "categoryLabel": "Ranged Weapons",
     "url": "/icons/shuriken-aperture.svg",
     "author": "Lorc"
+  },
+  {
+    "name": "sickle",
+    "label": "Sickle",
+    "category": "weapon-melee",
+    "categoryLabel": "Melee Weapons",
+    "url": "/icons/sickle.svg",
+    "author": "Delapouite"
+  },
+  {
+    "name": "siege-ram",
+    "label": "Siege Ram",
+    "category": "misc-gear",
+    "categoryLabel": "Misc Gear",
+    "url": "/icons/siege-ram.svg",
+    "author": "Skoll"
   },
   {
     "name": "skeleton-key",
@@ -3064,12 +3832,36 @@
     "author": "Lorc"
   },
   {
+    "name": "smoking-pipe",
+    "label": "Smoking Pipe",
+    "category": "magic-item",
+    "categoryLabel": "Magic Items",
+    "url": "/icons/smoking-pipe.svg",
+    "author": "Delapouite"
+  },
+  {
     "name": "snow-bottle",
     "label": "Snow Bottle",
     "category": "potion",
     "categoryLabel": "Potions & Alchemy",
     "url": "/icons/snow-bottle.svg",
     "author": "Lorc"
+  },
+  {
+    "name": "snowflake-1",
+    "label": "Snowflake 1",
+    "category": "magic-item",
+    "categoryLabel": "Magic Items",
+    "url": "/icons/snowflake-1.svg",
+    "author": "Lorc"
+  },
+  {
+    "name": "soap",
+    "label": "Soap",
+    "category": "misc-gear",
+    "categoryLabel": "Misc Gear",
+    "url": "/icons/soap.svg",
+    "author": "Delapouite"
   },
   {
     "name": "soda-bottle",
@@ -3094,6 +3886,22 @@
     "categoryLabel": "Tools",
     "url": "/icons/spade-skull.svg",
     "author": "Lorc"
+  },
+  {
+    "name": "spanner",
+    "label": "Spanner",
+    "category": "tool",
+    "categoryLabel": "Tools",
+    "url": "/icons/spanner.svg",
+    "author": "Lorc"
+  },
+  {
+    "name": "sparkles",
+    "label": "Sparkles",
+    "category": "magic-item",
+    "categoryLabel": "Magic Items",
+    "url": "/icons/sparkles.svg",
+    "author": "Delapouite"
   },
   {
     "name": "sparkling-sabre",
@@ -3144,6 +3952,14 @@
     "author": "Lorc"
   },
   {
+    "name": "spiked-bat",
+    "label": "Spiked Bat",
+    "category": "weapon-melee",
+    "categoryLabel": "Melee Weapons",
+    "url": "/icons/spiked-bat.svg",
+    "author": "Skoll"
+  },
+  {
     "name": "spiked-mace",
     "label": "Spiked Mace",
     "category": "weapon-melee",
@@ -3182,6 +3998,14 @@
     "categoryLabel": "Melee Weapons",
     "url": "/icons/spinning-sword.svg",
     "author": "Lorc"
+  },
+  {
+    "name": "spinning-wheel",
+    "label": "Spinning Wheel",
+    "category": "tool",
+    "categoryLabel": "Tools",
+    "url": "/icons/spinning-wheel.svg",
+    "author": "Caro Asercion"
   },
   {
     "name": "spiral-arrow",
@@ -3256,6 +4080,22 @@
     "author": "Lorc"
   },
   {
+    "name": "stone-block",
+    "label": "Stone Block",
+    "category": "tool",
+    "categoryLabel": "Tools",
+    "url": "/icons/stone-block.svg",
+    "author": "Lorc"
+  },
+  {
+    "name": "stone-pile",
+    "label": "Stone Pile",
+    "category": "weapon-ranged",
+    "categoryLabel": "Ranged Weapons",
+    "url": "/icons/stone-pile.svg",
+    "author": "Delapouite"
+  },
+  {
     "name": "stone-spear",
     "label": "Stone Spear",
     "category": "weapon-melee",
@@ -3264,11 +4104,35 @@
     "author": "Lorc"
   },
   {
+    "name": "stone-sphere",
+    "label": "Stone Sphere",
+    "category": "weapon-ranged",
+    "categoryLabel": "Ranged Weapons",
+    "url": "/icons/stone-sphere.svg",
+    "author": "Lorc"
+  },
+  {
+    "name": "straight-pipe",
+    "label": "Straight Pipe",
+    "category": "weapon-ranged",
+    "categoryLabel": "Ranged Weapons",
+    "url": "/icons/straight-pipe.svg",
+    "author": "Delapouite"
+  },
+  {
     "name": "striped-sword",
     "label": "Striped Sword",
     "category": "weapon-melee",
     "categoryLabel": "Melee Weapons",
     "url": "/icons/striped-sword.svg",
+    "author": "Lorc"
+  },
+  {
+    "name": "sun-radiations",
+    "label": "Sun Radiations",
+    "category": "magic-item",
+    "categoryLabel": "Magic Items",
+    "url": "/icons/sun-radiations.svg",
     "author": "Lorc"
   },
   {
@@ -3432,6 +4296,14 @@
     "author": "Lorc"
   },
   {
+    "name": "tarot-13-death",
+    "label": "Tarot 13 Death",
+    "category": "magic-item",
+    "categoryLabel": "Magic Items",
+    "url": "/icons/tarot-13-death.svg",
+    "author": "Caro Asercion"
+  },
+  {
     "name": "telescope",
     "label": "Telescope",
     "category": "tool",
@@ -3472,6 +4344,14 @@
     "author": "Lorc"
   },
   {
+    "name": "thorny-tentacle",
+    "label": "Thorny Tentacle",
+    "category": "magic-item",
+    "categoryLabel": "Magic Items",
+    "url": "/icons/thorny-tentacle.svg",
+    "author": "Lorc"
+  },
+  {
     "name": "three-pointed-shuriken",
     "label": "Three Pointed Shuriken",
     "category": "weapon-ranged",
@@ -3504,6 +4384,14 @@
     "author": "Lorc"
   },
   {
+    "name": "thunder-struck",
+    "label": "Thunder Struck",
+    "category": "magic-item",
+    "categoryLabel": "Magic Items",
+    "url": "/icons/thunder-struck.svg",
+    "author": "Lorc"
+  },
+  {
     "name": "tiara",
     "label": "Tiara",
     "category": "jewelry",
@@ -3520,12 +4408,36 @@
     "author": "Lorc"
   },
   {
+    "name": "time-trap",
+    "label": "Time Trap",
+    "category": "magic-item",
+    "categoryLabel": "Magic Items",
+    "url": "/icons/time-trap.svg",
+    "author": "Lorc"
+  },
+  {
     "name": "tomahawk",
     "label": "Tomahawk",
     "category": "weapon-melee",
     "categoryLabel": "Melee Weapons",
     "url": "/icons/tomahawk.svg",
     "author": "Delapouite"
+  },
+  {
+    "name": "toolbox",
+    "label": "Toolbox",
+    "category": "tool",
+    "categoryLabel": "Tools",
+    "url": "/icons/toolbox.svg",
+    "author": "Delapouite"
+  },
+  {
+    "name": "tooth",
+    "label": "Tooth",
+    "category": "magic-item",
+    "categoryLabel": "Magic Items",
+    "url": "/icons/tooth.svg",
+    "author": "Lorc"
   },
   {
     "name": "torch",
@@ -3613,6 +4525,14 @@
     "category": "tool",
     "categoryLabel": "Tools",
     "url": "/icons/triple-lock.svg",
+    "author": "Lorc"
+  },
+  {
+    "name": "triple-needle",
+    "label": "Triple Needle",
+    "category": "weapon-ranged",
+    "categoryLabel": "Ranged Weapons",
+    "url": "/icons/triple-needle.svg",
     "author": "Lorc"
   },
   {
@@ -3712,12 +4632,36 @@
     "author": "Lorc"
   },
   {
+    "name": "violin",
+    "label": "Violin",
+    "category": "instrument",
+    "categoryLabel": "Instruments",
+    "url": "/icons/violin.svg",
+    "author": "Zajkonur"
+  },
+  {
     "name": "visored-helm",
     "label": "Visored Helm",
     "category": "armor",
     "categoryLabel": "Armor & Shields",
     "url": "/icons/visored-helm.svg",
     "author": "Lorc"
+  },
+  {
+    "name": "walking-boot",
+    "label": "Walking Boot",
+    "category": "clothing",
+    "categoryLabel": "Clothing",
+    "url": "/icons/walking-boot.svg",
+    "author": "Lorc"
+  },
+  {
+    "name": "walking-scout",
+    "label": "Walking Scout",
+    "category": "magic-item",
+    "categoryLabel": "Magic Items",
+    "url": "/icons/walking-scout.svg",
+    "author": "Delapouite"
   },
   {
     "name": "war-axe",
@@ -3733,6 +4677,14 @@
     "category": "weapon-melee",
     "categoryLabel": "Melee Weapons",
     "url": "/icons/war-pick.svg",
+    "author": "Delapouite"
+  },
+  {
+    "name": "warhammer",
+    "label": "Warhammer",
+    "category": "weapon-melee",
+    "categoryLabel": "Melee Weapons",
+    "url": "/icons/warhammer.svg",
     "author": "Delapouite"
   },
   {
@@ -3776,6 +4728,22 @@
     "author": "Delapouite"
   },
   {
+    "name": "wax-seal",
+    "label": "Wax Seal",
+    "category": "misc-gear",
+    "categoryLabel": "Misc Gear",
+    "url": "/icons/wax-seal.svg",
+    "author": "Lorc"
+  },
+  {
+    "name": "wax-tablet",
+    "label": "Wax Tablet",
+    "category": "tool",
+    "categoryLabel": "Tools",
+    "url": "/icons/wax-tablet.svg",
+    "author": "Delapouite"
+  },
+  {
     "name": "whip",
     "label": "Whip",
     "category": "weapon-melee",
@@ -3790,6 +4758,14 @@
     "categoryLabel": "Ranged Weapons",
     "url": "/icons/whirlpool-shuriken.svg",
     "author": "DarkZaitzev"
+  },
+  {
+    "name": "whistle",
+    "label": "Whistle",
+    "category": "misc-gear",
+    "categoryLabel": "Misc Gear",
+    "url": "/icons/whistle.svg",
+    "author": "Delapouite"
   },
   {
     "name": "white-book",
@@ -3856,6 +4832,14 @@
     "author": "Lorc"
   },
   {
+    "name": "wolf-trap",
+    "label": "Wolf Trap",
+    "category": "misc-gear",
+    "categoryLabel": "Misc Gear",
+    "url": "/icons/wolf-trap.svg",
+    "author": "Lorc"
+  },
+  {
     "name": "wood-axe",
     "label": "Wood Axe",
     "category": "weapon-melee",
@@ -3872,12 +4856,28 @@
     "author": "Delapouite"
   },
   {
+    "name": "wood-stick",
+    "label": "Wood Stick",
+    "category": "misc-gear",
+    "categoryLabel": "Misc Gear",
+    "url": "/icons/wood-stick.svg",
+    "author": "Delapouite"
+  },
+  {
     "name": "wooden-helmet",
     "label": "Wooden Helmet",
     "category": "armor",
     "categoryLabel": "Armor & Shields",
     "url": "/icons/wooden-helmet.svg",
     "author": "Skoll"
+  },
+  {
+    "name": "wooden-pegleg",
+    "label": "Wooden Pegleg",
+    "category": "magic-item",
+    "categoryLabel": "Magic Items",
+    "url": "/icons/wooden-pegleg.svg",
+    "author": "Delapouite"
   },
   {
     "name": "zebra-shield",
