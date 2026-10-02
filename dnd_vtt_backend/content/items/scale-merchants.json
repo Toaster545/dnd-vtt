@@ -8,6 +8,6 @@
   "properties": [],
   "weight": 3,
   "cost": "5 gp",
-  "image_url": "/icons/backpack.svg",
+  "image_url": "/icons/scales.svg",
   "description": "A small scale used to weigh coins and precious materials, complete with a set of weights."
 }

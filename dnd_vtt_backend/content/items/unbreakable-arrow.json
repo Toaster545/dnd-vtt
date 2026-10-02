@@ -8,7 +8,7 @@
   "properties": [],
   "weight": 0,
   "cost": "—",
-  "image_url": "/icons/arrow-cluster.svg",
+  "image_url": "/icons/broadhead-arrow.svg",
   "description": "An arrow that cannot be broken except while inside an antimagic effect.",
   "rarity": "common",
   "source": {

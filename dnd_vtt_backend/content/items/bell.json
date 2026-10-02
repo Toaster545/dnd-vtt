@@ -8,6 +8,6 @@
   "properties": [],
   "weight": 0,
   "cost": "1 gp",
-  "image_url": "/icons/backpack.svg",
+  "image_url": "/icons/ringing-bell.svg",
   "description": "A small bell that rings when shaken or struck."
 }

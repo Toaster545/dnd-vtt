@@ -8,6 +8,6 @@
   "properties": [],
   "weight": 2,
   "cost": "5 cp",
-  "image_url": "/icons/backpack.svg",
+  "image_url": "/icons/empty-wood-bucket-handle.svg",
   "description": "A wooden or metal pail for carrying water and other materials."
 }

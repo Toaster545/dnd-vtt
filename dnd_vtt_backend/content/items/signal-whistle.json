@@ -8,6 +8,6 @@
   "properties": [],
   "weight": 0,
   "cost": "5 cp",
-  "image_url": "/icons/hunting-horn.svg",
+  "image_url": "/icons/whistle.svg",
   "description": "A small whistle that carries a piercing note over long distances."
 }

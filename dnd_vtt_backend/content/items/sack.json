@@ -8,6 +8,6 @@
   "properties": [],
   "weight": 0.5,
   "cost": "1 cp",
-  "image_url": "/icons/shopping-bag.svg",
+  "image_url": "/icons/swap-bag.svg",
   "description": "A simple cloth sack for carrying goods."
 }

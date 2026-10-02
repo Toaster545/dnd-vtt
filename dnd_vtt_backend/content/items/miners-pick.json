@@ -8,6 +8,6 @@
   "properties": [],
   "weight": 10,
   "cost": "2 gp",
-  "image_url": "/icons/pick-of-destiny.svg",
+  "image_url": "/icons/mining.svg",
   "description": "A pickaxe used to break rock and dig through earth."
 }

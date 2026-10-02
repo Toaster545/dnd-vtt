@@ -7,7 +7,7 @@
   "properties": [],
   "weight": 6,
   "cost": "Magic item",
-  "image_url": "/icons/acid-shield.svg",
+  "image_url": "/icons/checked-shield.svg",
   "description": "While holding this shield, you have a +3 bonus to AC. This bonus is in addition to the shield's normal +2 bonus to AC.",
   "rarity": "legendary",
   "requires_attunement": false,

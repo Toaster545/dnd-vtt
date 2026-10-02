@@ -10,7 +10,7 @@
   ],
   "weight": 4,
   "cost": "10 gp",
-  "image_url": "/icons/axe-in-log.svg",
+  "image_url": "/icons/battle-axe.svg",
   "description": "A broad-bladed axe balanced for one- or two-handed use.",
   "mastery": {
     "property": "Topple",

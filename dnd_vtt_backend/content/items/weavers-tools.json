@@ -8,6 +8,6 @@
   "properties": [],
   "weight": 5,
   "cost": "1 gp",
-  "image_url": "/icons/anvil.svg",
+  "image_url": "/icons/spinning-wheel.svg",
   "description": "A loom and shuttles used to weave cloth."
 }

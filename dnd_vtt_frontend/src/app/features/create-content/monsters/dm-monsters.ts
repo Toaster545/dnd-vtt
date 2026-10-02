@@ -9,6 +9,7 @@ import { ContentDetailDialogComponent } from '../content-detail-dialog/content-d
 import { ContentSourceFilterComponent } from '../content-source-filter/content-source-filter';
 import { StatblockExportMenuComponent } from '../../../shared/components/statblock-export-menu/statblock-export-menu';
 import { monsterStatblock } from '../../../core/utils/statblock-export';
+import { monsterTokenUrl } from '../../../core/utils/monster-token';
 
 type MonsterSort = 'name-asc' | 'name-desc' | 'source-asc' | 'cr-asc' | 'cr-desc';
 
@@ -38,6 +39,9 @@ export class DmMonstersComponent implements OnInit {
   sourceFilters = signal<string[]>([]);
   sort = signal<MonsterSort>('name-asc');
   officialExpanded = signal(true);
+  // Monsters whose token art failed to load (none downloaded, typical for homebrew) — they fall
+  // back to an icon instead of a broken image.
+  missingArt = signal<ReadonlySet<string>>(new Set());
 
   filteredMonsters = computed(() => this.filter(this.monsters(), 'HOMEBREW'));
   filteredOfficial = computed(() => this.filter(this.officialMonsters(), 'XPHB'));
@@ -61,6 +65,13 @@ export class DmMonstersComponent implements OnInit {
         default: return byName;
       }
     });
+  }
+
+  tokenUrl(monster: DndMonster): string | null {
+    return this.missingArt().has(monster.index) ? null : monsterTokenUrl(monster.index);
+  }
+  onArtError(monster: DndMonster) {
+    this.missingArt.update(set => new Set(set).add(monster.index));
   }
 
   setSourceFilters(codes: string[]) { this.sourceFilters.set(codes); }

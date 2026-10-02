@@ -8,6 +8,6 @@
   "properties": [],
   "weight": 1,
   "cost": "1 cp",
-  "image_url": "/icons/anvil.svg",
+  "image_url": "/icons/stone-block.svg",
   "description": "A stone used to sharpen and maintain the edge of a blade."
 }

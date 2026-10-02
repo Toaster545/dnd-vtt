@@ -8,7 +8,7 @@
   "properties": [],
   "weight": 0,
   "cost": "—",
-  "image_url": "/icons/drum.svg",
+  "image_url": "/icons/harp.svg",
   "description": "An instrument that creates harmless visual effects while it is played.",
   "rarity": "common",
   "requires_attunement": true,

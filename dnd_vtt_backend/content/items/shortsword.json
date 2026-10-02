@@ -11,7 +11,7 @@
   ],
   "weight": 2,
   "cost": "10 gp",
-  "image_url": "/icons/ancient-sword.svg",
+  "image_url": "/icons/gladius.svg",
   "description": "A short, quick blade.",
   "mastery": {
     "property": "Vex",

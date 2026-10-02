@@ -8,7 +8,7 @@
   "properties": [],
   "weight": 0,
   "cost": "—",
-  "image_url": "/icons/dice-shield.svg",
+  "image_url": "/icons/rolling-dices.svg",
   "description": "An attuned six-sided die whose result you can control.",
   "rarity": "common",
   "requires_attunement": true,

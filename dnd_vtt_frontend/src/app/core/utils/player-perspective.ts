@@ -1,4 +1,5 @@
 import { MapLighting, MapToken } from '../models/campaign.model';
+import { monsterTokenUrl } from './monster-token';
 
 // Client-side mirror of the backend's serializePlayerTokens (maps/player-tokens.ts), for screens
 // that show the players' view while signed in as the DM — the pop-out table view. The server
@@ -22,9 +23,7 @@ export function tokensAsPlayersSee(tokens: MapToken[]): MapToken[] {
         character_id: token.is_player ? token.character_id : undefined,
         // Monster art names the monster as plainly as its label, so it goes with the name.
         image_url:
-          token.monster_index && nameVisible
-            ? `/uploads/monster-tokens/${encodeURIComponent(token.monster_index)}.webp`
-            : token.image_url,
+          token.monster_index && nameVisible ? monsterTokenUrl(token.monster_index) : token.image_url,
         initiative: token.initiative ?? null,
         turn_start_x: token.turn_start_x ?? null,
         turn_start_y: token.turn_start_y ?? null,

@@ -10,6 +10,6 @@
   ],
   "weight": 0,
   "cost": "100 gp",
-  "image_url": "/icons/backpack.svg",
+  "image_url": "/icons/magnifying-glass.svg",
   "description": "A lens that magnifies small objects and text; can also focus sunlight to start a fire."
 }

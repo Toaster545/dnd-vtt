@@ -1,7 +1,8 @@
-import { Component, HostListener, input, output } from '@angular/core';
+import { Component, HostListener, input, output, signal } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { DndItem, DndMonster, DndSpell, itemDisplayName } from '../../../core/services/content.service';
 import { monsterSpeedText } from '../../../core/utils/monster-speed';
+import { monsterTokenUrl } from '../../../core/utils/monster-token';
 
 @Component({
   selector: 'app-content-detail-dialog',
@@ -20,6 +21,10 @@ export class ContentDetailDialogComponent {
   }
 
   readonly speedText = monsterSpeedText;
+  readonly tokenUrl = monsterTokenUrl;
+  // Index of a monster with no downloaded token art (typical for homebrew), so the header drops
+  // the image instead of showing it broken.
+  readonly artFailedFor = signal<string | null>(null);
 
   modifier(score: number): string {
     const value = Math.floor((score - 10) / 2);
