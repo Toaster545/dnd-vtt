@@ -525,7 +525,9 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
       const mapId = this.mapId;
       this.mapService.getTokenPlan(mapId, tokenId).then(
         plan => { if (this.myTokenId() === tokenId) this.myPlan.set(plan); },
-        () => {},
+        () => {
+          // No plan to show is the same as no plan set — nothing to surface.
+        },
       );
     });
 

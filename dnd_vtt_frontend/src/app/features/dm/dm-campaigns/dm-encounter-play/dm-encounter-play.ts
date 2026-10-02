@@ -237,7 +237,9 @@ export class DmEncounterPlayComponent implements OnInit, OnDestroy {
       if (event.campaignId !== this.campaignId || !this.extraCharacters()[event.characterId]) return;
       this.characterService.getCharacter(event.characterId).then(
         character => this.extraCharacters.update(map => ({ ...map, [event.characterId]: character })),
-        () => {},
+        () => {
+          // Keep the last-known copy; the next character_updated push retries the fetch.
+        },
       );
     });
   }

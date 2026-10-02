@@ -8,6 +8,8 @@ import {
   tokenBorderInnerRadius,
 } from './token-border';
 
+const noop = () => undefined;
+
 function fakeContext() {
   const calls = {
     arcs: [] as number[],
@@ -24,10 +26,10 @@ function fakeContext() {
   let fillStyle: unknown = '';
   let lineWidth = 0;
   const ctx = {
-    save() {},
-    restore() {},
-    beginPath() {},
-    closePath() {},
+    save: noop,
+    restore: noop,
+    beginPath: noop,
+    closePath: noop,
     rect(...rect: number[]) {
       calls.rects.push(rect);
     },
@@ -40,7 +42,7 @@ function fakeContext() {
     drawImage(_image: unknown, ...rect: number[]) {
       calls.images.push(rect);
     },
-    createLinearGradient: () => ({ addColorStop() {} }),
+    createLinearGradient: () => ({ addColorStop: noop }),
     set fillStyle(value: unknown) {
       fillStyle = value;
     },

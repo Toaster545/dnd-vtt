@@ -168,7 +168,9 @@ export class EncounterService {
     return new Observable(observer => {
       const socket = this.socketService.socket;
       const refetch = () => {
-        this.getTurnOrder(encounterId).then(tokens => observer.next(tokens), () => {});
+        this.getTurnOrder(encounterId).then(tokens => observer.next(tokens), () => {
+          // Best-effort refresh — the next turn_changed push retries it.
+        });
       };
       const handleChange = (event: { encounterId: string }) => {
         if (event.encounterId === encounterId) refetch();
