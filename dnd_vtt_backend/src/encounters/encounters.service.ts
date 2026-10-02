@@ -15,8 +15,21 @@ import { TokensGateway } from '../maps/tokens.gateway';
 
 export interface EncounterLevel {
   map_id: string;
+  // What players and the DM see: the level's own name if the DM gave it one, else the map's.
   name: string;
+  // The DM-given name alone (null when the level just shows the map's name) — what the encounter
+  // form edits.
+  custom_name: string | null;
   position: number;
+}
+
+const LEVEL_NAME_MAX = 60;
+
+// A DM-typed level name: trimmed and capped, with blank meaning "use the map's name".
+function cleanLevelName(value: unknown): string | null {
+  if (typeof value !== 'string') return null;
+  const name = value.trim().slice(0, LEVEL_NAME_MAX);
+  return name || null;
 }
 
 @Injectable()
@@ -203,7 +216,8 @@ export class EncountersService {
     if (encounters.length === 0) return [];
     const ids = encounters.map((e) => e.id as string);
     const result = await this.db.execute(
-      `SELECT el.encounter_id, el.map_id, el.position, bm.name
+      `SELECT el.encounter_id, el.map_id, el.position, el.name AS custom_name,
+              COALESCE(el.name, bm.name) AS name
        FROM encounter_levels el JOIN battle_maps bm ON bm.id = el.map_id
        WHERE el.encounter_id IN (${ids.map(() => '?').join(',')})
        ORDER BY el.position`,
@@ -215,6 +229,7 @@ export class EncountersService {
       list.push({
         map_id: row.map_id as string,
         name: row.name as string,
+        custom_name: (row.custom_name as string | null) ?? null,
         position: Number(row.position),
       });
       byEncounter.set(row.encounter_id as string, list);
@@ -234,8 +249,13 @@ export class EncountersService {
   }
 
   // Replaces an encounter's whole level list. Every map must belong to the encounter's campaign
-  // (maps are campaign-scoped); `encounters.map_id` follows the new entry level.
-  private async setLevels(encounterId: string, mapIds: string[]) {
+  // (maps are campaign-scoped); `encounters.map_id` follows the new entry level. `names` (keyed
+  // by map id) sets each level's name; without it, a level that stays keeps the name it had.
+  private async setLevels(
+    encounterId: string,
+    mapIds: string[],
+    names?: Record<string, unknown>,
+  ) {
     const unique = [...new Set(mapIds.filter((id) => typeof id === 'string'))];
     if (unique.length) {
       const owned = await this.db.execute(
@@ -251,14 +271,26 @@ export class EncountersService {
         );
       }
     }
+    const previous = names
+      ? null
+      : new Map(
+          (
+            await this.db.execute(
+              'SELECT map_id, name FROM encounter_levels WHERE encounter_id = ?',
+              [encounterId],
+            )
+          ).rows.map((r) => [r.map_id as string, r.name as string | null]),
+        );
+    const nameFor = (mapId: string) =>
+      names ? cleanLevelName(names[mapId]) : (previous!.get(mapId) ?? null);
     await this.db.executeMany([
       {
         sql: 'DELETE FROM encounter_levels WHERE encounter_id = ?',
         args: [encounterId],
       },
       ...unique.map((mapId, position) => ({
-        sql: 'INSERT INTO encounter_levels (encounter_id, map_id, position) VALUES (?, ?, ?)',
-        args: [encounterId, mapId, position],
+        sql: 'INSERT INTO encounter_levels (encounter_id, map_id, position, name) VALUES (?, ?, ?, ?)',
+        args: [encounterId, mapId, position, nameFor(mapId)],
       })),
       {
         sql: 'UPDATE encounters SET map_id = ? WHERE id = ?',
@@ -288,9 +320,14 @@ export class EncountersService {
     }
     const name = mapId
       ? (
-          await this.db.execute('SELECT name FROM battle_maps WHERE id = ?', [
-            mapId,
-          ])
+          await this.db.execute(
+            `SELECT COALESCE(el.name, bm.name) AS name
+             FROM battle_maps bm
+             LEFT JOIN encounter_levels el
+               ON el.map_id = bm.id AND el.encounter_id = ?
+             WHERE bm.id = ?`,
+            [id, mapId],
+          )
         ).rows[0]?.name
       : null;
     return {
@@ -365,15 +402,23 @@ export class EncountersService {
         JSON.stringify(dto.character_ids ?? []),
       ],
     );
-    await this.setLevels(id, dto.map_ids ?? (dto.map_id ? [dto.map_id] : []));
+    await this.setLevels(
+      id,
+      dto.map_ids ?? (dto.map_id ? [dto.map_id] : []),
+      dto.level_names,
+    );
     return this.findOne(id, dmId);
   }
 
   async update(id: string, dmId: string, body: Record<string, unknown>) {
     const current = await this.findOne(id, dmId);
     const name = (body.name as string | undefined) ?? current.name;
+    const levelNames =
+      body.level_names && typeof body.level_names === 'object'
+        ? (body.level_names as Record<string, unknown>)
+        : undefined;
     if (Array.isArray(body.map_ids)) {
-      await this.setLevels(id, body.map_ids as string[]);
+      await this.setLevels(id, body.map_ids as string[], levelNames);
     } else if (body.map_id !== undefined) {
       // Older single-map callers: swap the entry level, keep any levels below it.
       const below = current.levels

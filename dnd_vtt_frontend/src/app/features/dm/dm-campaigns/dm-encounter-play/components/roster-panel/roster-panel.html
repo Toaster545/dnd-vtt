@@ -29,10 +29,6 @@
             <p class="text-coal text-xs m-0 mt-0.5">{{ player.username }}</p>
           </div>
         </button>
-        <input type="color" class="h-7 w-7 rounded cursor-pointer border border-white/10 bg-transparent flex-shrink-0"
-          [ngModel]="colorFor()(player.characterId)" (ngModelChange)="characterColorChanged.emit({ id: player.characterId, color: $event })"
-          (click)="$event.stopPropagation()" name="color-player-{{ player.characterId }}"
-          [matTooltip]="'Token color for ' + player.characterName" />
       </div>
     }
   </div>
@@ -112,10 +108,6 @@
             <p class="text-coal text-xs m-0 mt-0.5">Level {{ character.level }} {{ classLabel()(character) }} · AC {{ character.armor_class }} · HP {{ character.max_hp }}</p>
           </div>
         </button>
-        <input type="color" class="h-7 w-7 rounded cursor-pointer border border-white/10 bg-transparent flex-shrink-0"
-          [ngModel]="colorFor()(character.id!)" (ngModelChange)="characterColorChanged.emit({ id: character.id!, color: $event })"
-          (click)="$event.stopPropagation()" name="color-{{ character.id }}"
-          [matTooltip]="'Token color for ' + character.name" />
       </div>
     }
   </div>

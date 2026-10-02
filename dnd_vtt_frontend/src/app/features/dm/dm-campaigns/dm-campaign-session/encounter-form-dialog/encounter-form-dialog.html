@@ -72,6 +72,14 @@
           Level 1 is where players start. Move tokens between levels during play.
         </p>
 
+        @if (levelDrafts().length > 1) {
+          <label class="field-label" for="level-name">Level {{ activeLevel() + 1 }} name</label>
+          <input id="level-name" class="field-input mb-3" maxlength="60"
+                 [ngModel]="levelName()" (ngModelChange)="levelName.set($event)"
+                 [ngModelOptions]="{ standalone: true }"
+                 [placeholder]="levelMapLabel(activeLevel())" />
+        }
+
         <label class="field-label">
           {{ existingMap() ? 'Replace map' : 'Map (optional)' }} — PNG, JPEG, WebP, or DungeonDraft (.dd2vtt) export
         </label>

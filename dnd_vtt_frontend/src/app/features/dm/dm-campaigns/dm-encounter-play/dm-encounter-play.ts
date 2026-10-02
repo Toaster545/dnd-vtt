@@ -170,7 +170,6 @@ export class DmEncounterPlayComponent implements OnInit, OnDestroy {
   });
 
   viewingCharacter = signal<Character | null>(null);
-  viewingCharacterToken = signal<MapToken | null>(null);
   viewingCharacterSummary = signal<{ token: MapToken; character: Character } | null>(null);
   viewingMonsterToken = signal<{ token: MapToken; monster: DndMonster } | null>(null);
   hpAdjustAmount = signal(0);
@@ -491,27 +490,17 @@ export class DmEncounterPlayComponent implements OnInit, OnDestroy {
   }
 
   private readonly palette = ['#3b82f6', '#22c55e', '#eab308', '#a855f7', '#ec4899', '#06b6d4', '#f97316', '#94a3b8'];
-  private characterColorOverrides = signal<Record<string, string>>({});
-
-  readonly colorFor = (characterId: string): string => {
-    const override = this.characterColorOverrides()[characterId];
-    if (override) return override;
+  // A placed character token's color, picked automatically from its roster position. Players
+  // style their own ring in the portrait dialog; this only colors the default ring and markers.
+  private colorFor(characterId: string): string {
     const idx = this.rosterIds().indexOf(characterId);
     return this.palette[idx >= 0 ? idx % this.palette.length : 0];
-  };
+  }
 
   private rosterIds(): string[] {
     const fromRoster = this.selected()?.character_ids ?? [];
     const fromPresence = this.partyPlayers().map(p => p.characterId);
     return [...new Set([...fromRoster, ...fromPresence])];
-  }
-
-  setCharacterColor(characterId: string, color: string) {
-    this.characterColorOverrides.update(map => ({ ...map, [characterId]: color }));
-    const armed = this.armedEntity();
-    if (armed?.kind === 'character' && armed.characterId === characterId) {
-      this.armedEntity.set({ ...armed, color });
-    }
   }
 
   private readonly monsterPalette = ['#e74c3c', '#f97316', '#c026d3', '#7c3aed', '#0891b2', '#65a30d', '#dc2626', '#78716c'];
@@ -563,13 +552,6 @@ export class DmEncounterPlayComponent implements OnInit, OnDestroy {
     this.viewingCharacterSummary.set(null);
   }
 
-  async setCharacterSummaryTokenColor(color: string) {
-    const current = this.viewingCharacterSummary();
-    if (!current) return;
-    const updated = await this.mapService.upsertToken({ ...current.token, color });
-    this.viewingCharacterSummary.set({ ...current, token: updated });
-  }
-
   // The DM already has full write access to a party member's campaign copy (see
   // CharactersService.update's isOwningDm carve-out) — no separate permission plumbing needed.
   async setCharacterSummaryDarkvision(darkvision_ft: number | null) {
@@ -583,7 +565,6 @@ export class DmEncounterPlayComponent implements OnInit, OnDestroy {
     const current = this.viewingCharacterSummary();
     if (!current) return;
     this.viewingCharacter.set(current.character);
-    this.viewingCharacterToken.set(current.token);
     this.viewingCharacterSummary.set(null);
   }
 
@@ -616,15 +597,8 @@ export class DmEncounterPlayComponent implements OnInit, OnDestroy {
     this.viewingCustomToken.set(null);
   }
 
-  async setCharacterTokenColor(color: string) {
-    const token = this.viewingCharacterToken();
-    if (!token) return;
-    this.viewingCharacterToken.set(await this.mapService.upsertToken({ ...token, color }));
-  }
-
   closeCharacterView() {
     this.viewingCharacter.set(null);
-    this.viewingCharacterToken.set(null);
   }
 
   onCharacterSaved(character: Character) {

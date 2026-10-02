@@ -37,6 +37,7 @@ import { LightEditorPanelComponent } from './components/light-editor-panel/light
 import { CharacterPlaySheetComponent } from '../characters/character-play-sheet/character-play-sheet';
 import { MainLayoutComponent } from '../../shared/layout/main-layout/main-layout';
 import { PageHeaderComponent } from '../../shared/layout/page-header/page-header';
+import { lightingAsPlayersSee, tokensAsPlayersSee } from '../../core/utils/player-perspective';
 
 @Component({
   selector: 'app-battle-map',
@@ -69,7 +70,15 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
   // player-campaign-session.ts), never broadcast. Punches a viewer-only hole in *this browser's*
   // darkness render around the player's own token; nobody else's screen is affected by it.
   readonly myDarkvisionFt = input<number | null>(null);
+  // Darkvision ranges by character_id, for a screen showing the whole party's view at once (the
+  // pop-out table view) — each such character's token on this map lights the darkness around it,
+  // the way a single player's own darkvision does through myDarkvisionFt.
+  readonly partyDarkvisionFt = input<Record<string, number>>({});
   readonly canControl = input<boolean | null>(null);
+  // Shows exactly what players get while signed in as the DM (the pop-out table view): the
+  // server sends a DM every token, so hidden tokens, masked names and DM-only stats are stripped
+  // here instead (see tokensAsPlayersSee). Set once, before the map loads.
+  readonly viewAsPlayers = input(false);
   // The viewing player's live character — when set, the player-facing side panel gains a
   // collapsible "Character Sheet" section alongside Turn Order so the sheet can be referenced
   // without leaving the map (see player-campaign-session.html). Never set for the DM.
@@ -234,7 +243,7 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
       const message = `Couldn't save walls: ${getErrorMessage(e)}`;
       this.error.set(message);
       setTimeout(() => { if (this.error() === message) this.error.set(null); }, 5000);
-      if (mapId === this.mapId) this.lighting.set(await this.mapService.getLighting(mapId));
+      if (mapId === this.mapId) this.setLighting(await this.mapService.getLighting(mapId));
     });
   }
 
@@ -460,6 +469,9 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
   private loadedMapId: string | null = null;
   private cellSize = 0;
   private lastTokens: MapToken[] = [];
+  // The untrimmed server payloads behind tokens/lighting in viewAsPlayers mode.
+  private serverTokens: MapToken[] = [];
+  private serverLighting: MapLighting | null = null;
   // Set from pressing a token until the button is released. Rebuilding the token layer then (a
   // socket broadcast, an image finishing loading, an HP change...) destroys the node Konva is
   // dragging and drops the token, so renders are held until release instead (see renderTokens).
@@ -550,6 +562,7 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
       this.selectedLightId();
       this.controlsMap();
       this.myDarkvisionFt();
+      this.partyDarkvisionFt();
       this.myToken();
       if (this.darknessLayer && this.cellSize) {
         // Torches moving, walls changing, or darkness toggling change which enemies a player sees.
@@ -651,7 +664,7 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
       ]);
       this.map.set(map);
       this.fog.set(fog);
-      this.lighting.set(lighting);
+      this.setLighting(lighting);
       this.initStage();
     } catch (e) {
       this.error.set(getErrorMessage(e));
@@ -801,7 +814,11 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
       broadcastMeasure: measurement => this.mapService.sendMeasure(this.mapId, measurement),
     });
 
-    this.tokenSub = this.mapService.watchTokens(this.mapId).subscribe(tokens => {
+    this.tokenSub = this.mapService.watchTokens(this.mapId).subscribe(serverTokens => {
+      this.serverTokens = serverTokens;
+      const tokens = this.viewAsPlayers() ? tokensAsPlayersSee(serverTokens) : serverTokens;
+      // Which tokens are hidden decides which lights are, so re-trim the last lighting too.
+      if (this.viewAsPlayers() && this.serverLighting) this.setLighting(this.serverLighting);
       this.tokens.set(tokens);
       this.lastTokens = tokens;
       this.renderTokens(tokens);
@@ -825,7 +842,7 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.lightingSub = this.mapService.watchLighting(this.mapId).subscribe(lighting => {
       const walls = this.pendingWalls ?? lighting.walls ?? [];
-      this.lighting.set({ ...lighting, walls });
+      this.setLighting({ ...lighting, walls });
       this.renderDarkness();
       this.renderLightMarkers();
       this.renderWalls();
@@ -902,10 +919,10 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
     const layer = this.darknessLayer;
     if (!layer) return;
     const lighting = this.lighting();
-    const personal = this.personalDarkvisionLight();
+    const darkvision = this.darkvisionLights();
     // Spliced in only for this render call — never touches the `lighting` signal itself, so it's
     // never persisted, broadcast, shown in the light editor, or visible on anyone else's screen.
-    const effective = personal ? { ...lighting, lights: [...lighting.lights, personal] } : lighting;
+    const effective = darkvision.length ? { ...lighting, lights: [...lighting.lights, ...darkvision] } : lighting;
     renderDarkness(layer, effective, this.lastTokens, this.controlsMap(), this.img, this.gridSize, this.cellSize);
   }
 
@@ -913,11 +930,14 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
   // range — so this reuses the same bright/dim radial-falloff punch a torch's dim ring already
   // gets, just with bright_radius_ft pinned to 0. token_id ties it to the viewer's own token so
   // it tracks that token's live position (including mid-drag) exactly like an attached torch does.
-  private personalDarkvisionLight(): MapLight | null {
-    const token = this.myToken();
-    const ft = this.myDarkvisionFt();
-    if (!token?.id || !ft) return null;
-    return {
+  private darkvisionLights(): MapLight[] {
+    const ranges: [MapToken | null, number | null][] = [[this.myToken(), this.myDarkvisionFt()]];
+    const party = this.partyDarkvisionFt();
+    const mine = this.myToken()?.id;
+    for (const token of this.lastTokens) {
+      if (token.character_id && token.id !== mine) ranges.push([token, party[token.character_id] ?? null]);
+    }
+    return ranges.flatMap(([token, ft]) => token?.id && ft ? [{
       token_id: token.id,
       map_id: this.mapId,
       bright_radius_ft: 0,
@@ -925,7 +945,12 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
       color: '#ffffff',
       enabled: true,
       label: 'Darkvision',
-    };
+    }] : []);
+  }
+
+  private setLighting(lighting: MapLighting) {
+    this.serverLighting = lighting;
+    this.lighting.set(this.viewAsPlayers() ? lightingAsPlayersSee(lighting, this.serverTokens) : lighting);
   }
 
   private renderLightMarkers() {
@@ -1073,8 +1098,7 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
     const hidden = new Set<string>();
     const lighting = this.lighting();
     if (this.controlsMap() || !lighting.enabled || !this.cellSize) return hidden;
-    const personal = this.personalDarkvisionLight();
-    const lights = personal ? [...lighting.lights, personal] : lighting.lights;
+    const lights = [...lighting.lights, ...this.darkvisionLights()];
     const areas = litAreas({ ...lighting, lights }, this.lastTokens, this.cellSize);
     for (const token of this.lastTokens) {
       if (!token.is_player && token.id && !isTokenLit(token, areas, this.cellSize)) hidden.add(token.id);

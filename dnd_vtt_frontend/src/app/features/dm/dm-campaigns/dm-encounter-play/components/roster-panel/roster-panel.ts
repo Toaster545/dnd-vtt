@@ -24,7 +24,6 @@ export class RosterPanelComponent {
   readonly characters = input.required<Character[]>();
 
   readonly classLabel = input.required<(c: Character) => string>();
-  readonly colorFor = input.required<(id: string) => string>();
   readonly isArmedCharacter = input.required<(id: string) => boolean>();
   readonly isArmedMonster = input.required<(index: string) => boolean>();
   readonly isArmedCustomToken = input(false);
@@ -38,7 +37,6 @@ export class RosterPanelComponent {
   readonly armPlayer = output<RosterPlayer>();
   readonly armMonster = output<DndMonster>();
   readonly armCharacter = output<Character>();
-  readonly characterColorChanged = output<{ id: string; color: string }>();
   readonly openMonsterSearch = output<void>();
   readonly closeMonsterSearch = output<void>();
   readonly monsterSearchQueryChanged = output<string>();
