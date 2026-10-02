@@ -247,6 +247,22 @@
         </div>
 
         <div>
+          <p class="field-label m-0 mb-2">Material</p>
+          <div class="segmented" role="group" aria-label="Border material">
+            @for (option of borderMaterials; track option.id) {
+              <button
+                type="button"
+                [class.active]="tokenBorder()?.material === option.id"
+                [attr.aria-pressed]="tokenBorder()?.material === option.id"
+                (click)="setBorderMaterial(option.id)"
+              >
+                {{ option.label }}
+              </button>
+            }
+          </div>
+        </div>
+
+        <div>
           <p class="field-label m-0 mb-2">Gradient</p>
           <div class="segmented" role="group" aria-label="Border gradient">
             <button
@@ -325,13 +341,44 @@
         }
 
         <div>
+          <p class="field-label m-0 mb-2">Background</p>
+          <div class="segmented" role="group" aria-label="Portrait background">
+            <button
+              type="button"
+              [class.active]="tokenBorder() && !tokenBorder()!.backgroundColor"
+              [attr.aria-pressed]="!!tokenBorder() && !tokenBorder()!.backgroundColor"
+              (click)="setBackground(false)"
+            >
+              None
+            </button>
+            <button
+              type="button"
+              [class.active]="!!tokenBorder()?.backgroundColor"
+              [attr.aria-pressed]="!!tokenBorder()?.backgroundColor"
+              (click)="setBackground(true)"
+            >
+              <mat-icon class="text-base">circle</mat-icon>
+              Background
+            </button>
+          </div>
+        </div>
+        @if (tokenBorder()?.backgroundColor) {
+          <ng-container
+            *ngTemplateOutlet="
+              colorPicker;
+              context: { key: 'backgroundColor', label: 'Background color' }
+            "
+          />
+        }
+
+        <div>
           <label class="field-label m-0 mb-2 flex justify-between" for="token-border-width">
             <span>Thickness</span>
             <span class="text-parchment">{{ borderShown().width }}</span>
           </label>
           <input
             id="token-border-width"
-            class="thickness-slider"
+            class="range-slider"
             type="range"
             step="1"
             [min]="minBorderWidth"
@@ -355,6 +402,27 @@
               </button>
             }
           </div>
+        </div>
+
+        <div>
+          <label class="field-label m-0 mb-2 flex justify-between" for="token-face-scale">
+            <span>Portrait zoom</span>
+            <span class="text-parchment">{{ borderShown().faceScale }}%</span>
+          </label>
+          <input
+            id="token-face-scale"
+            class="range-slider"
+            type="range"
+            step="5"
+            [min]="minFaceScale"
+            [max]="maxFaceScale"
+            [value]="borderShown().faceScale"
+            (input)="setFaceScale(+$any($event.target).value)"
+          />
+          <p class="text-xs text-slate m-0 mt-1">
+            Zoom out to show the background around your portrait. Zoom in past 100% and transparent
+            art (like a built avatar) breaks out over the top of the ring.
+          </p>
         </div>
       </section>
     </div>

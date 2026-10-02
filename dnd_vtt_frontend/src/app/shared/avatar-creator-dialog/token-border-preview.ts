@@ -1,8 +1,8 @@
 import { Component, ElementRef, effect, input, signal, viewChild } from '@angular/core';
 import { TokenBorder } from '../../core/models/token-border.model';
-import { strokeTokenBorder, tokenBorderInnerRadius } from '../../core/utils/token-border';
+import { drawBorderedToken } from '../../core/utils/token-border';
 
-// The character's token as the battle map draws it — same strokeTokenBorder() call as
+// The character's token as the battle map draws it — same drawBorderedToken() call as
 // token-renderer.ts, over a scrap of grid — so what the player picks is what the table sees.
 @Component({
   selector: 'app-token-border-preview',
@@ -74,22 +74,9 @@ export class TokenBorderPreviewComponent {
     ctx.stroke();
 
     const r = cell / 2;
-    const faceR = tokenBorderInnerRadius(r, border);
     ctx.save();
     ctx.translate(size / 2, size / 2);
-    ctx.beginPath();
-    ctx.arc(0, 0, faceR, 0, Math.PI * 2);
-    ctx.closePath();
-    if (image) {
-      ctx.save();
-      ctx.clip();
-      ctx.drawImage(image, -faceR, -faceR, faceR * 2, faceR * 2);
-      ctx.restore();
-    } else {
-      ctx.fillStyle = '#4b4438';
-      ctx.fill();
-    }
-    strokeTokenBorder(ctx, r, border);
+    drawBorderedToken(ctx, r, border, image, '#4b4438');
     ctx.restore();
   }
 }

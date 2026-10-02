@@ -25,14 +25,21 @@ import { CharacterService } from '../../core/services/character.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { PortraitCropperComponent } from './portrait-cropper';
 import { TokenBorderPreviewComponent } from './token-border-preview';
-import { TokenBorder, TokenBorderPattern } from '../../core/models/token-border.model';
+import {
+  TokenBorder,
+  TokenBorderMaterial,
+  TokenBorderPattern,
+} from '../../core/models/token-border.model';
 import {
   DEFAULT_TOKEN_BORDER,
   normalizeTokenBorder,
   TOKEN_BORDER_PALETTE,
   TOKEN_BORDER_PATTERNS,
+  TOKEN_BORDER_MATERIALS,
   TOKEN_BORDER_MAX_WIDTH,
   TOKEN_BORDER_MIN_WIDTH,
+  TOKEN_FACE_MAX_SCALE,
+  TOKEN_FACE_MIN_SCALE,
 } from '../../core/utils/token-border';
 
 export interface AvatarCreatorDialogData {
@@ -44,7 +51,10 @@ export interface AvatarCreatorDialogData {
 
 // `recipe` is always the builder's current design (kept even while an upload is in use, so
 // switching back restores it); `image` is the uploaded portrait URL, or null for the built avatar.
-type BorderColorKey = 'color' | 'gradientColor';
+type BorderColorKey = 'color' | 'gradientColor' | 'backgroundColor';
+
+// Starting color when the background is first switched on.
+const DEFAULT_BACKGROUND_COLOR = '#1f2937';
 
 // `tokenBorder` is null when the player keeps (or resets to) the default battle-map ring.
 export interface AvatarCreatorResult {
@@ -85,6 +95,9 @@ export class AvatarCreatorDialogComponent {
   readonly borderPalette = TOKEN_BORDER_PALETTE;
   readonly minBorderWidth = TOKEN_BORDER_MIN_WIDTH;
   readonly maxBorderWidth = TOKEN_BORDER_MAX_WIDTH;
+  readonly minFaceScale = TOKEN_FACE_MIN_SCALE;
+  readonly maxFaceScale = TOKEN_FACE_MAX_SCALE;
+  readonly borderMaterials = TOKEN_BORDER_MATERIALS;
   readonly borderPatterns = TOKEN_BORDER_PATTERNS;
   readonly saveError = signal('');
   readonly styles = AVATAR_STYLE_DEFINITIONS;
@@ -209,6 +222,18 @@ export class AvatarCreatorDialogComponent {
     // A few swatches along the palette is a different hue, not a near-neighbor shade.
     const gradientColor = this.borderPalette[(index + 4) % this.borderPalette.length];
     this.updateBorder({ gradientColor });
+  }
+
+  setBackground(on: boolean) {
+    this.updateBorder({ backgroundColor: on ? DEFAULT_BACKGROUND_COLOR : null });
+  }
+
+  setBorderMaterial(material: TokenBorderMaterial) {
+    this.updateBorder({ material });
+  }
+
+  setFaceScale(faceScale: number) {
+    this.updateBorder({ faceScale });
   }
 
   setBorderWidth(width: number) {

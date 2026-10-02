@@ -144,6 +144,9 @@ describe('CharactersService', () => {
       width: 7,
       pattern: 'dashed',
       gradientColor: '#3B82F6',
+      bandColor: '#FFFFFF',
+      material: 'studded',
+      faceScale: 120,
     };
     const created = await service.create(ownerId, {
       name: 'Aria',
@@ -153,6 +156,24 @@ describe('CharactersService', () => {
       ...tokenBorder,
       color: '#c9a227',
       gradientColor: '#3b82f6',
+      bandColor: '#ffffff',
+      backgroundColor: null,
+    });
+
+    // A border saved before band/background/material/zoom existed still loads, with defaults.
+    const legacy = await service.create(ownerId, {
+      name: 'Bram',
+      token_border: { color: '#e05252', width: 'thick', pattern: 'solid' },
+    });
+    expect((legacy as Record<string, unknown>).token_border).toEqual({
+      color: '#e05252',
+      width: 8,
+      pattern: 'solid',
+      gradientColor: null,
+      bandColor: null,
+      backgroundColor: null,
+      material: 'flat',
+      faceScale: 100,
     });
 
     for (const bad of [
@@ -160,6 +181,9 @@ describe('CharactersService', () => {
       { ...tokenBorder, pattern: 'zigzag' },
       { ...tokenBorder, width: 11 },
       { ...tokenBorder, width: 2.5 },
+      { ...tokenBorder, material: 'glass' },
+      { ...tokenBorder, faceScale: 200 },
+      { ...tokenBorder, backgroundColor: 'url(x)' },
       { ...tokenBorder, gradientColor: 'blue' },
     ]) {
       await expect(

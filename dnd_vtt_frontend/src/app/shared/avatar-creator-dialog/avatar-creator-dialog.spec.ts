@@ -145,6 +145,7 @@ describe('AvatarCreatorDialogComponent', () => {
 
   it('keeps an existing token border and can reset it to the default ring', () => {
     const border: TokenBorder = {
+      ...DEFAULT_TOKEN_BORDER,
       color: '#e05252',
       width: 8,
       pattern: 'double',
@@ -156,6 +157,14 @@ describe('AvatarCreatorDialogComponent', () => {
     expect(component.tokenBorder()?.gradientColor).toBeNull();
     component.resetBorder();
     expect(component.tokenBorder()).toBeNull();
+  });
+
+  it('turns the background on with a starting color and off again', () => {
+    const component = create();
+    component.setBackground(true);
+    expect(component.tokenBorder()?.backgroundColor).toMatch(/^#[0-9a-f]{6}$/);
+    component.setBackground(false);
+    expect(component.tokenBorder()?.backgroundColor).toBeNull();
   });
 
   it('cannot apply the upload tab before an image is chosen', async () => {

@@ -1,7 +1,7 @@
 import Konva from 'konva';
 import { MapFog, MapToken, MeasureShape } from '../../../core/models/campaign.model';
 import { TokenBorder } from '../../../core/models/token-border.model';
-import { strokeTokenBorder, tokenBorderInnerRadius } from '../../../core/utils/token-border';
+import { drawBorderedToken } from '../../../core/utils/token-border';
 
 export interface TokenRenderContext {
   cellSize: number;
@@ -102,7 +102,6 @@ export function renderTokens(layer: Konva.Layer, tokens: MapToken[], ctx: TokenR
       ? ctx.characterPortraits[token.character_id]
       : monsterImage;
     const border = token.character_id ? ctx.characterTokenBorders?.[token.character_id] : undefined;
-    const faceR = border ? tokenBorderInnerRadius(r, border) : r - 3;
 
     // One Konva.Shape drawing the token's circle, label, and HP badge itself, instead of a
     // Group with up to 4 child shapes (Circle/Text/Rect/Text) — same rationale as drawGrid:
@@ -132,31 +131,34 @@ export function renderTokens(layer: Konva.Layer, tokens: MapToken[], ctx: TokenR
         context.fillStrokeShape(hitShape);
       },
       sceneFunc: context => {
-        context.beginPath();
-        context.arc(0, 0, faceR, 0, Math.PI * 2);
-        context.closePath();
-        if (monsterImage) {
-          context.drawImage(monsterImage, -r, -r, r * 2, r * 2);
-        } else if (portrait) {
-          // Clip the portrait to the same circle the plain color fill would otherwise use, then
-          // stroke a ring in the token's own color (in place of the plain-fill fallback's white
-          // ring) so it stays identifiable at a glance even with a face now filling the token.
-          context.save();
-          context.clip();
-          context.drawImage(portrait, -faceR, -faceR, faceR * 2, faceR * 2);
-          context.restore();
-        } else {
-          context.fillStyle = token.color;
-          context.fill();
-        }
         if (border) {
-          // Raw 2D context: the ring needs setLineDash/createConicGradient, and sharing one
-          // drawing function with the portrait dialog's preview keeps the two identical.
-          strokeTokenBorder(context._context, r, border);
-        } else if (!monsterImage) {
-          context.lineWidth = portrait ? 3 : 2;
-          context.strokeStyle = portrait ? token.color : '#fff';
-          context.stroke();
+          // Raw 2D context: the ring needs setLineDash/gradients, and sharing one set of drawing
+          // functions with the portrait dialog's preview keeps the two identical.
+          drawBorderedToken(context._context, r, border, portrait ?? null, token.color);
+        } else {
+          context.beginPath();
+          context.arc(0, 0, r - 3, 0, Math.PI * 2);
+          context.closePath();
+          if (monsterImage) {
+            context.drawImage(monsterImage, -r, -r, r * 2, r * 2);
+          } else if (portrait) {
+            // Clip the portrait to the same circle the plain color fill would otherwise use, then
+            // stroke a ring in the token's own color (in place of the plain-fill fallback's white
+            // ring) so it stays identifiable at a glance even with a face now filling the token.
+            context.save();
+            context.clip();
+            const d = (r - 3) * 2;
+            context.drawImage(portrait, -(r - 3), -(r - 3), d, d);
+            context.restore();
+          } else {
+            context.fillStyle = token.color;
+            context.fill();
+          }
+          if (!monsterImage) {
+            context.lineWidth = portrait ? 3 : 2;
+            context.strokeStyle = portrait ? token.color : '#fff';
+            context.stroke();
+          }
         }
 
         if (token.id === ctx.currentTurnTokenId) {
