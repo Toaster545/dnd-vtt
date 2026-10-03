@@ -1,4 +1,5 @@
-import { Component, computed, input, output, signal } from '@angular/core';
+import { Component, DestroyRef, computed, effect, inject, input, output, signal } from '@angular/core';
+import { DOCUMENT, NgTemplateOutlet } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { DndItem, itemDisplayName } from '../../../../core/services/content.service';
@@ -15,20 +16,29 @@ const FONT_SCALES = [
   { label: 'Extra Large', value: 1.3 },
 ];
 
-const CARDS_PER_PAGE = 6;
-const CARD_COLUMNS = 2;
+// Standard poker-size playing card (2.5in x 3.5in), laid out 3x3 — the same grid as a 9-pocket
+// trading-card binder page, so a printed sheet maps one-to-one onto a binder page. Keep in sync
+// with $card-width/$card-height/$card-gap and the grid tracks in item-card-print.scss.
+const CARD_WIDTH_MM = 63.5;
+const CARD_HEIGHT_MM = 88.9;
+const CARD_COLUMNS = 3;
 const CARD_ROWS = 3;
+// Space between neighboring cards. Letter is the constraint: three 88.9mm rows leave only 12.7mm
+// of height, so every extra mm of gap here comes out of the top/bottom page margins.
+const CARD_GAP_MM = 2;
+const CARDS_PER_PAGE = CARD_COLUMNS * CARD_ROWS;
 
-// Matches the @page margin in item-card-print.scss — subtracted from the physical paper size to
-// get the printable content box that .print-page is sized to fill exactly. A fixed, known page
-// size (rather than sizing rows by content, as before) is what makes every card come out the same
-// size, which is what makes a single cut line down the middle — and across each row — land evenly
-// on every card instead of drifting page to page.
-const PAGE_MARGIN_MM = 10;
+// The page is printed with a zero @page margin and the card grid is centered on the full sheet
+// (see item-card-print.scss), so crop marks can sit in the margin outside the grid rather than on
+// top of the cards. Centering also keeps fronts and backs aligned when duplexing.
 const PAPER_SIZES_MM: Record<PaperSize, { width: number; height: number }> = {
   letter: { width: 215.9, height: 279.4 },
   a4: { width: 210, height: 297 },
 };
+
+// A .print-page exactly as tall as the sheet can spill a sub-pixel rounding error onto a blank
+// extra page in Chrome, so each page is shaved by this much (the grid stays centered within it).
+const PAGE_HEIGHT_SLACK_MM = 1;
 
 const RARITY_COLORS: Record<string, string> = {
   common: '#6b7280',
@@ -45,15 +55,17 @@ function chunk<T>(items: T[], size: number): T[][] {
   return pages;
 }
 
-function fractionLines(count: number): number[] {
-  const lines: number[] = [];
-  for (let i = 1; i < count; i++) lines.push((i / count) * 100);
-  return lines;
+// Both edges of every card, since with a gap between cards each one needs its own pair of cuts.
+function cardEdges(count: number, size: number): number[] {
+  return Array.from({ length: count }, (_, i) => i * (size + CARD_GAP_MM)).flatMap(start => [
+    start,
+    start + size,
+  ]);
 }
 
 @Component({
   selector: 'app-item-card-print',
-  imports: [FormsModule, MatIconModule],
+  imports: [FormsModule, MatIconModule, NgTemplateOutlet],
   templateUrl: './item-card-print.html',
   styleUrl: './item-card-print.scss',
 })
@@ -78,16 +90,26 @@ export class ItemCardPrintComponent {
   pages = computed(() => chunk(this.items(), CARDS_PER_PAGE));
   totalPrintedPages = computed(() => this.pages().length * (this.printBacks() ? 2 : 1));
 
-  pageContentSize = computed(() => {
+  pageSize = computed(() => {
     const paper = PAPER_SIZES_MM[this.paperSize()];
-    return { width: paper.width - 2 * PAGE_MARGIN_MM, height: paper.height - 2 * PAGE_MARGIN_MM };
+    return { width: paper.width, height: paper.height - PAGE_HEIGHT_SLACK_MM };
   });
 
-  // Cut-guide positions as percentages across the page — valid regardless of paper size or card
-  // margin because columns/rows are equal-fr grid tracks with padding = half the gap (see scss),
-  // which puts every boundary at an exact k/N fraction of the page.
-  readonly colGuides = fractionLines(CARD_COLUMNS);
-  readonly rowGuides = fractionLines(CARD_ROWS);
+  // Crop-mark positions (mm from the grid's top-left) at every card edge, including the outer ones.
+  readonly colEdges = cardEdges(CARD_COLUMNS, CARD_WIDTH_MM);
+  readonly rowEdges = cardEdges(CARD_ROWS, CARD_HEIGHT_MM);
+
+  constructor() {
+    // Component styles can't set a dynamic @page size, so inject one into <head> to make the print
+    // dialog default to the selected paper instead of whatever the printer's default is.
+    const doc = inject(DOCUMENT);
+    const pageStyle = doc.createElement('style');
+    doc.head.appendChild(pageStyle);
+    inject(DestroyRef).onDestroy(() => pageStyle.remove());
+    effect(() => {
+      pageStyle.textContent = `@media print { @page { size: ${this.paperSize()} portrait; margin: 0; } }`;
+    });
+  }
 
   cardColor(item: DndItem): string {
     if (this.colorMode() === 'custom') return this.customColor();
@@ -96,9 +118,14 @@ export class ItemCardPrintComponent {
 
   // Mirrors each row (reverses card order within every CARD_COLUMNS-wide row) so that duplexing
   // this page immediately after its front — flipped on the long edge, the common default — lands
-  // each back directly behind its matching front card instead of one column off.
-  backCards(page: DndItem[]): DndItem[] {
-    return chunk(page, CARD_COLUMNS).flatMap(row => [...row].reverse());
+  // each back directly behind its matching front card instead of mirrored across the row. A short
+  // final row is padded with empty slots first, or its backs would land behind the wrong column.
+  backCards(page: DndItem[]): (DndItem | null)[] {
+    return chunk(page, CARD_COLUMNS).flatMap(row => {
+      const padded: (DndItem | null)[] = [...row];
+      while (padded.length < CARD_COLUMNS) padded.push(null);
+      return padded.reverse();
+    });
   }
 
   fontFamily(): string {

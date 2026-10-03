@@ -82,78 +82,89 @@
 
   <div class="print-root print-preview flex-1 overflow-auto" [style.--card-font-scale]="fontScale()">
     @for (page of pages(); track $index) {
-      <div class="print-page" [style.width.mm]="pageContentSize().width" [style.height.mm]="pageContentSize().height">
-        @for (line of colGuides; track line) {
-          <div class="cut-guide cut-guide-v" [style.left.%]="line"></div>
-        }
-        @for (line of rowGuides; track line) {
-          <div class="cut-guide cut-guide-h" [style.top.%]="line"></div>
-        }
-        @for (item of page; track item.index) {
-          <div class="item-card" [class.border-thin]="borderStyle() === 'thin'"
-            [class.border-heavy]="borderStyle() === 'heavy'" [class.border-ornate]="borderStyle() === 'ornate'"
-            [class.border-dotted]="borderStyle() === 'dotted'" [class.border-none]="borderStyle() === 'none'"
-            [style.border-color]="cardColor(item)" [style.font-family]="fontFamily()">
-            <div class="item-card-header" [style.border-color]="cardColor(item)">
-              <h3>{{ itemDisplayName(item) }}</h3>
-              <p class="item-card-subtitle">{{ subtitle(item) }}</p>
-            </div>
+      <div class="print-page" [style.width.mm]="pageSize().width" [style.height.mm]="pageSize().height">
+        <div class="card-grid">
+          <ng-container *ngTemplateOutlet="cropMarks" />
+          @for (item of page; track item.index) {
+            <div class="item-card" [class.border-thin]="borderStyle() === 'thin'"
+              [class.border-heavy]="borderStyle() === 'heavy'" [class.border-ornate]="borderStyle() === 'ornate'"
+              [class.border-dotted]="borderStyle() === 'dotted'" [class.border-none]="borderStyle() === 'none'"
+              [style.border-color]="cardColor(item)" [style.font-family]="fontFamily()">
+              <div class="item-card-header" [style.border-color]="cardColor(item)">
+                <h3>{{ itemDisplayName(item) }}</h3>
+                <p class="item-card-subtitle">{{ subtitle(item) }}</p>
+              </div>
 
-            <div class="item-card-meta">
-              @if (showCostWeight() && item.cost) { <span>{{ item.cost }}</span> }
-              @if (showCostWeight() && item.weight) { <span>{{ item.weight }} lb.</span> }
-              @if (item.damage) { <span>{{ item.damage }} {{ item.damage_type || '' }}</span> }
-              @if (item.armor_class) { <span>AC {{ item.armor_class }}</span> }
-              @if (item.charges) { <span>{{ item.charges.max }} charges · {{ item.charges.recovery.replace('_', ' ') }}</span> }
-            </div>
-            @if (attunementText(item); as attune) {
-              <p class="item-card-attunement">{{ attune }}</p>
-            }
-
-            <div class="item-card-body">
-              @if (showDescription()) {
-                <p class="item-card-description">{{ item.description }}</p>
+              <div class="item-card-meta">
+                @if (showCostWeight() && item.cost) { <span>{{ item.cost }}</span> }
+                @if (showCostWeight() && item.weight) { <span>{{ item.weight }} lb.</span> }
+                @if (item.damage) { <span>{{ item.damage }} {{ item.damage_type || '' }}</span> }
+                @if (item.armor_class) { <span>AC {{ item.armor_class }}</span> }
+                @if (item.charges) { <span>{{ item.charges.max }} charges · {{ item.charges.recovery.replace('_', ' ') }}</span> }
+              </div>
+              @if (attunementText(item); as attune) {
+                <p class="item-card-attunement">{{ attune }}</p>
               }
 
-              @if (showExtras()) {
-                @if (item.properties.length) {
-                  <p class="item-card-extra"><strong>Properties:</strong> {{ item.properties.join(', ') }}</p>
+              <div class="item-card-body">
+                @if (showDescription()) {
+                  <p class="item-card-description">{{ item.description }}</p>
                 }
-                @if (item.mastery) {
-                  <p class="item-card-extra"><strong>{{ item.mastery.property }}:</strong> {{ item.mastery.description }}</p>
+
+                @if (showExtras()) {
+                  @if (item.properties.length) {
+                    <p class="item-card-extra"><strong>Properties:</strong> {{ item.properties.join(', ') }}</p>
+                  }
+                  @if (item.mastery) {
+                    <p class="item-card-extra"><strong>{{ item.mastery.property }}:</strong> {{ item.mastery.description }}</p>
+                  }
+                  @for (action of item.actions ?? []; track action.key) {
+                    <p class="item-card-extra"><strong>{{ action.name }}.</strong> {{ action.description }}</p>
+                  }
                 }
-                @for (action of item.actions ?? []; track action.key) {
-                  <p class="item-card-extra"><strong>{{ action.name }}.</strong> {{ action.description }}</p>
-                }
+              </div>
+
+              @if (showImage() && item.image_url) {
+                <img [src]="item.image_url" alt="" class="item-card-image" />
               }
             </div>
-
-            @if (showImage() && item.image_url) {
-              <img [src]="item.image_url" alt="" class="item-card-image" />
-            }
-          </div>
-        }
+          }
+        </div>
       </div>
 
       @if (printBacks()) {
-        <div class="print-page" [style.width.mm]="pageContentSize().width" [style.height.mm]="pageContentSize().height">
-          @for (line of colGuides; track line) {
-            <div class="cut-guide cut-guide-v" [style.left.%]="line"></div>
-          }
-          @for (line of rowGuides; track line) {
-            <div class="cut-guide cut-guide-h" [style.top.%]="line"></div>
-          }
-          @for (item of backCards(page); track item.index) {
-            <div class="item-card item-card-back" [style.border-color]="cardColor(item)">
-              @if (item.image_url) {
-                <img [src]="item.image_url" alt="" class="item-card-back-icon" />
+        <div class="print-page" [style.width.mm]="pageSize().width" [style.height.mm]="pageSize().height">
+          <div class="card-grid">
+            <ng-container *ngTemplateOutlet="cropMarks" />
+            @for (item of backCards(page); track $index) {
+              @if (item) {
+                <div class="item-card item-card-back" [style.border-color]="cardColor(item)">
+                  @if (item.image_url) {
+                    <img [src]="item.image_url" alt="" class="item-card-back-icon" />
+                  } @else {
+                    <mat-icon class="item-card-back-icon-fallback" [style.color]="cardColor(item)">inventory_2</mat-icon>
+                  }
+                </div>
               } @else {
-                <mat-icon class="item-card-back-icon-fallback" [style.color]="cardColor(item)">inventory_2</mat-icon>
+                <div></div>
               }
-            </div>
-          }
+            }
+          </div>
         </div>
       }
     }
   </div>
 </div>
+
+<!-- Short ticks just outside the grid at every card edge — they stay in the page margin, off the
+     cards themselves, so they're still there to line a ruler up against after the first cuts. -->
+<ng-template #cropMarks>
+  @for (x of colEdges; track x) {
+    <div class="crop-mark crop-mark-v crop-mark-top" [style.left.mm]="x"></div>
+    <div class="crop-mark crop-mark-v crop-mark-bottom" [style.left.mm]="x"></div>
+  }
+  @for (y of rowEdges; track y) {
+    <div class="crop-mark crop-mark-h crop-mark-left" [style.top.mm]="y"></div>
+    <div class="crop-mark crop-mark-h crop-mark-right" [style.top.mm]="y"></div>
+  }
+</ng-template>
