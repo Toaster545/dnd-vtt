@@ -96,6 +96,7 @@ describe('AvatarCreatorDialogComponent', () => {
       recipe: component.recipe(),
       image: UPLOADED,
       tokenBorder: null,
+      portraitUseToken: false,
     });
   });
 
@@ -111,6 +112,7 @@ describe('AvatarCreatorDialogComponent', () => {
       recipe: component.recipe(),
       image: null,
       tokenBorder: null,
+      portraitUseToken: false,
     });
   });
 
@@ -140,6 +142,23 @@ describe('AvatarCreatorDialogComponent', () => {
       recipe: component.recipe(),
       image: null,
       tokenBorder: expected,
+      portraitUseToken: false,
+    });
+  });
+
+  it('toggles whether the token is used as the portrait and returns the choice on apply', async () => {
+    const component = create();
+    expect(component.useTokenAsPortrait()).toBe(false);
+
+    component.toggleUseTokenAsPortrait();
+    expect(component.useTokenAsPortrait()).toBe(true);
+
+    await component.apply();
+    expect(close).toHaveBeenCalledWith({
+      recipe: component.recipe(),
+      image: null,
+      tokenBorder: null,
+      portraitUseToken: true,
     });
   });
 

@@ -17,7 +17,13 @@
         >
           <div class="card-body flex flex-col gap-3">
             <div class="flex items-center gap-3">
-              <img [src]="portraitFor(c)" class="w-10 h-10 rounded-full flex-shrink-0" alt="" />
+              <app-character-portrait
+                class="flex-shrink-0"
+                [imageSrc]="portraitFor(c)"
+                [border]="c.token_border"
+                [useToken]="!!c.portrait_use_token"
+                [size]="40"
+              />
               <div class="flex-1 min-w-0">
                 <p class="text-parchment font-medium truncate m-0">{{ c.name }}</p>
                 <p class="text-slate text-xs m-0 mt-0.5 truncate">

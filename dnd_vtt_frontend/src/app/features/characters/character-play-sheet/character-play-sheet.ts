@@ -37,6 +37,8 @@ import { SwipeTabsDirective } from '../../../shared/directives/swipe-tabs.direct
 import { levelUpPending } from '../../../core/utils/level-up';
 import { StatblockSpellGroup, characterStatblock } from '../../../core/utils/statblock-export';
 import { StatblockExportMenuComponent } from '../../../shared/components/statblock-export-menu/statblock-export-menu';
+import { UiScaleService } from '../../../core/services/ui-scale.service';
+import { CharacterPortraitComponent, tokenPortraitSize } from '../../../shared/components/character-portrait/character-portrait';
 import { Router } from '@angular/router';
 
 // The fields load() resolves content from — a change to any of them means refetching.
@@ -119,13 +121,18 @@ const TAB_LABELS: Record<Tab, string> = {
   selector: 'app-character-play-sheet',
   imports: [
     FormsModule, MatIconModule, MatTooltipModule, NgTemplateOutlet, ItemFormComponent, SwipeTabsDirective,
-    StatblockExportMenuComponent,
+    StatblockExportMenuComponent, CharacterPortraitComponent,
   ],
   templateUrl: './character-play-sheet.html',
   styleUrl: './character-play-sheet.scss',
   host: { '[class.sheet-preview]': 'preview()' },
 })
 export class CharacterPlaySheetComponent {
+  // Sizes the portrait button to match a token portrait (see TOKEN_PORTRAIT_SCALE), following the
+  // interface-size setting like the portrait itself does.
+  private readonly uiScale = inject(UiScaleService);
+  readonly tokenPortraitPx = computed(() => tokenPortraitSize(44, this.uiScale.current()));
+
   private content        = inject(ContentService);
   private itemService    = inject(ItemService);
   private characterService = inject(CharacterService);
@@ -1267,6 +1274,7 @@ export class CharacterPlaySheetComponent {
         recipe: char.avatar_recipe,
         image: char.portrait_image,
         tokenBorder: char.token_border,
+        portraitUseToken: char.portrait_use_token,
       },
       width: '960px',
       maxWidth: 'calc(100vw - 16px)',
@@ -1282,6 +1290,7 @@ export class CharacterPlaySheetComponent {
         avatar_recipe: recipe,
         portrait_image: result.image,
         token_border: result.tokenBorder,
+        portrait_use_token: result.portraitUseToken,
       });
     });
   }

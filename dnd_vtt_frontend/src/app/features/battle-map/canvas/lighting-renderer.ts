@@ -117,9 +117,21 @@ export function renderDarkness(
     const rows = Math.ceil(img.height / gridSize);
     const width = cols * cellSize;
     const height = rows * cellSize;
-    // Distinct hue from fog's rgba(215,220,225,0.4) tint so a DM can tell "seeing through
-    // darkness" apart from "seeing through fog" when both overlays are active at once.
-    const baseFill = isAdmin ? 'rgba(10,10,20,0.55)' : '#000';
+    // Ambient level is two opposed layers, not one fading fill: a plain black mask that shrinks
+    // as brightness rises (less darkness, same as before) stacked under a colored wash that grows
+    // as brightness rises (the ambient color becomes more visible the brighter it gets, like a
+    // colored light actually filling the room) — so a bright red ambience reads as "glowing red",
+    // not "barely-there red fading to a clear view". At level 0 the wash has zero alpha regardless
+    // of color, reproducing plain pitch-black darkness. The DM's own view caps both layers lower
+    // (0.55 / 0.4) — a distinct hue from fog's rgba(215,220,225,0.4) tint, so a DM can tell "seeing
+    // through darkness" apart from "seeing through fog" — so they can still see the map underneath
+    // for reference; players get both layers at full strength.
+    const level = Math.min(100, Math.max(0, lighting.ambient_level)) / 100;
+    const [ar, ag, ab] = hexToRgb(lighting.ambient_color);
+    const darkAlpha = (1 - level) * (isAdmin ? 0.55 : 1);
+    const washAlpha = level * (isAdmin ? 0.4 : 0.6);
+    const darkFill = `rgba(0,0,0,${darkAlpha})`;
+    const washFill = `rgba(${ar},${ag},${ab},${washAlpha})`;
     // Resolved up front (position, outer radius, visibility polygon) so both passes below and
     // every redraw Konva does of this shape reuse the same ray-cast work.
     const resolved = litAreas(lighting, tokens, cellSize);
@@ -130,13 +142,15 @@ export function renderDarkness(
       height,
       sceneFunc: context => {
         context.save();
-        context.fillStyle = baseFill;
         // Overshoot the map by a margin on every side. If the fill stopped exactly at the map
         // image's edge, then whenever that edge lands between screen pixels (letterbox offset,
         // zoom, rotation) both layers would only partially cover the border pixels, and the
         // anti-aliased half-darkness over half-image would show as a thin lit outline around
         // the map. The overshoot only ever lies over the black stage background, so it's invisible.
         const margin = Math.max(cellSize, 8);
+        context.fillStyle = darkFill;
+        context.fillRect(-margin, -margin, width + margin * 2, height + margin * 2);
+        context.fillStyle = washFill;
         context.fillRect(-margin, -margin, width + margin * 2, height + margin * 2);
 
         context.globalCompositeOperation = 'destination-out';

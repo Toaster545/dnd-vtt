@@ -1,9 +1,15 @@
-import { TokenBorder, TokenBorderMaterial, TokenBorderPattern } from '../models/token-border.model';
+import {
+  TokenBorder,
+  TokenBorderMaterial,
+  TokenBorderPattern,
+  TokenPopOutRange,
+} from '../models/token-border.model';
 
 export const TOKEN_BORDER_MIN_WIDTH = 1;
 export const TOKEN_BORDER_MAX_WIDTH = 10;
 export const TOKEN_FACE_MIN_SCALE = 80;
 export const TOKEN_FACE_MAX_SCALE = 150;
+export const TOKEN_POP_OUT_MAX_RANGES = 6;
 
 // Borders saved before thickness became a slider stored a named size instead.
 const LEGACY_WIDTHS: Record<string, number> = { thin: 2, normal: 5, thick: 8 };
@@ -45,6 +51,7 @@ export const DEFAULT_TOKEN_BORDER: TokenBorder = {
   backgroundColor: null,
   material: 'flat',
   faceScale: 100,
+  popOut: [{ start: 0, end: 180 }],
 };
 
 function isHex(value: unknown): value is string {
@@ -60,8 +67,21 @@ function inRange(value: unknown, min: number, max: number): value is number {
   return Number.isInteger(value) && (value as number) >= min && (value as number) <= max;
 }
 
-// Fields added after the first version (band, background, material, face scale) default when
-// missing, so borders saved earlier keep working; a present-but-invalid value still rejects.
+function normalizePopOut(value: unknown): TokenPopOutRange[] | null {
+  if (value === undefined) return DEFAULT_TOKEN_BORDER.popOut.map((range) => ({ ...range }));
+  if (!Array.isArray(value) || value.length > TOKEN_POP_OUT_MAX_RANGES) return null;
+  const ranges: TokenPopOutRange[] = [];
+  for (const item of value) {
+    if (!item || typeof item !== 'object') return null;
+    const { start, end } = item as Record<string, unknown>;
+    if (!inRange(start, 0, 360) || !inRange(end, 0, 360)) return null;
+    ranges.push({ start, end });
+  }
+  return ranges;
+}
+
+// Fields added after the first version (band, background, material, face scale, pop-out) default
+// when missing, so borders saved earlier keep working; a present-but-invalid value still rejects.
 export function normalizeTokenBorder(value: unknown): TokenBorder | null {
   if (!value || typeof value !== 'object' || Array.isArray(value)) return null;
   const raw = value as Record<string, unknown>;
@@ -73,6 +93,8 @@ export function normalizeTokenBorder(value: unknown): TokenBorder | null {
   if (!TOKEN_BORDER_MATERIALS.some((option) => option.id === material)) return null;
   const faceScale = raw['faceScale'] ?? 100;
   if (!inRange(faceScale, TOKEN_FACE_MIN_SCALE, TOKEN_FACE_MAX_SCALE)) return null;
+  const popOut = normalizePopOut(raw['popOut']);
+  if (!popOut) return null;
   const gradientColor = optionalHex(raw['gradientColor']);
   const bandColor = optionalHex(raw['bandColor']);
   const backgroundColor = optionalHex(raw['backgroundColor']);
@@ -88,6 +110,7 @@ export function normalizeTokenBorder(value: unknown): TokenBorder | null {
     backgroundColor,
     material: material as TokenBorderMaterial,
     faceScale,
+    popOut,
   };
 }
 
@@ -126,14 +149,17 @@ export function tokenBorderInnerRadius(r: number, border: TokenBorder): number {
 
 // Paints the token's face — background color, then the portrait at its zoom, clipped to the
 // ring's inner circle. `fallbackFill` stands in for the art while it hasn't loaded yet.
+// `faceR` defaults to the ring-inset radius, but a caller with no ring to inset for (a plain
+// portrait icon — see TokenBorderPreviewComponent's `showBorder`) can pass the full radius so the
+// face fills the whole circle instead of leaving a gap for a ring that's never drawn.
 export function drawTokenFace(
   ctx: CanvasRenderingContext2D,
   r: number,
   border: TokenBorder,
   image: CanvasImageSource | null,
   fallbackFill: string,
+  faceR: number = tokenBorderInnerRadius(r, border),
 ) {
-  const faceR = tokenBorderInnerRadius(r, border);
   ctx.save();
   ctx.beginPath();
   ctx.arc(0, 0, faceR, 0, Math.PI * 2);
@@ -330,8 +356,34 @@ export function artHasTransparency(image: CanvasImageSource): boolean {
   return transparent;
 }
 
-// The top half of a zoomed-in portrait drawn again, unclipped by the ring, so the character's
-// head breaks out over the top of the frame while the bottom half stays inside it.
+// Whether `degrees` (0° at 3 o'clock, counterclockwise) falls inside the wedge. Equal bounds are
+// an empty wedge; a start above the end wraps through 0°.
+export function popOutContains(range: TokenPopOutRange, degrees: number): boolean {
+  if (range.start === range.end) return false;
+  const d = ((degrees % 360) + 360) % 360;
+  const start = range.start % 360;
+  const end = range.end === 360 ? 360 : range.end % 360;
+  return start < end ? d >= start && d < end : d >= start || d < end;
+}
+
+// Which sides of the token the pop-out wedges reach into, so a caller can reserve headroom there.
+export function popOutSides(ranges: readonly TokenPopOutRange[]) {
+  const sides = { top: false, right: false, bottom: false, left: false };
+  for (let deg = 0; deg < 360; deg++) {
+    const mid = deg + 0.5;
+    if (!ranges.some((range) => popOutContains(range, mid))) continue;
+    const rad = (mid * Math.PI) / 180;
+    if (Math.sin(rad) > 0) sides.top = true;
+    if (Math.sin(rad) < 0) sides.bottom = true;
+    if (Math.cos(rad) > 0) sides.right = true;
+    if (Math.cos(rad) < 0) sides.left = true;
+  }
+  return sides;
+}
+
+// A zoomed-in portrait drawn again, unclipped by the ring, inside the border's pop-out wedges —
+// by default the top half, so the character's head breaks out over the top of the frame while the
+// bottom half stays inside it.
 export function drawTokenPopOut(
   ctx: CanvasRenderingContext2D,
   r: number,
@@ -339,12 +391,45 @@ export function drawTokenPopOut(
   image: CanvasImageSource,
 ) {
   const size = tokenBorderInnerRadius(r, border) * (border.faceScale / 100);
+  // Canvas y points down, so a counterclockwise angle θ is canvas angle -θ; the radius just has to
+  // reach past the image's corner.
+  const reach = size * 2;
   ctx.save();
   ctx.beginPath();
-  ctx.rect(-size, -size, size * 2, size);
+  for (const { start, end } of border.popOut) {
+    if (start === end) continue;
+    ctx.moveTo(0, 0);
+    ctx.arc(0, 0, reach, (-start * Math.PI) / 180, (-end * Math.PI) / 180, true);
+    ctx.closePath();
+  }
   ctx.clip();
   ctx.drawImage(image, -size, -size, size * 2, size * 2);
   ctx.restore();
+}
+
+// The largest ring radius that still keeps a pop-out (see drawTokenPopOut) within
+// `canvasHalfSize` of the center — i.e. the token's own face-image zoom and transparency decide
+// whether the pop-out even triggers; this just makes sure that, when it does, it has room to
+// actually fit, so a tight canvas (a portrait thumbnail, with no surrounding "floor" to bleed
+// onto like the battle map has) never needs to clip it. Below 100% zoom (or without transparent
+// art) nothing ever pops out, so the ring can take the whole canvas as before. tokenBorderInnerRadius
+// grows monotonically with r, so a plain bisection search finds the largest radius that fits.
+export function maxTokenRadiusForPopout(
+  canvasHalfSize: number,
+  border: TokenBorder,
+  image: CanvasImageSource | null,
+): number {
+  if (border.faceScale <= 100 || !image || !artHasTransparency(image)) return canvasHalfSize;
+  const scale = border.faceScale / 100;
+  let lo = 0;
+  let hi = canvasHalfSize;
+  for (let i = 0; i < 24; i++) {
+    const mid = (lo + hi) / 2;
+    const extent = tokenBorderInnerRadius(mid, border) * scale;
+    if (extent <= canvasHalfSize) lo = mid;
+    else hi = mid;
+  }
+  return lo;
 }
 
 // The whole bordered token — face, ring, then (when zoomed past 100% on transparent art) the
@@ -358,7 +443,7 @@ export function drawBorderedToken(
 ) {
   drawTokenFace(ctx, r, border, image, fallbackFill);
   strokeTokenBorder(ctx, r, border);
-  if (image && border.faceScale > 100 && artHasTransparency(image)) {
+  if (image && border.faceScale > 100 && border.popOut.length && artHasTransparency(image)) {
     drawTokenPopOut(ctx, r, border, image);
   }
 }

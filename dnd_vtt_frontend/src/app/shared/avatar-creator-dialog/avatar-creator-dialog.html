@@ -223,6 +223,24 @@
           />
           <p class="text-xs text-slate m-0">At map scale</p>
         </div>
+        <button
+          type="button"
+          [class]="useTokenAsPortrait() ? 'btn-primary w-full justify-center' : 'btn-outline w-full justify-center'"
+          [attr.aria-pressed]="useTokenAsPortrait()"
+          (click)="toggleUseTokenAsPortrait()"
+        >
+          <mat-icon class="text-base">{{ useTokenAsPortrait() ? 'check_circle' : 'badge' }}</mat-icon>
+          {{ useTokenAsPortrait() ? 'Using this as your portrait' : 'Use as portrait' }}
+        </button>
+        <p class="text-xs text-slate m-0">
+          @if (useTokenAsPortrait()) {
+            Your full token — border ring and all — is shown instead of your plain portrait in the
+            party list, dashboard, and character sheet.
+          } @else {
+            Use this full token — border ring, crop, and zoom — as your portrait everywhere it
+            appears.
+          }
+        </p>
       </section>
 
       <section class="token-options" aria-label="Token border options">
@@ -421,7 +439,58 @@
           />
           <p class="text-xs text-slate m-0 mt-1">
             Zoom out to show the background around your portrait. Zoom in past 100% and transparent
-            art (like a built avatar) breaks out over the top of the ring.
+            art (like a built avatar) can break out over the ring.
+          </p>
+        </div>
+
+        <div>
+          <p class="field-label m-0 mb-2">Breakout angles</p>
+          <div class="flex flex-col gap-2">
+            @for (range of borderShown().popOut; track $index) {
+              <div class="flex items-center gap-2">
+                <input
+                  class="field-input w-20"
+                  type="number"
+                  min="0"
+                  max="360"
+                  step="1"
+                  [attr.aria-label]="'Range ' + ($index + 1) + ' start angle'"
+                  [value]="range.start"
+                  (change)="setPopOutBound($index, 'start', $event)"
+                />
+                <span class="text-slate text-xs">° to</span>
+                <input
+                  class="field-input w-20"
+                  type="number"
+                  min="0"
+                  max="360"
+                  step="1"
+                  [attr.aria-label]="'Range ' + ($index + 1) + ' end angle'"
+                  [value]="range.end"
+                  (change)="setPopOutBound($index, 'end', $event)"
+                />
+                <span class="text-slate text-xs">°</span>
+                <button
+                  type="button"
+                  class="btn-outline"
+                  [attr.aria-label]="'Remove range ' + ($index + 1)"
+                  (click)="removePopOutRange($index)"
+                >
+                  <mat-icon class="text-base">close</mat-icon>
+                </button>
+              </div>
+            }
+          </div>
+          @if (borderShown().popOut.length < maxPopOutRanges) {
+            <button type="button" class="btn-outline mt-2" (click)="addPopOutRange()">
+              <mat-icon class="text-base">add</mat-icon>
+              Add range
+            </button>
+          }
+          <p class="text-xs text-slate m-0 mt-1">
+            Where the portrait may overflow the ring. 0° is the right edge and angles run
+            counterclockwise, so 0 to 180 is the top half. A start above the end wraps around, so
+            300 to 60 is a wedge on the right. No ranges keeps the portrait inside the ring.
           </p>
         </div>
       </section>

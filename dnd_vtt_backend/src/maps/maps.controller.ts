@@ -222,6 +222,15 @@ export class MapsController {
     return this.maps.setWalls(id, body?.walls, user);
   }
 
+  @Put(':id/lighting/ambient')
+  setAmbientLight(
+    @Param('id') id: string,
+    @Body() body: { level: number; color: string },
+    @CurrentUser() user: RequestUser,
+  ) {
+    return this.maps.setAmbientLight(id, body?.level, body?.color, user);
+  }
+
   @Post(':id/lighting/lights')
   upsertLight(
     @Param('id') id: string,

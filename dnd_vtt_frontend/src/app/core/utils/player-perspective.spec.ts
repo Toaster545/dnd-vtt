@@ -61,6 +61,8 @@ describe('player perspective', () => {
     const lighting: MapLighting = {
       enabled: true,
       walls: [],
+      ambient_level: 0,
+      ambient_color: '#0a0a14',
       lights: [
         {
           map_id: 'm1',

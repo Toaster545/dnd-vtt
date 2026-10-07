@@ -3,6 +3,9 @@ import {
   DEFAULT_TOKEN_BORDER,
   drawTokenFace,
   drawTokenPopOut,
+  maxTokenRadiusForPopout,
+  popOutContains,
+  popOutSides,
   normalizeTokenBorder,
   strokeTokenBorder,
   tokenBorderInnerRadius,
@@ -22,6 +25,8 @@ function fakeContext() {
     images: [] as number[][],
     clips: 0,
     rects: [] as number[][],
+    moves: 0,
+    sweeps: [] as number[][],
   };
   let fillStyle: unknown = '';
   let lineWidth = 0;
@@ -50,8 +55,12 @@ function fakeContext() {
     stroke() {
       calls.widths.push(lineWidth);
     },
-    arc(_x: number, _y: number, radius: number) {
+    moveTo() {
+      calls.moves++;
+    },
+    arc(_x: number, _y: number, radius: number, from?: number, to?: number) {
       calls.arcs.push(radius);
+      if (from !== undefined && to !== undefined) calls.sweeps.push([from, to]);
     },
     setLineDash(dash: number[]) {
       calls.dashes.push(dash);
@@ -125,18 +134,84 @@ describe('token border', () => {
     expect(empty.calls.images).toEqual([]);
   });
 
-  it('redraws only the top half of a zoomed portrait over the ring', () => {
-    const border: TokenBorder = { ...DEFAULT_TOKEN_BORDER, faceScale: 140 };
+  it('redraws a zoomed portrait over the ring only inside the pop-out wedges', () => {
+    const border: TokenBorder = {
+      ...DEFAULT_TOKEN_BORDER,
+      faceScale: 140,
+      popOut: [
+        { start: 0, end: 180 },
+        { start: 220, end: 250 },
+      ],
+    };
     const size = tokenBorderInnerRadius(30, border) * 1.4;
     const { ctx, calls } = fakeContext();
     drawTokenPopOut(ctx, 30, border, {} as CanvasImageSource);
-    // Clip spans the image's full width but stops at the token's center line.
-    const [x, y, w, h] = calls.rects[0];
-    expect([x, y, w, h].map((v) => +v.toFixed(6))).toEqual(
-      [-size, -size, size * 2, size].map((v) => +v.toFixed(6)),
-    );
-    expect(y + h).toBeCloseTo(0);
+    expect(calls.moves).toBe(2);
+    // Counterclockwise degrees become negated canvas radians (y points down).
+    expect(calls.sweeps[0][0]).toBeCloseTo(0);
+    expect(calls.sweeps[0][1]).toBeCloseTo(-Math.PI);
+    expect(calls.sweeps[1][0]).toBeCloseTo((-220 * Math.PI) / 180);
+    expect(calls.sweeps[1][1]).toBeCloseTo((-250 * Math.PI) / 180);
+    expect(calls.clips).toBe(1);
     expect(calls.images[0][2]).toBeCloseTo(size * 2);
+  });
+
+  it('skips empty wedges', () => {
+    const { ctx, calls } = fakeContext();
+    drawTokenPopOut(
+      ctx,
+      30,
+      { ...DEFAULT_TOKEN_BORDER, faceScale: 140, popOut: [{ start: 90, end: 90 }] },
+      {} as CanvasImageSource,
+    );
+    expect(calls.moves).toBe(0);
+  });
+
+  it('knows which angles a wedge covers, including wrapped and full ones', () => {
+    expect(popOutContains({ start: 0, end: 180 }, 90)).toBe(true);
+    expect(popOutContains({ start: 0, end: 180 }, 270)).toBe(false);
+    expect(popOutContains({ start: 300, end: 60 }, 350)).toBe(true);
+    expect(popOutContains({ start: 300, end: 60 }, 30)).toBe(true);
+    expect(popOutContains({ start: 300, end: 60 }, 180)).toBe(false);
+    expect(popOutContains({ start: 0, end: 360 }, 200)).toBe(true);
+    expect(popOutContains({ start: 90, end: 90 }, 90)).toBe(false);
+  });
+
+  it('reports which sides of the token the wedges reach into', () => {
+    expect(popOutSides([{ start: 0, end: 180 }])).toEqual({
+      top: true,
+      right: true,
+      bottom: false,
+      left: true,
+    });
+    expect(popOutSides([{ start: 100, end: 170 }])).toEqual({
+      top: true,
+      right: false,
+      bottom: false,
+      left: true,
+    });
+    expect(popOutSides([])).toEqual({ top: false, right: false, bottom: false, left: false });
+  });
+
+  it('validates and defaults the pop-out ranges', () => {
+    expect(normalizeTokenBorder({ color: '#e05252', width: 3, pattern: 'dotted' })?.popOut).toEqual(
+      [{ start: 0, end: 180 }],
+    );
+    expect(normalizeTokenBorder({ ...DEFAULT_TOKEN_BORDER, popOut: [] })?.popOut).toEqual([]);
+    expect(
+      normalizeTokenBorder({ ...DEFAULT_TOKEN_BORDER, popOut: [{ start: 300, end: 60 }] })?.popOut,
+    ).toEqual([{ start: 300, end: 60 }]);
+    for (const bad of [
+      'top',
+      [{ start: -1, end: 90 }],
+      [{ start: 0, end: 361 }],
+      [{ start: 0.5, end: 90 }],
+      [{ start: 0 }],
+      [null],
+      Array(7).fill({ start: 0, end: 10 }),
+    ]) {
+      expect(normalizeTokenBorder({ ...DEFAULT_TOKEN_BORDER, popOut: bad })).toBeNull();
+    }
   });
 
   it('adds studs only to a continuous studded ring', () => {
@@ -193,5 +268,22 @@ describe('token border', () => {
     const [, , inner, , , outer] = gradient.calls.gradients[0];
     expect(inner).toBeCloseTo(gradient.calls.arcs[0] - gradient.calls.widths[0] / 2);
     expect(outer).toBeCloseTo(29);
+  });
+
+  describe('maxTokenRadiusForPopout', () => {
+    // artHasTransparency samples the image through a real <canvas> 2D context, unavailable in
+    // jsdom (no `canvas` package in this project) — it falls back to "opaque" there, so these
+    // cover the guard clauses that short-circuit before that sampling rather than the bisection
+    // itself. The bisection's own math (tokenBorderInnerRadius is monotonic in r) is exercised
+    // indirectly by drawTokenPopOut's existing coverage above.
+    it('returns the full canvas when the face is at or below 100% zoom', () => {
+      const border: TokenBorder = { ...DEFAULT_TOKEN_BORDER, faceScale: 100 };
+      expect(maxTokenRadiusForPopout(30, border, {} as CanvasImageSource)).toBe(30);
+    });
+
+    it('returns the full canvas when there is no art to pop out', () => {
+      const border: TokenBorder = { ...DEFAULT_TOKEN_BORDER, faceScale: 150 };
+      expect(maxTokenRadiusForPopout(30, border, null)).toBe(30);
+    });
   });
 });

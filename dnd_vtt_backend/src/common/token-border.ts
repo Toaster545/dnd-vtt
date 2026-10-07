@@ -2,6 +2,13 @@
 // core/utils/token-border.ts, which draws it). Stored on the character's data blob as
 // `token_border`; anything that doesn't match this exact shape is rejected rather than
 // passed through to every viewer's canvas.
+// A wedge of the token in whole degrees, swept counterclockwise from `start` to `end` with 0° at
+// 3 o'clock (0–180 is the top half); a `start` above `end` wraps through 0°.
+export interface TokenPopOutRange {
+  start: number;
+  end: number;
+}
+
 export interface TokenBorder {
   color: string;
   // Thickness level, a whole number from 1 to 10 (the dialog's slider).
@@ -16,6 +23,8 @@ export interface TokenBorder {
   material: 'flat' | 'metal' | 'studded';
   // Portrait zoom inside the ring, a whole percentage from 80 to 150.
   faceScale: number;
+  // Wedges where a zoomed-in transparent portrait may break out over the ring; empty for none.
+  popOut: TokenPopOutRange[];
 }
 
 // Borders saved before thickness became a slider stored a named size instead.
@@ -41,7 +50,24 @@ function inRange(value: unknown, min: number, max: number): value is number {
   );
 }
 
-// Fields added after the first version (band, background, material, face scale) default when
+const DEFAULT_POP_OUT: TokenPopOutRange[] = [{ start: 0, end: 180 }];
+const MAX_POP_OUT_RANGES = 6;
+
+function parsePopOut(value: unknown): TokenPopOutRange[] | null {
+  if (value === undefined)
+    return DEFAULT_POP_OUT.map((range) => ({ ...range }));
+  if (!Array.isArray(value) || value.length > MAX_POP_OUT_RANGES) return null;
+  const ranges: TokenPopOutRange[] = [];
+  for (const item of value) {
+    if (!item || typeof item !== 'object') return null;
+    const { start, end } = item as Record<string, unknown>;
+    if (!inRange(start, 0, 360) || !inRange(end, 0, 360)) return null;
+    ranges.push({ start, end });
+  }
+  return ranges;
+}
+
+// Fields added after the first version (band, background, material, face scale, pop-out) default when
 // missing, so borders saved earlier keep working; a present-but-invalid value still rejects.
 export function parseTokenBorder(value: unknown): TokenBorder | null {
   if (!value || typeof value !== 'object' || Array.isArray(value)) return null;
@@ -59,6 +85,8 @@ export function parseTokenBorder(value: unknown): TokenBorder | null {
   }
   const faceScale = raw.faceScale ?? 100;
   if (!inRange(faceScale, 80, 150)) return null;
+  const popOut = parsePopOut(raw.popOut);
+  if (!popOut) return null;
   const gradientColor = optionalHex(raw.gradientColor);
   const bandColor = optionalHex(raw.bandColor);
   const backgroundColor = optionalHex(raw.backgroundColor);
@@ -78,5 +106,6 @@ export function parseTokenBorder(value: unknown): TokenBorder | null {
     backgroundColor,
     material: material as TokenBorder['material'],
     faceScale,
+    popOut,
   };
 }

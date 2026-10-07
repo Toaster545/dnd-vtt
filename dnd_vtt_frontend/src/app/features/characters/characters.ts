@@ -7,6 +7,7 @@ import { RecentActivityService } from '../../core/services/recent-activity.servi
 import { Character } from '../../core/models/character.model';
 import { ConfirmService } from '../../shared/confirm.service';
 import { portraitDataUri, portraitSource } from '../../core/utils/avatar';
+import { CharacterPortraitComponent } from '../../shared/components/character-portrait/character-portrait';
 
 // campaign_name/edit_unlocked are only present on campaign copies (joined in from the campaigns/
 // campaign_members tables on the backend) — absent/undefined for a portable template that isn't
@@ -19,7 +20,7 @@ type CharacterListItem = Character & { campaign_name?: string; edit_unlocked?: b
 // component, so they're deep-linkable and can carry their own route data.
 @Component({
   selector: 'app-characters',
-  imports: [MatIconModule, MatTooltipModule],
+  imports: [MatIconModule, MatTooltipModule, CharacterPortraitComponent],
   templateUrl: './characters.html',
   styleUrl: './characters.scss',
   host: { class: 'flex flex-col flex-1 min-h-0' },
