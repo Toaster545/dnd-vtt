@@ -19,6 +19,9 @@ import { JwtGuard } from '../auth/jwt.guard';
 import { CurrentUser } from '../common/current-user.decorator';
 import type { RequestUser } from '../common/current-user.decorator';
 
+// Hi-DPI screenshots and phone photos routinely exceed 10 MB.
+export const WIKI_IMAGE_MAX_BYTES = 30 * 1024 * 1024;
+
 @Controller('wiki')
 @UseGuards(JwtGuard)
 export class WikiController {
@@ -51,7 +54,7 @@ export class WikiController {
 
   @Post(':campaignId/upload')
   @UseInterceptors(
-    FileInterceptor('file', { limits: { fileSize: 10 * 1024 * 1024 } }),
+    FileInterceptor('file', { limits: { fileSize: WIKI_IMAGE_MAX_BYTES } }),
   )
   uploadImage(
     @Param('campaignId') campaignId: string,

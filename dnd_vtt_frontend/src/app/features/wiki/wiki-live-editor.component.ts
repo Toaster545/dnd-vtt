@@ -9,6 +9,7 @@ import {
   output,
   viewChild,
 } from '@angular/core';
+import { HttpErrorResponse } from '@angular/common/http';
 import {
   Completion,
   CompletionContext,
@@ -286,8 +287,9 @@ export class WikiLiveEditorComponent implements AfterViewInit, OnDestroy {
     try {
       const url = await this.wiki.uploadImage(this.campaignId(), file);
       replacement = `![${file.name}](${url})`;
-    } catch {
-      replacement = `![upload failed: ${file.name}]()`;
+    } catch (err) {
+      const tooLarge = err instanceof HttpErrorResponse && err.status === 413;
+      replacement = `![upload failed: ${file.name}${tooLarge ? ' is too large (max 30 MB)' : ''}]()`;
     }
     const idx = view.state.doc.toString().indexOf(token);
     if (idx < 0) return;
