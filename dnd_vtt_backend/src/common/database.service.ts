@@ -932,10 +932,11 @@ export class DatabaseService implements OnModuleInit {
 
   // ── V33: ambient light level/color ────────────────────────────────────────────
   // A map-wide brightness/tint for the darkness overlay, independent of any torch:
-  // `ambient_level` 0-100 (0 = pitch black outside torchlight, 100 = fully lit, no overlay at
-  // all) and `ambient_color` (the overlay's tint — moonlight blue, infernal red, etc, instead of
-  // the previously-hardcoded black/near-black). Defaults (0, '#0a0a14') reproduce the old
-  // hardcoded darkness exactly for every map that already has lighting configured.
+  // `ambient_level` 0-100 (0 = pitch black outside torchlight; as it rises, that black mask
+  // fades while `ambient_color` washes in more strongly, so a bright ambience reads as "the room
+  // glows that color" rather than "fading to a plain view of the map"). Defaults (0, '#0a0a14')
+  // reproduce the old hardcoded darkness exactly for every map that already has lighting
+  // configured, since the color wash has zero strength at level 0 regardless of color.
   private async applyV33() {
     await this.db.execute(
       `ALTER TABLE map_lighting ADD COLUMN ambient_level INTEGER NOT NULL DEFAULT 0`,

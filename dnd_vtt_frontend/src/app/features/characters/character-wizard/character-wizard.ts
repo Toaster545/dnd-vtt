@@ -24,6 +24,8 @@ import { AvatarRecipeV1 } from '../../../core/models/avatar.model';
 import { TokenBorder } from '../../../core/models/token-border.model';
 import { normalizeTokenBorder } from '../../../core/utils/token-border';
 import { AvatarCreatorDialogComponent, AvatarCreatorResult } from '../../../shared/avatar-creator-dialog/avatar-creator-dialog';
+import { UiScaleService } from '../../../core/services/ui-scale.service';
+import { CharacterPortraitComponent, tokenPortraitSize } from '../../../shared/components/character-portrait/character-portrait';
 import { ContentSourceDialogComponent } from '../../../shared/components/content-source-dialog/content-source-dialog';
 import { characterContentEnabled } from '../../../core/utils/content-sources';
 import { RaceStepComponent, Subrace, RaceChoice } from './steps/race-step/race-step';
@@ -76,11 +78,17 @@ function loadPreviewFraction(): number {
     CharacterPlaySheetComponent,
     SwipeTabsDirective,
     ResizeHandleDirective,
+    CharacterPortraitComponent,
   ],
   templateUrl: './character-wizard.html',
   styleUrl: './character-wizard.scss',
 })
 export class CharacterWizardComponent implements OnInit, OnDestroy {
+  // Sizes the portrait button to match a token portrait (see TOKEN_PORTRAIT_SCALE), following the
+  // interface-size setting like the portrait itself does.
+  private readonly uiScale = inject(UiScaleService);
+  readonly tokenPortraitPx = computed(() => tokenPortraitSize(44, this.uiScale.current()));
+
   // Share of the wizard's width the live-preview sheet takes, dragged via the handle between it
   // and the step pane. Kept as a fraction rather than px so it holds up across window sizes.
   previewFraction = signal(loadPreviewFraction());
@@ -206,6 +214,7 @@ export class CharacterWizardComponent implements OnInit, OnDestroy {
   avatarRecipe  = signal<AvatarRecipeV1 | null>(randomAvatarRecipe(this.initialPortraitSeed));
   portraitImage = signal<string | null>(null);
   tokenBorder   = signal<TokenBorder | null>(null);
+  portraitUseToken = signal(false);
   portraitUri   = computed(() =>
     portraitDataUri(portraitSource(this.portraitSeed(), this.avatarRecipe(), this.portraitImage())),
   );
@@ -627,6 +636,7 @@ export class CharacterWizardComponent implements OnInit, OnDestroy {
       avatar_recipe: this.avatarRecipe() ?? undefined,
       portrait_image: this.portraitImage(),
       token_border: this.tokenBorder(),
+      portrait_use_token: this.portraitUseToken(),
       race: this.selectedRace()?.name ?? '',
       subrace: this.selectedSubrace()?.name ?? '',
       race_choices: this.raceTraits(),
@@ -692,7 +702,7 @@ export class CharacterWizardComponent implements OnInit, OnDestroy {
     });
 
     effect(() => {
-      this.characterName(); this.portraitSeed(); this.avatarRecipe(); this.portraitImage(); this.tokenBorder(); this.level(); this.alignment();
+      this.characterName(); this.portraitSeed(); this.avatarRecipe(); this.portraitImage(); this.tokenBorder(); this.portraitUseToken(); this.level(); this.alignment();
       this.selectedRace(); this.selectedSubrace(); this.raceTraits(); this.selectedClasses();
       this.selectedBackground(); this.backgroundTraits();
       this.assignments(); this.selectedItemIndices(); this.spellChoices();
@@ -762,6 +772,7 @@ export class CharacterWizardComponent implements OnInit, OnDestroy {
       this.avatarRecipe.set(normalizeAvatarRecipe(existing.avatar_recipe));
       this.portraitImage.set(isPortraitImageUrl(existing.portrait_image) ? existing.portrait_image : null);
       this.tokenBorder.set(normalizeTokenBorder(existing.token_border));
+      this.portraitUseToken.set(!!existing.portrait_use_token);
       this.level.set(existing.level);
       this.alignment.set(existing.alignment);
       this.currentHp.set(existing.current_hp);
@@ -913,6 +924,7 @@ export class CharacterWizardComponent implements OnInit, OnDestroy {
         recipe: this.avatarRecipe(),
         image: this.portraitImage(),
         tokenBorder: this.tokenBorder(),
+        portraitUseToken: this.portraitUseToken(),
       },
       width: '960px',
       maxWidth: 'calc(100vw - 16px)',
@@ -925,6 +937,7 @@ export class CharacterWizardComponent implements OnInit, OnDestroy {
       this.avatarRecipe.set(recipe);
       this.portraitImage.set(result.image);
       this.tokenBorder.set(result.tokenBorder);
+      this.portraitUseToken.set(result.portraitUseToken);
     });
   }
 

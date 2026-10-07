@@ -1,4 +1,5 @@
 import { AvatarRecipeV1 } from './avatar.model';
+import { TokenBorder } from './token-border.model';
 
 export interface Campaign {
   id: string;
@@ -37,6 +38,8 @@ export interface CampaignMember {
   character_portrait_seed?: string | null;
   character_avatar_recipe?: AvatarRecipeV1 | null;
   character_portrait_image?: string | null;
+  character_token_border?: TokenBorder | null;
+  character_portrait_use_token?: boolean;
   source_character_id?: string | null;
   status?: 'active' | 'removed';
   joined_at?: string;
@@ -190,8 +193,10 @@ export interface MapLighting {
   enabled: boolean;
   lights: MapLight[];
   walls: MapWall[];
-  // Map-wide brightness (0 = pitch black outside torchlight, 100 = fully lit, no overlay at all)
-  // and the overlay's tint — independent of any individual MapLight's own color.
+  // Map-wide brightness (0 = pitch black outside torchlight; rising brightness fades the black
+  // mask while washing in `ambient_color` more strongly, so a bright ambience glows that color
+  // rather than fading to a plain view of the map) — independent of any individual MapLight's
+  // own color. See renderDarkness (lighting-renderer.ts) for the actual compositing.
   ambient_level: number;
   ambient_color: string;
 }

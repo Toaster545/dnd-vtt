@@ -165,7 +165,8 @@
                   <label class="field-label">Brightness ({{ lighting().ambient_level }}%)</label>
                   <input type="range" min="0" max="100" step="5" class="w-full accent-gold"
                          [value]="lighting().ambient_level"
-                         (input)="setAmbientLevel($any($event.target).value)" />
+                         (input)="setAmbientLevel($any($event.target).value)"
+                         (change)="flushAmbient()" />
                 </div>
                 <div class="flex items-center gap-3">
                   <span class="field-label">Tint</span>
