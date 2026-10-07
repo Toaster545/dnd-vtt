@@ -194,7 +194,9 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
     if (this.activeFogTool()) { this.activeMeasureTool.set(null); this.activeLightTool.set(null); }
   }
 
-  lighting = signal<MapLighting>({ enabled: false, lights: [], walls: [] });
+  lighting = signal<MapLighting>({
+    enabled: false, lights: [], walls: [], ambient_level: 0, ambient_color: '#0a0a14',
+  });
   activeLightTool = signal<LightToolName | null>(null);
   selectedLightId = signal<string | null>(null);
   selectedLight = computed(() => this.lighting().lights.find(l => l.id === this.selectedLightId()) ?? null);
@@ -366,6 +368,15 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
 
   async toggleLightingEnabled() {
     await this.mapService.setLightingEnabled(this.mapId, !this.lighting().enabled);
+  }
+
+  async setAmbientLevel(value: string) {
+    const level = Math.min(100, Math.max(0, Number(value) || 0));
+    await this.mapService.setAmbientLight(this.mapId, level, this.lighting().ambient_color);
+  }
+
+  async setAmbientColor(color: string) {
+    await this.mapService.setAmbientLight(this.mapId, this.lighting().ambient_level, color);
   }
 
   selectLight(light: MapLight) {

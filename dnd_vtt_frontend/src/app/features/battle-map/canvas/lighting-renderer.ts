@@ -117,9 +117,16 @@ export function renderDarkness(
     const rows = Math.ceil(img.height / gridSize);
     const width = cols * cellSize;
     const height = rows * cellSize;
-    // Distinct hue from fog's rgba(215,220,225,0.4) tint so a DM can tell "seeing through
-    // darkness" apart from "seeing through fog" when both overlays are active at once.
-    const baseFill = isAdmin ? 'rgba(10,10,20,0.55)' : '#000';
+    // Ambient level (0 = pitch black outside torchlight, 100 = fully lit) drives how opaque the
+    // base fill is; ambient color is its tint (moonlight blue, infernal red, etc — defaults to
+    // near-black). The DM's own view is additionally capped at 0.55 alpha (a distinct hue from
+    // fog's rgba(215,220,225,0.4) tint, so a DM can tell "seeing through darkness" apart from
+    // "seeing through fog") so they can still see the map underneath for reference; players get
+    // the ambient color at full strength since darkness is, to them, actually opaque.
+    const darkFactor = Math.min(1, Math.max(0, (100 - lighting.ambient_level) / 100));
+    const [ar, ag, ab] = hexToRgb(lighting.ambient_color);
+    const alpha = darkFactor * (isAdmin ? 0.55 : 1);
+    const baseFill = `rgba(${ar},${ag},${ab},${alpha})`;
     // Resolved up front (position, outer radius, visibility polygon) so both passes below and
     // every redraw Konva does of this shape reuse the same ray-cast work.
     const resolved = litAreas(lighting, tokens, cellSize);

@@ -190,6 +190,10 @@ export interface MapLighting {
   enabled: boolean;
   lights: MapLight[];
   walls: MapWall[];
+  // Map-wide brightness (0 = pitch black outside torchlight, 100 = fully lit, no overlay at all)
+  // and the overlay's tint — independent of any individual MapLight's own color.
+  ambient_level: number;
+  ambient_color: string;
 }
 
 // A DM-drawn wall segment that blocks light (and darkvision) — each light only brightens what it
