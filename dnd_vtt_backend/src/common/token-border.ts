@@ -54,7 +54,8 @@ const DEFAULT_POP_OUT: TokenPopOutRange[] = [{ start: 0, end: 180 }];
 const MAX_POP_OUT_RANGES = 6;
 
 function parsePopOut(value: unknown): TokenPopOutRange[] | null {
-  if (value === undefined) return DEFAULT_POP_OUT.map((range) => ({ ...range }));
+  if (value === undefined)
+    return DEFAULT_POP_OUT.map((range) => ({ ...range }));
   if (!Array.isArray(value) || value.length > MAX_POP_OUT_RANGES) return null;
   const ranges: TokenPopOutRange[] = [];
   for (const item of value) {

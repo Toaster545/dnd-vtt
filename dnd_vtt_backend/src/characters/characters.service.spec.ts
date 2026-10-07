@@ -188,7 +188,9 @@ describe('CharactersService', () => {
         ],
       },
     });
-    expect((ranged as Record<string, any>).token_border.popOut).toEqual([
+    expect(
+      (ranged as { token_border: { popOut: unknown } }).token_border.popOut,
+    ).toEqual([
       { start: 0, end: 180 },
       { start: 220, end: 250 },
     ]);
