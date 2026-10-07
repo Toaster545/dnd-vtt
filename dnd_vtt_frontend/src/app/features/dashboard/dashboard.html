@@ -56,7 +56,13 @@
             @if (latestCharacter(); as character) {
               <article class="card">
                 <div class="card-header flex items-center gap-2">
-                  <img [src]="portraitFor(character)" class="h-10 w-10 flex-shrink-0 rounded-full" alt="" />
+                  <app-character-portrait
+                    class="flex-shrink-0"
+                    [imageSrc]="portraitFor(character)"
+                    [border]="character.token_border"
+                    [useToken]="!!character.portrait_use_token"
+                    [size]="40"
+                  />
                   <h3 class="font-brand m-0 flex-1 text-sm text-parchment">Continue Character</h3>
                   <button class="btn-icon" type="button" (click)="toggleCharacterPin(character, $event)" [matTooltip]="isCharacterPinned(character) ? 'Unpin character' : 'Pin character'">
                     <mat-icon class="dashboard-icon" [class.text-gold]="isCharacterPinned(character)">{{ isCharacterPinned(character) ? 'star' : 'star_outline' }}</mat-icon>
@@ -90,7 +96,13 @@
           <div class="flex flex-col gap-2">
             @for (character of draftCharacters(); track character.id) {
               <div class="card card-body flex items-center gap-3 border-gold/25 bg-gold/5">
-                <img [src]="portraitFor(character)" class="h-9 w-9 flex-shrink-0 rounded-full" alt="" />
+                <app-character-portrait
+                  class="flex-shrink-0"
+                  [imageSrc]="portraitFor(character)"
+                  [border]="character.token_border"
+                  [useToken]="!!character.portrait_use_token"
+                  [size]="36"
+                />
                 <div class="min-w-0 flex-1">
                   <p class="m-0 text-sm text-parchment"><strong>{{ character.name || 'Unnamed Character' }}</strong> is still being created.</p>
                   <p class="m-0 mt-0.5 text-xs text-slate">Continue from the last saved character-creation step.</p>
@@ -100,7 +112,13 @@
             }
             @for (alert of levelUpAlerts(); track alert.character.id) {
               <div class="card card-body flex items-center gap-3 border-gold/25 bg-gold/5">
-                <img [src]="portraitFor(alert.character)" class="h-9 w-9 flex-shrink-0 rounded-full" alt="" />
+                <app-character-portrait
+                  class="flex-shrink-0"
+                  [imageSrc]="portraitFor(alert.character)"
+                  [border]="alert.character.token_border"
+                  [useToken]="!!alert.character.portrait_use_token"
+                  [size]="36"
+                />
                 <div class="min-w-0 flex-1">
                   <p class="m-0 text-sm text-parchment">
                     <strong>{{ alert.character.name }}</strong> reached level <strong>{{ alert.character.level }}</strong> in <span class="text-gold">{{ alert.character.campaign_name }}</span>.
@@ -128,7 +146,13 @@
           <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
             @for (character of pinnedCharacters(); track character.id) {
               <article class="card card-body flex items-center gap-3">
-                <img [src]="portraitFor(character)" class="h-9 w-9 flex-shrink-0 rounded-full" alt="" />
+                <app-character-portrait
+                  class="flex-shrink-0"
+                  [imageSrc]="portraitFor(character)"
+                  [border]="character.token_border"
+                  [useToken]="!!character.portrait_use_token"
+                  [size]="36"
+                />
                 <a class="min-w-0 flex-1 no-underline" [routerLink]="characterLink(character)">
                   <p class="m-0 truncate text-sm font-medium text-parchment">{{ character.name }}</p>
                   <p class="m-0 mt-0.5 truncate text-xs text-slate">Level {{ character.level }} · {{ classLabel(character) }}</p>
@@ -160,7 +184,13 @@
           <div class="flex flex-col gap-2">
             @for (character of recentCharacters(); track character.id) {
               <article class="card card-body flex items-center gap-3 py-3">
-                <img [src]="portraitFor(character)" class="h-9 w-9 flex-shrink-0 rounded-full" alt="" />
+                <app-character-portrait
+                  class="flex-shrink-0"
+                  [imageSrc]="portraitFor(character)"
+                  [border]="character.token_border"
+                  [useToken]="!!character.portrait_use_token"
+                  [size]="36"
+                />
                 <a class="min-w-0 flex-1 no-underline" [routerLink]="characterLink(character)">
                   <p class="m-0 truncate text-sm font-medium text-parchment">{{ character.name }}</p>
                   <p class="m-0 mt-0.5 truncate text-xs text-slate">{{ character.race }} · {{ classLabel(character) }} · Level {{ character.level }} @if (character.creation_status === 'draft') { · <span class="text-gold">Draft</span> }</p>

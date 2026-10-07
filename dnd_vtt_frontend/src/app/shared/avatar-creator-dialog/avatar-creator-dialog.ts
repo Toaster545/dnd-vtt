@@ -40,6 +40,7 @@ import {
   TOKEN_BORDER_MIN_WIDTH,
   TOKEN_FACE_MAX_SCALE,
   TOKEN_FACE_MIN_SCALE,
+  TOKEN_POP_OUT_MAX_RANGES,
 } from '../../core/utils/token-border';
 
 export interface AvatarCreatorDialogData {
@@ -47,6 +48,7 @@ export interface AvatarCreatorDialogData {
   recipe?: AvatarRecipeV1 | null;
   image?: string | null;
   tokenBorder?: TokenBorder | null;
+  portraitUseToken?: boolean;
 }
 
 // `recipe` is always the builder's current design (kept even while an upload is in use, so
@@ -61,6 +63,7 @@ export interface AvatarCreatorResult {
   recipe: AvatarRecipeV1;
   image: string | null;
   tokenBorder: TokenBorder | null;
+  portraitUseToken: boolean;
 }
 
 @Component({
@@ -92,11 +95,15 @@ export class AvatarCreatorDialogComponent {
   // starts a custom style from DEFAULT_TOKEN_BORDER.
   readonly tokenBorder = signal<TokenBorder | null>(normalizeTokenBorder(this.data.tokenBorder));
   readonly borderShown = computed(() => this.tokenBorder() ?? DEFAULT_TOKEN_BORDER);
+  // Whether the character's portrait (party list, dashboard, sheet header, ...) shows this
+  // bordered token instead of the plain face image — see CharacterPortraitComponent.
+  readonly useTokenAsPortrait = signal(!!this.data.portraitUseToken);
   readonly borderPalette = TOKEN_BORDER_PALETTE;
   readonly minBorderWidth = TOKEN_BORDER_MIN_WIDTH;
   readonly maxBorderWidth = TOKEN_BORDER_MAX_WIDTH;
   readonly minFaceScale = TOKEN_FACE_MIN_SCALE;
   readonly maxFaceScale = TOKEN_FACE_MAX_SCALE;
+  readonly maxPopOutRanges = TOKEN_POP_OUT_MAX_RANGES;
   readonly borderMaterials = TOKEN_BORDER_MATERIALS;
   readonly borderPatterns = TOKEN_BORDER_PATTERNS;
   readonly saveError = signal('');
@@ -180,7 +187,16 @@ export class AvatarCreatorDialogComponent {
   }
 
   private result(image: string | null): AvatarCreatorResult {
-    return { recipe: this.recipe(), image, tokenBorder: this.tokenBorder() };
+    return {
+      recipe: this.recipe(),
+      image,
+      tokenBorder: this.tokenBorder(),
+      portraitUseToken: this.useTokenAsPortrait(),
+    };
+  }
+
+  toggleUseTokenAsPortrait() {
+    this.useTokenAsPortrait.update((value) => !value);
   }
 
   updateBorder(patch: Partial<TokenBorder>) {
@@ -230,6 +246,32 @@ export class AvatarCreatorDialogComponent {
 
   setBorderMaterial(material: TokenBorderMaterial) {
     this.updateBorder({ material });
+  }
+
+  addPopOutRange() {
+    const popOut = this.borderShown().popOut;
+    if (popOut.length >= this.maxPopOutRanges) return;
+    this.updateBorder({ popOut: [...popOut, { start: 0, end: 180 }] });
+  }
+
+  removePopOutRange(index: number) {
+    this.updateBorder({ popOut: this.borderShown().popOut.filter((_, i) => i !== index) });
+  }
+
+  setPopOutBound(index: number, bound: 'start' | 'end', event: Event) {
+    const input = event.target as HTMLInputElement;
+    const value = Math.round(+input.value);
+    if (input.value === '' || !Number.isFinite(value)) {
+      input.value = String(this.borderShown().popOut[index][bound]);
+      return;
+    }
+    const clamped = Math.min(360, Math.max(0, value));
+    input.value = String(clamped);
+    this.updateBorder({
+      popOut: this.borderShown().popOut.map((range, i) =>
+        i === index ? { ...range, [bound]: clamped } : range,
+      ),
+    });
   }
 
   setFaceScale(faceScale: number) {

@@ -582,6 +582,9 @@ export class MapsService {
       enabled: !!lightingResult.rows[0]?.enabled,
       lights: lightsResult.rows.map((r) => this.deserializeLight(r)),
       walls: this.parseWalls(lightingResult.rows[0]?.walls),
+      ambient_level: Number(lightingResult.rows[0]?.ambient_level ?? 0),
+      ambient_color:
+        (lightingResult.rows[0]?.ambient_color as string) ?? '#0a0a14',
     };
   }
 
@@ -604,12 +607,39 @@ export class MapsService {
       // Players need the walls too — their own browser clips each light (and their darkvision)
       // against them. Walls are geometry only; nothing about them is DM-secret.
       walls: lighting.walls,
+      // Ambient mood lighting is visual, not DM-secret information — players see the same
+      // brightness/tint the DM set.
+      ambient_level: lighting.ambient_level,
+      ambient_color: lighting.ambient_color,
     };
   }
 
   async setLightingEnabled(mapId: string, enabled: boolean, user: RequestUser) {
     await this.assertMapAccess(mapId, user);
     await this.upsertMapLighting(mapId, enabled);
+    return this.broadcastLighting(mapId);
+  }
+
+  // Map-wide brightness (0-100) and tint applied by the darkness overlay outside any torch's
+  // reach — independent of the per-light color editor (light-editor-panel.ts), which only tints
+  // what a specific torch casts.
+  async setAmbientLight(
+    mapId: string,
+    level: number,
+    color: string,
+    user: RequestUser,
+  ) {
+    await this.assertMapAccess(mapId, user);
+    if (!Number.isFinite(level) || level < 0 || level > 100)
+      throw new BadRequestException('ambient level must be between 0 and 100');
+    if (!/^#[0-9a-f]{6}$/i.test(color))
+      throw new BadRequestException('ambient color must be a hex color');
+    await this.db.execute(
+      `INSERT INTO map_lighting (map_id, enabled, ambient_level, ambient_color) VALUES (?,0,?,?)
+       ON CONFLICT(map_id) DO UPDATE SET
+         ambient_level=excluded.ambient_level, ambient_color=excluded.ambient_color`,
+      [mapId, Math.round(level), color],
+    );
     return this.broadcastLighting(mapId);
   }
 

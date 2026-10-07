@@ -158,6 +158,7 @@ describe('CharactersService', () => {
       gradientColor: '#3b82f6',
       bandColor: '#ffffff',
       backgroundColor: null,
+      popOut: [{ start: 0, end: 180 }],
     });
 
     // A border saved before band/background/material/zoom existed still loads, with defaults.
@@ -174,7 +175,25 @@ describe('CharactersService', () => {
       backgroundColor: null,
       material: 'flat',
       faceScale: 100,
+      popOut: [{ start: 0, end: 180 }],
     });
+
+    const ranged = await service.create(ownerId, {
+      name: 'Cato',
+      token_border: {
+        ...tokenBorder,
+        popOut: [
+          { start: 0, end: 180 },
+          { start: 220, end: 250 },
+        ],
+      },
+    });
+    expect(
+      (ranged as { token_border: { popOut: unknown } }).token_border.popOut,
+    ).toEqual([
+      { start: 0, end: 180 },
+      { start: 220, end: 250 },
+    ]);
 
     for (const bad of [
       { ...tokenBorder, color: 'red' },
@@ -185,6 +204,11 @@ describe('CharactersService', () => {
       { ...tokenBorder, faceScale: 200 },
       { ...tokenBorder, backgroundColor: 'url(x)' },
       { ...tokenBorder, gradientColor: 'blue' },
+      { ...tokenBorder, popOut: 'top' },
+      { ...tokenBorder, popOut: [{ start: -1, end: 90 }] },
+      { ...tokenBorder, popOut: [{ start: 0, end: 361 }] },
+      { ...tokenBorder, popOut: [{ start: 0.5, end: 90 }] },
+      { ...tokenBorder, popOut: Array(7).fill({ start: 0, end: 10 }) },
     ]) {
       await expect(
         service.update(created.id as string, owner, {

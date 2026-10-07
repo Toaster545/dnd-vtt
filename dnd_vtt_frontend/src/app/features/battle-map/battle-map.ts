@@ -194,7 +194,9 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
     if (this.activeFogTool()) { this.activeMeasureTool.set(null); this.activeLightTool.set(null); }
   }
 
-  lighting = signal<MapLighting>({ enabled: false, lights: [], walls: [] });
+  lighting = signal<MapLighting>({
+    enabled: false, lights: [], walls: [], ambient_level: 0, ambient_color: '#0a0a14',
+  });
   activeLightTool = signal<LightToolName | null>(null);
   selectedLightId = signal<string | null>(null);
   selectedLight = computed(() => this.lighting().lights.find(l => l.id === this.selectedLightId()) ?? null);
@@ -366,6 +368,48 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
 
   async toggleLightingEnabled() {
     await this.mapService.setLightingEnabled(this.mapId, !this.lighting().enabled);
+  }
+
+  // Same optimistic-update-then-debounced-save shape as commitWalls/flushWalls: the slider fires
+  // an `input` event per tick while dragging, so updating the local signal immediately keeps the
+  // thumb and the darkness overlay tracking the pointer instead of waiting on a round trip per
+  // tick, while the actual save is coalesced into one request 300ms after the last change (or
+  // sooner, via flushAmbient on the slider's `change`/mouseup once the drag ends).
+  private pendingAmbient: { level: number; color: string } | null = null;
+  private ambientSaveTimer?: ReturnType<typeof setTimeout>;
+
+  setAmbientLevel(value: string) {
+    const level = Math.min(100, Math.max(0, Number(value) || 0));
+    this.commitAmbient(level, this.lighting().ambient_color);
+  }
+
+  setAmbientColor(color: string) {
+    this.commitAmbient(this.lighting().ambient_level, color);
+    this.flushAmbient();
+  }
+
+  private commitAmbient(level: number, color: string) {
+    this.pendingAmbient = { level, color };
+    this.lighting.update(l => ({ ...l, ambient_level: level, ambient_color: color }));
+    clearTimeout(this.ambientSaveTimer);
+    this.ambientSaveTimer = setTimeout(() => this.flushAmbient(), 300);
+  }
+
+  flushAmbient() {
+    clearTimeout(this.ambientSaveTimer);
+    this.ambientSaveTimer = undefined;
+    const pending = this.pendingAmbient;
+    if (!pending) return;
+    const mapId = this.mapId;
+    this.mapService.setAmbientLight(mapId, pending.level, pending.color).then(() => {
+      if (this.pendingAmbient === pending) this.pendingAmbient = null;
+    }).catch(async e => {
+      this.pendingAmbient = null;
+      const message = `Couldn't save ambient light: ${getErrorMessage(e)}`;
+      this.error.set(message);
+      setTimeout(() => { if (this.error() === message) this.error.set(null); }, 5000);
+      if (mapId === this.mapId) this.setLighting(await this.mapService.getLighting(mapId));
+    });
   }
 
   selectLight(light: MapLight) {
@@ -842,7 +886,9 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.lightingSub = this.mapService.watchLighting(this.mapId).subscribe(lighting => {
       const walls = this.pendingWalls ?? lighting.walls ?? [];
-      this.setLighting({ ...lighting, walls });
+      const ambient_level = this.pendingAmbient?.level ?? lighting.ambient_level;
+      const ambient_color = this.pendingAmbient?.color ?? lighting.ambient_color;
+      this.setLighting({ ...lighting, walls, ambient_level, ambient_color });
       this.renderDarkness();
       this.renderLightMarkers();
       this.renderWalls();

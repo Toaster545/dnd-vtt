@@ -243,6 +243,12 @@ export class BattleMapService {
     );
   }
 
+  async setAmbientLight(mapId: string, level: number, color: string): Promise<MapLighting> {
+    return firstValueFrom(
+      this.http.put<MapLighting>(`${API}/maps/${mapId}/lighting/ambient`, { level, color })
+    );
+  }
+
   async deleteLight(mapId: string, lightId: string): Promise<void> {
     await firstValueFrom(
       this.http.delete<void>(`${API}/maps/${mapId}/lighting/lights/${lightId}`)

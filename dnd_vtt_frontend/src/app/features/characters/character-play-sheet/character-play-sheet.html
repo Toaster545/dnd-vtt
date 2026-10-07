@@ -31,11 +31,18 @@
       <div class="sheet-identity flex items-center gap-2 min-w-0">
         <ng-content select="[sheetHeaderLeading]" />
         <button type="button"
-          class="group relative flex-shrink-0 rounded-full border-0 p-0 bg-transparent cursor-pointer disabled:cursor-default"
+          class="group relative flex flex-shrink-0 rounded-full border-0 p-0 bg-transparent cursor-pointer disabled:cursor-default"
+          [style.width.px]="char.portrait_use_token ? tokenPortraitPx() : null"
+          [style.height.px]="char.portrait_use_token ? tokenPortraitPx() : null"
           [disabled]="persisting()"
           (click)="changePortrait()"
           matTooltip="Change portrait">
-          <img [src]="portraitUri()" class="w-11 h-11 rounded-full ring-1 ring-white/15" alt="" />
+          <app-character-portrait
+            [imageSrc]="portraitUri()"
+            [border]="char.token_border"
+            [useToken]="!!char.portrait_use_token"
+            [size]="44"
+          />
           <span class="absolute inset-0 flex items-center justify-center rounded-full bg-black/45 opacity-0 transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100">
             <mat-icon class="text-base text-parchment">edit</mat-icon>
           </span>

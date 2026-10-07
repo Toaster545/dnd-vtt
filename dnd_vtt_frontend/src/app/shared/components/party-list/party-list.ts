@@ -3,6 +3,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { CampaignMember } from '../../../core/models/campaign.model';
 import { portraitDataUri, portraitSource } from '../../../core/utils/avatar';
+import { CharacterPortraitComponent } from '../character-portrait/character-portrait';
 
 // The campaign roster, shared verbatim across the DM/player campaign hubs and the DM/player
 // session hubs — those four call sites previously each hand-rolled the same <ul> of member rows.
@@ -11,7 +12,7 @@ import { portraitDataUri, portraitSource } from '../../../core/utils/avatar';
 // logic (openMember, character wizard, confirm dialogs, etc. differ per host).
 @Component({
   selector: 'app-party-list',
-  imports: [MatIconModule, MatTooltipModule],
+  imports: [MatIconModule, MatTooltipModule, CharacterPortraitComponent],
   templateUrl: './party-list.html',
 })
 export class PartyListComponent {

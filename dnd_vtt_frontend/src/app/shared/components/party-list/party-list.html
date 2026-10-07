@@ -3,7 +3,13 @@
     <li class="flex items-center py-2.5 gap-2"
         [class.cursor-pointer]="clickableRows()"
         (click)="onRowClick(member)">
-      <img [src]="portraitFor(member)" class="w-9 h-9 rounded-full flex-shrink-0" alt="" />
+      <app-character-portrait
+        class="flex-shrink-0"
+        [imageSrc]="portraitFor(member)"
+        [border]="member.character_token_border"
+        [useToken]="!!member.character_portrait_use_token"
+        [size]="36"
+      />
       <div class="flex-1 min-w-0">
         <p class="text-parchment text-sm font-medium truncate m-0">{{ member.character_name }}</p>
         <p class="text-slate text-xs m-0">

@@ -13,6 +13,7 @@ import { Campaign } from '../../core/models/campaign.model';
 import { AuthService } from '../../core/services/auth.service';
 import { portraitDataUri, portraitSource } from '../../core/utils/avatar';
 import { levelUpPending } from '../../core/utils/level-up';
+import { CharacterPortraitComponent } from '../../shared/components/character-portrait/character-portrait';
 
 type DashboardCharacter = Character & { campaign_name?: string; edit_unlocked?: boolean };
 type CampaignCopy = DashboardCharacter & { campaign_name: string; edit_unlocked: boolean };
@@ -31,7 +32,7 @@ function lastTouched(c: Character): number {
 
 @Component({
   selector: 'app-dashboard',
-  imports: [RouterLink, MatIconModule, MatTooltipModule],
+  imports: [RouterLink, MatIconModule, MatTooltipModule, CharacterPortraitComponent],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.scss',
   host: { class: 'flex flex-col flex-1 min-h-0 overflow-hidden' },

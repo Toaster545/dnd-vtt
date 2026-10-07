@@ -196,6 +196,7 @@ const PLAYER_EDITABLE_FIELDS = [
   'avatar_recipe',
   'portrait_image',
   'token_border',
+  'portrait_use_token',
   // Not itself an independent player choice — the frontend recomputes this from whatever's
   // equipped every time it persists (see CharacterPlaySheetComponent.persist), so it has to ride
   // along with the equipment toggle that changed it or campaign-hub/roster views relying on the
@@ -571,7 +572,8 @@ export class CharactersService {
       const normalized =
         'avatar_recipe' in body ||
         'portrait_image' in body ||
-        'token_border' in body
+        'token_border' in body ||
+        'portrait_use_token' in body
           ? this.normalizeCharacterAvatar(data)
           : data;
       normalized.applied_level = level;
@@ -1624,7 +1626,8 @@ export class CharactersService {
     const normalized =
       'avatar_recipe' in body ||
       'portrait_image' in body ||
-      'token_border' in body
+      'token_border' in body ||
+      'portrait_use_token' in body
         ? this.normalizeCharacterAvatar(data)
         : data;
 
@@ -1736,6 +1739,11 @@ export class CharactersService {
         if (!border) throw new BadRequestException('Invalid token border');
         normalized.token_border = border;
       }
+    }
+    if (
+      Object.prototype.hasOwnProperty.call(normalized, 'portrait_use_token')
+    ) {
+      normalized.portrait_use_token = !!normalized.portrait_use_token;
     }
     return normalized;
   }

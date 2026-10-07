@@ -3,7 +3,13 @@
 </button>
 
 <div class="flex items-center gap-2 mb-1">
-  <img [src]="portraitUri()" class="w-9 h-9 rounded-full border border-white/10 flex-shrink-0" alt="" />
+  <app-character-portrait
+    class="flex-shrink-0"
+    [imageSrc]="portraitUri()"
+    [border]="character().token_border"
+    [useToken]="!!character().portrait_use_token"
+    [size]="36"
+  />
   <h3 class="font-brand text-lg text-parchment m-0 flex-1 truncate">{{ character().name }}</h3>
 </div>
 <p class="text-coal text-xs mb-3">

@@ -4,10 +4,11 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { Character } from '../../../../../../core/models/character.model';
 import { MapToken } from '../../../../../../core/models/campaign.model';
 import { portraitDataUri, portraitSource } from '../../../../../../core/utils/avatar';
+import { CharacterPortraitComponent } from '../../../../../../shared/components/character-portrait/character-portrait';
 
 @Component({
   selector: 'app-character-token-detail',
-  imports: [MatIconModule, MatTooltipModule],
+  imports: [MatIconModule, MatTooltipModule, CharacterPortraitComponent],
   templateUrl: './character-token-detail.html',
 })
 export class CharacterTokenDetailComponent {
