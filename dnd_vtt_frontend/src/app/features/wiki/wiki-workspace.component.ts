@@ -176,7 +176,12 @@ export class WikiWorkspaceComponent implements OnInit {
   readonly canEditCurrent = computed(() => {
     const p = this.page();
     if (!p) return false;
-    return this.isDm() || p.visibility === 'shared';
+    return !!p.owner_id || this.isDm() || p.visibility === 'shared';
+  });
+
+  readonly canDeleteCurrent = computed(() => {
+    const p = this.page();
+    return !!p && !p.character_id && this.canEditCurrent();
   });
 
   /** In an embedded hub's read view, suppress the page heading when the current page is the one

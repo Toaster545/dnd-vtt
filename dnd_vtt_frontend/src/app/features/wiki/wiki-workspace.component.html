@@ -144,7 +144,11 @@
   >
     <mat-icon class="text-[15px] text-slate/50 shrink-0">description</mat-icon>
     <span class="truncate flex-1">{{ p.title }}</span>
-    @if (p.visibility === 'dm_only') {
+    @if (p.owner_id) {
+      <mat-icon class="text-[13px] text-slate/60 shrink-0" matTooltip="Only you can see this">
+        lock
+      </mat-icon>
+    } @else if (p.visibility === 'dm_only') {
       <mat-icon class="text-[13px] text-slate/60 shrink-0" matTooltip="DM only">
         visibility_off
       </mat-icon>
@@ -173,9 +177,11 @@
       <button class="menu-item" (click)="openPage(m.page.slug); closeMenu()">Open</button>
       <button class="menu-item" (click)="renamePage(m.page); closeMenu()">Rename</button>
       <button class="menu-item" (click)="movePage(m.page); closeMenu()">Move to folder…</button>
-      <button class="menu-item text-danger/80" (click)="deletePage(m.page); closeMenu()">
-        Delete
-      </button>
+      @if (!m.page.character_id) {
+        <button class="menu-item text-danger/80" (click)="deletePage(m.page); closeMenu()">
+          Delete
+        </button>
+      }
     }
   </div>
 }
@@ -263,7 +269,14 @@
                 }
               </span>
             }
-            @if (isDm() && !readingOnly()) {
+            @if (page()!.owner_id) {
+              <span
+                class="flex items-center gap-1 text-xs text-slate/70 px-1"
+                matTooltip="Only you can see this page"
+              >
+                <mat-icon class="text-[15px]">lock</mat-icon> Private
+              </span>
+            } @else if (isDm() && !readingOnly()) {
               <button
                 class="btn-icon"
                 (click)="toggleVisibility()"
@@ -274,7 +287,7 @@
                 <mat-icon>{{ page()!.visibility === 'dm_only' ? 'lock' : 'lock_open' }}</mat-icon>
               </button>
             }
-            @if (canEditCurrent() && !readingOnly()) {
+            @if (canDeleteCurrent() && !readingOnly()) {
               <button
                 class="btn-icon text-danger/70 hover:text-danger"
                 (click)="deletePage()"

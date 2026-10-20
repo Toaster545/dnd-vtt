@@ -32,6 +32,14 @@ export class WikiController {
     return this.wiki.tree(campaignId, user);
   }
 
+  @Get('character/:characterId')
+  characterNotes(
+    @Param('characterId') characterId: string,
+    @CurrentUser() user: RequestUser,
+  ) {
+    return this.wiki.characterNotes(characterId, user);
+  }
+
   @Get(':campaignId/search')
   search(
     @Param('campaignId') campaignId: string,
