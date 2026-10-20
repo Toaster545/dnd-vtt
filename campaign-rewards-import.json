@@ -1,0 +1,188 @@
+{
+  "items": [
+    {
+      "name": "Modothurian Hat",
+      "type": "magic",
+      "category": "Wondrous Item",
+      "damage": null,
+      "damage_type": null,
+      "properties": [],
+      "weight": 0.5,
+      "cost": "Magic item",
+      "description": "Prevents the wearer from getting wet, whether from rain or submersion.",
+      "rarity": "common",
+      "requires_attunement": false,
+      "image_url": "/icons/magic-hat.svg"
+    },
+    {
+      "name": "Blue Flame Lantern",
+      "type": "magic",
+      "category": "Wondrous Item",
+      "damage": null,
+      "damage_type": null,
+      "properties": [],
+      "weight": 2,
+      "cost": "Magic item",
+      "description": "A lantern whose blue flame turns red when a fiend is within 60 feet.",
+      "rarity": "uncommon",
+      "requires_attunement": false,
+      "image_url": "/icons/lantern-flame.svg"
+    },
+    {
+      "name": "Rope of Three Strands",
+      "type": "magic",
+      "category": "Wondrous Item",
+      "damage": null,
+      "damage_type": null,
+      "properties": [],
+      "weight": 1,
+      "cost": "Magic item",
+      "description": "A rope braided from three strands. When the wearer drops to 0 hit points, they drop to 1 hit point instead and a strand breaks.",
+      "rarity": "rare",
+      "requires_attunement": false,
+      "charges": {
+        "max": 3,
+        "recovery": "No recovery — each use permanently breaks a strand; usable at most once per day while a strand remains"
+      },
+      "image_url": "/icons/rope-coil.svg"
+    },
+    {
+      "name": "Clockwork Amulet",
+      "type": "magic",
+      "category": "Wondrous Item",
+      "damage": null,
+      "damage_type": null,
+      "properties": [],
+      "weight": 1,
+      "cost": "Magic item",
+      "description": "An amulet shaped like interlocking gears. Once per day, instead of rolling a d20 for an attack roll, saving throw, or ability check, the wearer can decide they rolled a 10.",
+      "rarity": "uncommon",
+      "requires_attunement": false,
+      "charges": { "max": 1, "recovery": "long rest" },
+      "actions": [
+        {
+          "key": "force_ten",
+          "name": "Forced Result",
+          "description": "Replaces the result of a d20 roll (attack, saving throw, or ability check) with a flat 10.",
+          "activation": "free"
+        }
+      ],
+      "image_url": "/icons/clockwork.svg"
+    },
+    {
+      "name": "Wooden Pipe",
+      "type": "magic",
+      "category": "Wondrous Item",
+      "damage": null,
+      "damage_type": null,
+      "properties": ["Advantage on Performance checks made with a musical instrument"],
+      "weight": 0.5,
+      "cost": "Magic item",
+      "description": "Whoever plays it sounds like a virtuoso. Once per day, they can cast Prestidigitation in the form of music.",
+      "rarity": "common",
+      "requires_attunement": false,
+      "charges": { "max": 1, "recovery": "long rest" },
+      "actions": [
+        {
+          "key": "musical_prestidigitation",
+          "name": "Musical Prestidigitation",
+          "description": "Casts the Prestidigitation spell by playing the pipe, without components.",
+          "activation": "action"
+        }
+      ],
+      "image_url": "/icons/flute.svg"
+    },
+    {
+      "name": "Returning Throwing Axe",
+      "type": "weapon",
+      "category": "Simple Melee",
+      "damage": "1d6",
+      "damage_type": "slashing",
+      "properties": [
+        "Light",
+        "Thrown (range 20/60 ft.)",
+        "Returns to the thrower's hand immediately after the attack"
+      ],
+      "weight": 2,
+      "cost": "Magic item",
+      "description": "An enchanted throwing axe that instantly returns to its owner's hand after being thrown.",
+      "rarity": "uncommon",
+      "requires_attunement": false,
+      "image_url": "/icons/magic-axe.svg"
+    },
+    {
+      "name": "Boots of Elvenkind",
+      "type": "magic",
+      "category": "Wondrous Item",
+      "damage": null,
+      "damage_type": null,
+      "properties": [],
+      "weight": 1,
+      "cost": "Magic item",
+      "description": "While you wear these boots, your steps make no sound, regardless of the surface you are moving across. You also have advantage on Dexterity (Stealth) checks that rely on moving silently.",
+      "rarity": "uncommon",
+      "requires_attunement": false,
+      "image_url": "/icons/leather-boot.svg"
+    },
+    {
+      "name": "Scale of Karapth",
+      "type": "magic",
+      "category": "Wondrous Item",
+      "damage": null,
+      "damage_type": null,
+      "properties": [],
+      "weight": 0.5,
+      "cost": "Magic item",
+      "description": "A dragon scale, warm to the touch. As a reaction, when the wearer takes fire damage, they gain resistance to that damage.",
+      "rarity": "uncommon",
+      "requires_attunement": true,
+      "charges": { "max": 1, "recovery": "long rest" },
+      "actions": [
+        {
+          "key": "fire_ward",
+          "name": "Fire Ward",
+          "description": "Triggered as a reaction when the wearer takes fire damage: gains resistance to that damage.",
+          "activation": "reaction"
+        }
+      ],
+      "image_url": "/icons/dragon-orb.svg"
+    },
+    {
+      "name": "Mother-Bramble Shard",
+      "type": "magic",
+      "category": "Wondrous Item",
+      "damage": null,
+      "damage_type": null,
+      "properties": [],
+      "weight": 0.5,
+      "cost": "Magic item",
+      "description": "A green crystal that grows slowly, like a plant. Once per day, the holder can cast Speak with Animals or Entangle (DC 12).",
+      "rarity": "uncommon",
+      "requires_attunement": false,
+      "charges": { "max": 1, "recovery": "long rest" },
+      "actions": [
+        {
+          "key": "cast_shard_spell",
+          "name": "Shard Spell",
+          "description": "Casts Speak with Animals or Entangle (save DC 12), the holder's choice.",
+          "activation": "action"
+        }
+      ],
+      "image_url": "/icons/crystal-growth.svg"
+    },
+    {
+      "name": "Talking Mirror",
+      "type": "magic",
+      "category": "Wondrous Item",
+      "damage": null,
+      "damage_type": null,
+      "properties": [],
+      "weight": 10,
+      "cost": "Magic item",
+      "description": "An enchanted mirror that compliments whoever looks into it, sees through illusions and disguises, and reveals the true face of anyone who looks into it.",
+      "rarity": "rare",
+      "requires_attunement": false,
+      "image_url": "/icons/mirror-mirror.svg"
+    }
+  ]
+}
