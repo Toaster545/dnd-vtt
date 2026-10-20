@@ -504,15 +504,24 @@ export class CharacterWizardComponent implements OnInit, OnDestroy {
       .map(r => ({
         itemIndex: r.itemIndex, name: itemName(r.itemIndex), quantity: r.quantity,
         equipped: priorEquipment.get(r.itemIndex)?.equipped ?? false,
+        attuned: priorEquipment.get(r.itemIndex)?.attuned,
       }));
+    const catalogIndices = new Set(this.items().map(it => it.index));
     const freeEquipment = this.items()
       .filter(it => this.selectedItemIndices().has(it.index))
       .map(it => ({
         itemIndex: it.index, name: itemDisplayName(it),
         quantity: priorEquipment.get(it.index)?.quantity ?? 1,
         equipped: priorEquipment.get(it.index)?.equipped ?? false,
+        attuned: priorEquipment.get(it.index)?.attuned,
       }));
-    return [...structuredEquipment, ...freeEquipment];
+    // Items the character already holds but this wizard's source-filtered catalog can't list
+    // (e.g. a DM-granted Tasha's item on an XPHB-only character) are carried over untouched —
+    // otherwise the next autosave would silently delete them.
+    const carriedOver = [...this.selectedItemIndices()]
+      .filter(index => !catalogIndices.has(index) && priorEquipment.has(index))
+      .map(index => priorEquipment.get(index)!);
+    return [...structuredEquipment, ...freeEquipment, ...carriedOver];
   });
 
   // Only `gp` is ever populated today — nothing in starting equipment grants cp/sp/ep/pp — but
