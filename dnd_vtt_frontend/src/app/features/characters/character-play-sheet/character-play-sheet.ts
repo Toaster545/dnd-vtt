@@ -1,3 +1,4 @@
+import { MagicInventoryComponent } from '../../../shared/components/magic-inventory/magic-inventory';
 import { CompanionService } from '../../../core/services/companion.service';
 import { CompanionSheetComponent } from '../../../shared/components/companion-sheet/companion-sheet';
 import {
@@ -26,7 +27,7 @@ import {
 import { adjustCurrency, CURRENCY_ORDER } from '../../../core/utils/currency';
 import { normalizeAvatarRecipe, portraitDataUri, portraitSource } from '../../../core/utils/avatar';
 import { AvatarCreatorDialogComponent, AvatarCreatorResult } from '../../../shared/avatar-creator-dialog/avatar-creator-dialog';
-import { reachableGrants, resolveCharacterFeatPicks } from '../../../core/utils/character-effects';
+import { equippedItems, attunementActive, reachableGrants, resolveCharacterFeatPicks } from '../../../core/utils/character-effects';
 import { characterContentEnabled } from '../../../core/utils/content-sources';
 import { resolveBackgroundOriginFeat } from '../../../core/utils/background-origin-feat';
 import {
@@ -121,7 +122,7 @@ const TAB_LABELS: Record<Tab, string> = {
 
 @Component({
   selector: 'app-character-play-sheet',
-  imports: [
+  imports: [MagicInventoryComponent,
     FormsModule, MatIconModule, MatTooltipModule, NgTemplateOutlet, ItemFormComponent, SwipeTabsDirective,
     StatblockExportMenuComponent, CharacterPortraitComponent, CompanionSheetComponent,
   ],
@@ -288,8 +289,6 @@ export class CharacterPlaySheetComponent {
   grantItemBusy          = signal(false);
   grantItemError         = signal('');
   grantItemNotice        = signal('');
-  replicateItemBusy      = signal(false);
-  replicateItemError     = signal('');
   pactWeaponSelection    = signal('');
   pactWeaponBusy         = signal(false);
   pactWeaponError        = signal('');
@@ -391,16 +390,12 @@ export class CharacterPlaySheetComponent {
     if (originFeat) featSelections.push({
       feat: originFeat, scope: `background:${this.bgData()!.index}:origin`, choices: char.background_choices ?? {},
     });
-    const equipped = new Set([
-      ...char.equipment.filter(entry => entry.equipped).map(entry => entry.itemIndex),
-      ...(char.replicated_items ?? []).filter(entry => entry.equipped).map(entry => entry.itemIndex),
-    ]);
     const classes = this.resolvedClasses().map(rc => ({ data: rc.data, level: rc.level, subclass: rc.subclass, choices: rc.choices }));
     return this.actionsService.compute(classes, char.resource_uses ?? {}, char.ability_scores, {
       characterLevel: char.level,
       race: this.raceData() ? { data: this.raceData()!, choices: char.race_choices ?? {} } : null,
       feats: featSelections.map(selection => ({ feat: selection.feat, choices: selection.choices })),
-      items: this.itemsAll().filter(item => equipped.has(item.index)),
+      items: equippedItems(char.equipment, this.itemsAll()).filter(item => attunementActive(item, char.equipment)),
     });
   });
 
@@ -489,7 +484,9 @@ export class CharacterPlaySheetComponent {
     return rows.filter(row => (row.item ? itemDisplayName(row.item) : row.entry.name).toLowerCase().includes(query));
   });
 
-  attunedCount = computed(() => this.localChar()?.equipment.filter(e => e.attuned).length ?? 0);
+  attunedCount = computed(() => this.localChar()?.attuned_items?.length ?? this.localChar()?.equipment.filter(e => e.attuned).length ?? 0);
+  showLongRestDialog = signal(false);
+  inventorySaved(char: Character) { this.localChar.set(char); this.saved.emit(char); }
   attunementSlotLimit = computed(() => this.stats()?.attunement_slot_limit ?? ATTUNEMENT_SLOT_LIMIT);
 
   pactWeaponOptions = computed(() => this.itemsAll()
@@ -503,32 +500,6 @@ export class CharacterPlaySheetComponent {
     const level = artificer?.data.levels.find(entry => entry.level === artificer.level);
     return Number(level?.class_specific?.['replicated_items'] ?? 0);
   });
-
-  replicablePlans = computed(() => {
-    const artificer = this.resolvedClasses().find(resolved => resolved.data.index === 'artificer');
-    if (!artificer) return [];
-    const grant = artificer.data.levels.flatMap(level => level.grants ?? [])
-      .find((candidate): candidate is Extract<TraitGrant, { type: 'choice' }> =>
-        candidate.type === 'choice' && candidate.key === 'magic_item_plans');
-    if (!grant) return [];
-    const selected = new Set(artificer.choices[grant.key] ?? []);
-    return grant.options
-      .filter(option => selected.has(option.name) && option.itemIndex)
-      .map(option => ({ option, item: this.itemsAll().find(item => item.index === option.itemIndex) ?? null }))
-      .filter((entry): entry is { option: typeof grant.options[number]; item: DndItem } => !!entry.item);
-  });
-
-  activeReplicatedItems = computed(() => {
-    const char = this.localChar();
-    if (!char) return [];
-    return (char.replicated_items ?? []).map(entry => ({
-      entry, item: this.itemsAll().find(item => item.index === entry.itemIndex) ?? null,
-    }));
-  });
-
-  isReplicatedItemActive(itemIndex: string): boolean {
-    return this.localChar()?.replicated_items?.some(entry => entry.itemIndex === itemIndex) ?? false;
-  }
 
   grantItemResults = computed(() => {
     const query = this.grantItemSearch().trim().toLowerCase();
@@ -649,7 +620,7 @@ export class CharacterPlaySheetComponent {
       stats,
       size: this.raceData()?.size,
       hitDice: this.resolvedClasses().map(rc => `${rc.level}d${rc.data.hit_die}`).join(' + '),
-      darkvisionFt: char.darkvision_ft ?? this.raceData()?.darkvision_ft,
+      darkvisionFt: this.stats()?.darkvision_ft,
       features: this.resolvedFeatures(),
       actions: this.actions(),
       spellcasting: castingAbility
@@ -1009,15 +980,24 @@ export class CharacterPlaySheetComponent {
   }
 
   // Actions
-  useAction(action: CharacterAction) {
+  async useAction(action: CharacterAction) {
     const char = this.localChar();
     if (!char) return;
+    if (action.itemInstanceId) {
+      const item = char.equipment.find(e => e.instanceId === action.itemInstanceId)?.resolvedItem;
+      const replaceConcentration = !!item?.spell?.concentration && !!char.active_concentration;
+      if (replaceConcentration && !await this.confirm.confirm('End your current Concentration to use this item?', 'Replace Concentration')) return;
+      try { this.inventorySaved(await this.characterService.inventoryOperation(char.id!, action.itemInstanceId, { action: 'use', replaceConcentration })); }
+      catch (e) { this.castError.set((e as {error?: {message?: string}}).error?.message ?? 'Could not use item.'); }
+      return;
+    }
     this.persist({ ...char, resource_uses: this.actionsService.use(char.resource_uses ?? {}, action) });
   }
 
   restoreAction(action: CharacterAction) {
     const char = this.localChar();
     if (!char) return;
+    if (action.itemInstanceId) { this.castNotice.set('Recover item charges from Equipment after the listed recharge event.'); return; }
     this.persist({ ...char, resource_uses: this.actionsService.restore(char.resource_uses ?? {}, action) });
   }
 
@@ -1032,20 +1012,8 @@ export class CharacterPlaySheetComponent {
         return;
       }
 
-      this.persisting.set(true);
-      try {
-        await this.characterService.saveCharacter({
-          ...char,
-          resource_uses: this.actionsService.rest(char.resource_uses ?? {}, this.actions(), type),
-        });
-        await this.characterService.restoreSpellcasting(char.id, type);
-        const healedResult = await this.characterService.restoreHitPoints(char.id, type);
-        this.localChar.set(healedResult);
-        this.saved.emit(this.localChar()!);
-        this.castNotice.set(type === 'long_rest' ? 'Long Rest complete.' : 'Short Rest complete. Pact Magic and short-rest free casts restored.');
-      } finally {
-        this.persisting.set(false);
-      }
+      this.showLongRestDialog.set(true);
+
   }
 
     openShortRestDialog() {
@@ -1094,44 +1062,7 @@ export class CharacterPlaySheetComponent {
     }
 
   // Inventory
-  toggleEquipped(entry: EquipmentEntry) {
-    const char = this.localChar();
-    if (!char) return;
-    const equipment = char.equipment.map(e => e.itemIndex === entry.itemIndex ? { ...e, equipped: !e.equipped } : e);
-    this.persist({ ...char, equipment });
-  }
-
-  // Attunement is independent of equipped — 5e lets you stay attuned to something you've taken
-  // off — so this only ever refuses to turn ON past the character's current slot limit; turning
-  // off is always allowed.
-  toggleAttuned(entry: EquipmentEntry) {
-    const char = this.localChar();
-    if (!char) return;
-    const attuning = !entry.attuned;
-    if (attuning && this.attunedCount() >= this.attunementSlotLimit()) return;
-    const equipment = char.equipment.map(e => e.itemIndex === entry.itemIndex ? { ...e, attuned: attuning } : e);
-    this.persist({ ...char, equipment });
-  }
-
-  async updateReplicatedItem(action: 'create' | 'dismiss' | 'toggle', itemIndex: string) {
-    const char = this.localChar();
-    if (!char?.id || this.replicateItemBusy()) return;
-    this.replicateItemBusy.set(true);
-    this.replicateItemError.set('');
-    try {
-      const result = await this.characterService.updateReplicatedItem(char.id, action, itemIndex);
-      this.localChar.set(result);
-      this.saved.emit(result);
-    } catch (error) {
-      const response = error as { error?: { message?: string | string[] } };
-      const message = response.error?.message;
-      this.replicateItemError.set(Array.isArray(message) ? message.join(' ') : message ?? 'Could not update the replicated item.');
-    } finally {
-      this.replicateItemBusy.set(false);
-    }
-  }
-
-  async updatePactWeapon(action: 'conjure' | 'bond' | 'dismiss', itemIndex?: string) {
+  async updatePactWeapon(action: 'conjure' | 'bond' | 'dismiss', itemIndex?: string, instanceId?: string) {
     const char = this.localChar();
     if (!char?.id || this.pactWeaponBusy()) return;
     const selected = itemIndex ?? this.pactWeaponSelection();
@@ -1142,7 +1073,7 @@ export class CharacterPlaySheetComponent {
     this.pactWeaponBusy.set(true);
     this.pactWeaponError.set('');
     try {
-      const result = await this.characterService.updatePactWeapon(char.id, action, selected || undefined);
+      const result = await this.characterService.updatePactWeapon(char.id, action, selected || undefined, instanceId);
       this.localChar.set(result);
       this.pactWeaponSelection.set(result.pact_weapon?.itemIndex ?? this.pactWeaponOptions()[0]?.index ?? '');
       this.saved.emit(result);

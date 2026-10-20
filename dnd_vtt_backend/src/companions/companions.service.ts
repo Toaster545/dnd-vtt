@@ -494,6 +494,11 @@ export class CompanionsService {
   }
 
   // Called inside the character's resource-operation lock, after a completed Long Rest.
+  async notifyRestCompleted(characterId: string) {
+    const owner = await this.owner(characterId);
+    this.events.changed(owner.campaign_id, characterId);
+  }
+
   async longRest(characterId: string) {
     const rows = await this.db.execute(
       'SELECT id,data FROM companions WHERE character_id=?',

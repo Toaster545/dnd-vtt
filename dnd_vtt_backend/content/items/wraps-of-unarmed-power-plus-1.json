@@ -1,0 +1,36 @@
+{
+  "index": "wraps-of-unarmed-power-plus-1",
+  "name": "Wraps of Unarmed Power +1",
+  "artificer_plan": {
+    "name": "Wraps of Unarmed Power +1",
+    "itemIndex": "wraps-of-unarmed-power-plus-1"
+  },
+  "type": "magic",
+  "category": "Wondrous Item",
+  "damage": null,
+  "damage_type": null,
+  "properties": [],
+  "weight": 0,
+  "cost": "Magic item",
+  "rarity": "uncommon",
+  "requires_attunement": false,
+  "source": {
+    "code": "EFA",
+    "book": "Eberron: Forge of the Artificer",
+    "edition": 2024,
+    "rules_text": "reference-only"
+  },
+  "description": "While worn, gain +1 to attack and damage rolls with Unarmed Strikes; their damage can be Force or its normal type.",
+  "effects": [
+    {
+      "type": "unarmed_bonus",
+      "value": 1
+    },
+    {
+      "type": "unarmed_damage_type_option",
+      "tags": [
+        "force"
+      ]
+    }
+  ]
+}

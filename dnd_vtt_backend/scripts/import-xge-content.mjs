@@ -503,3 +503,6 @@ write('manifests', 'xanathars-guide-to-everything', {
 });
 
 console.log(`Imported ${importedSubclasses.length} subclasses, ${importedSpells.length} spells, ${rawFeats.length} feats, and ${rawItems.length} magic items.`);
+
+const { writeItemRuntimeMetadata } = await import('./lib/item-runtime-metadata.mjs');
+writeItemRuntimeMetadata();

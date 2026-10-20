@@ -19,5 +19,10 @@
     "page": 137,
     "srd_5_2_1": false,
     "rules_text": "reference-only"
+  },
+  "charges": {
+    "max": 1,
+    "recovery": "long_rest",
+    "restore": "all"
   }
 }

@@ -1,0 +1,42 @@
+{
+  "index": "wand-of-magic-detection",
+  "name": "Wand of Magic Detection",
+  "artificer_plan": {
+    "name": "Wand of Magic Detection",
+    "itemIndex": "wand-of-magic-detection"
+  },
+  "type": "magic",
+  "category": "Wondrous Item",
+  "damage": null,
+  "damage_type": null,
+  "properties": [],
+  "weight": 0,
+  "cost": "Magic item",
+  "rarity": "uncommon",
+  "requires_attunement": false,
+  "source": {
+    "code": "EFA",
+    "book": "Eberron: Forge of the Artificer",
+    "edition": 2024,
+    "rules_text": "reference-only"
+  },
+  "spell": {
+    "index": "detect-magic",
+    "name": "Detect Magic",
+    "concentration": true
+  },
+  "description": "Expend 1 charge to cast Detect Magic, without spending a spell slot. The spell requires Concentration.",
+  "charges": {
+    "max": 3,
+    "recovery": "dawn",
+    "restore": "1d3"
+  },
+  "actions": [
+    {
+      "key": "activate",
+      "name": "Wand of Magic Detection",
+      "description": "Expend 1 charge to cast Detect Magic, without spending a spell slot. The spell requires Concentration.",
+      "activation": "action"
+    }
+  ]
+}

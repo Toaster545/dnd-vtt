@@ -720,91 +720,14 @@ describe('CharactersService', () => {
     ).rejects.toThrow(ConflictException);
   });
 
-  describe('replicateItem', () => {
-    async function makeArtificer(
-      plans: string[] = ['Returning Weapon', 'Repeating Shot'],
-    ) {
-      return service.create(ownerId, {
-        name: 'Forge',
-        class: 'Artificer',
-        level: 2,
-        classes: [
-          {
-            name: 'Artificer',
-            level: 2,
-            choices: { magic_item_plans: plans },
-          },
-        ],
-      });
-    }
-
-    it('creates, equips, and dismisses a learned replicated item', async () => {
-      const created = await makeArtificer();
-      const createdItem = (await service.replicateItem(
-        created.id as string,
-        owner,
-        {
-          itemIndex: 'returning-weapon',
-          action: 'create',
-        },
-      )) as unknown as { replicated_items: Record<string, unknown>[] };
-      expect(createdItem.replicated_items).toEqual([
-        expect.objectContaining({
-          itemIndex: 'returning-weapon',
-          planName: 'Returning Weapon',
-          equipped: false,
-        }),
-      ]);
-
-      const equipped = (await service.replicateItem(
-        created.id as string,
-        owner,
-        {
-          itemIndex: 'returning-weapon',
-          action: 'toggle',
-        },
-      )) as unknown as { replicated_items: Record<string, unknown>[] };
-      expect(equipped.replicated_items[0].equipped).toBe(true);
-
-      const dismissed = (await service.replicateItem(
-        created.id as string,
-        owner,
-        {
-          itemIndex: 'returning-weapon',
-          action: 'dismiss',
-        },
-      )) as unknown as { replicated_items: Record<string, unknown>[] };
-      expect(dismissed.replicated_items).toEqual([]);
-    });
-
-    it('rejects items whose plan the Artificer has not learned', async () => {
-      const created = await makeArtificer(['Returning Weapon']);
+  describe('legacy replication endpoint', () => {
+    it('requires old clients to refresh instead of silently creating unusable items', async () => {
       await expect(
-        service.replicateItem(created.id as string, owner, {
-          itemIndex: 'repeating-shot',
+        service.replicateItem('old-client', owner, {
           action: 'create',
+          itemIndex: 'returning-weapon',
         }),
-      ).rejects.toThrow(BadRequestException);
-    });
-
-    it('enforces the replicated-item limit from the Artificer table', async () => {
-      const created = await makeArtificer([
-        'Returning Weapon',
-        'Repeating Shot',
-        'Manifold Tool',
-      ]);
-      for (const itemIndex of ['returning-weapon', 'repeating-shot']) {
-        await service.replicateItem(created.id as string, owner, {
-          itemIndex,
-          action: 'create',
-        });
-      }
-      await expect(
-        service.replicateItem(created.id as string, owner, {
-          itemIndex: 'manifold-tool',
-          action: 'create',
-        }),
-      ).rejects.toThrow(ConflictException);
+      ).rejects.toThrow('Refresh');
     });
   });
 

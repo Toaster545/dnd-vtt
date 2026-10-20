@@ -11,14 +11,16 @@
     "species": 5,
     "backgrounds": 17,
     "feats": 28,
-    "items": 9,
+    "items": 21,
     "spells": 1,
     "monsters": 27,
     "companion_templates": 1,
     "artificer_magic_item_plans": 56
   },
   "catalog": {
-    "classes": ["artificer"],
+    "classes": [
+      "artificer"
+    ],
     "subclasses": [
       "alchemist",
       "armorer",
@@ -83,18 +85,34 @@
       "potent-dragonmark"
     ],
     "items": [
+      "alchemy-jug",
+      "bag-of-holding",
       "boots-of-the-winding-path",
+      "cap-of-water-breathing",
       "dazzling-weapon",
+      "goggles-of-night",
       "helm-of-awareness",
       "manifold-tool",
       "mind-sharpener",
       "repeating-shot",
       "repulsion-shield",
       "returning-weapon",
-      "spell-refueling-ring"
+      "rope-of-climbing",
+      "sending-stones",
+      "shield-plus-1",
+      "spell-refueling-ring",
+      "wand-of-magic-detection",
+      "wand-of-secrets",
+      "wand-of-the-war-mage-plus-1",
+      "weapon-plus-1",
+      "wraps-of-unarmed-power-plus-1"
     ],
-    "spells": ["homunculus-servant"],
-    "companion_templates": ["eldritch-cannon"],
+    "spells": [
+      "homunculus-servant"
+    ],
+    "companion_templates": [
+      "eldritch-cannon"
+    ],
     "monsters": [
       "boromar-smuggler",
       "boromar-underboss",

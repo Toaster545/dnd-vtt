@@ -332,6 +332,7 @@
                   <h4 class="font-brand text-gold text-xs uppercase tracking-widest m-0 pb-1.5 mb-2 border-b border-gold/25">Features &amp; Traits</h4>
                   <div class="flex flex-wrap gap-2 mb-3">
                     <span class="tag">Speed: {{ char.speed }} ft</span>
+                    @if (s.darkvision_ft) { <span class="tag">Darkvision: {{ s.darkvision_ft }} ft</span> }
                     @for (language of char.languages ?? []; track language) {
                       <span class="tag">{{ language }}</span>
                     }
@@ -403,7 +404,7 @@
                           <span class="text-slate">{{ s.unarmed_attack.damage_dice }}{{ fmt(s.unarmed_attack.damage_bonus) }} <span class="text-coal">{{ s.unarmed_attack.damage_type }}</span></span>
                         </div>
                       </div>
-                      @for (w of s.weapon_attacks; track w.itemIndex) {
+                      @for (w of s.weapon_attacks; track w.instanceId ?? w.itemIndex) {
                         <div class="flex items-center justify-between px-3 py-2 rounded border border-white/10 text-sm gap-3">
                           <div class="min-w-0">
                             <span class="text-parchment font-medium">{{ w.name }}</span>
@@ -721,152 +722,7 @@
               </section>
             }
 
-            @if (replicationLimit() > 0) {
-              <section class="rounded-lg border border-gold/25 bg-gold/5 p-3">
-                <div class="flex items-center justify-between gap-3 mb-2">
-                  <div>
-                    <h4 class="font-brand text-gold text-sm m-0">Replicate Magic Item</h4>
-                    <p class="text-xs text-slate mt-0.5 mb-0">{{ activeReplicatedItems().length }} / {{ replicationLimit() }} active</p>
-                  </div>
-                </div>
-                @if (replicateItemError()) { <p class="text-xs text-danger mt-0 mb-2">{{ replicateItemError() }}</p> }
-                @if (activeReplicatedItems().length) {
-                  <div class="flex flex-col gap-1.5 mb-2">
-                    @for (row of activeReplicatedItems(); track row.entry.itemIndex) {
-                      <div class="flex items-center justify-between gap-3 rounded border border-white/10 px-3 py-2">
-                        <div>
-                          <span class="text-sm text-parchment">{{ row.entry.planName }}</span>
-                          @if (row.item?.rarity) { <span class="text-xs text-coal"> · {{ row.item?.rarity }}</span> }
-                        </div>
-                        <div class="flex items-center gap-1.5">
-                          <button class="btn-outline text-xs" [disabled]="replicateItemBusy()"
-                            (click)="updateReplicatedItem('toggle', row.entry.itemIndex)">
-                            {{ row.entry.equipped ? 'Equipped' : 'Equip' }}
-                          </button>
-                          <button class="btn-icon text-danger/70" [disabled]="replicateItemBusy()"
-                            (click)="updateReplicatedItem('dismiss', row.entry.itemIndex)" matTooltip="End this replication">
-                            <mat-icon class="text-lg">close</mat-icon>
-                          </button>
-                        </div>
-                      </div>
-                    }
-                  </div>
-                }
-                <div class="flex flex-wrap gap-1.5">
-                  @for (plan of replicablePlans(); track plan.item.index) {
-                    <button class="btn-outline text-xs" [disabled]="replicateItemBusy() || activeReplicatedItems().length >= replicationLimit() || isReplicatedItemActive(plan.item.index)"
-                      (click)="updateReplicatedItem('create', plan.item.index)">
-                      Replicate {{ plan.option.name }}
-                    </button>
-                  }
-                </div>
-              </section>
-            }
-
-            @if (inventoryItems().length) {
-              <div class="flex items-center gap-2">
-                <mat-icon class="text-base text-slate flex-shrink-0">search</mat-icon>
-                <input class="field-input flex-1 text-sm" placeholder="Search equipment…"
-                  [ngModel]="inventorySearch()" (ngModelChange)="inventorySearch.set($event)" name="inventorySearch" />
-              </div>
-
-              @if (filteredInventoryItems().length) {
-                <div class="flex flex-col gap-1.5">
-                  @for (row of filteredInventoryItems(); track row.entry.itemIndex) {
-                    <div class="rounded border border-white/10 overflow-hidden">
-                      <div class="flex items-center justify-between px-3 py-2 gap-3">
-                        <button type="button"
-                          class="flex flex-col items-start min-w-0 flex-1 text-left border-0 bg-transparent cursor-pointer p-0"
-                          style="font-family: inherit;"
-                          [disabled]="!row.item" data-preview-ok
-                          (click)="toggleItemExpanded(row.entry.itemIndex)"
-                        >
-                          <div class="flex items-center gap-1.5 flex-wrap">
-                            @if (row.item) {
-                              <mat-icon class="detail-chevron text-base text-slate flex-shrink-0"
-                                [class.rotate-90]="expandedItems().has(row.entry.itemIndex)">chevron_right</mat-icon>
-                            }
-                            <span class="text-sm text-parchment">{{ row.item ? itemDisplayName(row.item) : row.entry.name }}</span>
-                            @if (row.entry.quantity > 1) { <span class="text-xs text-coal">×{{ row.entry.quantity }}</span> }
-                            @if (row.item?.requires_attunement && row.entry.equipped && !row.entry.attuned) {
-                              <span class="text-xs text-danger" matTooltip="Equipped but not attuned — its magic isn't active">Not attuned</span>
-                            }
-                          </div>
-                          @if (row.item) {
-                            <p class="text-xs text-slate mt-0.5 mb-0 pl-6">
-                              {{ row.item.category }}
-                              @if (row.item.damage) { · {{ row.item.damage }} {{ row.item.damage_type }} }
-                              @if (row.item.armor_class) { · AC {{ row.item.armor_class }} }
-                            </p>
-                          }
-                        </button>
-                        <div class="flex items-center gap-1.5 flex-shrink-0">
-                          @if (hasPactBlade() && row.item?.type === 'weapon' && row.item?.category?.includes('Melee')) {
-                            <button
-                              class="btn-outline text-xs"
-                              [disabled]="pactWeaponBusy() || char.pact_weapon?.itemIndex === row.entry.itemIndex"
-                              (click)="updatePactWeapon('bond', row.entry.itemIndex)"
-                            >{{ char.pact_weapon?.itemIndex === row.entry.itemIndex ? 'Pact Weapon' : 'Bond' }}</button>
-                          }
-                          @if (row.item?.requires_attunement) {
-                            <button
-                              class="text-xs px-2.5 py-1 rounded border transition-all"
-                              [class]="row.entry.attuned ? 'border-gold/60 bg-gold/10 text-parchment' : 'border-white/15 text-slate hover:border-white/30'"
-                              [disabled]="persisting() || (!row.entry.attuned && attunedCount() >= attunementSlotLimit())"
-                              (click)="toggleAttuned(row.entry)"
-                              [matTooltip]="!row.entry.attuned && attunedCount() >= attunementSlotLimit() ? 'No free attunement slots' : ''"
-                            >{{ row.entry.attuned ? 'Attuned' : 'Attune' }}</button>
-                          }
-                          <button
-                            class="text-xs px-2.5 py-1 rounded border transition-all"
-                            [class]="row.entry.equipped ? 'border-gold/60 bg-gold/10 text-parchment' : 'border-white/15 text-slate hover:border-white/30'"
-                            [disabled]="persisting()"
-                            (click)="toggleEquipped(row.entry)"
-                          >{{ row.entry.equipped ? 'Equipped' : 'Equip' }}</button>
-                          @if (isDm()) {
-                            <button class="btn-icon text-danger/70 hover:text-danger" [disabled]="persisting()"
-                              (click)="revokeItem(row.entry)" matTooltip="Remove from equipment">
-                              <mat-icon class="text-lg">delete</mat-icon>
-                            </button>
-                          }
-                        </div>
-                      </div>
-                      @if (row.item; as item) {
-                        @if (expandedItems().has(row.entry.itemIndex)) {
-                          <div class="px-3 pb-3 pt-2 pl-9 border-t border-white/10 bg-white/[0.02]">
-                            @if (item.description) {
-                              <p class="text-xs text-slate mt-0 mb-2 leading-relaxed whitespace-pre-line">{{ item.description }}</p>
-                            }
-                            <div class="flex flex-wrap gap-x-4 gap-y-1 text-xs text-slate">
-                              @if (item.cost) { <span>Cost: {{ item.cost }}</span> }
-                              @if (item.weight) { <span>Weight: {{ item.weight }} lb.</span> }
-                              @if (item.properties?.length) { <span>Properties: {{ item.properties.join(', ') }}</span> }
-                              @if (item.rarity) { <span>Rarity: {{ item.rarity }}</span> }
-                              @if (item.requires_attunement) { <span>Requires Attunement</span> }
-                              @if (item.charges) { <span>Charges: {{ item.charges.max }} ({{ item.charges.recovery }})</span> }
-                            </div>
-                            @if (item.mastery) {
-                              <p class="text-xs text-slate mt-2 mb-0"><span class="text-parchment">Mastery ({{ item.mastery.property }}):</span> {{ item.mastery.description }}</p>
-                            }
-                            @if (item.actions?.length) {
-                              <div class="mt-2 flex flex-col gap-1">
-                                @for (action of item.actions; track action.key) {
-                                  <p class="text-xs text-slate m-0"><span class="text-parchment">{{ action.name }}:</span> {{ action.description }}</p>
-                                }
-                              </div>
-                            }
-                          </div>
-                        }
-                      }
-                    </div>
-                  }
-                </div>
-              } @else {
-                <p class="text-sm text-slate">No equipment matches "{{ inventorySearch() }}".</p>
-              }
-            } @else {
-              <p class="text-sm text-slate">No equipment yet.</p>
-            }
+            <app-magic-inventory [character]="char" [items]="itemsAll()" [isDm]="isDm()" [canBond]="hasPactBlade()" (bond)="updatePactWeapon('bond', $event.itemIndex, $event.instanceId)" (saved)="inventorySaved($event)" />
 
             @if (showGrantItemDialog()) {
               <div class="fixed inset-0 z-50 bg-black/65 flex items-center justify-center p-4" (click)="closeGrantItemDialog()">
@@ -1093,4 +949,10 @@
       }
     </div>
   </div>
+}
+
+@if (showLongRestDialog()) {
+  @if (localChar(); as restChar) {
+    <app-magic-inventory [character]="restChar" [items]="itemsAll()" [isDm]="isDm()" [restOnly]="true" (saved)="inventorySaved($event)" (closed)="showLongRestDialog.set(false)" />
+  }
 }

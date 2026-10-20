@@ -1,0 +1,24 @@
+{
+  "index": "cap-of-water-breathing",
+  "name": "Cap of Water Breathing",
+  "artificer_plan": {
+    "name": "Cap of Water Breathing",
+    "itemIndex": "cap-of-water-breathing"
+  },
+  "type": "magic",
+  "category": "Wondrous Item",
+  "damage": null,
+  "damage_type": null,
+  "properties": [],
+  "weight": 0,
+  "cost": "Magic item",
+  "rarity": "uncommon",
+  "requires_attunement": false,
+  "source": {
+    "code": "EFA",
+    "book": "Eberron: Forge of the Artificer",
+    "edition": 2024,
+    "rules_text": "reference-only"
+  },
+  "description": "While wearing this cap underwater, you can breathe normally."
+}

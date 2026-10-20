@@ -1,6 +1,10 @@
 {
   "index": "manifold-tool",
   "name": "Manifold Tool",
+  "artificer_plan": {
+    "name": "Manifold Tool",
+    "itemIndex": "manifold-tool"
+  },
   "type": "magic",
   "category": "Wondrous Item",
   "damage": null,
@@ -8,20 +12,21 @@
   "properties": [],
   "weight": 0,
   "cost": "Magic item",
-  "image_url": "/icons/gear-hammer.svg",
-  "description": "A transforming tool that supports artisan work and can grant temporary proficiency with its assumed form.",
   "rarity": "common",
   "requires_attunement": true,
-  "artificer_plan": {
-    "name": "Manifold Tool",
-    "itemIndex": "manifold-tool"
-  },
   "source": {
     "code": "EFA",
     "book": "Eberron: Forge of the Artificer",
     "edition": 2024,
-    "page": 112,
-    "srd_5_2_1": false,
     "rules_text": "reference-only"
-  }
+  },
+  "description": "As a Magic action, transform this tool into another kind of Artisan’s Tools. You are proficient with the tool while holding it.",
+  "actions": [
+    {
+      "key": "activate",
+      "name": "Manifold Tool",
+      "description": "As a Magic action, transform this tool into another kind of Artisan’s Tools. You are proficient with the tool while holding it.",
+      "activation": "action"
+    }
+  ]
 }

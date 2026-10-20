@@ -1,3 +1,4 @@
+import { InventoryService } from './inventory.service';
 import { Module } from '@nestjs/common';
 import { CharactersController } from './characters.controller';
 import { CharactersService } from './characters.service';
@@ -10,6 +11,6 @@ import { CompanionsController } from '../companions/companions.controller';
 @Module({
   imports: [AuthModule, ContentModule, EncountersModule, CompanionsModule],
   controllers: [CharactersController, CompanionsController],
-  providers: [CharactersService],
+  providers: [CharactersService, InventoryService],
 })
 export class CharactersModule {}

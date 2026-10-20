@@ -1,3 +1,4 @@
+import { InventoryService } from './inventory.service';
 import { Optional } from '@nestjs/common';
 import { CompanionsService } from '../companions/companions.service';
 import { withCharacterLock } from '../common/character-lock';
@@ -248,6 +249,7 @@ export class CharactersService {
     private content: ContentService,
     private presence: EncounterPresenceGateway,
     @Optional() private companions?: CompanionsService,
+    @Optional() private inventory?: InventoryService,
   ) {}
 
   // Template characters only — campaign copies (campaign_id set) are DM-editable clones fetched
@@ -258,7 +260,7 @@ export class CharactersService {
       'SELECT * FROM characters WHERE user_id = ? AND campaign_id IS NULL ORDER BY created_at DESC',
       [userId],
     );
-    return result.rows.map((r) => this.deserialize(r));
+    return Promise.all(result.rows.map((r) => this.deserialize(r)));
   }
 
   // Campaign copies only — the per-campaign clones created when a player joins (see
@@ -279,11 +281,13 @@ export class CharactersService {
        ORDER BY ch.updated_at DESC`,
       [userId],
     );
-    return result.rows.map((r) => ({
-      ...this.deserialize(r),
-      campaign_name: r.campaign_name,
-      edit_unlocked: !!r.edit_unlocked,
-    }));
+    return Promise.all(
+      result.rows.map(async (r) => ({
+        ...(await this.deserialize(r)),
+        campaign_name: r.campaign_name,
+        edit_unlocked: !!r.edit_unlocked,
+      })),
+    );
   }
 
   async findOne(id: string, userId: string) {
@@ -433,6 +437,16 @@ export class CharactersService {
   }
 
   async update(id: string, user: RequestUser, body: Record<string, unknown>) {
+    return this.withCharacterLock(id, () =>
+      this.updateUnlocked(id, user, body),
+    );
+  }
+
+  private async updateUnlocked(
+    id: string,
+    user: RequestUser,
+    body: Record<string, unknown>,
+  ) {
     const existing = (await this.findOneReadable(id, user)) as Record<
       string,
       unknown
@@ -470,6 +484,8 @@ export class CharactersService {
     const data = this.normalizeCharacterAvatar(
       this.normalizeCharacterSources(rest, cls),
     );
+    if (this.inventory)
+      Object.assign(data, await this.inventory.decorate(id, {}));
     // Pact weapons are runtime state managed by updatePactWeapon. Preserve the authoritative
     // value instead of accepting one from a broad character PUT.
     if (existing.pact_weapon !== undefined)
@@ -478,8 +494,10 @@ export class CharactersService {
     const pactWeapon = data.pact_weapon as Record<string, unknown> | undefined;
     if (
       pactWeapon?.mode === 'bonded' &&
-      !recordArray(data.equipment).some(
-        (entry) => entry.itemIndex === pactWeapon.itemIndex,
+      !recordArray(data.equipment).some((entry) =>
+        pactWeapon.instanceId
+          ? entry.instanceId === pactWeapon.instanceId
+          : entry.itemIndex === pactWeapon.itemIndex,
       )
     ) {
       delete data.pact_weapon;
@@ -812,6 +830,15 @@ export class CharactersService {
     user: RequestUser,
     body: Record<string, unknown>,
   ) {
+    if (this.inventory) {
+      await this.inventory.grant(
+        id,
+        user,
+        this.requiredString(body.itemIndex, 'itemIndex'),
+        Number(body.quantity ?? 1),
+      );
+      return this.findOneReadable(id, user);
+    }
     return this.withCharacterLock(id, async () => {
       const character = (await this.findOneReadable(id, user)) as Record<
         string,
@@ -857,102 +884,37 @@ export class CharactersService {
     });
   }
 
-  async replicateItem(
+  replicateItem(id: string, user: RequestUser, body: Record<string, unknown>) {
+    void id;
+    void user;
+    void body;
+    return Promise.reject(
+      new ConflictException(
+        'Replication now happens during Long Rest. Refresh the character sheet.',
+      ),
+    );
+  }
+
+  async inventoryOptions(id: string, user: RequestUser) {
+    return this.inventory!.options(id, user);
+  }
+  async inventoryOperation(
+    id: string,
+    instanceId: string,
+    user: RequestUser,
+    body: Record<string, unknown>,
+  ) {
+    await this.inventory!.operate(id, instanceId, user, body);
+    return this.findOneReadable(id, user);
+  }
+  async completeRest(
     id: string,
     user: RequestUser,
     body: Record<string, unknown>,
   ) {
-    return this.withCharacterLock(id, async () => {
-      const character = (await this.findOneReadable(id, user)) as Record<
-        string,
-        unknown
-      >;
-      const data = this.characterData(character);
-      if (!stringArray(data.enabled_sources).includes('EFA')) {
-        throw new BadRequestException(
-          'Eberron content is not enabled for this character.',
-        );
-      }
-      const itemIndex = this.requiredString(body.itemIndex, 'itemIndex');
-      const action = this.requiredString(body.action, 'action');
-      if (!['create', 'dismiss', 'toggle'].includes(action)) {
-        throw new BadRequestException(
-          'action must be create, dismiss, or toggle.',
-        );
-      }
-      const item = await this.content.getItem(itemIndex);
-      const plan = item.artificer_plan as Record<string, unknown> | undefined;
-      const planName = typeof plan?.name === 'string' ? plan.name : '';
-      if (!planName)
-        throw new BadRequestException(
-          'That item is not an Artificer Magic Item Plan.',
-        );
-
-      const classSelections = Array.isArray(data.classes)
-        ? (data.classes as Record<string, unknown>[])
-        : [];
-      const artificerSelection = classSelections.find(
-        (entry) =>
-          typeof entry.name === 'string' &&
-          entry.name.toLowerCase() === 'artificer',
-      );
-      if (!artificerSelection)
-        throw new BadRequestException('This character is not an Artificer.');
-      const classLevel = Number(artificerSelection.level ?? 0);
-      const choices =
-        artificerSelection.choices &&
-        typeof artificerSelection.choices === 'object'
-          ? (artificerSelection.choices as Record<string, unknown>)
-          : {};
-      if (!stringArray(choices.magic_item_plans).includes(planName)) {
-        throw new BadRequestException(
-          `${planName} is not one of this Artificer’s learned plans.`,
-        );
-      }
-
-      const artificer = this.content.getClass('artificer') as {
-        levels?: { level?: number; class_specific?: Record<string, unknown> }[];
-      };
-      const levelData = artificer.levels?.find(
-        (entry) => entry.level === classLevel,
-      );
-      const maximum = Number(levelData?.class_specific?.replicated_items ?? 0);
-      const replicated = Array.isArray(data.replicated_items)
-        ? [...(data.replicated_items as Record<string, unknown>[])]
-        : [];
-      const existingIndex = replicated.findIndex(
-        (entry) => entry.itemIndex === itemIndex,
-      );
-
-      if (action === 'create') {
-        if (existingIndex >= 0)
-          throw new ConflictException(`${planName} is already replicated.`);
-        if (replicated.length >= maximum) {
-          throw new ConflictException(
-            `This Artificer can maintain ${maximum} replicated item${maximum === 1 ? '' : 's'}.`,
-          );
-        }
-        replicated.push({
-          itemIndex,
-          planName,
-          equipped: false,
-          createdAt: new Date().toISOString(),
-        });
-      } else {
-        if (existingIndex < 0)
-          throw new NotFoundException('That replicated item is not active.');
-        if (action === 'dismiss') replicated.splice(existingIndex, 1);
-        else
-          replicated[existingIndex] = {
-            ...replicated[existingIndex],
-            equipped: replicated[existingIndex].equipped !== true,
-          };
-      }
-
-      data.replicated_items = replicated;
-      await this.writeCharacterData(id, data);
-      return this.findOneReadable(id, user);
-    });
+    await this.inventory!.rest(id, user, body);
+    if (!body.correction) await this.companions?.notifyRestCompleted(id);
+    return this.findOneReadable(id, user);
   }
 
   async updatePactWeapon(
@@ -984,7 +946,22 @@ export class CharactersService {
       }
 
       const itemIndex = this.requiredString(body.itemIndex, 'itemIndex');
-      const item = await this.content.getItem(itemIndex);
+      const carried =
+        action === 'bond'
+          ? recordArray(data.equipment).find((entry) =>
+              typeof body.instanceId === 'string'
+                ? entry.instanceId === body.instanceId &&
+                  entry.itemIndex === itemIndex
+                : entry.itemIndex === itemIndex,
+            )
+          : undefined;
+      if (action === 'bond' && !carried)
+        throw new BadRequestException(
+          "The weapon must be in this character's inventory before it can be bonded.",
+        );
+      const item =
+        (carried?.resolvedItem as Record<string, unknown> | undefined) ??
+        (await this.content.getItem(itemIndex));
       const type = typeof item.type === 'string' ? item.type.toLowerCase() : '';
       const category =
         typeof item.category === 'string' ? item.category.toLowerCase() : '';
@@ -1008,6 +985,7 @@ export class CharactersService {
 
       data.pact_weapon = {
         itemIndex,
+        ...(carried?.instanceId ? { instanceId: carried.instanceId } : {}),
         name: typeof item.name === 'string' ? item.name : itemIndex,
         mode: action === 'bond' ? 'bonded' : 'conjured',
         createdAt: new Date().toISOString(),
@@ -1025,6 +1003,10 @@ export class CharactersService {
     user: RequestUser,
     body: Record<string, unknown>,
   ) {
+    if (this.inventory)
+      throw new ConflictException(
+        'Item removal now uses an individual item. Refresh the character sheet.',
+      );
     return this.withCharacterLock(id, async () => {
       const character = (await this.findOneReadable(id, user)) as Record<
         string,
@@ -1321,6 +1303,8 @@ export class CharactersService {
   }
 
   private async writeCharacterData(id: string, data: Record<string, unknown>) {
+    if (this.inventory)
+      Object.assign(data, await this.inventory.decorate(id, {}));
     await this.db.execute(
       'UPDATE characters SET data=?, updated_at=? WHERE id=?',
       [JSON.stringify(data), new Date().toISOString(), id],
@@ -1632,6 +1616,8 @@ export class CharactersService {
         ? body.name.trim()
         : (existing.name as string);
 
+    if (this.inventory)
+      Object.assign(normalized, await this.inventory.decorate(id, {}));
     await this.db.execute(
       `UPDATE characters SET name=?, data=?, updated_at=? WHERE id=?`,
       [name, JSON.stringify(normalized), new Date().toISOString(), id],
@@ -1646,13 +1632,16 @@ export class CharactersService {
     return { deleted: true };
   }
 
-  private deserialize(row: Record<string, unknown>) {
+  private async deserialize(row: Record<string, unknown>) {
     const data = this.normalizeCharacterSources(
       this.db.parseJson<Record<string, unknown>>(row.data as string, {}),
       row.class,
     );
     return {
       ...data,
+      ...(this.inventory
+        ? await this.inventory.decorate(String(row.id), {})
+        : {}),
       id: row.id,
       user_id: row.user_id,
       name: row.name,

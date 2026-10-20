@@ -389,3 +389,10 @@ for (const monster of raw.bestiary.monster.filter((entry) => entry.source === 'E
 }
 
 console.log(`Imported ${races.length} species, ${backgroundRows.length} backgrounds, 28 feats, ${Object.keys(officialItems).length} items, and ${raw.bestiary.monster.length} monsters for EFA.`);
+
+// Restore playable definitions after importing descriptive source records.
+const { writeMagicItemContent } = await import('./lib/magic-item-content.mjs');
+writeMagicItemContent(contentRoot);
+
+const { writeItemRuntimeMetadata } = await import('./lib/item-runtime-metadata.mjs');
+writeItemRuntimeMetadata();

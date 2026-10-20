@@ -30,5 +30,10 @@
         "per": "long_rest"
       }
     }
-  ]
+  ],
+  "charges": {
+    "max": 1,
+    "recovery": "dawn",
+    "restore": "all"
+  }
 }
