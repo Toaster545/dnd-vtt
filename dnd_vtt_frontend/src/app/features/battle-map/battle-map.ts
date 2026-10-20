@@ -272,14 +272,14 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   async clearMyPlan() {
-    const token = this.myToken();
+    const token = this.controlledToken();
     if (!token?.id) return;
     this.myPlan.set(null);
     await this.mapService.setTokenPlan(this.mapId, token.id, null);
   }
 
   private async setMyPlan(x: number, y: number) {
-    const token = this.myToken();
+    const token = this.controlledToken();
     if (!token?.id) return;
     this.myPlan.set({ x, y });
     try {
@@ -297,11 +297,12 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
   // the token whose turn it is.
   private planMarker = computed<PlanMarker | null>(() => {
     if (!this.controlsMap()) {
-      const token = this.myToken();
+      const token = this.controlledToken();
       const plan = this.myPlan();
       return token && plan ? { token, ...plan } : null;
     }
-    const token = this.tokens().find(t => t.id === this.currentTurnTokenId());
+    const selected = this.tokens().find(t => t.id === this.selectedTokenId());
+    const token = selected?.companion_owner_token_id === this.currentTurnTokenId() ? selected : this.tokens().find(t => t.id === this.currentTurnTokenId());
     if (!token || token.planned_x == null || token.planned_y == null) return null;
     return { token, x: token.planned_x, y: token.planned_y };
   });
@@ -347,7 +348,7 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   centerOnPlayerToken() {
-    const token = this.myToken();
+    const token = this.controlledToken();
     if (!token || !this.cellSize) return;
     this.stageView?.centerOn({
       x: (token.x + token.size / 2) * this.cellSize,
@@ -447,25 +448,26 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
 
   showMoveRange = signal(false);
 
+  controlledTokenId = signal<string | null>(null);
+  ownedTokens = computed(() => this.tokens().filter(t => t.character_id === this.myCharacterId() || (!!t.companion_id && t.companion_owner_id === this.myCharacterId())));
+  controlledToken = computed(() => this.ownedTokens().find(t => t.id === this.controlledTokenId()) ?? this.myToken());
   myToken = computed(() => this.tokens().find(t => t.character_id === this.myCharacterId()) ?? null);
   // Just the id, so effects keyed on it don't rerun on every token broadcast.
-  private myTokenId = computed(() => this.myToken()?.id ?? null);
-  private moveRangeFt = computed(() => this.myMoveSpeedFt() ?? 0);
+  private myTokenId = computed(() => this.controlledToken()?.id ?? null);
+  private moveRangeFt = computed(() => this.controlledToken()?.companion_speed ?? this.myMoveSpeedFt() ?? 0);
   // During the player's turn the range is drawn from where the turn began, not from wherever the
   // token has moved since — it shows the whole turn's reach, which doesn't shrink as they move.
   private moveRangeOrigin = computed(() => {
-    const token = this.myToken();
+    const token = this.controlledToken();
     if (!token || token.turn_start_x == null || token.turn_start_y == null) return token;
     return { ...token, x: token.turn_start_x, y: token.turn_start_y };
   });
 
   turnOrder = computed(() => {
-    return [...(this.turnOrderTokens() ?? this.tokens())].sort((a, b) => {
-      if (a.initiative == null && b.initiative == null) return 0;
-      if (a.initiative == null) return 1;
-      if (b.initiative == null) return -1;
-      return b.initiative - a.initiative;
-    });
+    const all = this.turnOrderTokens() ?? this.tokens();
+    const roots = all.filter(t => !t.companion_id).sort((a, b) => (b.initiative ?? -Infinity) - (a.initiative ?? -Infinity));
+    const children = all.filter(t => t.companion_id);
+    return [...roots.flatMap(t => [t, ...children.filter(c => c.companion_owner_token_id === t.id)]), ...children.filter(c => !roots.some(t => t.id === c.companion_owner_token_id))];
   });
 
   // The read-only (player-facing) turn order column: allowed by the host, and not collapsed by
@@ -1044,6 +1046,7 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
       hiddenTokenIds: this.tokensHiddenByDarkness(),
       onTokenClick: token => {
         this.selectedTokenId.set(token.id ?? null);
+        if (this.ownedTokens().some(t => t.id === token.id)) this.controlledTokenId.set(token.id!);
         this.tokenClicked.emit(token);
       },
       onTokenPress: () => {
@@ -1094,15 +1097,16 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
     const layer = this.trailLayer;
     if (!layer || !this.cellSize) return;
     const speedFor = (token: MapToken) =>
-      token.character_id && token.character_id === this.myCharacterId() ? this.myMoveSpeedFt() : null;
+      token.companion_owner_id === this.myCharacterId() ? token.companion_speed ?? null : token.character_id && token.character_id === this.myCharacterId() ? this.myMoveSpeedFt() : null;
     const trails: Trail[] = [];
-    const current = this.tokens().find(t => t.id === this.currentTurnTokenId());
+    const selected = this.tokens().find(t => t.id === this.selectedTokenId());
+    const current = selected?.companion_owner_token_id === this.currentTurnTokenId() ? selected : this.tokens().find(t => t.id === this.currentTurnTokenId());
     // An enemy in the dark leaves no visible trail either.
     if (current && current.id !== dragged?.id && !this.tokensHiddenByDarkness().has(current.id!)) {
       trails.push({ token: current, speedFt: speedFor(current), ...this.moveActions(current) });
     }
     if (dragged && drag) {
-      const onTurn = dragged.id === this.currentTurnTokenId() && dragged.turn_start_x != null;
+      const onTurn = (dragged.id === this.currentTurnTokenId() || (!!dragged.companion_id && dragged.companion_owner_token_id === this.currentTurnTokenId())) && dragged.turn_start_x != null;
       const token = onTurn ? dragged : {
         ...dragged, turn_start_x: dragged.x, turn_start_y: dragged.y,
         turn_anchor_x: dragged.x, turn_anchor_y: dragged.y, turn_moved_ft: 0, turn_diagonals: 0,
@@ -1190,7 +1194,8 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
         size: entity.size,
         hp: entity.hp,
         max_hp: entity.max_hp,
-        is_player: entity.kind === 'character',
+        is_player: entity.kind === 'character' || entity.kind === 'companion',
+        companion_id: entity.companionId,
         character_id: entity.characterId,
         monster_index: entity.monsterIndex,
       });

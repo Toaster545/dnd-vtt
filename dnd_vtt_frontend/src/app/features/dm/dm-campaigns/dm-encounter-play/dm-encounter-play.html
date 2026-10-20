@@ -30,7 +30,10 @@
 
       <div class="flex flex-1 overflow-hidden">
         <aside [style.width.px]="rosterWidth()" class="border-r border-white/10 overflow-y-auto flex-shrink-0 p-4">
-          @if (viewingCustomToken(); as tok) {
+          @if (viewingCompanionToken(); as pet) {
+            <button class="btn-outline mb-3" (click)="viewingCompanionToken.set(null)">Back to roster</button>
+            <app-companion-sheet [characterId]="pet.companion_owner_id!" [selectedId]="pet.companion_id!" />
+          } @else if (viewingCustomToken(); as tok) {
             <app-custom-token-editor
               [token]="tok"
               (back)="closeCustomTokenView()"
@@ -80,6 +83,15 @@
               (addMonster)="addMonsterToEncounter($event)"
               (removeMonster)="removeMonsterFromEncounter($event)"
             />
+            @if (rosterCompanions().length) {
+              <h3 class="text-xs font-semibold text-slate uppercase tracking-wider mt-4 mb-2">Companions</h3>
+              @for (pet of rosterCompanions(); track pet.id) {
+                <button class="btn-outline w-full mb-2 text-left" [class.text-gold]="armedEntity()?.companionId === pet.id" (click)="armCompanion(pet)">
+                  {{ pet.name }} · {{ pet.stats.current_hp }}/{{ pet.stats.max_hp }} HP · AC {{ pet.stats.armor_class }}
+                </button>
+              }
+              <p class="text-xs text-slate">Select a companion, then click the map to place it.</p>
+            }
           }
 
           @if (selectedToken(); as tok) {

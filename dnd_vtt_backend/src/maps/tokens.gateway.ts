@@ -11,6 +11,8 @@ import { Server, Socket } from 'socket.io';
 import { DatabaseService } from '../common/database.service';
 import { SocketAuthService } from '../auth/socket-auth.service';
 import { serializePlayerTokens } from './player-tokens';
+import { Optional } from '@nestjs/common';
+import { CompanionsService } from '../companions/companions.service';
 
 interface Measurement {
   shape: 'line' | 'cone' | 'sphere';
@@ -37,6 +39,7 @@ export class TokensGateway implements OnGatewayInit, OnGatewayDisconnect {
   constructor(
     private db: DatabaseService,
     private socketAuth: SocketAuthService,
+    @Optional() private companions?: CompanionsService,
   ) {}
 
   afterInit(server: Server) {
@@ -59,7 +62,8 @@ export class TokensGateway implements OnGatewayInit, OnGatewayDisconnect {
     void client.leave(`map:${mapId}:player`);
   }
 
-  broadcastTokens(mapId: string, tokens: Record<string, unknown>[]) {
+  async broadcastTokens(mapId: string, tokens: Record<string, unknown>[]) {
+    if (this.companions) tokens = await this.companions.decorateTokens(tokens);
     this.server.to(`map:${mapId}:dm`).emit('tokens_updated', tokens);
     this.server
       .to(`map:${mapId}:player`)

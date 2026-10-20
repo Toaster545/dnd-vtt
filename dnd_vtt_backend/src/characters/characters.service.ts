@@ -1,3 +1,6 @@
+import { Optional } from '@nestjs/common';
+import { CompanionsService } from '../companions/companions.service';
+import { withCharacterLock } from '../common/character-lock';
 import {
   BadRequestException,
   ConflictException,
@@ -240,12 +243,11 @@ const CHARACTER_COLUMN_KEYS = new Set([
 
 @Injectable()
 export class CharactersService {
-  private readonly characterLocks = new Map<string, Promise<void>>();
-
   constructor(
     private db: DatabaseService,
     private content: ContentService,
     private presence: EncounterPresenceGateway,
+    @Optional() private companions?: CompanionsService,
   ) {}
 
   // Template characters only — campaign copies (campaign_id set) are DM-editable clones fetched
@@ -1242,7 +1244,10 @@ export class CharactersService {
         unknown
       >;
       const data = this.characterData(character);
-      const classes = data.classes as { level: number }[];
+      const classes =
+        Array.isArray(data.classes) && data.classes.length
+          ? (data.classes as { level: number }[])
+          : [{ level: Number(character.level ?? 1) }];
 
       let totalHitDice = 0;
 
@@ -1259,7 +1264,7 @@ export class CharactersService {
         const recoveredDice = Math.trunc(totalHitDice / 2);
         data.hit_dice_used = Math.max(
           0,
-          (data.hit_dice_used as number) - recoveredDice,
+          Number(data.hit_dice_used ?? 0) - recoveredDice,
         );
       } else {
         const hitDiceUsed = Number(body.hitDiceUsed ?? 0);
@@ -1280,6 +1285,7 @@ export class CharactersService {
         data.current_hp = Math.min(maxHp, currentHp + healed);
       }
       await this.writeCharacterData(id, data);
+      if (body.type === 'long_rest') await this.companions?.longRest(id);
       return this.findOneReadable(id, user);
     });
   }
@@ -1301,21 +1307,7 @@ export class CharactersService {
     id: string,
     work: () => Promise<T>,
   ): Promise<T> {
-    const previous = this.characterLocks.get(id) ?? Promise.resolve();
-    let release!: () => void;
-    const current = new Promise<void>((resolve) => (release = resolve));
-    this.characterLocks.set(
-      id,
-      previous.then(() => current),
-    );
-    await previous;
-    try {
-      return await work();
-    } finally {
-      release();
-      // Keep the resolved tail as the next caller's predecessor. The map is bounded by the
-      // number of characters touched by this process and avoids a deletion race between waiters.
-    }
+    return withCharacterLock(id, work);
   }
 
   private characterData(
@@ -1389,7 +1381,7 @@ export class CharactersService {
       : {};
   }
 
-  private resolveSlotPools(character: Record<string, unknown>): {
+  resolveSlotPools(character: Record<string, unknown>): {
     key: string;
     name: string;
     type: 'slot' | 'pact' | 'restricted';

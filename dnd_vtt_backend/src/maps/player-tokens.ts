@@ -22,10 +22,20 @@ export function serializePlayerTokens(tokens: Record<string, unknown>[]) {
       size: Number(token.size),
       is_player: !!token.is_player,
       character_id: token.is_player ? token.character_id : undefined,
+      ...(token.companion_id
+        ? {
+            companion_id: token.companion_id,
+            companion_owner_id: token.companion_owner_id,
+            companion_owner_token_id: token.companion_owner_token_id,
+            companion_speed: token.companion_speed,
+          }
+        : {}),
       image_url:
-        token.monster_index && token.name_visible_to_players
-          ? monsterTokenImageUrl(token.monster_index as string)
-          : undefined,
+        token.companion_id && token.name_visible_to_players
+          ? (token.image_url as string | undefined)
+          : token.monster_index && token.name_visible_to_players
+            ? monsterTokenImageUrl(token.monster_index as string)
+            : undefined,
       initiative: token.initiative ?? null,
       turn_start_x: token.turn_start_x ?? null,
       turn_start_y: token.turn_start_y ?? null,

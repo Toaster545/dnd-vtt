@@ -1,3 +1,5 @@
+import { Optional } from '@nestjs/common';
+import { CompanionsService } from '../companions/companions.service';
 import {
   Injectable,
   NotFoundException,
@@ -38,6 +40,7 @@ export class EncountersService {
     private db: DatabaseService,
     private presence: EncounterPresenceGateway,
     private tokensGateway: TokensGateway,
+    @Optional() private companions?: CompanionsService,
   ) {}
 
   async findAllForUser(dmId: string) {
@@ -496,6 +499,9 @@ export class EncountersService {
        current_turn_token_id=NULL, round_number=1, updated_at=? WHERE id=?`,
       [new Date().toISOString(), id],
     );
+    await this.db.execute('DELETE FROM companion_turns WHERE encounter_id=?', [
+      id,
+    ]);
     const updated = await this.findOne(id, dmId);
 
     if (updated.session_id) {
@@ -578,7 +584,7 @@ export class EncountersService {
     );
     const levels = await this.playerLevels(encounterId);
     const seen = new Set<string>();
-    return result.rows
+    const rows = result.rows
       .filter((t) => {
         const characterId = t.character_id as string | null;
         if (!characterId) return true;
@@ -591,10 +597,13 @@ export class EncountersService {
         ...(t as Record<string, unknown>),
         is_player: !!t.is_player,
       })) as (Record<string, unknown> & { is_player: boolean })[];
+    return this.companions ? this.companions.decorateTokens(rows) : rows;
   }
 
   private async getTurnOrderIds(encounterId: string): Promise<string[]> {
-    return (await this.turnOrderTokens(encounterId)).map((t) => t.id as string);
+    return (await this.turnOrderTokens(encounterId))
+      .filter((t) => !t.companion_id)
+      .map((t) => t.id as string);
   }
 
   async nextTurn(id: string, dmId: string) {
@@ -658,9 +667,9 @@ export class EncountersService {
       // The token whose turn just ended is done with the destination it asked for.
       {
         sql: `UPDATE map_tokens SET planned_x = NULL, planned_y = NULL
-              WHERE id = (SELECT current_turn_token_id FROM encounters WHERE id = ?)
+              WHERE (id = (SELECT current_turn_token_id FROM encounters WHERE id = ?) OR companion_id IN (SELECT id FROM companions WHERE character_id=(SELECT t.character_id FROM map_tokens t JOIN encounters e ON e.current_turn_token_id=t.id WHERE e.id=?)))
                 AND id IS NOT ?`,
-        args: [id, tokenId],
+        args: [id, id, tokenId],
       },
       {
         sql: `UPDATE encounters SET current_turn_token_id=?, round_number=?, updated_at=? WHERE id=?`,
@@ -671,15 +680,34 @@ export class EncountersService {
       // nothing traveled yet (see MapsService.confirmTokenMove).
       {
         sql: `UPDATE map_tokens SET
-                turn_start_x = CASE WHEN id = ? THEN x END,
-                turn_start_y = CASE WHEN id = ? THEN y END,
-                turn_anchor_x = CASE WHEN id = ? THEN x END,
-                turn_anchor_y = CASE WHEN id = ? THEN y END,
+                turn_start_x = CASE WHEN (id = ? OR companion_id IN (SELECT id FROM companions WHERE character_id=(SELECT character_id FROM map_tokens WHERE id=?))) THEN x END,
+                turn_start_y = CASE WHEN (id = ? OR companion_id IN (SELECT id FROM companions WHERE character_id=(SELECT character_id FROM map_tokens WHERE id=?))) THEN y END,
+                turn_anchor_x = CASE WHEN (id = ? OR companion_id IN (SELECT id FROM companions WHERE character_id=(SELECT character_id FROM map_tokens WHERE id=?))) THEN x END,
+                turn_anchor_y = CASE WHEN (id = ? OR companion_id IN (SELECT id FROM companions WHERE character_id=(SELECT character_id FROM map_tokens WHERE id=?))) THEN y END,
                 turn_moved_ft = 0, turn_diagonals = 0
               WHERE map_id IN (SELECT map_id FROM encounter_levels WHERE encounter_id = ?)`,
-        args: [tokenId, tokenId, tokenId, tokenId, id],
+        args: [
+          tokenId,
+          tokenId,
+          tokenId,
+          tokenId,
+          tokenId,
+          tokenId,
+          tokenId,
+          tokenId,
+          id,
+        ],
       },
     ]);
+    await this.db.execute(
+      `DELETE FROM companion_turns WHERE encounter_id=? AND companion_id IN
+      (SELECT id FROM companions WHERE character_id=(SELECT character_id FROM map_tokens WHERE id=?))`,
+      [id, tokenId],
+    );
+    await this.db.execute(
+      "UPDATE companion_turns SET data=json_remove(data,'$.joltUsed') WHERE encounter_id=?",
+      [id],
+    );
     const updated = await this.findOne(id, dmId);
     // Every level's tokens carry the reset turn_start/turn_moved_ft — push them out so each map
     // drops the previous token's trail and draws the new one's starting point.
@@ -688,7 +716,7 @@ export class EncountersService {
         'SELECT * FROM map_tokens WHERE map_id = ?',
         [level.map_id],
       );
-      this.tokensGateway.broadcastTokens(
+      await this.tokensGateway.broadcastTokens(
         level.map_id,
         tokens.rows.map((r) => ({ ...r, is_player: !!r.is_player })),
       );
