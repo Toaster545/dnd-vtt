@@ -73,6 +73,11 @@ export class InventoryService {
       ...row,
     };
   }
+  // A campaign's DM manages its characters' inventories; a character outside any campaign
+  // has no DM, so its owner manages it directly.
+  private canManage(char: CharacterRecord, user: RequestUser) {
+    return char.campaign_id ? char.dm_id === user.id : char.user_id === user.id;
+  }
   private data(char: CharacterRecord): Record<string, any> {
     return this.db.parseJson<Record<string, any>>(char.data as string, {});
   }
@@ -557,7 +562,7 @@ export class InventoryService {
             break;
           }
           case 'remove':
-            if (char.dm_id !== user.id)
+            if (!this.canManage(char, user))
               throw new ForbiddenException(
                 'Only the campaign DM can remove inventory.',
               );
@@ -577,7 +582,7 @@ export class InventoryService {
     quantity: number,
   ) {
     const char = await this.character(id, user);
-    if (!char.campaign_id || char.dm_id !== user.id)
+    if (!this.canManage(char, user))
       throw new ForbiddenException('Only the campaign DM can give items.');
     const item = await this.definition(itemIndex);
     if (item.variant)

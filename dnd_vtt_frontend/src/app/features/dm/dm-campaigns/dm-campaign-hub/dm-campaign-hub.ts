@@ -301,10 +301,6 @@ export class DmCampaignHubComponent implements OnInit {
     await this.load();
   }
 
-  onCharacterCancelled() {
-    this.showWizard.set(false);
-  }
-
   async onViewCharacterSheet(id: string) {
     this.showWizard.set(false);
     this.sheetFromWizard.set(true);

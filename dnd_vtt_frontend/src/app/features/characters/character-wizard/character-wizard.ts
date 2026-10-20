@@ -681,6 +681,8 @@ export class CharacterWizardComponent implements OnInit, OnDestroy {
 
   private initialized = false;
   private saveTimer: ReturnType<typeof setTimeout> | null = null;
+  private saveInFlight: Promise<void> | null = null;
+  private saveQueued = false;
   private statusTimer: ReturnType<typeof setTimeout> | null = null;
 
   constructor() {
@@ -732,6 +734,7 @@ export class CharacterWizardComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
+    if (this.saveTimer && !this.levelUp()) void this.save().catch(() => undefined);
     if (this.saveTimer)  clearTimeout(this.saveTimer);
     if (this.statusTimer) clearTimeout(this.statusTimer);
   }
@@ -1050,8 +1053,25 @@ export class CharacterWizardComponent implements OnInit, OnDestroy {
     return choices;
   }
 
-  async save() {
-    if (this.saving()) return;
+  // A save requested while another is in flight is queued and re-run with the latest draft once
+  // the first lands — dropping it would lose the edit (slow connections make the overlap likely).
+  save(): Promise<void> {
+    if (this.saveInFlight) {
+      if (!this.levelUp()) this.saveQueued = true;
+      return this.saveInFlight;
+    }
+    this.saveInFlight = this.runSaves().finally(() => { this.saveInFlight = null; });
+    return this.saveInFlight;
+  }
+
+  private async runSaves() {
+    do {
+      this.saveQueued = false;
+      await this.saveOnce();
+    } while (this.saveQueued);
+  }
+
+  private async saveOnce() {
     if (this.saveTimer) { clearTimeout(this.saveTimer); this.saveTimer = null; }
     this.saving.set(true);
     this.saveError.set('');
