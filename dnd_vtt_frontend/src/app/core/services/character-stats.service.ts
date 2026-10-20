@@ -82,6 +82,13 @@ function weaponAbilityMod(weapon: DndItem, mods: Record<Ability, number>): numbe
   return weapon.category.includes('Ranged') ? mods.dexterity : mods.strength;
 }
 
+function isMagicWeapon(weapon: DndItem): boolean {
+  // Use catalog metadata, not names or descriptions. Magic weapons need not have a +N.
+  // Attunement gates an item's bonuses below, not its identity as a magic weapon.
+  return !!weapon.enhancement_bonus || !!weapon.requires_attunement
+    || ['common', 'uncommon', 'rare', 'very rare', 'legendary', 'artifact'].includes(weapon.rarity?.toLowerCase() ?? '');
+}
+
 function weaponDistance(weapon: DndItem): string {
   const isMelee = weapon.category.includes('Melee');
   const rangeProperty = weapon.properties.find(property => /(?:Ammunition|Thrown).*?\d+\s*\/\s*\d+/i.test(property));
@@ -235,11 +242,19 @@ export class CharacterStatsService {
       attackWeapons.push(pactWeapon);
     }
 
+    const weaponAbilityOptions = activeEffects(
+      allEffects.filter(effect => effect.type === 'weapon_ability_option' && effect.ability), equipment, items,
+    );
     const weapon_attacks: WeaponAttack[] = attackWeapons
       .filter(it => it.type === 'weapon')
       .map(weapon => {
         const isPactWeapon = weapon.index === pactWeaponIndex;
-        const abilityMod = isPactWeapon ? mods.charisma : weaponAbilityMod(weapon, mods);
+        const baseAbilityMod = isPactWeapon ? mods.charisma : weaponAbilityMod(weapon, mods);
+        // These features offer a choice; use the best eligible modifier, as with Finesse.
+        // Apply it once to both rolls, without altering proficiency or item enhancement.
+        const abilityMod = Math.max(baseAbilityMod, ...weaponAbilityOptions
+          .filter(effect => !effect.weaponFilter || (effect.weaponFilter === 'magic' && (isPactWeapon || isMagicWeapon(weapon))))
+          .map(effect => mods[effect.ability!]));
         const proficient = isPactWeapon || isProficientWithWeapon(weapon, classesForFeats, feats, raceForFeats);
         const isRanged = weapon.category.includes('Ranged');
         const isThrown = weapon.properties.some(p => p.startsWith('Thrown'));

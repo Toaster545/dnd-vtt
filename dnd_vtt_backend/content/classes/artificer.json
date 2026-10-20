@@ -1849,7 +1849,10 @@
             {
               "type": "feature",
               "name": "Battle Ready",
-              "description": "Use Intelligence instead of Strength or Dexterity for attack and damage rolls with magic weapons. Any weapon with which you are proficient can serve as your Artificer spellcasting focus."
+              "description": "Use Intelligence instead of Strength or Dexterity for attack and damage rolls with magic weapons. Any weapon with which you are proficient can serve as your Artificer spellcasting focus.",
+              "effects": [
+                { "type": "weapon_ability_option", "ability": "intelligence", "weaponFilter": "magic" }
+              ]
             },
             {
               "type": "feature",
