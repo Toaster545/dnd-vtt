@@ -222,6 +222,14 @@
           <span class="flex items-center justify-center w-5 h-5 rounded-full text-xs bg-white/10">5</span>Companions
         </button>
       }
+      @if (showNotesTab()) {
+        <button class="flex items-center gap-2 px-5 py-3.5 text-sm font-medium whitespace-nowrap border-b-2 border-0 cursor-pointer"
+          [class]="activeTab() === 'notes' ? 'border-gold text-gold' : 'border-transparent text-slate hover:text-parchment'"
+          (click)="goToTab('notes')" style="background: transparent; font-family: inherit;">
+          <span class="flex items-center justify-center w-5 h-5 rounded-full text-xs font-bold leading-none flex-shrink-0"
+            [class]="activeTab() === 'notes' ? 'bg-gold text-on-accent' : 'bg-white/10 text-slate'">{{ tabOrder().length }}</span>Notes
+        </button>
+      }
     </div>
 
     <!-- Phone-only stand-in for the tab bar (hidden above it via CSS): the full bar is
@@ -949,6 +957,12 @@
                 </div>
               </section>
             </div>
+          }
+        }
+
+        @case ('notes') {
+          @if (showNotesTab()) {
+            <app-character-notes [characterId]="char.id!" />
           }
         }
 

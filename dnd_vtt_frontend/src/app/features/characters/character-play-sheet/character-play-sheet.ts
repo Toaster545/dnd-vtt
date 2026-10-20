@@ -40,6 +40,7 @@ import { SwipeTabsDirective } from '../../../shared/directives/swipe-tabs.direct
 import { levelUpPending } from '../../../core/utils/level-up';
 import { StatblockSpellGroup, characterStatblock } from '../../../core/utils/statblock-export';
 import { StatblockExportMenuComponent } from '../../../shared/components/statblock-export-menu/statblock-export-menu';
+import { CharacterNotesComponent } from '../character-notes/character-notes';
 import { UiScaleService } from '../../../core/services/ui-scale.service';
 import { CharacterPortraitComponent, tokenPortraitSize } from '../../../shared/components/character-portrait/character-portrait';
 import { Router } from '@angular/router';
@@ -114,17 +115,17 @@ interface SpellFilters {
 
 interface DescriptionSegment { text: string; bold: boolean }
 
-type Tab = 'stats' | 'actions' | 'inventory' | 'spells' | 'companions';
-const TAB_ORDER: Tab[] = ['stats', 'actions', 'inventory', 'spells', 'companions'];
+type Tab = 'stats' | 'actions' | 'inventory' | 'spells' | 'companions' | 'notes';
+const TAB_ORDER: Tab[] = ['stats', 'actions', 'inventory', 'spells', 'companions', 'notes'];
 const TAB_LABELS: Record<Tab, string> = {
-  stats: 'Stats', actions: 'Actions', inventory: 'Equipment', spells: 'Spells', companions: 'Companions',
+  stats: 'Stats', actions: 'Actions', inventory: 'Equipment', spells: 'Spells', companions: 'Companions', notes: 'Notes',
 };
 
 @Component({
   selector: 'app-character-play-sheet',
   imports: [MagicInventoryComponent,
     FormsModule, MatIconModule, MatTooltipModule, NgTemplateOutlet, ItemFormComponent, SwipeTabsDirective,
-    StatblockExportMenuComponent, CharacterPortraitComponent, CompanionSheetComponent,
+    StatblockExportMenuComponent, CharacterPortraitComponent, CompanionSheetComponent, CharacterNotesComponent,
   ],
   templateUrl: './character-play-sheet.html',
   styleUrl: './character-play-sheet.scss',
@@ -172,7 +173,8 @@ export class CharacterPlaySheetComponent {
   readonly skillAbility  = SKILLS;
 
   activeTab   = signal<Tab>('stats');
-  readonly tabOrder = computed(() => TAB_ORDER.filter(tab => tab !== 'companions' || this.hasCompanions()));
+  readonly tabOrder = computed(() => TAB_ORDER.filter(tab =>
+    (tab !== 'companions' || this.hasCompanions()) && (tab !== 'notes' || this.showNotesTab())));
   readonly tabLabels = TAB_LABELS;
   private readonly bodyRef = viewChild<ElementRef<HTMLElement>>('sheetBody');
 
@@ -370,6 +372,11 @@ export class CharacterPlaySheetComponent {
     const stats = this.stats();
     return !!char?.campaign_id && !!stats && levelUpPending(char, stats.suggested_max_hp);
   });
+
+  // The owner's own campaign copy only; the DM never sees a player's private notes.
+  showNotesTab = computed(
+    () => !this.isDm() && !this.preview() && !!this.localChar()?.campaign_id && !!this.localChar()?.id,
+  );
 
   goToLevelUp() {
     const id = this.localChar()?.id;
