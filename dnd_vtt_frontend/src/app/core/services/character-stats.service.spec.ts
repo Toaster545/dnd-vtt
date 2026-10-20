@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { Character, defaultCharacter } from '../models/character.model';
 import { DndBackground, DndClass, DndFeat, DndItem } from './content.service';
 import { CharacterStatsService } from './character-stats.service';
+import artificerContent from '../../../../../dnd_vtt_backend/content/classes/artificer.json';
 
 const bard = {
   name: 'Bard',
@@ -128,6 +129,63 @@ const cleric = {
 } as unknown as DndClass;
 
 describe('CharacterStatsService', () => {
+  describe('Battle Ready', () => {
+    const artificer = artificerContent as unknown as DndClass;
+    const crossbow: DndItem = {
+      index: 'light-crossbow', name: 'Light Crossbow', type: 'weapon', category: 'Simple Ranged',
+      damage: '1d8', damage_type: 'piercing', properties: ['Ammunition (80/320)', 'Loading', 'Two-Handed'],
+      weight: 5, cost: '25 GP', description: '',
+    };
+    const dagger: DndItem = {
+      ...crossbow, index: 'dagger', name: 'Dagger', category: 'Simple Melee', damage: '1d4', properties: ['Finesse', 'Light', 'Thrown (20/60)'],
+    };
+    const magicCrossbow: DndItem = { ...crossbow, index: 'magic-crossbow', enhancement_bonus: 1 };
+    const magicDagger: DndItem = { ...dagger, index: 'magic-dagger', enhancement_bonus: 1 };
+    const build = (weapons: DndItem[], classLevel = 3, subclass = 'Battle Smith', scores = {}, totalLevel = classLevel) => {
+      const character: Character = {
+        ...defaultCharacter(), name: 'Battle Ready Test', class: 'Artificer', subclass, level: totalLevel,
+        ability_scores: { strength: 6, dexterity: 16, constitution: 14, intelligence: 18, wisdom: 12, charisma: 10, ...scores },
+        equipment: weapons.map(w => ({ itemIndex: w.index, name: w.name, quantity: 1, equipped: true })),
+      };
+      return new CharacterStatsService().compute(character, artificer, null, [], [
+        { data: artificer, choices: {}, level: classLevel, subclass },
+      ], weapons);
+    };
+
+    it('uses the actual subclass grant for magic ranged and finesse weapon attack and damage', () => {
+      const stats = build([crossbow, magicCrossbow, dagger, magicDagger]);
+      expect(stats.weapon_attacks.map(w => [w.itemIndex, w.attack_bonus, w.damage_dice, w.damage_bonus])).toEqual([
+        ['light-crossbow', 5, '1d8', 3], ['magic-crossbow', 7, '1d8', 5],
+        ['dagger', 5, '1d4', 3], ['magic-dagger', 7, '1d4', 5],
+      ]);
+      expect(stats.unarmed_attack.attack_bonus).toBe(0);
+    });
+
+    it('recognizes a magic weapon without an enhancement bonus and does not infer magic from its name', () => {
+      const stats = build([
+        { ...dagger, index: 'magic-no-bonus', rarity: 'uncommon' },
+        { ...dagger, index: 'named-only', name: 'Magic Dagger +1' },
+      ]);
+      expect(stats.weapon_attacks.map(w => [w.attack_bonus, w.damage_bonus])).toEqual([[6, 4], [5, 3]]);
+    });
+
+    it('retains a better ordinary ability because Intelligence is optional', () => {
+      const stats = build([magicDagger], 3, 'Battle Smith', { dexterity: 20 });
+      expect(stats.weapon_attacks[0]).toMatchObject({ attack_bonus: 8, damage_bonus: 6 });
+    });
+
+    it('requires Battle Smith level 3, independently of total character level', () => {
+      expect(build([magicCrossbow], 2, 'Battle Smith', {}, 5).weapon_attacks[0].attack_bonus).toBe(7);
+      expect(build([magicCrossbow], 3, 'Alchemist').weapon_attacks[0].attack_bonus).toBe(6);
+      expect(build([magicCrossbow], 3, 'Battle Smith', {}, 5).weapon_attacks[0].attack_bonus).toBe(8);
+    });
+
+    it('does not bypass attunement for the weapon’s enhancement bonus', () => {
+      const stats = build([{ ...magicCrossbow, requires_attunement: true }]);
+      expect(stats.weapon_attacks[0]).toMatchObject({ attack_bonus: 6, damage_bonus: 4 });
+    });
+  });
+
   it('adds proficiency to initiative when Alert is granted by the background', () => {
     const alert: DndFeat = {
       index: 'alert',

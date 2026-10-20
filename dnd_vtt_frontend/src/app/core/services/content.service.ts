@@ -49,6 +49,9 @@ export interface TraitEffect {
   ability?: 'strength' | 'dexterity' | 'constitution' | 'intelligence' | 'wisdom' | 'charisma';
   minimum?: number;
   condition?: EffectCondition;
+  // For weapon_ability_option: offer another ability for both attack and damage.
+  // Omitting the filter permits every weapon; conditions still gate the feature itself.
+  weaponFilter?: 'magic';
 }
 
 export type EffectCondition =
