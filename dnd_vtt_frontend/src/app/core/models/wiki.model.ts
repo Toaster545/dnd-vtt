@@ -7,6 +7,10 @@ export interface WikiPageSummary {
   /** '' = wiki root, otherwise a '/'-joined path like 'Lore/NPCs'. */
   folder: string;
   visibility: WikiVisibility;
+  /** Set on a page only its owner can see (a character's notes); not even the DM can read it. */
+  owner_id?: string | null;
+  /** The character this page is the private notebook for. */
+  character_id?: string | null;
   updated_at: string;
   updated_by_name?: string | null;
 }
