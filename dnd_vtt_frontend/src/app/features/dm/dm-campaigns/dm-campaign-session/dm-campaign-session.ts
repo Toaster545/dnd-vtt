@@ -174,10 +174,6 @@ export class DmCampaignSessionComponent implements OnInit {
     await this.refreshMembers();
   }
 
-  onCharacterCancelled() {
-    this.showWizard.set(false);
-  }
-
   // Quick view/edit of HP, rest, equipment, and spell prep — same as
   // DmCampaignHubComponent.viewMember.
   async viewMember(member: CampaignMember) {

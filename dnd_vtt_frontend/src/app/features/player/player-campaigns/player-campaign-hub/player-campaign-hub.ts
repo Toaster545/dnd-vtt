@@ -148,10 +148,6 @@ export class PlayerCampaignHubComponent implements OnInit {
     void this.loadMyCharacter();
   }
 
-  onCharacterCancelled() {
-    this.showWizard.set(false);
-  }
-
   async onViewCharacterSheet(id: string) {
     this.showWizard.set(false);
     this.sheetFromWizard.set(true);
