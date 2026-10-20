@@ -28,4 +28,30 @@ describe('serializePlayerTokens', () => {
     expect(token.label).toBe('Unknown');
     expect(token.image_url).toBeUndefined();
   });
+
+  it('identifies a companion and shares its portrait without exposing monster combat fields', () => {
+    const companion = {
+      ...goblin,
+      monster_index: null,
+      companion_id: 'pet',
+      companion_owner_id: 'hero',
+      image_url: '/uploads/portraits/player/portrait.webp',
+      hp: 20,
+    };
+    const [token] = serializePlayerTokens([companion]);
+    expect(token).toMatchObject({
+      companion_id: 'pet',
+      companion_owner_id: 'hero',
+      image_url: companion.image_url,
+    });
+    expect(token).not.toHaveProperty('hp');
+    expect(
+      serializePlayerTokens([
+        { ...companion, name_visible_to_players: false },
+      ])[0].image_url,
+    ).toBeUndefined();
+    expect(
+      serializePlayerTokens([{ ...companion, visible_to_players: false }]),
+    ).toEqual([]);
+  });
 });

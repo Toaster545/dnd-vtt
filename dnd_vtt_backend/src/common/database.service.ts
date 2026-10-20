@@ -89,9 +89,29 @@ export class DatabaseService implements OnModuleInit {
     if (version < 31) await this.applyV31();
     if (version < 32) await this.applyV32();
     if (version < 33) await this.applyV33();
+    if (version < 34) await this.applyV34();
   }
 
   // ── V1: initial schema (explicit columns on characters) ─────────────────────
+  private async applyV34() {
+    await this.db.execute(`CREATE TABLE companions (
+      id TEXT PRIMARY KEY, character_id TEXT NOT NULL REFERENCES characters(id) ON DELETE CASCADE,
+      kind TEXT NOT NULL, data TEXT NOT NULL,
+      created_at TEXT NOT NULL DEFAULT (datetime('now')), updated_at TEXT NOT NULL DEFAULT (datetime('now')),
+      UNIQUE(character_id,kind))`);
+    await this.db.execute(
+      `ALTER TABLE map_tokens ADD COLUMN companion_id TEXT REFERENCES companions(id) ON DELETE CASCADE`,
+    );
+    await this.db.execute(
+      `CREATE INDEX map_tokens_companion ON map_tokens(companion_id)`,
+    );
+    await this.db.execute(`CREATE TABLE companion_turns (
+      encounter_id TEXT NOT NULL REFERENCES encounters(id) ON DELETE CASCADE,
+      companion_id TEXT NOT NULL REFERENCES companions(id) ON DELETE CASCADE,
+      data TEXT NOT NULL DEFAULT '{}', PRIMARY KEY(encounter_id,companion_id))`);
+    await this.db.execute(`PRAGMA user_version = 34`);
+  }
+
   private async applyV1() {
     await this.db.execute(`
       CREATE TABLE IF NOT EXISTS profiles (

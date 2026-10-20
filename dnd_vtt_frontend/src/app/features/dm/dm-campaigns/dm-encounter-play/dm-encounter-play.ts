@@ -1,4 +1,7 @@
-import { Component, inject, signal, computed, OnInit, OnDestroy } from '@angular/core';
+import { CompanionService } from '../../../../core/services/companion.service';
+import { Companion } from '../../../../core/models/companion.model';
+import { CompanionSheetComponent } from '../../../../shared/components/companion-sheet/companion-sheet';
+import { Component, inject, signal, computed, effect, OnInit, OnDestroy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
@@ -34,12 +37,13 @@ import { CharacterTokenDetailComponent } from './components/character-token-deta
   imports: [
     FormsModule, MatIconModule, MatTooltipModule, BattleMapComponent, CharacterPlaySheetComponent, ResizeHandleDirective,
     EncounterToolbarComponent, RosterPanelComponent, CustomTokenEditorComponent, MonsterTokenDetailComponent,
-    CharacterTokenDetailComponent,
+    CharacterTokenDetailComponent, CompanionSheetComponent,
   ],
   templateUrl: './dm-encounter-play.html',
   host: { class: 'flex flex-col flex-1 min-h-0 overflow-hidden' },
 })
 export class DmEncounterPlayComponent implements OnInit, OnDestroy {
+  private companionService = inject(CompanionService);
   private route             = inject(ActivatedRoute);
   private router            = inject(Router);
   private encounterService = inject(EncounterService);
@@ -93,7 +97,7 @@ export class DmEncounterPlayComponent implements OnInit, OnDestroy {
 
   // Whichever token's detail panel is open — the one "Move to level" acts on.
   selectedToken = computed(() =>
-    this.viewingCustomToken() ?? this.viewingMonsterToken()?.token ?? this.viewingCharacterSummary()?.token ?? null
+    this.viewingCompanionToken() ?? this.viewingCustomToken() ?? this.viewingMonsterToken()?.token ?? this.viewingCharacterSummary()?.token ?? null
   );
 
   presentPlayers = signal<PresentPlayer[]>([]);
@@ -202,6 +206,22 @@ export class DmEncounterPlayComponent implements OnInit, OnDestroy {
       .map(id => this.characterFor(id))
       .filter((c): c is Character => !!c);
   });
+
+  viewingCompanionToken = signal<MapToken | null>(null);
+  companionsByOwner = signal<Record<string, Companion[]>>({});
+  rosterCompanions = computed(() => Object.values(this.companionsByOwner()).flat().filter(c => c.status !== 'dismissed' && c.stats.eligible));
+  constructor() {
+    effect(cleanup => {
+      const ids = [...new Set([...this.partyPlayers().map(p => p.characterId), ...this.rosterCharacters().map(c => c.id!)])];
+      this.companionsByOwner.update(rows => Object.fromEntries(Object.entries(rows).filter(([id]) => ids.includes(id))));
+      const subscriptions = ids.map(id => this.companionService.watch(id).subscribe(data => this.companionsByOwner.update(rows => ({ ...rows, [id]: data.companions }))));
+      cleanup(() => subscriptions.forEach(s => s.unsubscribe()));
+    });
+  }
+  armCompanion(c: Companion) {
+    const current = this.armedEntity();
+    this.armedEntity.set(current?.companionId === c.id ? null : { kind: 'companion', companionId: c.id, label: c.name, color: '#78ad95', size: 1 });
+  }
 
   async ngOnInit() {
     const [encounter, monsters, characters, campaign, sources] = await Promise.all([
@@ -375,6 +395,7 @@ export class DmEncounterPlayComponent implements OnInit, OnDestroy {
 
   private closeTokenPanels() {
     this.playerLevelError.set(null);
+    this.viewingCompanionToken.set(null);
     this.viewingCustomToken.set(null);
     this.viewingMonsterToken.set(null);
     this.viewingCharacterSummary.set(null);
@@ -528,6 +549,7 @@ export class DmEncounterPlayComponent implements OnInit, OnDestroy {
     // panel left open from the previous click would hide this one.
     this.closeTokenPanels();
     const seq = ++this.tokenClickSeq;
+    if (token.companion_id) { this.viewingCompanionToken.set(token); return; }
     if (token.character_id) {
       // A player's campaign copy isn't among the DM's own characters, and is only preloaded while
       // that player is connected — fetch it on demand so their token always opens its panel.

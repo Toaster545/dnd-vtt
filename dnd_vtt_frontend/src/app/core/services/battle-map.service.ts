@@ -118,11 +118,16 @@ export class BattleMapService {
         this.getTokens(mapId).then(tokens => observer.next(tokens));
       });
       socket.on('tokens_updated', handleUpdate);
+      const refreshCompanions = () => { this.getTokens(mapId).then(handleUpdate).catch(() => { /* Retry on the next update or reconnect. */ }); };
+      socket.on('companions_updated', refreshCompanions);
+      socket.on('character_updated', refreshCompanions);
 
       return () => {
         socket.emit('leave_map', mapId);
         socket.off('connect', rejoin);
         socket.off('tokens_updated', handleUpdate);
+        socket.off('companions_updated', refreshCompanions);
+        socket.off('character_updated', refreshCompanions);
       };
     });
   }

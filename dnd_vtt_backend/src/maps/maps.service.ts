@@ -13,6 +13,7 @@ import { TokensGateway } from './tokens.gateway';
 import type { RequestUser } from '../common/current-user.decorator';
 import { serializePlayerTokens } from './player-tokens';
 import { moveCost } from './movement';
+import { CompanionsService } from '../companions/companions.service';
 
 // A light-blocking wall segment, in fractional grid units (see applyV26).
 export interface MapWall {
@@ -31,6 +32,7 @@ export class MapsService {
     private db: DatabaseService,
     private gateway: TokensGateway,
     private content: ContentService,
+    private companions: CompanionsService,
   ) {}
 
   async findAll(campaignId: string, user: RequestUser) {
@@ -114,7 +116,9 @@ export class MapsService {
       'SELECT * FROM map_tokens WHERE map_id = ?',
       [mapId],
     );
-    return result.rows.map((r) => ({ ...r, is_player: !!r.is_player }));
+    return this.companions.decorateTokens(
+      result.rows.map((r) => ({ ...r, is_player: !!r.is_player })),
+    );
   }
 
   async getTokens(mapId: string, user: RequestUser) {
@@ -129,8 +133,56 @@ export class MapsService {
     user: RequestUser,
   ) {
     const map = await this.assertMapAccess(mapId, user);
-    const isNew = !token.id;
-    const id = (token.id as string) || randomUUID();
+    let isNew = !token.id;
+    let id = (token.id as string) || randomUUID();
+    if (token.id) {
+      const prior = await this.db.execute(
+        'SELECT companion_id FROM map_tokens WHERE id=? AND map_id=?',
+        [id, mapId],
+      );
+      if (!prior.rows[0]) throw new NotFoundException('Token not found');
+      if (prior.rows[0].companion_id)
+        token.companion_id = prior.rows[0].companion_id;
+    }
+    if (token.companion_id) {
+      const rows = await this.db.execute(
+        'SELECT character_id,data FROM companions WHERE id=?',
+        [token.companion_id],
+      );
+      const companion = rows.rows[0];
+      if (!companion) throw new NotFoundException('Companion not found');
+      const owner = await this.companions.owner(
+        companion.character_id as string,
+        user,
+      );
+      if (owner.campaign_id !== map.campaign_id)
+        throw new ForbiddenException('Companion belongs to another campaign');
+      const existing = await this.db.execute(
+        `SELECT id,map_id FROM map_tokens WHERE companion_id=? AND (map_id=? OR map_id IN (
+        SELECT other.map_id FROM encounter_levels mine JOIN encounter_levels other ON other.encounter_id=mine.encounter_id WHERE mine.map_id=?)) LIMIT 1`,
+        [token.companion_id, mapId, mapId],
+      );
+      if (isNew && existing.rows[0]) {
+        id = existing.rows[0].id as string;
+        isNew = false;
+        const oldMap = existing.rows[0].map_id as string;
+        await this.db.execute('UPDATE map_tokens SET map_id=? WHERE id=?', [
+          mapId,
+          id,
+        ]);
+        if (oldMap !== mapId)
+          await this.gateway.broadcastTokens(
+            oldMap,
+            await this.getTokensRaw(oldMap),
+          );
+      }
+      token.character_id = null;
+      token.monster_index = null;
+      token.is_player = true;
+      token.hp = null;
+      token.max_hp = null;
+      token.initiative = null;
+    }
 
     // A character is only ever in one place: placing one that already has a token on this map,
     // or on another level of an encounter this map belongs to, moves that token here instead —
@@ -165,13 +217,14 @@ export class MapsService {
     }
 
     await this.db.execute(
-      `INSERT INTO map_tokens (id, map_id, label, color, x, y, size, hp, max_hp, is_player, character_id, monster_index, initiative, visible_to_players, name_visible_to_players)
-       VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+      `INSERT INTO map_tokens (id, map_id, label, color, x, y, size, hp, max_hp, is_player, character_id, monster_index, initiative, visible_to_players, name_visible_to_players, companion_id)
+       VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
        ON CONFLICT(id) DO UPDATE SET
          label=excluded.label, color=excluded.color,
          x=excluded.x, y=excluded.y, size=excluded.size,
          hp=excluded.hp, max_hp=excluded.max_hp, is_player=excluded.is_player,
          character_id=excluded.character_id, monster_index=excluded.monster_index,
+         companion_id=excluded.companion_id,
          initiative=excluded.initiative,
          visible_to_players=excluded.visible_to_players,
          name_visible_to_players=excluded.name_visible_to_players`,
@@ -191,10 +244,11 @@ export class MapsService {
         initiative,
         token.visible_to_players === false ? 0 : 1,
         token.name_visible_to_players === false ? 0 : 1,
+        token.companion_id ?? null,
       ],
     );
     const tokens = await this.getTokensRaw(mapId);
-    this.gateway.broadcastTokens(mapId, tokens);
+    await this.gateway.broadcastTokens(mapId, tokens);
     return tokens.find((t) => t.id === id);
   }
 
@@ -241,7 +295,7 @@ export class MapsService {
       [mapId, existing.id],
     );
     for (const id of new Set([existing.map_id, mapId])) {
-      this.gateway.broadcastTokens(id, await this.getTokensRaw(id));
+      await this.gateway.broadcastTokens(id, await this.getTokensRaw(id));
       await this.broadcastLighting(id);
     }
     this.gateway.notifyCharacterLevelChanged(campaignId, characterId);
@@ -256,7 +310,7 @@ export class MapsService {
     );
     await this.db.execute('DELETE FROM map_tokens WHERE id = ?', [tokenId]);
     const tokens = await this.getTokensRaw(mapId);
-    this.gateway.broadcastTokens(mapId, tokens);
+    await this.gateway.broadcastTokens(mapId, tokens);
     // A light attached to this token cascades away with it (map_lights.token_id ON DELETE
     // CASCADE) — tell already-connected clients so an attached torch doesn't linger on screen.
     await this.broadcastLighting(mapId);
@@ -301,7 +355,7 @@ export class MapsService {
       [targetMapId, tokenId],
     );
     for (const id of [mapId, targetMapId]) {
-      this.gateway.broadcastTokens(id, await this.getTokensRaw(id));
+      await this.gateway.broadcastTokens(id, await this.getTokensRaw(id));
       await this.broadcastLighting(id);
     }
     if (typeof token.character_id === 'string') {
@@ -341,7 +395,7 @@ export class MapsService {
       tokenId,
     ]);
     const tokens = await this.getTokensRaw(mapId);
-    this.gateway.broadcastTokens(mapId, tokens);
+    await this.gateway.broadcastTokens(mapId, tokens);
     return tokens.find((t) => t.id === tokenId);
   }
 
@@ -375,7 +429,7 @@ export class MapsService {
       'UPDATE map_tokens SET planned_x = ?, planned_y = ? WHERE id = ?',
       [plan?.x ?? null, plan?.y ?? null, tokenId],
     );
-    this.gateway.broadcastTokens(mapId, await this.getTokensRaw(mapId));
+    await this.gateway.broadcastTokens(mapId, await this.getTokensRaw(mapId));
     return plan;
   }
 
@@ -401,6 +455,17 @@ export class MapsService {
 
     const isDm = await this.isCampaignDm(map.campaign_id as string, user);
     if (!isDm) {
+      if (token.companion_id) {
+        const companion = await this.db.execute(
+          'SELECT character_id FROM companions WHERE id=?',
+          [token.companion_id],
+        );
+        await this.companions.owner(
+          companion.rows[0]?.character_id as string,
+          user,
+        );
+        return token as Record<string, unknown>;
+      }
       if (!token.is_player || !token.character_id)
         throw new ForbiddenException();
       const owns = await this.db.execute(
@@ -431,7 +496,7 @@ export class MapsService {
       [Number(token.turn_moved_ft) + cost.feet, cost.diagonals, tokenId],
     );
     const tokens = await this.getTokensRaw(mapId);
-    this.gateway.broadcastTokens(mapId, tokens);
+    await this.gateway.broadcastTokens(mapId, tokens);
     return tokens.find((t) => t.id === tokenId);
   }
 
@@ -444,7 +509,7 @@ export class MapsService {
       [tokenId],
     );
     const tokens = await this.getTokensRaw(mapId);
-    this.gateway.broadcastTokens(mapId, tokens);
+    await this.gateway.broadcastTokens(mapId, tokens);
     return tokens.find((t) => t.id === tokenId);
   }
 
@@ -483,7 +548,7 @@ export class MapsService {
       tokenId,
     ]);
     const tokens = await this.getTokensRaw(mapId);
-    this.gateway.broadcastTokens(mapId, tokens);
+    await this.gateway.broadcastTokens(mapId, tokens);
     return tokens.find((t) => t.id === tokenId);
   }
 

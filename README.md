@@ -265,6 +265,35 @@ Android requires JDK 21, Android Studio 2025.2.1+, and API 24+. iOS requires mac
 
 See [mobile architecture](docs/mobile/architecture.md), [PWA installation](docs/mobile/pwa-installation.md), [Capacitor development](docs/mobile/capacitor-development.md), and [test evidence](docs/mobile/testing.md). Known limitations include no offline mutations or push notifications and required emulator/physical-device release testing.
 
+## Companions
+
+The character sheet exposes a conditional **Companions** section for the PHB 2024
+Beast Master's Primal Companion (Land, Sea, Sky) and the EFA Battle Smith's Steel
+Defender. The owner's Actions section links to command controls. Mobile users can
+swipe between sections or use the section selector.
+
+Companions have separate persistent records, with calculated stats, damage,
+temporary HP, conditions, Hit Dice, limited resources, names, and portraits.
+Damage survives owner level changes. Long Rests restore living companions and
+allow replacement; revival spends an available spell slot. Campaign joins copy
+companions with new IDs. The migration is schema version 34.
+
+DMs place companions from the encounter roster. Their tokens reference the saved
+companion rather than maintaining another HP value. Both supported rules versions
+act during the owner's turn; companions appear beneath the owner in initiative,
+with independent movement and reactions. Players can select their companion when
+planning a destination for the DM. Sheet and map updates refresh after reconnect.
+
+Combat controls track commands and companion actions/reactions, with correction
+controls. The owner's other bonus actions are still tracked manually. Attack and
+damage rolls are displayed for table adjudication; targeting, range, conditional
+damage (Charge/Hunter's Mark), Share Spells, and applying damage/healing to another
+creature remain manual. Arcane Jolt uses the owner's existing resource pool.
+Other companion references remain available without claiming to be active creatures.
+
+Rules and persistence live in `dnd_vtt_backend/src/companions`; the shared sheet is
+`dnd_vtt_frontend/src/app/shared/components/companion-sheet`.
+
 ## License
 
 MIT

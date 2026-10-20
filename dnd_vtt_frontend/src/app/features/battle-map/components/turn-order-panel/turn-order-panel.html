@@ -7,13 +7,13 @@
   } @else {
     @for (token of tokens(); track token.id) {
       <div class="flex items-center gap-2 py-1.5 px-1.5 rounded"
-           [class.bg-gold-container]="token.id === currentTurnTokenId()">
+           [class.bg-gold-container]="(token.id === currentTurnTokenId() || (!!token.companion_id && token.companion_owner_token_id === currentTurnTokenId()))">
         <span class="w-3 h-3 rounded-full flex-shrink-0" [style.background]="token.color"></span>
         <span class="text-sm flex-1 truncate"
-              [class.text-gold-bright]="token.id === currentTurnTokenId()"
-              [class.font-semibold]="token.id === currentTurnTokenId()"
-              [class.text-parchment]="token.id !== currentTurnTokenId()">{{ token.label }}</span>
-        @if (editable()) {
+              [class.text-gold-bright]="(token.id === currentTurnTokenId() || (!!token.companion_id && token.companion_owner_token_id === currentTurnTokenId()))"
+              [class.font-semibold]="(token.id === currentTurnTokenId() || (!!token.companion_id && token.companion_owner_token_id === currentTurnTokenId()))"
+              [class.text-parchment]="token.id !== currentTurnTokenId()">{{ token.companion_id ? '↳ ' : '' }}{{ token.label }}</span>
+        @if (editable() && !token.companion_id) {
           <input
             class="field-input w-11 text-center px-1 py-0.5 text-sm"
             type="number"
