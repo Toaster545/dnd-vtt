@@ -1,6 +1,10 @@
 {
   "index": "returning-weapon",
   "name": "Returning Weapon",
+  "artificer_plan": {
+    "name": "Returning Weapon",
+    "itemIndex": "returning-weapon"
+  },
   "type": "magic",
   "category": "Magic Weapon Template",
   "damage": null,
@@ -8,20 +12,18 @@
   "properties": [],
   "weight": 0,
   "cost": "Magic item",
-  "image_url": "/icons/boomerang.svg",
-  "description": "A +1 thrown weapon that returns to the wielder after a ranged attack.",
   "rarity": "uncommon",
   "requires_attunement": false,
-  "artificer_plan": {
-    "name": "Returning Weapon",
-    "itemIndex": "returning-weapon"
-  },
   "source": {
     "code": "EFA",
     "book": "Eberron: Forge of the Artificer",
     "edition": 2024,
-    "page": 112,
-    "srd_5_2_1": false,
     "rules_text": "reference-only"
-  }
+  },
+  "enhancement_bonus": 1,
+  "variant": {
+    "baseFilter": "thrown-weapon",
+    "namePrefix": "Returning"
+  },
+  "description": "This +1 weapon returns to your hand immediately after you make a ranged attack with it."
 }

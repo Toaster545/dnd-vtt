@@ -698,3 +698,6 @@ console.log(
   `Imported ${importedSubclasses.length} subclasses, ${importedSpells.length} spells, `
   + `${importedFeats.length} feats, ${rawItems.length} item variants, and ${importedMonsters.length} creatures.`,
 );
+
+const { writeItemRuntimeMetadata } = await import('./lib/item-runtime-metadata.mjs');
+writeItemRuntimeMetadata();

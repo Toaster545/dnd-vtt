@@ -107,6 +107,30 @@ export class CharactersController {
     return this.characters.revokeItem(id, user, body);
   }
 
+  @Get(':id/inventory-options')
+  inventoryOptions(@Param('id') id: string, @CurrentUser() user: RequestUser) {
+    return this.characters.inventoryOptions(id, user);
+  }
+
+  @Post(':id/inventory/:instanceId')
+  inventoryOperation(
+    @Param('id') id: string,
+    @Param('instanceId') instanceId: string,
+    @CurrentUser() user: RequestUser,
+    @Body() body: Record<string, unknown>,
+  ) {
+    return this.characters.inventoryOperation(id, instanceId, user, body);
+  }
+
+  @Post(':id/rest')
+  completeRest(
+    @Param('id') id: string,
+    @CurrentUser() user: RequestUser,
+    @Body() body: Record<string, unknown>,
+  ) {
+    return this.characters.completeRest(id, user, body);
+  }
+
   @Post(':id/replicate-item')
   replicateItem(
     @Param('id') id: string,

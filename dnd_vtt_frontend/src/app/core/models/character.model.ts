@@ -1,3 +1,4 @@
+import type { DndItem } from '../services/content.service';
 import { AvatarRecipeV1 } from './avatar.model';
 import { TokenBorder } from './token-border.model';
 
@@ -50,6 +51,13 @@ export const SKILLS: Record<string, Ability> = {
 };
 
 export interface EquipmentEntry {
+  instanceId?: string;
+  baseItemIndex?: string;
+  resolvedItem?: DndItem;
+  needsBase?: boolean;
+  unresolved?: boolean;
+  chargesUsed?: number;
+  origin?: { creatorId: string; planId: string; planName: string; createdAt: string };
   itemIndex: string;
   name: string;
   quantity: number;
@@ -66,6 +74,7 @@ export interface EquipmentEntry {
 export const ATTUNEMENT_SLOT_LIMIT = 3;
 
 export interface PactWeaponState {
+  instanceId?: string;
   itemIndex: string;
   name: string;
   mode: 'conjured' | 'bonded';
@@ -172,12 +181,9 @@ export interface Character {
   // Inventory
   equipment: EquipmentEntry[];
   pact_weapon?: PactWeaponState | null;
-  replicated_items?: {
-    itemIndex: string;
-    planName: string;
-    equipped: boolean;
-    createdAt: string;
-  }[];
+  inventory_version?: number;
+  attuned_items?: EquipmentEntry[];
+  replicated_items?: (EquipmentEntry & { planName?: string; holderId?: string; holderName?: string; createdAt?: string })[];
   currency: Currency;
 
   // Spells

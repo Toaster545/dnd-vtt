@@ -9,6 +9,7 @@ import { weaponMatchesAnyProficiency } from '../utils/weapon-proficiency';
 import { resolveBackgroundOriginFeat } from '../utils/background-origin-feat';
 
 export interface WeaponAttack {
+  instanceId?: string;
   itemIndex: string;
   name: string;
   distance: string;
@@ -55,6 +56,7 @@ export interface ComputedStats {
   // Adept/Advanced Artifice/Magic Item Master, Rogue's Use Magic Device) — each is an absolute
   // replacement for the previous tier, not a stacking bonus, so this takes the max rather than a sum.
   attunement_slot_limit: number;
+  darkvision_ft?: number;
 }
 
 // Weapon proficiency comes from book-facing labels that can name broad categories, restricted
@@ -83,6 +85,7 @@ function weaponAbilityMod(weapon: DndItem, mods: Record<Ability, number>): numbe
 }
 
 function isMagicWeapon(weapon: DndItem): boolean {
+  if (weapon.magical_weapon !== undefined) return weapon.magical_weapon;
   // Use catalog metadata, not names or descriptions. Magic weapons need not have a +N.
   // Attunement gates an item's bonuses below, not its identity as a magic weapon.
   return !!weapon.enhancement_bonus || !!weapon.requires_attunement
@@ -121,15 +124,7 @@ export class CharacterStatsService {
       subrace: char.subrace,
       characterLevel: char.level,
     } : null;
-    const equipment = [
-      ...char.equipment,
-      // A replicated item never requires attunement in its own right (Artificer's Replicate
-      // Magic Item), so it's stamped `attuned: true` here rather than left to the default —
-      // otherwise attunementActive() would wrongly treat one as dormant.
-      ...(char.replicated_items ?? []).map(entry => ({
-        itemIndex: entry.itemIndex, name: entry.planName, quantity: 1, equipped: entry.equipped, attuned: true,
-      })),
-    ];
+    const equipment = char.equipment;
     const allEffects = [
       ...collectTraitEffects(classesForFeats, feats, raceForFeats),
       ...collectFeatEffects(resolveBackgroundOriginFeat(backgroundData, feats), char.background_choices ?? {}),
@@ -219,14 +214,15 @@ export class CharacterStatsService {
     const passive_investigation = 10 + (skill_bonuses['Investigation'] ?? mods.intelligence);
     const passive_insight = 10 + (skill_bonuses['Insight'] ?? mods.wisdom);
 
+    const unarmedBonus = allEffects.filter(e => e.type === 'unarmed_bonus').reduce((n,e) => n + (e.value ?? 0), 0);
     const unarmed_attack: WeaponAttack = {
       itemIndex: 'unarmed-strike',
       name: 'Unarmed Strike',
       distance: '5 ft. reach',
-      attack_bonus: mods.strength + prof,
+      attack_bonus: mods.strength + prof + unarmedBonus,
       damage_dice: '1',
-      damage_bonus: mods.strength,
-      damage_type: 'bludgeoning',
+      damage_bonus: mods.strength + unarmedBonus,
+      damage_type: ['bludgeoning', ...new Set(allEffects.filter(e => e.type === 'unarmed_damage_type_option').flatMap(e => e.tags ?? []))].join(' / '),
     };
 
     const hasPactOfTheBlade = classesForFeats.some(({ data, choices }) =>
@@ -234,11 +230,11 @@ export class CharacterStatsService {
       && Object.values(choices).some(selection => selection.includes('Pact of the Blade')));
     const pactState = hasPactOfTheBlade ? char.pact_weapon : undefined;
     const bondedWeaponIsCarried = pactState?.mode !== 'bonded'
-      || char.equipment.some(entry => entry.itemIndex === pactState.itemIndex);
+      || char.equipment.some(entry => pactState.instanceId ? entry.instanceId === pactState.instanceId : entry.itemIndex === pactState.itemIndex);
     const pactWeaponIndex = pactState && bondedWeaponIsCarried ? pactState.itemIndex : undefined;
     const attackWeapons = equippedItems(equipment, items);
-    const pactWeapon = pactWeaponIndex ? items.find(item => item.index === pactWeaponIndex) : undefined;
-    if (pactWeapon && !attackWeapons.some(item => item.index === pactWeapon.index)) {
+    const pactWeapon = pactState?.instanceId ? char.equipment.find(e => e.instanceId === pactState.instanceId)?.resolvedItem : pactWeaponIndex ? items.find(item => item.index === pactWeaponIndex) : undefined;
+    if (pactWeapon && !attackWeapons.some(item => pactState?.instanceId ? item.instanceId === pactState.instanceId : item.index === pactWeapon.index)) {
       attackWeapons.push(pactWeapon);
     }
 
@@ -248,7 +244,7 @@ export class CharacterStatsService {
     const weapon_attacks: WeaponAttack[] = attackWeapons
       .filter(it => it.type === 'weapon')
       .map(weapon => {
-        const isPactWeapon = weapon.index === pactWeaponIndex;
+        const isPactWeapon = pactState?.instanceId ? weapon.instanceId === pactState.instanceId : weapon.index === pactWeaponIndex;
         const baseAbilityMod = isPactWeapon ? mods.charisma : weaponAbilityMod(weapon, mods);
         // These features offer a choice; use the best eligible modifier, as with Finesse.
         // Apply it once to both rolls, without altering proficiency or item enhancement.
@@ -279,6 +275,7 @@ export class CharacterStatsService {
 
         return {
           itemIndex: weapon.index,
+          instanceId: weapon.instanceId,
           name: itemDisplayName(weapon),
           distance: weaponDistance(weapon),
           attack_bonus: abilityMod + (proficient ? prof : 0) + rangedAttackBonus + enhancementBonus,
@@ -337,6 +334,7 @@ export class CharacterStatsService {
       spell_attack_bonus,
       spell_save_dc,
       attunement_slot_limit,
+      darkvision_ft: (char.darkvision_ft ?? raceData?.darkvision_ft ?? 0) + allEffects.filter(e => e.type === 'darkvision_extension').reduce((n,e) => n + (e.value ?? 0), 0),
     };
   }
 

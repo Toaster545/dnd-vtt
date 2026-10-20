@@ -1,0 +1,32 @@
+{
+  "index": "rope-of-climbing",
+  "name": "Rope of Climbing",
+  "artificer_plan": {
+    "name": "Rope of Climbing",
+    "itemIndex": "rope-of-climbing"
+  },
+  "type": "magic",
+  "category": "Wondrous Item",
+  "damage": null,
+  "damage_type": null,
+  "properties": [],
+  "weight": 0,
+  "cost": "Magic item",
+  "rarity": "uncommon",
+  "requires_attunement": false,
+  "source": {
+    "code": "EFA",
+    "book": "Eberron: Forge of the Artificer",
+    "edition": 2024,
+    "rules_text": "reference-only"
+  },
+  "description": "Use a Magic action to command this 60-foot rope to move, fasten, unfasten, coil, or knot itself. Movement and climbing are resolved at the table.",
+  "actions": [
+    {
+      "key": "activate",
+      "name": "Rope of Climbing",
+      "description": "Use a Magic action to command this 60-foot rope to move, fasten, unfasten, coil, or knot itself. Movement and climbing are resolved at the table.",
+      "activation": "action"
+    }
+  ]
+}

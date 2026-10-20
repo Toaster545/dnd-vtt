@@ -1,0 +1,26 @@
+{
+  "index": "shield-plus-1",
+  "name": "Shield",
+  "artificer_plan": {
+    "name": "Shield +1",
+    "itemIndex": "shield-plus-1"
+  },
+  "type": "armor",
+  "category": "Shield",
+  "damage": null,
+  "damage_type": null,
+  "properties": [],
+  "weight": 6,
+  "cost": "Magic item",
+  "rarity": "uncommon",
+  "requires_attunement": false,
+  "source": {
+    "code": "EFA",
+    "book": "Eberron: Forge of the Artificer",
+    "edition": 2024,
+    "rules_text": "reference-only"
+  },
+  "armor_class": "+2",
+  "enhancement_bonus": 1,
+  "description": "A shield with an additional +1 bonus to AC."
+}

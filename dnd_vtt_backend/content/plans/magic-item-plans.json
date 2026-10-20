@@ -1,0 +1,101 @@
+[
+  {
+    "id": "alchemy-jug",
+    "name": "Alchemy Jug",
+    "level": 2,
+    "itemIndex": "alchemy-jug"
+  },
+  {
+    "id": "bag-of-holding",
+    "name": "Bag of Holding",
+    "level": 2,
+    "itemIndex": "bag-of-holding"
+  },
+  {
+    "id": "cap-of-water-breathing",
+    "name": "Cap of Water Breathing",
+    "level": 2,
+    "itemIndex": "cap-of-water-breathing"
+  },
+  {
+    "id": "goggles-of-night",
+    "name": "Goggles of Night",
+    "level": 2,
+    "itemIndex": "goggles-of-night"
+  },
+  {
+    "id": "manifold-tool",
+    "name": "Manifold Tool",
+    "level": 2,
+    "itemIndex": "manifold-tool"
+  },
+  {
+    "id": "repeating-shot",
+    "name": "Repeating Shot",
+    "level": 2,
+    "itemIndex": "repeating-shot",
+    "baseFilter": "ammunition-weapon"
+  },
+  {
+    "id": "returning-weapon",
+    "name": "Returning Weapon",
+    "level": 2,
+    "itemIndex": "returning-weapon",
+    "baseFilter": "thrown-weapon"
+  },
+  {
+    "id": "rope-of-climbing",
+    "name": "Rope of Climbing",
+    "level": 2,
+    "itemIndex": "rope-of-climbing"
+  },
+  {
+    "id": "sending-stones",
+    "name": "Sending Stones",
+    "level": 2,
+    "itemIndex": "sending-stones"
+  },
+  {
+    "id": "shield-plus-1",
+    "name": "Shield +1",
+    "level": 2,
+    "itemIndex": "shield-plus-1"
+  },
+  {
+    "id": "wand-of-magic-detection",
+    "name": "Wand of Magic Detection",
+    "level": 2,
+    "itemIndex": "wand-of-magic-detection"
+  },
+  {
+    "id": "wand-of-secrets",
+    "name": "Wand of Secrets",
+    "level": 2,
+    "itemIndex": "wand-of-secrets"
+  },
+  {
+    "id": "wand-of-the-war-mage-plus-1",
+    "name": "Wand of the War Mage +1",
+    "level": 2,
+    "itemIndex": "wand-of-the-war-mage-plus-1"
+  },
+  {
+    "id": "weapon-plus-1",
+    "name": "Weapon +1",
+    "level": 2,
+    "itemIndex": "weapon-plus-1",
+    "baseFilter": "weapon"
+  },
+  {
+    "id": "wraps-of-unarmed-power-plus-1",
+    "name": "Wraps of Unarmed Power +1",
+    "level": 2,
+    "itemIndex": "wraps-of-unarmed-power-plus-1"
+  },
+  {
+    "id": "common-magic-item",
+    "name": "Common Magic Item",
+    "level": 2,
+    "common": true
+  }
+]

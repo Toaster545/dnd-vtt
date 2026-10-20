@@ -363,6 +363,8 @@ export class CampaignsService {
       source.data as string,
       {},
     );
+    delete copyData.inventory_version;
+    delete copyData.attuned_items;
     copyData.applied_level = Math.min(
       Number(source.level ?? 1),
       Number(campaignLevel),

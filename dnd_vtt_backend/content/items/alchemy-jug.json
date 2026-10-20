@@ -1,0 +1,37 @@
+{
+  "index": "alchemy-jug",
+  "name": "Alchemy Jug",
+  "artificer_plan": {
+    "name": "Alchemy Jug",
+    "itemIndex": "alchemy-jug"
+  },
+  "type": "magic",
+  "category": "Wondrous Item",
+  "damage": null,
+  "damage_type": null,
+  "properties": [],
+  "weight": 0,
+  "cost": "Magic item",
+  "rarity": "uncommon",
+  "requires_attunement": false,
+  "source": {
+    "code": "EFA",
+    "book": "Eberron: Forge of the Artificer",
+    "edition": 2024,
+    "rules_text": "reference-only"
+  },
+  "description": "Choose one liquid described by this item. Its daily production limit is tracked once per dawn.",
+  "charges": {
+    "max": 1,
+    "recovery": "dawn",
+    "restore": "all"
+  },
+  "actions": [
+    {
+      "key": "activate",
+      "name": "Alchemy Jug",
+      "description": "Choose one liquid described by this item. Its daily production limit is tracked once per dawn.",
+      "activation": "action"
+    }
+  ]
+}

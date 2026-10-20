@@ -359,7 +359,14 @@ export class ClassStepComponent implements OnInit {
 
   availableTraitOptions(grant: Extract<TraitGrant, { type: 'choice' }>): TraitOption[] {
     const allSelections = new Set(Object.values(this.draftTraits()).flat());
-    return grant.options.filter(option => {
+    const options: TraitOption[] = grant.key === 'magic_item_plans'
+      ? grant.options.flatMap(option => option.name !== 'Common Magic Item' ? [option] : [
+        ...(this.traitSelected(grant, option.name) ? [option] : []), ...this.items()
+        .filter(item => item.rarity?.toLowerCase() === 'common' && !item.cursed && !item.variant
+          && !/potion|scroll/i.test(item.category) && item.type !== 'consumable')
+        .map(item => ({ name: `Common Magic Item: ${item.index}`, description: `${item.name}: ${item.description}` }))])
+      : grant.options;
+    return options.filter(option => {
       if (this.traitSelected(grant, option.name)) return true;
       const prerequisite = option.prerequisite;
       if (!prerequisite) return true;
