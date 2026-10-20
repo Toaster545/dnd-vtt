@@ -149,6 +149,16 @@ export class CharacterService {
     );
   }
 
+  async inventoryOptions(id: string): Promise<InventoryOptions> {
+    return firstValueFrom(this.http.get<InventoryOptions>(`${API}/characters/${id}/inventory-options`));
+  }
+  async inventoryOperation(id: string, instanceId: string, body: Record<string, unknown>): Promise<Character> {
+    return firstValueFrom(this.http.post<Character>(`${API}/characters/${id}/inventory/${instanceId}`, body));
+  }
+  async completeRest(id: string, body: Record<string, unknown>): Promise<Character> {
+    return firstValueFrom(this.http.post<Character>(`${API}/characters/${id}/rest`, body));
+  }
+
   async updateReplicatedItem(
     id: string, action: 'create' | 'dismiss' | 'toggle', itemIndex: string,
   ): Promise<Character> {
@@ -158,10 +168,10 @@ export class CharacterService {
   }
 
   async updatePactWeapon(
-    id: string, action: 'conjure' | 'bond' | 'dismiss', itemIndex?: string,
+    id: string, action: 'conjure' | 'bond' | 'dismiss', itemIndex?: string, instanceId?: string,
   ): Promise<Character> {
     return firstValueFrom(
-      this.http.post<Character>(`${API}/characters/${id}/pact-weapon`, { action, itemIndex })
+      this.http.post<Character>(`${API}/characters/${id}/pact-weapon`, { action, itemIndex, instanceId })
     );
   }
 
@@ -179,4 +189,12 @@ export class CharacterService {
       this.http.post<Character>(`${API}/characters/${id}/revoke-spell`, { spellIndex })
     );
   }
+}
+
+export interface InventoryPlan {
+  id: string; name: string; itemIndex?: string; supported: boolean;
+  bases: { index: string; name: string }[];
+}
+export interface InventoryOptions {
+  plans: InventoryPlan[]; limit: number; targets: { id: string; name: string }[];
 }

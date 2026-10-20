@@ -1,0 +1,30 @@
+{
+  "index": "wand-of-the-war-mage-plus-1",
+  "name": "Wand of the War Mage +1",
+  "artificer_plan": {
+    "name": "Wand of the War Mage +1",
+    "itemIndex": "wand-of-the-war-mage-plus-1"
+  },
+  "type": "magic",
+  "category": "Wondrous Item",
+  "damage": null,
+  "damage_type": null,
+  "properties": [],
+  "weight": 0,
+  "cost": "Magic item",
+  "rarity": "uncommon",
+  "requires_attunement": "spellcaster",
+  "source": {
+    "code": "EFA",
+    "book": "Eberron: Forge of the Artificer",
+    "edition": 2024,
+    "rules_text": "reference-only"
+  },
+  "description": "While holding this wand, gain +1 to spell attack rolls and ignore Half Cover with spell attacks.",
+  "effects": [
+    {
+      "type": "spell_attack_bonus",
+      "value": 1
+    }
+  ]
+}

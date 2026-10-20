@@ -1,11 +1,13 @@
 {
   "index": "staff-of-adornment",
   "name": "Staff of Adornment",
-  "type": "gear",
-  "category": "Staff",
-  "damage": null,
-  "damage_type": null,
-  "properties": [],
+  "type": "weapon",
+  "category": "Simple Melee",
+  "damage": "1d6",
+  "damage_type": "bludgeoning",
+  "properties": [
+    "Versatile (1d8)"
+  ],
   "weight": 4,
   "cost": "—",
   "image_url": "/icons/sparkles.svg",
@@ -18,5 +20,6 @@
     "page": 139,
     "srd_5_2_1": false,
     "rules_text": "reference-only"
-  }
+  },
+  "magical_weapon": false
 }

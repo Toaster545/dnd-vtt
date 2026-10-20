@@ -354,6 +354,12 @@ export interface StartingEquipment {
 }
 
 export interface DndItem {
+  instanceId?: string;
+  chargesUsed?: number;
+  cursed?: boolean;
+  magical_weapon?: boolean;
+  spell?: { index: string; name: string; concentration?: boolean };
+  variant?: { baseFilter: string; namePrefix?: string; removeProperties?: string[] };
   index: string;
   name: string;
   type: 'weapon' | 'armor' | 'gear' | 'consumable' | string;
@@ -371,7 +377,7 @@ export interface DndItem {
   // The item's own +N (or cursed -N) — applied to a weapon's attack/damage rolls, or to AC for
   // armor/a shield, wherever the item is equipped. See CharacterStatsService/baseArmorClass.
   enhancement_bonus?: number;
-  charges?: { max: number; recovery: string };
+  charges?: { max: number; recovery: string; restore?: string };
   actions?: { key: string; name: string; description?: string; activation: ActionActivation; uses?: TraitAction['uses'] }[];
   effects?: TraitEffect[];
   artificer_plan?: { name: string; itemIndex: string };

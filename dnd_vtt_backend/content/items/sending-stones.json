@@ -1,0 +1,37 @@
+{
+  "index": "sending-stones",
+  "name": "Sending Stones",
+  "artificer_plan": {
+    "name": "Sending Stones",
+    "itemIndex": "sending-stones"
+  },
+  "type": "magic",
+  "category": "Wondrous Item",
+  "damage": null,
+  "damage_type": null,
+  "properties": [],
+  "weight": 0,
+  "cost": "Magic item",
+  "rarity": "uncommon",
+  "requires_attunement": false,
+  "source": {
+    "code": "EFA",
+    "book": "Eberron: Forge of the Artificer",
+    "edition": 2024,
+    "rules_text": "reference-only"
+  },
+  "description": "A linked pair of stones. Use a Magic action to cast Sending to the bearer of the other stone. Both stones share the daily use.",
+  "charges": {
+    "max": 1,
+    "recovery": "dawn",
+    "restore": "all"
+  },
+  "actions": [
+    {
+      "key": "activate",
+      "name": "Sending Stones",
+      "description": "A linked pair of stones. Use a Magic action to cast Sending to the bearer of the other stone. Both stones share the daily use.",
+      "activation": "action"
+    }
+  ]
+}

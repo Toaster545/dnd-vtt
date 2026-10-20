@@ -1,0 +1,30 @@
+{
+  "index": "goggles-of-night",
+  "name": "Goggles of Night",
+  "artificer_plan": {
+    "name": "Goggles of Night",
+    "itemIndex": "goggles-of-night"
+  },
+  "type": "magic",
+  "category": "Wondrous Item",
+  "damage": null,
+  "damage_type": null,
+  "properties": [],
+  "weight": 0,
+  "cost": "Magic item",
+  "rarity": "uncommon",
+  "requires_attunement": false,
+  "source": {
+    "code": "EFA",
+    "book": "Eberron: Forge of the Artificer",
+    "edition": 2024,
+    "rules_text": "reference-only"
+  },
+  "description": "While worn, grant 60-foot Darkvision, or extend existing Darkvision by 60 feet.",
+  "effects": [
+    {
+      "type": "darkvision_extension",
+      "value": 60
+    }
+  ]
+}

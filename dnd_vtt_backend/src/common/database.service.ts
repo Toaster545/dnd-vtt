@@ -1,7 +1,11 @@
 import { Injectable, OnModuleInit, Logger } from '@nestjs/common';
 import { createClient, Client, ResultSet } from '@libsql/client';
-import { existsSync, mkdirSync } from 'fs';
-import { dirname } from 'path';
+import { existsSync, mkdirSync, readdirSync, readFileSync } from 'fs';
+import { dirname, resolve, join } from 'path';
+import {
+  ItemDefinition,
+  migrateInventory,
+} from '../characters/inventory-rules';
 import { randomUUID } from 'crypto';
 import { generateJoinCode } from './join-code.util';
 
@@ -90,9 +94,81 @@ export class DatabaseService implements OnModuleInit {
     if (version < 32) await this.applyV32();
     if (version < 33) await this.applyV33();
     if (version < 34) await this.applyV34();
+    if (version < 35) await this.applyV35();
   }
 
   // ── V1: initial schema (explicit columns on characters) ─────────────────────
+  private async applyV35() {
+    const rows = (await this.execute('SELECT id,data FROM characters')).rows;
+    const itemDirectory = join(process.cwd(), 'content/items');
+    const definitions = new Map(
+      readdirSync(itemDirectory)
+        .filter((f) => f.endsWith('.json'))
+        .map((f) => {
+          const item = JSON.parse(
+            readFileSync(join(itemDirectory, f), 'utf8'),
+          ) as ItemDefinition;
+          return [item.index, item] as const;
+        }),
+    );
+    // SQLite makes a consistent backup, including committed WAL contents.
+    if (rows.length) {
+      const backup =
+        resolve(process.env.DB_PATH ?? './data/dnd.db') +
+        '.pre-inventory-' +
+        Date.now() +
+        '.bak';
+      await this.execute(`VACUUM INTO '${backup.replace(/'/g, "''")}'`);
+    }
+    const statements: { sql: string; args?: any[] }[] = [
+      {
+        sql: `CREATE TABLE inventory_instances (
+      id TEXT PRIMARY KEY, holder_id TEXT REFERENCES characters(id) ON DELETE SET NULL,
+      creator_id TEXT REFERENCES characters(id) ON DELETE CASCADE,
+      attuned_to TEXT REFERENCES characters(id) ON DELETE SET NULL, data TEXT NOT NULL)`,
+      },
+      {
+        sql: 'CREATE INDEX inventory_holder ON inventory_instances(holder_id)',
+      },
+      {
+        sql: 'CREATE INDEX inventory_creator ON inventory_instances(creator_id)',
+      },
+      {
+        sql: 'CREATE TABLE inventory_requests (character_id TEXT REFERENCES characters(id) ON DELETE CASCADE, request_id TEXT, PRIMARY KEY(character_id,request_id))',
+      },
+    ];
+    for (const row of rows) {
+      const data = this.parseJson<Record<string, unknown>>(
+        row.data as string,
+        {},
+      );
+      const equipment = migrateInventory(row.id as string, data, definitions);
+      for (const entry of equipment)
+        statements.push({
+          sql: 'INSERT INTO inventory_instances(id,holder_id,creator_id,attuned_to,data) VALUES(?,?,?,?,?)',
+          args: [
+            entry.instanceId,
+            row.id,
+            entry.origin?.creatorId ?? null,
+            entry.attuned ? row.id : null,
+            JSON.stringify(entry),
+          ],
+        });
+      data.equipment = equipment;
+      data.replicated_items = equipment.filter((e) => e.origin);
+      data.inventory_version = 1;
+      statements.push({
+        sql: 'UPDATE characters SET data=? WHERE id=?',
+        args: [JSON.stringify(data), row.id],
+      });
+    }
+    statements.push({ sql: 'PRAGMA user_version = 35' });
+    await this.executeMany(statements);
+    this.logger.log(
+      'Applied schema migration v35 (individual inventory items)',
+    );
+  }
+
   private async applyV34() {
     await this.db.execute(`CREATE TABLE companions (
       id TEXT PRIMARY KEY, character_id TEXT NOT NULL REFERENCES characters(id) ON DELETE CASCADE,

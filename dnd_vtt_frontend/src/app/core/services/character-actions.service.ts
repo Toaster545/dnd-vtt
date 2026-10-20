@@ -4,6 +4,7 @@ import { resolveProgressiveChoiceLimit } from '../utils/progressive-choice';
 import { AbilityScores, abilityModifier, proficiencyBonus } from '../models/character.model';
 
 export interface CharacterAction {
+  itemInstanceId?: string;
   key: string;
   name: string;
   description?: string;
@@ -92,7 +93,7 @@ export class CharacterActionsService {
     for (const selection of additional.feats ?? []) {
       collect(selection.feat.grants ?? [], selection.choices, selection.source ?? selection.feat.name, 1, additional.characterLevel);
     }
-    for (const item of additional.items ?? []) {
+    for (const item of (additional.items ?? []).filter(item => !item.instanceId)) {
       for (const action of item.actions ?? []) {
         collect([{
           type: 'feature', key: action.key, name: action.name, description: action.description,
@@ -101,7 +102,7 @@ export class CharacterActionsService {
       }
     }
 
-    return [...winners.values()].map(({ grant, source, classLevel }) => {
+    const classActions: CharacterAction[] = [...winners.values()].map(({ grant, source, classLevel }) => {
       const uses = grant.action!.uses;
       const progressiveMax = uses
         ? resolveProgressiveChoiceLimit(uses.max, uses.maxByLevel, classLevel)
@@ -125,6 +126,16 @@ export class CharacterActionsService {
         unlimited: !uses,
       };
     });
+    const itemActions: CharacterAction[] = (additional.items ?? []).filter(item => item.instanceId).flatMap(item => {
+      const actions = item.actions?.length ? item.actions : item.charges ? [{ key: 'use', name: item.name, description: item.description, activation: 'action' as const }] : [];
+      return actions.map(action => ({
+        key: `item:${item.instanceId}:${action.key}`, itemInstanceId: item.instanceId,
+        name: action.name, description: `${action.description ?? ''}${item.charges ? ' Recharge: ' + item.charges.recovery + '.' : ''}`,
+        source: item.name, activation: action.activation, maxUses: item.charges?.max ?? 0,
+        usedUses: item.chargesUsed ?? 0, per: 'long_rest' as const, shortRestRestore: 0, unlimited: !item.charges,
+      }));
+    });
+    return [...classActions, ...itemActions];
   }
 
   use(resourceUses: Record<string, number>, action: CharacterAction): Record<string, number> {

@@ -1,0 +1,24 @@
+{
+  "index": "bag-of-holding",
+  "name": "Bag of Holding",
+  "artificer_plan": {
+    "name": "Bag of Holding",
+    "itemIndex": "bag-of-holding"
+  },
+  "type": "magic",
+  "category": "Wondrous Item",
+  "damage": null,
+  "damage_type": null,
+  "properties": [],
+  "weight": 5,
+  "cost": "Magic item",
+  "rarity": "uncommon",
+  "requires_attunement": false,
+  "source": {
+    "code": "EFA",
+    "book": "Eberron: Forge of the Artificer",
+    "edition": 2024,
+    "rules_text": "reference-only"
+  },
+  "description": "An extradimensional bag holding up to 500 pounds and 64 cubic feet. Retrieving an item takes a Utilize action. Its contents and interactions are adjudicated at the table."
+}

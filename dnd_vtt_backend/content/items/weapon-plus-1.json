@@ -1,0 +1,28 @@
+{
+  "index": "weapon-plus-1",
+  "name": "Weapon +1",
+  "artificer_plan": {
+    "name": "Weapon +1",
+    "itemIndex": "weapon-plus-1"
+  },
+  "type": "magic",
+  "category": "Magic Weapon Template",
+  "damage": null,
+  "damage_type": null,
+  "properties": [],
+  "weight": 0,
+  "cost": "Magic item",
+  "rarity": "uncommon",
+  "requires_attunement": false,
+  "source": {
+    "code": "EFA",
+    "book": "Eberron: Forge of the Artificer",
+    "edition": 2024,
+    "rules_text": "reference-only"
+  },
+  "enhancement_bonus": 1,
+  "variant": {
+    "baseFilter": "weapon"
+  },
+  "description": "A magic weapon granting +1 to its attack and damage rolls."
+}
