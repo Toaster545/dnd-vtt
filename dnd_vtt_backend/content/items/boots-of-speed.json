@@ -1,0 +1,22 @@
+{
+  "index": "boots-of-speed",
+  "name": "Boots of Speed",
+  "type": "magic",
+  "category": "Wondrous Item",
+  "damage": null,
+  "damage_type": null,
+  "properties": [],
+  "weight": 0,
+  "cost": "Magic item",
+  "image_url": "/icons/walking-boot.svg",
+  "description": "As a bonus action, click the boots’ heels together to double your walking speed, and opportunity attacks against you have disadvantage. Lasts until you click them again or for up to 10 minutes total per day; the unused time resets at dawn.",
+  "rarity": "rare",
+  "requires_attunement": true,
+  "source": {
+    "code": "DMG",
+    "book": "Dungeon Master’s Guide",
+    "edition": 2014,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}
