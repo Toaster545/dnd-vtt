@@ -2,7 +2,7 @@
   <app-character-wizard class="flex flex-col flex-1 min-h-0"
     [character]="editingCharacter()"
     (saved)="onCharacterSaved()"
-    (cancelled)="onCharacterCancelled()"
+    (cancelled)="onCharacterSaved()"
   />
 } @else if (sheetCharacter(); as sc) {
   <app-character-play-sheet class="flex-1 min-h-0" [character]="sc" [isDm]="true" (saved)="onCharacterSheetSaved($event)">

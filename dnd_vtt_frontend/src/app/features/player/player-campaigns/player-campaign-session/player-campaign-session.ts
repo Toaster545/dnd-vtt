@@ -279,10 +279,6 @@ export class PlayerCampaignSessionComponent implements OnInit, OnDestroy {
     void this.loadMyCharacter();
   }
 
-  onWizardCancelled() {
-    this.showWizard.set(false);
-  }
-
   async onViewCharacterSheet(id: string) {
     this.showWizard.set(false);
     this.sheetFromWizard.set(true);
