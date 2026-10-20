@@ -1,0 +1,22 @@
+{
+  "index": "bracers-of-archery",
+  "name": "Bracers of Archery",
+  "type": "magic",
+  "category": "Wondrous Item",
+  "damage": null,
+  "damage_type": null,
+  "properties": [],
+  "weight": 0,
+  "cost": "Magic item",
+  "image_url": "/icons/gauntlet.svg",
+  "description": "While wearing these bracers, you have proficiency with the longbow and shortbow, and you gain a +2 bonus to damage rolls on ranged attacks made with such weapons.",
+  "rarity": "uncommon",
+  "requires_attunement": true,
+  "source": {
+    "code": "DMG",
+    "book": "Dungeon Master’s Guide",
+    "edition": 2014,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

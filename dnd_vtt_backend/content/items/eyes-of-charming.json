@@ -1,0 +1,26 @@
+{
+  "index": "eyes-of-charming",
+  "name": "Eyes of Charming",
+  "type": "magic",
+  "category": "Wondrous Item",
+  "damage": null,
+  "damage_type": null,
+  "properties": [],
+  "weight": 0,
+  "cost": "Magic item",
+  "image_url": "/icons/crystal-eye.svg",
+  "description": "These lenses fit over the eyes and have 3 charges. As an action, expend 1 charge to cast Charm Person (save DC 13) on a humanoid within 30 feet that can see you. Regains 1d3 expended charges daily at dawn.",
+  "rarity": "uncommon",
+  "requires_attunement": true,
+  "charges": {
+    "max": 3,
+    "recovery": "dawn"
+  },
+  "source": {
+    "code": "DMG",
+    "book": "Dungeon Master’s Guide",
+    "edition": 2014,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}
