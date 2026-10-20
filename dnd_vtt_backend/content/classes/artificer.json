@@ -1854,7 +1854,7 @@
             {
               "type": "feature",
               "name": "Steel Defender",
-              "description": "Create a customizable Medium Construct companion whose durability and attacks scale with your Artificer level and spellcasting. It acts immediately after you, Dodging unless commanded with a Bonus Action, and can impose Disadvantage on an attack against a nearby creature. Mending can restore its Hit Points, and a spell slot can revive or replace it."
+              "description": "Create a customizable Medium Construct companion whose durability and attacks scale with your Artificer level and spellcasting. It acts during your turn, Dodging unless commanded with a Bonus Action, and can impose Disadvantage on an attack against a nearby creature. Mending can restore its Hit Points, and a spell slot can revive or replace it."
             },
             {
               "type": "companion_grant",

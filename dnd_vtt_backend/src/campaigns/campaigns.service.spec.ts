@@ -96,6 +96,53 @@ describe('CampaignsService', () => {
   });
 
   describe('setPartyLevel', () => {
+    it('clones companions with new identities and independent state', async () => {
+      const campaign = await campaigns.create(dmId, { name: 'Companions' });
+      const playerId = await insertProfile(db);
+      const source = await characters.create(playerId, {
+        name: 'Ranger',
+        class: 'Ranger',
+        level: 5,
+      });
+      const companionId = randomUUID();
+      await db.execute(
+        'INSERT INTO companions(id,character_id,kind,data) VALUES(?,?,?,?)',
+        [
+          companionId,
+          source.id,
+          'primal',
+          JSON.stringify({ name: 'Ash', form: 'land', damage: 3, revision: 4 }),
+        ],
+      );
+      const joined = await campaigns.join(asPlayer(playerId), {
+        joinCode: campaign.join_code as string,
+        characterId: source.id,
+      } as JoinCampaignDto);
+      const copies = await db.execute(
+        'SELECT * FROM companions WHERE character_id=?',
+        [joined.members[0].character_id],
+      );
+      expect(copies.rows).toHaveLength(1);
+      expect(copies.rows[0].id).not.toBe(companionId);
+      expect(db.parseJson(copies.rows[0].data as string, {})).toMatchObject({
+        name: 'Ash',
+        damage: 3,
+        revision: 1,
+      });
+      await db.execute('UPDATE companions SET data=? WHERE id=?', [
+        '{}',
+        copies.rows[0].id,
+      ]);
+      const original = await db.execute(
+        'SELECT data FROM companions WHERE id=?',
+        [companionId],
+      );
+      expect(db.parseJson(original.rows[0].data as string, {})).toMatchObject({
+        damage: 3,
+        revision: 4,
+      });
+    });
+
     async function joinedCopyId(level: number) {
       const campaign = await campaigns.create(dmId, { name: 'Test' });
       const playerId = await insertProfile(db);

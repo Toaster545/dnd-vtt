@@ -18,7 +18,7 @@
           [activeLightTool]="activeLightTool()"
           [lightingEnabled]="lighting().enabled"
           [showMoveRange]="showMoveRange()"
-          [hasMyToken]="!!myToken()"
+          [hasMyToken]="!!controlledToken()"
           [isAdmin]="controlsMap()"
           [pickingDestination]="pickingDestination()"
           [hasDestination]="!!myPlan()"
@@ -68,6 +68,14 @@
         </div>
       }
 
+      @if (!controlsMap() && ownedTokens().length > 1) {
+        <div class="absolute bottom-3 left-3 z-10 bg-surface border border-white/10 rounded p-2">
+          <label class="text-xs text-slate" for="companion-movement-token">Plan movement for</label>
+          <select id="companion-movement-token" class="field-input" [value]="controlledToken()?.id" (change)="controlledTokenId.set($any($event.target).value)">
+            @for (token of ownedTokens(); track token.id) { <option [value]="token.id">{{ token.label }}</option> }
+          </select>
+        </div>
+      }
       @if (loading()) {
         <div class="absolute inset-0 flex items-center justify-center">
           <span class="spinner-lg"></span>

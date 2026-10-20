@@ -1,0 +1,178 @@
+<div class="flex flex-col gap-4 max-w-4xl">
+  @if (error()) { <p role="alert" class="text-danger text-sm">{{ error() }}</p> }
+  @if (notice()) { <p role="status" class="text-gold text-sm">{{ notice() }}</p> }
+  @if (!data() && !error()) { <p class="text-slate">Loading companions…</p> }
+  @if (!selectedId()) {
+    @for (option of available(); track option.kind) {
+      <div class="rounded border border-white/10 p-3 flex flex-wrap items-center gap-3">
+        <span class="text-parchment">{{ option.name }}</span>
+        <select class="field-input w-auto" [ngModel]="forms[option.kind] || option.forms[0]" (ngModelChange)="forms[option.kind] = $event" [attr.aria-label]="option.name + ' form'" [disabled]="readonly() || busy()">
+          @for (form of option.forms; track form) { <option [value]="form">{{ form }}</option> }
+        </select>
+        <button class="btn-outline" [disabled]="readonly() || busy()" (click)="create(option.kind, option.forms[0])">{{ option.kind === 'steel' ? 'Create defender' : 'Summon beast' }}</button>
+      </div>
+    }
+    @if (companions().length > 1) {
+      <div class="flex flex-wrap gap-2" data-preview-ok>
+        @for (c of companions(); track c.id) {
+          <button class="btn-outline" [class.text-gold]="companion()?.id === c.id" (click)="selected.set(c.id)">{{ c.name }} · {{ c.stats.current_hp }}/{{ c.stats.max_hp }} HP</button>
+        }
+      </div>
+    }
+  }
+  @if (companion(); as c) {
+    <div class="companion-card flex flex-col gap-3">
+      <div class="flex items-center gap-3">
+        @if (c.portrait_image) { <img class="w-12 h-12 rounded-full object-cover" [src]="portraitUrl(c.portrait_image)" [alt]="c.name" /> }
+        <div><h3 class="font-brand text-gold m-0">{{ c.name }}</h3><p class="text-slate text-xs m-0">{{ c.stats.name }} · {{ c.stats.size }} {{ c.stats.type }}@if (c.stats.alignment) {, {{ c.stats.alignment }}} · {{ c.stats.source }} · {{ c.status }}</p></div>
+      </div>
+      @if (!c.stats.eligible) { <p class="text-danger text-sm">This character no longer has the required subclass level. Saved companion state is retained.</p> }
+      <div class="companion-grid vitals text-center">
+        <div class="stat-tile"><span class="stat-label">HP</span><div class="stat-value text-parchment">{{ c.stats.current_hp }}/{{ c.stats.max_hp }}</div></div>
+        <div class="stat-tile"><span class="stat-label">AC</span><div class="stat-value text-gold">{{ c.stats.armor_class }}</div></div>
+        <div class="stat-tile"><span class="stat-label">Temporary HP</span><div class="stat-value text-parchment">{{ c.temp_hp }}</div></div>
+        <div class="stat-tile"><span class="stat-label">Hit Dice</span><div class="stat-value text-parchment">{{ c.stats.hit_dice - c.hit_dice_used }}d{{ c.stats.hit_die }}</div></div>
+      </div>
+      <div class="companion-grid abilities text-center">
+        @for (ability of c.stats.ability_scores | keyvalue: preserveOrder; track ability.key) {
+          <div class="stat-tile ability-tile">
+            <span class="stat-label">{{ ability.key.slice(0, 3) }}</span>
+            <div class="stat-value text-gold">{{ signed(modifier(ability.value)) }}</div>
+            <span class="text-slate text-xs">Score {{ ability.value }}</span>
+          </div>
+        }
+      </div>
+      <details class="disclosure" data-preview-ok><summary class="text-slate text-sm">Adjust HP</summary>
+      <fieldset [disabled]="readonly() || busy()" class="border-0 p-0 m-0 mt-2 flex flex-wrap gap-2 items-center">
+        <input class="field-input w-20" type="number" min="0" max="10000" [(ngModel)]="amount" aria-label="HP adjustment" />
+        <button class="btn-outline" [disabled]="c.status !== 'active'" (click)="mutate('hp', {amount: -amount})">Damage</button>
+        <button class="btn-outline" [disabled]="c.status !== 'active'" (click)="mutate('hp', {amount: amount})">{{ c.kind === 'steel' ? 'Heal / Mending' : 'Heal' }}</button>
+        <input class="field-input w-20" type="number" min="0" [(ngModel)]="tempHp" aria-label="Temporary HP" />
+        <button class="btn-outline" (click)="mutate('temp_hp', {amount: tempHp})">Set temp HP</button>
+      </fieldset>
+      </details>
+      <details class="disclosure" data-preview-ok><summary class="text-slate text-sm">Saving throws and senses</summary>
+      <div class="companion-grid abilities text-center mt-2">
+        @for (ability of c.stats.ability_scores | keyvalue: preserveOrder; track ability.key) {
+          <div><span class="text-slate text-xs uppercase">{{ ability.key.slice(0, 3) }}</span><div class="text-parchment text-sm">{{ signed(c.stats.saving_throws[ability.key]) }}</div></div>
+        }
+      </div>
+      <div class="text-xs text-slate mt-2">
+        <p class="m-0">Speed: @for (speed of c.stats.speed | keyvalue; track speed.key) { {{ speed.key }} {{ speed.value }} ft. }</p>
+        <p class="m-0">Darkvision {{ c.stats.darkvision }} ft. · Passive Perception {{ c.stats.passive_perception }}</p>
+        <p class="m-0">All ability checks add {{ signed(c.stats.check_bonus) }} to the companion’s ability modifier. {{ c.stats.languages }}.</p>
+        @if (c.stats.damage_immunities.length) { <p class="m-0">Damage immunities: {{ c.stats.damage_immunities.join(', ') }}</p> }
+        @if (c.stats.condition_immunities.length) { <p class="m-0">Condition immunities: {{ c.stats.condition_immunities.join(', ') }}</p> }
+      </div>
+      </details>
+      @if (c.conditions.length) { <p class="m-0 text-sm text-gold">Conditions: {{ c.conditions.join(', ') }}</p> }
+      <details class="disclosure" data-preview-ok><summary class="text-slate text-sm">Traits and progression</summary>
+        @for (trait of c.stats.traits; track trait.name) { <p class="text-sm text-slate"><strong class="text-parchment">{{ trait.name }}.</strong> {{ trait.description }}</p> }
+      </details>
+      <div class="text-xs text-slate">
+        <p class="m-0">Acts during your turn. Defaults to Dodge; moves and reacts independently.</p>
+        <p class="m-0">If you are Incapacitated, it can act without a command.</p>
+        @if (data()?.ownerIncapacitated) { <p class="text-gold m-0">Owner incapacitated: the companion may act independently.</p> }
+        @if (c.turn?.started) {
+          <p class="m-0 text-parchment">{{ c.turn?.ownerTurn ? 'Owner’s turn' : 'Waiting for owner’s turn' }} · {{ data()?.ownerIncapacitated ? 'Acts independently' : 'Command: ' + commandName() }}{{ c.turn?.commandCost === 'bonus_action' ? ' (Bonus Action)' : c.turn?.commandCost === 'replace_attack' ? ' (Replaced attack)' : '' }}</p>
+          <p class="m-0">Action {{ c.turn?.actionUsed ? 'used' : 'available' }} · Reaction {{ c.turn?.reactionUsed ? 'used' : 'available' }}</p>
+        } @else { <p class="m-0">Turn tracking begins when the DM starts the turn order.</p> }
+      </div>
+      <div><h4 class="section-title">Attacks and features</h4>
+        @for (action of specialActions(); track action.key) {
+          <details class="disclosure action-card" data-preview-ok>
+            <summary class="text-sm">
+              <span class="action-heading"><strong class="text-parchment">{{ action.name }}</strong>
+                @if (action.attack_bonus !== undefined) { <span class="text-slate text-xs">{{ signed(action.attack_bonus!) }} to hit · {{ action.damage }} · {{ action.reach }} ft.</span> }
+                @if (action.uses) { <span class="text-gold text-xs">{{ action.uses - (action.used || 0) }}/{{ action.uses }} uses</span> }
+              </span>
+            </summary>
+            <ng-container [ngTemplateOutlet]="actionControls" [ngTemplateOutletContext]="{ $implicit: action }" />
+          </details>
+        }
+      </div>
+      <div class="combat-grid">
+      <div class="basic-actions">
+        <h4 class="section-title">Basic actions</h4>
+        @for (action of basicActions(); track action.key) {
+          <details class="disclosure basic-action" data-preview-ok>
+            <summary class="text-sm"><strong class="text-parchment">{{ action.name }}</strong><span class="text-slate text-xs"> · Action</span></summary>
+            <ng-container [ngTemplateOutlet]="actionControls" [ngTemplateOutletContext]="{ $implicit: action }" />
+          </details>
+        }
+      </div>
+      <div><h4 class="section-title">Reactions</h4>
+        @for (action of reactions(); track action.key) {
+          <details class="disclosure" data-preview-ok>
+            <summary class="text-sm"><strong class="text-parchment">{{ action.name }}</strong><span class="text-slate text-xs"> · Reaction</span></summary>
+            <div class="action-body"><p class="text-slate text-sm m-0 mb-2">{{ action.description }}</p>
+              <button class="btn-outline" [disabled]="!canUse(c, action)" (click)="mutate('use', {key: action.key})">Use reaction</button>
+            </div>
+          </details>
+        }
+      </div>
+      </div>
+      <ng-template #actionControls let-action>
+        <div class="action-body">
+          @if (action.attack_bonus !== undefined) { <p class="text-xs text-gold m-0 mb-1">{{ action.damage }} {{ action.damage_type }} · {{ action.attacks }} attack(s)</p> }
+          <p class="text-sm text-slate m-0 mb-2">{{ action.description }}</p>
+          @if (action.key === 'strike' && c.stats.command.replaceAttack) { <p class="text-xs text-slate m-0 mb-2">Replace one attack from your Attack action to command this strike.</p> }
+          <div class="flex flex-wrap gap-2">
+            @if (action.key !== 'dodge') { <button class="btn-outline" [disabled]="!canCommand(c)" (click)="command(action)">Command · Bonus Action</button> }
+            @if (action.key === 'strike' && c.stats.command.replaceAttack) { <button class="btn-outline" [disabled]="!canCommand(c)" (click)="command(action, 'replace_attack')">Command · Replace attack</button> }
+            <button class="btn-outline" [disabled]="!canUse(c, action)" (click)="mutate('use', {key: action.key})">{{ action.key === 'repair' ? 'Repair self' : action.key === 'strike' ? 'Roll attack' : 'Use action' }}</button>
+            @if (action.key === 'repair') {
+              <button class="btn-outline" [disabled]="!canUse(c, action)" (click)="mutate('use', {key: 'repair', target: 'other'})">Repair another target</button>
+              <button class="btn-outline" [disabled]="readonly() || busy()" (click)="mutate('restore_resource', {key: 'repair'})">Restore use</button>
+            }
+            @if (c.stats.command.exceptionalTraining && ['dash','disengage','dodge','help'].includes(action.key)) { <button class="btn-outline" [disabled]="!canAct(c) || !c.turn?.ownerTurn || c.turn?.commandCost !== 'bonus_action' || !!c.turn?.bonusUsed" (click)="mutate('use', {key: action.key, bonus: true})">Use beast’s Bonus Action</button> }
+          </div>
+          @if (action.key !== 'dodge' && !data()?.ownerIncapacitated) { <p class="text-xs text-slate m-0 mt-2">Command first, then resolve the action. Track your other Bonus Actions on your character sheet.</p> }
+        </div>
+      </ng-template>
+      @if (c.kind === 'steel' && c.stats.class_level >= 9) {
+        <div class="text-sm text-slate">Arcane Jolt · {{ data()?.arcaneJoltUsed }} owner uses spent
+          <button class="btn-outline" [disabled]="!canAct(c) || !!(c.turn?.started && c.turn?.joltUsed)" (click)="mutate('jolt')">Apply Arcane Jolt on a hit</button>
+        </div>
+      }
+      <details class="disclosure recovery" [open]="c.status !== 'active'" data-preview-ok><summary class="text-gold text-sm">Rest, revive or replace</summary>
+        <fieldset [disabled]="readonly() || busy()" class="border-0 p-0 m-0 flex flex-col gap-2 mt-2">
+          <div class="flex flex-wrap gap-2"><input class="field-input w-20" type="number" min="1" [max]="c.stats.hit_dice - c.hit_dice_used" [(ngModel)]="hitDice" aria-label="Hit Dice to spend" /><button class="btn-outline" [disabled]="c.status !== 'active'" (click)="mutate('short_rest', {hitDice: hitDice})">Spend Hit Dice · Short Rest</button></div>
+          <p class="text-xs text-slate m-0">The owner’s Long Rest restores a living companion. A dead companion needs revival or replacement.</p>
+          @if (c.kind === 'primal') {
+            <p class="text-sm text-slate m-0"><strong class="text-parchment">Revive.</strong> If the beast died within the last hour, take a Magic action to touch it and spend a spell slot. It returns after 1 minute with full HP.</p>
+            <p class="text-sm text-slate m-0"><strong class="text-parchment">Replace.</strong> When you finish a Long Rest, summon a beast with your chosen form and appearance within 5 feet. The previous beast vanishes.</p>
+          } @else {
+            <p class="text-sm text-slate m-0">Revive a defender that died within the last hour with a Magic action, a spell slot and 1 minute. Create a replacement after a Long Rest, or with a spell slot and 1 minute. The old defender perishes.</p>
+          }
+          @if (c.status === 'dead' || (c.kind === 'steel' && !c.replacement_available)) {
+            <select class="field-input" [(ngModel)]="slotIndex" aria-label="Spell slot for revival or creation">
+              @for (slot of data()?.slots || []; track $index) { <option [ngValue]="$index" [disabled]="slot.remaining <= 0">{{ slot.name }} · Level {{ slot.level }} · {{ slot.remaining }} remaining</option> }
+            </select>
+          }
+          @if (c.status === 'dead') { <button class="btn-outline self-start" (click)="restore('revive')">Complete revival · 1 minute + spell slot</button> }
+          <div class="flex flex-wrap gap-2">
+            <select class="field-input w-auto" [ngModel]="replacementForm || c.form" (ngModelChange)="replacementForm = $event" aria-label="Replacement form">
+              @for (form of c.kind === 'primal' ? ['land','sea','sky'] : ['defender']; track form) { <option [value]="form">{{ form }}</option> }
+            </select>
+            <button class="btn-outline" [disabled]="c.kind === 'primal' && !c.replacement_available" (click)="restore('replace')">Replace companion · {{ c.replacement_available ? 'after Long Rest' : c.kind === 'primal' ? 'requires Long Rest' : 'spell slot' }}</button>
+          </div>
+        </fieldset>
+      </details>
+      <details class="disclosure" data-preview-ok><summary class="text-slate text-sm">Manage companion / corrections</summary>
+        <fieldset [disabled]="readonly() || busy()" class="border-0 p-0 m-0 flex flex-col gap-3 mt-3">
+          <label class="text-sm text-slate">Portrait <input type="file" accept="image/png,image/jpeg,image/webp" (change)="uploadPortrait($event)" /></label>
+          <div class="flex flex-wrap gap-2"><input class="field-input flex-1" maxlength="80" [(ngModel)]="newName" [placeholder]="c.name" aria-label="Companion name" /><button class="btn-outline" (click)="mutate('rename', {name: newName})">Rename</button></div>
+          <div class="flex flex-wrap gap-2"><input class="field-input flex-1" [(ngModel)]="conditions" placeholder="Conditions, separated by commas" aria-label="Companion conditions" /><button class="btn-outline" (click)="mutate('conditions', {conditions: conditions.split(',').map(trim) .filter(nonempty)})">Set conditions</button></div>
+          <button class="btn-outline" [disabled]="c.status === 'dismissed'" (click)="mutate('dismiss')">Dismiss companion</button>
+          <button class="btn-outline" (click)="mutate('correct_hp', {amount: amount})">Correct current HP to {{ amount }}</button>
+          @if (c.turn) {
+            <div class="flex flex-wrap gap-2">
+              @for (field of ['command','actionUsed','bonusUsed','reactionUsed','joltUsed']; track field) { <button class="btn-outline text-xs" (click)="mutate('correct_turn', {field: field})">Reset {{ correctionLabels[field] }}</button> }
+            </div>
+          }
+        </fieldset>
+      </details>
+    </div>
+  }
+</div>

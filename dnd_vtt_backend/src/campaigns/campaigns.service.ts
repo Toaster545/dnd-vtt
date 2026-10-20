@@ -387,6 +387,26 @@ export class CampaignsService {
       ],
     );
 
+    const sourceCompanions = await this.db.execute(
+      'SELECT kind,data FROM companions WHERE character_id=?',
+      [dto.characterId],
+    );
+    for (const companion of sourceCompanions.rows) {
+      const state = this.db.parseJson<Record<string, unknown>>(
+        companion.data as string,
+        {},
+      );
+      await this.db.execute(
+        'INSERT INTO companions(id,character_id,kind,data) VALUES(?,?,?,?)',
+        [
+          randomUUID(),
+          copyId,
+          companion.kind,
+          JSON.stringify({ ...state, revision: 1 }),
+        ],
+      );
+    }
+
     const membershipId = randomUUID();
     await this.db.execute(
       // New members start hidden from the rest of the party's list — the DM opts each one in via

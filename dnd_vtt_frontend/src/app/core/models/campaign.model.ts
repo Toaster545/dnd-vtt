@@ -101,6 +101,10 @@ export interface BattleMap {
 }
 
 export interface MapToken {
+  companion_id?: string;
+  companion_owner_id?: string;
+  companion_owner_token_id?: string;
+  companion_speed?: number;
   id?: string;
   map_id: string;
   label: string;
@@ -220,7 +224,8 @@ export type LightToolName = 'place' | 'wall' | 'erase-wall';
 // click — built by the roster UI (from a Character or a DndMonster), consumed by BattleMapComponent
 // to fill in a new token's fields instead of a manually-typed label/color.
 export interface PlacingEntity {
-  kind: 'monster' | 'character' | 'custom';
+  kind: 'monster' | 'character' | 'custom' | 'companion';
+  companionId?: string;
   label: string;
   color: string;
   size: number;

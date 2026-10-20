@@ -4,9 +4,10 @@ import { EncountersService } from './encounters.service';
 import { EncounterPresenceGateway } from './encounter-presence.gateway';
 import { AuthModule } from '../auth/auth.module';
 import { MapsModule } from '../maps/maps.module';
+import { CompanionsModule } from '../companions/companions.module';
 
 @Module({
-  imports: [AuthModule, MapsModule],
+  imports: [AuthModule, MapsModule, CompanionsModule],
   controllers: [EncountersController],
   providers: [EncountersService, EncounterPresenceGateway],
   exports: [EncounterPresenceGateway],

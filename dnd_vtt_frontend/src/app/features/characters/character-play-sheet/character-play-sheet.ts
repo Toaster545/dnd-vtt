@@ -1,3 +1,5 @@
+import { CompanionService } from '../../../core/services/companion.service';
+import { CompanionSheetComponent } from '../../../shared/components/companion-sheet/companion-sheet';
 import {
   Component, inject, input, output, signal, computed, effect, viewChild, ElementRef,
 } from '@angular/core';
@@ -111,17 +113,17 @@ interface SpellFilters {
 
 interface DescriptionSegment { text: string; bold: boolean }
 
-type Tab = 'stats' | 'actions' | 'inventory' | 'spells';
-const TAB_ORDER: Tab[] = ['stats', 'actions', 'inventory', 'spells'];
+type Tab = 'stats' | 'actions' | 'inventory' | 'spells' | 'companions';
+const TAB_ORDER: Tab[] = ['stats', 'actions', 'inventory', 'spells', 'companions'];
 const TAB_LABELS: Record<Tab, string> = {
-  stats: 'Stats', actions: 'Actions', inventory: 'Equipment', spells: 'Spells',
+  stats: 'Stats', actions: 'Actions', inventory: 'Equipment', spells: 'Spells', companions: 'Companions',
 };
 
 @Component({
   selector: 'app-character-play-sheet',
   imports: [
     FormsModule, MatIconModule, MatTooltipModule, NgTemplateOutlet, ItemFormComponent, SwipeTabsDirective,
-    StatblockExportMenuComponent, CharacterPortraitComponent,
+    StatblockExportMenuComponent, CharacterPortraitComponent, CompanionSheetComponent,
   ],
   templateUrl: './character-play-sheet.html',
   styleUrl: './character-play-sheet.scss',
@@ -133,6 +135,8 @@ export class CharacterPlaySheetComponent {
   private readonly uiScale = inject(UiScaleService);
   readonly tokenPortraitPx = computed(() => tokenPortraitSize(44, this.uiScale.current()));
 
+  private companionService = inject(CompanionService);
+  private savedCompanionCount = signal(0);
   private content        = inject(ContentService);
   private itemService    = inject(ItemService);
   private characterService = inject(CharacterService);
@@ -167,7 +171,7 @@ export class CharacterPlaySheetComponent {
   readonly skillAbility  = SKILLS;
 
   activeTab   = signal<Tab>('stats');
-  readonly tabOrder  = TAB_ORDER;
+  readonly tabOrder = computed(() => TAB_ORDER.filter(tab => tab !== 'companions' || this.hasCompanions()));
   readonly tabLabels = TAB_LABELS;
   private readonly bodyRef = viewChild<ElementRef<HTMLElement>>('sheetBody');
 
@@ -178,8 +182,9 @@ export class CharacterPlaySheetComponent {
   // Swipe left/right (touch only, see appSwipeTabs) steps through the tabs in display order;
   // clamped rather than wrapping so a swipe past either end is simply a no-op.
   swipeTab(dir: 1 | -1) {
-    const idx = TAB_ORDER.indexOf(this.activeTab());
-    this.goToTab(TAB_ORDER[Math.min(TAB_ORDER.length - 1, Math.max(0, idx + dir))]);
+    const order = this.tabOrder();
+    const idx = order.indexOf(this.activeTab());
+    this.goToTab(order[Math.min(order.length - 1, Math.max(0, idx + dir))]);
   }
 
   // Every tab switch (tab bar click or swipe) lands at the top of the fresh tab — but it does
@@ -335,6 +340,16 @@ export class CharacterPlaySheetComponent {
     }
     return [...companions.values()];
   });
+
+  companionFeatures = computed(() => this.resolvedClasses().filter(c => c.level >= 3 && ['beast-master', 'battle-smith'].includes((c.subclassName ?? '').toLowerCase().replace(/\s+/g, '-'))));
+  hasCompanions = computed(() => this.savedCompanionCount() > 0 || this.companionFeatures().length > 0 || this.activeCompanions().length > 0);
+  referenceCompanions = computed(() => this.activeCompanions().filter(c => c.monster.index !== 'steel-defender'));
+  async companionChanged() {
+    const id = this.localChar()?.id;
+    if (!id) return;
+    const character = await this.characterService.getCharacter(id);
+    this.localChar.set(character); this.saved.emit(character);
+  }
 
   primaryClass = computed(() => this.resolvedClasses()[0]?.data ?? null);
 
@@ -799,6 +814,13 @@ export class CharacterPlaySheetComponent {
   private loadSeq = 0;
 
   constructor() {
+    effect(cleanup => {
+      const id = this.character().id;
+      this.savedCompanionCount.set(0);
+      if (!id) return;
+      const sub = this.companionService.watch(id).subscribe(data => this.savedCompanionCount.set(data.companions.length));
+      cleanup(() => sub.unsubscribe());
+    });
     effect(() => {
       const char = this.character();
       if (!this.loaded || (!this.preview() && char.id !== this.loadedId)) {

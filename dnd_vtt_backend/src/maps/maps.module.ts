@@ -4,9 +4,10 @@ import { MapsService } from './maps.service';
 import { TokensGateway } from './tokens.gateway';
 import { AuthModule } from '../auth/auth.module';
 import { ContentModule } from '../content/content.module';
+import { CompanionsModule } from '../companions/companions.module';
 
 @Module({
-  imports: [AuthModule, ContentModule],
+  imports: [AuthModule, ContentModule, CompanionsModule],
   controllers: [MapsController],
   providers: [MapsService, TokensGateway],
   exports: [TokensGateway],

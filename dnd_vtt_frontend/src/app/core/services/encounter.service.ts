@@ -178,11 +178,15 @@ export class EncounterService {
       this.socketService.connect();
       socket.on('encounter_tokens_changed', handleChange);
       socket.on('connect', refetch);
+      socket.on('companions_updated', refetch);
+      socket.on('character_updated', refetch);
       refetch();
 
       return () => {
         socket.off('encounter_tokens_changed', handleChange);
         socket.off('connect', refetch);
+        socket.off('companions_updated', refetch);
+        socket.off('character_updated', refetch);
       };
     });
   }

@@ -215,15 +215,24 @@
           [class]="activeTab() === 'spells' ? 'bg-gold text-on-accent' : 'bg-white/10 text-slate'">4</span>
         Spells
       </button>
+      @if (hasCompanions()) {
+        <button class="flex items-center gap-2 px-5 py-3.5 text-sm font-medium whitespace-nowrap border-b-2 border-0 cursor-pointer"
+          [class]="activeTab() === 'companions' ? 'border-gold text-gold' : 'border-transparent text-slate'"
+          (click)="goToTab('companions')" style="background: transparent; font-family: inherit;">
+          <span class="flex items-center justify-center w-5 h-5 rounded-full text-xs bg-white/10">5</span>Companions
+        </button>
+      }
     </div>
 
     <!-- Phone-only stand-in for the tab bar (hidden above it via CSS): the full bar is
          suppressed on narrow viewports since the body advances tabs on horizontal swipe
          (appSwipeTabs), so this just names the current tab and shows position. -->
     <div class="sheet-tab-indicator" aria-hidden="true">
-      <span class="sheet-tab-indicator-label">{{ tabLabels[activeTab()] }}</span>
+      <select class="sheet-tab-indicator-label bg-transparent border-0 text-gold" aria-label="Character sheet section" [value]="activeTab()" (change)="goToTab($any($event.target).value)" data-preview-ok>
+        @for (tab of tabOrder(); track tab) { <option [value]="tab">{{ tabLabels[tab] }}</option> }
+      </select>
       <span class="sheet-tab-indicator-dots">
-        @for (t of tabOrder; track t) {
+        @for (t of tabOrder(); track t) {
           <span class="dot" [class.active]="activeTab() === t"></span>
         }
       </span>
@@ -334,10 +343,24 @@
                       }
                     </div>
                   }
-                  @if (activeCompanions().length) {
-                    <h4 class="font-brand text-gold text-xs uppercase tracking-widest m-0 pt-4 pb-1.5 mb-2 border-b border-gold/25">Companions</h4>
+
+                </div>
+              </div>
+
+            </div>
+          }
+        }
+
+        @case ('companions') {
+          @if (char.id) {
+            <app-companion-sheet [characterId]="char.id!" [readonly]="preview()" (changed)="companionChanged()" />
+          } @else {
+            <p class="text-slate">Save your character to create and manage companions.</p>
+          }
+                  @if (referenceCompanions().length) {
+                    <h4 class="font-brand text-gold text-xs uppercase tracking-widest m-0 pt-4 pb-1.5 mb-2 border-b border-gold/25">Other companion references</h4>
                     <div class="flex flex-col gap-2">
-                      @for (companion of activeCompanions(); track companion.monster.index) {
+                      @for (companion of referenceCompanions(); track companion.monster.index) {
                         <div class="rounded border border-white/10 bg-elevated px-3 py-2 text-sm">
                           <div class="flex flex-wrap items-center gap-2">
                             <span class="text-parchment font-medium">{{ companion.monster.name }}</span>
@@ -356,11 +379,6 @@
                       }
                     </div>
                   }
-                </div>
-              </div>
-
-            </div>
-          }
         }
 
         <!-- ACTIONS -->
@@ -421,10 +439,15 @@
 
               <!-- BONUS + SPECIAL ACTIONS share the second column — both are usually short lists -->
               <div class="flex flex-col gap-5">
-                @if (bonusActions().length || bonusActionSpells().length || bonusActionFeatures().length) {
+                @if (bonusActions().length || bonusActionSpells().length || bonusActionFeatures().length || companionFeatures().length) {
                   <div>
                     <h4 class="font-brand text-gold text-xs uppercase tracking-widest m-0 pb-1.5 mb-2 border-b border-gold/25">Bonus Actions</h4>
                     <div class="flex flex-col gap-1.5">
+                      @for (feature of companionFeatures(); track feature.name) {
+                        <button class="btn-outline text-left" (click)="goToTab('companions')" data-preview-ok>
+                          Command {{ feature.name === 'Ranger' ? 'Primal Companion' : 'Steel Defender' }} · Bonus Action
+                        </button>
+                      }
                       @for (action of bonusActions(); track action.key) {
                         @let remaining = action.maxUses - action.usedUses;
                         <div class="px-3 py-2 rounded border border-white/10 text-sm">
