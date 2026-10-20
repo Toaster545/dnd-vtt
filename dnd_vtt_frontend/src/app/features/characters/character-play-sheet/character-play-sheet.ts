@@ -285,6 +285,7 @@ export class CharacterPlaySheetComponent {
   showGrantItemDialog    = signal(false);
   grantItemSearch        = signal('');
   grantItemQuantity      = signal(1);
+  grantItemCategory      = signal('');
   grantItemCreatingCustom = signal(false);
   grantItemBusy          = signal(false);
   grantItemError         = signal('');
@@ -501,12 +502,21 @@ export class CharacterPlaySheetComponent {
     return Number(level?.class_specific?.['replicated_items'] ?? 0);
   });
 
-  grantItemResults = computed(() => {
+  // A character in a campaign is managed by its DM; one outside any campaign has no DM, so its
+  // owner adds and removes items themselves.
+  ownsPersonalCharacter = computed(() => !this.isDm() && !this.preview() && !this.localChar()?.campaign_id);
+  canManageInventory = computed(() => this.isDm() || this.ownsPersonalCharacter());
+
+  grantItemCategories = computed(() =>
+    [...new Set(this.itemsAll().map(item => item.category).filter(Boolean))].sort());
+
+  grantItemMatches = computed(() => {
     const query = this.grantItemSearch().trim().toLowerCase();
-    const items = this.itemsAll();
-    if (!query) return items;
-    return items.filter(item => item.name.toLowerCase().includes(query));
+    const category = this.grantItemCategory();
+    return this.itemsAll().filter(item =>
+      (!category || item.category === category) && (!query || item.name.toLowerCase().includes(query)));
   });
+  grantItemResults = computed(() => this.grantItemMatches().slice(0, 100));
 
   // Excludes anything the character already has, whether from class/race/feat progression or an
   // earlier grant — spellRows() already folds granted spells in alongside every other origin.
@@ -1086,7 +1096,7 @@ export class CharacterPlaySheetComponent {
     }
   }
 
-  // DM-only counterpart to grantItem — takes the whole stack back (see
+  // Counterpart to grantItem (DM, or the owner of a campaign-less character) — takes the whole stack back (see
   // CharacterService.revokeItem / CharactersService.revokeItem for the partial-quantity form,
   // unused here since "remove this from their inventory" is the sheet's only entry point).
   async revokeItem(entry: EquipmentEntry) {
@@ -1106,6 +1116,7 @@ export class CharacterPlaySheetComponent {
   openGrantItemDialog() {
     this.grantItemSearch.set('');
     this.grantItemQuantity.set(1);
+    this.grantItemCategory.set('');
     this.grantItemCreatingCustom.set(false);
     this.grantItemError.set('');
     this.grantItemNotice.set('');
@@ -1132,7 +1143,8 @@ export class CharacterPlaySheetComponent {
       const result = await this.characterService.grantItem(char.id, item.index, quantity);
       this.localChar.set(result);
       this.saved.emit(result);
-      this.grantItemNotice.set(`Gave ${char.name} ${quantity > 1 ? quantity + '× ' : ''}${itemDisplayName(item)}.`);
+      const what = `${quantity > 1 ? quantity + '× ' : ''}${itemDisplayName(item)}`;
+      this.grantItemNotice.set(this.ownsPersonalCharacter() ? `Added ${what}.` : `Gave ${char.name} ${what}.`);
     } catch (error: unknown) {
       const candidate = error as { error?: { message?: string | string[] } };
       const message = candidate.error?.message;
