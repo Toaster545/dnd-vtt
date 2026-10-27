@@ -6,12 +6,13 @@ import { JwtGuard } from './jwt.guard';
 import { AdminGuard } from './admin.guard';
 import { DatabaseService } from '../common/database.service';
 import { SocketAuthService } from './socket-auth.service';
+import { resolveJwtSecret } from './jwt-secret';
 
 @Module({
   imports: [
     JwtModule.registerAsync({
       useFactory: () => ({
-        secret: process.env.JWT_SECRET ?? 'change-me',
+        secret: resolveJwtSecret(),
         signOptions: { expiresIn: '15m' },
       }),
     }),

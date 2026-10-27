@@ -1,5 +1,5 @@
 import { NestFactory } from '@nestjs/core';
-import { ValidationPipe } from '@nestjs/common';
+import { Logger, ValidationPipe } from '@nestjs/common';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { join } from 'path';
 import * as express from 'express';
@@ -7,6 +7,13 @@ import { AppModule } from './app.module';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
+
+  if (process.env.DEV_BYPASS === 'true') {
+    Logger.warn(
+      'DEV_BYPASS=true: the bearer token "dev" is accepted as admin. Do not expose this server publicly.',
+      'Bootstrap',
+    );
+  }
 
   app.setGlobalPrefix('api');
   // Nest's 100kb JSON default is too small for a big map's wall set (PUT /maps/:id/lighting/walls
