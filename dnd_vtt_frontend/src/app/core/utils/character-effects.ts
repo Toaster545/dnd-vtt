@@ -223,7 +223,13 @@ export function resolveLanguageProficiencies(
 export function equippedItems(equipment: EquipmentEntry[], items: DndItem[]): DndItem[] {
   return equipment
     .filter((e) => e.equipped)
-    .map((e) => e.needsBase || e.unresolved ? undefined : e.resolvedItem ? { ...e.resolvedItem, instanceId: e.instanceId, chargesUsed: e.chargesUsed } : items.find((it) => it.index === e.itemIndex))
+    .map((e) =>
+      e.needsBase || e.unresolved
+        ? undefined
+        : e.resolvedItem
+          ? { ...e.resolvedItem, instanceId: e.instanceId, chargesUsed: e.chargesUsed }
+          : items.find((it) => it.index === e.itemIndex),
+    )
     .filter((it): it is DndItem => !!it);
 }
 
@@ -233,15 +239,19 @@ export function equippedItems(equipment: EquipmentEntry[], items: DndItem[]): Dn
 // you've taken off, but a worn-but-unattuned item that requires attunement is mechanically inert).
 export function attunementActive(item: DndItem, equipment: EquipmentEntry[]): boolean {
   if (!item.requires_attunement) return true;
-  return !!equipment.find((e) => item.instanceId ? e.instanceId === item.instanceId : e.itemIndex === item.index)?.attuned;
+  return !!equipment.find((e) =>
+    item.instanceId ? e.instanceId === item.instanceId : e.itemIndex === item.index,
+  )?.attuned;
 }
 
 // Equipped items whose magic is actually switched on right now — the basis for effects that
 // come from gear (see collectTraitEffects's caller in character-stats.service.ts), so an
 // unattuned item requiring attunement never contributes effects just for being worn.
 export function activeMagicItems(equipment: EquipmentEntry[], items: DndItem[]): DndItem[] {
-  const active = equippedItems(equipment, items).filter((item) => attunementActive(item, equipment));
-  return [...new Map(active.map(item => [item.index, item])).values()];
+  const active = equippedItems(equipment, items).filter((item) =>
+    attunementActive(item, equipment),
+  );
+  return [...new Map(active.map((item) => [item.index, item])).values()];
 }
 
 export const isShieldItem = (it: DndItem) => it.category === 'Shield';

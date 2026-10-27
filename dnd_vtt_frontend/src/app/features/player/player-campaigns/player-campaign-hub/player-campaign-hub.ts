@@ -8,20 +8,27 @@ import { AuthService } from '../../../../core/services/auth.service';
 import { RecentActivityService } from '../../../../core/services/recent-activity.service';
 import { CampaignHub, CampaignMember } from '../../../../core/models/campaign.model';
 import { Character } from '../../../../core/models/character.model';
-import { WikiEmbedComponent } from '../../../wiki/wiki-embed.component';
+import { WikiEmbedComponent } from '../../../wiki/wiki-embed';
 import { PartyListComponent } from '../../../../shared/components/party-list/party-list';
 import { CharacterWizardComponent } from '../../../characters/character-wizard/character-wizard';
 import { CharacterPlaySheetComponent } from '../../../characters/character-play-sheet/character-play-sheet';
 import { PlayerContextService } from '../../../../core/services/player-context.service';
-import { ConfirmService } from '../../../../shared/confirm.service';
+import { ConfirmService } from '../../../../shared/components/confirm-dialog/confirm.service';
 import { HubViewService } from '../../../../core/services/hub-view.service';
 import { ResizeHandleDirective } from '../../../../shared/directives/resize-handle.directive';
+import { getErrorMessage } from '../../../../core/utils/error-message';
 
 @Component({
   selector: 'app-player-campaign-hub',
   imports: [
-    RouterLink, MatIconModule, MatTooltipModule, WikiEmbedComponent, PartyListComponent, CharacterWizardComponent,
-    CharacterPlaySheetComponent, ResizeHandleDirective,
+    RouterLink,
+    MatIconModule,
+    MatTooltipModule,
+    WikiEmbedComponent,
+    PartyListComponent,
+    CharacterWizardComponent,
+    CharacterPlaySheetComponent,
+    ResizeHandleDirective,
   ],
   templateUrl: './player-campaign-hub.html',
   // Routed in via player-shell's <router-outlet>, so without a host sizing class this stays an
@@ -31,39 +38,41 @@ import { ResizeHandleDirective } from '../../../../shared/directives/resize-hand
   host: { class: 'flex flex-col flex-1 min-h-0 overflow-hidden' },
 })
 export class PlayerCampaignHubComponent implements OnInit {
-  private route            = inject(ActivatedRoute);
-  private router           = inject(Router);
-  private campaignService  = inject(CampaignService);
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
+  private campaignService = inject(CampaignService);
   private characterService = inject(CharacterService);
-  private recentActivity   = inject(RecentActivityService);
-  private playerContext    = inject(PlayerContextService);
-  private confirm          = inject(ConfirmService);
-  auth                     = inject(AuthService);
-  hubView                  = inject(HubViewService);
+  private recentActivity = inject(RecentActivityService);
+  private playerContext = inject(PlayerContextService);
+  private confirm = inject(ConfirmService);
+  auth = inject(AuthService);
+  hubView = inject(HubViewService);
 
   campaignId = this.route.snapshot.paramMap.get('campaignId')!;
 
   campaign = signal<CampaignHub | null>(null);
-  loading  = signal(true);
+  loading = signal(true);
 
   // The embedded wiki panel lands on a page named after this campaign, if one exists.
   readonly wikiTitles = computed(() => {
     const c = this.campaign();
     return c ? [c.name] : [];
   });
-  leaving  = signal(false);
+  leaving = signal(false);
   leaveError = signal('');
 
   // This campaign's copy of the player's character, shown inline in the main column when the
   // Wiki/Character tabs next to the title are set to Character (see HubViewService).
-  readonly myCharacterId = computed(() =>
-    this.campaign()?.members.find(m => m.user_id === this.auth.profile()?.id)?.character_id ?? null,
+  readonly myCharacterId = computed(
+    () =>
+      this.campaign()?.members.find((m) => m.user_id === this.auth.profile()?.id)?.character_id ??
+      null,
   );
   myCharacter = signal<Character | null>(null);
   readonly showSheet = computed(() => this.hubView.current() === 'sheet' && !!this.myCharacterId());
 
   editingCharacter = signal<Character | null>(null);
-  showWizard       = signal(false);
+  showWizard = signal(false);
   sheetCharacter = signal<Character | null>(null);
   // Set only when the sheet was opened via the wizard's "View Sheet" button (as opposed to
   // viewMyCharacter) — routes closeCharacterSheet() back into the wizard instead of the hub.
@@ -117,11 +126,7 @@ export class PlayerCampaignHubComponent implements OnInit {
       await this.playerContext.clearCampaign();
       await this.router.navigate(['/home/campaigns']);
     } catch (error: unknown) {
-      const response = error as { error?: { message?: string | string[] } };
-      const message = response.error?.message;
-      this.leaveError.set(
-        Array.isArray(message) ? message.join(' ') : message ?? 'Could not leave this campaign.',
-      );
+      this.leaveError.set(getErrorMessage(error, 'Could not leave this campaign.'));
     } finally {
       this.leaving.set(false);
     }
@@ -138,7 +143,10 @@ export class PlayerCampaignHubComponent implements OnInit {
   // migration / setOwnRaceClassVisibility) — the DM always sees it regardless of this toggle.
   async toggleRaceClassVisibility(member: CampaignMember) {
     this.campaign.set(
-      await this.campaignService.setOwnRaceClassVisibility(this.campaignId, !member.show_race_class),
+      await this.campaignService.setOwnRaceClassVisibility(
+        this.campaignId,
+        !member.show_race_class,
+      ),
     );
   }
 
@@ -187,6 +195,10 @@ export class PlayerCampaignHubComponent implements OnInit {
 
   formatDate(iso?: string): string {
     if (!iso) return '';
-    return new Date(iso).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
+    return new Date(iso).toLocaleDateString(undefined, {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+    });
   }
 }

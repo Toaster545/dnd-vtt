@@ -17,14 +17,15 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { WikiService } from '../../core/services/wiki.service';
-import { ConfirmService } from '../../shared/confirm.service';
+import { ConfirmService } from '../../shared/components/confirm-dialog/confirm.service';
 import {
   WikiBacklink,
   WikiPage,
   WikiPageSummary,
   WikiSearchHit,
 } from '../../core/models/wiki.model';
-import { WikiLiveEditorComponent } from './wiki-live-editor.component';
+import { WikiLiveEditorComponent } from './wiki-live-editor';
+import { persistWidth, readStoredWidth } from '../../core/utils/storage-keys';
 import {
   FolderNode,
   buildTree,
@@ -41,8 +42,7 @@ type ContextMenu =
 
 /** An item currently being dragged in the sidebar tree. */
 type DragItem =
-  | { kind: 'page'; page: WikiPageSummary; from: string }
-  | { kind: 'folder'; path: string };
+  { kind: 'page'; page: WikiPageSummary; from: string } | { kind: 'folder'; path: string };
 
 const SAVE_DEBOUNCE_MS = 1500;
 
@@ -50,23 +50,6 @@ const MIN_SIDEBAR = 160;
 const MAX_SIDEBAR = 520;
 const DEFAULT_SIDEBAR = 256;
 const SIDEBAR_WIDTH_KEY = 'wiki:sidebar:width';
-
-function loadSidebarWidth(): number {
-  try {
-    const n = Number(localStorage.getItem(SIDEBAR_WIDTH_KEY));
-    return n >= MIN_SIDEBAR && n <= MAX_SIDEBAR ? n : DEFAULT_SIDEBAR;
-  } catch {
-    return DEFAULT_SIDEBAR;
-  }
-}
-
-function persistSidebarWidth(width: number): void {
-  try {
-    localStorage.setItem(SIDEBAR_WIDTH_KEY, String(Math.round(width)));
-  } catch {
-    /* ignore */
-  }
-}
 
 // The routing-free wiki. `WikiComponent` wraps this for the full-page route (syncing `slug` <-> the
 // URL); `WikiEmbedComponent` renders it inside the campaign/session hubs with `embedded` set, which
@@ -82,8 +65,8 @@ function persistSidebarWidth(width: number): void {
     MatTooltipModule,
     WikiLiveEditorComponent,
   ],
-  templateUrl: './wiki-workspace.component.html',
-  styleUrl: './wiki-workspace.component.scss',
+  templateUrl: './wiki-workspace.html',
+  styleUrl: './wiki-workspace.scss',
   host: {
     class: 'flex',
     '[class.flex-1]': '!embedded()',
@@ -137,7 +120,9 @@ export class WikiWorkspaceComponent implements OnInit {
   menu = signal<ContextMenu | null>(null);
 
   /** Sidebar width in px; drag the divider on its right edge to resize. */
-  sidebarWidth = signal(loadSidebarWidth());
+  sidebarWidth = signal(
+    readStoredWidth(SIDEBAR_WIDTH_KEY, MIN_SIDEBAR, MAX_SIDEBAR, DEFAULT_SIDEBAR),
+  );
 
   /** Sidebar drag & drop: the item being dragged, and the folder path hovered as a drop target
    *  ('' = wiki root, null = nothing hovered). */
@@ -157,13 +142,9 @@ export class WikiWorkspaceComponent implements OnInit {
   private autoSlug: string | null = null;
 
   readonly slugSet = computed(() => new Set(this.tree().map((p) => p.slug)));
-  readonly editorPages = computed(() =>
-    this.tree().map((p) => ({ title: p.title, slug: p.slug })),
-  );
+  readonly editorPages = computed(() => this.tree().map((p) => ({ title: p.title, slug: p.slug })));
 
-  readonly rootNode = computed<FolderNode>(() =>
-    buildTree(this.tree(), this.draftFolders()),
-  );
+  readonly rootNode = computed<FolderNode>(() => buildTree(this.tree(), this.draftFolders()));
 
   /** True when the embedded panel is showing its default landing page — the Home button hides then
    *  since there's nowhere for it to go. */
@@ -193,10 +174,7 @@ export class WikiWorkspaceComponent implements OnInit {
     const p = this.page();
     if (!p) return false;
     const want = slugify(p.title);
-    return (
-      !!want &&
-      this.preferredTitles().some((t) => slugify(t ?? '') === want)
-    );
+    return !!want && this.preferredTitles().some((t) => slugify(t ?? '') === want);
   });
 
   readonly dirty = computed(() => {
@@ -339,9 +317,7 @@ export class WikiWorkspaceComponent implements OnInit {
     for (const title of this.preferredTitles()) {
       const want = slugify(title ?? '');
       if (!want) continue;
-      const hit =
-        rows.find((r) => r.slug === want) ??
-        rows.find((r) => slugify(r.title) === want);
+      const hit = rows.find((r) => r.slug === want) ?? rows.find((r) => slugify(r.title) === want);
       if (hit) return hit.slug;
     }
     return firstPageSlug(this.rootNode());
@@ -505,9 +481,7 @@ export class WikiWorkspaceComponent implements OnInit {
       (p) => p.folder === path || p.folder.startsWith(`${path}/`),
     );
     await Promise.all(
-      affected.map((p) =>
-        this.wiki.update(p.id, { folder: next + p.folder.slice(path.length) }),
-      ),
+      affected.map((p) => this.wiki.update(p.id, { folder: next + p.folder.slice(path.length) })),
     );
     this.draftFolders.update((d) =>
       d.map((f) => (f === path || f.startsWith(`${path}/`) ? next + f.slice(path.length) : f)),
@@ -533,9 +507,7 @@ export class WikiWorkspaceComponent implements OnInit {
         this.wiki.update(p.id, { folder: joinFolder(parent, p.folder.slice(path.length)) }),
       ),
     );
-    this.draftFolders.update((d) =>
-      d.filter((f) => f !== path && !f.startsWith(`${path}/`)),
-    );
+    this.draftFolders.update((d) => d.filter((f) => f !== path && !f.startsWith(`${path}/`)));
     await this.loadTree();
     if (this.page()) await this.loadPage(this.page()!.slug);
   }
@@ -667,7 +639,7 @@ export class WikiWorkspaceComponent implements OnInit {
       window.removeEventListener('pointerup', up);
       document.body.style.cursor = prevCursor;
       document.body.style.userSelect = prevSelect;
-      persistSidebarWidth(this.sidebarWidth());
+      persistWidth(SIDEBAR_WIDTH_KEY, this.sidebarWidth());
     };
     window.addEventListener('pointermove', move);
     window.addEventListener('pointerup', up);
@@ -762,10 +734,7 @@ export class WikiWorkspaceComponent implements OnInit {
 
   private persistCollapsed(set: Set<string>): void {
     try {
-      localStorage.setItem(
-        `wiki:collapsed:${this.campaignId()}`,
-        JSON.stringify([...set]),
-      );
+      localStorage.setItem(`wiki:collapsed:${this.campaignId()}`, JSON.stringify([...set]));
     } catch {
       /* ignore */
     }

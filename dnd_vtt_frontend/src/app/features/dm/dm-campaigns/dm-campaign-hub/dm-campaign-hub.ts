@@ -15,12 +15,13 @@ import { ClassChoiceSource } from '../../../../core/utils/character-effects';
 import { CampaignHub, CampaignMember } from '../../../../core/models/campaign.model';
 import { Session } from '../../../../core/models/session.model';
 import { Character } from '../../../../core/models/character.model';
-import { ConfirmService } from '../../../../shared/confirm.service';
-import { WikiEmbedComponent } from '../../../wiki/wiki-embed.component';
+import { ConfirmService } from '../../../../shared/components/confirm-dialog/confirm.service';
+import { WikiEmbedComponent } from '../../../wiki/wiki-embed';
 import { PartyListComponent } from '../../../../shared/components/party-list/party-list';
 import { CharacterWizardComponent } from '../../../characters/character-wizard/character-wizard';
 import { CharacterPlaySheetComponent } from '../../../characters/character-play-sheet/character-play-sheet';
 import { DescriptionDialogComponent } from '../../../../shared/components/description-dialog/description-dialog';
+import { getErrorMessage } from '../../../../core/utils/error-message';
 
 function toContentIndex(name: string): string {
   return name.toLowerCase().replace(/\s+/g, '-');
@@ -29,8 +30,14 @@ function toContentIndex(name: string): string {
 @Component({
   selector: 'app-dm-campaign-hub',
   imports: [
-    FormsModule, RouterLink, MatIconModule, MatTooltipModule, WikiEmbedComponent, PartyListComponent,
-    CharacterWizardComponent, CharacterPlaySheetComponent,
+    FormsModule,
+    RouterLink,
+    MatIconModule,
+    MatTooltipModule,
+    WikiEmbedComponent,
+    PartyListComponent,
+    CharacterWizardComponent,
+    CharacterPlaySheetComponent,
   ],
   templateUrl: './dm-campaign-hub.html',
   // Routed in via dm-shell's <router-outlet>, so without a host sizing class this stays an
@@ -41,48 +48,48 @@ function toContentIndex(name: string): string {
   host: { class: 'flex flex-col flex-1 min-h-0 overflow-hidden' },
 })
 export class DmCampaignHubComponent implements OnInit {
-  private route            = inject(ActivatedRoute);
-  private router           = inject(Router);
-  private campaignService  = inject(CampaignService);
-  private sessionService   = inject(SessionService);
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
+  private campaignService = inject(CampaignService);
+  private sessionService = inject(SessionService);
   private characterService = inject(CharacterService);
-  private content          = inject(ContentService);
-  private statsService     = inject(CharacterStatsService);
-  private confirm          = inject(ConfirmService);
-  private dialog           = inject(MatDialog);
-  private recentActivity   = inject(RecentActivityService);
+  private content = inject(ContentService);
+  private statsService = inject(CharacterStatsService);
+  private confirm = inject(ConfirmService);
+  private dialog = inject(MatDialog);
+  private recentActivity = inject(RecentActivityService);
 
   campaignId = this.route.snapshot.paramMap.get('campaignId')!;
 
   campaign = signal<CampaignHub | null>(null);
-  loading  = signal(true);
+  loading = signal(true);
 
   // The embedded wiki panel lands on a page named after this campaign, if one exists.
   readonly wikiTitles = computed(() => {
     const c = this.campaign();
     return c ? [c.name] : [];
   });
-  copied   = signal(false);
-  sources  = signal<DndContentSource[]>([]);
+  copied = signal(false);
+  sources = signal<DndContentSource[]>([]);
   sourcesExpanded = signal(false);
   savingSources = signal(false);
   sourceError = signal<string | null>(null);
 
   editingCharacter = signal<Character | null>(null);
-  showWizard       = signal(false);
-  sheetCharacter   = signal<Character | null>(null);
+  showWizard = signal(false);
+  sheetCharacter = signal<Character | null>(null);
   // Set only when the sheet was opened via the wizard's "View Sheet" button (as opposed to
   // viewMember) — routes closeCharacterSheet() back into the wizard instead of the roster.
-  sheetFromWizard  = signal(false);
+  sheetFromWizard = signal(false);
 
   showForm = signal(false);
-  saving   = signal(false);
-  newName        = '';
+  saving = signal(false);
+  newName = '';
   newDescription = '';
 
   uploadingBackground = signal(false);
 
-  partyLevel     = 1;
+  partyLevel = 1;
   savingPartyLevel = signal(false);
 
   // The character's stored max_hp only reflects whatever level it was last saved at through the
@@ -91,7 +98,9 @@ export class DmCampaignHubComponent implements OnInit {
   // for display, so the hub doesn't show a stale number until the DM reopens that character.
   memberMaxHp = signal<Record<string, number>>({});
 
-  async ngOnInit() { await this.load(); }
+  async ngOnInit() {
+    await this.load();
+  }
 
   private async load() {
     this.recentActivity.markCampaignViewed(this.campaignId);
@@ -103,7 +112,10 @@ export class DmCampaignHubComponent implements OnInit {
       ]);
       this.campaign.set(campaign);
       this.sources.set(sources);
-      this.partyLevel = campaign.members.reduce((max, m) => Math.max(max, m.character_level ?? 1), 1);
+      this.partyLevel = campaign.members.reduce(
+        (max, m) => Math.max(max, m.character_level ?? 1),
+        1,
+      );
       void this.loadMemberMaxHp(campaign.members);
     } finally {
       this.loading.set(false);
@@ -123,46 +135,59 @@ export class DmCampaignHubComponent implements OnInit {
     this.savingSources.set(true);
     this.sourceError.set(null);
     try {
-      this.campaign.set(await this.campaignService.update(this.campaignId, {
-        allowed_sources: [...allowed],
-      }));
-    } catch (error) {
-      const response = error as { error?: { message?: string | string[] } };
-      const message = response?.error?.message;
-      this.sourceError.set(
-        Array.isArray(message) ? message.join(' ') : message || 'Could not update campaign sources.',
+      this.campaign.set(
+        await this.campaignService.update(this.campaignId, {
+          allowed_sources: [...allowed],
+        }),
       );
+    } catch (error) {
+      this.sourceError.set(getErrorMessage(error, 'Could not update campaign sources.'));
     } finally {
       this.savingSources.set(false);
     }
   }
 
   private async loadMemberMaxHp(members: CampaignMember[]) {
-    const entries = await Promise.all(members.map(async (member) => {
-      try {
-        const char = await this.characterService.getCharacter(member.character_id);
-        const [classData, raceData, backgroundData, feats, items] = await Promise.all([
-          this.content.getClass(toContentIndex(char.class)).catch(() => null),
-          this.content.getRace(toContentIndex(char.race)).catch(() => null),
-          this.content.getBackground(toContentIndex(char.background)).catch(() => null),
-          this.content.getFeats(),
-          this.content.getItems(this.campaignId),
-        ]);
-        const primary = char.classes?.[0];
-        const classesForFeats: ClassChoiceSource[] = classData ? [{
-          data: classData,
-          choices: primary?.choices ?? {},
-          level: primary?.level ?? char.level,
-          subclass: primary?.subclass ?? char.subclass,
-        }] : [];
-        const stats = this.statsService.compute(
-          char, classData, raceData, feats, classesForFeats, items, backgroundData,
-        );
-        return [member.character_id, char.max_hp_overridden ? char.max_hp : stats.suggested_max_hp] as const;
-      } catch {
-        return null;
-      }
-    }));
+    const entries = await Promise.all(
+      members.map(async (member) => {
+        try {
+          const char = await this.characterService.getCharacter(member.character_id);
+          const [classData, raceData, backgroundData, feats, items] = await Promise.all([
+            this.content.getClass(toContentIndex(char.class)).catch(() => null),
+            this.content.getRace(toContentIndex(char.race)).catch(() => null),
+            this.content.getBackground(toContentIndex(char.background)).catch(() => null),
+            this.content.getFeats(),
+            this.content.getItems(this.campaignId),
+          ]);
+          const primary = char.classes?.[0];
+          const classesForFeats: ClassChoiceSource[] = classData
+            ? [
+                {
+                  data: classData,
+                  choices: primary?.choices ?? {},
+                  level: primary?.level ?? char.level,
+                  subclass: primary?.subclass ?? char.subclass,
+                },
+              ]
+            : [];
+          const stats = this.statsService.compute(
+            char,
+            classData,
+            raceData,
+            feats,
+            classesForFeats,
+            items,
+            backgroundData,
+          );
+          return [
+            member.character_id,
+            char.max_hp_overridden ? char.max_hp : stats.suggested_max_hp,
+          ] as const;
+        } catch {
+          return null;
+        }
+      }),
+    );
     const map: Record<string, number> = {};
     for (const entry of entries) if (entry) map[entry[0]] = entry[1];
     this.memberMaxHp.set(map);
@@ -170,17 +195,21 @@ export class DmCampaignHubComponent implements OnInit {
 
   async openDescriptionDialog() {
     const description: string | undefined = await firstValueFrom(
-      this.dialog.open(DescriptionDialogComponent, {
-        data: {
-          title: 'Campaign Description',
-          description: this.campaign()?.description ?? '',
-          placeholder: 'Campaign overview, tone, hooks…',
-        },
-        width: '480px',
-      }).afterClosed(),
+      this.dialog
+        .open(DescriptionDialogComponent, {
+          data: {
+            title: 'Campaign Description',
+            description: this.campaign()?.description ?? '',
+            placeholder: 'Campaign overview, tone, hooks…',
+          },
+          width: '480px',
+        })
+        .afterClosed(),
     );
     if (description === undefined) return;
-    this.campaign.set(await this.campaignService.update(this.campaignId, { description: description.trim() }));
+    this.campaign.set(
+      await this.campaignService.update(this.campaignId, { description: description.trim() }),
+    );
   }
 
   async onBackgroundFileChange(event: Event) {
@@ -204,12 +233,18 @@ export class DmCampaignHubComponent implements OnInit {
     if (!this.newName.trim()) return;
     this.saving.set(true);
     try {
-      await this.sessionService.create(this.campaignId, this.newName.trim(), this.newDescription.trim());
-      this.newName        = '';
+      await this.sessionService.create(
+        this.campaignId,
+        this.newName.trim(),
+        this.newDescription.trim(),
+      );
+      this.newName = '';
       this.newDescription = '';
       this.showForm.set(false);
       await this.load();
-    } finally { this.saving.set(false); }
+    } finally {
+      this.saving.set(false);
+    }
   }
 
   async toggleSessionVisibility(session: Session, event: Event) {
@@ -230,7 +265,13 @@ export class DmCampaignHubComponent implements OnInit {
   async deleteSession(session: Session, event: Event) {
     event.stopPropagation();
     event.preventDefault();
-    if (!await this.confirm.confirm(`Delete "${session.name}"? This cannot be undone.`, 'Delete Session')) return;
+    if (
+      !(await this.confirm.confirm(
+        `Delete "${session.name}"? This cannot be undone.`,
+        'Delete Session',
+      ))
+    )
+      return;
     await this.sessionService.remove(session.id);
     await this.load();
   }
@@ -253,7 +294,14 @@ export class DmCampaignHubComponent implements OnInit {
   async levelPartyUp() {
     const next = this.partyLevel + 1;
     if (next > 20) return;
-    if (!await this.confirm.confirm(`Level up the whole party to level ${next}?`, 'Level Party Up', 'Level Up')) return;
+    if (
+      !(await this.confirm.confirm(
+        `Level up the whole party to level ${next}?`,
+        'Level Party Up',
+        'Level Up',
+      ))
+    )
+      return;
     this.savingPartyLevel.set(true);
     try {
       const campaign = await this.campaignService.setPartyLevel(this.campaignId, next);
@@ -266,7 +314,13 @@ export class DmCampaignHubComponent implements OnInit {
   }
 
   async removeMember(userId: string, name: string) {
-    if (!await this.confirm.confirm(`Remove ${name} from this campaign? They can rejoin later with the campaign code.`, 'Remove Player')) return;
+    if (
+      !(await this.confirm.confirm(
+        `Remove ${name} from this campaign? They can rejoin later with the campaign code.`,
+        'Remove Player',
+      ))
+    )
+      return;
     await this.campaignService.removeMember(this.campaignId, userId);
     await this.load();
   }
@@ -275,7 +329,11 @@ export class DmCampaignHubComponent implements OnInit {
   // CharactersService.update's edit_unlocked check) — otherwise only HP/rest/equipment/spell-prep
   // changes from the in-encounter play sheet are player-writable.
   async toggleEditAccess(member: CampaignMember) {
-    await this.campaignService.setMemberEditAccess(this.campaignId, member.user_id, !member.edit_unlocked);
+    await this.campaignService.setMemberEditAccess(
+      this.campaignId,
+      member.user_id,
+      !member.edit_unlocked,
+    );
     await this.load();
   }
 
@@ -351,6 +409,10 @@ export class DmCampaignHubComponent implements OnInit {
 
   formatDate(iso?: string): string {
     if (!iso) return '';
-    return new Date(iso).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
+    return new Date(iso).toLocaleDateString(undefined, {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+    });
   }
 }

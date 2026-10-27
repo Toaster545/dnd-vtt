@@ -1,6 +1,11 @@
 import { Component, HostListener, input, output, signal } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
-import { DndItem, DndMonster, DndSpell, itemDisplayName } from '../../../core/services/content.service';
+import {
+  DndItem,
+  DndMonster,
+  DndSpell,
+  itemDisplayName,
+} from '../../../core/services/content.service';
 import { monsterSpeedText } from '../../../core/utils/monster-speed';
 import { monsterTokenUrl } from '../../../core/utils/monster-token';
 

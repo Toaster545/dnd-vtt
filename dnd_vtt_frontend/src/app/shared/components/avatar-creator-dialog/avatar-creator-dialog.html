@@ -225,11 +225,17 @@
         </div>
         <button
           type="button"
-          [class]="useTokenAsPortrait() ? 'btn-primary w-full justify-center' : 'btn-outline w-full justify-center'"
+          [class]="
+            useTokenAsPortrait()
+              ? 'btn-primary w-full justify-center'
+              : 'btn-outline w-full justify-center'
+          "
           [attr.aria-pressed]="useTokenAsPortrait()"
           (click)="toggleUseTokenAsPortrait()"
         >
-          <mat-icon class="text-base">{{ useTokenAsPortrait() ? 'check_circle' : 'badge' }}</mat-icon>
+          <mat-icon class="text-base">{{
+            useTokenAsPortrait() ? 'check_circle' : 'badge'
+          }}</mat-icon>
           {{ useTokenAsPortrait() ? 'Using this as your portrait' : 'Use as portrait' }}
         </button>
         <p class="text-xs text-slate m-0">

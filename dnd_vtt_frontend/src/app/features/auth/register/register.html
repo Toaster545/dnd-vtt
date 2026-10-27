@@ -7,13 +7,19 @@
     <div class="card-body">
       @if (success()) {
         <p class="text-parchment text-sm">
-          Account created! <a routerLink="/auth/login" class="text-gold hover:text-gold-bright">Sign in</a>.
+          Account created!
+          <a routerLink="/auth/login" class="text-gold hover:text-gold-bright">Sign in</a>.
         </p>
       } @else {
         <form [formGroup]="form" (ngSubmit)="submit()" class="flex flex-col gap-4">
           <div class="field">
             <label class="field-label">Username</label>
-            <input class="field-input" type="text" formControlName="username" autocomplete="username" />
+            <input
+              class="field-input"
+              type="text"
+              formControlName="username"
+              autocomplete="username"
+            />
             @if (form.controls.username.touched && form.controls.username.invalid) {
               <p class="field-error">Username required (min 3 chars)</p>
             }
@@ -30,7 +36,12 @@
           </div>
           <div class="field">
             <label class="field-label">Password</label>
-            <input class="field-input" type="password" formControlName="password" autocomplete="new-password" />
+            <input
+              class="field-input"
+              type="password"
+              formControlName="password"
+              autocomplete="new-password"
+            />
             @if (form.controls.password.touched && form.controls.password.invalid) {
               <p class="field-error">Password required (min 6 chars)</p>
             }
@@ -38,14 +49,23 @@
           @if (error()) {
             <p class="text-danger text-sm">{{ error() }}</p>
           }
-          <button type="submit" class="btn-primary w-full justify-center h-11 mt-1 text-base" [disabled]="loading()">
-            @if (loading()) { <span class="spinner-sm"></span> } @else { Create Account }
+          <button
+            type="submit"
+            class="btn-primary w-full justify-center h-11 mt-1 text-base"
+            [disabled]="loading()"
+          >
+            @if (loading()) {
+              <span class="spinner-sm"></span>
+            } @else {
+              Create Account
+            }
           </button>
         </form>
       }
     </div>
     <div class="px-5 pb-5 text-center text-sm text-slate">
-      Already have an account? <a routerLink="/auth/login" class="text-gold hover:text-gold-bright">Sign in</a>
+      Already have an account?
+      <a routerLink="/auth/login" class="text-gold hover:text-gold-bright">Sign in</a>
     </div>
   </div>
 </div>

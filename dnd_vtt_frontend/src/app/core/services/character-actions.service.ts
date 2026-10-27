@@ -1,5 +1,13 @@
 import { Injectable } from '@angular/core';
-import { ActionActivation, TraitGrant, DndClass, DndFeat, DndItem, DndRace, Subclass } from './content.service';
+import {
+  ActionActivation,
+  TraitGrant,
+  DndClass,
+  DndFeat,
+  DndItem,
+  DndRace,
+  Subclass,
+} from './content.service';
 import { resolveProgressiveChoiceLimit } from '../utils/progressive-choice';
 import { AbilityScores, abilityModifier, proficiencyBonus } from '../models/character.model';
 
@@ -32,9 +40,11 @@ interface AdditionalActionSources {
 
 function resolveLevelValue<T>(base: T, byLevel: Record<string, T> | undefined, level: number): T {
   if (!byLevel) return base;
-  return Object.entries(byLevel)
-    .filter(([threshold]) => Number(threshold) <= level)
-    .sort(([left], [right]) => Number(right) - Number(left))[0]?.[1] ?? base;
+  return (
+    Object.entries(byLevel)
+      .filter(([threshold]) => Number(threshold) <= level)
+      .sort(([left], [right]) => Number(right) - Number(left))[0]?.[1] ?? base
+  );
 }
 
 @Injectable({ providedIn: 'root' })
@@ -44,7 +54,12 @@ export class CharacterActionsService {
   // Surge going from 1 to 2 uses) is the same resource, not a second one — the highest
   // unlocked level's declaration wins rather than being additive.
   compute(
-    classes: { data: DndClass; level: number; subclass?: Subclass | null; choices?: Record<string, string[]> }[],
+    classes: {
+      data: DndClass;
+      level: number;
+      subclass?: Subclass | null;
+      choices?: Record<string, string[]>;
+    }[],
     resourceUses: Record<string, number>,
     abilityScores?: AbilityScores,
     additional: AdditionalActionSources = { characterLevel: 1 },
@@ -54,22 +69,30 @@ export class CharacterActionsService {
     // current level in that class, which is what a description's `{level}` placeholder means
     // (e.g. Second Wind's "1d10 + {level}" scales with current Fighter level, not the level 1
     // it was unlocked at).
-    const winners = new Map<string, { level: number; classLevel: number; grant: FeatureGrant; source: string }>();
+    const winners = new Map<
+      string,
+      { level: number; classLevel: number; grant: FeatureGrant; source: string }
+    >();
 
     const collect = (
-      grants: TraitGrant[], choices: Record<string, string[]>, source: string,
-      level: number, classLevel: number,
+      grants: TraitGrant[],
+      choices: Record<string, string[]>,
+      source: string,
+      level: number,
+      classLevel: number,
     ) => {
       for (const grant of grants) {
         if (grant.type === 'feature' && grant.action && grant.key) {
           const existing = winners.get(grant.key);
-          if (!existing || level >= existing.level) winners.set(grant.key, { level, classLevel, grant, source });
+          if (!existing || level >= existing.level)
+            winners.set(grant.key, { level, classLevel, grant, source });
           continue;
         }
         if (grant.type !== 'choice') continue;
         const selected = new Set(choices[grant.key] ?? []);
         for (const option of grant.options) {
-          if (selected.has(option.name)) collect(option.grants ?? [], choices, source, level, classLevel);
+          if (selected.has(option.name))
+            collect(option.grants ?? [], choices, source, level, classLevel);
         }
       }
     };
@@ -86,55 +109,105 @@ export class CharacterActionsService {
       // A `feature` grant's `level` gates a race trait that unlocks past level 1 (e.g.
       // Goliath's Large Form at 5) — races have no per-level `levels[]` structure like a class,
       // so this is the one place that checks it directly against character level.
-      const reachable = (additional.race.data.grants ?? [])
-        .filter(g => g.type !== 'feature' || (g.level ?? 1) <= additional.characterLevel);
-      collect(reachable, additional.race.choices, additional.race.data.name, 0, additional.characterLevel);
+      const reachable = (additional.race.data.grants ?? []).filter(
+        (g) => g.type !== 'feature' || (g.level ?? 1) <= additional.characterLevel,
+      );
+      collect(
+        reachable,
+        additional.race.choices,
+        additional.race.data.name,
+        0,
+        additional.characterLevel,
+      );
     }
     for (const selection of additional.feats ?? []) {
-      collect(selection.feat.grants ?? [], selection.choices, selection.source ?? selection.feat.name, 1, additional.characterLevel);
+      collect(
+        selection.feat.grants ?? [],
+        selection.choices,
+        selection.source ?? selection.feat.name,
+        1,
+        additional.characterLevel,
+      );
     }
-    for (const item of (additional.items ?? []).filter(item => !item.instanceId)) {
+    for (const item of (additional.items ?? []).filter((item) => !item.instanceId)) {
       for (const action of item.actions ?? []) {
-        collect([{
-          type: 'feature', key: action.key, name: action.name, description: action.description,
-          action: { activation: action.activation, uses: action.uses },
-        }], {}, item.name, 1, additional.characterLevel);
+        collect(
+          [
+            {
+              type: 'feature',
+              key: action.key,
+              name: action.name,
+              description: action.description,
+              action: { activation: action.activation, uses: action.uses },
+            },
+          ],
+          {},
+          item.name,
+          1,
+          additional.characterLevel,
+        );
       }
     }
 
-    const classActions: CharacterAction[] = [...winners.values()].map(({ grant, source, classLevel }) => {
-      const uses = grant.action!.uses;
-      const progressiveMax = uses
-        ? resolveProgressiveChoiceLimit(uses.max, uses.maxByLevel, classLevel)
-        : 0;
-      const abilityMax = uses?.maxAbilityModifier && abilityScores
-        ? abilityModifier(abilityScores[uses.maxAbilityModifier])
-        : null;
-      const proficiencyMax = uses?.maxProficiencyBonus ? proficiencyBonus(additional.characterLevel) : null;
-      const calculatedMax = abilityMax ?? proficiencyMax;
-      const max = calculatedMax == null ? progressiveMax : Math.max(uses?.minimum ?? 0, calculatedMax);
-      return {
-        key: grant.key!,
-        name: grant.name,
-        description: grant.description?.replace('{level}', String(classLevel)),
-        activation: grant.action!.activation,
-        source,
-        maxUses: max,
-        usedUses: Math.min(resourceUses[grant.key!] ?? 0, max),
-        per: uses ? resolveLevelValue(uses.per, uses.perByLevel, classLevel) : 'long_rest',
-        shortRestRestore: uses?.shortRestRestore ?? 0,
-        unlimited: !uses,
-      };
-    });
-    const itemActions: CharacterAction[] = (additional.items ?? []).filter(item => item.instanceId).flatMap(item => {
-      const actions = item.actions?.length ? item.actions : item.charges ? [{ key: 'use', name: item.name, description: item.description, activation: 'action' as const }] : [];
-      return actions.map(action => ({
-        key: `item:${item.instanceId}:${action.key}`, itemInstanceId: item.instanceId,
-        name: action.name, description: `${action.description ?? ''}${item.charges ? ' Recharge: ' + item.charges.recovery + '.' : ''}`,
-        source: item.name, activation: action.activation, maxUses: item.charges?.max ?? 0,
-        usedUses: item.chargesUsed ?? 0, per: 'long_rest' as const, shortRestRestore: 0, unlimited: !item.charges,
-      }));
-    });
+    const classActions: CharacterAction[] = [...winners.values()].map(
+      ({ grant, source, classLevel }) => {
+        const uses = grant.action!.uses;
+        const progressiveMax = uses
+          ? resolveProgressiveChoiceLimit(uses.max, uses.maxByLevel, classLevel)
+          : 0;
+        const abilityMax =
+          uses?.maxAbilityModifier && abilityScores
+            ? abilityModifier(abilityScores[uses.maxAbilityModifier])
+            : null;
+        const proficiencyMax = uses?.maxProficiencyBonus
+          ? proficiencyBonus(additional.characterLevel)
+          : null;
+        const calculatedMax = abilityMax ?? proficiencyMax;
+        const max =
+          calculatedMax == null ? progressiveMax : Math.max(uses?.minimum ?? 0, calculatedMax);
+        return {
+          key: grant.key!,
+          name: grant.name,
+          description: grant.description?.replace('{level}', String(classLevel)),
+          activation: grant.action!.activation,
+          source,
+          maxUses: max,
+          usedUses: Math.min(resourceUses[grant.key!] ?? 0, max),
+          per: uses ? resolveLevelValue(uses.per, uses.perByLevel, classLevel) : 'long_rest',
+          shortRestRestore: uses?.shortRestRestore ?? 0,
+          unlimited: !uses,
+        };
+      },
+    );
+    const itemActions: CharacterAction[] = (additional.items ?? [])
+      .filter((item) => item.instanceId)
+      .flatMap((item) => {
+        const actions = item.actions?.length
+          ? item.actions
+          : item.charges
+            ? [
+                {
+                  key: 'use',
+                  name: item.name,
+                  description: item.description,
+                  activation: 'action' as const,
+                },
+              ]
+            : [];
+        return actions.map((action) => ({
+          key: `item:${item.instanceId}:${action.key}`,
+          itemInstanceId: item.instanceId,
+          name: action.name,
+          description: `${action.description ?? ''}${item.charges ? ' Recharge: ' + item.charges.recovery + '.' : ''}`,
+          source: item.name,
+          activation: action.activation,
+          maxUses: item.charges?.max ?? 0,
+          usedUses: item.chargesUsed ?? 0,
+          per: 'long_rest' as const,
+          shortRestRestore: 0,
+          unlimited: !item.charges,
+        }));
+      });
     return [...classActions, ...itemActions];
   }
 
@@ -150,7 +223,11 @@ export class CharacterActionsService {
 
   // Short rests clear short-rest pools and partially restore pools that explicitly say they do;
   // long rests clear every expended-use counter.
-  rest(resourceUses: Record<string, number>, actions: CharacterAction[], type: 'short_rest' | 'long_rest'): Record<string, number> {
+  rest(
+    resourceUses: Record<string, number>,
+    actions: CharacterAction[],
+    type: 'short_rest' | 'long_rest',
+  ): Record<string, number> {
     const next = { ...resourceUses };
     for (const action of actions) {
       if (type === 'long_rest' || action.per === 'short_rest') {

@@ -25,11 +25,18 @@ export class RegisterComponent {
   success = signal(false);
 
   async submit() {
-    if (this.form.invalid) { this.form.markAllAsTouched(); return; }
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      return;
+    }
     this.loading.set(true);
     this.error.set(null);
     try {
-      await this.auth.signUp(this.form.value.email!, this.form.value.password!, this.form.value.username!);
+      await this.auth.signUp(
+        this.form.value.email!,
+        this.form.value.password!,
+        this.form.value.username!,
+      );
       this.success.set(true);
     } catch (e) {
       this.error.set(getErrorMessage(e));

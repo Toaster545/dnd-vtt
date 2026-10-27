@@ -29,7 +29,10 @@ export interface O5eBackground {
   skill_proficiencies: string | null;
 }
 
-interface ListResponse<T> { count: number; results: T[] }
+interface ListResponse<T> {
+  count: number;
+  results: T[];
+}
 
 @Injectable({ providedIn: 'root' })
 export class Open5eService {
@@ -49,7 +52,9 @@ export class Open5eService {
   }
 
   async getClasses(): Promise<O5eClass[]> {
-    const res = await this.fetch<ListResponse<O5eClass>>(`${BASE}/classes/?document__slug=wotc-srd&limit=20`);
+    const res = await this.fetch<ListResponse<O5eClass>>(
+      `${BASE}/classes/?document__slug=wotc-srd&limit=20`,
+    );
     return res.results;
   }
 

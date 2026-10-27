@@ -4,9 +4,12 @@
       <span class="spinner-lg"></span>
     </div>
   } @else {
-
     <div class="wizard-header flex items-end gap-3 flex-shrink-0 px-6 pt-4 bg-black/40">
-      <button class="wizard-back-button btn-icon" (click)="cancelAndSave()" matTooltip="Back to characters">
+      <button
+        class="wizard-back-button btn-icon"
+        (click)="cancelAndSave()"
+        matTooltip="Back to characters"
+      >
         <mat-icon>arrow_back</mat-icon>
       </button>
       <div class="wizard-portrait-field field">
@@ -31,21 +34,46 @@
       </div>
       <div class="wizard-name-field field flex-1 max-w-xs">
         <label class="field-label">Character Name</label>
-        <input class="field-input py-1 text-sm" [ngModel]="characterName()" (ngModelChange)="characterName.set($event)" placeholder="Unnamed Character" name="charName" />
+        <input
+          class="field-input py-1 text-sm"
+          [ngModel]="characterName()"
+          (ngModelChange)="characterName.set($event)"
+          placeholder="Unnamed Character"
+          name="charName"
+        />
       </div>
       <div class="wizard-level-field field w-20">
         <label class="field-label">Level</label>
-        <input class="field-input py-1 text-sm" type="number" [ngModel]="level()" (ngModelChange)="level.set(+$event)"
-          min="1" max="20" name="level" [readonly]="levelUp()" [class.opacity-60]="levelUp()" />
+        <input
+          class="field-input py-1 text-sm"
+          type="number"
+          [ngModel]="level()"
+          (ngModelChange)="level.set(+$event)"
+          min="1"
+          max="20"
+          name="level"
+          [readonly]="levelUp()"
+          [class.opacity-60]="levelUp()"
+        />
       </div>
       <div class="wizard-maxhp-field field w-40">
         <label class="field-label">Max HP</label>
         <div class="flex items-center gap-2">
-          <input class="field-input py-1 text-sm w-16" type="number" min="1" name="maxHp"
-            [ngModel]="maxHP()" (ngModelChange)="setMaxHpOverride($event)" />
+          <input
+            class="field-input py-1 text-sm w-16"
+            type="number"
+            min="1"
+            name="maxHp"
+            [ngModel]="maxHP()"
+            (ngModelChange)="setMaxHpOverride($event)"
+          />
           @if (maxHpOverride() !== null && maxHpOverride() !== suggestedMaxHP()) {
-            <button type="button" class="text-[11px] text-gold hover:underline whitespace-nowrap"
-              (click)="maxHpOverride.set(null)" matTooltip="Reset to the average">
+            <button
+              type="button"
+              class="text-[11px] text-gold hover:underline whitespace-nowrap"
+              (click)="maxHpOverride.set(null)"
+              matTooltip="Reset to the average"
+            >
               avg {{ suggestedMaxHP() }}
             </button>
           } @else {
@@ -53,13 +81,21 @@
           }
         </div>
       </div>
-      <button class="wizard-sources-button btn-outline text-sm gap-1.5 ml-auto" (click)="openSourcesDialog()" matTooltip="Choose character content sources">
+      <button
+        class="wizard-sources-button btn-outline text-sm gap-1.5 ml-auto"
+        (click)="openSourcesDialog()"
+        matTooltip="Choose character content sources"
+      >
         <mat-icon class="text-base">auto_stories</mat-icon>
         Sources
         <span class="toolbar-badge text-[10px]">{{ enabledSources().size }}</span>
       </button>
       @if (isEditing() && !levelUp()) {
-        <button class="wizard-sheet-button btn-outline text-sm gap-1.5" (click)="openSheet()" matTooltip="View the play sheet for this character">
+        <button
+          class="wizard-sheet-button btn-outline text-sm gap-1.5"
+          (click)="openSheet()"
+          matTooltip="View the play sheet for this character"
+        >
           <mat-icon class="text-base">badge</mat-icon>
           View Sheet
         </button>
@@ -67,30 +103,45 @@
     </div>
 
     @if (levelUp()) {
-      <div class="flex items-center gap-2 px-6 py-2 bg-gold/10 border-b border-gold/25 flex-shrink-0 text-sm text-gold">
+      <div
+        class="flex items-center gap-2 px-6 py-2 bg-gold/10 border-b border-gold/25 flex-shrink-0 text-sm text-gold"
+      >
         <mat-icon class="text-base">trending_up</mat-icon>
         Level-Up — record the choices for level {{ level() }}. Earlier levels are locked.
       </div>
     }
 
     <!-- Step tabs -->
-    <div class="wizard-tabs flex border-b border-white/10 overflow-x-auto flex-shrink-0 bg-black/40">
+    <div
+      class="wizard-tabs flex border-b border-white/10 overflow-x-auto flex-shrink-0 bg-black/40"
+    >
       @for (stepIndex of visibleStepIndices(); track stepIndex; let position = $index) {
         <button
           class="flex items-center gap-2 px-5 py-3.5 text-sm font-medium whitespace-nowrap border-b-2 transition-colors border-0 cursor-pointer"
-          [class]="activeStep() === stepIndex
-            ? 'border-gold text-gold'
-            : 'border-transparent text-slate hover:text-parchment'"
+          [class]="
+            activeStep() === stepIndex
+              ? 'border-gold text-gold'
+              : 'border-transparent text-slate hover:text-parchment'
+          "
           (click)="activeStep.set(stepIndex)"
-          style="background: transparent; font-family: inherit;"
+          style="background: transparent; font-family: inherit"
         >
-          <span class="flex items-center justify-center w-5 h-5 rounded-full text-xs font-bold leading-none flex-shrink-0"
-            [class]="activeStep() === stepIndex ? 'bg-gold text-on-accent' : 'bg-white/10 text-slate'">
+          <span
+            class="flex items-center justify-center w-5 h-5 rounded-full text-xs font-bold leading-none flex-shrink-0"
+            [class]="
+              activeStep() === stepIndex ? 'bg-gold text-on-accent' : 'bg-white/10 text-slate'
+            "
+          >
             {{ position + 1 }}
           </span>
           <span class="wizard-step-label">{{ steps[stepIndex] }}</span>
           @if (stepNeedsAttention(stepIndex)) {
-            <span class="text-gold text-sm font-bold leading-none" title="Choices remaining" aria-label="Choices remaining">*</span>
+            <span
+              class="text-gold text-sm font-bold leading-none"
+              title="Choices remaining"
+              aria-label="Choices remaining"
+              >*</span
+            >
           }
         </button>
       }
@@ -98,111 +149,137 @@
 
     <!-- Step content + live preview -->
     <div #wizardMain class="wizard-main flex-1 flex min-h-0">
-    <div class="wizard-step-pane flex-1 min-w-0 overflow-y-auto p-6" appSwipeTabs (swipeLeft)="next()" (swipeRight)="prev()">
-      @if (activeStep() === 0) {
-        <app-class-step
-          [classes]="classes()"
-          [items]="items()"
-          [feats]="feats()"
-          [species]="selectedRace()?.index ?? ''"
-          [speciesChoices]="raceTraits()"
-          [selectedClasses]="selectedClasses()"
-          [characterLevel]="level()"
-          [minEditableLevel]="levelUpBaseline()"
-          [baseAbilityScores]="scoresBeforeClassASI()"
-          [proficientSkills]="proficientSkillNames()"
-          [unavailableSkills]="classUnavailableSkills()"
-          [externalFeatIndices]="externalFeatIndices()"
-          (classAdded)="onClassAdded($event)"
-          (classRemoved)="onClassRemoved($event)"
-        />
-      }
-      @if (activeStep() === 1) {
-        <app-race-step
-          [races]="races()"
-          [feats]="feats()"
-          [selected]="raceSelection()"
-          [unavailableSkills]="raceUnavailableSkills()"
-          (raceChosen)="onRaceChosen($event)"
-        />
-      }
-      @if (activeStep() === 2) {
-        <app-background-step
-          [backgrounds]="backgrounds()"
-          [feats]="feats()"
-          [selected]="backgroundSelection()"
-          [baseAbilityScores]="scoresBeforeBackgroundASI()"
-          [unavailableSkills]="backgroundUnavailableSkills()"
-          (backgroundChosen)="onBackgroundChosen($event)"
-        />
-      }
-      @if (activeStep() === 3) {
-        <app-abilities-step
-          [assignments]="assignments()"
-          [bonusScores]="bonusScores()"
-          [finalScores]="finalScores()"
-          [method]="scoreMethod()"
-          (assignmentChanged)="assign($event.ability, $event.value)"
-          (methodChanged)="setScoreMethod($event)"
-        />
-      }
-      @if (activeStep() === 4) {
-        <app-equipment-step
-          [items]="items()"
-          [selectedItemIndices]="selectedItemIndices()"
-          [currency]="startingCurrency()"
-          [classData]="primaryClass()"
-          [background]="selectedBackground()"
-          [classChoices]="classEquipChoices()"
-          [backgroundChoices]="backgroundEquipChoices()"
-          (itemToggled)="toggleItem($event)"
-          (classChoicesChanged)="classEquipChoices.set($event)"
-          (backgroundChoicesChanged)="backgroundEquipChoices.set($event)"
-        />
-      }
-      @if (activeStep() === 5) {
-        <app-spells-step
-          [spells]="spells()"
-          [resolution]="spellResolution()"
-          (spellToggled)="toggleSpell($event)"
-        />
-      }
-    </div>
+      <div
+        class="wizard-step-pane flex-1 min-w-0 overflow-y-auto p-6"
+        appSwipeTabs
+        (swipeLeft)="next()"
+        (swipeRight)="prev()"
+      >
+        @if (activeStep() === 0) {
+          <app-class-step
+            [classes]="classes()"
+            [items]="items()"
+            [feats]="feats()"
+            [species]="selectedRace()?.index ?? ''"
+            [speciesChoices]="raceTraits()"
+            [selectedClasses]="selectedClasses()"
+            [characterLevel]="level()"
+            [minEditableLevel]="levelUpBaseline()"
+            [baseAbilityScores]="scoresBeforeClassASI()"
+            [proficientSkills]="proficientSkillNames()"
+            [unavailableSkills]="classUnavailableSkills()"
+            [externalFeatIndices]="externalFeatIndices()"
+            (classAdded)="onClassAdded($event)"
+            (classRemoved)="onClassRemoved($event)"
+          />
+        }
+        @if (activeStep() === 1) {
+          <app-race-step
+            [races]="races()"
+            [feats]="feats()"
+            [selected]="raceSelection()"
+            [unavailableSkills]="raceUnavailableSkills()"
+            (raceChosen)="onRaceChosen($event)"
+          />
+        }
+        @if (activeStep() === 2) {
+          <app-background-step
+            [backgrounds]="backgrounds()"
+            [feats]="feats()"
+            [selected]="backgroundSelection()"
+            [baseAbilityScores]="scoresBeforeBackgroundASI()"
+            [unavailableSkills]="backgroundUnavailableSkills()"
+            (backgroundChosen)="onBackgroundChosen($event)"
+          />
+        }
+        @if (activeStep() === 3) {
+          <app-abilities-step
+            [assignments]="assignments()"
+            [bonusScores]="bonusScores()"
+            [finalScores]="finalScores()"
+            [method]="scoreMethod()"
+            (assignmentChanged)="assign($event.ability, $event.value)"
+            (methodChanged)="setScoreMethod($event)"
+          />
+        }
+        @if (activeStep() === 4) {
+          <app-equipment-step
+            [items]="items()"
+            [selectedItemIndices]="selectedItemIndices()"
+            [currency]="startingCurrency()"
+            [classData]="primaryClass()"
+            [background]="selectedBackground()"
+            [classChoices]="classEquipChoices()"
+            [backgroundChoices]="backgroundEquipChoices()"
+            (itemToggled)="toggleItem($event)"
+            (classChoicesChanged)="classEquipChoices.set($event)"
+            (backgroundChoicesChanged)="backgroundEquipChoices.set($event)"
+          />
+        }
+        @if (activeStep() === 5) {
+          <app-spells-step
+            [spells]="spells()"
+            [resolution]="spellResolution()"
+            (spellToggled)="toggleSpell($event)"
+          />
+        }
+      </div>
 
-    <!-- Live preview -->
-    <!-- Drag to resize the preview -->
-    <div appResizeHandle (resizeDrag)="onPreviewResize($event)"
-         class="wizard-preview-handle w-1.5 flex-shrink-0 border-l border-white/10 hover:bg-gold/40 active:bg-gold/60 transition-colors"></div>
-    <div class="wizard-preview flex-shrink-0 min-w-0 overflow-hidden" [style.width.%]="previewFraction() * 100">
-      <app-character-play-sheet [character]="draftCharacter()" [preview]="true" />
-    </div>
+      <!-- Live preview -->
+      <!-- Drag to resize the preview -->
+      <div
+        appResizeHandle
+        (resizeDrag)="onPreviewResize($event)"
+        class="wizard-preview-handle w-1.5 flex-shrink-0 border-l border-white/10 hover:bg-gold/40 active:bg-gold/60 transition-colors"
+      ></div>
+      <div
+        class="wizard-preview flex-shrink-0 min-w-0 overflow-hidden"
+        [style.width.%]="previewFraction() * 100"
+      >
+        <app-character-play-sheet [character]="draftCharacter()" [preview]="true" />
+      </div>
     </div>
 
     <!-- Persistent footer -->
-    <div class="wizard-footer flex items-center justify-between px-6 py-4 border-t border-white/10 flex-shrink-0 bg-canvas">
+    <div
+      class="wizard-footer flex items-center justify-between px-6 py-4 border-t border-white/10 flex-shrink-0 bg-canvas"
+    >
       <div class="flex items-center gap-3">
-        <button class="btn-ghost" (click)="cancelAndSave()">{{ isEditing() ? 'Close' : 'Cancel' }}</button>
+        <button class="btn-ghost" (click)="cancelAndSave()">
+          {{ isEditing() ? 'Close' : 'Cancel' }}
+        </button>
         <span class="text-xs">
-          @if (saveStatus() === 'saving') { <span class="text-slate">Saving…</span> }
-          @if (saveStatus() === 'saved')  { <span class="text-success">Saved ✓</span> }
-          @if (saveError())               { <span class="text-danger">{{ saveError() }}</span> }
+          @if (saveStatus() === 'saving') {
+            <span class="text-slate">Saving…</span>
+          }
+          @if (saveStatus() === 'saved') {
+            <span class="text-success">Saved ✓</span>
+          }
+          @if (saveError()) {
+            <span class="text-danger">{{ saveError() }}</span>
+          }
         </span>
       </div>
       <div class="flex gap-2">
-        <button class="btn-outline" [disabled]="activeStep() === visibleStepIndices()[0]" (click)="prev()">
+        <button
+          class="btn-outline"
+          [disabled]="activeStep() === visibleStepIndices()[0]"
+          (click)="prev()"
+        >
           ← Previous
         </button>
         @if (isLastStep()) {
           <button class="btn-primary" [disabled]="saving()" (click)="finish()">
-            @if (saving()) { <span class="spinner-sm"></span> } @else { {{ levelUp() ? 'Apply Level-Up' : 'Done' }} }
+            @if (saving()) {
+              <span class="spinner-sm"></span>
+            } @else {
+              {{ levelUp() ? 'Apply Level-Up' : 'Done' }}
+            }
           </button>
         } @else {
-          <button class="btn-primary" (click)="next()">
-            Next →
-          </button>
+          <button class="btn-primary" (click)="next()">Next →</button>
         }
       </div>
     </div>
-
   }
 </div>

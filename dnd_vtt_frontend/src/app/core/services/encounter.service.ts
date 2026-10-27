@@ -3,7 +3,12 @@ import { HttpClient } from '@angular/common/http';
 import { firstValueFrom, Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import {
-  Encounter, EncounterStartedEvent, MyEncounterLevel, PartyLeveledEvent, PresentPlayer, TurnState,
+  Encounter,
+  EncounterStartedEvent,
+  MyEncounterLevel,
+  PartyLeveledEvent,
+  PresentPlayer,
+  TurnState,
 } from '../models/encounter.model';
 import { AvatarRecipeV1 } from '../models/avatar.model';
 import { MapToken } from '../models/campaign.model';
@@ -26,7 +31,9 @@ export class EncounterService {
   }
 
   getBySession(sessionId: string): Promise<Encounter[]> {
-    return firstValueFrom(this.http.get<Encounter[]>(`${API}/encounters`, { params: { sessionId } }));
+    return firstValueFrom(
+      this.http.get<Encounter[]>(`${API}/encounters`, { params: { sessionId } }),
+    );
   }
 
   getById(id: string): Promise<Encounter> {
@@ -38,7 +45,9 @@ export class EncounterService {
   // other encounter before the DM even tries.
   getActiveForCampaign(campaignId: string): Promise<Encounter | null> {
     return firstValueFrom(
-      this.http.get<Encounter | null>(`${API}/encounters`, { params: { activeCampaignId: campaignId } }),
+      this.http.get<Encounter | null>(`${API}/encounters`, {
+        params: { activeCampaignId: campaignId },
+      }),
     );
   }
 
@@ -50,7 +59,9 @@ export class EncounterService {
   // DM side: show a character's player a different level — they need a token on it already.
   setPlayerLevel(id: string, characterId: string, mapId: string): Promise<Encounter> {
     return firstValueFrom(
-      this.http.put<Encounter>(`${API}/encounters/${id}/player-levels/${characterId}`, { map_id: mapId }),
+      this.http.put<Encounter>(`${API}/encounters/${id}/player-levels/${characterId}`, {
+        map_id: mapId,
+      }),
     );
   }
 
@@ -63,7 +74,9 @@ export class EncounterService {
   }
 
   setVisibility(id: string, visible: boolean): Promise<Encounter> {
-    return firstValueFrom(this.http.patch<Encounter>(`${API}/encounters/${id}/visibility`, { visible }));
+    return firstValueFrom(
+      this.http.patch<Encounter>(`${API}/encounters/${id}/visibility`, { visible }),
+    );
   }
 
   remove(id: string): Promise<void> {
@@ -89,7 +102,7 @@ export class EncounterService {
   // DM side: live list of players currently viewing this encounter, for the roster's "Players"
   // section — same connect/emit/listen/cleanup shape as BattleMapService.watchTokens.
   watchPresence(encounterId: string): Observable<PresentPlayer[]> {
-    return new Observable(observer => {
+    return new Observable((observer) => {
       const socket = this.socketService.socket;
       // Named so `off` below only removes this subscription's own listener — `socket` is a
       // singleton shared with other live features (e.g. map token watching), so tearing down one
@@ -116,12 +129,19 @@ export class EncounterService {
   // every reconnect (see activeAnnounce) since this, like watchPresence's join, doesn't survive a
   // dropped/reconnected transport on its own — without it, a player who loses their connection
   // mid-session silently stops receiving turn_changed pushes (same room) until they hard-refresh.
-  announcePresence(encounterId: string, info: {
-    username: string; characterId: string; characterName: string; hp?: number; max_hp?: number;
-    portraitSeed?: string;
-    avatarRecipe?: AvatarRecipeV1;
-    portraitImage?: string;
-  }) {
+  announcePresence(
+    encounterId: string,
+    info: {
+      username: string;
+      characterId: string;
+      characterName: string;
+      hp?: number;
+      max_hp?: number;
+      portraitSeed?: string;
+      avatarRecipe?: AvatarRecipeV1;
+      portraitImage?: string;
+    },
+  ) {
     const socket = this.socketService.socket;
     if (this.activeAnnounce) socket.off('connect', this.activeAnnounce.reannounce);
     const reannounce = () => socket.emit('announce_presence', { encounterId, ...info });
@@ -144,7 +164,7 @@ export class EncounterService {
   // on the caller already being in the `encounter-presence:${id}` room via watchPresence()
   // (DM side) or announcePresence() (player side) — this doesn't do its own join/emit.
   watchTurnState(): Observable<TurnState> {
-    return new Observable(observer => {
+    return new Observable((observer) => {
       const socket = this.socketService.socket;
       const handleUpdate = (state: TurnState) => observer.next(state);
       this.socketService.connect();
@@ -165,12 +185,15 @@ export class EncounterService {
   // getTurnOrder, refetched whenever a token changes on any level (or the level list itself
   // changes) and after a reconnect. Same room caveat as watchTurnState.
   watchTurnOrder(encounterId: string): Observable<MapToken[]> {
-    return new Observable(observer => {
+    return new Observable((observer) => {
       const socket = this.socketService.socket;
       const refetch = () => {
-        this.getTurnOrder(encounterId).then(tokens => observer.next(tokens), () => {
-          // Best-effort refresh — the next turn_changed push retries it.
-        });
+        this.getTurnOrder(encounterId).then(
+          (tokens) => observer.next(tokens),
+          () => {
+            // Best-effort refresh — the next turn_changed push retries it.
+          },
+        );
       };
       const handleChange = (event: { encounterId: string }) => {
         if (event.encounterId === encounterId) refetch();
@@ -195,9 +218,10 @@ export class EncounterService {
   // the caller's campaigns — the player owning that character re-resolves which level they're on
   // (see PlayerCampaignSessionComponent). Campaign-room scoped, so the caller filters by character.
   watchCharacterLevelChanged(): Observable<{ campaignId: string; characterId: string }> {
-    return new Observable(observer => {
+    return new Observable((observer) => {
       const socket = this.socketService.socket;
-      const handleChange = (event: { campaignId: string; characterId: string }) => observer.next(event);
+      const handleChange = (event: { campaignId: string; characterId: string }) =>
+        observer.next(event);
       this.socketService.connect();
       socket.on('character_level_changed', handleChange);
 
@@ -210,9 +234,10 @@ export class EncounterService {
   // Fires when a character in one of the caller's campaigns is saved (HP, spell slots, items...)
   // — ids only, the caller refetches what it shows. Campaign-room scoped like the one above.
   watchCharacterUpdated(): Observable<{ campaignId: string; characterId: string }> {
-    return new Observable(observer => {
+    return new Observable((observer) => {
       const socket = this.socketService.socket;
-      const handleUpdate = (event: { campaignId: string; characterId: string }) => observer.next(event);
+      const handleUpdate = (event: { campaignId: string; characterId: string }) =>
+        observer.next(event);
       this.socketService.connect();
       socket.on('character_updated', handleUpdate);
 
@@ -225,7 +250,7 @@ export class EncounterService {
   // Fires whenever any encounter goes live, regardless of campaign — the caller is responsible
   // for filtering to campaigns it actually cares about (see ShellComponent).
   watchEncounterStarted(): Observable<EncounterStartedEvent> {
-    return new Observable(observer => {
+    return new Observable((observer) => {
       const socket = this.socketService.socket;
       const handleStart = (event: EncounterStartedEvent) => observer.next(event);
       this.socketService.connect();
@@ -240,7 +265,7 @@ export class EncounterService {
   // Fires when the DM levels a party up — same "filter to your campaigns, then surface a banner"
   // pattern as watchEncounterStarted (see ShellComponent).
   watchPartyLeveled(): Observable<PartyLeveledEvent> {
-    return new Observable(observer => {
+    return new Observable((observer) => {
       const socket = this.socketService.socket;
       const handleLeveled = (event: PartyLeveledEvent) => observer.next(event);
       this.socketService.connect();

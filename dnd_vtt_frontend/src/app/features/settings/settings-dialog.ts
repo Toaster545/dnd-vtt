@@ -10,7 +10,7 @@ import { UI_SCALE_OPTIONS, UiScaleService } from '../../core/services/ui-scale.s
 import { UserAdminService } from '../../core/services/user-admin.service';
 import { UserProfile, UserRole } from '../../core/models/user.model';
 import { getErrorMessage } from '../../core/utils/error-message';
-import { ConfirmService } from '../../shared/confirm.service';
+import { ConfirmService } from '../../shared/components/confirm-dialog/confirm.service';
 import { PwaService } from '../../core/services/pwa.service';
 
 interface UserEditForm {
@@ -100,10 +100,13 @@ export class SettingsDialogComponent implements OnInit {
   }
 
   async deleteUser(user: UserProfile) {
-    if (!await this.confirm.confirm(
-      `Delete the account "${user.username}"? This cannot be undone.`,
-      'Delete Account',
-    )) return;
+    if (
+      !(await this.confirm.confirm(
+        `Delete the account "${user.username}"? This cannot be undone.`,
+        'Delete Account',
+      ))
+    )
+      return;
     try {
       await this.userAdmin.remove(user.id);
       this.users.update((list) => list.filter((u) => u.id !== user.id));
@@ -114,7 +117,11 @@ export class SettingsDialogComponent implements OnInit {
 
   formatDate(iso?: string): string {
     if (!iso) return '';
-    return new Date(iso).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
+    return new Date(iso).toLocaleDateString(undefined, {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+    });
   }
 
   installNatOne() {

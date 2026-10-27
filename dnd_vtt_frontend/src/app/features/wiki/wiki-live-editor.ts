@@ -242,9 +242,7 @@ export class WikiLiveEditorComponent implements AfterViewInit, OnDestroy {
   private readonly onDrop = (event: DragEvent): void => {
     const view = this.view;
     if (!view || this.readonly() || !this.campaignId() || !event.dataTransfer) return;
-    const files = Array.from(event.dataTransfer.files).filter((f) =>
-      f.type.startsWith('image/'),
-    );
+    const files = Array.from(event.dataTransfer.files).filter((f) => f.type.startsWith('image/'));
     if (!files.length) return;
     event.preventDefault();
     event.stopPropagation();

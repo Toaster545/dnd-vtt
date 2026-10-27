@@ -1,5 +1,5 @@
 import { Component, OnInit, input, signal } from '@angular/core';
-import { WikiWorkspaceComponent } from './wiki-workspace.component';
+import { WikiWorkspaceComponent } from './wiki-workspace';
 
 // The campaign wiki embedded in a campaign/session hub, replacing the old "Comments" panel. Renders
 // read-only by default with an eye toggle to the full editing workspace (see

@@ -2,7 +2,12 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import { Campaign, CampaignHub, CampaignJoinPreview, CampaignMember } from '../models/campaign.model';
+import {
+  Campaign,
+  CampaignHub,
+  CampaignJoinPreview,
+  CampaignMember,
+} from '../models/campaign.model';
 import { PlayerCurrentContext } from '../models/player.model';
 
 const API = environment.apiUrl;
@@ -20,22 +25,33 @@ export class CampaignService {
   }
 
   getCurrentContext(id: string): Promise<PlayerCurrentContext> {
-    return firstValueFrom(this.http.get<PlayerCurrentContext>(`${API}/campaigns/${id}/current-context`));
+    return firstValueFrom(
+      this.http.get<PlayerCurrentContext>(`${API}/campaigns/${id}/current-context`),
+    );
   }
 
   setCurrentSession(id: string, sessionId: string | null): Promise<PlayerCurrentContext> {
     return firstValueFrom(
-      this.http.patch<PlayerCurrentContext>(`${API}/campaigns/${id}/current-session`, { session_id: sessionId }),
+      this.http.patch<PlayerCurrentContext>(`${API}/campaigns/${id}/current-session`, {
+        session_id: sessionId,
+      }),
     );
   }
 
   create(name: string, description: string, allowedSources: string[]): Promise<CampaignHub> {
-    return firstValueFrom(this.http.post<CampaignHub>(`${API}/campaigns`, {
-      name, description, allowed_sources: allowedSources,
-    }));
+    return firstValueFrom(
+      this.http.post<CampaignHub>(`${API}/campaigns`, {
+        name,
+        description,
+        allowed_sources: allowedSources,
+      }),
+    );
   }
 
-  update(id: string, patch: { description?: string; background_url?: string | null; allowed_sources?: string[] }): Promise<CampaignHub> {
+  update(
+    id: string,
+    patch: { description?: string; background_url?: string | null; allowed_sources?: string[] },
+  ): Promise<CampaignHub> {
     return firstValueFrom(this.http.patch<CampaignHub>(`${API}/campaigns/${id}`, patch));
   }
 
@@ -57,25 +73,37 @@ export class CampaignService {
 
   previewJoin(joinCode: string): Promise<CampaignJoinPreview> {
     return firstValueFrom(
-      this.http.get<CampaignJoinPreview>(`${API}/campaigns/join-preview/${joinCode.trim().toUpperCase()}`),
+      this.http.get<CampaignJoinPreview>(
+        `${API}/campaigns/join-preview/${joinCode.trim().toUpperCase()}`,
+      ),
     );
   }
 
   getMembers(campaignId: string): Promise<CampaignMember[]> {
-    return firstValueFrom(this.http.get<CampaignMember[]>(`${API}/campaigns/${campaignId}/members`));
+    return firstValueFrom(
+      this.http.get<CampaignMember[]>(`${API}/campaigns/${campaignId}/members`),
+    );
   }
 
   removeMember(campaignId: string, userId: string): Promise<void> {
-    return firstValueFrom(this.http.delete<void>(`${API}/campaigns/${campaignId}/members/${userId}`));
+    return firstValueFrom(
+      this.http.delete<void>(`${API}/campaigns/${campaignId}/members/${userId}`),
+    );
   }
 
   leave(campaignId: string): Promise<{ left: true; characterId: string }> {
     return firstValueFrom(
-      this.http.delete<{ left: true; characterId: string }>(`${API}/campaigns/${campaignId}/members/me`),
+      this.http.delete<{ left: true; characterId: string }>(
+        `${API}/campaigns/${campaignId}/members/me`,
+      ),
     );
   }
 
-  setMemberEditAccess(campaignId: string, userId: string, unlocked: boolean): Promise<{ edit_unlocked: boolean }> {
+  setMemberEditAccess(
+    campaignId: string,
+    userId: string,
+    unlocked: boolean,
+  ): Promise<{ edit_unlocked: boolean }> {
     return firstValueFrom(
       this.http.patch<{ edit_unlocked: boolean }>(
         `${API}/campaigns/${campaignId}/members/${userId}/edit-access`,
@@ -84,7 +112,11 @@ export class CampaignService {
     );
   }
 
-  setMemberPartyVisibility(campaignId: string, userId: string, visible: boolean): Promise<{ visible_to_party: boolean }> {
+  setMemberPartyVisibility(
+    campaignId: string,
+    userId: string,
+    visible: boolean,
+  ): Promise<{ visible_to_party: boolean }> {
     return firstValueFrom(
       this.http.patch<{ visible_to_party: boolean }>(
         `${API}/campaigns/${campaignId}/members/${userId}/party-visibility`,

@@ -8,7 +8,10 @@ export const FEET_PER_SQUARE = 5;
 // ruler/cone/sphere tools can start and end anywhere under the cursor rather than only at
 // intersections. Kept in grid units (not raw pixels) since Measurement/drawMeasurement already
 // work in col/row and multiply back by cellSize.
-export function pointerToGridPos(stage: Konva.Stage, cellSize: number): { col: number; row: number } {
+export function pointerToGridPos(
+  stage: Konva.Stage,
+  cellSize: number,
+): { col: number; row: number } {
   const pos = stage.getRelativePointerPosition()!;
   return {
     col: pos.x / cellSize,
@@ -17,45 +20,74 @@ export function pointerToGridPos(stage: Konva.Stage, cellSize: number): { col: n
 }
 
 function addMeasureLabel(layer: Konva.Layer, text: string, x: number, y: number) {
-  layer.add(new Konva.Text({
-    x, y, text, fontSize: 14, fontStyle: 'bold',
-    fill: '#fff', offsetX: text.length * 3.5, offsetY: 20,
-    shadowColor: '#000', shadowBlur: 4, shadowOpacity: 0.8,
-  }));
+  layer.add(
+    new Konva.Text({
+      x,
+      y,
+      text,
+      fontSize: 14,
+      fontStyle: 'bold',
+      fill: '#fff',
+      offsetX: text.length * 3.5,
+      offsetY: 20,
+      shadowColor: '#000',
+      shadowBlur: 4,
+      shadowOpacity: 0.8,
+    }),
+  );
 }
 
 function drawMeasurement(layer: Konva.Layer, cellSize: number, m: Measurement) {
-  const ox = m.originCol * cellSize, oy = m.originRow * cellSize;
-  const px = m.pointCol * cellSize, py = m.pointRow * cellSize;
-  const dx = px - ox, dy = py - oy;
+  const ox = m.originCol * cellSize,
+    oy = m.originRow * cellSize;
+  const px = m.pointCol * cellSize,
+    py = m.pointRow * cellSize;
+  const dx = px - ox,
+    dy = py - oy;
   const distancePx = Math.hypot(dx, dy);
   const squares = distancePx / cellSize;
   const feet = Math.round(squares * FEET_PER_SQUARE);
   const color = '#f5d67a';
 
   if (m.shape === 'line') {
-    layer.add(new Konva.Line({ points: [ox, oy, px, py], stroke: color, strokeWidth: 3, lineCap: 'round' }));
+    layer.add(
+      new Konva.Line({ points: [ox, oy, px, py], stroke: color, strokeWidth: 3, lineCap: 'round' }),
+    );
     layer.add(new Konva.Circle({ x: ox, y: oy, radius: 4, fill: color }));
     layer.add(new Konva.Circle({ x: px, y: py, radius: 4, fill: color }));
     addMeasureLabel(layer, `${feet} ft`, (ox + px) / 2, (oy + py) / 2);
   } else if (m.shape === 'sphere') {
-    layer.add(new Konva.Circle({
-      x: ox, y: oy, radius: distancePx,
-      stroke: color, strokeWidth: 2, fill: 'rgba(245, 214, 122, 0.15)',
-    }));
+    layer.add(
+      new Konva.Circle({
+        x: ox,
+        y: oy,
+        radius: distancePx,
+        stroke: color,
+        strokeWidth: 2,
+        fill: 'rgba(245, 214, 122, 0.15)',
+      }),
+    );
     addMeasureLabel(layer, `${feet} ft`, ox, oy);
   } else {
     // Cone: apex at the origin, width at the far end equals the cone's length (the 5e
     // convention) — an isoceles triangle from the origin out to two points straddling the
     // drag point, offset perpendicular to the drag direction by half the length.
-    const nx = -dy / distancePx, ny = dx / distancePx;
+    const nx = -dy / distancePx,
+      ny = dx / distancePx;
     const half = distancePx / 2;
-    const leftX = px + nx * half, leftY = py + ny * half;
-    const rightX = px - nx * half, rightY = py - ny * half;
-    layer.add(new Konva.Line({
-      points: [ox, oy, leftX, leftY, rightX, rightY],
-      closed: true, stroke: color, strokeWidth: 2, fill: 'rgba(245, 214, 122, 0.15)',
-    }));
+    const leftX = px + nx * half,
+      leftY = py + ny * half;
+    const rightX = px - nx * half,
+      rightY = py - ny * half;
+    layer.add(
+      new Konva.Line({
+        points: [ox, oy, leftX, leftY, rightX, rightY],
+        closed: true,
+        stroke: color,
+        strokeWidth: 2,
+        fill: 'rgba(245, 214, 122, 0.15)',
+      }),
+    );
     addMeasureLabel(layer, `${feet} ft`, px, py);
   }
 }

@@ -36,10 +36,12 @@ const monk = {
         {
           type: 'feature',
           name: 'Disciplined Survivor',
-          effects: [{
-            type: 'saving_throw_proficiency',
-            tags: ['strength', 'dexterity', 'constitution', 'intelligence', 'wisdom', 'charisma'],
-          }],
+          effects: [
+            {
+              type: 'saving_throw_proficiency',
+              tags: ['strength', 'dexterity', 'constitution', 'intelligence', 'wisdom', 'charisma'],
+            },
+          ],
         },
       ],
     },
@@ -132,31 +134,80 @@ describe('CharacterStatsService', () => {
   describe('Battle Ready', () => {
     const artificer = artificerContent as unknown as DndClass;
     const crossbow: DndItem = {
-      index: 'light-crossbow', name: 'Light Crossbow', type: 'weapon', category: 'Simple Ranged',
-      damage: '1d8', damage_type: 'piercing', properties: ['Ammunition (80/320)', 'Loading', 'Two-Handed'],
-      weight: 5, cost: '25 GP', description: '',
+      index: 'light-crossbow',
+      name: 'Light Crossbow',
+      type: 'weapon',
+      category: 'Simple Ranged',
+      damage: '1d8',
+      damage_type: 'piercing',
+      properties: ['Ammunition (80/320)', 'Loading', 'Two-Handed'],
+      weight: 5,
+      cost: '25 GP',
+      description: '',
     };
     const dagger: DndItem = {
-      ...crossbow, index: 'dagger', name: 'Dagger', category: 'Simple Melee', damage: '1d4', properties: ['Finesse', 'Light', 'Thrown (20/60)'],
+      ...crossbow,
+      index: 'dagger',
+      name: 'Dagger',
+      category: 'Simple Melee',
+      damage: '1d4',
+      properties: ['Finesse', 'Light', 'Thrown (20/60)'],
     };
     const magicCrossbow: DndItem = { ...crossbow, index: 'magic-crossbow', enhancement_bonus: 1 };
     const magicDagger: DndItem = { ...dagger, index: 'magic-dagger', enhancement_bonus: 1 };
-    const build = (weapons: DndItem[], classLevel = 3, subclass = 'Battle Smith', scores = {}, totalLevel = classLevel) => {
+    const build = (
+      weapons: DndItem[],
+      classLevel = 3,
+      subclass = 'Battle Smith',
+      scores = {},
+      totalLevel = classLevel,
+    ) => {
       const character: Character = {
-        ...defaultCharacter(), name: 'Battle Ready Test', class: 'Artificer', subclass, level: totalLevel,
-        ability_scores: { strength: 6, dexterity: 16, constitution: 14, intelligence: 18, wisdom: 12, charisma: 10, ...scores },
-        equipment: weapons.map(w => ({ itemIndex: w.index, name: w.name, quantity: 1, equipped: true })),
+        ...defaultCharacter(),
+        name: 'Battle Ready Test',
+        class: 'Artificer',
+        subclass,
+        level: totalLevel,
+        ability_scores: {
+          strength: 6,
+          dexterity: 16,
+          constitution: 14,
+          intelligence: 18,
+          wisdom: 12,
+          charisma: 10,
+          ...scores,
+        },
+        equipment: weapons.map((w) => ({
+          itemIndex: w.index,
+          name: w.name,
+          quantity: 1,
+          equipped: true,
+        })),
       };
-      return new CharacterStatsService().compute(character, artificer, null, [], [
-        { data: artificer, choices: {}, level: classLevel, subclass },
-      ], weapons);
+      return new CharacterStatsService().compute(
+        character,
+        artificer,
+        null,
+        [],
+        [{ data: artificer, choices: {}, level: classLevel, subclass }],
+        weapons,
+      );
     };
 
     it('uses the actual subclass grant for magic ranged and finesse weapon attack and damage', () => {
       const stats = build([crossbow, magicCrossbow, dagger, magicDagger]);
-      expect(stats.weapon_attacks.map(w => [w.itemIndex, w.attack_bonus, w.damage_dice, w.damage_bonus])).toEqual([
-        ['light-crossbow', 5, '1d8', 3], ['magic-crossbow', 7, '1d8', 5],
-        ['dagger', 5, '1d4', 3], ['magic-dagger', 7, '1d4', 5],
+      expect(
+        stats.weapon_attacks.map((w) => [
+          w.itemIndex,
+          w.attack_bonus,
+          w.damage_dice,
+          w.damage_bonus,
+        ]),
+      ).toEqual([
+        ['light-crossbow', 5, '1d8', 3],
+        ['magic-crossbow', 7, '1d8', 5],
+        ['dagger', 5, '1d4', 3],
+        ['magic-dagger', 7, '1d4', 5],
       ]);
       expect(stats.unarmed_attack.attack_bonus).toBe(0);
     });
@@ -166,7 +217,10 @@ describe('CharacterStatsService', () => {
         { ...dagger, index: 'magic-no-bonus', rarity: 'uncommon' },
         { ...dagger, index: 'named-only', name: 'Magic Dagger +1' },
       ]);
-      expect(stats.weapon_attacks.map(w => [w.attack_bonus, w.damage_bonus])).toEqual([[6, 4], [5, 3]]);
+      expect(stats.weapon_attacks.map((w) => [w.attack_bonus, w.damage_bonus])).toEqual([
+        [6, 4],
+        [5, 3],
+      ]);
     });
 
     it('retains a better ordinary ability because Intelligence is optional', () => {
@@ -175,9 +229,13 @@ describe('CharacterStatsService', () => {
     });
 
     it('requires Battle Smith level 3, independently of total character level', () => {
-      expect(build([magicCrossbow], 2, 'Battle Smith', {}, 5).weapon_attacks[0].attack_bonus).toBe(7);
+      expect(build([magicCrossbow], 2, 'Battle Smith', {}, 5).weapon_attacks[0].attack_bonus).toBe(
+        7,
+      );
       expect(build([magicCrossbow], 3, 'Alchemist').weapon_attacks[0].attack_bonus).toBe(6);
-      expect(build([magicCrossbow], 3, 'Battle Smith', {}, 5).weapon_attacks[0].attack_bonus).toBe(8);
+      expect(build([magicCrossbow], 3, 'Battle Smith', {}, 5).weapon_attacks[0].attack_bonus).toBe(
+        8,
+      );
     });
 
     it('does not bypass attunement for the weapon’s enhancement bonus', () => {
@@ -215,7 +273,13 @@ describe('CharacterStatsService', () => {
     };
 
     const stats = new CharacterStatsService().compute(
-      character, bard, null, [alert], [], [], criminal,
+      character,
+      bard,
+      null,
+      [alert],
+      [],
+      [],
+      criminal,
     );
 
     expect(stats.initiative).toBe(5);
@@ -317,11 +381,20 @@ describe('CharacterStatsService', () => {
       level: 14,
     };
     const stats = new CharacterStatsService().compute(
-      character, monk, null, [], [{ data: monk, choices: {}, level: 14 }],
+      character,
+      monk,
+      null,
+      [],
+      [{ data: monk, choices: {}, level: 14 }],
     );
 
     expect([...stats.saving_throw_proficient]).toEqual([
-      'strength', 'dexterity', 'constitution', 'intelligence', 'wisdom', 'charisma',
+      'strength',
+      'dexterity',
+      'constitution',
+      'intelligence',
+      'wisdom',
+      'charisma',
     ]);
     expect(stats.saving_throw_bonuses.wisdom).toBe(5);
   });
@@ -329,14 +402,28 @@ describe('CharacterStatsService', () => {
   it('limits a Monk martial-weapon proficiency to weapons with Light', () => {
     const weapons: DndItem[] = [
       {
-        index: 'shortsword', name: 'Shortsword', type: 'weapon', category: 'Martial Melee',
-        damage: '1d6', damage_type: 'Piercing', properties: ['Finesse', 'Light'],
-        weight: 2, cost: '10 GP', description: '',
+        index: 'shortsword',
+        name: 'Shortsword',
+        type: 'weapon',
+        category: 'Martial Melee',
+        damage: '1d6',
+        damage_type: 'Piercing',
+        properties: ['Finesse', 'Light'],
+        weight: 2,
+        cost: '10 GP',
+        description: '',
       },
       {
-        index: 'longsword', name: 'Longsword', type: 'weapon', category: 'Martial Melee',
-        damage: '1d8', damage_type: 'Slashing', properties: ['Versatile'],
-        weight: 3, cost: '15 GP', description: '',
+        index: 'longsword',
+        name: 'Longsword',
+        type: 'weapon',
+        category: 'Martial Melee',
+        damage: '1d8',
+        damage_type: 'Slashing',
+        properties: ['Versatile'],
+        weight: 3,
+        cost: '15 GP',
+        description: '',
       },
     ];
     const character: Character = {
@@ -344,51 +431,90 @@ describe('CharacterStatsService', () => {
       name: 'Armed Monk',
       class: 'Monk',
       level: 1,
-      equipment: weapons.map(weapon => ({
-        itemIndex: weapon.index, name: weapon.name, quantity: 1, equipped: true,
+      equipment: weapons.map((weapon) => ({
+        itemIndex: weapon.index,
+        name: weapon.name,
+        quantity: 1,
+        equipped: true,
       })),
     };
     const stats = new CharacterStatsService().compute(
-      character, monk, null, [], [{ data: monk, choices: {}, level: 1 }], weapons,
+      character,
+      monk,
+      null,
+      [],
+      [{ data: monk, choices: {}, level: 1 }],
+      weapons,
     );
 
-    expect(stats.weapon_attacks.map(attack => attack.attack_bonus)).toEqual([2, 0]);
+    expect(stats.weapon_attacks.map((attack) => attack.attack_bonus)).toEqual([2, 0]);
   });
 
   it('labels melee reach and ranged or thrown weapon distances', () => {
     const weapons: DndItem[] = [
       {
-        index: 'sickle', name: 'Sickle', type: 'weapon', category: 'Simple Melee',
-        damage: '1d4', damage_type: 'Slashing', properties: ['Light'],
-        weight: 2, cost: '1 GP', description: '',
+        index: 'sickle',
+        name: 'Sickle',
+        type: 'weapon',
+        category: 'Simple Melee',
+        damage: '1d4',
+        damage_type: 'Slashing',
+        properties: ['Light'],
+        weight: 2,
+        cost: '1 GP',
+        description: '',
       },
       {
-        index: 'whip', name: 'Whip', type: 'weapon', category: 'Martial Melee',
-        damage: '1d4', damage_type: 'Slashing', properties: ['Finesse', 'Reach'],
-        weight: 3, cost: '2 GP', description: '',
+        index: 'whip',
+        name: 'Whip',
+        type: 'weapon',
+        category: 'Martial Melee',
+        damage: '1d4',
+        damage_type: 'Slashing',
+        properties: ['Finesse', 'Reach'],
+        weight: 3,
+        cost: '2 GP',
+        description: '',
       },
       {
-        index: 'longbow', name: 'Longbow', type: 'weapon', category: 'Martial Ranged',
-        damage: '1d8', damage_type: 'Piercing', properties: ['Ammunition (range 150/600)'],
-        weight: 2, cost: '50 GP', description: '',
+        index: 'longbow',
+        name: 'Longbow',
+        type: 'weapon',
+        category: 'Martial Ranged',
+        damage: '1d8',
+        damage_type: 'Piercing',
+        properties: ['Ammunition (range 150/600)'],
+        weight: 2,
+        cost: '50 GP',
+        description: '',
       },
       {
-        index: 'dagger', name: 'Dagger', type: 'weapon', category: 'Simple Melee',
-        damage: '1d4', damage_type: 'Piercing', properties: ['Finesse', 'Thrown (range 20/60)'],
-        weight: 1, cost: '2 GP', description: '',
+        index: 'dagger',
+        name: 'Dagger',
+        type: 'weapon',
+        category: 'Simple Melee',
+        damage: '1d4',
+        damage_type: 'Piercing',
+        properties: ['Finesse', 'Thrown (range 20/60)'],
+        weight: 1,
+        cost: '2 GP',
+        description: '',
       },
     ];
     const character: Character = {
       ...defaultCharacter(),
       name: 'Range Tester',
-      equipment: weapons.map(weapon => ({
-        itemIndex: weapon.index, name: weapon.name, quantity: 1, equipped: true,
+      equipment: weapons.map((weapon) => ({
+        itemIndex: weapon.index,
+        name: weapon.name,
+        quantity: 1,
+        equipped: true,
       })),
     };
 
     const stats = new CharacterStatsService().compute(character, monk, null, [], [], weapons);
 
-    expect(stats.weapon_attacks.map(attack => attack.distance)).toEqual([
+    expect(stats.weapon_attacks.map((attack) => attack.distance)).toEqual([
       '5 ft. reach',
       '10 ft. reach',
       '150/600 ft.',
@@ -399,60 +525,106 @@ describe('CharacterStatsService', () => {
   it('always exposes a proficient Strength-based Unarmed Strike', () => {
     const character: Character = {
       ...defaultCharacter(),
-      name: 'Brawler', level: 5,
+      name: 'Brawler',
+      level: 5,
       ability_scores: {
-        strength: 14, dexterity: 10, constitution: 10,
-        intelligence: 10, wisdom: 10, charisma: 10,
+        strength: 14,
+        dexterity: 10,
+        constitution: 10,
+        intelligence: 10,
+        wisdom: 10,
+        charisma: 10,
       },
     };
 
     const stats = new CharacterStatsService().compute(character, null, null);
 
     expect(stats.unarmed_attack).toMatchObject({
-      name: 'Unarmed Strike', distance: '5 ft. reach', attack_bonus: 5,
-      damage_dice: '1', damage_bonus: 2, damage_type: 'bludgeoning',
+      name: 'Unarmed Strike',
+      distance: '5 ft. reach',
+      attack_bonus: 5,
+      damage_dice: '1',
+      damage_bonus: 2,
+      damage_type: 'bludgeoning',
     });
   });
 
   it('adds a conjured pact weapon using Charisma and automatic proficiency', () => {
     const warlock = {
-      index: 'warlock', name: 'Warlock', hit_die: 8,
-      saving_throws: ['wisdom', 'charisma'], weapon_proficiencies: ['Simple Weapons'],
-      levels: [], subclasses: [],
+      index: 'warlock',
+      name: 'Warlock',
+      hit_die: 8,
+      saving_throws: ['wisdom', 'charisma'],
+      weapon_proficiencies: ['Simple Weapons'],
+      levels: [],
+      subclasses: [],
     } as unknown as DndClass;
     const longsword: DndItem = {
-      index: 'custom:swirling-katana', name: 'Swirling Katana', type: 'weapon', category: 'Martial Melee',
-      damage: '1d8', damage_type: 'slashing', properties: ['Versatile (1d10)'],
-      weight: 3, cost: '15 GP', description: '',
+      index: 'custom:swirling-katana',
+      name: 'Swirling Katana',
+      type: 'weapon',
+      category: 'Martial Melee',
+      damage: '1d8',
+      damage_type: 'slashing',
+      properties: ['Versatile (1d10)'],
+      weight: 3,
+      cost: '15 GP',
+      description: '',
     };
     const character: Character = {
       ...defaultCharacter(),
-      name: 'Bladebound', class: 'Warlock', level: 3,
+      name: 'Bladebound',
+      class: 'Warlock',
+      level: 3,
       ability_scores: {
-        strength: 8, dexterity: 12, constitution: 14,
-        intelligence: 10, wisdom: 10, charisma: 18,
+        strength: 8,
+        dexterity: 12,
+        constitution: 14,
+        intelligence: 10,
+        wisdom: 10,
+        charisma: 18,
       },
-      classes: [{
-        name: 'Warlock', level: 3,
-        choices: { eldritch_invocations: ['Pact of the Blade'] },
-      }],
+      classes: [
+        {
+          name: 'Warlock',
+          level: 3,
+          choices: { eldritch_invocations: ['Pact of the Blade'] },
+        },
+      ],
       pact_weapon: {
-        itemIndex: 'custom:swirling-katana', name: 'Swirling Katana', mode: 'conjured',
+        itemIndex: 'custom:swirling-katana',
+        name: 'Swirling Katana',
+        mode: 'conjured',
         createdAt: '2026-01-01T00:00:00.000Z',
       },
     };
 
     const stats = new CharacterStatsService().compute(
-      character, warlock, null, [], [{
-        data: warlock, level: 3, choices: { eldritch_invocations: ['Pact of the Blade'] },
-      }], [longsword],
+      character,
+      warlock,
+      null,
+      [],
+      [
+        {
+          data: warlock,
+          level: 3,
+          choices: { eldritch_invocations: ['Pact of the Blade'] },
+        },
+      ],
+      [longsword],
     );
 
-    expect(stats.weapon_attacks).toEqual([expect.objectContaining({
-      itemIndex: 'custom:swirling-katana', attack_bonus: 6, damage_dice: '1d8',
-      versatile_damage_dice: '1d10', damage_bonus: 4,
-      damage_type: 'slashing / necrotic / psychic / radiant', is_pact_weapon: true,
-    })]);
+    expect(stats.weapon_attacks).toEqual([
+      expect.objectContaining({
+        itemIndex: 'custom:swirling-katana',
+        attack_bonus: 6,
+        damage_dice: '1d8',
+        versatile_damage_dice: '1d10',
+        damage_bonus: 4,
+        damage_type: 'slashing / necrotic / psychic / radiant',
+        is_pact_weapon: true,
+      }),
+    ]);
   });
 
   it('adds an ability-based Aura of Protection bonus to every saving throw', () => {
@@ -471,7 +643,11 @@ describe('CharacterStatsService', () => {
       },
     };
     const stats = new CharacterStatsService().compute(
-      character, paladin, null, [], [{ data: paladin, choices: {}, level: 6 }],
+      character,
+      paladin,
+      null,
+      [],
+      [{ data: paladin, choices: {}, level: 6 }],
     );
 
     expect(stats.saving_throw_bonuses.strength).toBe(3);
@@ -479,71 +655,148 @@ describe('CharacterStatsService', () => {
     expect(stats.saving_throw_bonuses.charisma).toBe(9);
   });
 
-  it('adds a weapon\'s own enhancement bonus to both its attack and damage rolls', () => {
+  it("adds a weapon's own enhancement bonus to both its attack and damage rolls", () => {
     const plusOneLongsword: DndItem = {
-      index: 'plus-one-longsword', name: '+1 Longsword', type: 'weapon', category: 'Martial Melee',
-      damage: '1d8', damage_type: 'slashing', properties: ['Versatile (1d10)'],
-      weight: 3, cost: '15 GP', description: '', enhancement_bonus: 1,
+      index: 'plus-one-longsword',
+      name: '+1 Longsword',
+      type: 'weapon',
+      category: 'Martial Melee',
+      damage: '1d8',
+      damage_type: 'slashing',
+      properties: ['Versatile (1d10)'],
+      weight: 3,
+      cost: '15 GP',
+      description: '',
+      enhancement_bonus: 1,
     };
     const character: Character = {
       ...defaultCharacter(),
-      name: 'Plus One Fighter', level: 1,
+      name: 'Plus One Fighter',
+      level: 1,
       ability_scores: {
-        strength: 16, dexterity: 10, constitution: 10,
-        intelligence: 10, wisdom: 10, charisma: 10,
+        strength: 16,
+        dexterity: 10,
+        constitution: 10,
+        intelligence: 10,
+        wisdom: 10,
+        charisma: 10,
       },
-      equipment: [{ itemIndex: plusOneLongsword.index, name: plusOneLongsword.name, quantity: 1, equipped: true }],
+      equipment: [
+        {
+          itemIndex: plusOneLongsword.index,
+          name: plusOneLongsword.name,
+          quantity: 1,
+          equipped: true,
+        },
+      ],
     };
 
-    const stats = new CharacterStatsService().compute(character, null, null, [], [], [plusOneLongsword]);
+    const stats = new CharacterStatsService().compute(
+      character,
+      null,
+      null,
+      [],
+      [],
+      [plusOneLongsword],
+    );
 
-    expect(stats.weapon_attacks).toEqual([expect.objectContaining({ attack_bonus: 4, damage_bonus: 4 })]);
+    expect(stats.weapon_attacks).toEqual([
+      expect.objectContaining({ attack_bonus: 4, damage_bonus: 4 }),
+    ]);
   });
 
   it('adds a flat ability_score_bonus item effect to the derived modifier and everything downstream', () => {
     const beltOfGiantStrength: DndItem = {
-      index: 'belt-of-giant-strength', name: 'Belt of Hill Giant Strength', type: 'gear', category: 'Wondrous Item',
-      properties: [], weight: 1, cost: 'Magic item', description: '',
+      index: 'belt-of-giant-strength',
+      name: 'Belt of Hill Giant Strength',
+      type: 'gear',
+      category: 'Wondrous Item',
+      properties: [],
+      weight: 1,
+      cost: 'Magic item',
+      description: '',
       requires_attunement: true,
       effects: [{ type: 'ability_score_bonus', ability: 'strength', minimum: 21 }],
     };
     const character: Character = {
       ...defaultCharacter(),
-      name: 'Belted Barbarian', level: 1,
+      name: 'Belted Barbarian',
+      level: 1,
       ability_scores: {
-        strength: 14, dexterity: 10, constitution: 10,
-        intelligence: 10, wisdom: 10, charisma: 10,
+        strength: 14,
+        dexterity: 10,
+        constitution: 10,
+        intelligence: 10,
+        wisdom: 10,
+        charisma: 10,
       },
-      equipment: [{
-        itemIndex: beltOfGiantStrength.index, name: beltOfGiantStrength.name, quantity: 1,
-        equipped: true, attuned: true,
-      }],
+      equipment: [
+        {
+          itemIndex: beltOfGiantStrength.index,
+          name: beltOfGiantStrength.name,
+          quantity: 1,
+          equipped: true,
+          attuned: true,
+        },
+      ],
     };
 
-    const stats = new CharacterStatsService().compute(character, null, null, [], [], [beltOfGiantStrength]);
+    const stats = new CharacterStatsService().compute(
+      character,
+      null,
+      null,
+      [],
+      [],
+      [beltOfGiantStrength],
+    );
 
     expect(stats.ability_modifiers.strength).toBe(5);
     expect(stats.unarmed_attack.attack_bonus).toBe(5 + 2);
   });
 
-  it('leaves an item\'s effects dormant while it requires attunement and isn\'t attuned', () => {
+  it("leaves an item's effects dormant while it requires attunement and isn't attuned", () => {
     const beltOfGiantStrength: DndItem = {
-      index: 'belt-of-giant-strength', name: 'Belt of Hill Giant Strength', type: 'gear', category: 'Wondrous Item',
-      properties: [], weight: 1, cost: 'Magic item', description: '',
+      index: 'belt-of-giant-strength',
+      name: 'Belt of Hill Giant Strength',
+      type: 'gear',
+      category: 'Wondrous Item',
+      properties: [],
+      weight: 1,
+      cost: 'Magic item',
+      description: '',
       requires_attunement: true,
       effects: [{ type: 'ability_score_bonus', ability: 'strength', minimum: 21 }],
     };
     const character: Character = {
       ...defaultCharacter(),
-      name: 'Unattuned Barbarian', level: 1,
+      name: 'Unattuned Barbarian',
+      level: 1,
       ability_scores: {
-        strength: 14, dexterity: 10, constitution: 10,
-        intelligence: 10, wisdom: 10, charisma: 10,
+        strength: 14,
+        dexterity: 10,
+        constitution: 10,
+        intelligence: 10,
+        wisdom: 10,
+        charisma: 10,
       },
-      equipment: [{ itemIndex: beltOfGiantStrength.index, name: beltOfGiantStrength.name, quantity: 1, equipped: true }],
+      equipment: [
+        {
+          itemIndex: beltOfGiantStrength.index,
+          name: beltOfGiantStrength.name,
+          quantity: 1,
+          equipped: true,
+        },
+      ],
     };
 
-    const stats = new CharacterStatsService().compute(character, null, null, [], [], [beltOfGiantStrength]);
+    const stats = new CharacterStatsService().compute(
+      character,
+      null,
+      null,
+      [],
+      [],
+      [beltOfGiantStrength],
+    );
 
     expect(stats.ability_modifiers.strength).toBe(2);
   });

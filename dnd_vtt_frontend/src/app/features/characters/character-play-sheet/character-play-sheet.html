@@ -1,7 +1,6 @@
 @if (loading()) {
   <div class="flex justify-center items-center h-full"><span class="spinner-lg"></span></div>
 } @else if (localChar(); as char) {
-
   <!-- Collapsed-by-default disclosure for a feature / trait / action row: the name is the
        summary with its provenance as a sub-label to its right, and the rules text expands
        below on click. Shared by the Stats and Actions tabs so both stay skimmable during play. -->
@@ -9,7 +8,9 @@
     @if (f.detail) {
       <details class="detail-disclosure text-sm">
         <summary class="flex items-center gap-1">
-          <mat-icon class="detail-chevron text-base text-slate flex-shrink-0">chevron_right</mat-icon>
+          <mat-icon class="detail-chevron text-base text-slate flex-shrink-0"
+            >chevron_right</mat-icon
+          >
           <span class="text-parchment font-medium">{{ f.name }}</span>
           <span class="text-coal text-xs"> · {{ f.source }}</span>
         </summary>
@@ -24,73 +25,143 @@
   </ng-template>
 
   <div class="flex flex-col h-full overflow-hidden">
-
     <!-- Header -->
-    <div class="sheet-header flex flex-wrap items-center justify-between gap-4 px-6 pt-5 pb-4 border-b border-white/10 flex-shrink-0"
-      [class.is-hidden]="headerHidden()">
+    <div
+      class="sheet-header flex flex-wrap items-center justify-between gap-4 px-6 pt-5 pb-4 border-b border-white/10 flex-shrink-0"
+      [class.is-hidden]="headerHidden()"
+    >
       <div class="sheet-identity flex items-center gap-2 min-w-0">
         <ng-content select="[sheetHeaderLeading]" />
-        <button type="button"
+        <button
+          type="button"
           class="group relative flex flex-shrink-0 rounded-full border-0 p-0 bg-transparent cursor-pointer disabled:cursor-default"
           [style.width.px]="char.portrait_use_token ? tokenPortraitPx() : null"
           [style.height.px]="char.portrait_use_token ? tokenPortraitPx() : null"
           [disabled]="persisting()"
           (click)="changePortrait()"
-          matTooltip="Change portrait">
+          matTooltip="Change portrait"
+        >
           <app-character-portrait
             [imageSrc]="portraitUri()"
             [border]="char.token_border"
             [useToken]="!!char.portrait_use_token"
             [size]="44"
           />
-          <span class="absolute inset-0 flex items-center justify-center rounded-full bg-black/45 opacity-0 transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100">
+          <span
+            class="absolute inset-0 flex items-center justify-center rounded-full bg-black/45 opacity-0 transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100"
+          >
             <mat-icon class="text-base text-parchment">edit</mat-icon>
           </span>
         </button>
         <div class="sheet-identity-copy min-w-0">
           @if (editingName()) {
             <div class="flex items-center gap-1">
-              <input class="field-input font-brand text-2xl py-0.5 px-1.5 min-w-0" type="text" autofocus
-                [ngModel]="nameDraft()" (ngModelChange)="nameDraft.set($event)" name="characterNameEdit"
-                (keydown.enter)="confirmNameEdit()" (keydown.escape)="cancelNameEdit()" #nameInput
-                (focus)="nameInput.select()" />
-              <button class="btn-icon w-6 h-6 text-xs" [disabled]="persisting()" (click)="confirmNameEdit()" matTooltip="Save"><mat-icon class="text-base">check</mat-icon></button>
-              <button class="btn-icon w-6 h-6 text-xs" [disabled]="persisting()" (click)="cancelNameEdit()" matTooltip="Cancel"><mat-icon class="text-base">close</mat-icon></button>
+              <input
+                class="field-input font-brand text-2xl py-0.5 px-1.5 min-w-0"
+                type="text"
+                autofocus
+                [ngModel]="nameDraft()"
+                (ngModelChange)="nameDraft.set($event)"
+                name="characterNameEdit"
+                (keydown.enter)="confirmNameEdit()"
+                (keydown.escape)="cancelNameEdit()"
+                #nameInput
+                (focus)="nameInput.select()"
+              />
+              <button
+                class="btn-icon w-6 h-6 text-xs"
+                [disabled]="persisting()"
+                (click)="confirmNameEdit()"
+                matTooltip="Save"
+              >
+                <mat-icon class="text-base">check</mat-icon>
+              </button>
+              <button
+                class="btn-icon w-6 h-6 text-xs"
+                [disabled]="persisting()"
+                (click)="cancelNameEdit()"
+                matTooltip="Cancel"
+              >
+                <mat-icon class="text-base">close</mat-icon>
+              </button>
             </div>
           } @else {
-            <h2 class="font-brand text-2xl text-parchment m-0 leading-tight truncate cursor-pointer hover:underline decoration-dotted underline-offset-4"
-              (click)="startEditingName()" matTooltip="Click to rename">{{ char.name }}</h2>
+            <h2
+              class="font-brand text-2xl text-parchment m-0 leading-tight truncate cursor-pointer hover:underline decoration-dotted underline-offset-4"
+              (click)="startEditingName()"
+              matTooltip="Click to rename"
+            >
+              {{ char.name }}
+            </h2>
           }
           @if (!compact()) {
             <p class="text-slate text-sm m-0 mt-1">
               Level {{ char.level }} {{ char.race }}
-              @if (char.subrace) { ({{ char.subrace }}) }
-              &nbsp;·&nbsp; {{ char.class }}@if (char.subclass) { — {{ char.subclass }} }
-              @if (char.background) { &nbsp;·&nbsp; {{ char.background }} }
+              @if (char.subrace) {
+                ({{ char.subrace }})
+              }
+              &nbsp;·&nbsp; {{ char.class }}
+              @if (char.subclass) {
+                — {{ char.subclass }}
+              }
+              @if (char.background) {
+                &nbsp;·&nbsp; {{ char.background }}
+              }
             </p>
           }
         </div>
         @if (!preview() && stats()) {
-          <app-statblock-export-menu class="self-start" [name]="char.name" [build]="buildStatblock" />
+          <app-statblock-export-menu
+            class="self-start"
+            [name]="char.name"
+            [build]="buildStatblock"
+          />
         }
       </div>
       @if (stats(); as s) {
         <div class="sheet-combat-strip">
           <div class="sheet-hp-control flex items-center gap-1">
             <div class="sheet-hp-adjuster flex flex-col items-center gap-0.5">
-              <button class="btn-icon sheet-hp-btn" [disabled]="!hpAdjustAmount() || char.current_hp >= char.max_hp || persisting()"
-                (click)="applyHpDelta(hpAdjustAmount())" matTooltip="Heal">+</button>
-              <input class="field-input sheet-hp-input text-center text-xs" type="number" min="0"
-                [ngModel]="hpAdjustAmount()" (ngModelChange)="setHpAdjustAmount($event)" name="hpAdjust" />
-              <button class="btn-icon sheet-hp-btn" [disabled]="!hpAdjustAmount() || char.current_hp <= 0 || persisting()"
-                (click)="applyHpDelta(-hpAdjustAmount())" matTooltip="Damage">−</button>
+              <button
+                class="btn-icon sheet-hp-btn"
+                [disabled]="!hpAdjustAmount() || char.current_hp >= char.max_hp || persisting()"
+                (click)="applyHpDelta(hpAdjustAmount())"
+                matTooltip="Heal"
+              >
+                +
+              </button>
+              <input
+                class="field-input sheet-hp-input text-center text-xs"
+                type="number"
+                min="0"
+                [ngModel]="hpAdjustAmount()"
+                (ngModelChange)="setHpAdjustAmount($event)"
+                name="hpAdjust"
+              />
+              <button
+                class="btn-icon sheet-hp-btn"
+                [disabled]="!hpAdjustAmount() || char.current_hp <= 0 || persisting()"
+                (click)="applyHpDelta(-hpAdjustAmount())"
+                matTooltip="Damage"
+              >
+                −
+              </button>
             </div>
             <div class="sheet-hp-summary text-center">
               <div class="text-[10px] text-slate uppercase tracking-widest">Hit Points</div>
-              <div class="font-brand text-2xl leading-none" [class]="hpPercent(char) <= 25 ? 'text-danger' : 'text-parchment'">{{ char.current_hp }}</div>
+              <div
+                class="font-brand text-2xl leading-none"
+                [class]="hpPercent(char) <= 25 ? 'text-danger' : 'text-parchment'"
+              >
+                {{ char.current_hp }}
+              </div>
               <div class="text-xs text-slate">/ {{ char.max_hp }}</div>
               <div class="sheet-hp-bar w-16 h-1.5 bg-white/10 rounded-full mt-0.5 overflow-hidden">
-                <div class="h-full rounded-full transition-all" [class]="hpColor(char)" [style.width.%]="hpPercent(char)"></div>
+                <div
+                  class="h-full rounded-full transition-all"
+                  [class]="hpColor(char)"
+                  [style.width.%]="hpPercent(char)"
+                ></div>
               </div>
             </div>
           </div>
@@ -103,7 +174,10 @@
               <div class="text-[10px] text-slate uppercase tracking-widest mb-0.5">Conditions</div>
               <div class="flex flex-wrap gap-1 justify-center max-w-[15rem]">
                 @for (condition of char.conditions ?? []; track condition) {
-                  <span class="text-[11px] leading-none px-1.5 py-0.5 rounded-full bg-danger/15 text-danger border border-danger/30">{{ condition }}</span>
+                  <span
+                    class="text-[11px] leading-none px-1.5 py-0.5 rounded-full bg-danger/15 text-danger border border-danger/30"
+                    >{{ condition }}</span
+                  >
                 }
               </div>
             </div>
@@ -118,55 +192,121 @@
           <div class="sheet-stat sheet-stat-initiative text-center">
             <div class="text-[10px] text-slate uppercase tracking-widest mb-0.5">Initiative</div>
             <div class="font-brand text-2xl leading-none text-gold">{{ fmt(s.initiative) }}</div>
-            @if (s.initiative_advantage) { <div class="text-[9px] text-gold mt-1 uppercase">Advantage</div> }
+            @if (s.initiative_advantage) {
+              <div class="text-[9px] text-gold mt-1 uppercase">Advantage</div>
+            }
           </div>
           <button
             class="sheet-stat sheet-stat-inspiration text-center border-0 bg-transparent cursor-pointer p-0"
             type="button"
             [disabled]="persisting()"
             (click)="toggleHeroicInspiration()"
-            [matTooltip]="char.heroic_inspiration ? 'Spend Heroic Inspiration' : 'Mark Heroic Inspiration available'"
+            [matTooltip]="
+              char.heroic_inspiration
+                ? 'Spend Heroic Inspiration'
+                : 'Mark Heroic Inspiration available'
+            "
           >
             <div class="text-[10px] text-slate uppercase tracking-widest mb-0.5">Inspiration</div>
-            <mat-icon class="text-2xl leading-none" [class]="char.heroic_inspiration ? 'text-gold' : 'text-coal'">{{ char.heroic_inspiration ? 'star' : 'star_border' }}</mat-icon>
+            <mat-icon
+              class="text-2xl leading-none"
+              [class]="char.heroic_inspiration ? 'text-gold' : 'text-coal'"
+              >{{ char.heroic_inspiration ? 'star' : 'star_border' }}</mat-icon
+            >
           </button>
           <div class="sheet-rest-actions flex flex-col gap-1 justify-center">
-            <button class="btn-outline text-xs px-2 py-1" [disabled]="persisting()" (click)="rest('short_rest')">Short Rest</button>
-            <button class="btn-outline text-xs px-2 py-1" [disabled]="persisting()" (click)="rest('long_rest')">Long Rest</button>
+            <button
+              class="btn-outline text-xs px-2 py-1"
+              [disabled]="persisting()"
+              (click)="rest('short_rest')"
+            >
+              Short Rest
+            </button>
+            <button
+              class="btn-outline text-xs px-2 py-1"
+              [disabled]="persisting()"
+              (click)="rest('long_rest')"
+            >
+              Long Rest
+            </button>
           </div>
         </div>
-            @if (showShortRestDialog()) {
-              <div class="fixed inset-0 z-50 bg-black/65 flex items-center justify-center p-4" (click)="closeShortRestDialog()">
-                <section class="w-full max-w-md max-h-[88vh] flex flex-col overflow-hidden bg-elevated border border-gold/35 rounded-xl shadow-2xl" (click)="$event.stopPropagation()">
-                  <div class="flex items-start justify-between gap-3 p-5 pb-3 flex-shrink-0">
-                    <div>
-                      <h3 class="font-brand text-gold text-xl m-0">Short Rest</h3>
-                      <p class="text-xs text-slate mt-1 mb-0">Spend hit dice and heal</p>
-                    </div>
-                    <button class="btn-icon" (click)="closeShortRestDialog()"><mat-icon>close</mat-icon></button>
-                  </div>
-
-                  <div class="px-5 pb-3">
-                    <label class="text-xs text-slate">Hit Dice to spend <span class="text-coal text-xs">(available: {{ (localChar()?.level ?? 0) - (localChar()?.hit_dice_used ?? 0) }})</span></label>
-                    <input class="field-input mt-1" type="number" min="0" [ngModel]="shortRestHitDice()" (ngModelChange)="shortRestHitDice.set($event)" name="shortRestHitDice" />
-                    <label class="text-xs text-slate mt-3">Amount healed</label>
-                    <input class="field-input mt-1" type="number" min="0" [ngModel]="shortRestHealed()" (ngModelChange)="shortRestHealed.set($event)" name="shortRestHealed" />
-                    @if (shortRestError()) { <p class="text-sm text-red-300 mt-2 mb-0">{{ shortRestError() }}</p> }
-                  </div>
-
-                  <div class="p-5 pt-3 border-t border-white/10 flex-shrink-0 flex gap-2">
-                    <button class="btn-outline flex-1 justify-center text-center" (click)="closeShortRestDialog()">Cancel</button>
-                    <button class="btn-primary flex-1 justify-center text-center" [disabled]="shortRestBusy() || persisting()" (click)="confirmShortRest()">Apply Short Rest</button>
-                  </div>
-                </section>
+        @if (showShortRestDialog()) {
+          <div
+            class="fixed inset-0 z-50 bg-black/65 flex items-center justify-center p-4"
+            (click)="closeShortRestDialog()"
+          >
+            <section
+              class="w-full max-w-md max-h-[88vh] flex flex-col overflow-hidden bg-elevated border border-gold/35 rounded-xl shadow-2xl"
+              (click)="$event.stopPropagation()"
+            >
+              <div class="flex items-start justify-between gap-3 p-5 pb-3 flex-shrink-0">
+                <div>
+                  <h3 class="font-brand text-gold text-xl m-0">Short Rest</h3>
+                  <p class="text-xs text-slate mt-1 mb-0">Spend hit dice and heal</p>
+                </div>
+                <button class="btn-icon" (click)="closeShortRestDialog()">
+                  <mat-icon>close</mat-icon>
+                </button>
               </div>
-            }
+
+              <div class="px-5 pb-3">
+                <label class="text-xs text-slate"
+                  >Hit Dice to spend
+                  <span class="text-coal text-xs"
+                    >(available:
+                    {{ (localChar()?.level ?? 0) - (localChar()?.hit_dice_used ?? 0) }})</span
+                  ></label
+                >
+                <input
+                  class="field-input mt-1"
+                  type="number"
+                  min="0"
+                  [ngModel]="shortRestHitDice()"
+                  (ngModelChange)="shortRestHitDice.set($event)"
+                  name="shortRestHitDice"
+                />
+                <label class="text-xs text-slate mt-3">Amount healed</label>
+                <input
+                  class="field-input mt-1"
+                  type="number"
+                  min="0"
+                  [ngModel]="shortRestHealed()"
+                  (ngModelChange)="shortRestHealed.set($event)"
+                  name="shortRestHealed"
+                />
+                @if (shortRestError()) {
+                  <p class="text-sm text-red-300 mt-2 mb-0">{{ shortRestError() }}</p>
+                }
+              </div>
+
+              <div class="p-5 pt-3 border-t border-white/10 flex-shrink-0 flex gap-2">
+                <button
+                  class="btn-outline flex-1 justify-center text-center"
+                  (click)="closeShortRestDialog()"
+                >
+                  Cancel
+                </button>
+                <button
+                  class="btn-primary flex-1 justify-center text-center"
+                  [disabled]="shortRestBusy() || persisting()"
+                  (click)="confirmShortRest()"
+                >
+                  Apply Short Rest
+                </button>
+              </div>
+            </section>
+          </div>
+        }
       }
     </div>
 
     @if (showLevelUpBanner()) {
-      <button type="button" (click)="goToLevelUp()"
-        class="flex items-center gap-2 w-full px-6 py-2 bg-gold/10 border-b border-gold/25 flex-shrink-0 text-sm text-gold text-left border-x-0 border-t-0 cursor-pointer">
+      <button
+        type="button"
+        (click)="goToLevelUp()"
+        class="flex items-center gap-2 w-full px-6 py-2 bg-gold/10 border-b border-gold/25 flex-shrink-0 text-sm text-gold text-left border-x-0 border-t-0 cursor-pointer"
+      >
         <mat-icon class="text-base flex-shrink-0">trending_up</mat-icon>
         <span class="flex-1">You reached level {{ char.level }} — apply your level-up.</span>
         <span class="btn-outline text-xs px-2 py-0.5 pointer-events-none">Level Up</span>
@@ -174,60 +314,110 @@
     }
 
     <!-- Tabs -->
-    <div class="sheet-tabs flex border-b border-white/10 overflow-x-auto flex-shrink-0" data-preview-ok>
+    <div
+      class="sheet-tabs flex border-b border-white/10 overflow-x-auto flex-shrink-0"
+      data-preview-ok
+    >
       <button
         class="flex items-center gap-2 px-5 py-3.5 text-sm font-medium whitespace-nowrap border-b-2 transition-colors border-0 cursor-pointer"
-        [class]="activeTab() === 'stats' ? 'border-gold text-gold' : 'border-transparent text-slate hover:text-parchment'"
+        [class]="
+          activeTab() === 'stats'
+            ? 'border-gold text-gold'
+            : 'border-transparent text-slate hover:text-parchment'
+        "
         (click)="goToTab('stats')"
-        style="background: transparent; font-family: inherit;"
+        style="background: transparent; font-family: inherit"
       >
-        <span class="flex items-center justify-center w-5 h-5 rounded-full text-xs font-bold leading-none flex-shrink-0"
-          [class]="activeTab() === 'stats' ? 'bg-gold text-on-accent' : 'bg-white/10 text-slate'">1</span>
+        <span
+          class="flex items-center justify-center w-5 h-5 rounded-full text-xs font-bold leading-none flex-shrink-0"
+          [class]="activeTab() === 'stats' ? 'bg-gold text-on-accent' : 'bg-white/10 text-slate'"
+          >1</span
+        >
         Stats
       </button>
       <button
         class="flex items-center gap-2 px-5 py-3.5 text-sm font-medium whitespace-nowrap border-b-2 transition-colors border-0 cursor-pointer"
-        [class]="activeTab() === 'actions' ? 'border-gold text-gold' : 'border-transparent text-slate hover:text-parchment'"
+        [class]="
+          activeTab() === 'actions'
+            ? 'border-gold text-gold'
+            : 'border-transparent text-slate hover:text-parchment'
+        "
         (click)="goToTab('actions')"
-        style="background: transparent; font-family: inherit;"
+        style="background: transparent; font-family: inherit"
       >
-        <span class="flex items-center justify-center w-5 h-5 rounded-full text-xs font-bold leading-none flex-shrink-0"
-          [class]="activeTab() === 'actions' ? 'bg-gold text-on-accent' : 'bg-white/10 text-slate'">2</span>
+        <span
+          class="flex items-center justify-center w-5 h-5 rounded-full text-xs font-bold leading-none flex-shrink-0"
+          [class]="activeTab() === 'actions' ? 'bg-gold text-on-accent' : 'bg-white/10 text-slate'"
+          >2</span
+        >
         Actions
       </button>
       <button
         class="flex items-center gap-2 px-5 py-3.5 text-sm font-medium whitespace-nowrap border-b-2 transition-colors border-0 cursor-pointer"
-        [class]="activeTab() === 'inventory' ? 'border-gold text-gold' : 'border-transparent text-slate hover:text-parchment'"
+        [class]="
+          activeTab() === 'inventory'
+            ? 'border-gold text-gold'
+            : 'border-transparent text-slate hover:text-parchment'
+        "
         (click)="goToTab('inventory')"
-        style="background: transparent; font-family: inherit;"
+        style="background: transparent; font-family: inherit"
       >
-        <span class="flex items-center justify-center w-5 h-5 rounded-full text-xs font-bold leading-none flex-shrink-0"
-          [class]="activeTab() === 'inventory' ? 'bg-gold text-on-accent' : 'bg-white/10 text-slate'">3</span>
+        <span
+          class="flex items-center justify-center w-5 h-5 rounded-full text-xs font-bold leading-none flex-shrink-0"
+          [class]="
+            activeTab() === 'inventory' ? 'bg-gold text-on-accent' : 'bg-white/10 text-slate'
+          "
+          >3</span
+        >
         Equipment
       </button>
       <button
         class="flex items-center gap-2 px-5 py-3.5 text-sm font-medium whitespace-nowrap border-b-2 transition-colors border-0 cursor-pointer"
-        [class]="activeTab() === 'spells' ? 'border-gold text-gold' : 'border-transparent text-slate hover:text-parchment'"
+        [class]="
+          activeTab() === 'spells'
+            ? 'border-gold text-gold'
+            : 'border-transparent text-slate hover:text-parchment'
+        "
         (click)="goToTab('spells')"
-        style="background: transparent; font-family: inherit;"
+        style="background: transparent; font-family: inherit"
       >
-        <span class="flex items-center justify-center w-5 h-5 rounded-full text-xs font-bold leading-none flex-shrink-0"
-          [class]="activeTab() === 'spells' ? 'bg-gold text-on-accent' : 'bg-white/10 text-slate'">4</span>
+        <span
+          class="flex items-center justify-center w-5 h-5 rounded-full text-xs font-bold leading-none flex-shrink-0"
+          [class]="activeTab() === 'spells' ? 'bg-gold text-on-accent' : 'bg-white/10 text-slate'"
+          >4</span
+        >
         Spells
       </button>
       @if (hasCompanions()) {
-        <button class="flex items-center gap-2 px-5 py-3.5 text-sm font-medium whitespace-nowrap border-b-2 border-0 cursor-pointer"
-          [class]="activeTab() === 'companions' ? 'border-gold text-gold' : 'border-transparent text-slate'"
-          (click)="goToTab('companions')" style="background: transparent; font-family: inherit;">
-          <span class="flex items-center justify-center w-5 h-5 rounded-full text-xs bg-white/10">5</span>Companions
+        <button
+          class="flex items-center gap-2 px-5 py-3.5 text-sm font-medium whitespace-nowrap border-b-2 border-0 cursor-pointer"
+          [class]="
+            activeTab() === 'companions' ? 'border-gold text-gold' : 'border-transparent text-slate'
+          "
+          (click)="goToTab('companions')"
+          style="background: transparent; font-family: inherit"
+        >
+          <span class="flex items-center justify-center w-5 h-5 rounded-full text-xs bg-white/10"
+            >5</span
+          >Companions
         </button>
       }
       @if (showNotesTab()) {
-        <button class="flex items-center gap-2 px-5 py-3.5 text-sm font-medium whitespace-nowrap border-b-2 border-0 cursor-pointer"
-          [class]="activeTab() === 'notes' ? 'border-gold text-gold' : 'border-transparent text-slate hover:text-parchment'"
-          (click)="goToTab('notes')" style="background: transparent; font-family: inherit;">
-          <span class="flex items-center justify-center w-5 h-5 rounded-full text-xs font-bold leading-none flex-shrink-0"
-            [class]="activeTab() === 'notes' ? 'bg-gold text-on-accent' : 'bg-white/10 text-slate'">{{ tabOrder().length }}</span>Notes
+        <button
+          class="flex items-center gap-2 px-5 py-3.5 text-sm font-medium whitespace-nowrap border-b-2 border-0 cursor-pointer"
+          [class]="
+            activeTab() === 'notes'
+              ? 'border-gold text-gold'
+              : 'border-transparent text-slate hover:text-parchment'
+          "
+          (click)="goToTab('notes')"
+          style="background: transparent; font-family: inherit"
+        >
+          <span
+            class="flex items-center justify-center w-5 h-5 rounded-full text-xs font-bold leading-none flex-shrink-0"
+            [class]="activeTab() === 'notes' ? 'bg-gold text-on-accent' : 'bg-white/10 text-slate'"
+            >{{ tabOrder().length }}</span
+          >Notes
         </button>
       }
     </div>
@@ -236,8 +426,16 @@
          suppressed on narrow viewports since the body advances tabs on horizontal swipe
          (appSwipeTabs), so this just names the current tab and shows position. -->
     <div class="sheet-tab-indicator" aria-hidden="true">
-      <select class="sheet-tab-indicator-label bg-transparent border-0 text-gold" aria-label="Character sheet section" [value]="activeTab()" (change)="goToTab($any($event.target).value)" data-preview-ok>
-        @for (tab of tabOrder(); track tab) { <option [value]="tab">{{ tabLabels[tab] }}</option> }
+      <select
+        class="sheet-tab-indicator-label bg-transparent border-0 text-gold"
+        aria-label="Character sheet section"
+        [value]="activeTab()"
+        (change)="goToTab($any($event.target).value)"
+        data-preview-ok
+      >
+        @for (tab of tabOrder(); track tab) {
+          <option [value]="tab">{{ tabLabels[tab] }}</option>
+        }
       </select>
       <span class="sheet-tab-indicator-dots">
         @for (t of tabOrder(); track t) {
@@ -246,728 +444,1598 @@
       </span>
     </div>
 
-    <div #sheetBody class="sheet-body flex-1 overflow-y-auto p-6"
-      (scroll)="onBodyScroll($event)" (wheel)="onBodyWheel($event)"
-      (touchstart)="onBodyTouchStart($event)" (touchmove)="onBodyTouchMove($event)"
-      appSwipeTabs (swipeLeft)="swipeTab(1)" (swipeRight)="swipeTab(-1)">
+    <div
+      #sheetBody
+      class="sheet-body flex-1 overflow-y-auto p-6"
+      (scroll)="onBodyScroll($event)"
+      (wheel)="onBodyWheel($event)"
+      (touchstart)="onBodyTouchStart($event)"
+      (touchmove)="onBodyTouchMove($event)"
+      appSwipeTabs
+      (swipeLeft)="swipeTab(1)"
+      (swipeRight)="swipeTab(-1)"
+    >
       <!-- Keyed on the active tab so the pane element is recreated on every switch, which
            replays the slide-in keyframe (see .sheet-pane in the scss). slideDir() picks the
            side it enters from — from the right when advancing, from the left when going back. -->
       @for (tab of [activeTab()]; track tab) {
-      <div class="sheet-pane" [class.slide-from-right]="slideDir() === 1" [class.slide-from-left]="slideDir() === -1">
-      @switch (tab) {
-
-        <!-- STATS -->
-        @case ('stats') {
-          @if (stats(); as s) {
-            <div class="flex flex-col gap-5">
-
-              @if (s.spell_attack_bonus !== null) {
-                <div class="grid grid-cols-2 gap-2 max-w-md">
-                  <div class="bg-elevated rounded-lg border border-white/10 text-center py-2.5">
-                    <div class="text-[10px] text-slate uppercase tracking-wide">Spell Attack</div>
-                    <div class="font-brand text-xl text-gold mt-0.5">{{ fmt(s.spell_attack_bonus!) }}</div>
-                  </div>
-                  <div class="bg-elevated rounded-lg border border-white/10 text-center py-2.5">
-                    <div class="text-[10px] text-slate uppercase tracking-wide">Spell Save DC</div>
-                    <div class="font-brand text-xl text-gold mt-0.5">{{ s.spell_save_dc }}</div>
-                  </div>
-                </div>
-              }
-
-              <div class="flex flex-wrap gap-6">
-                <div class="flex flex-col gap-1.5 flex-shrink-0">
-                  @for (ab of abilities; track ab) {
-                    <div class="bg-elevated rounded-lg border border-white/10 text-center w-[72px] py-2.5">
-                      <div class="text-xs text-slate uppercase tracking-widest font-semibold">{{ abilityShort[ab] }}</div>
-                      <div class="font-brand text-2xl text-gold font-bold leading-none mt-1">{{ fmt(s.ability_modifiers[ab]) }}</div>
-                    </div>
-                  }
-                </div>
-
-                <div class="min-w-[150px]">
-                  <h4 class="font-brand text-gold text-xs uppercase tracking-widest m-0 pb-1.5 mb-2 border-b border-gold/25">Saving Throws</h4>
-                  <div class="flex flex-col gap-1.5">
-                    @for (ab of abilities; track ab) {
-                      <div class="flex items-center gap-2 text-sm">
-                        <span class="w-4 h-4 rounded-full border flex items-center justify-center shrink-0 text-[9px]"
-                          [class]="s.saving_throw_proficient.has(ab) ? 'bg-gold border-gold text-canvas font-bold' : 'border-slate/50 text-transparent'">●</span>
-                        <span class="font-brand text-gold text-sm w-7 text-right tabular-nums">{{ fmt(s.saving_throw_bonuses[ab]) }}</span>
-                        <span class="text-slate text-xs">{{ abilityShort[ab] }}</span>
-                      </div>
-                    }
-                  </div>
-
-                  <h4 class="font-brand text-gold text-xs uppercase tracking-widest m-0 pt-3 pb-1.5 mb-2 border-b border-gold/25">Proficiency</h4>
-                  <div class="flex items-center justify-between gap-2 text-xs">
-                    <span class="text-slate">Bonus</span>
-                    <span class="font-brand text-gold">+{{ s.proficiency_bonus }}</span>
-                  </div>
-
-                  <h4 class="font-brand text-gold text-xs uppercase tracking-widest m-0 pt-3 pb-1.5 mb-2 border-b border-gold/25">Passives</h4>
-                  <div class="flex flex-col gap-1 text-xs">
-                    <div class="flex items-center justify-between gap-2">
-                      <span class="text-slate">Perception</span>
-                      <span class="font-brand text-gold">{{ s.passive_perception }}</span>
-                    </div>
-                    <div class="flex items-center justify-between gap-2">
-                      <span class="text-slate">Investigation</span>
-                      <span class="font-brand text-gold">{{ s.passive_investigation }}</span>
-                    </div>
-                    <div class="flex items-center justify-between gap-2">
-                      <span class="text-slate">Insight</span>
-                      <span class="font-brand text-gold">{{ s.passive_insight }}</span>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="min-w-[210px]">
-                  <h4 class="font-brand text-gold text-xs uppercase tracking-widest m-0 pb-1.5 mb-2 border-b border-gold/25">Skills</h4>
-                  <div class="flex flex-col gap-1">
-                    @for (skill of skillList; track skill) {
-                      <div class="flex items-center gap-1.5 text-xs">
-                        <span class="w-3.5 h-3.5 rounded-full border flex items-center justify-center shrink-0 text-[8px]"
-                          [class]="char.skills?.[skill] ? 'bg-gold border-gold text-canvas font-bold' : 'border-slate/50 text-transparent'">●</span>
-                        <span class="font-brand text-gold w-6 text-right tabular-nums text-xs">{{ fmt(s.skill_bonuses[skill]) }}</span>
-                        <span class="text-slate flex-1 truncate">{{ skill }}</span>
-                        <span class="text-coal/80 text-[10px] w-7 text-right">{{ abilityShort[skillAbility[skill]] }}</span>
-                      </div>
-                    }
-                  </div>
-                </div>
-
-                <div class="flex-1 min-w-[280px]">
-                  <h4 class="font-brand text-gold text-xs uppercase tracking-widest m-0 pb-1.5 mb-2 border-b border-gold/25">Features &amp; Traits</h4>
-                  <div class="flex flex-wrap gap-2 mb-3">
-                    <span class="tag">Speed: {{ char.speed }} ft</span>
-                    @if (s.darkvision_ft) { <span class="tag">Darkvision: {{ s.darkvision_ft }} ft</span> }
-                    @for (language of char.languages ?? []; track language) {
-                      <span class="tag">{{ language }}</span>
-                    }
-                  </div>
-                  @if (resolvedFeatures().length) {
-                    <div class="flex flex-col gap-2">
-                      @for (f of resolvedFeatures(); track f.source + f.name) {
-                        <ng-container [ngTemplateOutlet]="featureRow" [ngTemplateOutletContext]="{ $implicit: f }"></ng-container>
-                      }
-                    </div>
-                  }
-
-                </div>
-              </div>
-
-            </div>
-          }
-        }
-
-        @case ('companions') {
-          @if (char.id) {
-            <app-companion-sheet [characterId]="char.id!" [readonly]="preview()" (changed)="companionChanged()" />
-          } @else {
-            <p class="text-slate">Save your character to create and manage companions.</p>
-          }
-                  @if (referenceCompanions().length) {
-                    <h4 class="font-brand text-gold text-xs uppercase tracking-widest m-0 pt-4 pb-1.5 mb-2 border-b border-gold/25">Other companion references</h4>
-                    <div class="flex flex-col gap-2">
-                      @for (companion of referenceCompanions(); track companion.monster.index) {
-                        <div class="rounded border border-white/10 bg-elevated px-3 py-2 text-sm">
-                          <div class="flex flex-wrap items-center gap-2">
-                            <span class="text-parchment font-medium">{{ companion.monster.name }}</span>
-                            <span class="tag">{{ companion.source }}</span>
-                            <span class="text-coal text-xs">AC {{ companion.monster.armor_class }}</span>
-                            <span class="text-coal text-xs">
-                              HP {{ companion.monster.hit_points_formula || companion.monster.hit_points }}
-                            </span>
-                          </div>
-                          @if (companion.monster.actions.length) {
-                            <div class="text-xs text-slate mt-1">
-                              {{ companion.monster.actions[0].name }} — {{ companion.monster.actions[0].description }}
-                            </div>
-                          }
-                        </div>
-                      }
-                    </div>
-                  }
-        }
-
-        <!-- ACTIONS -->
-        @case ('actions') {
-          <div class="flex flex-col gap-5 max-w-6xl">
-
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-5 items-start">
-
-              <!-- ATTACKS: weapons, spell attacks, and no-save spells with rolled damage -->
+        <div
+          class="sheet-pane"
+          [class.slide-from-right]="slideDir() === 1"
+          [class.slide-from-left]="slideDir() === -1"
+        >
+          @switch (tab) {
+            <!-- STATS -->
+            @case ('stats') {
               @if (stats(); as s) {
-                @if (s.unarmed_attack || s.weapon_attacks.length || spellAttacks().length) {
-                  <div>
-                    <h4 class="font-brand text-gold text-xs uppercase tracking-widest m-0 pb-1.5 mb-2 border-b border-gold/25">Attacks</h4>
-                    <div class="flex flex-col gap-1.5">
-                      <div class="flex items-center justify-between px-3 py-2 rounded border border-white/10 text-sm gap-3">
-                        <div class="min-w-0">
-                          <span class="text-parchment font-medium">{{ s.unarmed_attack.name }}</span>
-                          <span class="text-coal text-xs"> · {{ s.unarmed_attack.distance }}</span>
+                <div class="flex flex-col gap-5">
+                  @if (s.spell_attack_bonus !== null) {
+                    <div class="grid grid-cols-2 gap-2 max-w-md">
+                      <div class="bg-elevated rounded-lg border border-white/10 text-center py-2.5">
+                        <div class="text-[10px] text-slate uppercase tracking-wide">
+                          Spell Attack
                         </div>
-                        <div class="flex flex-col items-end flex-shrink-0 text-xs leading-tight">
-                          <span class="text-slate">Attack <span class="font-brand text-gold text-sm">{{ fmt(s.unarmed_attack.attack_bonus) }}</span></span>
-                          <span class="text-slate">{{ s.unarmed_attack.damage_dice }}{{ fmt(s.unarmed_attack.damage_bonus) }} <span class="text-coal">{{ s.unarmed_attack.damage_type }}</span></span>
+                        <div class="font-brand text-xl text-gold mt-0.5">
+                          {{ fmt(s.spell_attack_bonus!) }}
                         </div>
                       </div>
-                      @for (w of s.weapon_attacks; track w.instanceId ?? w.itemIndex) {
-                        <div class="flex items-center justify-between px-3 py-2 rounded border border-white/10 text-sm gap-3">
-                          <div class="min-w-0">
-                            <span class="text-parchment font-medium">{{ w.name }}</span>
-                            @if (w.is_pact_weapon) { <span class="text-gold text-xs"> · Pact Weapon</span> }
-                            @if (w.mastery) { <span class="text-coal text-xs"> · {{ w.mastery.property }}</span> }
-                            @if (w.distance) { <span class="text-coal text-xs"> · {{ w.distance }}</span> }
-                          </div>
-                          <div class="flex flex-col items-end flex-shrink-0 text-xs leading-tight">
-                            <span class="text-slate">Attack <span class="font-brand text-gold text-sm">{{ fmt(w.attack_bonus) }}</span></span>
-                            <span class="text-slate">
-                              {{ w.damage_dice }}{{ fmt(w.damage_bonus) }}
-                              @if (w.versatile_damage_dice) { <span> ({{ w.versatile_damage_dice }}{{ fmt(w.damage_bonus) }})</span> }
-                              <span class="text-coal">{{ w.damage_type }}</span>
-                            </span>
-                          </div>
+                      <div class="bg-elevated rounded-lg border border-white/10 text-center py-2.5">
+                        <div class="text-[10px] text-slate uppercase tracking-wide">
+                          Spell Save DC
                         </div>
-                      }
-                      @for (attack of spellAttacks(); track attack.origin.sourceKey + ':' + attack.spell.index) {
-                        <div class="flex items-center justify-between px-3 py-2 rounded border border-white/10 text-sm gap-3">
-                          <div class="min-w-0">
-                            <span class="text-parchment font-medium">{{ attack.spell.name }}</span><span class="text-coal text-xs"> · {{ attack.spell.level === 0 ? 'Cantrip' : 'Level ' + attack.spell.level }} ({{ attack.origin.sourceName }}) · {{ attack.spell.range }}</span>
+                        <div class="font-brand text-xl text-gold mt-0.5">{{ s.spell_save_dc }}</div>
+                      </div>
+                    </div>
+                  }
+
+                  <div class="flex flex-wrap gap-6">
+                    <div class="flex flex-col gap-1.5 flex-shrink-0">
+                      @for (ab of abilities; track ab) {
+                        <div
+                          class="bg-elevated rounded-lg border border-white/10 text-center w-[72px] py-2.5"
+                        >
+                          <div class="text-xs text-slate uppercase tracking-widest font-semibold">
+                            {{ abilityShort[ab] }}
                           </div>
-                          <div class="flex flex-col items-end flex-shrink-0 text-xs leading-tight">
-                            @if (attack.origin.spellAttackBonus !== null) { <span class="text-slate">Attack <span class="font-brand text-gold text-sm">{{ fmt(attack.origin.spellAttackBonus) }}</span></span> }
-                            @if (spellDamageFormula(attack.spell, attack.origin); as damage) { <span class="text-slate">{{ damage }} @if (spellDamageType(attack.spell)) { <span class="text-coal">{{ spellDamageType(attack.spell) }}</span> }</span> }
+                          <div class="font-brand text-2xl text-gold font-bold leading-none mt-1">
+                            {{ fmt(s.ability_modifiers[ab]) }}
                           </div>
                         </div>
                       }
                     </div>
+
+                    <div class="min-w-[150px]">
+                      <h4
+                        class="font-brand text-gold text-xs uppercase tracking-widest m-0 pb-1.5 mb-2 border-b border-gold/25"
+                      >
+                        Saving Throws
+                      </h4>
+                      <div class="flex flex-col gap-1.5">
+                        @for (ab of abilities; track ab) {
+                          <div class="flex items-center gap-2 text-sm">
+                            <span
+                              class="w-4 h-4 rounded-full border flex items-center justify-center shrink-0 text-[9px]"
+                              [class]="
+                                s.saving_throw_proficient.has(ab)
+                                  ? 'bg-gold border-gold text-canvas font-bold'
+                                  : 'border-slate/50 text-transparent'
+                              "
+                              >●</span
+                            >
+                            <span
+                              class="font-brand text-gold text-sm w-7 text-right tabular-nums"
+                              >{{ fmt(s.saving_throw_bonuses[ab]) }}</span
+                            >
+                            <span class="text-slate text-xs">{{ abilityShort[ab] }}</span>
+                          </div>
+                        }
+                      </div>
+
+                      <h4
+                        class="font-brand text-gold text-xs uppercase tracking-widest m-0 pt-3 pb-1.5 mb-2 border-b border-gold/25"
+                      >
+                        Proficiency
+                      </h4>
+                      <div class="flex items-center justify-between gap-2 text-xs">
+                        <span class="text-slate">Bonus</span>
+                        <span class="font-brand text-gold">+{{ s.proficiency_bonus }}</span>
+                      </div>
+
+                      <h4
+                        class="font-brand text-gold text-xs uppercase tracking-widest m-0 pt-3 pb-1.5 mb-2 border-b border-gold/25"
+                      >
+                        Passives
+                      </h4>
+                      <div class="flex flex-col gap-1 text-xs">
+                        <div class="flex items-center justify-between gap-2">
+                          <span class="text-slate">Perception</span>
+                          <span class="font-brand text-gold">{{ s.passive_perception }}</span>
+                        </div>
+                        <div class="flex items-center justify-between gap-2">
+                          <span class="text-slate">Investigation</span>
+                          <span class="font-brand text-gold">{{ s.passive_investigation }}</span>
+                        </div>
+                        <div class="flex items-center justify-between gap-2">
+                          <span class="text-slate">Insight</span>
+                          <span class="font-brand text-gold">{{ s.passive_insight }}</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="min-w-[210px]">
+                      <h4
+                        class="font-brand text-gold text-xs uppercase tracking-widest m-0 pb-1.5 mb-2 border-b border-gold/25"
+                      >
+                        Skills
+                      </h4>
+                      <div class="flex flex-col gap-1">
+                        @for (skill of skillList; track skill) {
+                          <div class="flex items-center gap-1.5 text-xs">
+                            <span
+                              class="w-3.5 h-3.5 rounded-full border flex items-center justify-center shrink-0 text-[8px]"
+                              [class]="
+                                char.skills?.[skill]
+                                  ? 'bg-gold border-gold text-canvas font-bold'
+                                  : 'border-slate/50 text-transparent'
+                              "
+                              >●</span
+                            >
+                            <span
+                              class="font-brand text-gold w-6 text-right tabular-nums text-xs"
+                              >{{ fmt(s.skill_bonuses[skill]) }}</span
+                            >
+                            <span class="text-slate flex-1 truncate">{{ skill }}</span>
+                            <span class="text-coal/80 text-[10px] w-7 text-right">{{
+                              abilityShort[skillAbility[skill]]
+                            }}</span>
+                          </div>
+                        }
+                      </div>
+                    </div>
+
+                    <div class="flex-1 min-w-[280px]">
+                      <h4
+                        class="font-brand text-gold text-xs uppercase tracking-widest m-0 pb-1.5 mb-2 border-b border-gold/25"
+                      >
+                        Features &amp; Traits
+                      </h4>
+                      <div class="flex flex-wrap gap-2 mb-3">
+                        <span class="tag">Speed: {{ char.speed }} ft</span>
+                        @if (s.darkvision_ft) {
+                          <span class="tag">Darkvision: {{ s.darkvision_ft }} ft</span>
+                        }
+                        @for (language of char.languages ?? []; track language) {
+                          <span class="tag">{{ language }}</span>
+                        }
+                      </div>
+                      @if (resolvedFeatures().length) {
+                        <div class="flex flex-col gap-2">
+                          @for (f of resolvedFeatures(); track f.source + f.name) {
+                            <ng-container
+                              [ngTemplateOutlet]="featureRow"
+                              [ngTemplateOutletContext]="{ $implicit: f }"
+                            ></ng-container>
+                          }
+                        </div>
+                      }
+                    </div>
                   </div>
-                }
+                </div>
               }
+            }
 
-              <!-- BONUS + SPECIAL ACTIONS share the second column — both are usually short lists -->
-              <div class="flex flex-col gap-5">
-                @if (bonusActions().length || bonusActionSpells().length || bonusActionFeatures().length || companionFeatures().length) {
-                  <div>
-                    <h4 class="font-brand text-gold text-xs uppercase tracking-widest m-0 pb-1.5 mb-2 border-b border-gold/25">Bonus Actions</h4>
-                    <div class="flex flex-col gap-1.5">
-                      @for (feature of companionFeatures(); track feature.name) {
-                        <button class="btn-outline text-left" (click)="goToTab('companions')" data-preview-ok>
-                          Command {{ feature.name === 'Ranger' ? 'Primal Companion' : 'Steel Defender' }} · Bonus Action
-                        </button>
-                      }
-                      @for (action of bonusActions(); track action.key) {
-                        @let remaining = action.maxUses - action.usedUses;
-                        <div class="px-3 py-2 rounded border border-white/10 text-sm">
-                          <div class="flex items-center justify-between gap-3">
-                            <div class="min-w-0">
-                              <span class="text-parchment font-medium">{{ action.name }}</span><span class="text-coal text-xs"> · {{ action.source }}</span>
-                            </div>
-                            <div class="flex items-center gap-2 flex-shrink-0">
-                              @if (action.unlimited) {
-                                <span class="text-sm text-slate">At will</span>
-                              } @else {
-                                <span class="text-sm text-parchment tabular-nums">{{ remaining }} / {{ action.maxUses }}</span>
-                                <button class="btn-icon" [disabled]="action.usedUses === 0 || persisting()" (click)="restoreAction(action)" matTooltip="Restore a use">
-                                  <mat-icon class="text-base">add</mat-icon>
-                                </button>
-                                <button class="btn-primary text-sm" [disabled]="remaining === 0 || persisting()" (click)="useAction(action)">Use</button>
-                              }
-                            </div>
-                          </div>
-                          @if (action.description) {
-                            <details class="detail-disclosure mt-1">
-                              <summary class="flex items-center gap-1 text-xs text-gold/90">
-                                <mat-icon class="detail-chevron text-base flex-shrink-0">chevron_right</mat-icon>
-                                Details
-                              </summary>
-                              <p class="text-xs text-slate mt-1 mb-0 leading-relaxed">{{ action.description }}</p>
-                            </details>
-                          }
-                        </div>
-                      }
-                      @for (spellRow of bonusActionSpells(); track spellRow.spell.index) {
-                        <div class="flex items-center justify-between px-3 py-2 rounded border border-white/10 text-sm gap-3">
-                          <div class="min-w-0"><span class="text-parchment font-medium">{{ spellRow.spell.name }}</span><span class="text-coal text-xs"> · {{ spellRow.spell.level === 0 ? 'Cantrip' : 'Level ' + spellRow.spell.level }} ({{ spellSourceNames(spellRow) }}) · {{ spellRow.spell.range }}</span></div>
-                          <span class="text-slate text-xs flex-shrink-0">{{ spellRow.spell.duration }}</span>
-                        </div>
-                      }
-                      @for (feature of bonusActionFeatures(); track feature.name) {
-                        <div class="px-3 py-2 rounded border border-white/10 text-sm">
-                          <div class="min-w-0"><span class="text-parchment font-medium">{{ feature.name }}</span><span class="text-coal text-xs"> · {{ feature.source }}</span></div>
-                          @if (feature.detail) {
-                            <details class="detail-disclosure mt-1">
-                              <summary class="flex items-center gap-1 text-xs text-gold/90">
-                                <mat-icon class="detail-chevron text-base flex-shrink-0">chevron_right</mat-icon>
-                                Details
-                              </summary>
-                              <p class="text-xs text-slate mt-1 mb-0 leading-relaxed">{{ feature.detail }}</p>
-                            </details>
-                          }
+            @case ('companions') {
+              @if (char.id) {
+                <app-companion-sheet
+                  [characterId]="char.id!"
+                  [readonly]="preview()"
+                  (changed)="companionChanged()"
+                />
+              } @else {
+                <p class="text-slate">Save your character to create and manage companions.</p>
+              }
+              @if (referenceCompanions().length) {
+                <h4
+                  class="font-brand text-gold text-xs uppercase tracking-widest m-0 pt-4 pb-1.5 mb-2 border-b border-gold/25"
+                >
+                  Other companion references
+                </h4>
+                <div class="flex flex-col gap-2">
+                  @for (companion of referenceCompanions(); track companion.monster.index) {
+                    <div class="rounded border border-white/10 bg-elevated px-3 py-2 text-sm">
+                      <div class="flex flex-wrap items-center gap-2">
+                        <span class="text-parchment font-medium">{{ companion.monster.name }}</span>
+                        <span class="tag">{{ companion.source }}</span>
+                        <span class="text-coal text-xs"
+                          >AC {{ companion.monster.armor_class }}</span
+                        >
+                        <span class="text-coal text-xs">
+                          HP
+                          {{ companion.monster.hit_points_formula || companion.monster.hit_points }}
+                        </span>
+                      </div>
+                      @if (companion.monster.actions.length) {
+                        <div class="text-xs text-slate mt-1">
+                          {{ companion.monster.actions[0].name }} —
+                          {{ companion.monster.actions[0].description }}
                         </div>
                       }
                     </div>
-                  </div>
-                }
+                  }
+                </div>
+              }
+            }
 
-                <!-- SPECIAL ACTIONS: 'free' activation resources outside the normal action economy,
-                     plus reference-only entries (e.g. maneuvers) that draw from one of those pools -->
-                @if (specialActions().length || specialActionReferences().length) {
-                  <div>
-                    <h4 class="font-brand text-gold text-xs uppercase tracking-widest m-0 pb-1.5 mb-2 border-b border-gold/25">Special Actions</h4>
-                    <div class="flex flex-col gap-2">
-                      @for (action of specialActions(); track action.key) {
-                        @let remaining = action.maxUses - action.usedUses;
-                        <div class="card">
-                          <div class="card-body">
-                            <div class="flex items-center justify-between gap-3">
-                              <div class="flex items-center gap-2 flex-wrap min-w-0">
-                                <span class="text-parchment font-medium text-sm">{{ action.name }}</span>
-                                <span class="text-coal text-xs">{{ action.source }}</span>
+            <!-- ACTIONS -->
+            @case ('actions') {
+              <div class="flex flex-col gap-5 max-w-6xl">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-5 items-start">
+                  <!-- ATTACKS: weapons, spell attacks, and no-save spells with rolled damage -->
+                  @if (stats(); as s) {
+                    @if (s.unarmed_attack || s.weapon_attacks.length || spellAttacks().length) {
+                      <div>
+                        <h4
+                          class="font-brand text-gold text-xs uppercase tracking-widest m-0 pb-1.5 mb-2 border-b border-gold/25"
+                        >
+                          Attacks
+                        </h4>
+                        <div class="flex flex-col gap-1.5">
+                          <div
+                            class="flex items-center justify-between px-3 py-2 rounded border border-white/10 text-sm gap-3"
+                          >
+                            <div class="min-w-0">
+                              <span class="text-parchment font-medium">{{
+                                s.unarmed_attack.name
+                              }}</span>
+                              <span class="text-coal text-xs">
+                                · {{ s.unarmed_attack.distance }}</span
+                              >
+                            </div>
+                            <div
+                              class="flex flex-col items-end flex-shrink-0 text-xs leading-tight"
+                            >
+                              <span class="text-slate"
+                                >Attack
+                                <span class="font-brand text-gold text-sm">{{
+                                  fmt(s.unarmed_attack.attack_bonus)
+                                }}</span></span
+                              >
+                              <span class="text-slate"
+                                >{{ s.unarmed_attack.damage_dice
+                                }}{{ fmt(s.unarmed_attack.damage_bonus) }}
+                                <span class="text-coal">{{
+                                  s.unarmed_attack.damage_type
+                                }}</span></span
+                              >
+                            </div>
+                          </div>
+                          @for (w of s.weapon_attacks; track w.instanceId ?? w.itemIndex) {
+                            <div
+                              class="flex items-center justify-between px-3 py-2 rounded border border-white/10 text-sm gap-3"
+                            >
+                              <div class="min-w-0">
+                                <span class="text-parchment font-medium">{{ w.name }}</span>
+                                @if (w.is_pact_weapon) {
+                                  <span class="text-gold text-xs"> · Pact Weapon</span>
+                                }
+                                @if (w.mastery) {
+                                  <span class="text-coal text-xs"> · {{ w.mastery.property }}</span>
+                                }
+                                @if (w.distance) {
+                                  <span class="text-coal text-xs"> · {{ w.distance }}</span>
+                                }
                               </div>
-                              <div class="flex items-center gap-2 flex-shrink-0">
-                                @if (action.unlimited) {
-                                  <span class="text-sm text-slate">At will</span>
-                                } @else {
-                                  <span class="text-sm text-parchment tabular-nums">{{ remaining }} / {{ action.maxUses }}</span>
-                                  <button class="btn-icon" [disabled]="action.usedUses === 0 || persisting()" (click)="restoreAction(action)" matTooltip="Restore a use">
-                                    <mat-icon class="text-base">add</mat-icon>
-                                  </button>
-                                  <button class="btn-primary text-sm" [disabled]="remaining === 0 || persisting()" (click)="useAction(action)">Use</button>
+                              <div
+                                class="flex flex-col items-end flex-shrink-0 text-xs leading-tight"
+                              >
+                                <span class="text-slate"
+                                  >Attack
+                                  <span class="font-brand text-gold text-sm">{{
+                                    fmt(w.attack_bonus)
+                                  }}</span></span
+                                >
+                                <span class="text-slate">
+                                  {{ w.damage_dice }}{{ fmt(w.damage_bonus) }}
+                                  @if (w.versatile_damage_dice) {
+                                    <span>
+                                      ({{ w.versatile_damage_dice }}{{ fmt(w.damage_bonus) }})</span
+                                    >
+                                  }
+                                  <span class="text-coal">{{ w.damage_type }}</span>
+                                </span>
+                              </div>
+                            </div>
+                          }
+                          @for (
+                            attack of spellAttacks();
+                            track attack.origin.sourceKey + ':' + attack.spell.index
+                          ) {
+                            <div
+                              class="flex items-center justify-between px-3 py-2 rounded border border-white/10 text-sm gap-3"
+                            >
+                              <div class="min-w-0">
+                                <span class="text-parchment font-medium">{{
+                                  attack.spell.name
+                                }}</span
+                                ><span class="text-coal text-xs">
+                                  ·
+                                  {{
+                                    attack.spell.level === 0
+                                      ? 'Cantrip'
+                                      : 'Level ' + attack.spell.level
+                                  }}
+                                  ({{ attack.origin.sourceName }}) · {{ attack.spell.range }}</span
+                                >
+                              </div>
+                              <div
+                                class="flex flex-col items-end flex-shrink-0 text-xs leading-tight"
+                              >
+                                @if (attack.origin.spellAttackBonus !== null) {
+                                  <span class="text-slate"
+                                    >Attack
+                                    <span class="font-brand text-gold text-sm">{{
+                                      fmt(attack.origin.spellAttackBonus)
+                                    }}</span></span
+                                  >
+                                }
+                                @if (spellDamageFormula(attack.spell, attack.origin); as damage) {
+                                  <span class="text-slate"
+                                    >{{ damage }}
+                                    @if (spellDamageType(attack.spell)) {
+                                      <span class="text-coal">{{
+                                        spellDamageType(attack.spell)
+                                      }}</span>
+                                    }
+                                  </span>
                                 }
                               </div>
                             </div>
-                            @if (action.description) {
-                              <details class="detail-disclosure mt-1">
-                                <summary class="flex items-center gap-1 text-xs text-gold/90">
-                                  <mat-icon class="detail-chevron text-base flex-shrink-0">chevron_right</mat-icon>
-                                  Details
-                                </summary>
-                                <p class="text-xs text-slate mt-1 mb-0 leading-relaxed">{{ action.description }}</p>
-                              </details>
-                            }
-                          </div>
+                          }
                         </div>
-                      }
-                      @for (f of specialActionReferences(); track f.name) {
-                        <ng-container [ngTemplateOutlet]="featureRow" [ngTemplateOutletContext]="{ $implicit: f }"></ng-container>
-                      }
-                    </div>
-                  </div>
-                }
+                      </div>
+                    }
+                  }
 
-                <!-- REACTIONS: trackable 'reaction' features, reaction-cast spells, and the universal reference list -->
-                @if (reactionResourceActions().length || reactionSpells().length || universalReactions.length) {
-                  <div>
-                    <h4 class="font-brand text-gold text-xs uppercase tracking-widest m-0 pb-1.5 mb-2 border-b border-gold/25">Reactions</h4>
-                    <div class="flex flex-col gap-1.5">
-                      @for (action of reactionResourceActions(); track action.key) {
-                        @let remaining = action.maxUses - action.usedUses;
-                        <div class="px-3 py-2 rounded border border-white/10 text-sm">
+                  <!-- BONUS + SPECIAL ACTIONS share the second column — both are usually short lists -->
+                  <div class="flex flex-col gap-5">
+                    @if (
+                      bonusActions().length ||
+                      bonusActionSpells().length ||
+                      bonusActionFeatures().length ||
+                      companionFeatures().length
+                    ) {
+                      <div>
+                        <h4
+                          class="font-brand text-gold text-xs uppercase tracking-widest m-0 pb-1.5 mb-2 border-b border-gold/25"
+                        >
+                          Bonus Actions
+                        </h4>
+                        <div class="flex flex-col gap-1.5">
+                          @for (feature of companionFeatures(); track feature.name) {
+                            <button
+                              class="btn-outline text-left"
+                              (click)="goToTab('companions')"
+                              data-preview-ok
+                            >
+                              Command
+                              {{
+                                feature.name === 'Ranger' ? 'Primal Companion' : 'Steel Defender'
+                              }}
+                              · Bonus Action
+                            </button>
+                          }
+                          @for (action of bonusActions(); track action.key) {
+                            @let remaining = action.maxUses - action.usedUses;
+                            <div class="px-3 py-2 rounded border border-white/10 text-sm">
+                              <div class="flex items-center justify-between gap-3">
+                                <div class="min-w-0">
+                                  <span class="text-parchment font-medium">{{ action.name }}</span
+                                  ><span class="text-coal text-xs"> · {{ action.source }}</span>
+                                </div>
+                                <div class="flex items-center gap-2 flex-shrink-0">
+                                  @if (action.unlimited) {
+                                    <span class="text-sm text-slate">At will</span>
+                                  } @else {
+                                    <span class="text-sm text-parchment tabular-nums"
+                                      >{{ remaining }} / {{ action.maxUses }}</span
+                                    >
+                                    <button
+                                      class="btn-icon"
+                                      [disabled]="action.usedUses === 0 || persisting()"
+                                      (click)="restoreAction(action)"
+                                      matTooltip="Restore a use"
+                                    >
+                                      <mat-icon class="text-base">add</mat-icon>
+                                    </button>
+                                    <button
+                                      class="btn-primary text-sm"
+                                      [disabled]="remaining === 0 || persisting()"
+                                      (click)="useAction(action)"
+                                    >
+                                      Use
+                                    </button>
+                                  }
+                                </div>
+                              </div>
+                              @if (action.description) {
+                                <details class="detail-disclosure mt-1">
+                                  <summary class="flex items-center gap-1 text-xs text-gold/90">
+                                    <mat-icon class="detail-chevron text-base flex-shrink-0"
+                                      >chevron_right</mat-icon
+                                    >
+                                    Details
+                                  </summary>
+                                  <p class="text-xs text-slate mt-1 mb-0 leading-relaxed">
+                                    {{ action.description }}
+                                  </p>
+                                </details>
+                              }
+                            </div>
+                          }
+                          @for (spellRow of bonusActionSpells(); track spellRow.spell.index) {
+                            <div
+                              class="flex items-center justify-between px-3 py-2 rounded border border-white/10 text-sm gap-3"
+                            >
+                              <div class="min-w-0">
+                                <span class="text-parchment font-medium">{{
+                                  spellRow.spell.name
+                                }}</span
+                                ><span class="text-coal text-xs">
+                                  ·
+                                  {{
+                                    spellRow.spell.level === 0
+                                      ? 'Cantrip'
+                                      : 'Level ' + spellRow.spell.level
+                                  }}
+                                  ({{ spellSourceNames(spellRow) }}) ·
+                                  {{ spellRow.spell.range }}</span
+                                >
+                              </div>
+                              <span class="text-slate text-xs flex-shrink-0">{{
+                                spellRow.spell.duration
+                              }}</span>
+                            </div>
+                          }
+                          @for (feature of bonusActionFeatures(); track feature.name) {
+                            <div class="px-3 py-2 rounded border border-white/10 text-sm">
+                              <div class="min-w-0">
+                                <span class="text-parchment font-medium">{{ feature.name }}</span
+                                ><span class="text-coal text-xs"> · {{ feature.source }}</span>
+                              </div>
+                              @if (feature.detail) {
+                                <details class="detail-disclosure mt-1">
+                                  <summary class="flex items-center gap-1 text-xs text-gold/90">
+                                    <mat-icon class="detail-chevron text-base flex-shrink-0"
+                                      >chevron_right</mat-icon
+                                    >
+                                    Details
+                                  </summary>
+                                  <p class="text-xs text-slate mt-1 mb-0 leading-relaxed">
+                                    {{ feature.detail }}
+                                  </p>
+                                </details>
+                              }
+                            </div>
+                          }
+                        </div>
+                      </div>
+                    }
+
+                    <!-- SPECIAL ACTIONS: 'free' activation resources outside the normal action economy,
+                     plus reference-only entries (e.g. maneuvers) that draw from one of those pools -->
+                    @if (specialActions().length || specialActionReferences().length) {
+                      <div>
+                        <h4
+                          class="font-brand text-gold text-xs uppercase tracking-widest m-0 pb-1.5 mb-2 border-b border-gold/25"
+                        >
+                          Special Actions
+                        </h4>
+                        <div class="flex flex-col gap-2">
+                          @for (action of specialActions(); track action.key) {
+                            @let remaining = action.maxUses - action.usedUses;
+                            <div class="card">
+                              <div class="card-body">
+                                <div class="flex items-center justify-between gap-3">
+                                  <div class="flex items-center gap-2 flex-wrap min-w-0">
+                                    <span class="text-parchment font-medium text-sm">{{
+                                      action.name
+                                    }}</span>
+                                    <span class="text-coal text-xs">{{ action.source }}</span>
+                                  </div>
+                                  <div class="flex items-center gap-2 flex-shrink-0">
+                                    @if (action.unlimited) {
+                                      <span class="text-sm text-slate">At will</span>
+                                    } @else {
+                                      <span class="text-sm text-parchment tabular-nums"
+                                        >{{ remaining }} / {{ action.maxUses }}</span
+                                      >
+                                      <button
+                                        class="btn-icon"
+                                        [disabled]="action.usedUses === 0 || persisting()"
+                                        (click)="restoreAction(action)"
+                                        matTooltip="Restore a use"
+                                      >
+                                        <mat-icon class="text-base">add</mat-icon>
+                                      </button>
+                                      <button
+                                        class="btn-primary text-sm"
+                                        [disabled]="remaining === 0 || persisting()"
+                                        (click)="useAction(action)"
+                                      >
+                                        Use
+                                      </button>
+                                    }
+                                  </div>
+                                </div>
+                                @if (action.description) {
+                                  <details class="detail-disclosure mt-1">
+                                    <summary class="flex items-center gap-1 text-xs text-gold/90">
+                                      <mat-icon class="detail-chevron text-base flex-shrink-0"
+                                        >chevron_right</mat-icon
+                                      >
+                                      Details
+                                    </summary>
+                                    <p class="text-xs text-slate mt-1 mb-0 leading-relaxed">
+                                      {{ action.description }}
+                                    </p>
+                                  </details>
+                                }
+                              </div>
+                            </div>
+                          }
+                          @for (f of specialActionReferences(); track f.name) {
+                            <ng-container
+                              [ngTemplateOutlet]="featureRow"
+                              [ngTemplateOutletContext]="{ $implicit: f }"
+                            ></ng-container>
+                          }
+                        </div>
+                      </div>
+                    }
+
+                    <!-- REACTIONS: trackable 'reaction' features, reaction-cast spells, and the universal reference list -->
+                    @if (
+                      reactionResourceActions().length ||
+                      reactionSpells().length ||
+                      universalReactions.length
+                    ) {
+                      <div>
+                        <h4
+                          class="font-brand text-gold text-xs uppercase tracking-widest m-0 pb-1.5 mb-2 border-b border-gold/25"
+                        >
+                          Reactions
+                        </h4>
+                        <div class="flex flex-col gap-1.5">
+                          @for (action of reactionResourceActions(); track action.key) {
+                            @let remaining = action.maxUses - action.usedUses;
+                            <div class="px-3 py-2 rounded border border-white/10 text-sm">
+                              <div class="flex items-center justify-between gap-3">
+                                <div class="min-w-0">
+                                  <span class="text-parchment font-medium">{{ action.name }}</span
+                                  ><span class="text-coal text-xs"> · {{ action.source }}</span>
+                                </div>
+                                <div class="flex items-center gap-2 flex-shrink-0">
+                                  @if (action.unlimited) {
+                                    <span class="text-sm text-slate">At will</span>
+                                  } @else {
+                                    <span class="text-sm text-parchment tabular-nums"
+                                      >{{ remaining }} / {{ action.maxUses }}</span
+                                    >
+                                    <button
+                                      class="btn-icon"
+                                      [disabled]="action.usedUses === 0 || persisting()"
+                                      (click)="restoreAction(action)"
+                                      matTooltip="Restore a use"
+                                    >
+                                      <mat-icon class="text-base">add</mat-icon>
+                                    </button>
+                                    <button
+                                      class="btn-primary text-sm"
+                                      [disabled]="remaining === 0 || persisting()"
+                                      (click)="useAction(action)"
+                                    >
+                                      Use
+                                    </button>
+                                  }
+                                </div>
+                              </div>
+                              @if (action.description) {
+                                <details class="detail-disclosure mt-1">
+                                  <summary class="flex items-center gap-1 text-xs text-gold/90">
+                                    <mat-icon class="detail-chevron text-base flex-shrink-0"
+                                      >chevron_right</mat-icon
+                                    >
+                                    Details
+                                  </summary>
+                                  <p class="text-xs text-slate mt-1 mb-0 leading-relaxed">
+                                    {{ action.description }}
+                                  </p>
+                                </details>
+                              }
+                            </div>
+                          }
+                          @for (spellRow of reactionSpells(); track spellRow.spell.index) {
+                            <div
+                              class="flex items-center justify-between px-3 py-2 rounded border border-white/10 text-sm gap-3"
+                            >
+                              <div class="min-w-0">
+                                <span class="text-parchment font-medium">{{
+                                  spellRow.spell.name
+                                }}</span
+                                ><span class="text-coal text-xs">
+                                  ·
+                                  {{
+                                    spellRow.spell.level === 0
+                                      ? 'Cantrip'
+                                      : 'Level ' + spellRow.spell.level
+                                  }}
+                                  ({{ spellSourceNames(spellRow) }}) ·
+                                  {{ spellRow.spell.range }}</span
+                                >
+                              </div>
+                              <span class="text-slate text-xs flex-shrink-0">{{
+                                spellRow.spell.duration
+                              }}</span>
+                            </div>
+                          }
+                          @for (f of universalReactions; track f.name) {
+                            <ng-container
+                              [ngTemplateOutlet]="featureRow"
+                              [ngTemplateOutletContext]="{ $implicit: f }"
+                            ></ng-container>
+                          }
+                        </div>
+                      </div>
+                    }
+                  </div>
+                </div>
+
+                <!-- ACTIONS: trackable 'action' features, universal actions, weapon mastery effects -->
+                <div>
+                  <h4
+                    class="font-brand text-gold text-xs uppercase tracking-widest m-0 pb-1.5 mb-2 border-b border-gold/25"
+                  >
+                    Actions
+                  </h4>
+                  <div class="flex flex-col gap-2">
+                    @for (action of actionResourceActions(); track action.key) {
+                      @let remaining = action.maxUses - action.usedUses;
+                      <div class="card">
+                        <div class="card-body">
                           <div class="flex items-center justify-between gap-3">
-                            <div class="min-w-0">
-                              <span class="text-parchment font-medium">{{ action.name }}</span><span class="text-coal text-xs"> · {{ action.source }}</span>
+                            <div class="flex items-center gap-2 flex-wrap min-w-0">
+                              <span class="text-parchment font-medium text-sm">{{
+                                action.name
+                              }}</span>
+                              <span class="text-coal text-xs">{{ action.source }}</span>
                             </div>
                             <div class="flex items-center gap-2 flex-shrink-0">
                               @if (action.unlimited) {
                                 <span class="text-sm text-slate">At will</span>
                               } @else {
-                                <span class="text-sm text-parchment tabular-nums">{{ remaining }} / {{ action.maxUses }}</span>
-                                <button class="btn-icon" [disabled]="action.usedUses === 0 || persisting()" (click)="restoreAction(action)" matTooltip="Restore a use">
+                                <span class="text-sm text-parchment tabular-nums"
+                                  >{{ remaining }} / {{ action.maxUses }}</span
+                                >
+                                <button
+                                  class="btn-icon"
+                                  [disabled]="action.usedUses === 0 || persisting()"
+                                  (click)="restoreAction(action)"
+                                  matTooltip="Restore a use"
+                                >
                                   <mat-icon class="text-base">add</mat-icon>
                                 </button>
-                                <button class="btn-primary text-sm" [disabled]="remaining === 0 || persisting()" (click)="useAction(action)">Use</button>
+                                <button
+                                  class="btn-primary text-sm"
+                                  [disabled]="remaining === 0 || persisting()"
+                                  (click)="useAction(action)"
+                                >
+                                  Use
+                                </button>
                               }
                             </div>
                           </div>
                           @if (action.description) {
                             <details class="detail-disclosure mt-1">
                               <summary class="flex items-center gap-1 text-xs text-gold/90">
-                                <mat-icon class="detail-chevron text-base flex-shrink-0">chevron_right</mat-icon>
+                                <mat-icon class="detail-chevron text-base flex-shrink-0"
+                                  >chevron_right</mat-icon
+                                >
                                 Details
                               </summary>
-                              <p class="text-xs text-slate mt-1 mb-0 leading-relaxed">{{ action.description }}</p>
+                              <p class="text-xs text-slate mt-1 mb-0 leading-relaxed">
+                                {{ action.description }}
+                              </p>
                             </details>
                           }
                         </div>
-                      }
-                      @for (spellRow of reactionSpells(); track spellRow.spell.index) {
-                        <div class="flex items-center justify-between px-3 py-2 rounded border border-white/10 text-sm gap-3">
-                          <div class="min-w-0"><span class="text-parchment font-medium">{{ spellRow.spell.name }}</span><span class="text-coal text-xs"> · {{ spellRow.spell.level === 0 ? 'Cantrip' : 'Level ' + spellRow.spell.level }} ({{ spellSourceNames(spellRow) }}) · {{ spellRow.spell.range }}</span></div>
-                          <span class="text-slate text-xs flex-shrink-0">{{ spellRow.spell.duration }}</span>
-                        </div>
-                      }
-                      @for (f of universalReactions; track f.name) {
-                        <ng-container [ngTemplateOutlet]="featureRow" [ngTemplateOutletContext]="{ $implicit: f }"></ng-container>
-                      }
-                    </div>
-                  </div>
-                }
-              </div>
-
-            </div>
-
-            <!-- ACTIONS: trackable 'action' features, universal actions, weapon mastery effects -->
-            <div>
-              <h4 class="font-brand text-gold text-xs uppercase tracking-widest m-0 pb-1.5 mb-2 border-b border-gold/25">Actions</h4>
-              <div class="flex flex-col gap-2">
-                @for (action of actionResourceActions(); track action.key) {
-                  @let remaining = action.maxUses - action.usedUses;
-                  <div class="card">
-                    <div class="card-body">
-                      <div class="flex items-center justify-between gap-3">
-                        <div class="flex items-center gap-2 flex-wrap min-w-0">
-                          <span class="text-parchment font-medium text-sm">{{ action.name }}</span>
-                          <span class="text-coal text-xs">{{ action.source }}</span>
-                        </div>
-                        <div class="flex items-center gap-2 flex-shrink-0">
-                          @if (action.unlimited) {
-                            <span class="text-sm text-slate">At will</span>
-                          } @else {
-                            <span class="text-sm text-parchment tabular-nums">{{ remaining }} / {{ action.maxUses }}</span>
-                            <button class="btn-icon" [disabled]="action.usedUses === 0 || persisting()" (click)="restoreAction(action)" matTooltip="Restore a use">
-                              <mat-icon class="text-base">add</mat-icon>
-                            </button>
-                            <button class="btn-primary text-sm" [disabled]="remaining === 0 || persisting()" (click)="useAction(action)">Use</button>
-                          }
-                        </div>
                       </div>
-                      @if (action.description) {
-                        <details class="detail-disclosure mt-1">
-                          <summary class="flex items-center gap-1 text-xs text-gold/90">
-                            <mat-icon class="detail-chevron text-base flex-shrink-0">chevron_right</mat-icon>
-                            Details
-                          </summary>
-                          <p class="text-xs text-slate mt-1 mb-0 leading-relaxed">{{ action.description }}</p>
-                        </details>
-                      }
-                    </div>
-                  </div>
-                }
-                @for (f of masteredWeapons(); track f.name) {
-                  <ng-container [ngTemplateOutlet]="featureRow" [ngTemplateOutletContext]="{ $implicit: f }"></ng-container>
-                }
-                @for (f of universalActions; track f.name) {
-                  <ng-container [ngTemplateOutlet]="featureRow" [ngTemplateOutletContext]="{ $implicit: f }"></ng-container>
-                }
-              </div>
-            </div>
-
-          </div>
-        }
-
-        <!-- EQUIPMENT -->
-        @case ('inventory') {
-          <div class="flex flex-col gap-5 max-w-3xl">
-            <div class="flex flex-wrap items-start justify-between gap-2">
-              <div class="flex flex-wrap gap-2">
-                @for (denom of currencyOrder; track denom) {
-                  <div class="bg-elevated rounded-lg border text-center py-2 px-3 min-w-[76px]"
-                    [class.border-white/10]="insufficientFundsDenom() !== denom"
-                    [class.border-danger]="insufficientFundsDenom() === denom">
-                    <div class="text-[10px] text-slate uppercase tracking-wide">{{ denom }}</div>
-                    <div class="font-brand text-lg text-gold">{{ char.currency[denom] }}</div>
-                    <div class="flex items-center justify-center gap-1 mt-1.5">
-                      <button class="btn-icon w-5 h-5 text-xs" [disabled]="!currencyAdjustAmounts()[denom] || persisting()"
-                        (click)="applyCurrencyDelta(denom, -1)" matTooltip="Remove">−</button>
-                      <input class="field-input w-9 text-center text-xs py-0.5 px-1" type="number" min="0"
-                        [ngModel]="currencyAdjustAmounts()[denom]" (ngModelChange)="setCurrencyAdjustAmount(denom, $event)"
-                        [name]="'currencyAdjust-' + denom" />
-                      <button class="btn-icon w-5 h-5 text-xs" [disabled]="!currencyAdjustAmounts()[denom] || persisting()"
-                        (click)="applyCurrencyDelta(denom, 1)" matTooltip="Add">+</button>
-                    </div>
-                    @if (insufficientFundsDenom() === denom) {
-                      <div class="text-[9px] text-danger mt-1">Not enough funds</div>
+                    }
+                    @for (f of masteredWeapons(); track f.name) {
+                      <ng-container
+                        [ngTemplateOutlet]="featureRow"
+                        [ngTemplateOutletContext]="{ $implicit: f }"
+                      ></ng-container>
+                    }
+                    @for (f of universalActions; track f.name) {
+                      <ng-container
+                        [ngTemplateOutlet]="featureRow"
+                        [ngTemplateOutletContext]="{ $implicit: f }"
+                      ></ng-container>
                     }
                   </div>
-                }
-              </div>
-
-              @if (canManageInventory()) {
-                <button class="btn-outline text-sm gap-1.5 flex-shrink-0" (click)="openGrantItemDialog()">
-                  <mat-icon class="text-base">{{ isDm() ? 'redeem' : 'add_circle_outline' }}</mat-icon>
-                  {{ isDm() ? 'Give Item' : 'Add Item' }}
-                </button>
-              }
-            </div>
-
-            <div class="flex items-center gap-2 text-xs text-slate">
-              <mat-icon class="text-sm" [class.text-danger]="attunedCount() > attunementSlotLimit()">auto_awesome</mat-icon>
-              Attunement: {{ attunedCount() }} / {{ attunementSlotLimit() }}
-            </div>
-
-            @if (hasPactBlade()) {
-              <section class="rounded-lg border border-gold/25 bg-gold/5 p-3">
-                <div class="flex flex-wrap items-start justify-between gap-3">
-                  <div>
-                    <h4 class="font-brand text-gold text-sm m-0">Pact Weapon</h4>
-                    @if (char.pact_weapon; as pactWeapon) {
-                      <p class="text-sm text-parchment mt-1 mb-0">
-                        {{ pactWeapon.name }}
-                        <span class="text-xs text-slate"> · {{ pactWeapon.mode === 'conjured' ? 'Conjured' : 'Bonded' }}</span>
-                      </p>
-                      <p class="text-xs text-slate mt-1 mb-0">Uses Charisma for attacks and damage. On a hit, choose its normal, Necrotic, Psychic, or Radiant damage type.</p>
-                    } @else {
-                      <p class="text-xs text-slate mt-1 mb-0">Conjure a Simple or Martial melee weapon. You can also bond a carried melee weapon below.</p>
-                    }
-                  </div>
-                  @if (char.pact_weapon) {
-                    <button class="btn-outline text-xs" [disabled]="pactWeaponBusy()" (click)="updatePactWeapon('dismiss')">Dismiss</button>
-                  }
                 </div>
-                <div class="flex flex-col sm:flex-row gap-2 mt-3">
-                  <select class="field-input flex-1" [ngModel]="pactWeaponSelection()" (ngModelChange)="pactWeaponSelection.set($event)" name="pactWeaponSelection">
-                    @for (weapon of pactWeaponOptions(); track weapon.index) {
-                      <option [value]="weapon.index">{{ weapon.name }} · {{ weapon.damage }} {{ weapon.damage_type }}</option>
-                    }
-                  </select>
-                  <button class="btn-primary text-sm" [disabled]="pactWeaponBusy() || !pactWeaponSelection()" (click)="updatePactWeapon('conjure')">
-                    {{ char.pact_weapon ? 'Conjure Instead' : 'Conjure Weapon' }}
-                  </button>
-                </div>
-                @if (pactWeaponError()) { <p class="text-xs text-danger mt-2 mb-0">{{ pactWeaponError() }}</p> }
-              </section>
+              </div>
             }
 
-            <app-magic-inventory [character]="char" [items]="itemsAll()" [isDm]="canManageInventory()" [canBond]="hasPactBlade()" (bond)="updatePactWeapon('bond', $event.itemIndex, $event.instanceId)" (saved)="inventorySaved($event)" />
+            <!-- EQUIPMENT -->
+            @case ('inventory') {
+              <div class="flex flex-col gap-5 max-w-3xl">
+                <div class="flex flex-wrap items-start justify-between gap-2">
+                  <div class="flex flex-wrap gap-2">
+                    @for (denom of currencyOrder; track denom) {
+                      <div
+                        class="bg-elevated rounded-lg border text-center py-2 px-3 min-w-[76px]"
+                        [class.border-white/10]="insufficientFundsDenom() !== denom"
+                        [class.border-danger]="insufficientFundsDenom() === denom"
+                      >
+                        <div class="text-[10px] text-slate uppercase tracking-wide">
+                          {{ denom }}
+                        </div>
+                        <div class="font-brand text-lg text-gold">{{ char.currency[denom] }}</div>
+                        <div class="flex items-center justify-center gap-1 mt-1.5">
+                          <button
+                            class="btn-icon w-5 h-5 text-xs"
+                            [disabled]="!currencyAdjustAmounts()[denom] || persisting()"
+                            (click)="applyCurrencyDelta(denom, -1)"
+                            matTooltip="Remove"
+                          >
+                            −
+                          </button>
+                          <input
+                            class="field-input w-9 text-center text-xs py-0.5 px-1"
+                            type="number"
+                            min="0"
+                            [ngModel]="currencyAdjustAmounts()[denom]"
+                            (ngModelChange)="setCurrencyAdjustAmount(denom, $event)"
+                            [name]="'currencyAdjust-' + denom"
+                          />
+                          <button
+                            class="btn-icon w-5 h-5 text-xs"
+                            [disabled]="!currencyAdjustAmounts()[denom] || persisting()"
+                            (click)="applyCurrencyDelta(denom, 1)"
+                            matTooltip="Add"
+                          >
+                            +
+                          </button>
+                        </div>
+                        @if (insufficientFundsDenom() === denom) {
+                          <div class="text-[9px] text-danger mt-1">Not enough funds</div>
+                        }
+                      </div>
+                    }
+                  </div>
 
-            @if (showGrantItemDialog()) {
-              <div class="fixed inset-0 z-50 bg-black/65 flex items-center justify-center p-4" (click)="closeGrantItemDialog()">
-                <section class="w-full max-w-2xl max-h-[88vh] flex flex-col overflow-hidden bg-elevated border border-gold/35 rounded-xl shadow-2xl" (click)="$event.stopPropagation()">
-                  @if (grantItemCreatingCustom()) {
-                    <app-item-form (saved)="onCustomItemGranted($event)" (cancelled)="grantItemCreatingCustom.set(false)" />
+                  @if (canManageInventory()) {
+                    <button
+                      class="btn-outline text-sm gap-1.5 flex-shrink-0"
+                      (click)="openGrantItemDialog()"
+                    >
+                      <mat-icon class="text-base">{{
+                        isDm() ? 'redeem' : 'add_circle_outline'
+                      }}</mat-icon>
+                      {{ isDm() ? 'Give Item' : 'Add Item' }}
+                    </button>
+                  }
+                </div>
+
+                <div class="flex items-center gap-2 text-xs text-slate">
+                  <mat-icon
+                    class="text-sm"
+                    [class.text-danger]="attunedCount() > attunementSlotLimit()"
+                    >auto_awesome</mat-icon
+                  >
+                  Attunement: {{ attunedCount() }} / {{ attunementSlotLimit() }}
+                </div>
+
+                @if (hasPactBlade()) {
+                  <section class="rounded-lg border border-gold/25 bg-gold/5 p-3">
+                    <div class="flex flex-wrap items-start justify-between gap-3">
+                      <div>
+                        <h4 class="font-brand text-gold text-sm m-0">Pact Weapon</h4>
+                        @if (char.pact_weapon; as pactWeapon) {
+                          <p class="text-sm text-parchment mt-1 mb-0">
+                            {{ pactWeapon.name }}
+                            <span class="text-xs text-slate">
+                              · {{ pactWeapon.mode === 'conjured' ? 'Conjured' : 'Bonded' }}</span
+                            >
+                          </p>
+                          <p class="text-xs text-slate mt-1 mb-0">
+                            Uses Charisma for attacks and damage. On a hit, choose its normal,
+                            Necrotic, Psychic, or Radiant damage type.
+                          </p>
+                        } @else {
+                          <p class="text-xs text-slate mt-1 mb-0">
+                            Conjure a Simple or Martial melee weapon. You can also bond a carried
+                            melee weapon below.
+                          </p>
+                        }
+                      </div>
+                      @if (char.pact_weapon) {
+                        <button
+                          class="btn-outline text-xs"
+                          [disabled]="pactWeaponBusy()"
+                          (click)="updatePactWeapon('dismiss')"
+                        >
+                          Dismiss
+                        </button>
+                      }
+                    </div>
+                    <div class="flex flex-col sm:flex-row gap-2 mt-3">
+                      <select
+                        class="field-input flex-1"
+                        [ngModel]="pactWeaponSelection()"
+                        (ngModelChange)="pactWeaponSelection.set($event)"
+                        name="pactWeaponSelection"
+                      >
+                        @for (weapon of pactWeaponOptions(); track weapon.index) {
+                          <option [value]="weapon.index">
+                            {{ weapon.name }} · {{ weapon.damage }} {{ weapon.damage_type }}
+                          </option>
+                        }
+                      </select>
+                      <button
+                        class="btn-primary text-sm"
+                        [disabled]="pactWeaponBusy() || !pactWeaponSelection()"
+                        (click)="updatePactWeapon('conjure')"
+                      >
+                        {{ char.pact_weapon ? 'Conjure Instead' : 'Conjure Weapon' }}
+                      </button>
+                    </div>
+                    @if (pactWeaponError()) {
+                      <p class="text-xs text-danger mt-2 mb-0">{{ pactWeaponError() }}</p>
+                    }
+                  </section>
+                }
+
+                <app-magic-inventory
+                  [character]="char"
+                  [items]="itemsAll()"
+                  [isDm]="canManageInventory()"
+                  [canBond]="hasPactBlade()"
+                  (bond)="updatePactWeapon('bond', $event.itemIndex, $event.instanceId)"
+                  (saved)="inventorySaved($event)"
+                />
+
+                @if (showGrantItemDialog()) {
+                  <div
+                    class="fixed inset-0 z-50 bg-black/65 flex items-center justify-center p-4"
+                    (click)="closeGrantItemDialog()"
+                  >
+                    <section
+                      class="w-full max-w-2xl max-h-[88vh] flex flex-col overflow-hidden bg-elevated border border-gold/35 rounded-xl shadow-2xl"
+                      (click)="$event.stopPropagation()"
+                    >
+                      @if (grantItemCreatingCustom()) {
+                        <app-item-form
+                          (saved)="onCustomItemGranted($event)"
+                          (cancelled)="grantItemCreatingCustom.set(false)"
+                        />
+                      } @else {
+                        <div class="flex items-start justify-between gap-3 p-5 pb-3 flex-shrink-0">
+                          <div>
+                            <h3 class="font-brand text-gold text-xl m-0">
+                              {{ isDm() ? 'Give Item' : 'Add Item' }}
+                            </h3>
+                            <p class="text-xs text-slate mt-1 mb-0">
+                              {{ isDm() ? 'to ' + char.name : 'to ' + char.name + '’s inventory' }}
+                            </p>
+                          </div>
+                          <button class="btn-icon" (click)="closeGrantItemDialog()">
+                            <mat-icon>close</mat-icon>
+                          </button>
+                        </div>
+
+                        <div class="flex items-center gap-2 px-5 pb-3 flex-shrink-0">
+                          <input
+                            class="field-input flex-1"
+                            placeholder="Search items…"
+                            autofocus
+                            [ngModel]="grantItemSearch()"
+                            (ngModelChange)="grantItemSearch.set($event)"
+                            name="grantItemSearch"
+                          />
+                          <select
+                            class="field-input w-40 flex-shrink-0"
+                            aria-label="Category"
+                            [ngModel]="grantItemCategory()"
+                            (ngModelChange)="grantItemCategory.set($event)"
+                            name="grantItemCategory"
+                          >
+                            <option value="">All categories</option>
+                            @for (category of grantItemCategories(); track category) {
+                              <option [value]="category">{{ category }}</option>
+                            }
+                          </select>
+                          <label class="text-xs text-slate flex-shrink-0">Qty</label>
+                          <input
+                            class="field-input w-16 text-center"
+                            type="number"
+                            min="1"
+                            [ngModel]="grantItemQuantity()"
+                            (ngModelChange)="setGrantItemQuantity($event)"
+                            name="grantItemQuantity"
+                          />
+                        </div>
+
+                        @if (grantItemNotice()) {
+                          <p class="text-sm text-success px-5 mb-2 mt-0">{{ grantItemNotice() }}</p>
+                        }
+                        @if (grantItemError()) {
+                          <p class="text-sm text-red-300 px-5 mb-2 mt-0">{{ grantItemError() }}</p>
+                        }
+
+                        <div class="flex-1 overflow-y-auto px-5 pb-2 flex flex-col gap-1.5">
+                          @for (candidate of grantItemResults(); track candidate.index) {
+                            <button
+                              class="flex items-center justify-between gap-3 px-3 py-2 rounded border border-white/10 hover:border-gold/40 text-left transition-colors"
+                              [disabled]="grantItemBusy()"
+                              (click)="grantItem(candidate)"
+                            >
+                              <div class="min-w-0">
+                                <span class="text-sm text-parchment">{{
+                                  itemDisplayName(candidate)
+                                }}</span>
+                                <p class="text-xs text-slate m-0 mt-0.5">
+                                  {{ candidate.category }}
+                                  @if (candidate.damage) {
+                                    · {{ candidate.damage }} {{ candidate.damage_type }}
+                                  }
+                                  @if (candidate.armor_class) {
+                                    · AC {{ candidate.armor_class }}
+                                  }
+                                  · {{ candidate.cost }}
+                                </p>
+                              </div>
+                              <mat-icon class="text-slate flex-shrink-0"
+                                >add_circle_outline</mat-icon
+                              >
+                            </button>
+                          } @empty {
+                            <p class="text-sm text-slate py-4">No items match your search.</p>
+                          }
+                          @if (grantItemMatches().length > grantItemResults().length) {
+                            <p class="text-xs text-slate py-2 m-0">
+                              Showing the first {{ grantItemResults().length }} of
+                              {{ grantItemMatches().length }} — search or pick a category to narrow
+                              it down.
+                            </p>
+                          }
+                        </div>
+
+                        <div class="p-5 pt-3 border-t border-white/10 flex-shrink-0">
+                          <button
+                            class="btn-outline text-sm gap-1.5 w-full justify-center"
+                            (click)="grantItemCreatingCustom.set(true)"
+                          >
+                            <mat-icon class="text-base">add</mat-icon>
+                            Create a new custom item
+                          </button>
+                        </div>
+                      }
+                    </section>
+                  </div>
+                }
+              </div>
+            }
+
+            <!-- SPELLS -->
+            @case ('spells') {
+              <div class="flex flex-col gap-5 max-w-6xl">
+                @if (!spellResolution()?.sources?.length && !spellRows().length) {
+                  <div class="flex items-center justify-between gap-2">
+                    <p class="text-sm text-slate m-0">{{ char.name }} isn't a spellcaster.</p>
+                    @if (isDm()) {
+                      <button
+                        class="btn-outline text-sm gap-1.5 flex-shrink-0"
+                        (click)="openGrantSpellDialog()"
+                      >
+                        <mat-icon class="text-base">auto_awesome</mat-icon>
+                        Give Spell
+                      </button>
+                    }
+                  </div>
+                } @else {
+                  <div class="flex flex-col sm:flex-row sm:items-center gap-2">
+                    <div class="relative flex-1">
+                      <mat-icon class="absolute left-3 top-1/2 -translate-y-1/2 text-slate text-lg"
+                        >search</mat-icon
+                      >
+                      <input
+                        class="w-full bg-elevated border border-white/15 rounded-lg pl-10 pr-3 py-2 text-sm text-parchment outline-none focus:border-gold/60"
+                        placeholder="Search spells"
+                        [ngModel]="spellFilters().search"
+                        (ngModelChange)="updateSpellFilter('search', $event)"
+                      />
+                    </div>
+                    <button
+                      class="btn-secondary flex items-center justify-center gap-2"
+                      data-preview-ok
+                      (click)="spellFiltersOpen.set(true)"
+                    >
+                      <mat-icon class="text-lg">tune</mat-icon> Filters
+                    </button>
+                    @if (isDm()) {
+                      <button
+                        class="btn-outline text-sm gap-1.5 flex-shrink-0"
+                        (click)="openGrantSpellDialog()"
+                      >
+                        <mat-icon class="text-base">auto_awesome</mat-icon>
+                        Give Spell
+                      </button>
+                    }
+                  </div>
+
+                  @if (spellFiltersOpen()) {
+                    <div
+                      class="fixed inset-0 z-30 bg-black/25"
+                      data-preview-ok
+                      (click)="spellFiltersOpen.set(false)"
+                    ></div>
+                    <div
+                      class="fixed z-40 top-20 right-4 sm:right-8 w-[min(92vw,430px)] bg-elevated border border-gold/30 rounded-xl shadow-2xl p-4"
+                      data-preview-ok
+                      (click)="$event.stopPropagation()"
+                    >
+                      <div class="flex items-center justify-between mb-4">
+                        <h3 class="font-brand text-gold m-0">Filter spells</h3>
+                        <button class="btn-icon" (click)="spellFiltersOpen.set(false)">
+                          <mat-icon>close</mat-icon>
+                        </button>
+                      </div>
+                      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <label class="text-xs text-slate"
+                          >Level<select
+                            class="field-select mt-1 w-full"
+                            [ngModel]="spellFilters().level"
+                            (ngModelChange)="updateSpellFilter('level', $event)"
+                          >
+                            <option value="">All levels</option>
+                            <option value="0">Cantrip</option>
+                            @for (level of slotPips(9); track level) {
+                              <option [value]="level + 1">Level {{ level + 1 }}</option>
+                            }
+                          </select></label
+                        >
+                        <label class="text-xs text-slate"
+                          >School<select
+                            class="field-select mt-1 w-full"
+                            [ngModel]="spellFilters().school"
+                            (ngModelChange)="updateSpellFilter('school', $event)"
+                          >
+                            <option value="">All schools</option>
+                            @for (school of spellSchools(); track school) {
+                              <option [value]="school">{{ school }}</option>
+                            }
+                          </select></label
+                        >
+                        <label class="text-xs text-slate"
+                          >Source<select
+                            class="field-select mt-1 w-full"
+                            [ngModel]="spellFilters().source"
+                            (ngModelChange)="updateSpellFilter('source', $event)"
+                          >
+                            <option value="">All sources</option>
+                            @for (source of spellSources(); track source) {
+                              <option [value]="source">{{ source }}</option>
+                            }
+                          </select></label
+                        >
+                        <label class="text-xs text-slate"
+                          >Casting time<select
+                            class="field-select mt-1 w-full"
+                            [ngModel]="spellFilters().castingTime"
+                            (ngModelChange)="updateSpellFilter('castingTime', $event)"
+                          >
+                            <option value="">Any casting time</option>
+                            <option value="action">Action</option>
+                            <option value="bonus_action">Bonus Action</option>
+                            <option value="reaction">Reaction</option>
+                            <option value="other">Other</option>
+                          </select></label
+                        >
+                        <label class="text-xs text-slate sm:col-span-2"
+                          >Status<select
+                            class="field-select mt-1 w-full"
+                            [ngModel]="spellFilters().prepared"
+                            (ngModelChange)="updateSpellFilter('prepared', $event)"
+                          >
+                            <option value="">Any status</option>
+                            <option value="prepared">Prepared</option>
+                            <option value="always_prepared">Always Prepared</option>
+                            <option value="known">Known</option>
+                            <option value="spellbook">Spellbook</option>
+                          </select></label
+                        >
+                        <label class="flex items-center gap-2 text-sm text-parchment"
+                          ><input
+                            type="checkbox"
+                            [ngModel]="spellFilters().ritual"
+                            (ngModelChange)="updateSpellFilter('ritual', $event)"
+                          />
+                          Ritual only</label
+                        >
+                        <label class="flex items-center gap-2 text-sm text-parchment"
+                          ><input
+                            type="checkbox"
+                            [ngModel]="spellFilters().concentration"
+                            (ngModelChange)="updateSpellFilter('concentration', $event)"
+                          />
+                          Concentration only</label
+                        >
+                      </div>
+                      <div class="flex justify-between mt-4 pt-3 border-t border-white/10">
+                        <button
+                          class="text-xs text-slate hover:text-parchment"
+                          (click)="clearSpellFilters()"
+                        >
+                          Clear filters</button
+                        ><button class="btn-primary" (click)="spellFiltersOpen.set(false)">
+                          Show {{ filteredSpellRows().length }}
+                        </button>
+                      </div>
+                    </div>
+                  }
+
+                  @if (castNotice()) {
+                    <div
+                      class="rounded-lg border border-gold/30 bg-gold/5 px-3 py-2 text-sm text-parchment flex items-center justify-between gap-3"
+                    >
+                      <span>{{ castNotice() }}</span
+                      ><button class="text-slate hover:text-parchment" (click)="castNotice.set('')">
+                        ×
+                      </button>
+                    </div>
+                  }
+                  @if (char.active_concentration) {
+                    <div
+                      class="rounded-lg border border-violet-400/35 bg-violet-500/10 px-3 py-2 flex flex-wrap items-center justify-between gap-2"
+                    >
+                      <div>
+                        <span class="text-xs uppercase tracking-wider text-violet-200"
+                          >Concentrating</span
+                        >
+                        <div class="text-sm text-parchment">
+                          {{ char.active_concentration.name }}
+                        </div>
+                      </div>
+                      <button
+                        class="btn-secondary text-xs"
+                        [disabled]="persisting()"
+                        (click)="endConcentration()"
+                      >
+                        End concentration
+                      </button>
+                    </div>
+                  }
+
+                  @if (spellResolution(); as spellcasting) {
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                      @for (source of spellcasting.sources; track source.key) {
+                        <div class="bg-elevated rounded-lg border border-white/10 px-3 py-2">
+                          <div class="text-sm text-parchment">{{ source.name }}</div>
+                          @if (source.castingAbility) {
+                            <div class="text-xs text-slate mt-1">
+                              {{ abilityShort[source.castingAbility] }}
+                              @if (source.spellAttackBonus !== null) {
+                                · Attack {{ fmt(source.spellAttackBonus) }}
+                              }
+                              @if (source.spellSaveDc !== null) {
+                                · Save DC {{ source.spellSaveDc }}
+                              }
+                            </div>
+                          }
+                        </div>
+                      }
+                    </div>
+                  }
+
+                  @for (pool of spellResolution()?.slotPools ?? []; track pool.key) {
+                    <div>
+                      <h4
+                        class="font-brand text-gold text-xs uppercase tracking-widest m-0 pb-1.5 mb-2 border-b border-gold/25"
+                      >
+                        {{ pool.name
+                        }}{{
+                          pool.type === 'pact' || pool.recovery === 'short_rest'
+                            ? ' (Short Rest)'
+                            : ''
+                        }}
+                      </h4>
+                      <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2">
+                        @for (slot of slotLevels(pool); track slot[0]) {
+                          @let used = slotUses(pool.key, slot[0]);
+                          <div
+                            class="bg-elevated rounded-lg border border-white/10 px-3 py-2 text-center"
+                          >
+                            <div class="flex items-center justify-between gap-2">
+                              <span class="text-[10px] text-slate">Level {{ slot[0] }}</span
+                              ><span class="text-xs text-gold"
+                                >{{ slot[1] - used }}/{{ slot[1] }}</span
+                              >
+                            </div>
+                            <div
+                              class="flex flex-wrap items-center justify-center gap-1.5 mt-2"
+                              [attr.aria-label]="
+                                slot[1] - used + ' of ' + slot[1] + ' slots remaining'
+                              "
+                            >
+                              @for (pip of slotPips(slot[1]); track pip) {
+                                <span
+                                  class="w-3 h-3 rounded-full border"
+                                  [class]="
+                                    pip < slot[1] - used
+                                      ? 'bg-gold border-gold'
+                                      : 'bg-transparent border-white/25'
+                                  "
+                                ></span>
+                              }
+                            </div>
+                          </div>
+                        }
+                      </div>
+                    </div>
+                  }
+
+                  @if (spellResolution()?.validationErrors?.length) {
+                    <div
+                      class="rounded border border-danger/40 bg-danger/10 px-3 py-2 text-xs text-red-200"
+                    >
+                      Spell choices need repair in character creation.
+                      <ul class="mt-1 mb-0 pl-4 list-disc">
+                        @for (
+                          error of spellResolution()?.validationErrors ?? [];
+                          track error.requirementKey + ':' + error.spellIndex + ':' + error.message
+                        ) {
+                          <li>{{ error.message }}</li>
+                        }
+                      </ul>
+                    </div>
+                  }
+
+                  @if (spellRows().length) {
+                    <div>
+                      <h4
+                        class="font-brand text-gold text-xs uppercase tracking-widest m-0 pb-1.5 mb-2 border-b border-gold/25"
+                      >
+                        Cantrips
+                      </h4>
+                      @if (cantripRows().length) {
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-2 mb-5">
+                          @for (row of cantripRows(); track row.spell.index) {
+                            <ng-container
+                              [ngTemplateOutlet]="spellCard"
+                              [ngTemplateOutletContext]="{ $implicit: row }"
+                            ></ng-container>
+                          }
+                        </div>
+                      } @else {
+                        <p class="text-sm text-slate mb-5">No cantrips match these filters.</p>
+                      }
+                      <h4
+                        class="font-brand text-gold text-xs uppercase tracking-widest m-0 pb-1.5 mb-2 border-b border-gold/25"
+                      >
+                        Leveled Spells
+                      </h4>
+                      @if (leveledSpellRows().length) {
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-2">
+                          @for (row of leveledSpellRows(); track row.spell.index) {
+                            <ng-container
+                              [ngTemplateOutlet]="spellCard"
+                              [ngTemplateOutletContext]="{ $implicit: row }"
+                            ></ng-container>
+                          }
+                        </div>
+                      } @else {
+                        <p class="text-sm text-slate">No leveled spells match these filters.</p>
+                      }
+                    </div>
                   } @else {
+                    <p class="text-sm text-slate">No spells selected yet.</p>
+                  }
+                }
+              </div>
+
+              <ng-template #spellCard let-row>
+                <article
+                  class="px-3 py-3 rounded-lg border border-white/10 bg-elevated/40 flex flex-col gap-2 min-h-[164px]"
+                >
+                  <div class="flex items-start justify-between gap-3">
+                    <div class="min-w-0">
+                      <h5 class="text-sm text-parchment m-0">{{ row.spell.name }}</h5>
+                      <p class="text-xs text-slate mt-0.5 mb-0">
+                        {{ row.spell.level === 0 ? 'Cantrip' : 'Level ' + row.spell.level }} ·
+                        {{ row.spell.school }}
+                      </p>
+                    </div>
+                    <div class="flex items-center gap-1 flex-shrink-0">
+                      @if (isDm() && isGrantedSpell(row)) {
+                        <button
+                          class="btn-icon text-danger/70 hover:text-danger"
+                          [disabled]="persisting()"
+                          (click)="revokeSpell(row)"
+                          matTooltip="Remove this spell"
+                        >
+                          <mat-icon class="text-lg">delete</mat-icon>
+                        </button>
+                      }
+                      <button
+                        class="btn-primary text-xs"
+                        [matTooltip]="
+                          !castingMethods(row).length
+                            ? 'This spell is in your spellbook but is not prepared.'
+                            : castingMethods(row).every((method) => !method.available)
+                              ? 'No eligible slot or free cast remains.'
+                              : ''
+                        "
+                        [disabled]="
+                          persisting() || castingMethods(row).every((method) => !method.available)
+                        "
+                        (click)="openCastDialog(row)"
+                      >
+                        Cast
+                      </button>
+                    </div>
+                  </div>
+                  <div class="flex flex-wrap gap-1">
+                    @for (status of categoryLabels(row); track status) {
+                      <span
+                        class="text-[10px] px-2 py-0.5 rounded-full border"
+                        [matTooltip]="
+                          status === 'Always Prepared'
+                            ? 'Granted by a feature. It is always prepared and cannot be removed.'
+                            : ''
+                        "
+                        [class]="
+                          status === 'Always Prepared'
+                            ? 'border-gold/45 text-gold bg-gold/5'
+                            : 'border-white/15 text-slate'
+                        "
+                        >{{ status }}</span
+                      >
+                    }
+                    @if (isGrantedSpell(row)) {
+                      <span
+                        class="text-[10px] px-2 py-0.5 rounded-full border border-success/30 text-success"
+                        >Gifted</span
+                      >
+                    }
+                    @if (row.spell.ritual) {
+                      <span
+                        class="text-[10px] px-2 py-0.5 rounded-full border border-sky-400/30 text-sky-200"
+                        >Ritual</span
+                      >
+                    }
+                    @if (row.spell.concentration) {
+                      <span
+                        class="text-[10px] px-2 py-0.5 rounded-full border border-violet-400/30 text-violet-200"
+                        >Concentration</span
+                      >
+                    }
+                  </div>
+                  <p class="text-xs text-slate m-0">
+                    {{ row.spell.casting_time }} · {{ row.spell.range }} · {{ row.spell.duration }}
+                  </p>
+                  <div class="text-[11px] text-coal flex flex-col gap-0.5">
+                    @for (origin of row.origins; track origin.sourceKey + ':' + origin.category) {
+                      <span>{{ originLabel(origin) }}</span>
+                    }
+                  </div>
+                  <details class="mt-auto text-xs text-slate">
+                    <summary class="cursor-pointer text-gold/90">Description</summary>
+                    <p class="mt-2 mb-0 leading-relaxed">
+                      @for (segment of descriptionSegments(row.spell.description); track $index) {
+                        <span
+                          [class.font-semibold]="segment.bold"
+                          [class.text-parchment]="segment.bold"
+                          >{{ segment.text }}</span
+                        >
+                      }
+                    </p>
+                    @if (row.spell.higher_levels) {
+                      <p class="mt-2 mb-0">
+                        <strong>At Higher Levels.</strong> {{ row.spell.higher_levels }}
+                      </p>
+                    }
+                  </details>
+                </article>
+              </ng-template>
+
+              @if (castDialogSpell(); as row) {
+                <div
+                  class="fixed inset-0 z-50 bg-black/65 flex items-center justify-center p-4"
+                  (click)="closeCastDialog()"
+                >
+                  <section
+                    class="w-full max-w-lg max-h-[88vh] overflow-y-auto bg-elevated border border-gold/35 rounded-xl shadow-2xl p-5"
+                    (click)="$event.stopPropagation()"
+                  >
+                    <div class="flex items-start justify-between gap-3">
+                      <div>
+                        <h3 class="font-brand text-gold text-xl m-0">Cast {{ row.spell.name }}</h3>
+                        <p class="text-xs text-slate mt-1 mb-0">
+                          {{ row.spell.level === 0 ? 'Cantrip' : 'Level ' + row.spell.level }} ·
+                          {{ row.spell.school }} · {{ row.spell.casting_time }}
+                        </p>
+                      </div>
+                      <button class="btn-icon" (click)="closeCastDialog()">
+                        <mat-icon>close</mat-icon>
+                      </button>
+                    </div>
+                    <p class="text-sm text-slate leading-relaxed my-4">
+                      @for (segment of descriptionSegments(row.spell.description); track $index) {
+                        <span
+                          [class.font-semibold]="segment.bold"
+                          [class.text-parchment]="segment.bold"
+                          >{{ segment.text }}</span
+                        >
+                      }
+                    </p>
+                    @if (row.spell.higher_levels) {
+                      <div class="rounded-lg border border-gold/25 bg-gold/5 px-3 py-2.5 mb-4">
+                        <div class="flex items-center gap-2 mb-1">
+                          <mat-icon class="text-gold text-lg">trending_up</mat-icon
+                          ><strong class="text-xs uppercase tracking-wider text-gold"
+                            >At Higher Levels</strong
+                          >
+                        </div>
+                        <p class="text-sm text-parchment/90 leading-relaxed m-0">
+                          {{ row.spell.higher_levels }}
+                        </p>
+                      </div>
+                    }
+                    @if (replacingConcentration()) {
+                      <div class="rounded-lg border border-violet-400/40 bg-violet-500/10 p-3">
+                        <p class="text-sm text-parchment mt-0 mb-3">
+                          Casting this spell ends concentration on
+                          <strong>{{ char.active_concentration?.name }}</strong
+                          >. Replace it?
+                        </p>
+                        <div class="flex gap-2 justify-end">
+                          <button
+                            class="btn-secondary"
+                            (click)="replacingConcentration.set(false); pendingCastMethod.set(null)"
+                          >
+                            Keep current</button
+                          ><button
+                            class="btn-primary"
+                            [disabled]="persisting()"
+                            (click)="confirmConcentrationReplacement()"
+                          >
+                            Replace and cast
+                          </button>
+                        </div>
+                      </div>
+                    } @else {
+                      <div class="flex flex-col gap-2">
+                        @for (method of castingMethods(row); track method.key) {
+                          <button
+                            class="w-full rounded-lg border px-3 py-2.5 text-left transition-colors"
+                            [class]="
+                              method.available
+                                ? method.upcast
+                                  ? 'border-gold/35 hover:border-gold/70 bg-gold/5'
+                                  : 'border-white/15 hover:border-gold/50 bg-black/10'
+                                : 'border-white/5 opacity-45 cursor-not-allowed'
+                            "
+                            [disabled]="!method.available || persisting()"
+                            (click)="requestCast(method)"
+                          >
+                            <span class="flex items-center justify-between gap-3"
+                              ><span class="flex items-center gap-2"
+                                ><strong class="text-sm text-parchment">{{ method.label }}</strong>
+                                @if (method.upcast) {
+                                  <span
+                                    class="text-[10px] px-1.5 py-0.5 rounded bg-gold/15 border border-gold/35 text-gold uppercase tracking-wide"
+                                    >Upcast +{{ method.upcast.levelsAbove }}</span
+                                  >
+                                }</span
+                              ><span class="text-xs text-slate">{{ method.detail }}</span></span
+                            >
+                            @if (method.upcast) {
+                              <span
+                                class="block mt-2 pt-2 border-t border-gold/15 text-xs text-gold/90"
+                                ><strong>Level {{ method.upcast.slotLevel }}:</strong>
+                                {{ method.upcast.summary }}</span
+                              >
+                            }
+                          </button>
+                        }
+                        @if (!castingMethods(row).length) {
+                          <p class="text-sm text-slate">
+                            This spell is in the spellbook but isn't prepared, so it can't be cast
+                            yet.
+                          </p>
+                        }
+                      </div>
+                    }
+                    @if (castError()) {
+                      <p class="text-sm text-red-300 mt-3 mb-0">{{ castError() }}</p>
+                    }
+                  </section>
+                </div>
+              }
+
+              @if (showGrantSpellDialog()) {
+                <div
+                  class="fixed inset-0 z-50 bg-black/65 flex items-center justify-center p-4"
+                  (click)="closeGrantSpellDialog()"
+                >
+                  <section
+                    class="w-full max-w-2xl max-h-[88vh] flex flex-col overflow-hidden bg-elevated border border-gold/35 rounded-xl shadow-2xl"
+                    (click)="$event.stopPropagation()"
+                  >
                     <div class="flex items-start justify-between gap-3 p-5 pb-3 flex-shrink-0">
                       <div>
-                        <h3 class="font-brand text-gold text-xl m-0">{{ isDm() ? 'Give Item' : 'Add Item' }}</h3>
-                        <p class="text-xs text-slate mt-1 mb-0">{{ isDm() ? 'to ' + char.name : 'to ' + char.name + '’s inventory' }}</p>
+                        <h3 class="font-brand text-gold text-xl m-0">Give Spell</h3>
+                        <p class="text-xs text-slate mt-1 mb-0">
+                          to {{ char.name }} · always known, castable at will
+                        </p>
                       </div>
-                      <button class="btn-icon" (click)="closeGrantItemDialog()"><mat-icon>close</mat-icon></button>
+                      <button class="btn-icon" (click)="closeGrantSpellDialog()">
+                        <mat-icon>close</mat-icon>
+                      </button>
                     </div>
 
                     <div class="flex items-center gap-2 px-5 pb-3 flex-shrink-0">
-                      <input class="field-input flex-1" placeholder="Search items…" autofocus
-                        [ngModel]="grantItemSearch()" (ngModelChange)="grantItemSearch.set($event)" name="grantItemSearch" />
-                      <select class="field-input w-40 flex-shrink-0" aria-label="Category"
-                        [ngModel]="grantItemCategory()" (ngModelChange)="grantItemCategory.set($event)" name="grantItemCategory">
-                        <option value="">All categories</option>
-                        @for (category of grantItemCategories(); track category) { <option [value]="category">{{ category }}</option> }
-                      </select>
-                      <label class="text-xs text-slate flex-shrink-0">Qty</label>
-                      <input class="field-input w-16 text-center" type="number" min="1"
-                        [ngModel]="grantItemQuantity()" (ngModelChange)="setGrantItemQuantity($event)" name="grantItemQuantity" />
+                      <input
+                        class="field-input flex-1"
+                        placeholder="Search spells…"
+                        autofocus
+                        [ngModel]="grantSpellSearch()"
+                        (ngModelChange)="grantSpellSearch.set($event)"
+                        name="grantSpellSearch"
+                      />
                     </div>
 
-                    @if (grantItemNotice()) { <p class="text-sm text-success px-5 mb-2 mt-0">{{ grantItemNotice() }}</p> }
-                    @if (grantItemError()) { <p class="text-sm text-red-300 px-5 mb-2 mt-0">{{ grantItemError() }}</p> }
+                    @if (grantSpellNotice()) {
+                      <p class="text-sm text-success px-5 mb-2 mt-0">{{ grantSpellNotice() }}</p>
+                    }
+                    @if (grantSpellError()) {
+                      <p class="text-sm text-red-300 px-5 mb-2 mt-0">{{ grantSpellError() }}</p>
+                    }
 
-                    <div class="flex-1 overflow-y-auto px-5 pb-2 flex flex-col gap-1.5">
-                      @for (candidate of grantItemResults(); track candidate.index) {
+                    <div class="flex-1 overflow-y-auto px-5 pb-5 flex flex-col gap-1.5">
+                      @for (candidate of grantSpellResults(); track candidate.index) {
                         <button
                           class="flex items-center justify-between gap-3 px-3 py-2 rounded border border-white/10 hover:border-gold/40 text-left transition-colors"
-                          [disabled]="grantItemBusy()"
-                          (click)="grantItem(candidate)"
+                          [disabled]="grantSpellBusy()"
+                          (click)="grantSpell(candidate)"
                         >
                           <div class="min-w-0">
-                            <span class="text-sm text-parchment">{{ itemDisplayName(candidate) }}</span>
+                            <span class="text-sm text-parchment">{{ candidate.name }}</span>
                             <p class="text-xs text-slate m-0 mt-0.5">
-                              {{ candidate.category }}
-                              @if (candidate.damage) { · {{ candidate.damage }} {{ candidate.damage_type }} }
-                              @if (candidate.armor_class) { · AC {{ candidate.armor_class }} }
-                              · {{ candidate.cost }}
+                              {{ candidate.level === 0 ? 'Cantrip' : 'Level ' + candidate.level }} ·
+                              {{ candidate.school }}
                             </p>
                           </div>
                           <mat-icon class="text-slate flex-shrink-0">add_circle_outline</mat-icon>
                         </button>
                       } @empty {
-                        <p class="text-sm text-slate py-4">No items match your search.</p>
-                      }
-                      @if (grantItemMatches().length > grantItemResults().length) {
-                        <p class="text-xs text-slate py-2 m-0">Showing the first {{ grantItemResults().length }} of {{ grantItemMatches().length }} — search or pick a category to narrow it down.</p>
+                        <p class="text-sm text-slate py-4">No spells match your search.</p>
                       }
                     </div>
-
-                    <div class="p-5 pt-3 border-t border-white/10 flex-shrink-0">
-                      <button class="btn-outline text-sm gap-1.5 w-full justify-center" (click)="grantItemCreatingCustom.set(true)">
-                        <mat-icon class="text-base">add</mat-icon>
-                        Create a new custom item
-                      </button>
-                    </div>
-                  }
-                </section>
-              </div>
+                  </section>
+                </div>
+              }
             }
-          </div>
-        }
 
-        <!-- SPELLS -->
-        @case ('spells') {
-          <div class="flex flex-col gap-5 max-w-6xl">
-            @if (!spellResolution()?.sources?.length && !spellRows().length) {
-              <div class="flex items-center justify-between gap-2">
-                <p class="text-sm text-slate m-0">{{ char.name }} isn't a spellcaster.</p>
-                @if (isDm()) {
-                  <button class="btn-outline text-sm gap-1.5 flex-shrink-0" (click)="openGrantSpellDialog()">
-                    <mat-icon class="text-base">auto_awesome</mat-icon>
-                    Give Spell
-                  </button>
-                }
-              </div>
-            } @else {
-              <div class="flex flex-col sm:flex-row sm:items-center gap-2">
-                <div class="relative flex-1">
-                  <mat-icon class="absolute left-3 top-1/2 -translate-y-1/2 text-slate text-lg">search</mat-icon>
-                  <input class="w-full bg-elevated border border-white/15 rounded-lg pl-10 pr-3 py-2 text-sm text-parchment outline-none focus:border-gold/60" placeholder="Search spells" [ngModel]="spellFilters().search" (ngModelChange)="updateSpellFilter('search', $event)">
-                </div>
-                <button class="btn-secondary flex items-center justify-center gap-2" data-preview-ok (click)="spellFiltersOpen.set(true)"><mat-icon class="text-lg">tune</mat-icon> Filters</button>
-                @if (isDm()) {
-                  <button class="btn-outline text-sm gap-1.5 flex-shrink-0" (click)="openGrantSpellDialog()">
-                    <mat-icon class="text-base">auto_awesome</mat-icon>
-                    Give Spell
-                  </button>
-                }
-              </div>
-
-              @if (spellFiltersOpen()) {
-                <div class="fixed inset-0 z-30 bg-black/25" data-preview-ok (click)="spellFiltersOpen.set(false)"></div>
-                <div class="fixed z-40 top-20 right-4 sm:right-8 w-[min(92vw,430px)] bg-elevated border border-gold/30 rounded-xl shadow-2xl p-4" data-preview-ok (click)="$event.stopPropagation()">
-                  <div class="flex items-center justify-between mb-4"><h3 class="font-brand text-gold m-0">Filter spells</h3><button class="btn-icon" (click)="spellFiltersOpen.set(false)"><mat-icon>close</mat-icon></button></div>
-                  <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <label class="text-xs text-slate">Level<select class="field-select mt-1 w-full" [ngModel]="spellFilters().level" (ngModelChange)="updateSpellFilter('level', $event)"><option value="">All levels</option><option value="0">Cantrip</option>@for (level of slotPips(9); track level) { <option [value]="level + 1">Level {{ level + 1 }}</option> }</select></label>
-                    <label class="text-xs text-slate">School<select class="field-select mt-1 w-full" [ngModel]="spellFilters().school" (ngModelChange)="updateSpellFilter('school', $event)"><option value="">All schools</option>@for (school of spellSchools(); track school) { <option [value]="school">{{ school }}</option> }</select></label>
-                    <label class="text-xs text-slate">Source<select class="field-select mt-1 w-full" [ngModel]="spellFilters().source" (ngModelChange)="updateSpellFilter('source', $event)"><option value="">All sources</option>@for (source of spellSources(); track source) { <option [value]="source">{{ source }}</option> }</select></label>
-                    <label class="text-xs text-slate">Casting time<select class="field-select mt-1 w-full" [ngModel]="spellFilters().castingTime" (ngModelChange)="updateSpellFilter('castingTime', $event)"><option value="">Any casting time</option><option value="action">Action</option><option value="bonus_action">Bonus Action</option><option value="reaction">Reaction</option><option value="other">Other</option></select></label>
-                    <label class="text-xs text-slate sm:col-span-2">Status<select class="field-select mt-1 w-full" [ngModel]="spellFilters().prepared" (ngModelChange)="updateSpellFilter('prepared', $event)"><option value="">Any status</option><option value="prepared">Prepared</option><option value="always_prepared">Always Prepared</option><option value="known">Known</option><option value="spellbook">Spellbook</option></select></label>
-                    <label class="flex items-center gap-2 text-sm text-parchment"><input type="checkbox" [ngModel]="spellFilters().ritual" (ngModelChange)="updateSpellFilter('ritual', $event)"> Ritual only</label>
-                    <label class="flex items-center gap-2 text-sm text-parchment"><input type="checkbox" [ngModel]="spellFilters().concentration" (ngModelChange)="updateSpellFilter('concentration', $event)"> Concentration only</label>
-                  </div>
-                  <div class="flex justify-between mt-4 pt-3 border-t border-white/10"><button class="text-xs text-slate hover:text-parchment" (click)="clearSpellFilters()">Clear filters</button><button class="btn-primary" (click)="spellFiltersOpen.set(false)">Show {{ filteredSpellRows().length }}</button></div>
-                </div>
+            @case ('notes') {
+              @if (showNotesTab()) {
+                <app-character-notes [characterId]="char.id!" />
               }
-
-              @if (castNotice()) { <div class="rounded-lg border border-gold/30 bg-gold/5 px-3 py-2 text-sm text-parchment flex items-center justify-between gap-3"><span>{{ castNotice() }}</span><button class="text-slate hover:text-parchment" (click)="castNotice.set('')">×</button></div> }
-              @if (char.active_concentration) {
-                <div class="rounded-lg border border-violet-400/35 bg-violet-500/10 px-3 py-2 flex flex-wrap items-center justify-between gap-2"><div><span class="text-xs uppercase tracking-wider text-violet-200">Concentrating</span><div class="text-sm text-parchment">{{ char.active_concentration.name }}</div></div><button class="btn-secondary text-xs" [disabled]="persisting()" (click)="endConcentration()">End concentration</button></div>
-              }
-
-              @if (spellResolution(); as spellcasting) {
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                  @for (source of spellcasting.sources; track source.key) {
-                    <div class="bg-elevated rounded-lg border border-white/10 px-3 py-2"><div class="text-sm text-parchment">{{ source.name }}</div>@if (source.castingAbility) { <div class="text-xs text-slate mt-1">{{ abilityShort[source.castingAbility] }}@if (source.spellAttackBonus !== null) { · Attack {{ fmt(source.spellAttackBonus) }} }@if (source.spellSaveDc !== null) { · Save DC {{ source.spellSaveDc }} }</div> }</div>
-                  }
-                </div>
-              }
-
-              @for (pool of spellResolution()?.slotPools ?? []; track pool.key) {
-                <div>
-                  <h4 class="font-brand text-gold text-xs uppercase tracking-widest m-0 pb-1.5 mb-2 border-b border-gold/25">{{ pool.name }}{{ pool.type === 'pact' || pool.recovery === 'short_rest' ? ' (Short Rest)' : '' }}</h4>
-                  <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2">
-                    @for (slot of slotLevels(pool); track slot[0]) {
-                      @let used = slotUses(pool.key, slot[0]);
-                      <div class="bg-elevated rounded-lg border border-white/10 px-3 py-2 text-center"><div class="flex items-center justify-between gap-2"><span class="text-[10px] text-slate">Level {{ slot[0] }}</span><span class="text-xs text-gold">{{ slot[1] - used }}/{{ slot[1] }}</span></div><div class="flex flex-wrap items-center justify-center gap-1.5 mt-2" [attr.aria-label]="(slot[1] - used) + ' of ' + slot[1] + ' slots remaining'">@for (pip of slotPips(slot[1]); track pip) { <span class="w-3 h-3 rounded-full border" [class]="pip < slot[1] - used ? 'bg-gold border-gold' : 'bg-transparent border-white/25'"></span> }</div></div>
-                    }
-                  </div>
-                </div>
-              }
-
-              @if (spellResolution()?.validationErrors?.length) {
-                <div class="rounded border border-danger/40 bg-danger/10 px-3 py-2 text-xs text-red-200">Spell choices need repair in character creation.<ul class="mt-1 mb-0 pl-4 list-disc">@for (error of spellResolution()?.validationErrors ?? []; track error.requirementKey + ':' + error.spellIndex + ':' + error.message) { <li>{{ error.message }}</li> }</ul></div>
-              }
-
-              @if (spellRows().length) {
-                <div>
-                  <h4 class="font-brand text-gold text-xs uppercase tracking-widest m-0 pb-1.5 mb-2 border-b border-gold/25">Cantrips</h4>
-                  @if (cantripRows().length) { <div class="grid grid-cols-1 lg:grid-cols-2 gap-2 mb-5">@for (row of cantripRows(); track row.spell.index) { <ng-container [ngTemplateOutlet]="spellCard" [ngTemplateOutletContext]="{ $implicit: row }"></ng-container> }</div> } @else { <p class="text-sm text-slate mb-5">No cantrips match these filters.</p> }
-                  <h4 class="font-brand text-gold text-xs uppercase tracking-widest m-0 pb-1.5 mb-2 border-b border-gold/25">Leveled Spells</h4>
-                  @if (leveledSpellRows().length) { <div class="grid grid-cols-1 lg:grid-cols-2 gap-2">@for (row of leveledSpellRows(); track row.spell.index) { <ng-container [ngTemplateOutlet]="spellCard" [ngTemplateOutletContext]="{ $implicit: row }"></ng-container> }</div> } @else { <p class="text-sm text-slate">No leveled spells match these filters.</p> }
-                </div>
-              } @else { <p class="text-sm text-slate">No spells selected yet.</p> }
             }
-          </div>
-
-          <ng-template #spellCard let-row>
-            <article class="px-3 py-3 rounded-lg border border-white/10 bg-elevated/40 flex flex-col gap-2 min-h-[164px]">
-              <div class="flex items-start justify-between gap-3"><div class="min-w-0"><h5 class="text-sm text-parchment m-0">{{ row.spell.name }}</h5><p class="text-xs text-slate mt-0.5 mb-0">{{ row.spell.level === 0 ? 'Cantrip' : 'Level ' + row.spell.level }} · {{ row.spell.school }}</p></div><div class="flex items-center gap-1 flex-shrink-0">@if (isDm() && isGrantedSpell(row)) { <button class="btn-icon text-danger/70 hover:text-danger" [disabled]="persisting()" (click)="revokeSpell(row)" matTooltip="Remove this spell"><mat-icon class="text-lg">delete</mat-icon></button> }<button class="btn-primary text-xs" [matTooltip]="!castingMethods(row).length ? 'This spell is in your spellbook but is not prepared.' : castingMethods(row).every(method => !method.available) ? 'No eligible slot or free cast remains.' : ''" [disabled]="persisting() || castingMethods(row).every(method => !method.available)" (click)="openCastDialog(row)">Cast</button></div></div>
-              <div class="flex flex-wrap gap-1">@for (status of categoryLabels(row); track status) { <span class="text-[10px] px-2 py-0.5 rounded-full border" [matTooltip]="status === 'Always Prepared' ? 'Granted by a feature. It is always prepared and cannot be removed.' : ''" [class]="status === 'Always Prepared' ? 'border-gold/45 text-gold bg-gold/5' : 'border-white/15 text-slate'">{{ status }}</span> }@if (isGrantedSpell(row)) { <span class="text-[10px] px-2 py-0.5 rounded-full border border-success/30 text-success">Gifted</span> }@if (row.spell.ritual) { <span class="text-[10px] px-2 py-0.5 rounded-full border border-sky-400/30 text-sky-200">Ritual</span> }@if (row.spell.concentration) { <span class="text-[10px] px-2 py-0.5 rounded-full border border-violet-400/30 text-violet-200">Concentration</span> }</div>
-              <p class="text-xs text-slate m-0">{{ row.spell.casting_time }} · {{ row.spell.range }} · {{ row.spell.duration }}</p>
-              <div class="text-[11px] text-coal flex flex-col gap-0.5">@for (origin of row.origins; track origin.sourceKey + ':' + origin.category) { <span>{{ originLabel(origin) }}</span> }</div>
-              <details class="mt-auto text-xs text-slate"><summary class="cursor-pointer text-gold/90">Description</summary><p class="mt-2 mb-0 leading-relaxed">@for (segment of descriptionSegments(row.spell.description); track $index) { <span [class.font-semibold]="segment.bold" [class.text-parchment]="segment.bold">{{ segment.text }}</span> }</p>@if (row.spell.higher_levels) { <p class="mt-2 mb-0"><strong>At Higher Levels.</strong> {{ row.spell.higher_levels }}</p> }</details>
-            </article>
-          </ng-template>
-
-          @if (castDialogSpell(); as row) {
-            <div class="fixed inset-0 z-50 bg-black/65 flex items-center justify-center p-4" (click)="closeCastDialog()">
-              <section class="w-full max-w-lg max-h-[88vh] overflow-y-auto bg-elevated border border-gold/35 rounded-xl shadow-2xl p-5" (click)="$event.stopPropagation()">
-                <div class="flex items-start justify-between gap-3"><div><h3 class="font-brand text-gold text-xl m-0">Cast {{ row.spell.name }}</h3><p class="text-xs text-slate mt-1 mb-0">{{ row.spell.level === 0 ? 'Cantrip' : 'Level ' + row.spell.level }} · {{ row.spell.school }} · {{ row.spell.casting_time }}</p></div><button class="btn-icon" (click)="closeCastDialog()"><mat-icon>close</mat-icon></button></div>
-                <p class="text-sm text-slate leading-relaxed my-4">@for (segment of descriptionSegments(row.spell.description); track $index) { <span [class.font-semibold]="segment.bold" [class.text-parchment]="segment.bold">{{ segment.text }}</span> }</p>
-                @if (row.spell.higher_levels) {
-                  <div class="rounded-lg border border-gold/25 bg-gold/5 px-3 py-2.5 mb-4">
-                    <div class="flex items-center gap-2 mb-1"><mat-icon class="text-gold text-lg">trending_up</mat-icon><strong class="text-xs uppercase tracking-wider text-gold">At Higher Levels</strong></div>
-                    <p class="text-sm text-parchment/90 leading-relaxed m-0">{{ row.spell.higher_levels }}</p>
-                  </div>
-                }
-                @if (replacingConcentration()) {
-                  <div class="rounded-lg border border-violet-400/40 bg-violet-500/10 p-3"><p class="text-sm text-parchment mt-0 mb-3">Casting this spell ends concentration on <strong>{{ char.active_concentration?.name }}</strong>. Replace it?</p><div class="flex gap-2 justify-end"><button class="btn-secondary" (click)="replacingConcentration.set(false); pendingCastMethod.set(null)">Keep current</button><button class="btn-primary" [disabled]="persisting()" (click)="confirmConcentrationReplacement()">Replace and cast</button></div></div>
-                } @else {
-                  <div class="flex flex-col gap-2">@for (method of castingMethods(row); track method.key) { <button class="w-full rounded-lg border px-3 py-2.5 text-left transition-colors" [class]="method.available ? method.upcast ? 'border-gold/35 hover:border-gold/70 bg-gold/5' : 'border-white/15 hover:border-gold/50 bg-black/10' : 'border-white/5 opacity-45 cursor-not-allowed'" [disabled]="!method.available || persisting()" (click)="requestCast(method)"><span class="flex items-center justify-between gap-3"><span class="flex items-center gap-2"><strong class="text-sm text-parchment">{{ method.label }}</strong>@if (method.upcast) { <span class="text-[10px] px-1.5 py-0.5 rounded bg-gold/15 border border-gold/35 text-gold uppercase tracking-wide">Upcast +{{ method.upcast.levelsAbove }}</span> }</span><span class="text-xs text-slate">{{ method.detail }}</span></span>@if (method.upcast) { <span class="block mt-2 pt-2 border-t border-gold/15 text-xs text-gold/90"><strong>Level {{ method.upcast.slotLevel }}:</strong> {{ method.upcast.summary }}</span> }</button> }@if (!castingMethods(row).length) { <p class="text-sm text-slate">This spell is in the spellbook but isn't prepared, so it can't be cast yet.</p> }</div>
-                }
-                @if (castError()) { <p class="text-sm text-red-300 mt-3 mb-0">{{ castError() }}</p> }
-              </section>
-            </div>
           }
-
-          @if (showGrantSpellDialog()) {
-            <div class="fixed inset-0 z-50 bg-black/65 flex items-center justify-center p-4" (click)="closeGrantSpellDialog()">
-              <section class="w-full max-w-2xl max-h-[88vh] flex flex-col overflow-hidden bg-elevated border border-gold/35 rounded-xl shadow-2xl" (click)="$event.stopPropagation()">
-                <div class="flex items-start justify-between gap-3 p-5 pb-3 flex-shrink-0">
-                  <div>
-                    <h3 class="font-brand text-gold text-xl m-0">Give Spell</h3>
-                    <p class="text-xs text-slate mt-1 mb-0">to {{ char.name }} · always known, castable at will</p>
-                  </div>
-                  <button class="btn-icon" (click)="closeGrantSpellDialog()"><mat-icon>close</mat-icon></button>
-                </div>
-
-                <div class="flex items-center gap-2 px-5 pb-3 flex-shrink-0">
-                  <input class="field-input flex-1" placeholder="Search spells…" autofocus
-                    [ngModel]="grantSpellSearch()" (ngModelChange)="grantSpellSearch.set($event)" name="grantSpellSearch" />
-                </div>
-
-                @if (grantSpellNotice()) { <p class="text-sm text-success px-5 mb-2 mt-0">{{ grantSpellNotice() }}</p> }
-                @if (grantSpellError()) { <p class="text-sm text-red-300 px-5 mb-2 mt-0">{{ grantSpellError() }}</p> }
-
-                <div class="flex-1 overflow-y-auto px-5 pb-5 flex flex-col gap-1.5">
-                  @for (candidate of grantSpellResults(); track candidate.index) {
-                    <button
-                      class="flex items-center justify-between gap-3 px-3 py-2 rounded border border-white/10 hover:border-gold/40 text-left transition-colors"
-                      [disabled]="grantSpellBusy()"
-                      (click)="grantSpell(candidate)"
-                    >
-                      <div class="min-w-0">
-                        <span class="text-sm text-parchment">{{ candidate.name }}</span>
-                        <p class="text-xs text-slate m-0 mt-0.5">
-                          {{ candidate.level === 0 ? 'Cantrip' : 'Level ' + candidate.level }} · {{ candidate.school }}
-                        </p>
-                      </div>
-                      <mat-icon class="text-slate flex-shrink-0">add_circle_outline</mat-icon>
-                    </button>
-                  } @empty {
-                    <p class="text-sm text-slate py-4">No spells match your search.</p>
-                  }
-                </div>
-              </section>
-            </div>
-          }
-        }
-
-        @case ('notes') {
-          @if (showNotesTab()) {
-            <app-character-notes [characterId]="char.id!" />
-          }
-        }
-
-      }
-      </div>
+        </div>
       }
     </div>
   </div>
@@ -975,6 +2043,13 @@
 
 @if (showLongRestDialog()) {
   @if (localChar(); as restChar) {
-    <app-magic-inventory [character]="restChar" [items]="itemsAll()" [isDm]="isDm()" [restOnly]="true" (saved)="inventorySaved($event)" (closed)="showLongRestDialog.set(false)" />
+    <app-magic-inventory
+      [character]="restChar"
+      [items]="itemsAll()"
+      [isDm]="isDm()"
+      [restOnly]="true"
+      (saved)="inventorySaved($event)"
+      (closed)="showLongRestDialog.set(false)"
+    />
   }
 }

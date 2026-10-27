@@ -134,8 +134,8 @@ management screens live under `features/dm/dm-campaigns/`, gated per-endpoint on
 - `features/battle-map/` — Konva canvas plus toolbar/add-token-panel/turn-order-panel components
 - `features/create-content/` — DM-authored content (currently monsters)
 - `shared/layout/` — `main-layout`, `app-header`, `page-header`
-- `shared/` — other cross-feature reusable components (confirm dialog, notes-panel, party-list,
-  portrait-picker-dialog, description-dialog)
+- `shared/components/` — every cross-feature reusable component, one folder each (confirm-dialog +
+  `ConfirmService`, avatar-creator-dialog, party-list, description-dialog, ...)
 
 Styling is SCSS with Tailwind utilities layered in (`tailwind.config.js`, `postcss.config.js`); Angular
 Material is a dependency but usage is selective, not app-wide.
@@ -181,7 +181,7 @@ dnd_vtt_frontend/
     shared/
       layout/            # main-layout, app-header, page-header
       components/          # notes-panel, party-list, description-dialog
-      confirm-dialog/, portrait-picker-dialog/, directives/, pipes/
+      directives/, pipes/
     app.routes.ts
 ```
 
@@ -190,3 +190,17 @@ dnd_vtt_frontend/
 - Backend: single quotes, trailing commas (`.prettierrc`).
 - Frontend: single quotes, 100-char print width, Angular parser for `.html` templates (`.prettierrc`).
 - Standalone Angular components throughout — no `NgModule`-based features.
+- Frontend files: no `.component.ts` suffix (`wiki-workspace.ts`, class `WikiWorkspaceComponent`);
+  run `npm run format` before committing — CI runs `format:check`. Prettier reflows whitespace in
+  templates, so put `<!-- prettier-ignore -->` above elements where adjacency matters (`name*`).
+- Frontend templates: external `templateUrl` by default; inline `template:` only for tiny
+  (~10 line) components.
+- Frontend async: `HttpClient` only inside `core/services` (never raw `fetch` except for data URLs and
+  the token-refresh call, which must bypass the interceptor); `firstValueFrom` for one-shot calls,
+  `toSignal`/`takeUntilDestroyed` for streams; show failures with `getErrorMessage(err, fallback)`
+  (`core/utils/error-message.ts`), never by reading `err.error?.message` by hand.
+- Storage keys shared between files live in `core/utils/storage-keys.ts`. New keys:
+  `dnd-vtt-<feature>-<thing>`; don't rename existing ones (resets users' saved values).
+- Model field casing: fields that mirror a backend/DB column stay `snake_case`; fields inside the JSON
+  `data` blobs written by newer code (characters' inventory/spell state) are `camelCase`. Within one
+  interface follow the surrounding fields; don't rename existing ones without a data migration.

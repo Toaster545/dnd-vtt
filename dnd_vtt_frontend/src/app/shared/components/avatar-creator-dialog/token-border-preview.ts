@@ -1,12 +1,12 @@
 import { Component, ElementRef, computed, effect, input, signal, viewChild } from '@angular/core';
-import { TokenBorder } from '../../core/models/token-border.model';
+import { TokenBorder } from '../../../core/models/token-border.model';
 import {
   artHasTransparency,
   drawBorderedToken,
   drawTokenFace,
   popOutSides,
   tokenBorderInnerRadius,
-} from '../../core/utils/token-border';
+} from '../../../core/utils/token-border';
 
 // The character's token as the battle map draws it — same drawBorderedToken() call as
 // token-renderer.ts, over a scrap of grid — so what the player picks is what the table sees.

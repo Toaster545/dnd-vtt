@@ -1,7 +1,7 @@
 import { Component, DestroyRef, computed, inject } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
-import { WikiWorkspaceComponent } from './wiki-workspace.component';
+import { WikiWorkspaceComponent } from './wiki-workspace';
 
 // Full-page wiki route (`/home/campaigns[/manage]/:campaignId/wiki[/:slug]`). A thin shell around
 // `WikiWorkspaceComponent`: it reads `campaignId` / `wikiDm` / `slug` from the route and keeps the
@@ -29,10 +29,9 @@ export class WikiComponent {
     ? ['/home/campaigns/manage', this.campaignId, 'wiki']
     : ['/home/campaigns', this.campaignId, 'wiki'];
 
-  private paramMap = toSignal(
-    this.route.paramMap.pipe(takeUntilDestroyed(this.destroyRef)),
-    { initialValue: this.route.snapshot.paramMap },
-  );
+  private paramMap = toSignal(this.route.paramMap.pipe(takeUntilDestroyed(this.destroyRef)), {
+    initialValue: this.route.snapshot.paramMap,
+  });
   readonly routeSlug = computed(() => this.paramMap()?.get('slug') ?? null);
 
   onSlugChange(slug: string | null): void {

@@ -2,7 +2,15 @@ import { MagicInventoryComponent } from '../../../shared/components/magic-invent
 import { CompanionService } from '../../../core/services/companion.service';
 import { CompanionSheetComponent } from '../../../shared/components/companion-sheet/companion-sheet';
 import {
-  Component, inject, input, output, signal, computed, effect, viewChild, ElementRef,
+  Component,
+  inject,
+  input,
+  output,
+  signal,
+  computed,
+  effect,
+  viewChild,
+  ElementRef,
 } from '@angular/core';
 import { NgTemplateOutlet } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -10,47 +18,87 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import {
-  ContentService, DndClass, DndRace, DndBackground, DndItem, DndSpell, DndFeat, DndMonster,
-  DndContentSource, Subclass, TraitGrant, itemDisplayName,
+  ContentService,
+  DndClass,
+  DndRace,
+  DndBackground,
+  DndItem,
+  DndSpell,
+  DndFeat,
+  DndMonster,
+  DndContentSource,
+  Subclass,
+  TraitGrant,
+  itemDisplayName,
 } from '../../../core/services/content.service';
 import { ItemFormComponent } from '../../create-content/items/item-form/item-form';
 import { ItemService } from '../../../core/services/item.service';
-import {
-  CharacterService, SpellCastCommand,
-} from '../../../core/services/character.service';
+import { CharacterService, SpellCastCommand } from '../../../core/services/character.service';
 import { CharacterStatsService } from '../../../core/services/character-stats.service';
-import { CharacterActionsService, CharacterAction } from '../../../core/services/character-actions.service';
 import {
-  Character, ABILITIES, ABILITY_SHORT, SKILLS, EquipmentEntry, Currency, ATTUNEMENT_SLOT_LIMIT,
-  abilityModifier, proficiencyBonus,
+  CharacterActionsService,
+  CharacterAction,
+} from '../../../core/services/character-actions.service';
+import {
+  Character,
+  ABILITIES,
+  ABILITY_SHORT,
+  SKILLS,
+  EquipmentEntry,
+  Currency,
+  ATTUNEMENT_SLOT_LIMIT,
+  abilityModifier,
+  proficiencyBonus,
 } from '../../../core/models/character.model';
 import { adjustCurrency, CURRENCY_ORDER } from '../../../core/utils/currency';
 import { normalizeAvatarRecipe, portraitDataUri, portraitSource } from '../../../core/utils/avatar';
-import { AvatarCreatorDialogComponent, AvatarCreatorResult } from '../../../shared/avatar-creator-dialog/avatar-creator-dialog';
-import { equippedItems, attunementActive, reachableGrants, resolveCharacterFeatPicks } from '../../../core/utils/character-effects';
+import {
+  AvatarCreatorDialogComponent,
+  AvatarCreatorResult,
+} from '../../../shared/components/avatar-creator-dialog/avatar-creator-dialog';
+import {
+  equippedItems,
+  attunementActive,
+  reachableGrants,
+  resolveCharacterFeatPicks,
+} from '../../../core/utils/character-effects';
 import { characterContentEnabled } from '../../../core/utils/content-sources';
 import { resolveBackgroundOriginFeat } from '../../../core/utils/background-origin-feat';
 import {
-  describeSpellUpcast, isSpellAttackAction, resolveSpellAttackDamage,
-  resolveSpellcasting, ResolvedSpellOrigin, ResolvedSpellSlotPool, ResolvedSpellCategory,
+  describeSpellUpcast,
+  isSpellAttackAction,
+  resolveSpellAttackDamage,
+  resolveSpellcasting,
+  ResolvedSpellOrigin,
+  ResolvedSpellSlotPool,
+  ResolvedSpellCategory,
   SpellUpcastEffect,
 } from '../../../core/utils/spellcasting';
-import { ConfirmService } from '../../../shared/confirm.service';
+import { ConfirmService } from '../../../shared/components/confirm-dialog/confirm.service';
 import { SwipeTabsDirective } from '../../../shared/directives/swipe-tabs.directive';
 import { levelUpPending } from '../../../core/utils/level-up';
 import { StatblockSpellGroup, characterStatblock } from '../../../core/utils/statblock-export';
 import { StatblockExportMenuComponent } from '../../../shared/components/statblock-export-menu/statblock-export-menu';
 import { CharacterNotesComponent } from '../character-notes/character-notes';
 import { UiScaleService } from '../../../core/services/ui-scale.service';
-import { CharacterPortraitComponent, tokenPortraitSize } from '../../../shared/components/character-portrait/character-portrait';
+import {
+  CharacterPortraitComponent,
+  tokenPortraitSize,
+} from '../../../shared/components/character-portrait/character-portrait';
 import { Router } from '@angular/router';
+import { getErrorMessage } from '../../../core/utils/error-message';
 
 // The fields load() resolves content from — a change to any of them means refetching.
 function contentKey(char: Character): string {
   return JSON.stringify([
-    char.race, char.background, char.campaign_id ?? null, char.enabled_sources ?? null,
-    char.class, char.subclass, char.level,
-    (char.classes ?? []).map(c => [c.name, c.level, c.subclass ?? '', c.choices ?? {}]),
+    char.race,
+    char.background,
+    char.campaign_id ?? null,
+    char.enabled_sources ?? null,
+    char.class,
+    char.subclass,
+    char.level,
+    (char.classes ?? []).map((c) => [c.name, c.level, c.subclass ?? '', c.choices ?? {}]),
   ]);
 }
 
@@ -113,19 +161,36 @@ interface SpellFilters {
   prepared: string;
 }
 
-interface DescriptionSegment { text: string; bold: boolean }
+interface DescriptionSegment {
+  text: string;
+  bold: boolean;
+}
 
 type Tab = 'stats' | 'actions' | 'inventory' | 'spells' | 'companions' | 'notes';
 const TAB_ORDER: Tab[] = ['stats', 'actions', 'inventory', 'spells', 'companions', 'notes'];
 const TAB_LABELS: Record<Tab, string> = {
-  stats: 'Stats', actions: 'Actions', inventory: 'Equipment', spells: 'Spells', companions: 'Companions', notes: 'Notes',
+  stats: 'Stats',
+  actions: 'Actions',
+  inventory: 'Equipment',
+  spells: 'Spells',
+  companions: 'Companions',
+  notes: 'Notes',
 };
 
 @Component({
   selector: 'app-character-play-sheet',
-  imports: [MagicInventoryComponent,
-    FormsModule, MatIconModule, MatTooltipModule, NgTemplateOutlet, ItemFormComponent, SwipeTabsDirective,
-    StatblockExportMenuComponent, CharacterPortraitComponent, CompanionSheetComponent, CharacterNotesComponent,
+  imports: [
+    MagicInventoryComponent,
+    FormsModule,
+    MatIconModule,
+    MatTooltipModule,
+    NgTemplateOutlet,
+    ItemFormComponent,
+    SwipeTabsDirective,
+    StatblockExportMenuComponent,
+    CharacterPortraitComponent,
+    CompanionSheetComponent,
+    CharacterNotesComponent,
   ],
   templateUrl: './character-play-sheet.html',
   styleUrl: './character-play-sheet.scss',
@@ -139,14 +204,14 @@ export class CharacterPlaySheetComponent {
 
   private companionService = inject(CompanionService);
   private savedCompanionCount = signal(0);
-  private content        = inject(ContentService);
-  private itemService    = inject(ItemService);
+  private content = inject(ContentService);
+  private itemService = inject(ItemService);
   private characterService = inject(CharacterService);
-  private statsService    = inject(CharacterStatsService);
-  private actionsService  = inject(CharacterActionsService);
-  private confirm         = inject(ConfirmService);
-  private dialog          = inject(MatDialog);
-  private router          = inject(Router);
+  private statsService = inject(CharacterStatsService);
+  private actionsService = inject(CharacterActionsService);
+  private confirm = inject(ConfirmService);
+  private dialog = inject(MatDialog);
+  private router = inject(Router);
 
   readonly itemDisplayName = itemDisplayName;
 
@@ -154,27 +219,31 @@ export class CharacterPlaySheetComponent {
   // Set by DM-facing hosts (dm-campaign-hub, dm-campaign-session, dm-encounter-play) when the
   // sheet is opened for a party member rather than the viewer's own character — gates the
   // "Give Item" control, which calls a DM-only backend endpoint.
-  readonly isDm       = input(false);
+  readonly isDm = input(false);
   // Set by encounter-play hosts (dm-encounter-play, the battle-map sidebar) where the viewer
   // already knows whose sheet this is — hides the "Level X Race · Class · Background" meta line
   // to keep the header tight next to the map.
-  readonly compact    = input(false);
+  readonly compact = input(false);
   // Set by the character wizard, which shows this sheet as a live preview of an unsaved draft.
   // The sheet is look-only then: clicks that would change or save the character (HP, rests,
   // equip, casting, portrait, …) are swallowed by onPreviewClick, and only navigation — tabs,
   // item expanders, spell filters, <details> disclosures — marked `data-preview-ok` gets through.
   // Race/class/background edits reload their content data in place (see the constructor).
-  readonly preview    = input(false);
-  readonly saved      = output<Character>();
+  readonly preview = input(false);
+  readonly saved = output<Character>();
 
-  readonly abilities     = ABILITIES;
-  readonly abilityShort  = ABILITY_SHORT;
-  readonly skillList     = Object.keys(SKILLS);
-  readonly skillAbility  = SKILLS;
+  readonly abilities = ABILITIES;
+  readonly abilityShort = ABILITY_SHORT;
+  readonly skillList = Object.keys(SKILLS);
+  readonly skillAbility = SKILLS;
 
-  activeTab   = signal<Tab>('stats');
-  readonly tabOrder = computed(() => TAB_ORDER.filter(tab =>
-    (tab !== 'companions' || this.hasCompanions()) && (tab !== 'notes' || this.showNotesTab())));
+  activeTab = signal<Tab>('stats');
+  readonly tabOrder = computed(() =>
+    TAB_ORDER.filter(
+      (tab) =>
+        (tab !== 'companions' || this.hasCompanions()) && (tab !== 'notes' || this.showNotesTab()),
+    ),
+  );
   readonly tabLabels = TAB_LABELS;
   private readonly bodyRef = viewChild<ElementRef<HTMLElement>>('sheetBody');
 
@@ -260,8 +329,8 @@ export class CharacterPlaySheetComponent {
       this.touchArmedAtStart = false;
     }
   }
-  loading     = signal(true);
-  persisting  = signal(false);
+  loading = signal(true);
+  persisting = signal(false);
   spellFiltersOpen = signal(false);
   castDialogSpell = signal<DisplaySpell | null>(null);
   pendingCastMethod = signal<CastingMethod | null>(null);
@@ -269,38 +338,45 @@ export class CharacterPlaySheetComponent {
   castNotice = signal('');
   replacingConcentration = signal(false);
   readonly spellFilters = signal<SpellFilters>({
-    search: '', level: '', school: '', source: '', castingTime: '', ritual: false,
-    concentration: false, prepared: '',
+    search: '',
+    level: '',
+    school: '',
+    source: '',
+    castingTime: '',
+    ritual: false,
+    concentration: false,
+    prepared: '',
   });
 
-  inventorySearch  = signal('');
-  expandedItems    = signal<Set<string>>(new Set());
+  inventorySearch = signal('');
+  expandedItems = signal<Set<string>>(new Set());
 
   toggleItemExpanded(itemIndex: string) {
-    this.expandedItems.update(set => {
+    this.expandedItems.update((set) => {
       const next = new Set(set);
-      if (next.has(itemIndex)) next.delete(itemIndex); else next.add(itemIndex);
+      if (next.has(itemIndex)) next.delete(itemIndex);
+      else next.add(itemIndex);
       return next;
     });
   }
 
-  showGrantItemDialog    = signal(false);
-  grantItemSearch        = signal('');
-  grantItemQuantity      = signal(1);
-  grantItemCategory      = signal('');
+  showGrantItemDialog = signal(false);
+  grantItemSearch = signal('');
+  grantItemQuantity = signal(1);
+  grantItemCategory = signal('');
   grantItemCreatingCustom = signal(false);
-  grantItemBusy          = signal(false);
-  grantItemError         = signal('');
-  grantItemNotice        = signal('');
-  pactWeaponSelection    = signal('');
-  pactWeaponBusy         = signal(false);
-  pactWeaponError        = signal('');
+  grantItemBusy = signal(false);
+  grantItemError = signal('');
+  grantItemNotice = signal('');
+  pactWeaponSelection = signal('');
+  pactWeaponBusy = signal(false);
+  pactWeaponError = signal('');
 
   showGrantSpellDialog = signal(false);
-  grantSpellSearch     = signal('');
-  grantSpellBusy       = signal(false);
-  grantSpellError      = signal('');
-  grantSpellNotice     = signal('');
+  grantSpellSearch = signal('');
+  grantSpellBusy = signal(false);
+  grantSpellError = signal('');
+  grantSpellNotice = signal('');
 
   // Short-rest dialog state
   showShortRestDialog = signal(false);
@@ -309,48 +385,80 @@ export class CharacterPlaySheetComponent {
   shortRestError = signal('');
   shortRestBusy = signal(false);
 
-  hpAdjustAmount  = signal<number>(0);
-  currencyOrder   = CURRENCY_ORDER;
-  currencyAdjustAmounts = signal<Record<keyof Currency, number>>({ cp: 0, sp: 0, ep: 0, gp: 0, pp: 0 });
+  hpAdjustAmount = signal<number>(0);
+  currencyOrder = CURRENCY_ORDER;
+  currencyAdjustAmounts = signal<Record<keyof Currency, number>>({
+    cp: 0,
+    sp: 0,
+    ep: 0,
+    gp: 0,
+    pp: 0,
+  });
   insufficientFundsDenom = signal<keyof Currency | null>(null);
 
-  localChar       = signal<Character | null>(null);
-  raceData        = signal<DndRace | null>(null);
-  bgData          = signal<DndBackground | null>(null);
-  itemsAll        = signal<DndItem[]>([]);
-  spellsAll       = signal<DndSpell[]>([]);
-  monstersAll     = signal<DndMonster[]>([]);
-  sourcesAll      = signal<DndContentSource[]>([]);
-  spellLists      = signal<Record<string, string[]>>({});
-  featsAll        = signal<DndFeat[]>([]);
+  localChar = signal<Character | null>(null);
+  raceData = signal<DndRace | null>(null);
+  bgData = signal<DndBackground | null>(null);
+  itemsAll = signal<DndItem[]>([]);
+  spellsAll = signal<DndSpell[]>([]);
+  monstersAll = signal<DndMonster[]>([]);
+  sourcesAll = signal<DndContentSource[]>([]);
+  spellLists = signal<Record<string, string[]>>({});
+  featsAll = signal<DndFeat[]>([]);
   resolvedClasses = signal<ResolvedClass[]>([]);
 
   activeCompanions = computed<ActiveCompanion[]>(() => {
-    const byIndex = new Map(this.monstersAll().map(monster => [monster.index, monster]));
+    const byIndex = new Map(this.monstersAll().map((monster) => [monster.index, monster]));
     const companions = new Map<string, ActiveCompanion>();
     for (const resolved of this.resolvedClasses()) {
       for (const grant of reachableGrants(resolved.data, resolved.subclassName, resolved.level)) {
         if (grant.type !== 'companion_grant') continue;
         const monster = byIndex.get(grant.monsterIndex);
-        if (monster) companions.set(monster.index, { monster, source: resolved.subclassName || resolved.name, detail: grant.description });
+        if (monster)
+          companions.set(monster.index, {
+            monster,
+            source: resolved.subclassName || resolved.name,
+            detail: grant.description,
+          });
       }
     }
     for (const row of this.spellRows()) {
       const index = row.spell.companion_index;
       const monster = index ? byIndex.get(index) : undefined;
-      if (monster) companions.set(index!, { monster, source: row.origins.map(origin => origin.sourceName).join(', '), detail: row.spell.description });
+      if (monster)
+        companions.set(index!, {
+          monster,
+          source: row.origins.map((origin) => origin.sourceName).join(', '),
+          detail: row.spell.description,
+        });
     }
     return [...companions.values()];
   });
 
-  companionFeatures = computed(() => this.resolvedClasses().filter(c => c.level >= 3 && ['beast-master', 'battle-smith'].includes((c.subclassName ?? '').toLowerCase().replace(/\s+/g, '-'))));
-  hasCompanions = computed(() => this.savedCompanionCount() > 0 || this.companionFeatures().length > 0 || this.activeCompanions().length > 0);
-  referenceCompanions = computed(() => this.activeCompanions().filter(c => c.monster.index !== 'steel-defender'));
+  companionFeatures = computed(() =>
+    this.resolvedClasses().filter(
+      (c) =>
+        c.level >= 3 &&
+        ['beast-master', 'battle-smith'].includes(
+          (c.subclassName ?? '').toLowerCase().replace(/\s+/g, '-'),
+        ),
+    ),
+  );
+  hasCompanions = computed(
+    () =>
+      this.savedCompanionCount() > 0 ||
+      this.companionFeatures().length > 0 ||
+      this.activeCompanions().length > 0,
+  );
+  referenceCompanions = computed(() =>
+    this.activeCompanions().filter((c) => c.monster.index !== 'steel-defender'),
+  );
   async companionChanged() {
     const id = this.localChar()?.id;
     if (!id) return;
     const character = await this.characterService.getCharacter(id);
-    this.localChar.set(character); this.saved.emit(character);
+    this.localChar.set(character);
+    this.saved.emit(character);
   }
 
   primaryClass = computed(() => this.resolvedClasses()[0]?.data ?? null);
@@ -358,9 +466,20 @@ export class CharacterPlaySheetComponent {
   stats = computed(() => {
     const char = this.localChar();
     if (!char) return null;
-    const classesForFeats = this.resolvedClasses().map(rc => ({ data: rc.data, choices: rc.choices, level: rc.level, subclass: rc.subclassName }));
+    const classesForFeats = this.resolvedClasses().map((rc) => ({
+      data: rc.data,
+      choices: rc.choices,
+      level: rc.level,
+      subclass: rc.subclassName,
+    }));
     return this.statsService.compute(
-      char, this.primaryClass(), this.raceData(), this.featsAll(), classesForFeats, this.itemsAll(), this.bgData(),
+      char,
+      this.primaryClass(),
+      this.raceData(),
+      this.featsAll(),
+      classesForFeats,
+      this.itemsAll(),
+      this.bgData(),
     );
   });
 
@@ -375,7 +494,8 @@ export class CharacterPlaySheetComponent {
 
   // The owner's own campaign copy only; the DM never sees a player's private notes.
   showNotesTab = computed(
-    () => !this.isDm() && !this.preview() && !!this.localChar()?.campaign_id && !!this.localChar()?.id,
+    () =>
+      !this.isDm() && !this.preview() && !!this.localChar()?.campaign_id && !!this.localChar()?.id,
   );
 
   goToLevelUp() {
@@ -386,24 +506,42 @@ export class CharacterPlaySheetComponent {
   actions = computed<CharacterAction[]>(() => {
     const char = this.localChar();
     if (!char) return [];
-    const classesForFeats = this.resolvedClasses().map(rc => ({
-      data: rc.data, level: rc.level, subclass: rc.subclassName, choices: rc.choices,
+    const classesForFeats = this.resolvedClasses().map((rc) => ({
+      data: rc.data,
+      level: rc.level,
+      subclass: rc.subclassName,
+      choices: rc.choices,
     }));
     const featSelections = resolveCharacterFeatPicks(
       classesForFeats,
       this.featsAll(),
-      this.raceData() ? { data: this.raceData()!, choices: char.race_choices ?? {}, subrace: char.subrace } : null,
+      this.raceData()
+        ? { data: this.raceData()!, choices: char.race_choices ?? {}, subrace: char.subrace }
+        : null,
     );
     const originFeat = resolveBackgroundOriginFeat(this.bgData(), this.featsAll());
-    if (originFeat) featSelections.push({
-      feat: originFeat, scope: `background:${this.bgData()!.index}:origin`, choices: char.background_choices ?? {},
-    });
-    const classes = this.resolvedClasses().map(rc => ({ data: rc.data, level: rc.level, subclass: rc.subclass, choices: rc.choices }));
+    if (originFeat)
+      featSelections.push({
+        feat: originFeat,
+        scope: `background:${this.bgData()!.index}:origin`,
+        choices: char.background_choices ?? {},
+      });
+    const classes = this.resolvedClasses().map((rc) => ({
+      data: rc.data,
+      level: rc.level,
+      subclass: rc.subclass,
+      choices: rc.choices,
+    }));
     return this.actionsService.compute(classes, char.resource_uses ?? {}, char.ability_scores, {
       characterLevel: char.level,
       race: this.raceData() ? { data: this.raceData()!, choices: char.race_choices ?? {} } : null,
-      feats: featSelections.map(selection => ({ feat: selection.feat, choices: selection.choices })),
-      items: equippedItems(char.equipment, this.itemsAll()).filter(item => attunementActive(item, char.equipment)),
+      feats: featSelections.map((selection) => ({
+        feat: selection.feat,
+        choices: selection.choices,
+      })),
+      items: equippedItems(char.equipment, this.itemsAll()).filter((item) =>
+        attunementActive(item, char.equipment),
+      ),
     });
   });
 
@@ -411,27 +549,65 @@ export class CharacterPlaySheetComponent {
   // class features split by their action economy — Bonus Actions, Special ("free" activation
   // — resources like Action Surge that don't cost any action-economy slot at all), Reactions,
   // then plain Actions (activation 'action') alongside the static reference lists below.
-  actionResourceActions   = computed(() => this.actions().filter(a => a.activation === 'action'));
-  reactionResourceActions = computed(() => this.actions().filter(a => a.activation === 'reaction'));
-  bonusActions         = computed(() => this.actions().filter(a => a.activation === 'bonus_action'));
-  specialActions       = computed(() => this.actions().filter(a => a.activation === 'free'));
+  actionResourceActions = computed(() => this.actions().filter((a) => a.activation === 'action'));
+  reactionResourceActions = computed(() =>
+    this.actions().filter((a) => a.activation === 'reaction'),
+  );
+  bonusActions = computed(() => this.actions().filter((a) => a.activation === 'bonus_action'));
+  specialActions = computed(() => this.actions().filter((a) => a.activation === 'free'));
 
   // The standard PHB actions every character can always take — not class-specific data, so a
   // fixed reference list rather than something resolved from grants.
   readonly universalActions: DisplayFeature[] = [
     { source: 'Action', name: 'Dash', detail: 'Gain extra movement equal to your Speed.' },
-    { source: 'Action', name: 'Disengage', detail: "Your movement doesn't provoke opportunity attacks for the rest of the turn." },
-    { source: 'Action', name: 'Dodge', detail: 'Until your next turn, attack rolls against you have disadvantage (if you can see the attacker), and you make Dexterity saves with advantage.' },
-    { source: 'Action', name: 'Help', detail: "Give an ally advantage on their next ability check for a task, or on their next attack against a creature within 5 ft. of you." },
-    { source: 'Action', name: 'Hide', detail: 'Make a Dexterity (Stealth) check to become hidden.' },
-    { source: 'Action', name: 'Ready', detail: 'Choose a trigger and an action or movement to take in response to it, using your reaction when it occurs.' },
-    { source: 'Action', name: 'Search', detail: 'Make a Wisdom (Perception) or Intelligence (Investigation) check to find something.' },
-    { source: 'Action', name: 'Use an Object', detail: 'Interact with a second object, or use an object that requires your action.' },
+    {
+      source: 'Action',
+      name: 'Disengage',
+      detail: "Your movement doesn't provoke opportunity attacks for the rest of the turn.",
+    },
+    {
+      source: 'Action',
+      name: 'Dodge',
+      detail:
+        'Until your next turn, attack rolls against you have disadvantage (if you can see the attacker), and you make Dexterity saves with advantage.',
+    },
+    {
+      source: 'Action',
+      name: 'Help',
+      detail:
+        'Give an ally advantage on their next ability check for a task, or on their next attack against a creature within 5 ft. of you.',
+    },
+    {
+      source: 'Action',
+      name: 'Hide',
+      detail: 'Make a Dexterity (Stealth) check to become hidden.',
+    },
+    {
+      source: 'Action',
+      name: 'Ready',
+      detail:
+        'Choose a trigger and an action or movement to take in response to it, using your reaction when it occurs.',
+    },
+    {
+      source: 'Action',
+      name: 'Search',
+      detail: 'Make a Wisdom (Perception) or Intelligence (Investigation) check to find something.',
+    },
+    {
+      source: 'Action',
+      name: 'Use an Object',
+      detail: 'Interact with a second object, or use an object that requires your action.',
+    },
   ];
 
   // The standard PHB reaction every character can always take.
   readonly universalReactions: DisplayFeature[] = [
-    { source: 'Reaction', name: 'Opportunity Attack', detail: 'When a hostile creature you can see moves out of your reach, you can use your reaction to make one melee attack against it.' },
+    {
+      source: 'Reaction',
+      name: 'Opportunity Attack',
+      detail:
+        'When a hostile creature you can see moves out of your reach, you can use your reaction to make one melee attack against it.',
+    },
   ];
 
   // Weapons the character has actually chosen mastery for (across every weapon_mastery grant on
@@ -442,15 +618,19 @@ export class CharacterPlaySheetComponent {
     const names = new Set<string>();
     for (const rc of this.resolvedClasses()) {
       const levels = [...rc.data.levels, ...(rc.subclass?.levels ?? [])];
-      for (const grant of levels.flatMap(l => l.grants ?? [])) {
+      for (const grant of levels.flatMap((l) => l.grants ?? [])) {
         if (grant.type !== 'weapon_mastery') continue;
         for (const name of rc.choices[grant.key] ?? []) names.add(name);
       }
     }
     return [...names]
-      .map(name => items.find(it => it.name === name && it.mastery))
+      .map((name) => items.find((it) => it.name === name && it.mastery))
       .filter((it): it is DndItem => !!it)
-      .map(it => ({ source: 'Weapon Mastery', name: `${it.name} — ${it.mastery!.property}`, detail: it.mastery!.description }));
+      .map((it) => ({
+        source: 'Weapon Mastery',
+        name: `${it.name} — ${it.mastery!.property}`,
+        detail: it.mastery!.description,
+      }));
   });
 
   // Choice grants flagged `display: 'special_action'` (e.g. Battle Master maneuvers) — each
@@ -463,10 +643,10 @@ export class CharacterPlaySheetComponent {
     for (const rc of this.resolvedClasses()) {
       const source = rc.subclassName ? `${rc.name} (${rc.subclassName})` : rc.name;
       const levels = [...rc.data.levels, ...(rc.subclass?.levels ?? [])];
-      for (const grant of levels.flatMap(l => l.grants ?? [])) {
+      for (const grant of levels.flatMap((l) => l.grants ?? [])) {
         if (grant.type !== 'choice' || grant.display !== 'special_action') continue;
         for (const name of rc.choices[grant.key] ?? []) {
-          const option = grant.options.find(o => o.name === name);
+          const option = grant.options.find((o) => o.name === name);
           if (option) out.push({ source, name: option.name, detail: option.description });
         }
       }
@@ -481,7 +661,7 @@ export class CharacterPlaySheetComponent {
     // Equipped items float to the top; order within each group is otherwise preserved
     // (Array.prototype.sort is stable).
     return char.equipment
-      .map(e => ({ entry: e, item: items.find(it => it.index === e.itemIndex) ?? null }))
+      .map((e) => ({ entry: e, item: items.find((it) => it.index === e.itemIndex) ?? null }))
       .sort((a, b) => Number(b.entry.equipped) - Number(a.entry.equipped));
   });
 
@@ -489,39 +669,70 @@ export class CharacterPlaySheetComponent {
     const query = this.inventorySearch().trim().toLowerCase();
     const rows = this.inventoryItems();
     if (!query) return rows;
-    return rows.filter(row => (row.item ? itemDisplayName(row.item) : row.entry.name).toLowerCase().includes(query));
+    return rows.filter((row) =>
+      (row.item ? itemDisplayName(row.item) : row.entry.name).toLowerCase().includes(query),
+    );
   });
 
-  attunedCount = computed(() => this.localChar()?.attuned_items?.length ?? this.localChar()?.equipment.filter(e => e.attuned).length ?? 0);
+  attunedCount = computed(
+    () =>
+      this.localChar()?.attuned_items?.length ??
+      this.localChar()?.equipment.filter((e) => e.attuned).length ??
+      0,
+  );
   showLongRestDialog = signal(false);
-  inventorySaved(char: Character) { this.localChar.set(char); this.saved.emit(char); }
-  attunementSlotLimit = computed(() => this.stats()?.attunement_slot_limit ?? ATTUNEMENT_SLOT_LIMIT);
+  inventorySaved(char: Character) {
+    this.localChar.set(char);
+    this.saved.emit(char);
+  }
+  attunementSlotLimit = computed(
+    () => this.stats()?.attunement_slot_limit ?? ATTUNEMENT_SLOT_LIMIT,
+  );
 
-  pactWeaponOptions = computed(() => this.itemsAll()
-    .filter(item => item.type === 'weapon'
-      && item.category.includes('Melee')
-      && (item.category.startsWith('Simple') || item.category.startsWith('Martial')))
-    .sort((a, b) => a.name.localeCompare(b.name)));
+  pactWeaponOptions = computed(() =>
+    this.itemsAll()
+      .filter(
+        (item) =>
+          item.type === 'weapon' &&
+          item.category.includes('Melee') &&
+          (item.category.startsWith('Simple') || item.category.startsWith('Martial')),
+      )
+      .sort((a, b) => a.name.localeCompare(b.name)),
+  );
 
   replicationLimit = computed(() => {
-    const artificer = this.resolvedClasses().find(resolved => resolved.data.index === 'artificer');
-    const level = artificer?.data.levels.find(entry => entry.level === artificer.level);
+    const artificer = this.resolvedClasses().find(
+      (resolved) => resolved.data.index === 'artificer',
+    );
+    const level = artificer?.data.levels.find((entry) => entry.level === artificer.level);
     return Number(level?.class_specific?.['replicated_items'] ?? 0);
   });
 
   // A character in a campaign is managed by its DM; one outside any campaign has no DM, so its
   // owner adds and removes items themselves.
-  ownsPersonalCharacter = computed(() => !this.isDm() && !this.preview() && !this.localChar()?.campaign_id);
+  ownsPersonalCharacter = computed(
+    () => !this.isDm() && !this.preview() && !this.localChar()?.campaign_id,
+  );
   canManageInventory = computed(() => this.isDm() || this.ownsPersonalCharacter());
 
   grantItemCategories = computed(() =>
-    [...new Set(this.itemsAll().map(item => item.category).filter(Boolean))].sort());
+    [
+      ...new Set(
+        this.itemsAll()
+          .map((item) => item.category)
+          .filter(Boolean),
+      ),
+    ].sort(),
+  );
 
   grantItemMatches = computed(() => {
     const query = this.grantItemSearch().trim().toLowerCase();
     const category = this.grantItemCategory();
-    return this.itemsAll().filter(item =>
-      (!category || item.category === category) && (!query || item.name.toLowerCase().includes(query)));
+    return this.itemsAll().filter(
+      (item) =>
+        (!category || item.category === category) &&
+        (!query || item.name.toLowerCase().includes(query)),
+    );
   });
   grantItemResults = computed(() => this.grantItemMatches().slice(0, 100));
 
@@ -529,10 +740,10 @@ export class CharacterPlaySheetComponent {
   // earlier grant — spellRows() already folds granted spells in alongside every other origin.
   grantSpellResults = computed(() => {
     const query = this.grantSpellSearch().trim().toLowerCase();
-    const known = new Set(this.spellRows().map(row => row.spell.index));
-    const spells = this.spellsAll().filter(spell => !known.has(spell.index));
+    const known = new Set(this.spellRows().map((row) => row.spell.index));
+    const spells = this.spellsAll().filter((spell) => !known.has(spell.index));
     if (!query) return spells;
-    return spells.filter(spell => spell.name.toLowerCase().includes(query));
+    return spells.filter((spell) => spell.name.toLowerCase().includes(query));
   });
 
   spellResolution = computed(() => {
@@ -540,10 +751,16 @@ export class CharacterPlaySheetComponent {
     if (!char) return null;
     const race = this.raceData();
     const background = this.bgData();
-    const subrace = race && char.subrace ? race.subraces.find(candidate => candidate.name === char.subrace) ?? null : null;
+    const subrace =
+      race && char.subrace
+        ? (race.subraces.find((candidate) => candidate.name === char.subrace) ?? null)
+        : null;
     const featSelections = resolveCharacterFeatPicks(
-      this.resolvedClasses().map(rc => ({
-        data: rc.data, choices: rc.choices, level: rc.level, subclass: rc.subclassName,
+      this.resolvedClasses().map((rc) => ({
+        data: rc.data,
+        choices: rc.choices,
+        level: rc.level,
+        subclass: rc.subclassName,
       })),
       this.featsAll(),
       race ? { data: race, choices: char.race_choices ?? {}, subrace: char.subrace } : null,
@@ -565,7 +782,7 @@ export class CharacterPlaySheetComponent {
       abilityScores: char.ability_scores,
       spells: this.spellsAll(),
       spellLists: this.spellLists(),
-      classes: this.resolvedClasses().map(rc => ({
+      classes: this.resolvedClasses().map((rc) => ({
         cls: rc.data,
         level: rc.level,
         subclass: rc.subclassName,
@@ -575,14 +792,17 @@ export class CharacterPlaySheetComponent {
       background: background ? { background, choices: char.background_choices ?? {} } : null,
       feats: featSelections,
       spellChoices: char.spell_choices ?? {},
-      grantedSpells: (char.granted_spells ?? []).map(g => ({ spellIndex: g.spellIndex, sourceName: g.sourceName })),
+      grantedSpells: (char.granted_spells ?? []).map((g) => ({
+        spellIndex: g.spellIndex,
+        sourceName: g.sourceName,
+      })),
     });
   });
 
   spellRows = computed<DisplaySpell[]>(() => {
     const resolution = this.spellResolution();
     if (!resolution) return [];
-    const spellByIndex = new Map(this.spellsAll().map(spell => [spell.index, spell]));
+    const spellByIndex = new Map(this.spellsAll().map((spell) => [spell.index, spell]));
     const rows = new Map<string, DisplaySpell>();
     const priority = { known: 0, spellbook: 1, prepared: 2, always_prepared: 3 } as const;
     for (const origin of [
@@ -605,12 +825,14 @@ export class CharacterPlaySheetComponent {
         }
       }
     }
-    return [...rows.values()].sort((a, b) =>
-      a.spell.level - b.spell.level
-      || a.spell.name.localeCompare(b.spell.name));
+    return [...rows.values()].sort(
+      (a, b) => a.spell.level - b.spell.level || a.spell.name.localeCompare(b.spell.name),
+    );
   });
 
-  castableSpells = computed(() => this.spellRows().filter(row => row.origins.some(origin => origin.category !== 'spellbook')));
+  castableSpells = computed(() =>
+    this.spellRows().filter((row) => row.origins.some((origin) => origin.category !== 'spellbook')),
+  );
 
   // Obsidian Fantasy Statblocks export — formats what the sheet has already resolved (stats,
   // features, tracked actions, castable spells) rather than re-deriving anything.
@@ -620,23 +842,31 @@ export class CharacterPlaySheetComponent {
     const rows = this.castableSpells();
     const slotsByLevel: Record<string, number> = {};
     for (const pool of this.spellResolution()?.slotPools ?? []) {
-      for (const [level, count] of Object.entries(pool.slots)) slotsByLevel[level] = (slotsByLevel[level] ?? 0) + count;
+      for (const [level, count] of Object.entries(pool.slots))
+        slotsByLevel[level] = (slotsByLevel[level] ?? 0) + count;
     }
     const ordinal = (n: number) => `${n}${n === 1 ? 'st' : n === 2 ? 'nd' : n === 3 ? 'rd' : 'th'}`;
     const groups: StatblockSpellGroup[] = [];
-    for (const level of [...new Set(rows.map(row => row.spell.level))]) {
+    for (const level of [...new Set(rows.map((row) => row.spell.level))]) {
       const slots = slotsByLevel[String(level)];
       groups.push({
-        label: level === 0 ? 'Cantrips (at will)' : `${ordinal(level)} level${slots ? ` (${slots} slot${slots === 1 ? '' : 's'})` : ''}`,
-        spells: rows.filter(row => row.spell.level === level).map(row => row.spell.name.toLowerCase()),
+        label:
+          level === 0
+            ? 'Cantrips (at will)'
+            : `${ordinal(level)} level${slots ? ` (${slots} slot${slots === 1 ? '' : 's'})` : ''}`,
+        spells: rows
+          .filter((row) => row.spell.level === level)
+          .map((row) => row.spell.name.toLowerCase()),
       });
     }
-    const castingAbility = rows.map(row => row.origin.castingAbility).find(Boolean);
+    const castingAbility = rows.map((row) => row.origin.castingAbility).find(Boolean);
     return characterStatblock({
       character: char,
       stats,
       size: this.raceData()?.size,
-      hitDice: this.resolvedClasses().map(rc => `${rc.level}d${rc.data.hit_die}`).join(' + '),
+      hitDice: this.resolvedClasses()
+        .map((rc) => `${rc.level}d${rc.data.hit_die}`)
+        .join(' + '),
       darkvisionFt: this.stats()?.darkvision_ft,
       features: this.resolvedFeatures(),
       actions: this.actions(),
@@ -650,53 +880,81 @@ export class CharacterPlaySheetComponent {
     for (const row of this.castableSpells()) {
       if (!predicate(row.spell) || this.castingTimeKind(row.spell) === 'bonus_action') continue;
       const seen = new Set<string>();
-      for (const origin of row.origins.filter(candidate => candidate.category !== 'spellbook')) {
+      for (const origin of row.origins.filter((candidate) => candidate.category !== 'spellbook')) {
         if (seen.has(origin.sourceKey)) continue;
         seen.add(origin.sourceKey);
         rolls.push({ spell: row.spell, origin });
       }
     }
-    return rolls.sort((a, b) => a.spell.name.localeCompare(b.spell.name) || a.origin.sourceName.localeCompare(b.origin.sourceName));
+    return rolls.sort(
+      (a, b) =>
+        a.spell.name.localeCompare(b.spell.name) ||
+        a.origin.sourceName.localeCompare(b.origin.sourceName),
+    );
   }
   // Attack-roll spells and no-save spells with rolled damage. Save-only spells remain in Spells.
   spellAttacks = computed<DisplaySpellRoll[]>(() => this.spellRollsMatching(isSpellAttackAction));
-  bonusActionSpells = computed(() => this.castableSpells()
-    .filter(row => this.castingTimeKind(row.spell) === 'bonus_action'));
-  reactionSpells = computed(() => this.castableSpells()
-    .filter(row => this.castingTimeKind(row.spell) === 'reaction'));
-  hasPactBlade = computed(() => this.resolvedClasses().some(rc =>
-    rc.data.index === 'warlock'
-    && Object.values(rc.choices).some(selected => selected.includes('Pact of the Blade'))));
+  bonusActionSpells = computed(() =>
+    this.castableSpells().filter((row) => this.castingTimeKind(row.spell) === 'bonus_action'),
+  );
+  reactionSpells = computed(() =>
+    this.castableSpells().filter((row) => this.castingTimeKind(row.spell) === 'reaction'),
+  );
+  hasPactBlade = computed(() =>
+    this.resolvedClasses().some(
+      (rc) =>
+        rc.data.index === 'warlock' &&
+        Object.values(rc.choices).some((selected) => selected.includes('Pact of the Blade')),
+    ),
+  );
   bonusActionFeatures = computed<DisplayFeature[]>(() => {
     const out: DisplayFeature[] = [];
     if (this.hasPactBlade()) {
       out.push(
-        { source: 'Warlock', name: 'Pact of the Blade: Conjure', detail: 'Conjure a Simple or Martial melee weapon in your hand and bond with it.' },
-        { source: 'Warlock', name: 'Pact of the Blade: Bond', detail: 'Touch a magic weapon and form your pact bond with it.' },
+        {
+          source: 'Warlock',
+          name: 'Pact of the Blade: Conjure',
+          detail: 'Conjure a Simple or Martial melee weapon in your hand and bond with it.',
+        },
+        {
+          source: 'Warlock',
+          name: 'Pact of the Blade: Bond',
+          detail: 'Touch a magic weapon and form your pact bond with it.',
+        },
       );
     }
     return out;
   });
 
-  spellSchools = computed(() => [...new Set(this.spellRows().map(row => row.spell.school))].sort());
-  spellSources = computed(() => [...new Set(this.spellRows().flatMap(row => row.origins.map(origin => origin.sourceName)))].sort());
+  spellSchools = computed(() =>
+    [...new Set(this.spellRows().map((row) => row.spell.school))].sort(),
+  );
+  spellSources = computed(() =>
+    [
+      ...new Set(this.spellRows().flatMap((row) => row.origins.map((origin) => origin.sourceName))),
+    ].sort(),
+  );
   filteredSpellRows = computed(() => {
     const filters = this.spellFilters();
     const search = filters.search.trim().toLowerCase();
-    return this.spellRows().filter(row => {
-      if (search && !`${row.spell.name} ${row.spell.description}`.toLowerCase().includes(search)) return false;
+    return this.spellRows().filter((row) => {
+      if (search && !`${row.spell.name} ${row.spell.description}`.toLowerCase().includes(search))
+        return false;
       if (filters.level && String(row.spell.level) !== filters.level) return false;
       if (filters.school && row.spell.school !== filters.school) return false;
-      if (filters.source && !row.origins.some(origin => origin.sourceName === filters.source)) return false;
-      if (filters.castingTime && this.castingTimeKind(row.spell) !== filters.castingTime) return false;
+      if (filters.source && !row.origins.some((origin) => origin.sourceName === filters.source))
+        return false;
+      if (filters.castingTime && this.castingTimeKind(row.spell) !== filters.castingTime)
+        return false;
       if (filters.ritual && !row.spell.ritual) return false;
       if (filters.concentration && !row.spell.concentration) return false;
-      if (filters.prepared && !row.origins.some(origin => origin.category === filters.prepared)) return false;
+      if (filters.prepared && !row.origins.some((origin) => origin.category === filters.prepared))
+        return false;
       return true;
     });
   });
-  cantripRows = computed(() => this.filteredSpellRows().filter(row => row.spell.level === 0));
-  leveledSpellRows = computed(() => this.filteredSpellRows().filter(row => row.spell.level > 0));
+  cantripRows = computed(() => this.filteredSpellRows().filter((row) => row.spell.level === 0));
+  leveledSpellRows = computed(() => this.filteredSpellRows().filter((row) => row.spell.level > 0));
 
   resolvedFeatures = computed<DisplayFeature[]>(() => {
     const char = this.localChar();
@@ -709,11 +967,12 @@ export class CharacterPlaySheetComponent {
       // A `feature` grant's `level` gates it the same way a class level does below — a
       // level-5 race trait (e.g. Goliath's Large Form) shouldn't preview on the sheet any
       // earlier than a level-5 class feature would.
-      const reachable = (grant: TraitGrant) => grant.type !== 'feature' || (grant.level ?? 1) <= char.level;
+      const reachable = (grant: TraitGrant) =>
+        grant.type !== 'feature' || (grant.level ?? 1) <= char.level;
       for (const grant of this.grantsOrLegacy(race.grants, race.traits).filter(reachable)) {
         out.push(...this.describeGrant(grant, raceChoices, race.name));
       }
-      const sub = char.subrace ? race.subraces.find(s => s.name === char.subrace) : null;
+      const sub = char.subrace ? race.subraces.find((s) => s.name === char.subrace) : null;
       if (sub) {
         for (const grant of this.grantsOrLegacy(sub.grants, sub.traits).filter(reachable)) {
           out.push(...this.describeGrant(grant, raceChoices, sub.name));
@@ -727,7 +986,8 @@ export class CharacterPlaySheetComponent {
       for (const lvl of levels) {
         if (lvl.level > rc.level) continue;
         if (lvl.grants?.length) {
-          for (const grant of lvl.grants) out.push(...this.describeGrant(grant, rc.choices, source));
+          for (const grant of lvl.grants)
+            out.push(...this.describeGrant(grant, rc.choices, source));
         } else {
           for (const f of lvl.features) out.push({ source, name: f });
         }
@@ -738,7 +998,9 @@ export class CharacterPlaySheetComponent {
   });
 
   private describeChoicePicks(
-    grant: Extract<TraitGrant, { type: 'choice' }>, choices: Record<string, string[]>, source: string,
+    grant: Extract<TraitGrant, { type: 'choice' }>,
+    choices: Record<string, string[]>,
+    source: string,
   ): DisplayFeature[] {
     const picked = choices[grant.key] ?? [];
     if (!picked.length) return [];
@@ -746,10 +1008,16 @@ export class CharacterPlaySheetComponent {
   }
 
   private grantsOrLegacy(grants: TraitGrant[] | undefined, traits: string[]): TraitGrant[] {
-    return grants?.length ? grants : traits.map(name => ({ type: 'feature', name }) as TraitGrant);
+    return grants?.length
+      ? grants
+      : traits.map((name) => ({ type: 'feature', name }) as TraitGrant);
   }
 
-  private describeGrant(grant: TraitGrant, choices: Record<string, string[]>, source: string): DisplayFeature[] {
+  private describeGrant(
+    grant: TraitGrant,
+    choices: Record<string, string[]>,
+    source: string,
+  ): DisplayFeature[] {
     switch (grant.type) {
       case 'feature':
         return [{ source, name: grant.name, detail: grant.description }];
@@ -765,7 +1033,7 @@ export class CharacterPlaySheetComponent {
       case 'ability_choice': {
         const featIndex = grant.allowFeat ? choices[`${grant.key}:feat`]?.[0] : undefined;
         if (featIndex) {
-          const feat = this.featsAll().find(f => f.index === featIndex);
+          const feat = this.featsAll().find((f) => f.index === featIndex);
           return feat ? [{ source, name: feat.name, detail: feat.description }] : [];
         }
         const picked = choices[grant.key] ?? [];
@@ -779,9 +1047,9 @@ export class CharacterPlaySheetComponent {
       }
       case 'feat_pick': {
         return (choices[grant.key] ?? [])
-          .map(index => this.featsAll().find(feat => feat.index === index))
+          .map((index) => this.featsAll().find((feat) => feat.index === index))
           .filter((feat): feat is DndFeat => !!feat)
-          .map(feat => ({ source, name: feat.name, detail: feat.description }));
+          .map((feat) => ({ source, name: feat.name, detail: feat.description }));
       }
       default:
         return [];
@@ -802,11 +1070,13 @@ export class CharacterPlaySheetComponent {
   private loadSeq = 0;
 
   constructor() {
-    effect(cleanup => {
+    effect((cleanup) => {
       const id = this.character().id;
       this.savedCompanionCount.set(0);
       if (!id) return;
-      const sub = this.companionService.watch(id).subscribe(data => this.savedCompanionCount.set(data.companions.length));
+      const sub = this.companionService
+        .watch(id)
+        .subscribe((data) => this.savedCompanionCount.set(data.companions.length));
       cleanup(() => sub.unsubscribe());
     });
     effect(() => {
@@ -829,7 +1099,11 @@ export class CharacterPlaySheetComponent {
       }
     });
 
-    inject(ElementRef<HTMLElement>).nativeElement.addEventListener('click', this.onPreviewClick, true);
+    inject(ElementRef<HTMLElement>).nativeElement.addEventListener(
+      'click',
+      this.onPreviewClick,
+      true,
+    );
   }
 
   // Capture-phase listener on the host, so it runs before any (click) handler inside the sheet.
@@ -847,18 +1121,32 @@ export class CharacterPlaySheetComponent {
 
     const classEntries = char.classes?.length
       ? char.classes
-      : (char.class ? [{ name: char.class, level: char.level, subclass: char.subclass, choices: {} as Record<string, string[]> }] : []);
+      : char.class
+        ? [
+            {
+              name: char.class,
+              level: char.level,
+              subclass: char.subclass,
+              choices: {} as Record<string, string[]>,
+            },
+          ]
+        : [];
 
     const campaignId = char.campaign_id ?? undefined;
     // A campaign exposes the campaign DM's custom library. A standalone character has no
     // campaign through which to resolve that library, so include the current user's own items.
     const itemsPromise = campaignId
       ? this.content.getItems(campaignId)
-      : Promise.all([this.content.getItems(), this.itemService.getMine()])
-          .then(([official, custom]) => [...official, ...custom]);
+      : Promise.all([this.content.getItems(), this.itemService.getMine()]).then(
+          ([official, custom]) => [...official, ...custom],
+        );
     const [race, bg, items, spells, spellLists, feats, monsters, sources] = await Promise.all([
-      char.race ? this.content.getRace(toIndex(char.race)).catch(() => null) : Promise.resolve(null),
-      char.background ? this.content.getBackground(toIndex(char.background)).catch(() => null) : Promise.resolve(null),
+      char.race
+        ? this.content.getRace(toIndex(char.race)).catch(() => null)
+        : Promise.resolve(null),
+      char.background
+        ? this.content.getBackground(toIndex(char.background)).catch(() => null)
+        : Promise.resolve(null),
       itemsPromise,
       this.content.getSpells(campaignId),
       this.content.getSpellLists(),
@@ -867,12 +1155,17 @@ export class CharacterPlaySheetComponent {
       this.content.getSources(),
     ]);
 
-    const classDataList = await Promise.all(classEntries.map(c => this.content.getClass(toIndex(c.name)).catch(() => null)));
+    const classDataList = await Promise.all(
+      classEntries.map((c) => this.content.getClass(toIndex(c.name)).catch(() => null)),
+    );
     if (seq !== this.loadSeq) return;
 
-    const enabledSources = new Set(char.enabled_sources ?? sources
-      .filter(source => source.player_options && (source.default_enabled || source.locked))
-      .map(source => source.code));
+    const enabledSources = new Set(
+      char.enabled_sources ??
+        sources
+          .filter((source) => source.player_options && (source.default_enabled || source.locked))
+          .map((source) => source.code),
+    );
     const include = <T extends { source?: { code: string } }>(entry: T) =>
       characterContentEnabled(entry, enabledSources, sources);
 
@@ -881,9 +1174,16 @@ export class CharacterPlaySheetComponent {
         const data = classDataList[i];
         if (!data) return null;
         const subclass = c.subclass
-          ? data.subclasses.find(s => s.name === c.subclass && include(s)) ?? null
+          ? (data.subclasses.find((s) => s.name === c.subclass && include(s)) ?? null)
           : null;
-        return { name: c.name, data, level: c.level, subclassName: c.subclass ?? '', subclass, choices: c.choices ?? {} };
+        return {
+          name: c.name,
+          data,
+          level: c.level,
+          subclassName: c.subclass ?? '',
+          subclass,
+          choices: c.choices ?? {},
+        };
       })
       .filter((c): c is ResolvedClass => c !== null);
 
@@ -896,7 +1196,9 @@ export class CharacterPlaySheetComponent {
     this.spellLists.set(spellLists);
     this.featsAll.set(feats.filter(include));
     this.resolvedClasses.set(resolved);
-    this.pactWeaponSelection.set(char.pact_weapon?.itemIndex ?? this.pactWeaponOptions()[0]?.index ?? '');
+    this.pactWeaponSelection.set(
+      char.pact_weapon?.itemIndex ?? this.pactWeaponOptions()[0]?.index ?? '',
+    );
     this.loading.set(false);
   }
 
@@ -906,9 +1208,20 @@ export class CharacterPlaySheetComponent {
   // sync with the same live formula the sheet itself displays (`stats().computed_ac`) every time
   // something is persisted, not just on equip toggles — cheap, and never wrong.
   private computeArmorClass(char: Character): number {
-    const classesForFeats = this.resolvedClasses().map(rc => ({ data: rc.data, choices: rc.choices, level: rc.level, subclass: rc.subclassName }));
+    const classesForFeats = this.resolvedClasses().map((rc) => ({
+      data: rc.data,
+      choices: rc.choices,
+      level: rc.level,
+      subclass: rc.subclassName,
+    }));
     return this.statsService.compute(
-      char, this.primaryClass(), this.raceData(), this.featsAll(), classesForFeats, this.itemsAll(), this.bgData(),
+      char,
+      this.primaryClass(),
+      this.raceData(),
+      this.featsAll(),
+      classesForFeats,
+      this.itemsAll(),
+      this.bgData(),
     ).computed_ac;
   }
 
@@ -949,8 +1262,9 @@ export class CharacterPlaySheetComponent {
 
   spellDamageFormula(spell: DndSpell, origin: ResolvedSpellOrigin): string | null {
     const char = this.localChar();
-    const abilityDamage = /(?:plus|add) your spellcasting ability modifier/i.test(spell.description)
-      || spell.index === 'eldritch-blast' && this.hasClassChoice('Warlock', 'Agonizing Blast');
+    const abilityDamage =
+      /(?:plus|add) your spellcasting ability modifier/i.test(spell.description) ||
+      (spell.index === 'eldritch-blast' && this.hasClassChoice('Warlock', 'Agonizing Blast'));
     let modifier = 0;
     if (abilityDamage && char && origin.castingAbility) {
       modifier = abilityModifier(char.ability_scores[origin.castingAbility]);
@@ -963,8 +1277,11 @@ export class CharacterPlaySheetComponent {
   }
 
   private hasClassChoice(className: string, choice: string): boolean {
-    return this.resolvedClasses().some(rc =>
-      rc.name === className && Object.values(rc.choices).some(selected => selected.includes(choice)));
+    return this.resolvedClasses().some(
+      (rc) =>
+        rc.name === className &&
+        Object.values(rc.choices).some((selected) => selected.includes(choice)),
+    );
   }
 
   hpPercent(char: Character): number {
@@ -1001,85 +1318,121 @@ export class CharacterPlaySheetComponent {
     const char = this.localChar();
     if (!char) return;
     if (action.itemInstanceId) {
-      const item = char.equipment.find(e => e.instanceId === action.itemInstanceId)?.resolvedItem;
+      const item = char.equipment.find((e) => e.instanceId === action.itemInstanceId)?.resolvedItem;
       const replaceConcentration = !!item?.spell?.concentration && !!char.active_concentration;
-      if (replaceConcentration && !await this.confirm.confirm('End your current Concentration to use this item?', 'Replace Concentration')) return;
-      try { this.inventorySaved(await this.characterService.inventoryOperation(char.id!, action.itemInstanceId, { action: 'use', replaceConcentration })); }
-      catch (e) { this.castError.set((e as {error?: {message?: string}}).error?.message ?? 'Could not use item.'); }
+      if (
+        replaceConcentration &&
+        !(await this.confirm.confirm(
+          'End your current Concentration to use this item?',
+          'Replace Concentration',
+        ))
+      )
+        return;
+      try {
+        this.inventorySaved(
+          await this.characterService.inventoryOperation(char.id!, action.itemInstanceId, {
+            action: 'use',
+            replaceConcentration,
+          }),
+        );
+      } catch (e) {
+        this.castError.set(getErrorMessage(e, 'Could not use item.'));
+      }
       return;
     }
-    this.persist({ ...char, resource_uses: this.actionsService.use(char.resource_uses ?? {}, action) });
+    this.persist({
+      ...char,
+      resource_uses: this.actionsService.use(char.resource_uses ?? {}, action),
+    });
   }
 
   restoreAction(action: CharacterAction) {
     const char = this.localChar();
     if (!char) return;
-    if (action.itemInstanceId) { this.castNotice.set('Recover item charges from Equipment after the listed recharge event.'); return; }
-    this.persist({ ...char, resource_uses: this.actionsService.restore(char.resource_uses ?? {}, action) });
+    if (action.itemInstanceId) {
+      this.castNotice.set('Recover item charges from Equipment after the listed recharge event.');
+      return;
+    }
+    this.persist({
+      ...char,
+      resource_uses: this.actionsService.restore(char.resource_uses ?? {}, action),
+    });
   }
 
   async rest(type: 'short_rest' | 'long_rest') {
     const char = this.localChar();
     if (!char?.id || this.persisting()) return;
-      if (type === 'short_rest') {
-        this.shortRestHitDice.set(0);
-        this.shortRestHealed.set(0);
-        this.shortRestError.set('');
-        this.showShortRestDialog.set(true);
-        return;
-      }
-
-      this.showLongRestDialog.set(true);
-
-  }
-
-    openShortRestDialog() {
-      const char = this.localChar();
-      if (!char) return;
+    if (type === 'short_rest') {
       this.shortRestHitDice.set(0);
       this.shortRestHealed.set(0);
       this.shortRestError.set('');
       this.showShortRestDialog.set(true);
+      return;
     }
 
-    closeShortRestDialog() {
+    this.showLongRestDialog.set(true);
+  }
+
+  openShortRestDialog() {
+    const char = this.localChar();
+    if (!char) return;
+    this.shortRestHitDice.set(0);
+    this.shortRestHealed.set(0);
+    this.shortRestError.set('');
+    this.showShortRestDialog.set(true);
+  }
+
+  closeShortRestDialog() {
+    this.showShortRestDialog.set(false);
+    this.shortRestError.set('');
+  }
+
+  async confirmShortRest() {
+    const char = this.localChar();
+    if (!char?.id || this.persisting()) return;
+    const hitDiceUsed = Math.max(0, Math.floor(this.shortRestHitDice()));
+    const healed = Math.max(0, Math.floor(this.shortRestHealed()));
+    const available = Math.max(0, (char.level ?? 0) - (char.hit_dice_used ?? 0));
+    if (hitDiceUsed > available) {
+      this.shortRestError.set(`You only have ${available} hit dice available.`);
+      return;
+    }
+    this.persisting.set(true);
+    this.shortRestBusy.set(true);
+    try {
+      await this.characterService.saveCharacter({
+        ...char,
+        resource_uses: this.actionsService.rest(
+          char.resource_uses ?? {},
+          this.actions(),
+          'short_rest',
+        ),
+      });
+      await this.characterService.restoreSpellcasting(char.id, 'short_rest');
+      const healedResult = await this.characterService.restoreHitPoints(
+        char.id,
+        'short_rest',
+        hitDiceUsed,
+        healed,
+      );
+      this.localChar.set(healedResult);
+      this.saved.emit(this.localChar()!);
+      this.castNotice.set('Short Rest complete. Pact Magic and short-rest free casts restored.');
       this.showShortRestDialog.set(false);
-      this.shortRestError.set('');
+    } catch (err) {
+      this.shortRestError.set(`Could not complete short rest. ${err}`);
+    } finally {
+      this.persisting.set(false);
+      this.shortRestBusy.set(false);
     }
-
-    async confirmShortRest() {
-      const char = this.localChar();
-      if (!char?.id || this.persisting()) return;
-      const hitDiceUsed = Math.max(0, Math.floor(this.shortRestHitDice()));
-      const healed = Math.max(0, Math.floor(this.shortRestHealed()));
-      const available = Math.max(0, (char.level ?? 0) - (char.hit_dice_used ?? 0));
-      if (hitDiceUsed > available) {
-        this.shortRestError.set(`You only have ${available} hit dice available.`);
-        return;
-      }
-      this.persisting.set(true);
-      this.shortRestBusy.set(true);
-      try {
-        await this.characterService.saveCharacter({
-          ...char,
-          resource_uses: this.actionsService.rest(char.resource_uses ?? {}, this.actions(), 'short_rest'),
-        });
-        await this.characterService.restoreSpellcasting(char.id, 'short_rest');
-        const healedResult = await this.characterService.restoreHitPoints(char.id, 'short_rest', hitDiceUsed, healed);
-        this.localChar.set(healedResult);
-        this.saved.emit(this.localChar()!);
-        this.castNotice.set('Short Rest complete. Pact Magic and short-rest free casts restored.');
-        this.showShortRestDialog.set(false);
-      } catch (err) {
-        this.shortRestError.set(`Could not complete short rest. ${err}`);
-      } finally {
-        this.persisting.set(false);
-        this.shortRestBusy.set(false);
-      }
-    }
+  }
 
   // Inventory
-  async updatePactWeapon(action: 'conjure' | 'bond' | 'dismiss', itemIndex?: string, instanceId?: string) {
+  async updatePactWeapon(
+    action: 'conjure' | 'bond' | 'dismiss',
+    itemIndex?: string,
+    instanceId?: string,
+  ) {
     const char = this.localChar();
     if (!char?.id || this.pactWeaponBusy()) return;
     const selected = itemIndex ?? this.pactWeaponSelection();
@@ -1090,14 +1443,19 @@ export class CharacterPlaySheetComponent {
     this.pactWeaponBusy.set(true);
     this.pactWeaponError.set('');
     try {
-      const result = await this.characterService.updatePactWeapon(char.id, action, selected || undefined, instanceId);
+      const result = await this.characterService.updatePactWeapon(
+        char.id,
+        action,
+        selected || undefined,
+        instanceId,
+      );
       this.localChar.set(result);
-      this.pactWeaponSelection.set(result.pact_weapon?.itemIndex ?? this.pactWeaponOptions()[0]?.index ?? '');
+      this.pactWeaponSelection.set(
+        result.pact_weapon?.itemIndex ?? this.pactWeaponOptions()[0]?.index ?? '',
+      );
       this.saved.emit(result);
     } catch (error) {
-      const response = error as { error?: { message?: string | string[] } };
-      const message = response.error?.message;
-      this.pactWeaponError.set(Array.isArray(message) ? message.join(' ') : message ?? 'Could not update the pact weapon.');
+      this.pactWeaponError.set(getErrorMessage(error, 'Could not update the pact weapon.'));
     } finally {
       this.pactWeaponBusy.set(false);
     }
@@ -1109,7 +1467,13 @@ export class CharacterPlaySheetComponent {
   async revokeItem(entry: EquipmentEntry) {
     const char = this.localChar();
     if (!char?.id || this.persisting()) return;
-    if (!await this.confirm.confirm(`Remove ${entry.name} from ${char.name}'s equipment?`, 'Remove Item')) return;
+    if (
+      !(await this.confirm.confirm(
+        `Remove ${entry.name} from ${char.name}'s equipment?`,
+        'Remove Item',
+      ))
+    )
+      return;
     this.persisting.set(true);
     try {
       const result = await this.characterService.revokeItem(char.id, entry.itemIndex);
@@ -1151,11 +1515,11 @@ export class CharacterPlaySheetComponent {
       this.localChar.set(result);
       this.saved.emit(result);
       const what = `${quantity > 1 ? quantity + '× ' : ''}${itemDisplayName(item)}`;
-      this.grantItemNotice.set(this.ownsPersonalCharacter() ? `Added ${what}.` : `Gave ${char.name} ${what}.`);
+      this.grantItemNotice.set(
+        this.ownsPersonalCharacter() ? `Added ${what}.` : `Gave ${char.name} ${what}.`,
+      );
     } catch (error: unknown) {
-      const candidate = error as { error?: { message?: string | string[] } };
-      const message = candidate.error?.message;
-      this.grantItemError.set(Array.isArray(message) ? message.join(' ') : message ?? 'Could not grant that item.');
+      this.grantItemError.set(getErrorMessage(error, 'Could not grant that item.'));
     } finally {
       this.grantItemBusy.set(false);
     }
@@ -1165,7 +1529,7 @@ export class CharacterPlaySheetComponent {
   // this sheet's already-loaded catalog so it shows up in the search list without a reload, then
   // hand it straight to the same grant flow as a catalog pick.
   onCustomItemGranted(item: DndItem) {
-    this.itemsAll.update(items => [...items, item]);
+    this.itemsAll.update((items) => [...items, item]);
     this.grantItemCreatingCustom.set(false);
     void this.grantItem(item);
   }
@@ -1193,9 +1557,7 @@ export class CharacterPlaySheetComponent {
       this.saved.emit(result);
       this.grantSpellNotice.set(`Gave ${char.name} ${spell.name}.`);
     } catch (error: unknown) {
-      const candidate = error as { error?: { message?: string | string[] } };
-      const message = candidate.error?.message;
-      this.grantSpellError.set(Array.isArray(message) ? message.join(' ') : message ?? 'Could not grant that spell.');
+      this.grantSpellError.set(getErrorMessage(error, 'Could not grant that spell.'));
     } finally {
       this.grantSpellBusy.set(false);
     }
@@ -1205,13 +1567,19 @@ export class CharacterPlaySheetComponent {
   // origin backing it comes from the synthetic `granted:dm:` source resolveSpellcasting creates
   // for each entry in `granted_spells` — see spellcasting.ts.
   isGrantedSpell(row: DisplaySpell): boolean {
-    return row.origins.every(origin => origin.sourceKey.startsWith('granted:dm:'));
+    return row.origins.every((origin) => origin.sourceKey.startsWith('granted:dm:'));
   }
 
   async revokeSpell(row: DisplaySpell) {
     const char = this.localChar();
     if (!char?.id || this.persisting()) return;
-    if (!await this.confirm.confirm(`Remove ${row.spell.name} from ${char.name}'s spells?`, 'Remove Spell')) return;
+    if (
+      !(await this.confirm.confirm(
+        `Remove ${row.spell.name} from ${char.name}'s spells?`,
+        'Remove Spell',
+      ))
+    )
+      return;
     this.persisting.set(true);
     try {
       const result = await this.characterService.revokeSpell(char.id, row.spell.index);
@@ -1223,7 +1591,10 @@ export class CharacterPlaySheetComponent {
   }
 
   setCurrencyAdjustAmount(denom: keyof Currency, value: string) {
-    this.currencyAdjustAmounts.update(amounts => ({ ...amounts, [denom]: Math.max(0, Math.floor(+value || 0)) }));
+    this.currencyAdjustAmounts.update((amounts) => ({
+      ...amounts,
+      [denom]: Math.max(0, Math.floor(+value || 0)),
+    }));
   }
 
   // The generated portrait shown in the sheet header, from the same recipe/seed pair every other
@@ -1231,7 +1602,9 @@ export class CharacterPlaySheetComponent {
   portraitUri = computed(() => {
     const char = this.localChar();
     if (!char) return '';
-    return portraitDataUri(portraitSource(char.portrait_seed || char.id!, char.avatar_recipe, char.portrait_image));
+    return portraitDataUri(
+      portraitSource(char.portrait_seed || char.id!, char.avatar_recipe, char.portrait_image),
+    );
   });
 
   // Picking a portrait is player agency we keep even when the DM has locked the wizard — the
@@ -1240,38 +1613,41 @@ export class CharacterPlaySheetComponent {
   changePortrait() {
     const char = this.localChar();
     if (!char) return;
-    this.dialog.open(AvatarCreatorDialogComponent, {
-      data: {
-        seed: char.portrait_seed || char.id || '',
-        recipe: char.avatar_recipe,
-        image: char.portrait_image,
-        tokenBorder: char.token_border,
-        portraitUseToken: char.portrait_use_token,
-      },
-      width: '960px',
-      maxWidth: 'calc(100vw - 16px)',
-      maxHeight: 'calc(100vh - 16px)',
-      autoFocus: false,
-    }).afterClosed().subscribe((result: AvatarCreatorResult | null | undefined) => {
-      const recipe = normalizeAvatarRecipe(result?.recipe);
-      if (!result || !recipe) return;
-      // null (not undefined) so a locked copy's whitelist save actually clears a previous upload.
-      this.persist({
-        ...char,
-        portrait_seed: recipe.seed,
-        avatar_recipe: recipe,
-        portrait_image: result.image,
-        token_border: result.tokenBorder,
-        portrait_use_token: result.portraitUseToken,
+    this.dialog
+      .open(AvatarCreatorDialogComponent, {
+        data: {
+          seed: char.portrait_seed || char.id || '',
+          recipe: char.avatar_recipe,
+          image: char.portrait_image,
+          tokenBorder: char.token_border,
+          portraitUseToken: char.portrait_use_token,
+        },
+        width: '960px',
+        maxWidth: 'calc(100vw - 16px)',
+        maxHeight: 'calc(100vh - 16px)',
+        autoFocus: false,
+      })
+      .afterClosed()
+      .subscribe((result: AvatarCreatorResult | null | undefined) => {
+        const recipe = normalizeAvatarRecipe(result?.recipe);
+        if (!result || !recipe) return;
+        // null (not undefined) so a locked copy's whitelist save actually clears a previous upload.
+        this.persist({
+          ...char,
+          portrait_seed: recipe.seed,
+          avatar_recipe: recipe,
+          portrait_image: result.image,
+          token_border: result.tokenBorder,
+          portrait_use_token: result.portraitUseToken,
+        });
       });
-    });
   }
 
   // Renaming is player agency we keep even when the DM has locked the wizard — flavor only, like
   // the portrait, so the backend accepts it separately from the rest of PLAYER_EDITABLE_FIELDS
   // (see CharactersService.updatePlayerEditableFields; `name` is a column, not a data-blob key).
   editingName = signal(false);
-  nameDraft   = signal('');
+  nameDraft = signal('');
 
   startEditingName() {
     const char = this.localChar();
@@ -1311,9 +1687,11 @@ export class CharacterPlaySheetComponent {
   slotUses(poolKey: string, level: string): number {
     const char = this.localChar();
     if (!char) return 0;
-    return char.spell_slot_uses?.[poolKey]?.[level]
-      ?? (poolKey === 'spellcasting' ? char.spell_slots_used?.[level] : 0)
-      ?? 0;
+    return (
+      char.spell_slot_uses?.[poolKey]?.[level] ??
+      (poolKey === 'spellcasting' ? char.spell_slots_used?.[level] : 0) ??
+      0
+    );
   }
 
   castingTimeKind(spell: DndSpell): string {
@@ -1325,24 +1703,34 @@ export class CharacterPlaySheetComponent {
   }
 
   updateSpellFilter<K extends keyof SpellFilters>(key: K, value: SpellFilters[K]) {
-    this.spellFilters.update(filters => ({ ...filters, [key]: value }));
+    this.spellFilters.update((filters) => ({ ...filters, [key]: value }));
   }
 
   clearSpellFilters() {
     this.spellFilters.set({
-      search: '', level: '', school: '', source: '', castingTime: '', ritual: false,
-      concentration: false, prepared: '',
+      search: '',
+      level: '',
+      school: '',
+      source: '',
+      castingTime: '',
+      ritual: false,
+      concentration: false,
+      prepared: '',
     });
   }
 
   categoryLabels(row: DisplaySpell): string[] {
-    return [...new Set(row.origins.map(origin => this.spellCategoryLabel(origin.category)))];
+    return [...new Set(row.origins.map((origin) => this.spellCategoryLabel(origin.category)))];
   }
 
   spellSourceNames(row: DisplaySpell): string {
-    return [...new Set(row.origins
-      .filter(origin => origin.category !== 'spellbook')
-      .map(origin => origin.sourceName))].join(', ');
+    return [
+      ...new Set(
+        row.origins
+          .filter((origin) => origin.category !== 'spellbook')
+          .map((origin) => origin.sourceName),
+      ),
+    ].join(', ');
   }
 
   descriptionSegments(description: string): DescriptionSegment[] {
@@ -1350,17 +1738,20 @@ export class CharacterPlaySheetComponent {
     const boldPattern = /\*\*(.+?)\*\*/gs;
     let cursor = 0;
     for (const match of description.matchAll(boldPattern)) {
-      if (match.index > cursor) segments.push({ text: description.slice(cursor, match.index), bold: false });
+      if (match.index > cursor)
+        segments.push({ text: description.slice(cursor, match.index), bold: false });
       segments.push({ text: match[1], bold: true });
       cursor = match.index + match[0].length;
     }
-    if (cursor < description.length) segments.push({ text: description.slice(cursor), bold: false });
+    if (cursor < description.length)
+      segments.push({ text: description.slice(cursor), bold: false });
     return segments.length ? segments : [{ text: description, bold: false }];
   }
 
   originLabel(origin: ResolvedSpellOrigin): string {
     const ability = origin.castingAbility ? ` · ${this.abilityShort[origin.castingAbility]}` : '';
-    const attack = origin.spellAttackBonus === null ? '' : ` · Attack ${this.fmt(origin.spellAttackBonus)}`;
+    const attack =
+      origin.spellAttackBonus === null ? '' : ` · Attack ${this.fmt(origin.spellAttackBonus)}`;
     const save = origin.spellSaveDc === null ? '' : ` · DC ${origin.spellSaveDc}`;
     return `${origin.sourceName}${ability}${attack}${save}`;
   }
@@ -1374,7 +1765,7 @@ export class CharacterPlaySheetComponent {
 
   castingMethods(row: DisplaySpell): CastingMethod[] {
     const methods: CastingMethod[] = [];
-    const castableOrigins = row.origins.filter(origin => origin.category !== 'spellbook');
+    const castableOrigins = row.origins.filter((origin) => origin.category !== 'spellbook');
     for (const origin of castableOrigins) {
       if (row.spell.level === 0) {
         methods.push({
@@ -1389,7 +1780,9 @@ export class CharacterPlaySheetComponent {
         const remaining = this.freeCastRemaining(origin);
         methods.push({
           key: origin.freeCast.key,
-          label: origin.freeCast.atWill ? `At will · ${origin.sourceName}` : `Free cast · ${origin.sourceName}`,
+          label: origin.freeCast.atWill
+            ? `At will · ${origin.sourceName}`
+            : `Free cast · ${origin.sourceName}`,
           detail: origin.freeCast.atWill
             ? 'No spell slot'
             : `${remaining}/${origin.freeCast.maxUses} · ${origin.freeCast.recovery === 'short_rest' ? 'Short Rest' : 'Long Rest'}`,
@@ -1409,7 +1802,8 @@ export class CharacterPlaySheetComponent {
     }
     if (row.spell.level > 0 && castableOrigins.length) {
       for (const pool of this.spellResolution()?.slotPools ?? []) {
-        if (pool.allowedSpellIndices && !pool.allowedSpellIndices.includes(row.spell.index)) continue;
+        if (pool.allowedSpellIndices && !pool.allowedSpellIndices.includes(row.spell.index))
+          continue;
         for (const [level, maximum] of this.slotLevels(pool)) {
           const numericLevel = Number(level);
           if (numericLevel < row.spell.level) continue;
@@ -1428,7 +1822,12 @@ export class CharacterPlaySheetComponent {
               command: {
                 spellIndex: row.spell.index,
                 sourceKey: origin.sourceKey,
-                method: pool.type === 'pact' ? 'pact' : pool.type === 'restricted' ? 'restricted' : 'slot',
+                method:
+                  pool.type === 'pact'
+                    ? 'pact'
+                    : pool.type === 'restricted'
+                      ? 'restricted'
+                      : 'slot',
                 poolKey: pool.key,
                 slotLevel: numericLevel,
               },
@@ -1437,7 +1836,7 @@ export class CharacterPlaySheetComponent {
         }
       }
     }
-    const unique = new Map(methods.map(method => [method.key, method]));
+    const unique = new Map(methods.map((method) => [method.key, method]));
     return [...unique.values()];
   }
 
@@ -1486,12 +1885,12 @@ export class CharacterPlaySheetComponent {
       this.localChar.set(result.character);
       this.saved.emit(result.character);
       const roll = this.rollSpellEffect(row, result.cast.castLevel, method.command.sourceKey);
-      this.castNotice.set(`${result.cast.spellName} cast using ${result.cast.resourceLabel}.${roll ? ` ${roll}` : ''}`);
+      this.castNotice.set(
+        `${result.cast.spellName} cast using ${result.cast.resourceLabel}.${roll ? ` ${roll}` : ''}`,
+      );
       this.closeCastDialog();
     } catch (error: unknown) {
-      const candidate = error as { error?: { message?: string | string[] } };
-      const message = candidate.error?.message;
-      this.castError.set(Array.isArray(message) ? message.join(' ') : message ?? 'The spell could not be cast.');
+      this.castError.set(getErrorMessage(error, 'The spell could not be cast.'));
     } finally {
       this.persisting.set(false);
     }
@@ -1513,11 +1912,13 @@ export class CharacterPlaySheetComponent {
 
   private rollSpellEffect(row: DisplaySpell, castLevel: number, sourceKey: string): string {
     const spell = row.spell;
-    const origin = row.origins.find(candidate => candidate.sourceKey === sourceKey) ?? row.origin;
+    const origin = row.origins.find((candidate) => candidate.sourceKey === sourceKey) ?? row.origin;
     const results: string[] = [];
     if (spell.mechanics.spell_attacks?.length && origin.spellAttackBonus !== null) {
       const d20 = Math.floor(Math.random() * 20) + 1;
-      results.push(`Attack ${d20 + origin.spellAttackBonus} (${d20}${this.fmt(origin.spellAttackBonus)})`);
+      results.push(
+        `Attack ${d20 + origin.spellAttackBonus} (${d20}${this.fmt(origin.spellAttackBonus)})`,
+      );
     }
     if (spell.mechanics.saving_throws.length && origin.spellSaveDc !== null) {
       results.push(`${spell.mechanics.saving_throws.join('/')} save DC ${origin.spellSaveDc}`);
@@ -1526,15 +1927,20 @@ export class CharacterPlaySheetComponent {
     if (spell.mechanics.scaling) {
       const threshold = Object.keys(spell.mechanics.scaling.values)
         .map(Number)
-        .filter(level => level <= (spell.level === 0 ? (this.localChar()?.level ?? 1) : castLevel))
+        .filter(
+          (level) => level <= (spell.level === 0 ? (this.localChar()?.level ?? 1) : castLevel),
+        )
         .sort((a, b) => b - a)[0];
       formula = spell.mechanics.scaling.values[String(threshold)] ?? '';
     }
     if (!formula) formula = spell.description.match(/\b\d+d\d+(?:\s*[+-]\s*\d+)?\b/i)?.[0] ?? '';
     if (!formula) return results.join(' · ');
     if (castLevel > spell.level && spell.higher_levels) {
-      const perLevel = spell.higher_levels.match(/(?:by|an extra)\s+(\d+d\d+)\s+(?:for each|per)/i)?.[1];
-      if (perLevel) formula = `${formula} + ${castLevel - spell.level}${perLevel.replace(/^1/, '')}`;
+      const perLevel = spell.higher_levels.match(
+        /(?:by|an extra)\s+(\d+d\d+)\s+(?:for each|per)/i,
+      )?.[1];
+      if (perLevel)
+        formula = `${formula} + ${castLevel - spell.level}${perLevel.replace(/^1/, '')}`;
     }
     const parts = [...formula.matchAll(/(\d+)d(\d+)(?:\s*([+-])\s*(\d+))?/gi)];
     if (!parts.length) return '';
@@ -1545,7 +1951,10 @@ export class CharacterPlaySheetComponent {
       for (let i = 0; i < count; i++) total += Math.floor(Math.random() * sides) + 1;
       if (part[3]) total += (part[3] === '-' ? -1 : 1) * Number(part[4]);
     }
-    if (/spellcasting ability modifier/i.test(spell.description) && origin.spellAttackBonus !== null) {
+    if (
+      /spellcasting ability modifier/i.test(spell.description) &&
+      origin.spellAttackBonus !== null
+    ) {
       const modifier = origin.spellAttackBonus - proficiencyBonus(this.localChar()?.level ?? 1);
       total += modifier;
       formula += ` ${this.fmt(modifier)}`;

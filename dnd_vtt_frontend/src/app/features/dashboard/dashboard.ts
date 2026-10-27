@@ -39,29 +39,39 @@ function lastTouched(c: Character): number {
 })
 export class DashboardComponent implements OnInit {
   private characterService = inject(CharacterService);
-  private campaignService  = inject(CampaignService);
-  private content          = inject(ContentService);
-  private statsService     = inject(CharacterStatsService);
-  private recentActivity   = inject(RecentActivityService);
-  private auth             = inject(AuthService);
-  private router           = inject(Router);
+  private campaignService = inject(CampaignService);
+  private content = inject(ContentService);
+  private statsService = inject(CharacterStatsService);
+  private recentActivity = inject(RecentActivityService);
+  private auth = inject(AuthService);
+  private router = inject(Router);
 
   loading = signal(true);
   characters = signal<DashboardCharacter[]>([]);
   campaigns = signal<Campaign[]>([]);
   pinnedCharacterIds = signal(new Set<string>());
   pinnedCampaignIds = signal(new Set<string>());
-  levelUpAlerts   = signal<LevelUpAlert[]>([]);
+  levelUpAlerts = signal<LevelUpAlert[]>([]);
   hasAnyCharacters = signal(false);
-  hasAnyCampaigns  = signal(false);
+  hasAnyCampaigns = signal(false);
 
-  latestCharacter = computed(() => this.characters().find(character => character.creation_status !== 'draft') ?? null);
+  latestCharacter = computed(
+    () => this.characters().find((character) => character.creation_status !== 'draft') ?? null,
+  );
   latestCampaign = computed(() => this.campaigns()[0] ?? null);
   recentCharacters = computed(() => this.characters().slice(0, 3));
   recentCampaigns = computed(() => this.campaigns().slice(0, 3));
-  pinnedCharacters = computed(() => this.characters().filter(character => character.id && this.pinnedCharacterIds().has(character.id)));
-  pinnedCampaigns = computed(() => this.campaigns().filter(campaign => this.pinnedCampaignIds().has(campaign.id)));
-  draftCharacters = computed(() => this.characters().filter(character => character.creation_status === 'draft'));
+  pinnedCharacters = computed(() =>
+    this.characters().filter(
+      (character) => character.id && this.pinnedCharacterIds().has(character.id),
+    ),
+  );
+  pinnedCampaigns = computed(() =>
+    this.campaigns().filter((campaign) => this.pinnedCampaignIds().has(campaign.id)),
+  );
+  draftCharacters = computed(() =>
+    this.characters().filter((character) => character.creation_status === 'draft'),
+  );
   attentionCount = computed(() => this.draftCharacters().length + this.levelUpAlerts().length);
 
   async ngOnInit() {
@@ -76,11 +86,19 @@ export class DashboardComponent implements OnInit {
       this.hasAnyCharacters.set(templates.length > 0 || copies.length > 0);
       this.hasAnyCampaigns.set(campaigns.length > 0);
 
-      const allCharacters = [...copies, ...templates].sort((a, b) => lastTouched(b) - lastTouched(a));
+      const allCharacters = [...copies, ...templates].sort(
+        (a, b) => lastTouched(b) - lastTouched(a),
+      );
       this.characters.set(this.recentActivity.sortByRecentlyViewed(allCharacters));
-      this.campaigns.set(this.recentActivity.sortCampaignsByRecentlyViewed(
-        [...campaigns].sort((a, b) => new Date(b.updated_at ?? b.created_at ?? 0).getTime() - new Date(a.updated_at ?? a.created_at ?? 0).getTime()),
-      ));
+      this.campaigns.set(
+        this.recentActivity.sortCampaignsByRecentlyViewed(
+          [...campaigns].sort(
+            (a, b) =>
+              new Date(b.updated_at ?? b.created_at ?? 0).getTime() -
+              new Date(a.updated_at ?? a.created_at ?? 0).getTime(),
+          ),
+        ),
+      );
       this.loadFavorites();
 
       this.levelUpAlerts.set(await this.findLevelUpAlerts(copies));
@@ -96,17 +114,21 @@ export class DashboardComponent implements OnInit {
     if (!copies.length) return [];
 
     const [feats, items, backgrounds] = await Promise.all([
-      this.content.getFeats(), this.content.getItems(), this.content.getBackgrounds(),
+      this.content.getFeats(),
+      this.content.getItems(),
+      this.content.getBackgrounds(),
     ]);
     const classCache = new Map<string, Awaited<ReturnType<ContentService['getClass']>> | null>();
-    const raceCache  = new Map<string, Awaited<ReturnType<ContentService['getRace']>> | null>();
+    const raceCache = new Map<string, Awaited<ReturnType<ContentService['getRace']>> | null>();
 
     const loadClass = async (index: string) => {
-      if (!classCache.has(index)) classCache.set(index, await this.content.getClass(index).catch(() => null));
+      if (!classCache.has(index))
+        classCache.set(index, await this.content.getClass(index).catch(() => null));
       return classCache.get(index)!;
     };
     const loadRace = async (index: string) => {
-      if (!raceCache.has(index)) raceCache.set(index, await this.content.getRace(index).catch(() => null));
+      if (!raceCache.has(index))
+        raceCache.set(index, await this.content.getRace(index).catch(() => null));
       return raceCache.get(index)!;
     };
 
@@ -117,16 +139,30 @@ export class DashboardComponent implements OnInit {
         loadRace(toContentIndex(char.race)),
       ]);
       const primary = char.classes?.[0];
-      const classesForFeats: ClassChoiceSource[] = classData ? [{
-        data: classData,
-        choices: primary?.choices ?? {},
-        level: primary?.level ?? char.level,
-        subclass: primary?.subclass ?? char.subclass,
-      }] : [];
-      const backgroundData = backgrounds.find(background =>
-        background.index === toContentIndex(char.background) || background.name === char.background) ?? null;
+      const classesForFeats: ClassChoiceSource[] = classData
+        ? [
+            {
+              data: classData,
+              choices: primary?.choices ?? {},
+              level: primary?.level ?? char.level,
+              subclass: primary?.subclass ?? char.subclass,
+            },
+          ]
+        : [];
+      const backgroundData =
+        backgrounds.find(
+          (background) =>
+            background.index === toContentIndex(char.background) ||
+            background.name === char.background,
+        ) ?? null;
       const stats = this.statsService.compute(
-        char, classData, raceData, feats, classesForFeats, items, backgroundData,
+        char,
+        classData,
+        raceData,
+        feats,
+        classesForFeats,
+        items,
+        backgroundData,
       );
       if (levelUpPending(char, stats.suggested_max_hp)) {
         alerts.push({ character: char });
@@ -136,7 +172,9 @@ export class DashboardComponent implements OnInit {
   }
 
   campaignLink(campaign: Campaign): string[] {
-    return campaign.is_owner ? ['/home/campaigns/manage', campaign.id] : ['/home/campaigns', campaign.id];
+    return campaign.is_owner
+      ? ['/home/campaigns/manage', campaign.id]
+      : ['/home/campaigns', campaign.id];
   }
 
   characterLink(character: Character): string[] {
@@ -154,12 +192,22 @@ export class DashboardComponent implements OnInit {
   }
 
   portraitFor(character: Character): string {
-    return portraitDataUri(portraitSource(character.portrait_seed || character.id!, character.avatar_recipe, character.portrait_image));
+    return portraitDataUri(
+      portraitSource(
+        character.portrait_seed || character.id!,
+        character.avatar_recipe,
+        character.portrait_image,
+      ),
+    );
   }
 
   formatDate(iso?: string): string {
     if (!iso) return '';
-    return new Date(iso).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
+    return new Date(iso).toLocaleDateString(undefined, {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+    });
   }
 
   goToCharacters() {
@@ -226,10 +274,12 @@ export class DashboardComponent implements OnInit {
   }
 
   private saveFavorites() {
-    localStorage.setItem(this.favoritesKey(), JSON.stringify({
-      characters: [...this.pinnedCharacterIds()],
-      campaigns: [...this.pinnedCampaignIds()],
-    }));
+    localStorage.setItem(
+      this.favoritesKey(),
+      JSON.stringify({
+        characters: [...this.pinnedCharacterIds()],
+        campaigns: [...this.pinnedCampaignIds()],
+      }),
+    );
   }
-
 }

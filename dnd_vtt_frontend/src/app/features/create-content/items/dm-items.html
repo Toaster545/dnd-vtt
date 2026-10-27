@@ -3,14 +3,28 @@
 }
 
 @if (editingImageFor()) {
-  <app-icon-picker-dialog [showReset]="true" (picked)="onImagePicked($event)" (resetRequested)="onImageReset()" (closed)="closeImageEditor()" />
+  <app-icon-picker-dialog
+    [showReset]="true"
+    (picked)="onImagePicked($event)"
+    (resetRequested)="onImageReset()"
+    (closed)="closeImageEditor()"
+  />
 }
 
 @if (showPrintView()) {
-  <app-item-card-print class="flex flex-col flex-1 min-h-0" [items]="itemsToPrint()" (closed)="closePrintView()" />
+  <app-item-card-print
+    class="flex flex-col flex-1 min-h-0"
+    [items]="itemsToPrint()"
+    (closed)="closePrintView()"
+  />
 } @else if (showForm()) {
-  <app-item-form class="flex flex-col flex-1 min-h-0"
-    [item]="editingItem()" [duplicateFrom]="duplicatingItem()" (saved)="onSaved()" (cancelled)="onCancelled()" />
+  <app-item-form
+    class="flex flex-col flex-1 min-h-0"
+    [item]="editingItem()"
+    [duplicateFrom]="duplicatingItem()"
+    (saved)="onSaved()"
+    (cancelled)="onCancelled()"
+  />
 } @else {
   <div class="flex-1 overflow-auto p-6">
     <div class="flex flex-wrap items-center mb-5 gap-3">
@@ -20,23 +34,43 @@
         [selected]="sourceFilters()"
         (selectedChange)="setSourceFilters($event)"
       />
-      <select class="field-input w-40" [ngModel]="sort()" (ngModelChange)="sort.set($event)" name="sort">
+      <select
+        class="field-input w-40"
+        [ngModel]="sort()"
+        (ngModelChange)="sort.set($event)"
+        name="sort"
+      >
         <option value="name-asc">Name A–Z</option>
         <option value="name-desc">Name Z–A</option>
         <option value="type-asc">Type A–Z</option>
         <option value="source-asc">Source A–Z</option>
       </select>
-      <input class="field-input w-56" [ngModel]="search()" (ngModelChange)="onSearchChange($event)" placeholder="Search items…" name="search" />
-      <button class="btn-outline" [class.border-gold]="printMode()" [class.text-gold]="printMode()" (click)="togglePrintMode()">
+      <input
+        class="field-input w-56"
+        [ngModel]="search()"
+        (ngModelChange)="onSearchChange($event)"
+        placeholder="Search items…"
+        name="search"
+      />
+      <button
+        class="btn-outline"
+        [class.border-gold]="printMode()"
+        [class.text-gold]="printMode()"
+        (click)="togglePrintMode()"
+      >
         <mat-icon>print</mat-icon> {{ printMode() ? 'Cancel' : 'Print Cards' }}
       </button>
-      <input #importInput type="file" accept="application/json,.json" hidden (change)="onImportFileSelected($event)" />
+      <input
+        #importInput
+        type="file"
+        accept="application/json,.json"
+        hidden
+        (change)="onImportFileSelected($event)"
+      />
       <button class="btn-outline" [disabled]="importing()" (click)="importInput.click()">
         <mat-icon>{{ importing() ? 'hourglass_empty' : 'upload_file' }}</mat-icon> Import JSON
       </button>
-      <button class="btn-primary" (click)="openCreate()">
-        <mat-icon>add</mat-icon> New Item
-      </button>
+      <button class="btn-primary" (click)="openCreate()"><mat-icon>add</mat-icon> New Item</button>
     </div>
 
     @if (importMessage()) {
@@ -51,7 +85,11 @@
         <span class="text-sm text-parchment flex-1">
           {{ selectedForPrint().size }} item{{ selectedForPrint().size === 1 ? '' : 's' }} selected
         </span>
-        <button class="btn-primary" [disabled]="selectedForPrint().size === 0" (click)="openPrintView()">
+        <button
+          class="btn-primary"
+          [disabled]="selectedForPrint().size === 0"
+          (click)="openPrintView()"
+        >
           <mat-icon>print</mat-icon> Print Selected
         </button>
       </div>
@@ -70,16 +108,35 @@
       } @else {
         <ul class="divide-y divide-white/8 mb-5">
           @for (i of filteredItems(); track i.index) {
-            <li class="flex items-center p-3 gap-3 cursor-pointer hover:bg-white/5"
-              (click)="printMode() ? toggleSelectedForPrint(i) : openEdit(i)">
+            <li
+              class="flex items-center p-3 gap-3 cursor-pointer hover:bg-white/5"
+              (click)="printMode() ? toggleSelectedForPrint(i) : openEdit(i)"
+            >
               @if (printMode()) {
-                <input type="checkbox" class="flex-shrink-0" [checked]="isSelectedForPrint(i)" (click)="$event.stopPropagation()" (change)="toggleSelectedForPrint(i)" />
+                <input
+                  type="checkbox"
+                  class="flex-shrink-0"
+                  [checked]="isSelectedForPrint(i)"
+                  (click)="$event.stopPropagation()"
+                  (change)="toggleSelectedForPrint(i)"
+                />
               }
               <div class="w-9 h-9 flex items-center justify-center flex-shrink-0">
                 @if (i.art_url) {
-                  <img [src]="i.art_url" alt="" loading="lazy" class="w-full h-full object-contain" />
+                  <img
+                    [src]="i.art_url"
+                    alt=""
+                    loading="lazy"
+                    class="w-full h-full object-contain"
+                  />
                 } @else if (i.image_url) {
-                  <img [src]="i.image_url" alt="" class="w-full h-full object-contain" [class.brightness-0]="isLibraryIcon(i.image_url)" [class.invert]="isLibraryIcon(i.image_url)" />
+                  <img
+                    [src]="i.image_url"
+                    alt=""
+                    class="w-full h-full object-contain"
+                    [class.brightness-0]="isLibraryIcon(i.image_url)"
+                    [class.invert]="isLibraryIcon(i.image_url)"
+                  />
                 } @else {
                   <mat-icon class="text-base text-slate">inventory_2</mat-icon>
                 }
@@ -89,12 +146,24 @@
                 <p class="text-slate text-xs m-0 mt-0.5">{{ i.type }} · {{ i.category }}</p>
               </div>
               <div class="flex items-center gap-1.5">
-                <span class="text-xs text-slate border border-white/10 rounded px-2 py-0.5">{{ i.cost }}</span>
+                <span class="text-xs text-slate border border-white/10 rounded px-2 py-0.5">{{
+                  i.cost
+                }}</span>
                 @if (!printMode()) {
-                  <button class="btn-icon" type="button" (click)="openDuplicate(i, $event)" title="Duplicate">
+                  <button
+                    class="btn-icon"
+                    type="button"
+                    (click)="openDuplicate(i, $event)"
+                    title="Duplicate"
+                  >
                     <mat-icon class="text-base">content_copy</mat-icon>
                   </button>
-                  <button class="btn-icon" type="button" (click)="onDelete(i, $event)" title="Delete">
+                  <button
+                    class="btn-icon"
+                    type="button"
+                    (click)="onDelete(i, $event)"
+                    title="Delete"
+                  >
                     <mat-icon class="text-base">delete</mat-icon>
                   </button>
                 }
@@ -104,9 +173,17 @@
         </ul>
       }
 
-      <button class="flex items-center gap-1.5 w-full text-left mb-2" type="button" (click)="officialExpanded.set(!officialExpanded())">
-        <mat-icon class="text-base text-slate">{{ officialExpanded() ? 'expand_more' : 'chevron_right' }}</mat-icon>
-        <h3 class="text-xs font-semibold text-slate uppercase tracking-wide m-0">Published Content · {{ filteredOfficial().length }}</h3>
+      <button
+        class="flex items-center gap-1.5 w-full text-left mb-2"
+        type="button"
+        (click)="officialExpanded.set(!officialExpanded())"
+      >
+        <mat-icon class="text-base text-slate">{{
+          officialExpanded() ? 'expand_more' : 'chevron_right'
+        }}</mat-icon>
+        <h3 class="text-xs font-semibold text-slate uppercase tracking-wide m-0">
+          Published Content · {{ filteredOfficial().length }}
+        </h3>
       </button>
       @if (officialExpanded()) {
         @if (filteredOfficial().length === 0) {
@@ -114,17 +191,36 @@
         } @else {
           <ul class="divide-y divide-white/8">
             @for (i of filteredOfficial(); track i.index) {
-              <li class="flex items-center p-3 gap-3 cursor-pointer hover:bg-white/5"
-                (click)="printMode() ? toggleSelectedForPrint(i) : openDetails(i)">
+              <li
+                class="flex items-center p-3 gap-3 cursor-pointer hover:bg-white/5"
+                (click)="printMode() ? toggleSelectedForPrint(i) : openDetails(i)"
+              >
                 @if (printMode()) {
-                  <input type="checkbox" class="flex-shrink-0" [checked]="isSelectedForPrint(i)" (click)="$event.stopPropagation()" (change)="toggleSelectedForPrint(i)" />
+                  <input
+                    type="checkbox"
+                    class="flex-shrink-0"
+                    [checked]="isSelectedForPrint(i)"
+                    (click)="$event.stopPropagation()"
+                    (change)="toggleSelectedForPrint(i)"
+                  />
                 }
                 <div class="relative w-9 h-9 flex-shrink-0 group/thumb">
                   <div class="w-9 h-9 flex items-center justify-center">
                     @if (i.art_url) {
-                      <img [src]="i.art_url" alt="" loading="lazy" class="w-full h-full object-contain" />
+                      <img
+                        [src]="i.art_url"
+                        alt=""
+                        loading="lazy"
+                        class="w-full h-full object-contain"
+                      />
                     } @else if (i.image_url) {
-                      <img [src]="i.image_url" alt="" class="w-full h-full object-contain" [class.brightness-0]="isLibraryIcon(i.image_url)" [class.invert]="isLibraryIcon(i.image_url)" />
+                      <img
+                        [src]="i.image_url"
+                        alt=""
+                        class="w-full h-full object-contain"
+                        [class.brightness-0]="isLibraryIcon(i.image_url)"
+                        [class.invert]="isLibraryIcon(i.image_url)"
+                      />
                     } @else {
                       <mat-icon class="text-base text-slate">inventory_2</mat-icon>
                     }
@@ -132,7 +228,10 @@
                   @if (!printMode()) {
                     <button
                       class="absolute inset-0 flex items-center justify-center rounded bg-black/60 opacity-0 transition-opacity group-hover/thumb:opacity-100"
-                      type="button" (click)="openImageEditor(i, $event)" title="Change image">
+                      type="button"
+                      (click)="openImageEditor(i, $event)"
+                      title="Change image"
+                    >
                       <mat-icon class="text-sm text-parchment">edit</mat-icon>
                     </button>
                   }
@@ -140,12 +239,21 @@
                 <div class="flex-1 min-w-0">
                   <p class="text-parchment font-medium truncate m-0">{{ itemDisplayName(i) }}</p>
                   <p class="text-slate text-xs m-0 mt-0.5">{{ i.type }} · {{ i.category }}</p>
-                  <p class="text-coal text-[10px] m-0 mt-0.5">{{ i.source?.book || 'Player\'s Handbook' }}</p>
+                  <p class="text-coal text-[10px] m-0 mt-0.5">
+                    {{ i.source?.book || "Player's Handbook" }}
+                  </p>
                 </div>
                 <div class="flex items-center gap-1.5">
-                  <span class="text-xs text-slate border border-white/10 rounded px-2 py-0.5">{{ i.cost }}</span>
+                  <span class="text-xs text-slate border border-white/10 rounded px-2 py-0.5">{{
+                    i.cost
+                  }}</span>
                   @if (!printMode()) {
-                    <button class="btn-icon" type="button" (click)="openDuplicate(i, $event)" title="Duplicate as homebrew">
+                    <button
+                      class="btn-icon"
+                      type="button"
+                      (click)="openDuplicate(i, $event)"
+                      title="Duplicate as homebrew"
+                    >
                       <mat-icon class="text-base">content_copy</mat-icon>
                     </button>
                   }

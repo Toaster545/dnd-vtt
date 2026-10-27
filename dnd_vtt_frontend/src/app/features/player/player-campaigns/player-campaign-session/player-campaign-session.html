@@ -1,19 +1,31 @@
 @if (showWizard()) {
-  <app-character-wizard class="flex flex-col flex-1 min-h-0"
+  <app-character-wizard
+    class="flex flex-col flex-1 min-h-0"
     [character]="editingCharacter()"
     (saved)="onWizardSaved()"
     (cancelled)="onWizardSaved()"
     (viewSheet)="onViewCharacterSheet($event)"
   />
 } @else if (sheetCharacter(); as sc) {
-  <app-character-play-sheet class="flex-1 min-h-0" [character]="sc" (saved)="onCharacterSheetSaved($event)">
-    <button sheetHeaderLeading class="btn-icon" (click)="closeCharacterSheet()" [matTooltip]="sheetFromWizard() ? 'Back to editor' : 'Back to session'">
+  <app-character-play-sheet
+    class="flex-1 min-h-0"
+    [character]="sc"
+    (saved)="onCharacterSheetSaved($event)"
+  >
+    <button
+      sheetHeaderLeading
+      class="btn-icon"
+      (click)="closeCharacterSheet()"
+      [matTooltip]="sheetFromWizard() ? 'Back to editor' : 'Back to session'"
+    >
       <mat-icon>arrow_back</mat-icon>
     </button>
   </app-character-play-sheet>
 } @else if (activeEncounter(); as encounter) {
   <div class="flex flex-col h-full overflow-hidden">
-    <div class="hide-in-fullscreen flex items-center gap-2 px-4 py-2.5 border-b border-white/10 flex-shrink-0">
+    <div
+      class="hide-in-fullscreen flex items-center gap-2 px-4 py-2.5 border-b border-white/10 flex-shrink-0"
+    >
       <div class="flex items-center gap-2 flex-1 min-w-0">
         <button class="btn-ghost text-sm" (click)="leaveEncounter()">
           <mat-icon class="text-base">arrow_back</mat-icon> Leave
@@ -21,7 +33,10 @@
         <span class="text-parchment font-medium text-sm ml-2 truncate">{{ encounter.name }}</span>
         @if (myLevel(); as level) {
           @if (level.level_count > 1 && level.name) {
-            <span class="flex items-center gap-1 text-xs text-slate truncate" matTooltip="The level your character is on">
+            <span
+              class="flex items-center gap-1 text-xs text-slate truncate"
+              matTooltip="The level your character is on"
+            >
               {{ level.name }}
             </span>
           }
@@ -37,10 +52,18 @@
 
       <div class="flex items-center gap-1 flex-1 justify-end">
         @if (activeCharacter()) {
-          <button class="btn-ghost text-sm" [class.bg-white/10]="view() === 'map'" (click)="view.set('map')">
+          <button
+            class="btn-ghost text-sm"
+            [class.bg-white/10]="view() === 'map'"
+            (click)="view.set('map')"
+          >
             <mat-icon class="text-base">map</mat-icon> Map
           </button>
-          <button class="btn-ghost text-sm" [class.bg-white/10]="view() === 'sheet'" (click)="view.set('sheet')">
+          <button
+            class="btn-ghost text-sm"
+            [class.bg-white/10]="view() === 'sheet'"
+            (click)="view.set('sheet')"
+          >
             <mat-icon class="text-base">badge</mat-icon> Character
           </button>
         }
@@ -51,19 +74,31 @@
       <div class="flex-1 min-w-0 flex flex-col overflow-hidden">
         @if (view() === 'sheet') {
           @if (activeCharacter(); as char) {
-            <app-character-play-sheet [character]="char" (saved)="onCharacterSaved($event)"
-              class="block flex-1 min-h-0" />
+            <app-character-play-sheet
+              [character]="char"
+              (saved)="onCharacterSaved($event)"
+              class="block flex-1 min-h-0"
+            />
           }
         } @else if (myLevel()?.map_id ?? encounter.map_id; as levelMapId) {
-          <app-battle-map [mapIdInput]="levelMapId" [embedded]="true" [canControl]="false" [characterHp]="characterHp()"
+          <app-battle-map
+            [mapIdInput]="levelMapId"
+            [embedded]="true"
+            [canControl]="false"
+            [characterHp]="characterHp()"
             [characterPortraits]="characterPortraits()"
             [characterTokenBorders]="characterTokenBorders()"
             [currentTurnTokenId]="encounter.current_turn_token_id ?? null"
-            [turnOrderTokens]="turnOrderTokens()" [showTurnOrder]="(encounter.round_number ?? 1) >= 2"
-            [myCharacterId]="activeCharacter()?.id ?? null" [myMoveSpeedFt]="activeCharacter()?.speed ?? null"
-            [myDarkvisionFt]="myDarkvisionFt()" [myCharacter]="activeCharacter()"
+            [turnOrderTokens]="turnOrderTokens()"
+            [showTurnOrder]="(encounter.round_number ?? 1) >= 2"
+            [myCharacterId]="activeCharacter()?.id ?? null"
+            [myMoveSpeedFt]="activeCharacter()?.speed ?? null"
+            [myDarkvisionFt]="myDarkvisionFt()"
+            [myCharacter]="activeCharacter()"
             (currentTurnTokenChanged)="currentTurnToken.set($event)"
-            (characterSaved)="onCharacterSaved($event)" class="flex-1 min-w-0" />
+            (characterSaved)="onCharacterSaved($event)"
+            class="flex-1 min-w-0"
+          />
         } @else {
           <div class="flex-1 flex items-center justify-center text-slate text-sm">
             No map attached to this encounter.
@@ -73,22 +108,40 @@
     </div>
   </div>
 } @else {
-  <div class="flex-1 min-h-0 flex flex-col overflow-y-auto p-6 bg-cover bg-center"
-       [style.background-image]="session()?.background_url ? 'linear-gradient(rgba(13,14,22,0.88), rgba(13,14,22,0.88)), url(' + session()!.background_url + ')' : null">
+  <div
+    class="flex-1 min-h-0 flex flex-col overflow-y-auto p-6 bg-cover bg-center"
+    [style.background-image]="
+      session()?.background_url
+        ? 'linear-gradient(rgba(13,14,22,0.88), rgba(13,14,22,0.88)), url(' +
+          session()!.background_url +
+          ')'
+        : null
+    "
+  >
     <div class="flex items-center gap-2 mb-5 flex-shrink-0">
       <button class="btn-icon" (click)="backToHub()" matTooltip="Back to campaign">
         <mat-icon>arrow_back</mat-icon>
       </button>
       <div class="min-w-0">
         <h2 class="font-brand text-xl text-parchment m-0">{{ session()?.name }}</h2>
-        @if (session()?.description) { <p class="text-slate text-sm m-0 mt-0.5">{{ session()!.description }}</p> }
+        @if (session()?.description) {
+          <p class="text-slate text-sm m-0 mt-0.5">{{ session()!.description }}</p>
+        }
       </div>
       <div class="flex-1 flex items-center gap-1 ml-3">
         @if (myCharacterId()) {
-          <button class="btn-ghost text-sm" [class.bg-white/10]="!showSheet()" (click)="hubView.set('wiki')">
+          <button
+            class="btn-ghost text-sm"
+            [class.bg-white/10]="!showSheet()"
+            (click)="hubView.set('wiki')"
+          >
             <mat-icon class="text-base">menu_book</mat-icon> Wiki
           </button>
-          <button class="btn-ghost text-sm" [class.bg-white/10]="showSheet()" (click)="hubView.set('sheet')">
+          <button
+            class="btn-ghost text-sm"
+            [class.bg-white/10]="showSheet()"
+            (click)="hubView.set('sheet')"
+          >
             <mat-icon class="text-base">badge</mat-icon> Character
           </button>
         }
@@ -99,72 +152,114 @@
       <div class="flex justify-center mt-10"><span class="spinner-lg"></span></div>
     } @else {
       <!-- Same sheet-vs-wiki sizing as PlayerCampaignHubComponent's grid. -->
-      <div class="flex-1 flex flex-col lg:flex-row gap-6 lg:gap-0"
-           [class]="showSheet() ? 'lg:min-h-0' : ''"
-           [style.--hub-sidebar-w]="hubView.sidebarWidth() + 'px'">
+      <div
+        class="flex-1 flex flex-col lg:flex-row gap-6 lg:gap-0"
+        [class]="showSheet() ? 'lg:min-h-0' : ''"
+        [style.--hub-sidebar-w]="hubView.sidebarWidth() + 'px'"
+      >
         <div class="flex-1 min-w-0 flex flex-col">
           @if (showSheet()) {
             @if (myCharacter(); as mc) {
-              <app-character-play-sheet class="h-[80dvh] lg:h-full min-h-0 rounded-lg border border-white/10 bg-black/20 overflow-hidden"
-                [character]="mc" (saved)="onMyCharacterSaved($event)" />
+              <app-character-play-sheet
+                class="h-[80dvh] lg:h-full min-h-0 rounded-lg border border-white/10 bg-black/20 overflow-hidden"
+                [character]="mc"
+                (saved)="onMyCharacterSaved($event)"
+              />
             } @else {
               <div class="flex justify-center mt-10"><span class="spinner-lg"></span></div>
             }
           } @else {
-            <app-wiki-embed [campaignId]="campaignId" [dm]="false" [matchTitles]="wikiTitles()" [scope]="sessionId" />
+            <app-wiki-embed
+              [campaignId]="campaignId"
+              [dm]="false"
+              [matchTitles]="wikiTitles()"
+              [scope]="sessionId"
+            />
           }
         </div>
 
         <!-- Drag to resize the sidebar (lg+ only; below that the columns stack). -->
-        <div appResizeHandle (resizeDrag)="onSidebarResize($event)"
-             class="hidden lg:block w-1.5 ml-2 flex-shrink-0 rounded hover:bg-gold/40 active:bg-gold/60 transition-colors"></div>
+        <div
+          appResizeHandle
+          (resizeDrag)="onSidebarResize($event)"
+          class="hidden lg:block w-1.5 ml-2 flex-shrink-0 rounded hover:bg-gold/40 active:bg-gold/60 transition-colors"
+        ></div>
 
         <!-- lg:px-2 leaves room for the rows' -mx-2 hover background, which the sheet view's
              overflow-y-auto would otherwise clip (overflow-y forces overflow-x to clip too). -->
-        <div class="lg:flex-shrink-0 lg:w-[var(--hub-sidebar-w)] lg:px-2"
-             [class]="showSheet() ? 'lg:min-h-0 lg:overflow-y-auto' : ''">
+        <div
+          class="lg:flex-shrink-0 lg:w-[var(--hub-sidebar-w)] lg:px-2"
+          [class]="showSheet() ? 'lg:min-h-0 lg:overflow-y-auto' : ''"
+        >
           <h3 class="font-brand text-base text-parchment m-0 mb-3">Encounters</h3>
           <ul class="divide-y divide-white/8">
             @for (encounter of encounters(); track encounter.id) {
               <li>
-                <div class="py-3 px-2 -mx-2 rounded hover:bg-white/5 transition-colors"
-                     [class.bg-gold/5]="encounter.status === 'active'">
+                <div
+                  class="py-3 px-2 -mx-2 rounded hover:bg-white/5 transition-colors"
+                  [class.bg-gold/5]="encounter.status === 'active'"
+                >
                   <div class="flex items-center gap-3">
                     <div class="flex-1 min-w-0">
                       <p class="text-parchment font-medium truncate m-0">
                         {{ encounter.name }}
                         @if (encounter.status === 'active') {
-                          <span class="text-xs text-gold border border-gold/40 rounded px-1.5 py-0.5 ml-1">live</span>
+                          <span
+                            class="text-xs text-gold border border-gold/40 rounded px-1.5 py-0.5 ml-1"
+                            >live</span
+                          >
                         } @else if (encounter.status === 'ended') {
-                          <span class="text-xs text-slate border border-white/15 rounded px-1.5 py-0.5 ml-1">recap</span>
+                          <span
+                            class="text-xs text-slate border border-white/15 rounded px-1.5 py-0.5 ml-1"
+                            >recap</span
+                          >
                         } @else {
-                          <span class="text-xs text-slate border border-white/15 rounded px-1.5 py-0.5 ml-1">upcoming</span>
+                          <span
+                            class="text-xs text-slate border border-white/15 rounded px-1.5 py-0.5 ml-1"
+                            >upcoming</span
+                          >
                         }
                       </p>
                       @if (encounter.summary) {
-                        <p class="text-slate text-xs m-0 mt-0.5 line-clamp-2">{{ encounter.summary }}</p>
+                        <p class="text-slate text-xs m-0 mt-0.5 line-clamp-2">
+                          {{ encounter.summary }}
+                        </p>
                       }
                     </div>
 
                     @if (encounter.status === 'active') {
-                      <button class="btn-primary text-sm" [disabled]="joiningId() === encounter.id" (click)="join(encounter)">
-                        @if (joiningId() === encounter.id) { <span class="spinner-sm"></span> } @else { Join }
+                      <button
+                        class="btn-primary text-sm"
+                        [disabled]="joiningId() === encounter.id"
+                        (click)="join(encounter)"
+                      >
+                        @if (joiningId() === encounter.id) {
+                          <span class="spinner-sm"></span>
+                        } @else {
+                          Join
+                        }
                       </button>
                     }
                   </div>
                 </div>
               </li>
             } @empty {
-              <p class="text-slate text-sm py-4">Nothing revealed yet — check back once your DM adds an encounter.</p>
+              <p class="text-slate text-sm py-4">
+                Nothing revealed yet — check back once your DM adds an encounter.
+              </p>
             }
           </ul>
 
           <h3 class="font-brand text-base text-parchment m-0 mt-6 mb-3">Party</h3>
-          <app-party-list [members]="members()" [currentUserId]="auth.profile()?.id ?? null" [showSelfControls]="true"
+          <app-party-list
+            [members]="members()"
+            [currentUserId]="auth.profile()?.id ?? null"
+            [showSelfControls]="true"
             (toggleRaceClassVisibility)="toggleRaceClassVisibility($event)"
             (viewCharacter)="viewMyCharacter($event)"
             (editCharacter)="editMyCharacter($event)"
-            (levelUpCharacter)="levelUpMyCharacter($event)" />
+            (levelUpCharacter)="levelUpMyCharacter($event)"
+          />
         </div>
       </div>
     }

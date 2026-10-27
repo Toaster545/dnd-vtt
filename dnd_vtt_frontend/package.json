@@ -13,6 +13,8 @@
     "build:dev": "ng build --configuration development",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
+    "format": "prettier --write \"src/**/*.{ts,html,scss}\"",
+    "format:check": "prettier --check \"src/**/*.{ts,html,scss}\"",
     "lint": "ng lint",
     "cap:sync": "npm run build && cap sync",
     "cap:open:android": "cap open android",

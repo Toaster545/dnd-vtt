@@ -1,11 +1,15 @@
 import { TestBed } from '@angular/core/testing';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { vi } from 'vitest';
-import { CharacterService } from '../../core/services/character.service';
-import { legacySeedToAvatarRecipe, portraitDataUri, portraitSource } from '../../core/utils/avatar';
+import { CharacterService } from '../../../core/services/character.service';
+import {
+  legacySeedToAvatarRecipe,
+  portraitDataUri,
+  portraitSource,
+} from '../../../core/utils/avatar';
 import { AvatarCreatorDialogComponent } from './avatar-creator-dialog';
-import { TokenBorder } from '../../core/models/token-border.model';
-import { DEFAULT_TOKEN_BORDER } from '../../core/utils/token-border';
+import { TokenBorder } from '../../../core/models/token-border.model';
+import { DEFAULT_TOKEN_BORDER } from '../../../core/utils/token-border';
 
 const UPLOADED = '/uploads/portraits/user-1/2f1c0f3e-0000-4000-8000-000000000000.webp';
 

@@ -1,5 +1,16 @@
 import {
-  Component, ElementRef, inject, input, output, signal, computed, effect, OnInit, AfterViewInit, OnDestroy, ViewChild
+  Component,
+  ElementRef,
+  inject,
+  input,
+  output,
+  signal,
+  computed,
+  effect,
+  OnInit,
+  AfterViewInit,
+  OnDestroy,
+  ViewChild,
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import Konva from 'konva';
@@ -9,18 +20,31 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { BattleMapService } from '../../core/services/battle-map.service';
 import { AuthService } from '../../core/services/auth.service';
 import {
-  MapToken, BattleMap, MapFog, MapLight, MapLighting, MapWall, PlacingEntity, MeasureShape, FogToolName,
+  MapToken,
+  BattleMap,
+  MapFog,
+  MapLight,
+  MapLighting,
+  MapWall,
+  PlacingEntity,
+  MeasureShape,
+  FogToolName,
   LightToolName,
 } from '../../core/models/campaign.model';
 import { Character } from '../../core/models/character.model';
-import { ConfirmService } from '../../shared/confirm.service';
+import { ConfirmService } from '../../shared/components/confirm-dialog/confirm.service';
 import { ResizeHandleDirective } from '../../shared/directives/resize-handle.directive';
 import { drawGrid } from './canvas/grid-renderer';
 import { renderMoveRange } from './canvas/move-range-renderer';
 import { Trail, TrailDrag, renderTurnTrails } from './canvas/turn-trail-renderer';
 import { PlanMarker, renderPlanMarker } from './canvas/plan-marker-renderer';
 import { renderTokens, snapToCell } from './canvas/token-renderer';
-import { isTokenLit, litAreas, renderDarkness, renderLightMarkers } from './canvas/lighting-renderer';
+import {
+  isTokenLit,
+  litAreas,
+  renderDarkness,
+  renderLightMarkers,
+} from './canvas/lighting-renderer';
 import { getErrorMessage } from '../../core/utils/error-message';
 import { MeasurementTool } from './canvas/measurement-tool';
 import { FogTool } from './canvas/fog-tool';
@@ -42,8 +66,15 @@ import { lightingAsPlayersSee, tokensAsPlayersSee } from '../../core/utils/playe
 @Component({
   selector: 'app-battle-map',
   imports: [
-    ResizeHandleDirective, MapToolbarComponent, TurnOrderPanelComponent, LightEditorPanelComponent,
-    CharacterPlaySheetComponent, MainLayoutComponent, PageHeaderComponent, MatIconModule, MatTooltipModule,
+    ResizeHandleDirective,
+    MapToolbarComponent,
+    TurnOrderPanelComponent,
+    LightEditorPanelComponent,
+    CharacterPlaySheetComponent,
+    MainLayoutComponent,
+    PageHeaderComponent,
+    MatIconModule,
+    MatTooltipModule,
   ],
   templateUrl: './battle-map.html',
   styleUrl: './battle-map.scss',
@@ -52,7 +83,7 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('stageContainer') stageContainer!: ElementRef<HTMLDivElement>;
 
   readonly mapIdInput = input<string | undefined>(undefined);
-  readonly embedded   = input(false);
+  readonly embedded = input(false);
   readonly placingEntity = input<PlacingEntity | null>(null);
   readonly characterHp = input<Record<string, { hp: number; max_hp: number }>>({});
   readonly characterPortraits = input<Record<string, PortraitSource>>({});
@@ -123,7 +154,7 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
   rightAsideWidth = signal(256);
 
   onRightAsideResize(dx: number) {
-    this.rightAsideWidth.update(w => Math.min(420, Math.max(220, w - dx)));
+    this.rightAsideWidth.update((w) => Math.min(420, Math.max(220, w - dx)));
   }
 
   // Player in-encounter panel: turn order and character sheet sit side by side, each with its
@@ -136,28 +167,38 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
 
   turnColWidth = signal(BattleMapComponent.readStoredNumber(BattleMapComponent.TURN_W_KEY, 208));
   sheetWidth = signal(BattleMapComponent.readStoredNumber(BattleMapComponent.SHEET_W_KEY, 460));
-  showTurnColumn = signal(BattleMapComponent.readStoredBool(BattleMapComponent.PANEL_TURNCOL_KEY, true));
-  showSheetColumn = signal(BattleMapComponent.readStoredBool(BattleMapComponent.PANEL_SHEETCOL_KEY, true));
+  showTurnColumn = signal(
+    BattleMapComponent.readStoredBool(BattleMapComponent.PANEL_TURNCOL_KEY, true),
+  );
+  showSheetColumn = signal(
+    BattleMapComponent.readStoredBool(BattleMapComponent.PANEL_SHEETCOL_KEY, true),
+  );
 
   onTurnColResize(dx: number) {
-    this.turnColWidth.update(w => Math.min(380, Math.max(160, w - dx)));
+    this.turnColWidth.update((w) => Math.min(380, Math.max(160, w - dx)));
     BattleMapComponent.writeStored(BattleMapComponent.TURN_W_KEY, String(this.turnColWidth()));
   }
 
   onSheetResize(dx: number) {
     const max = Math.max(360, Math.min(window.innerWidth - 320, 1100));
-    this.sheetWidth.update(w => Math.min(max, Math.max(300, w - dx)));
+    this.sheetWidth.update((w) => Math.min(max, Math.max(300, w - dx)));
     BattleMapComponent.writeStored(BattleMapComponent.SHEET_W_KEY, String(this.sheetWidth()));
   }
 
   toggleTurnColumn() {
-    this.showTurnColumn.update(v => !v);
-    BattleMapComponent.writeStored(BattleMapComponent.PANEL_TURNCOL_KEY, String(this.showTurnColumn()));
+    this.showTurnColumn.update((v) => !v);
+    BattleMapComponent.writeStored(
+      BattleMapComponent.PANEL_TURNCOL_KEY,
+      String(this.showTurnColumn()),
+    );
   }
 
   toggleSheetColumn() {
-    this.showSheetColumn.update(v => !v);
-    BattleMapComponent.writeStored(BattleMapComponent.PANEL_SHEETCOL_KEY, String(this.showSheetColumn()));
+    this.showSheetColumn.update((v) => !v);
+    BattleMapComponent.writeStored(
+      BattleMapComponent.PANEL_SHEETCOL_KEY,
+      String(this.showSheetColumn()),
+    );
   }
 
   private static readStoredNumber(key: string, fallback: number): number {
@@ -181,25 +222,37 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
   activeMeasureTool = signal<MeasureShape | null>(null);
 
   toggleMeasureTool(shape: MeasureShape) {
-    this.activeMeasureTool.update(current => current === shape ? null : shape);
+    this.activeMeasureTool.update((current) => (current === shape ? null : shape));
     this.pickingDestination.set(false);
-    if (this.activeMeasureTool()) { this.activeFogTool.set(null); this.activeLightTool.set(null); }
+    if (this.activeMeasureTool()) {
+      this.activeFogTool.set(null);
+      this.activeLightTool.set(null);
+    }
   }
 
   fog = signal<MapFog>({ enabled: false, hidden_cells: [] });
   activeFogTool = signal<FogToolName | null>(null);
 
   toggleFogTool(tool: FogToolName) {
-    this.activeFogTool.update(current => current === tool ? null : tool);
-    if (this.activeFogTool()) { this.activeMeasureTool.set(null); this.activeLightTool.set(null); }
+    this.activeFogTool.update((current) => (current === tool ? null : tool));
+    if (this.activeFogTool()) {
+      this.activeMeasureTool.set(null);
+      this.activeLightTool.set(null);
+    }
   }
 
   lighting = signal<MapLighting>({
-    enabled: false, lights: [], walls: [], ambient_level: 0, ambient_color: '#0a0a14',
+    enabled: false,
+    lights: [],
+    walls: [],
+    ambient_level: 0,
+    ambient_color: '#0a0a14',
   });
   activeLightTool = signal<LightToolName | null>(null);
   selectedLightId = signal<string | null>(null);
-  selectedLight = computed(() => this.lighting().lights.find(l => l.id === this.selectedLightId()) ?? null);
+  selectedLight = computed(
+    () => this.lighting().lights.find((l) => l.id === this.selectedLightId()) ?? null,
+  );
   // Radii the next placed torch gets — set in the aside while the place tool is active, and
   // still editable per torch afterwards via the light editor. Defaults match a 5e torch.
   newLightBrightFt = signal(20);
@@ -211,8 +264,11 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   toggleLightTool(tool: LightToolName) {
-    this.activeLightTool.update(current => current === tool ? null : tool);
-    if (this.activeLightTool()) { this.activeMeasureTool.set(null); this.activeFogTool.set(null); }
+    this.activeLightTool.update((current) => (current === tool ? null : tool));
+    if (this.activeLightTool()) {
+      this.activeMeasureTool.set(null);
+      this.activeFogTool.set(null);
+    }
   }
 
   // Walls are edited optimistically: the local `lighting` signal updates on every click so the
@@ -225,7 +281,7 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private commitWalls(walls: MapWall[]) {
     this.pendingWalls = walls;
-    this.lighting.update(l => ({ ...l, walls }));
+    this.lighting.update((l) => ({ ...l, walls }));
     clearTimeout(this.wallSaveTimer);
     this.wallSaveTimer = setTimeout(() => this.flushWalls(), 300);
   }
@@ -236,24 +292,34 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
     const walls = this.pendingWalls;
     if (!walls) return;
     const mapId = this.mapId;
-    this.mapService.setWalls(mapId, walls).then(() => {
-      if (this.pendingWalls === walls) this.pendingWalls = null;
-    }).catch(async e => {
-      // Drop the unsaved local walls and resync with what the server actually has.
-      this.pendingWalls = null;
-      // Shown over the (still usable) map briefly — there's no app-wide toast to route it to.
-      const message = `Couldn't save walls: ${getErrorMessage(e)}`;
-      this.error.set(message);
-      setTimeout(() => { if (this.error() === message) this.error.set(null); }, 5000);
-      if (mapId === this.mapId) this.setLighting(await this.mapService.getLighting(mapId));
-    });
+    this.mapService
+      .setWalls(mapId, walls)
+      .then(() => {
+        if (this.pendingWalls === walls) this.pendingWalls = null;
+      })
+      .catch(async (e) => {
+        // Drop the unsaved local walls and resync with what the server actually has.
+        this.pendingWalls = null;
+        // Shown over the (still usable) map briefly — there's no app-wide toast to route it to.
+        const message = `Couldn't save walls: ${getErrorMessage(e)}`;
+        this.error.set(message);
+        setTimeout(() => {
+          if (this.error() === message) this.error.set(null);
+        }, 5000);
+        if (mapId === this.mapId) this.setLighting(await this.mapService.getLighting(mapId));
+      });
   }
 
   async clearWalls() {
     if (!this.lighting().walls.length) return;
-    if (!await this.confirm.confirm(
-      'Remove every wall from this map? Light will spread freely again.', 'Clear Walls', 'Clear'
-    )) return;
+    if (
+      !(await this.confirm.confirm(
+        'Remove every wall from this map? Light will spread freely again.',
+        'Clear Walls',
+        'Clear',
+      ))
+    )
+      return;
     this.wallTool.reset();
     this.commitWalls([]);
     this.flushWalls();
@@ -289,7 +355,9 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
       // Same brief over-the-map notice as a failed wall save (see flushWalls).
       const message = `Couldn't save your destination: ${getErrorMessage(e)}`;
       this.error.set(message);
-      setTimeout(() => { if (this.error() === message) this.error.set(null); }, 5000);
+      setTimeout(() => {
+        if (this.error() === message) this.error.set(null);
+      }, 5000);
     }
   }
 
@@ -301,8 +369,11 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
       const plan = this.myPlan();
       return token && plan ? { token, ...plan } : null;
     }
-    const selected = this.tokens().find(t => t.id === this.selectedTokenId());
-    const token = selected?.companion_owner_token_id === this.currentTurnTokenId() ? selected : this.tokens().find(t => t.id === this.currentTurnTokenId());
+    const selected = this.tokens().find((t) => t.id === this.selectedTokenId());
+    const token =
+      selected?.companion_owner_token_id === this.currentTurnTokenId()
+        ? selected
+        : this.tokens().find((t) => t.id === this.currentTurnTokenId());
     if (!token || token.planned_x == null || token.planned_y == null) return null;
     return { token, x: token.planned_x, y: token.planned_y };
   });
@@ -361,9 +432,14 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   async revealAllFog() {
-    if (!await this.confirm.confirm(
-      'Reveal the entire map? Any areas you\'ve hidden will become visible again.', 'Reveal All', 'Reveal'
-    )) return;
+    if (
+      !(await this.confirm.confirm(
+        "Reveal the entire map? Any areas you've hidden will become visible again.",
+        'Reveal All',
+        'Reveal',
+      ))
+    )
+      return;
     await this.mapService.resetFog(this.mapId);
   }
 
@@ -391,7 +467,7 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private commitAmbient(level: number, color: string) {
     this.pendingAmbient = { level, color };
-    this.lighting.update(l => ({ ...l, ambient_level: level, ambient_color: color }));
+    this.lighting.update((l) => ({ ...l, ambient_level: level, ambient_color: color }));
     clearTimeout(this.ambientSaveTimer);
     this.ambientSaveTimer = setTimeout(() => this.flushAmbient(), 300);
   }
@@ -402,15 +478,20 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
     const pending = this.pendingAmbient;
     if (!pending) return;
     const mapId = this.mapId;
-    this.mapService.setAmbientLight(mapId, pending.level, pending.color).then(() => {
-      if (this.pendingAmbient === pending) this.pendingAmbient = null;
-    }).catch(async e => {
-      this.pendingAmbient = null;
-      const message = `Couldn't save ambient light: ${getErrorMessage(e)}`;
-      this.error.set(message);
-      setTimeout(() => { if (this.error() === message) this.error.set(null); }, 5000);
-      if (mapId === this.mapId) this.setLighting(await this.mapService.getLighting(mapId));
-    });
+    this.mapService
+      .setAmbientLight(mapId, pending.level, pending.color)
+      .then(() => {
+        if (this.pendingAmbient === pending) this.pendingAmbient = null;
+      })
+      .catch(async (e) => {
+        this.pendingAmbient = null;
+        const message = `Couldn't save ambient light: ${getErrorMessage(e)}`;
+        this.error.set(message);
+        setTimeout(() => {
+          if (this.error() === message) this.error.set(null);
+        }, 5000);
+        if (mapId === this.mapId) this.setLighting(await this.mapService.getLighting(mapId));
+      });
   }
 
   selectLight(light: MapLight) {
@@ -428,7 +509,14 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   async removeLight(light: MapLight) {
-    if (!await this.confirm.confirm(`Remove "${light.label || 'this light'}" from the map?`, 'Remove Light', 'Remove')) return;
+    if (
+      !(await this.confirm.confirm(
+        `Remove "${light.label || 'this light'}" from the map?`,
+        'Remove Light',
+        'Remove',
+      ))
+    )
+      return;
     if (!light.id) return;
     await this.mapService.deleteLight(this.mapId, light.id);
     if (this.selectedLightId() === light.id) this.selectedLightId.set(null);
@@ -449,12 +537,24 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
   showMoveRange = signal(false);
 
   controlledTokenId = signal<string | null>(null);
-  ownedTokens = computed(() => this.tokens().filter(t => t.character_id === this.myCharacterId() || (!!t.companion_id && t.companion_owner_id === this.myCharacterId())));
-  controlledToken = computed(() => this.ownedTokens().find(t => t.id === this.controlledTokenId()) ?? this.myToken());
-  myToken = computed(() => this.tokens().find(t => t.character_id === this.myCharacterId()) ?? null);
+  ownedTokens = computed(() =>
+    this.tokens().filter(
+      (t) =>
+        t.character_id === this.myCharacterId() ||
+        (!!t.companion_id && t.companion_owner_id === this.myCharacterId()),
+    ),
+  );
+  controlledToken = computed(
+    () => this.ownedTokens().find((t) => t.id === this.controlledTokenId()) ?? this.myToken(),
+  );
+  myToken = computed(
+    () => this.tokens().find((t) => t.character_id === this.myCharacterId()) ?? null,
+  );
   // Just the id, so effects keyed on it don't rerun on every token broadcast.
   private myTokenId = computed(() => this.controlledToken()?.id ?? null);
-  private moveRangeFt = computed(() => this.controlledToken()?.companion_speed ?? this.myMoveSpeedFt() ?? 0);
+  private moveRangeFt = computed(
+    () => this.controlledToken()?.companion_speed ?? this.myMoveSpeedFt() ?? 0,
+  );
   // During the player's turn the range is drawn from where the turn began, not from wherever the
   // token has moved since — it shows the whole turn's reach, which doesn't shrink as they move.
   private moveRangeOrigin = computed(() => {
@@ -465,19 +565,24 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
 
   turnOrder = computed(() => {
     const all = this.turnOrderTokens() ?? this.tokens();
-    const roots = all.filter(t => !t.companion_id).sort((a, b) => (b.initiative ?? -Infinity) - (a.initiative ?? -Infinity));
-    const children = all.filter(t => t.companion_id);
-    return [...roots.flatMap(t => [t, ...children.filter(c => c.companion_owner_token_id === t.id)]), ...children.filter(c => !roots.some(t => t.id === c.companion_owner_token_id))];
+    const roots = all
+      .filter((t) => !t.companion_id)
+      .sort((a, b) => (b.initiative ?? -Infinity) - (a.initiative ?? -Infinity));
+    const children = all.filter((t) => t.companion_id);
+    return [
+      ...roots.flatMap((t) => [t, ...children.filter((c) => c.companion_owner_token_id === t.id)]),
+      ...children.filter((c) => !roots.some((t) => t.id === c.companion_owner_token_id)),
+    ];
   });
 
   // The read-only (player-facing) turn order column: allowed by the host, and not collapsed by
   // the player — a sheet-less viewer has no collapse control, so it's always open for them.
-  turnColumnVisible = computed(() =>
-    this.showTurnOrder() && (this.showTurnColumn() || !this.myCharacter())
+  turnColumnVisible = computed(
+    () => this.showTurnOrder() && (this.showTurnColumn() || !this.myCharacter()),
   );
 
-  currentTurnToken = computed(() =>
-    this.turnOrder().find(t => t.id === this.currentTurnTokenId()) ?? null
+  currentTurnToken = computed(
+    () => this.turnOrder().find((t) => t.id === this.currentTurnTokenId()) ?? null,
   );
 
   private stage?: Konva.Stage;
@@ -506,7 +611,9 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
   private lightingSub?: Subscription;
   private measurementTool = new MeasurementTool();
   private wallTool = new WallTool();
-  private fogTool = new FogTool((cells, revealed) => this.mapService.paintFog(this.mapId, cells, revealed));
+  private fogTool = new FogTool((cells, revealed) =>
+    this.mapService.paintFog(this.mapId, cells, revealed),
+  );
   private pointerTools?: StagePointerTools;
   private stageView?: StageView;
   private mapId!: string;
@@ -558,7 +665,13 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
       this.showMoveRange();
       this.moveRangeOrigin();
       if (this.moveRangeLayer && this.cellSize && this.stage) {
-        renderMoveRange(this.moveRangeLayer, this.cellSize, this.showMoveRange(), this.moveRangeOrigin(), this.moveRangeFt());
+        renderMoveRange(
+          this.moveRangeLayer,
+          this.cellSize,
+          this.showMoveRange(),
+          this.moveRangeOrigin(),
+          this.moveRangeFt(),
+        );
       }
     });
 
@@ -582,7 +695,9 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
       }
       const mapId = this.mapId;
       this.mapService.getTokenPlan(mapId, tokenId).then(
-        plan => { if (this.myTokenId() === tokenId) this.myPlan.set(plan); },
+        (plan) => {
+          if (this.myTokenId() === tokenId) this.myPlan.set(plan);
+        },
         () => {
           // No plan to show is the same as no plan set — nothing to surface.
         },
@@ -731,13 +846,16 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
       this.error.set('Failed to load the map image.');
       this.loading.set(false);
     };
-    void this.mapService.getMapImage(map.image_url).then((blob) => {
-      this.mapImageObjectUrl = URL.createObjectURL(blob);
-      img.src = this.mapImageObjectUrl;
-    }).catch(() => {
-      this.error.set('Failed to load the authorized map image.');
-      this.loading.set(false);
-    });
+    void this.mapService
+      .getMapImage(map.image_url)
+      .then((blob) => {
+        this.mapImageObjectUrl = URL.createObjectURL(blob);
+        img.src = this.mapImageObjectUrl;
+      })
+      .catch(() => {
+        this.error.set('Failed to load the authorized map image.');
+        this.loading.set(false);
+      });
   }
 
   private buildStage() {
@@ -747,7 +865,11 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
       return;
     }
 
-    this.stage = new Konva.Stage({ container, width: container.clientWidth, height: container.clientHeight });
+    this.stage = new Konva.Stage({
+      container,
+      width: container.clientWidth,
+      height: container.clientHeight,
+    });
     this.mapLayer = new Konva.Layer();
     this.gridLayer = new Konva.Layer();
     this.fogLayer = new Konva.Layer();
@@ -761,8 +883,17 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
     this.measureLayer = new Konva.Layer();
     // Darkness (and each torch's glow) sits under the fog, so fogged areas hide lighting too.
     this.stage.add(
-      this.mapLayer, this.gridLayer, this.darknessLayer, this.fogLayer, this.moveRangeLayer,
-      this.trailLayer, this.planLayer, this.tokenLayer, this.lightMarkerLayer, this.wallLayer, this.measureLayer,
+      this.mapLayer,
+      this.gridLayer,
+      this.darknessLayer,
+      this.fogLayer,
+      this.moveRangeLayer,
+      this.trailLayer,
+      this.planLayer,
+      this.tokenLayer,
+      this.lightMarkerLayer,
+      this.wallLayer,
+      this.measureLayer,
     );
     this.fogLayer.listening(false);
     this.darknessLayer.listening(false);
@@ -789,7 +920,11 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
         return;
       }
       if (this.activeLightTool() === 'wall' && this.controlsMap()) {
-        const point = wallPointUnderPointer(this.stage!, this.cellSize, !!(e.evt as MouseEvent).shiftKey);
+        const point = wallPointUnderPointer(
+          this.stage!,
+          this.cellSize,
+          !!(e.evt as MouseEvent).shiftKey,
+        );
         const wall = point && this.wallTool.addVertex(point);
         if (wall) this.commitWalls([...this.lighting().walls, wall]);
         this.renderWalls();
@@ -815,7 +950,13 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
         }
         return;
       }
-      if (e.target === this.konvaImg && this.controlsMap() && !this.activeMeasureTool() && !this.activeFogTool() && !this.activeLightTool()) {
+      if (
+        e.target === this.konvaImg &&
+        this.controlsMap() &&
+        !this.activeMeasureTool() &&
+        !this.activeFogTool() &&
+        !this.activeLightTool()
+      ) {
         const pos = this.stage!.getRelativePointerPosition()!;
         const col = Math.floor(pos.x / this.cellSize);
         const row = Math.floor(pos.y / this.cellSize);
@@ -827,7 +968,9 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
     this.stage.on('mousemove touchmove', (e) => {
       const tool = this.activeLightTool();
       if (tool === 'wall') {
-        this.wallTool.setHover(wallPointUnderPointer(this.stage!, this.cellSize, !!(e.evt as MouseEvent).shiftKey));
+        this.wallTool.setHover(
+          wallPointUnderPointer(this.stage!, this.cellSize, !!(e.evt as MouseEvent).shiftKey),
+        );
         this.renderWalls();
       } else if (tool === 'erase-wall') {
         const point = wallPointUnderPointer(this.stage!, this.cellSize, true);
@@ -848,7 +991,10 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
       this.renderWalls();
     });
 
-    this.stageView = new StageView(this.stage, () => !this.activeFogTool() && !this.activeMeasureTool() && !this.activeLightTool());
+    this.stageView = new StageView(
+      this.stage,
+      () => !this.activeFogTool() && !this.activeMeasureTool() && !this.activeLightTool(),
+    );
 
     this.pointerTools = new StagePointerTools(this.stage, this.fogTool, this.measurementTool, {
       cellSize: () => this.cellSize,
@@ -857,10 +1003,10 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
       controlsMap: () => this.controlsMap(),
       onFogChanged: () => this.renderFog(),
       onMeasureChanged: () => this.renderMeasurements(),
-      broadcastMeasure: measurement => this.mapService.sendMeasure(this.mapId, measurement),
+      broadcastMeasure: (measurement) => this.mapService.sendMeasure(this.mapId, measurement),
     });
 
-    this.tokenSub = this.mapService.watchTokens(this.mapId).subscribe(serverTokens => {
+    this.tokenSub = this.mapService.watchTokens(this.mapId).subscribe((serverTokens) => {
       this.serverTokens = serverTokens;
       const tokens = this.viewAsPlayers() ? tokensAsPlayersSee(serverTokens) : serverTokens;
       // Which tokens are hidden decides which lights are, so re-trim the last lighting too.
@@ -880,13 +1026,13 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
       this.renderMeasurements();
     });
 
-    this.fogSub = this.mapService.watchFog(this.mapId).subscribe(fog => {
+    this.fogSub = this.mapService.watchFog(this.mapId).subscribe((fog) => {
       this.fog.set(fog);
       this.renderFog();
       this.renderLightMarkers();
     });
 
-    this.lightingSub = this.mapService.watchLighting(this.mapId).subscribe(lighting => {
+    this.lightingSub = this.mapService.watchLighting(this.mapId).subscribe((lighting) => {
       const walls = this.pendingWalls ?? lighting.walls ?? [];
       const ambient_level = this.pendingAmbient?.level ?? lighting.ambient_level;
       const ambient_color = this.pendingAmbient?.color ?? lighting.ambient_color;
@@ -928,7 +1074,10 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
 
     // Letterboxed when the image's aspect ratio doesn't match the container's — center the map
     // in the leftover space rather than pinning it to the top-left corner.
-    this.stageView?.setHome({ x: (container.clientWidth - w) / 2, y: (container.clientHeight - h) / 2 });
+    this.stageView?.setHome({
+      x: (container.clientWidth - w) / 2,
+      y: (container.clientHeight - h) / 2,
+    });
 
     drawGrid(this.gridLayer!, w, h, this.cellSize);
     this.renderFog();
@@ -936,7 +1085,13 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
     this.renderDarkness();
     this.renderLightMarkers();
     this.renderWalls();
-    renderMoveRange(this.moveRangeLayer!, this.cellSize, this.showMoveRange(), this.moveRangeOrigin(), this.moveRangeFt());
+    renderMoveRange(
+      this.moveRangeLayer!,
+      this.cellSize,
+      this.showMoveRange(),
+      this.moveRangeOrigin(),
+      this.moveRangeFt(),
+    );
     this.renderTrail();
     this.renderPlan();
   }
@@ -948,7 +1103,11 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
   private syncStageSize() {
     const container = this.stageContainer.nativeElement;
     if (!this.stage || !container.clientWidth || !container.clientHeight) return;
-    if (this.stage.width() === container.clientWidth && this.stage.height() === container.clientHeight) return;
+    if (
+      this.stage.width() === container.clientWidth &&
+      this.stage.height() === container.clientHeight
+    )
+      return;
     this.stage.width(container.clientWidth);
     this.stage.height(container.clientHeight);
     this.stage.batchDraw();
@@ -958,7 +1117,12 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
     const layer = this.fogLayer;
     if (!layer) return;
     this.fogTool.render(
-      layer, this.fog(), this.controlsMap(), this.img, this.gridSize, this.cellSize,
+      layer,
+      this.fog(),
+      this.controlsMap(),
+      this.img,
+      this.gridSize,
+      this.cellSize,
       this.activeFogTool() === 'reveal-rect',
     );
   }
@@ -970,8 +1134,18 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
     const darkvision = this.darkvisionLights();
     // Spliced in only for this render call — never touches the `lighting` signal itself, so it's
     // never persisted, broadcast, shown in the light editor, or visible on anyone else's screen.
-    const effective = darkvision.length ? { ...lighting, lights: [...lighting.lights, ...darkvision] } : lighting;
-    renderDarkness(layer, effective, this.lastTokens, this.controlsMap(), this.img, this.gridSize, this.cellSize);
+    const effective = darkvision.length
+      ? { ...lighting, lights: [...lighting.lights, ...darkvision] }
+      : lighting;
+    renderDarkness(
+      layer,
+      effective,
+      this.lastTokens,
+      this.controlsMap(),
+      this.img,
+      this.gridSize,
+      this.cellSize,
+    );
   }
 
   // Darkvision has no "bright" zone in 5e — it sees as if in dim light throughout its whole
@@ -983,22 +1157,31 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
     const party = this.partyDarkvisionFt();
     const mine = this.myToken()?.id;
     for (const token of this.lastTokens) {
-      if (token.character_id && token.id !== mine) ranges.push([token, party[token.character_id] ?? null]);
+      if (token.character_id && token.id !== mine)
+        ranges.push([token, party[token.character_id] ?? null]);
     }
-    return ranges.flatMap(([token, ft]) => token?.id && ft ? [{
-      token_id: token.id,
-      map_id: this.mapId,
-      bright_radius_ft: 0,
-      dim_radius_ft: ft,
-      color: '#ffffff',
-      enabled: true,
-      label: 'Darkvision',
-    }] : []);
+    return ranges.flatMap(([token, ft]) =>
+      token?.id && ft
+        ? [
+            {
+              token_id: token.id,
+              map_id: this.mapId,
+              bright_radius_ft: 0,
+              dim_radius_ft: ft,
+              color: '#ffffff',
+              enabled: true,
+              label: 'Darkvision',
+            },
+          ]
+        : [],
+    );
   }
 
   private setLighting(lighting: MapLighting) {
     this.serverLighting = lighting;
-    this.lighting.set(this.viewAsPlayers() ? lightingAsPlayersSee(lighting, this.serverTokens) : lighting);
+    this.lighting.set(
+      this.viewAsPlayers() ? lightingAsPlayersSee(lighting, this.serverTokens) : lighting,
+    );
   }
 
   private renderLightMarkers() {
@@ -1008,11 +1191,20 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
     // — only the DM's view gets click/drag/delete wired up, via `interactive` below.
     const fog = this.fog();
     const hiddenCells = !this.controlsMap() && fog.enabled ? new Set(fog.hidden_cells) : null;
-    renderLightMarkers(layer, this.lighting(), this.lastTokens, this.cellSize, this.selectedLightId(), this.controlsMap(), hiddenCells, {
-      onLightClick: light => this.selectLight(light),
-      onLightDragEnd: (light, col, row) => this.moveLight(light, col, row),
-      onLightContextMenu: light => this.removeLight(light),
-    });
+    renderLightMarkers(
+      layer,
+      this.lighting(),
+      this.lastTokens,
+      this.cellSize,
+      this.selectedLightId(),
+      this.controlsMap(),
+      hiddenCells,
+      {
+        onLightClick: (light) => this.selectLight(light),
+        onLightDragEnd: (light, col, row) => this.moveLight(light, col, row),
+        onLightContextMenu: (light) => this.removeLight(light),
+      },
+    );
   }
 
   // Walls are an editing overlay: only the DM sees them, and only while a lighting tool is armed
@@ -1044,9 +1236,10 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
       characterTokenBorders: this.characterTokenBorders(),
       tokenImages: this.tokenImageCache.resolve(tokens, () => this.renderTokens(this.lastTokens)),
       hiddenTokenIds: this.tokensHiddenByDarkness(),
-      onTokenClick: token => {
+      onTokenClick: (token) => {
         this.selectedTokenId.set(token.id ?? null);
-        if (this.ownedTokens().some(t => t.id === token.id)) this.controlledTokenId.set(token.id!);
+        if (this.ownedTokens().some((t) => t.id === token.id))
+          this.controlledTokenId.set(token.id!);
         this.tokenClicked.emit(token);
       },
       onTokenPress: () => {
@@ -1056,7 +1249,9 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
         // Shown on its snapped square right away rather than wherever it was let go of, until
         // the server's tokens_updated broadcast confirms (or, on failure, restores) it. The
         // token layer itself redraws on release (onPointerRelease), right after this dragend.
-        this.lastTokens = this.lastTokens.map(t => t.id === token.id ? { ...t, x: col, y: row } : t);
+        this.lastTokens = this.lastTokens.map((t) =>
+          t.id === token.id ? { ...t, x: col, y: row } : t,
+        );
         this.tokenRenderPending = true;
         this.selectedTokenId.set(token.id ?? null);
         this.renderTrail();
@@ -1068,7 +1263,7 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
           this.renderTrail();
         });
       },
-      onTokenContextMenu: token => this.removeToken(token),
+      onTokenContextMenu: (token) => this.removeToken(token),
       onTokenDragMove: (token, xPx, yPx) => {
         // Purely local — no network call. Keeps a light attached to this token tracking the
         // drag live instead of only snapping into place once tokens_updated round-trips back
@@ -1076,13 +1271,16 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
         // this temporary mutation with the server's canonical positions.
         const gx = xPx / this.cellSize - token.size / 2;
         const gy = yPx / this.cellSize - token.size / 2;
-        this.lastTokens = this.lastTokens.map(t => t.id === token.id ? { ...t, x: gx, y: gy } : t);
+        this.lastTokens = this.lastTokens.map((t) =>
+          t.id === token.id ? { ...t, x: gx, y: gy } : t,
+        );
         this.renderDarkness();
         this.renderLightMarkers();
         // Same snapping as the drop itself (token-renderer's dragend). `token` is the position
         // the server last saved, not the live one just written into lastTokens above.
         this.renderTrail(token, {
-          xPx, yPx,
+          xPx,
+          yPx,
           col: snapToCell(xPx, token.size, this.cellSize),
           row: snapToCell(yPx, token.size, this.cellSize),
         });
@@ -1097,20 +1295,38 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
     const layer = this.trailLayer;
     if (!layer || !this.cellSize) return;
     const speedFor = (token: MapToken) =>
-      token.companion_owner_id === this.myCharacterId() ? token.companion_speed ?? null : token.character_id && token.character_id === this.myCharacterId() ? this.myMoveSpeedFt() : null;
+      token.companion_owner_id === this.myCharacterId()
+        ? (token.companion_speed ?? null)
+        : token.character_id && token.character_id === this.myCharacterId()
+          ? this.myMoveSpeedFt()
+          : null;
     const trails: Trail[] = [];
-    const selected = this.tokens().find(t => t.id === this.selectedTokenId());
-    const current = selected?.companion_owner_token_id === this.currentTurnTokenId() ? selected : this.tokens().find(t => t.id === this.currentTurnTokenId());
+    const selected = this.tokens().find((t) => t.id === this.selectedTokenId());
+    const current =
+      selected?.companion_owner_token_id === this.currentTurnTokenId()
+        ? selected
+        : this.tokens().find((t) => t.id === this.currentTurnTokenId());
     // An enemy in the dark leaves no visible trail either.
     if (current && current.id !== dragged?.id && !this.tokensHiddenByDarkness().has(current.id!)) {
       trails.push({ token: current, speedFt: speedFor(current), ...this.moveActions(current) });
     }
     if (dragged && drag) {
-      const onTurn = (dragged.id === this.currentTurnTokenId() || (!!dragged.companion_id && dragged.companion_owner_token_id === this.currentTurnTokenId())) && dragged.turn_start_x != null;
-      const token = onTurn ? dragged : {
-        ...dragged, turn_start_x: dragged.x, turn_start_y: dragged.y,
-        turn_anchor_x: dragged.x, turn_anchor_y: dragged.y, turn_moved_ft: 0, turn_diagonals: 0,
-      };
+      const onTurn =
+        (dragged.id === this.currentTurnTokenId() ||
+          (!!dragged.companion_id &&
+            dragged.companion_owner_token_id === this.currentTurnTokenId())) &&
+        dragged.turn_start_x != null;
+      const token = onTurn
+        ? dragged
+        : {
+            ...dragged,
+            turn_start_x: dragged.x,
+            turn_start_y: dragged.y,
+            turn_anchor_x: dragged.x,
+            turn_anchor_y: dragged.y,
+            turn_moved_ft: 0,
+            turn_diagonals: 0,
+          };
       trails.push({ token, drag, speedFt: speedFor(dragged) });
     }
     renderTurnTrails(layer, trails, {
@@ -1135,9 +1351,10 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
     if (!layer || !this.cellSize) return;
     const plan = this.planMarker();
     // The DM accepts a player's pick by clicking it: the token moves there like a normal drag.
-    const accept = plan && this.controlsMap()
-      ? () => this.mapService.upsertToken({ ...plan.token, x: plan.x, y: plan.y })
-      : undefined;
+    const accept =
+      plan && this.controlsMap()
+        ? () => this.mapService.upsertToken({ ...plan.token, x: plan.x, y: plan.y })
+        : undefined;
     renderPlanMarker(layer, this.cellSize, plan, accept);
   }
 
@@ -1151,12 +1368,15 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
     const lights = [...lighting.lights, ...this.darkvisionLights()];
     const areas = litAreas({ ...lighting, lights }, this.lastTokens, this.cellSize);
     for (const token of this.lastTokens) {
-      if (!token.is_player && token.id && !isTokenLit(token, areas, this.cellSize)) hidden.add(token.id);
+      if (!token.is_player && token.id && !isTokenLit(token, areas, this.cellSize))
+        hidden.add(token.id);
     }
     return hidden;
   }
 
-  private resolvePortraitImages(sources: Record<string, PortraitSource>): Record<string, HTMLImageElement> {
+  private resolvePortraitImages(
+    sources: Record<string, PortraitSource>,
+  ): Record<string, HTMLImageElement> {
     return this.portraitCache.resolve(sources, () => this.renderTokens(this.lastTokens));
   }
 
@@ -1167,7 +1387,14 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   async removeToken(token: MapToken) {
-    if (!await this.confirm.confirm(`Remove "${token.label ?? 'this token'}" from the map?`, 'Remove Token', 'Remove')) return;
+    if (
+      !(await this.confirm.confirm(
+        `Remove "${token.label ?? 'this token'}" from the map?`,
+        'Remove Token',
+        'Remove',
+      ))
+    )
+      return;
     await this.mapService.deleteToken(token.id!, token.map_id ?? this.mapId);
   }
 
@@ -1190,7 +1417,8 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
         map_id: this.mapId,
         label: entity.label,
         color: entity.color,
-        x: col, y: row,
+        x: col,
+        y: row,
         size: entity.size,
         hp: entity.hp,
         max_hp: entity.max_hp,
@@ -1206,7 +1434,8 @@ export class BattleMapComponent implements OnInit, AfterViewInit, OnDestroy {
       map_id: this.mapId,
       label: this.newToken.label,
       color: this.newToken.color,
-      x: col, y: row,
+      x: col,
+      y: row,
       size: this.newToken.size,
       is_player: this.newToken.is_player,
     });

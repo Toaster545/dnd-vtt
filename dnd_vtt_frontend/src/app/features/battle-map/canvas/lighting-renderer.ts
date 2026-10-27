@@ -14,7 +14,7 @@ export function resolveLightPosition(
   cellSize: number,
 ): { x: number; y: number } | null {
   if (light.token_id) {
-    const token = tokens.find(t => t.id === light.token_id);
+    const token = tokens.find((t) => t.id === light.token_id);
     if (!token) return null;
     const r = (token.size * cellSize) / 2;
     const cx = token.x * cellSize + r;
@@ -40,17 +40,19 @@ export interface LitArea {
 // Every enabled light's reach, in pixels, clipped by walls — what renderDarkness punches out of
 // the darkness, and what isTokenLit checks a token against.
 export function litAreas(lighting: MapLighting, tokens: MapToken[], cellSize: number): LitArea[] {
-  const wallSegments: Segment[] = (lighting.walls ?? []).map(w => ({
+  const wallSegments: Segment[] = (lighting.walls ?? []).map((w) => ({
     a: { x: w.x1 * cellSize, y: w.y1 * cellSize },
     b: { x: w.x2 * cellSize, y: w.y2 * cellSize },
   }));
-  return lighting.lights.filter(l => l.enabled).flatMap(light => {
-    const pos = resolveLightPosition(light, tokens, cellSize);
-    if (!pos) return [];
-    const outerPx = ((light.bright_radius_ft + light.dim_radius_ft) / FEET_PER_SQUARE) * cellSize;
-    if (outerPx <= 0) return [];
-    return [{ light, pos, outerPx, clip: visibilityPolygon(pos, outerPx, wallSegments) }];
-  });
+  return lighting.lights
+    .filter((l) => l.enabled)
+    .flatMap((light) => {
+      const pos = resolveLightPosition(light, tokens, cellSize);
+      if (!pos) return [];
+      const outerPx = ((light.bright_radius_ft + light.dim_radius_ft) / FEET_PER_SQUARE) * cellSize;
+      if (outerPx <= 0) return [];
+      return [{ light, pos, outerPx, clip: visibilityPolygon(pos, outerPx, wallSegments) }];
+    });
 }
 
 // Whether any part of the token's circle is within reach of a light (dim light included) with no
@@ -70,9 +72,12 @@ export function isTokenLit(token: MapToken, areas: LitArea[], cellSize: number):
       samples.push({ x: cx + Math.cos(a) * ringR, y: cy + Math.sin(a) * ringR });
     }
   }
-  return areas.some(({ pos, outerPx, clip }) =>
-    Math.hypot(pos.x - cx, pos.y - cy) <= outer ||
-    samples.some(p => Math.hypot(p.x - pos.x, p.y - pos.y) < outerPx && (!clip || pointInPolygon(p, clip)))
+  return areas.some(
+    ({ pos, outerPx, clip }) =>
+      Math.hypot(pos.x - cx, pos.y - cy) <= outer ||
+      samples.some(
+        (p) => Math.hypot(p.x - pos.x, p.y - pos.y) < outerPx && (!clip || pointInPolygon(p, clip)),
+      ),
   );
 }
 
@@ -140,7 +145,7 @@ export function renderDarkness(
       listening: false,
       width,
       height,
-      sceneFunc: context => {
+      sceneFunc: (context) => {
         context.save();
         // Overshoot the map by a margin on every side. If the fill stopped exactly at the map
         // image's edge, then whenever that edge lands between screen pixels (letterbox offset,
@@ -235,7 +240,8 @@ export function renderLightMarkers(
   for (const light of lighting.lights) {
     const pos = resolveLightPosition(light, tokens, cellSize);
     if (!pos) continue;
-    if (hiddenCells?.has(`${Math.floor(pos.x / cellSize)},${Math.floor(pos.y / cellSize)}`)) continue;
+    if (hiddenCells?.has(`${Math.floor(pos.x / cellSize)},${Math.floor(pos.y / cellSize)}`))
+      continue;
     const isSelected = interactive && light.id === selectedLightId;
 
     const marker = new Konva.Shape({
@@ -244,13 +250,15 @@ export function renderLightMarkers(
       listening: interactive,
       draggable: interactive && !light.token_id,
       fill: light.color,
-      hitFunc: interactive ? (context, shape) => {
-        context.beginPath();
-        context.arc(0, 0, radius + 3, 0, Math.PI * 2);
-        context.closePath();
-        context.fillStrokeShape(shape);
-      } : undefined,
-      sceneFunc: context => {
+      hitFunc: interactive
+        ? (context, shape) => {
+            context.beginPath();
+            context.arc(0, 0, radius + 3, 0, Math.PI * 2);
+            context.closePath();
+            context.fillStrokeShape(shape);
+          }
+        : undefined,
+      sceneFunc: (context) => {
         context.beginPath();
         context.arc(0, 0, radius, 0, Math.PI * 2);
         context.closePath();
@@ -262,12 +270,18 @@ export function renderLightMarkers(
       },
     });
     marker.getSelfRect = () => ({
-      x: -radius - 3, y: -radius - 3, width: (radius + 3) * 2, height: (radius + 3) * 2,
+      x: -radius - 3,
+      y: -radius - 3,
+      width: (radius + 3) * 2,
+      height: (radius + 3) * 2,
     });
 
     if (interactive) {
       marker.on('click tap', () => callbacks.onLightClick(light));
-      marker.on('contextmenu', (e) => { e.evt.preventDefault(); callbacks.onLightContextMenu(light); });
+      marker.on('contextmenu', (e) => {
+        e.evt.preventDefault();
+        callbacks.onLightContextMenu(light);
+      });
       if (!light.token_id) {
         marker.on('dragend', () => {
           const p = marker.position();

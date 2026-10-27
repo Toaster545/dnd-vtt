@@ -5,7 +5,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { CharacterService } from '../../core/services/character.service';
 import { RecentActivityService } from '../../core/services/recent-activity.service';
 import { Character } from '../../core/models/character.model';
-import { ConfirmService } from '../../shared/confirm.service';
+import { ConfirmService } from '../../shared/components/confirm-dialog/confirm.service';
 import { portraitDataUri, portraitSource } from '../../core/utils/avatar';
 import { CharacterPortraitComponent } from '../../shared/components/character-portrait/character-portrait';
 
@@ -33,7 +33,9 @@ export class CharactersComponent implements OnInit {
 
   characters = signal<CharacterListItem[]>([]);
 
-  async ngOnInit() { await this.load(); }
+  async ngOnInit() {
+    await this.load();
+  }
 
   private async load() {
     const [templates, copies] = await Promise.all([
@@ -52,7 +54,9 @@ export class CharactersComponent implements OnInit {
   }
 
   openRow(c: CharacterListItem) {
-    void this.router.navigate(this.canEdit(c) ? ['/home/characters', c.id, 'edit'] : ['/home/characters', c.id]);
+    void this.router.navigate(
+      this.canEdit(c) ? ['/home/characters', c.id, 'edit'] : ['/home/characters', c.id],
+    );
   }
 
   viewSheet(c: CharacterListItem) {
@@ -80,9 +84,12 @@ export class CharactersComponent implements OnInit {
   }
 
   async deleteCharacter(id: string) {
-    const char = this.characters().find(c => c.id === id);
+    const char = this.characters().find((c) => c.id === id);
     const name = char?.name ?? 'this character';
-    if (!await this.confirm.confirm(`Delete "${name}"? This cannot be undone.`, 'Delete Character')) return;
+    if (
+      !(await this.confirm.confirm(`Delete "${name}"? This cannot be undone.`, 'Delete Character'))
+    )
+      return;
     await this.characterService.deleteCharacter(id);
     await this.load();
   }
@@ -94,6 +101,8 @@ export class CharactersComponent implements OnInit {
   // Falls back to the character id as the DiceBear seed for characters created before portraits
   // existed — still deterministic per-character, just not one the player ever explicitly picked.
   portraitFor(c: CharacterListItem): string {
-    return portraitDataUri(portraitSource(c.portrait_seed || c.id!, c.avatar_recipe, c.portrait_image));
+    return portraitDataUri(
+      portraitSource(c.portrait_seed || c.id!, c.avatar_recipe, c.portrait_image),
+    );
   }
 }

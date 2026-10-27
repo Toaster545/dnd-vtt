@@ -5,11 +5,16 @@
     </button>
     <span class="text-parchment font-medium text-sm ml-2 truncate">{{ encounter().name }}</span>
     @if (levels().length > 1) {
-      <select class="field-input !w-auto max-w-48 !py-1 !pl-2 text-xs flex-shrink-0"
-              aria-label="Level shown on the map" matTooltip="Level shown on the map"
-              (change)="onLevelChange($event)">
+      <select
+        class="field-input !w-auto max-w-48 !py-1 !pl-2 text-xs flex-shrink-0"
+        aria-label="Level shown on the map"
+        matTooltip="Level shown on the map"
+        (change)="onLevelChange($event)"
+      >
         @for (level of levels(); track level.map_id) {
-          <option [value]="level.map_id" [selected]="level.map_id === activeMapId()">{{ level.name }}</option>
+          <option [value]="level.map_id" [selected]="level.map_id === activeMapId()">
+            {{ level.name }}
+          </option>
         }
       </select>
     }
@@ -17,8 +22,12 @@
 
   @if (encounter().status === 'active') {
     <div class="flex items-center gap-1 flex-shrink-0">
-      <button class="btn-icon" [disabled]="togglingTurn() || !currentTurnToken()"
-              (click)="previousTurn.emit()" matTooltip="Previous turn">
+      <button
+        class="btn-icon"
+        [disabled]="togglingTurn() || !currentTurnToken()"
+        (click)="previousTurn.emit()"
+        matTooltip="Previous turn"
+      >
         <mat-icon>skip_previous</mat-icon>
       </button>
       <span class="text-sm font-brand text-gold whitespace-nowrap px-1">
@@ -29,8 +38,12 @@
           Turn Order
         }
       </span>
-      <button class="btn-icon" [disabled]="togglingTurn()"
-              (click)="nextTurn.emit()" [matTooltip]="currentTurnToken() ? 'Next turn' : 'Start turn order'">
+      <button
+        class="btn-icon"
+        [disabled]="togglingTurn()"
+        (click)="nextTurn.emit()"
+        [matTooltip]="currentTurnToken() ? 'Next turn' : 'Start turn order'"
+      >
         <mat-icon>skip_next</mat-icon>
       </button>
     </div>
@@ -38,14 +51,30 @@
 
   <div class="flex items-center gap-2 flex-1 justify-end">
     @if (encounter().map_id) {
-      <button class="btn-icon" (click)="openPlayerView.emit()" matTooltip="Open player view in a new window">
+      <button
+        class="btn-icon"
+        (click)="openPlayerView.emit()"
+        matTooltip="Open player view in a new window"
+      >
         <mat-icon>open_in_new</mat-icon>
       </button>
     }
     @if (encounter().status === 'active') {
-      <button class="btn-outline text-xs px-2 py-1" [disabled]="togglingStatus()" (click)="stop.emit()">Stop Encounter</button>
+      <button
+        class="btn-outline text-xs px-2 py-1"
+        [disabled]="togglingStatus()"
+        (click)="stop.emit()"
+      >
+        Stop Encounter
+      </button>
     } @else {
-      <button class="btn-primary text-xs px-2 py-1" [disabled]="togglingStatus()" (click)="start.emit()">Start Encounter</button>
+      <button
+        class="btn-primary text-xs px-2 py-1"
+        [disabled]="togglingStatus()"
+        (click)="start.emit()"
+      >
+        Start Encounter
+      </button>
     }
   </div>
 </div>

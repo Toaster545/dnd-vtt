@@ -50,7 +50,8 @@ function hpFor(token: MapToken, ctx: TokenRenderContext): { hp: number; max_hp: 
   if (token.character_id) return ctx.characterHp[token.character_id] ?? null;
   // Monster hp/max_hp lives directly on the token, but stays hidden from players — standard
   // hide-the-enemy's-exact-HP table convention, unlike character HP which is party-visible.
-  if (ctx.isAdmin && token.hp != null && token.max_hp != null) return { hp: token.hp, max_hp: token.max_hp };
+  if (ctx.isAdmin && token.hp != null && token.max_hp != null)
+    return { hp: token.hp, max_hp: token.max_hp };
   return null;
 }
 
@@ -82,7 +83,10 @@ export function renderTokens(layer: Konva.Layer, tokens: MapToken[], ctx: TokenR
   // above wipes any z-order a previous moveToTop()-style tweak would have set — so the selected
   // token has to be sorted to the end of the draw list on every render, not just nudged once.
   const orderedTokens = ctx.selectedTokenId
-    ? [...tokens.filter(t => t.id !== ctx.selectedTokenId), ...tokens.filter(t => t.id === ctx.selectedTokenId)]
+    ? [
+        ...tokens.filter((t) => t.id !== ctx.selectedTokenId),
+        ...tokens.filter((t) => t.id === ctx.selectedTokenId),
+      ]
     : tokens;
   for (const token of orderedTokens) {
     if (hiddenByFog(token) || (token.id && ctx.hiddenTokenIds?.has(token.id))) continue;
@@ -96,11 +100,8 @@ export function renderTokens(layer: Konva.Layer, tokens: MapToken[], ctx: TokenR
     const hp = hpFor(token, ctx);
     // Monster token art comes already framed and round, so it's drawn bare at the token's full
     // size; a character portrait is a plain square face that still needs the clip and color ring.
-    const monsterImage =
-      !token.character_id && token.id ? ctx.tokenImages[token.id] : undefined;
-    const portrait = token.character_id
-      ? ctx.characterPortraits[token.character_id]
-      : monsterImage;
+    const monsterImage = !token.character_id && token.id ? ctx.tokenImages[token.id] : undefined;
+    const portrait = token.character_id ? ctx.characterPortraits[token.character_id] : monsterImage;
     const border = token.character_id ? ctx.characterTokenBorders?.[token.character_id] : undefined;
 
     // One Konva.Shape drawing the token's circle, label, and HP badge itself, instead of a
@@ -130,7 +131,7 @@ export function renderTokens(layer: Konva.Layer, tokens: MapToken[], ctx: TokenR
         context.closePath();
         context.fillStrokeShape(hitShape);
       },
-      sceneFunc: context => {
+      sceneFunc: (context) => {
         if (border) {
           // Raw 2D context: the ring needs setLineDash/gradients, and sharing one set of drawing
           // functions with the portrait dialog's preview keeps the two identical.
@@ -183,7 +184,8 @@ export function renderTokens(layer: Konva.Layer, tokens: MapToken[], ctx: TokenR
           const text = `${hp.hp}/${hp.max_hp}`;
           const fontSize = Math.max(10, Math.min(13, r * 0.4));
           context.font = `bold ${fontSize}px Arial`;
-          const padX = 4, padY = 2;
+          const padX = 4,
+            padY = 2;
           const labelW = context.measureText(text).width;
           const labelH = fontSize;
           const bgY = -(r + labelH + padY * 2 + 4);
@@ -224,7 +226,7 @@ export function renderTokens(layer: Konva.Layer, tokens: MapToken[], ctx: TokenR
       // rebuild the layer, so it's safe to call mid-drag without killing the drag Konva is
       // currently tracking on this exact node (a full renderTokens() rebuild here would destroy
       // and recreate the node, silently ending the drag).
-      shape.on('mousedown touchstart', e => {
+      shape.on('mousedown touchstart', (e) => {
         if ('button' in e.evt && e.evt.button !== 0) return;
         ctx.onTokenPress?.(token);
       });
@@ -239,10 +241,15 @@ export function renderTokens(layer: Konva.Layer, tokens: MapToken[], ctx: TokenR
       shape.on('dragend', () => {
         const pos = shape.position();
         ctx.onTokenMoved(
-          token, snapToCell(pos.x, token.size, cellSize), snapToCell(pos.y, token.size, cellSize),
+          token,
+          snapToCell(pos.x, token.size, cellSize),
+          snapToCell(pos.y, token.size, cellSize),
         );
       });
-      shape.on('contextmenu', (e) => { e.evt.preventDefault(); ctx.onTokenContextMenu(token); });
+      shape.on('contextmenu', (e) => {
+        e.evt.preventDefault();
+        ctx.onTokenContextMenu(token);
+      });
     }
     layer.add(shape);
   }

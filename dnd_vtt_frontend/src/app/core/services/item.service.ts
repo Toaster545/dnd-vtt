@@ -26,7 +26,7 @@ export class ItemService {
   // Bulk JSON import — server assigns `index` for every entry, same as createItem.
   async createItems(items: Omit<DndItem, 'index'>[]): Promise<DndItem[]> {
     const created = await firstValueFrom(
-      this.http.post<DndItem[]>(`${API}/content/items/bulk`, { items })
+      this.http.post<DndItem[]>(`${API}/content/items/bulk`, { items }),
     );
     this.content.invalidateContent('items');
     return created;
@@ -34,16 +34,14 @@ export class ItemService {
 
   async updateItem(item: DndItem): Promise<DndItem> {
     const updated = await firstValueFrom(
-      this.http.put<DndItem>(`${API}/content/items/${encodeURIComponent(item.index)}`, item)
+      this.http.put<DndItem>(`${API}/content/items/${encodeURIComponent(item.index)}`, item),
     );
     this.content.invalidateContent('items', updated.index);
     return updated;
   }
 
   async deleteItem(index: string): Promise<void> {
-    await firstValueFrom(
-      this.http.delete(`${API}/content/items/${encodeURIComponent(index)}`)
-    );
+    await firstValueFrom(this.http.delete(`${API}/content/items/${encodeURIComponent(index)}`));
     this.content.invalidateContent('items', index);
   }
 
@@ -51,7 +49,7 @@ export class ItemService {
     const form = new FormData();
     form.append('file', file);
     const updated = await firstValueFrom(
-      this.http.post<DndItem>(`${API}/content/items/${encodeURIComponent(index)}/image`, form)
+      this.http.post<DndItem>(`${API}/content/items/${encodeURIComponent(index)}/image`, form),
     );
     this.content.invalidateContent('items', updated.index);
     return updated;
@@ -63,7 +61,7 @@ export class ItemService {
     const updated = await firstValueFrom(
       this.http.put<DndItem>(`${API}/content/items/${encodeURIComponent(index)}/image-override`, {
         image_url: imageUrl,
-      })
+      }),
     );
     this.content.invalidateContent('items', updated.index);
     return updated;
@@ -71,7 +69,7 @@ export class ItemService {
 
   async clearImageOverride(index: string): Promise<DndItem> {
     const updated = await firstValueFrom(
-      this.http.delete<DndItem>(`${API}/content/items/${encodeURIComponent(index)}/image-override`)
+      this.http.delete<DndItem>(`${API}/content/items/${encodeURIComponent(index)}/image-override`),
     );
     this.content.invalidateContent('items', updated.index);
     return updated;

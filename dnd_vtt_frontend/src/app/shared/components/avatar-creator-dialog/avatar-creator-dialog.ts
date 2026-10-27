@@ -9,7 +9,7 @@ import {
   AvatarColorDefinition,
   AvatarPartDefinition,
   AvatarRecipeV1,
-} from '../../core/models/avatar.model';
+} from '../../../core/models/avatar.model';
 import {
   AVATAR_STYLE_DEFINITIONS,
   isPortraitImageUrl,
@@ -20,8 +20,8 @@ import {
   randomAvatarRecipe,
   randomAvatarRecipeForStyle,
   randomizeAvatarCategory,
-} from '../../core/utils/avatar';
-import { CharacterService } from '../../core/services/character.service';
+} from '../../../core/utils/avatar';
+import { CharacterService } from '../../../core/services/character.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { PortraitCropperComponent } from './portrait-cropper';
 import { TokenBorderPreviewComponent } from './token-border-preview';
@@ -29,7 +29,7 @@ import {
   TokenBorder,
   TokenBorderMaterial,
   TokenBorderPattern,
-} from '../../core/models/token-border.model';
+} from '../../../core/models/token-border.model';
 import {
   DEFAULT_TOKEN_BORDER,
   normalizeTokenBorder,
@@ -41,7 +41,7 @@ import {
   TOKEN_FACE_MAX_SCALE,
   TOKEN_FACE_MIN_SCALE,
   TOKEN_POP_OUT_MAX_RANGES,
-} from '../../core/utils/token-border';
+} from '../../../core/utils/token-border';
 
 export interface AvatarCreatorDialogData {
   seed: string;
