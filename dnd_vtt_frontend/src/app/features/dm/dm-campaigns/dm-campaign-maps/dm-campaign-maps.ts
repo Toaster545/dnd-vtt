@@ -67,7 +67,9 @@ export class DmCampaignMapsComponent implements OnInit, OnDestroy {
     );
   }
 
-  async ngOnInit() { await this.loadMaps(); }
+  async ngOnInit() {
+    await this.loadMaps();
+  }
 
   ngOnDestroy() {
     if (this.previewUrl) URL.revokeObjectURL(this.previewUrl);
@@ -75,9 +77,13 @@ export class DmCampaignMapsComponent implements OnInit, OnDestroy {
 
   private async loadMaps() {
     this.loading.set(true);
-    try { this.maps.set(await this.mapService.getMapsForCampaign(this.campaignId)); }
-    catch (e) { this.error.set(getErrorMessage(e)); }
-    finally { this.loading.set(false); }
+    try {
+      this.maps.set(await this.mapService.getMapsForCampaign(this.campaignId));
+    } catch (e) {
+      this.error.set(getErrorMessage(e));
+    } finally {
+      this.loading.set(false);
+    }
   }
 
   onFileChange(event: Event) {
@@ -110,7 +116,12 @@ export class DmCampaignMapsComponent implements OnInit, OnDestroy {
     this.error.set(null);
     try {
       const url = await this.mapService.uploadMapImage(this.selectedFile, this.campaignId);
-      await this.mapService.createMap({ campaign_id: this.campaignId, name: this.newMapName, image_url: url, grid_size: this.gridSize });
+      await this.mapService.createMap({
+        campaign_id: this.campaignId,
+        name: this.newMapName,
+        image_url: url,
+        grid_size: this.gridSize,
+      });
       this.newMapName = '';
       this.selectedFile = null;
       if (this.previewUrl) URL.revokeObjectURL(this.previewUrl);
@@ -118,8 +129,11 @@ export class DmCampaignMapsComponent implements OnInit, OnDestroy {
       this.imgWidth = 0;
       this.imgHeight = 0;
       await this.loadMaps();
-    } catch (e) { this.error.set(getErrorMessage(e)); }
-    finally { this.uploading.set(false); }
+    } catch (e) {
+      this.error.set(getErrorMessage(e));
+    } finally {
+      this.uploading.set(false);
+    }
   }
 
   backToHub() {

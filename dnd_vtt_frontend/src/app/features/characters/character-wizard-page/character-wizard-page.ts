@@ -4,6 +4,7 @@ import { CharacterWizardComponent } from '../character-wizard/character-wizard';
 import { CharacterService } from '../../../core/services/character.service';
 import { RecentActivityService } from '../../../core/services/recent-activity.service';
 import { Character } from '../../../core/models/character.model';
+import { ACTIVE_DRAFT_KEY, ACTIVE_DRAFT_STEP_KEY } from '../../../core/utils/storage-keys';
 
 // Thin routed wrapper around the reusable <app-character-wizard/> (also embedded directly inside
 // dm-campaign-hub/player-campaign-hub for their own character-creation flows, which stay
@@ -29,7 +30,7 @@ export class CharacterWizardPageComponent implements OnInit {
 
   async ngOnInit() {
     const routedId = this.route.snapshot.paramMap.get('id');
-    const id = routedId ?? localStorage.getItem('character.active-draft-id');
+    const id = routedId ?? localStorage.getItem(ACTIVE_DRAFT_KEY);
     if (id) {
       try {
         const character = await this.characterService.getCharacter(id);
@@ -39,8 +40,8 @@ export class CharacterWizardPageComponent implements OnInit {
         }
       } catch {
         if (!routedId) {
-          localStorage.removeItem('character.active-draft-id');
-          localStorage.removeItem('character.active-draft-step');
+          localStorage.removeItem(ACTIVE_DRAFT_KEY);
+          localStorage.removeItem(ACTIVE_DRAFT_STEP_KEY);
         }
       }
     }

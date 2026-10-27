@@ -1,18 +1,36 @@
-import { Component, inject, signal, computed, output, input, OnInit, WritableSignal } from '@angular/core';
+import {
+  Component,
+  inject,
+  signal,
+  computed,
+  output,
+  input,
+  OnInit,
+  WritableSignal,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { HttpErrorResponse } from '@angular/common/http';
 import { MatIconModule } from '@angular/material/icon';
 import { MonsterService } from '../../../../core/services/monster.service';
 import { DndMonster } from '../../../../core/services/content.service';
 import { EntryListComponent, StatBlockEntry } from './entry-list/entry-list';
+import { getErrorMessage } from '../../../../core/utils/error-message';
 
-interface AbilityBonus { ability: string; bonus: number; }
-interface SkillBonus { skill: string; bonus: number; }
+interface AbilityBonus {
+  ability: string;
+  bonus: number;
+}
+interface SkillBonus {
+  skill: string;
+  bonus: number;
+}
 
 const SIZES = ['Tiny', 'Small', 'Medium', 'Large', 'Huge', 'Gargantuan'];
 
 function tagsFrom(raw: string): string[] {
-  return raw.split(',').map(s => s.trim()).filter(Boolean);
+  return raw
+    .split(',')
+    .map((s) => s.trim())
+    .filter(Boolean);
 }
 
 @Component({
@@ -23,11 +41,11 @@ function tagsFrom(raw: string): string[] {
 export class MonsterFormComponent implements OnInit {
   private monsterService = inject(MonsterService);
 
-  readonly monster   = input<DndMonster | null>(null);
+  readonly monster = input<DndMonster | null>(null);
   // Set instead of `monster` to seed the form from an existing monster (official or homebrew)
   // without editing it — save() still creates a brand-new custom entry.
   readonly duplicateFrom = input<DndMonster | null>(null);
-  readonly saved     = output<DndMonster>();
+  readonly saved = output<DndMonster>();
   readonly cancelled = output<void>();
 
   readonly isEdit = computed(() => this.monster() != null);
@@ -35,66 +53,73 @@ export class MonsterFormComponent implements OnInit {
   readonly sizes = SIZES;
 
   saving = signal(false);
-  error  = signal<string | null>(null);
+  error = signal<string | null>(null);
 
   name = signal('');
   // The server assigns a permanent `custom:<uuid>` index on create; we just carry it through on
   // edit so MonsterService.updateMonster knows which row to hit.
   private originalIndex: string | null = null;
 
-  size      = signal('Medium');
-  type      = signal('');
+  size = signal('Medium');
+  type = signal('');
   alignment = signal('');
-  color     = signal('#e74c3c');
+  color = signal('#e74c3c');
 
-  armorClass     = signal(10);
+  armorClass = signal(10);
   armorClassDesc = signal('');
-  hitPoints      = signal(10);
-  hitDice        = signal('');
+  hitPoints = signal(10);
+  hitDice = signal('');
 
-  speedWalk   = signal<number | null>(30);
-  speedFly    = signal<number | null>(null);
-  speedSwim   = signal<number | null>(null);
-  speedClimb  = signal<number | null>(null);
+  speedWalk = signal<number | null>(30);
+  speedFly = signal<number | null>(null);
+  speedSwim = signal<number | null>(null);
+  speedClimb = signal<number | null>(null);
   speedBurrow = signal<number | null>(null);
 
-  strength     = signal(10);
-  dexterity    = signal(10);
+  strength = signal(10);
+  dexterity = signal(10);
   constitution = signal(10);
   intelligence = signal(10);
-  wisdom       = signal(10);
-  charisma     = signal(10);
+  wisdom = signal(10);
+  charisma = signal(10);
 
   savingThrows = signal<AbilityBonus[]>([]);
-  skills       = signal<SkillBonus[]>([]);
+  skills = signal<SkillBonus[]>([]);
 
   damageVulnerabilities = signal('');
-  damageResistances     = signal('');
-  damageImmunities      = signal('');
-  conditionImmunities   = signal('');
+  damageResistances = signal('');
+  damageImmunities = signal('');
+  conditionImmunities = signal('');
 
-  darkvision        = signal<number | null>(null);
-  blindsight        = signal<number | null>(null);
-  truesight         = signal<number | null>(null);
-  tremorsense       = signal<number | null>(null);
+  darkvision = signal<number | null>(null);
+  blindsight = signal<number | null>(null);
+  truesight = signal<number | null>(null);
+  tremorsense = signal<number | null>(null);
   passivePerception = signal(10);
 
-  languages       = signal('');
+  languages = signal('');
   challengeRating = signal('');
-  xp              = signal(0);
+  xp = signal(0);
 
-  traits           = signal<StatBlockEntry[]>([]);
-  actions          = signal<StatBlockEntry[]>([{ name: '', description: '' }]);
-  bonusActions     = signal<StatBlockEntry[]>([]);
-  reactions        = signal<StatBlockEntry[]>([]);
+  traits = signal<StatBlockEntry[]>([]);
+  actions = signal<StatBlockEntry[]>([{ name: '', description: '' }]);
+  bonusActions = signal<StatBlockEntry[]>([]);
+  reactions = signal<StatBlockEntry[]>([]);
   legendaryActions = signal<StatBlockEntry[]>([]);
 
   description = signal('');
 
-  readonly canSave = computed(() =>
-    !!(this.name().trim() && this.type().trim() && this.alignment().trim() &&
-       this.hitDice().trim() && this.challengeRating().trim() &&
-       this.actions().some(a => a.name.trim())));
+  readonly canSave = computed(
+    () =>
+      !!(
+        this.name().trim() &&
+        this.type().trim() &&
+        this.alignment().trim() &&
+        this.hitDice().trim() &&
+        this.challengeRating().trim() &&
+        this.actions().some((a) => a.name.trim())
+      ),
+  );
 
   ngOnInit() {
     const editing = this.monster();
@@ -126,7 +151,9 @@ export class MonsterFormComponent implements OnInit {
     this.wisdom.set(m.ability_scores.wisdom);
     this.charisma.set(m.ability_scores.charisma);
 
-    this.savingThrows.set(Object.entries(m.saving_throws ?? {}).map(([ability, bonus]) => ({ ability, bonus })));
+    this.savingThrows.set(
+      Object.entries(m.saving_throws ?? {}).map(([ability, bonus]) => ({ ability, bonus })),
+    );
     this.skills.set(Object.entries(m.skills ?? {}).map(([skill, bonus]) => ({ skill, bonus })));
 
     this.damageVulnerabilities.set((m.damage_vulnerabilities ?? []).join(', '));
@@ -158,22 +185,34 @@ export class MonsterFormComponent implements OnInit {
   }
 
   private updateAt<T>(list: WritableSignal<T[]>, i: number, patch: Partial<T>) {
-    list.update(rows => rows.map((r, idx) => (idx === i ? { ...r, ...patch } : r)));
+    list.update((rows) => rows.map((r, idx) => (idx === i ? { ...r, ...patch } : r)));
   }
   private addTo<T>(list: WritableSignal<T[]>, entry: T) {
-    list.update(rows => [...rows, entry]);
+    list.update((rows) => [...rows, entry]);
   }
   private removeAt<T>(list: WritableSignal<T[]>, i: number) {
-    list.update(rows => rows.filter((_, idx) => idx !== i));
+    list.update((rows) => rows.filter((_, idx) => idx !== i));
   }
 
-  updateSavingThrow(i: number, patch: Partial<AbilityBonus>) { this.updateAt(this.savingThrows, i, patch); }
-  addSavingThrow() { this.addTo(this.savingThrows, { ability: '', bonus: 0 }); }
-  removeSavingThrow(i: number) { this.removeAt(this.savingThrows, i); }
+  updateSavingThrow(i: number, patch: Partial<AbilityBonus>) {
+    this.updateAt(this.savingThrows, i, patch);
+  }
+  addSavingThrow() {
+    this.addTo(this.savingThrows, { ability: '', bonus: 0 });
+  }
+  removeSavingThrow(i: number) {
+    this.removeAt(this.savingThrows, i);
+  }
 
-  updateSkill(i: number, patch: Partial<SkillBonus>) { this.updateAt(this.skills, i, patch); }
-  addSkill() { this.addTo(this.skills, { skill: '', bonus: 0 }); }
-  removeSkill(i: number) { this.removeAt(this.skills, i); }
+  updateSkill(i: number, patch: Partial<SkillBonus>) {
+    this.updateAt(this.skills, i, patch);
+  }
+  addSkill() {
+    this.addTo(this.skills, { skill: '', bonus: 0 });
+  }
+  removeSkill(i: number) {
+    this.removeAt(this.skills, i);
+  }
 
   private buildMonster(): Omit<DndMonster, 'index'> {
     const speed: DndMonster['speed'] = {};
@@ -190,9 +229,15 @@ export class MonsterFormComponent implements OnInit {
     if (this.tremorsense() != null) senses.tremorsense = this.tremorsense()!;
 
     const savingThrows = Object.fromEntries(
-      this.savingThrows().filter(s => s.ability.trim()).map(s => [s.ability.trim(), s.bonus]));
+      this.savingThrows()
+        .filter((s) => s.ability.trim())
+        .map((s) => [s.ability.trim(), s.bonus]),
+    );
     const skills = Object.fromEntries(
-      this.skills().filter(s => s.skill.trim()).map(s => [s.skill.trim(), s.bonus]));
+      this.skills()
+        .filter((s) => s.skill.trim())
+        .map((s) => [s.skill.trim(), s.bonus]),
+    );
 
     const monster: Omit<DndMonster, 'index'> = {
       name: this.name().trim(),
@@ -205,29 +250,37 @@ export class MonsterFormComponent implements OnInit {
       hit_dice: this.hitDice().trim(),
       speed,
       ability_scores: {
-        strength: this.strength(), dexterity: this.dexterity(), constitution: this.constitution(),
-        intelligence: this.intelligence(), wisdom: this.wisdom(), charisma: this.charisma(),
+        strength: this.strength(),
+        dexterity: this.dexterity(),
+        constitution: this.constitution(),
+        intelligence: this.intelligence(),
+        wisdom: this.wisdom(),
+        charisma: this.charisma(),
       },
       senses,
       languages: tagsFrom(this.languages()),
       challenge_rating: this.challengeRating().trim(),
       xp: this.xp(),
-      actions: this.actions().filter(a => a.name.trim()),
+      actions: this.actions().filter((a) => a.name.trim()),
     };
     if (this.armorClassDesc().trim()) monster.armor_class_desc = this.armorClassDesc().trim();
     if (Object.keys(savingThrows).length) monster.saving_throws = savingThrows;
     if (Object.keys(skills).length) monster.skills = skills;
-    if (this.damageVulnerabilities().trim()) monster.damage_vulnerabilities = tagsFrom(this.damageVulnerabilities());
-    if (this.damageResistances().trim()) monster.damage_resistances = tagsFrom(this.damageResistances());
-    if (this.damageImmunities().trim()) monster.damage_immunities = tagsFrom(this.damageImmunities());
-    if (this.conditionImmunities().trim()) monster.condition_immunities = tagsFrom(this.conditionImmunities());
-    const traits = this.traits().filter(t => t.name.trim());
+    if (this.damageVulnerabilities().trim())
+      monster.damage_vulnerabilities = tagsFrom(this.damageVulnerabilities());
+    if (this.damageResistances().trim())
+      monster.damage_resistances = tagsFrom(this.damageResistances());
+    if (this.damageImmunities().trim())
+      monster.damage_immunities = tagsFrom(this.damageImmunities());
+    if (this.conditionImmunities().trim())
+      monster.condition_immunities = tagsFrom(this.conditionImmunities());
+    const traits = this.traits().filter((t) => t.name.trim());
     if (traits.length) monster.traits = traits;
-    const bonusActions = this.bonusActions().filter(t => t.name.trim());
+    const bonusActions = this.bonusActions().filter((t) => t.name.trim());
     if (bonusActions.length) monster.bonus_actions = bonusActions;
-    const reactions = this.reactions().filter(t => t.name.trim());
+    const reactions = this.reactions().filter((t) => t.name.trim());
     if (reactions.length) monster.reactions = reactions;
-    const legendaryActions = this.legendaryActions().filter(t => t.name.trim());
+    const legendaryActions = this.legendaryActions().filter((t) => t.name.trim());
     if (legendaryActions.length) monster.legendary_actions = legendaryActions;
     if (this.description().trim()) monster.description = this.description().trim();
 
@@ -245,7 +298,7 @@ export class MonsterFormComponent implements OnInit {
         : await this.monsterService.createMonster(built);
       this.saved.emit(saved);
     } catch (e) {
-      const message = e instanceof HttpErrorResponse ? (e.error?.message ?? e.message) : 'Failed to save monster.';
+      const message = getErrorMessage(e, 'Failed to save monster.');
       this.error.set(Array.isArray(message) ? message.join(', ') : message);
     } finally {
       this.saving.set(false);

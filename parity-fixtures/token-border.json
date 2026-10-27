@@ -1,0 +1,34 @@
+{
+  "cases": [
+    { "name": "null", "input": null, "expected": null },
+    { "name": "array", "input": [], "expected": null },
+    { "name": "bad color", "input": { "color": "red", "width": 3, "pattern": "solid" }, "expected": null },
+    { "name": "width out of range", "input": { "color": "#112233", "width": 11, "pattern": "solid" }, "expected": null },
+    { "name": "bad pattern", "input": { "color": "#112233", "width": 3, "pattern": "wavy" }, "expected": null },
+    { "name": "bad material", "input": { "color": "#112233", "width": 3, "pattern": "solid", "material": "gold" }, "expected": null },
+    { "name": "face scale out of range", "input": { "color": "#112233", "width": 3, "pattern": "solid", "faceScale": 200 }, "expected": null },
+    { "name": "too many pop-out ranges", "input": { "color": "#112233", "width": 3, "pattern": "solid", "popOut": [{"start":0,"end":1},{"start":0,"end":1},{"start":0,"end":1},{"start":0,"end":1},{"start":0,"end":1},{"start":0,"end":1},{"start":0,"end":1}] }, "expected": null },
+    { "name": "bad pop-out range", "input": { "color": "#112233", "width": 3, "pattern": "solid", "popOut": [{ "start": 0, "end": 361 }] }, "expected": null },
+    { "name": "bad optional hex", "input": { "color": "#112233", "width": 3, "pattern": "solid", "bandColor": "nope" }, "expected": null },
+    {
+      "name": "minimal fills defaults and lowercases color",
+      "input": { "color": "#AABBCC", "width": 3, "pattern": "dashed" },
+      "expected": { "color": "#aabbcc", "width": 3, "pattern": "dashed", "gradientColor": null, "bandColor": null, "backgroundColor": null, "material": "flat", "faceScale": 100, "popOut": [{ "start": 0, "end": 180 }] }
+    },
+    {
+      "name": "legacy named width",
+      "input": { "color": "#112233", "width": "thick", "pattern": "solid" },
+      "expected": { "color": "#112233", "width": 8, "pattern": "solid", "gradientColor": null, "bandColor": null, "backgroundColor": null, "material": "flat", "faceScale": 100, "popOut": [{ "start": 0, "end": 180 }] }
+    },
+    {
+      "name": "full",
+      "input": { "color": "#112233", "width": 10, "pattern": "double", "gradientColor": "#FFFFFF", "bandColor": "#000000", "backgroundColor": "#123456", "material": "studded", "faceScale": 150, "popOut": [{ "start": 350, "end": 10 }] },
+      "expected": { "color": "#112233", "width": 10, "pattern": "double", "gradientColor": "#ffffff", "bandColor": "#000000", "backgroundColor": "#123456", "material": "studded", "faceScale": 150, "popOut": [{ "start": 350, "end": 10 }] }
+    },
+    {
+      "name": "empty pop-out kept",
+      "input": { "color": "#112233", "width": 1, "pattern": "dotted", "popOut": [] },
+      "expected": { "color": "#112233", "width": 1, "pattern": "dotted", "gradientColor": null, "bandColor": null, "backgroundColor": null, "material": "flat", "faceScale": 100, "popOut": [] }
+    }
+  ]
+}

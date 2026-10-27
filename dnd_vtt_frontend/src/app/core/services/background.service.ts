@@ -51,13 +51,15 @@ export class BackgroundService {
       error: () => this.customOptions.set([]),
     });
 
-    this.router.events.pipe(filter((e): e is NavigationEnd => e instanceof NavigationEnd)).subscribe(() => {
-      let route = this.activatedRoute.root;
-      while (route.firstChild) route = route.firstChild;
-      const bgOverlay = route.snapshot.data['bgOverlay'];
-      if (typeof bgOverlay === 'number') this.setPageOverlay(bgOverlay);
-      else this.resetPageOverlay();
-    });
+    this.router.events
+      .pipe(filter((e): e is NavigationEnd => e instanceof NavigationEnd))
+      .subscribe(() => {
+        let route = this.activatedRoute.root;
+        while (route.firstChild) route = route.firstChild;
+        const bgOverlay = route.snapshot.data['bgOverlay'];
+        if (typeof bgOverlay === 'number') this.setPageOverlay(bgOverlay);
+        else this.resetPageOverlay();
+      });
   }
 
   set(id: string): void {

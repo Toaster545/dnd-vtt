@@ -9,15 +9,15 @@ import { ALIGNMENTS } from '../../../../../core/models/character.model';
   templateUrl: './details-step.html',
 })
 export class DetailsStepComponent {
-  readonly alignment          = input.required<string>();
-  readonly maxHP              = input.required<number>();
-  readonly suggestedMaxHP     = input.required<number>();
-  readonly maxHpOverridden    = input(false);
-  readonly armorClass         = input.required<number>();
-  readonly speed              = input.required<number>();
-  readonly profBonus          = input.required<number>();
-  readonly selectedRace       = input<DndRace | null>(null);
-  readonly selectedClass      = input<DndClass | null>(null);
+  readonly alignment = input.required<string>();
+  readonly maxHP = input.required<number>();
+  readonly suggestedMaxHP = input.required<number>();
+  readonly maxHpOverridden = input(false);
+  readonly armorClass = input.required<number>();
+  readonly speed = input.required<number>();
+  readonly profBonus = input.required<number>();
+  readonly selectedRace = input<DndRace | null>(null);
+  readonly selectedClass = input<DndClass | null>(null);
   readonly selectedBackground = input<DndBackground | null>(null);
 
   readonly alignmentChanged = output<string>();

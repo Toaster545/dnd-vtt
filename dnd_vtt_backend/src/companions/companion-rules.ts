@@ -1,3 +1,4 @@
+import { abilityModifier } from '../common/ability';
 // Playable definitions are versioned separately from reference-only bestiary entries.
 export type CompanionKind = 'primal' | 'steel';
 export type CompanionForm = 'land' | 'sea' | 'sky' | 'defender';
@@ -65,7 +66,6 @@ export interface CompanionAction {
   attacks?: number;
   basic?: boolean;
 }
-const mod = (n: number) => Math.floor((n - 10) / 2);
 const slug = (s: string | undefined) =>
   (s ?? '').toLowerCase().replace(/\s+/g, '-');
 export function companionLevel(
@@ -99,7 +99,7 @@ export function resolveCompanion(owner: CompanionOwner, state: CompanionState) {
   const sky = state.form === 'sky';
   const sea = state.form === 'sea';
   const ability = steel ? 'intelligence' : 'wisdom';
-  const abilityMod = mod(owner.ability_scores?.[ability] ?? 10);
+  const abilityMod = abilityModifier(owner.ability_scores?.[ability] ?? 10);
   const pb = Math.ceil(owner.level / 4) + 1;
   const maxHp = (sky ? 4 : 5) * (level + 1);
   const scores = steel
@@ -266,10 +266,13 @@ export function resolveCompanion(owner: CompanionOwner, state: CompanionState) {
     hit_dice: level,
     ability_scores: abilities,
     saving_throws: Object.fromEntries(
-      Object.entries(abilities).map(([key, score]) => [key, mod(score) + pb]),
+      Object.entries(abilities).map(([key, score]) => [
+        key,
+        abilityModifier(score) + pb,
+      ]),
     ),
     check_bonus: pb,
-    passive_perception: 10 + mod(abilities.wisdom) + pb,
+    passive_perception: 10 + abilityModifier(abilities.wisdom) + pb,
     speed: steel
       ? { walk: 40 }
       : sky

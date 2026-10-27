@@ -1,6 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { environment } from '../../../environments/environment';
-import { AuthTokenService } from './auth-token.service';
+import { HttpClient } from '@angular/common/http';
+import { firstValueFrom } from 'rxjs';
 
 const API = environment.apiUrl;
 
@@ -36,8 +37,15 @@ export interface DndSourceReference {
 }
 
 export interface SpellSlots {
-  '1'?: number; '2'?: number; '3'?: number; '4'?: number; '5'?: number;
-  '6'?: number; '7'?: number; '8'?: number; '9'?: number;
+  '1'?: number;
+  '2'?: number;
+  '3'?: number;
+  '4'?: number;
+  '5'?: number;
+  '6'?: number;
+  '7'?: number;
+  '8'?: number;
+  '9'?: number;
 }
 // A choice's mechanical effect (AC bonus, proficiency, etc.), computed generically
 // instead of matched by display name.
@@ -86,7 +94,8 @@ export interface TraitAction {
     maxByLevel?: Record<string, number>;
     // Uses equal the named ability modifier (subject to `minimum`) when ability
     // scores are available; `max` remains the safe fallback for older callers.
-    maxAbilityModifier?: 'strength' | 'dexterity' | 'constitution' | 'intelligence' | 'wisdom' | 'charisma';
+    maxAbilityModifier?:
+      'strength' | 'dexterity' | 'constitution' | 'intelligence' | 'wisdom' | 'charisma';
     maxProficiencyBonus?: boolean;
     minimum?: number;
     per: 'short_rest' | 'long_rest';
@@ -103,42 +112,106 @@ export type TraitGrant =
   // `level` gates a race feature that unlocks past character level 1 (e.g. Goliath's Large
   // Form at 5) — races have no per-level grant structure like a class's `levels[]`, so this is
   // checked directly against character level instead. Omitted = always active.
-  | { type: 'feature'; name: string; description?: string; key?: string; action?: TraitAction; effects?: TraitEffect[]; level?: number }
+  | {
+      type: 'feature';
+      name: string;
+      description?: string;
+      key?: string;
+      action?: TraitAction;
+      effects?: TraitEffect[];
+      level?: number;
+    }
   // `chooseByLevel` grows the pool with class level (key = level, value = total choices).
   // `display: 'special_action'` is for choices whose picked options are themselves combat
   // reference material (e.g. Battle Master maneuvers) rather than passive features: the play
   // sheet lists each selected option individually in the Actions tab's Special Actions section
   // (full description, no use counter — they draw from an already-tracked pool like Superiority
   // Dice) instead of collapsing them into one comma-joined line on the Features list.
-  | { type: 'choice'; key: string; name: string; choose: number; chooseByLevel?: Record<string, number>; description?: string; options: TraitOption[]; display?: 'special_action' }
+  | {
+      type: 'choice';
+      key: string;
+      name: string;
+      choose: number;
+      chooseByLevel?: Record<string, number>;
+      description?: string;
+      options: TraitOption[];
+      display?: 'special_action';
+    }
   // `skills` restricts to a named list (e.g. Elf's Keen Senses); omitted = any skill (Human's Skillful).
-  | { type: 'skill_choice'; key: string; name: string; choose: number; description?: string; skills?: string[] }
+  | {
+      type: 'skill_choice';
+      key: string;
+      name: string;
+      choose: number;
+      description?: string;
+      skills?: string[];
+    }
   // Choose existing skill proficiencies whose proficiency bonus is doubled. Options are derived
   // from the character's live proficient-skill set; `skills` optionally narrows the eligible set.
-  | { type: 'expertise_choice'; key: string; name: string; choose: number; description?: string; skills?: string[] }
+  | {
+      type: 'expertise_choice';
+      key: string;
+      name: string;
+      choose: number;
+      description?: string;
+      skills?: string[];
+    }
   // Options are derived from weapon items (DndItem.mastery) the class is proficient with,
   // filtered by category, rather than embedded here.
-  | { type: 'weapon_mastery'; key: string; name: string; choose: number; description?: string; proficiency: string[] }
+  | {
+      type: 'weapon_mastery';
+      key: string;
+      name: string;
+      choose: number;
+      description?: string;
+      proficiency: string[];
+    }
   // Distribute `points` across abilities (max +2 each, 20 cap) — e.g. ASI (all 6 abilities) or
   // a Background's origin boost (3 points, restricted `abilities`). `key` must be unique per
   // occurrence ("asi_4", "asi_8"). `allowFeat` (class ASI only) lets the player take a feat
   // instead, stored under `${key}:feat` (plus `${key}:feat_ability` if that feat offers a
   // choice of ability); `feats` restricts which feats are offered.
-  | { type: 'ability_choice'; key: string; name: string; description?: string; points: number; abilities?: string[]; allowFeat?: boolean; feats?: string[] }
+  | {
+      type: 'ability_choice';
+      key: string;
+      name: string;
+      description?: string;
+      points: number;
+      abilities?: string[];
+      allowFeat?: boolean;
+      feats?: string[];
+    }
   // Pure feat picker from the Feats library, filtered to `category` (and optionally `feats`) —
   // e.g. a class's Fighting Style feature. No ASI alternative. `excludeKey` points at another
   // feat_pick/ability_choice grant whose picks should be excluded (e.g. Fighter's Additional
   // Fighting Style must differ from the one picked at level 1).
-  | { type: 'feat_pick'; key: string; name: string; choose: number; description?: string; category: 'origin' | 'general' | 'fighting_style' | 'epic'; feats?: string[]; excludeKey?: string }
+  | {
+      type: 'feat_pick';
+      key: string;
+      name: string;
+      choose: number;
+      description?: string;
+      category: 'origin' | 'general' | 'fighting_style' | 'epic';
+      feats?: string[];
+      excludeKey?: string;
+    }
   // Fixed or selectable spells granted by a species, class, subclass, feat, or another option.
   // Class/subclass grants inherit that class's spellcasting source unless `sourceKey` is set.
   | {
-      type: 'spell_grant'; key: string; name: string; description?: string;
+      type: 'spell_grant';
+      key: string;
+      name: string;
+      description?: string;
       destination: 'known' | 'spellbook' | 'always_prepared';
-      spells?: string[]; choose?: number; countsAgainstLimit?: boolean;
-      sourceKey?: string; sourceName?: string; list?: string;
+      spells?: string[];
+      choose?: number;
+      countsAgainstLimit?: boolean;
+      sourceKey?: string;
+      sourceName?: string;
+      list?: string;
       ability?: SpellcastingAbility;
-      characterLevel?: number; classLevel?: number;
+      characterLevel?: number;
+      classLevel?: number;
       fromDestination?: 'known' | 'spellbook' | 'prepared';
       freeCast?: {
         uses?: number | 'proficiency_bonus' | 'spellcasting_ability_modifier';
@@ -149,30 +222,56 @@ export type TraitGrant =
         slotLevel?: number;
       };
       filter?: {
-        lists?: string[]; schools?: string[]; minLevel?: number; maxLevel?: number;
-        exactLevels?: number[]; ritual?: boolean; spellAttack?: boolean; castingTimes?: string[];
+        lists?: string[];
+        schools?: string[];
+        minLevel?: number;
+        maxLevel?: number;
+        exactLevels?: number[];
+        ritual?: boolean;
+        spellAttack?: boolean;
+        castingTimes?: string[];
       };
     }
   // Adds spells to the active class source without creating a second slot pool. This is used
   // by subclasses such as Divine Soul and by feats that expand every active class list.
   | {
-      type: 'spell_list_expansion'; key: string; name: string;
-      spells?: string[]; list?: string; description?: string;
-      alwaysPreparedIfFeat?: string; sourceKey?: string; sourceName?: string;
+      type: 'spell_list_expansion';
+      key: string;
+      name: string;
+      spells?: string[];
+      list?: string;
+      description?: string;
+      alwaysPreparedIfFeat?: string;
+      sourceKey?: string;
+      sourceName?: string;
       ability?: SpellcastingAbility;
     }
   // A restricted bonus slot whose level scales with character level. It is kept separate
   // from normal and Pact Magic pools so the cast flow can enforce its origin restriction.
   | {
-      type: 'dragonmark_slot'; key: string; name: string; maxLevel: number;
+      type: 'dragonmark_slot';
+      key: string;
+      name: string;
+      maxLevel: number;
       recovery: 'short_rest' | 'long_rest';
     }
   // Resolves a companion from the shared monster catalog without copying a second stat block
   // into the class definition.
-  | { type: 'companion_grant'; key: string; name: string; monsterIndex: string; description?: string };
+  | {
+      type: 'companion_grant';
+      key: string;
+      name: string;
+      monsterIndex: string;
+      description?: string;
+    };
 
 export type SpellcastingAbility =
-  | 'strength' | 'dexterity' | 'constitution' | 'intelligence' | 'wisdom' | 'charisma'
+  | 'strength'
+  | 'dexterity'
+  | 'constitution'
+  | 'intelligence'
+  | 'wisdom'
+  | 'charisma'
   | { choiceKey: string };
 
 export interface SpellcastingDefinition {
@@ -214,7 +313,12 @@ export interface DndFeat {
   // `grantsSaveProficiency` (Resilient) adds save proficiency in the increased ability.
   // Fighting Style / proficiency feats instead carry `effects` (same TraitEffect shape as a
   // class `choice` option).
-  abilityIncrease?: { abilities: string[]; amount: number; maximum?: number; grantsSaveProficiency?: boolean };
+  abilityIncrease?: {
+    abilities: string[];
+    amount: number;
+    maximum?: number;
+    grantsSaveProficiency?: boolean;
+  };
   effects?: TraitEffect[];
   // Choices granted by the feat itself (for example Skilled's three proficiencies). These use
   // the same data-driven grant shapes as races, classes, and backgrounds.
@@ -329,8 +433,8 @@ export type EquipmentItemRef =
   | { key: string; category: string; label: string; quantity?: number };
 
 export interface EquipmentOption {
-  key: string;    // stable id for this alternative within its group, e.g. "chain_mail"
-  label: string;  // display text, e.g. "Leather Armor, a Longbow, and 20 Arrows"
+  key: string; // stable id for this alternative within its group, e.g. "chain_mail"
+  label: string; // display text, e.g. "Leather Armor, a Longbow, and 20 Arrows"
   items: EquipmentItemRef[];
   // gp bundled with THIS option specifically — classes often offer multiple full, independently
   // priced gear packages, each with its own leftover gold (unlike the flat `StartingEquipment.gold`).
@@ -378,7 +482,13 @@ export interface DndItem {
   // armor/a shield, wherever the item is equipped. See CharacterStatsService/baseArmorClass.
   enhancement_bonus?: number;
   charges?: { max: number; recovery: string; restore?: string };
-  actions?: { key: string; name: string; description?: string; activation: ActionActivation; uses?: TraitAction['uses'] }[];
+  actions?: {
+    key: string;
+    name: string;
+    description?: string;
+    activation: ActionActivation;
+    uses?: TraitAction['uses'];
+  }[];
   effects?: TraitEffect[];
   artificer_plan?: { name: string; itemIndex: string };
   image_url?: string;
@@ -461,14 +571,23 @@ export interface DndMonster {
   hit_points_formula?: string;
   hit_dice: string;
   speed: {
-    walk?: number; fly?: number; swim?: number; climb?: number; burrow?: number; hover?: boolean;
+    walk?: number;
+    fly?: number;
+    swim?: number;
+    climb?: number;
+    burrow?: number;
+    hover?: boolean;
   };
   // Full speed text when a mode has a qualifier the numbers can't carry, e.g. a lycanthrope's
   // "40 ft. (wolf form only)".
   speed_desc?: string;
   ability_scores: {
-    strength: number; dexterity: number; constitution: number;
-    intelligence: number; wisdom: number; charisma: number;
+    strength: number;
+    dexterity: number;
+    constitution: number;
+    intelligence: number;
+    wisdom: number;
+    charisma: number;
   };
   saving_throws?: Record<string, number>;
   skills?: Record<string, number>;
@@ -478,7 +597,10 @@ export interface DndMonster {
   condition_immunities?: string[];
   gear?: string[];
   senses: {
-    darkvision?: number; blindsight?: number; truesight?: number; tremorsense?: number;
+    darkvision?: number;
+    blindsight?: number;
+    truesight?: number;
+    tremorsense?: number;
     passive_perception: number;
     notes?: string[];
   };
@@ -504,16 +626,12 @@ export type CustomContentKind = 'monsters' | 'items' | 'spells';
 @Injectable({ providedIn: 'root' })
 export class ContentService {
   private cache = new Map<string, unknown>();
-  private tokens = inject(AuthTokenService);
+  private http = inject(HttpClient);
 
   private async get<T>(path: string): Promise<T> {
     if (this.cache.has(path)) return this.cache.get(path) as T;
-    const token = this.tokens.accessToken();
-    const res = await fetch(`${API}/content/${path}`, {
-      headers: token ? { Authorization: `Bearer ${token}` } : {},
-    });
-    if (!res.ok) throw new Error(`Failed to load content: ${path}`);
-    const data = await res.json() as T;
+    // HttpClient (not fetch) so the auth interceptor attaches the token and retries once on a 401.
+    const data = await firstValueFrom(this.http.get<T>(`${API}/content/${path}`));
     this.cache.set(path, data);
     return data;
   }
@@ -531,21 +649,55 @@ export class ContentService {
     }
   }
 
-  getSources()                      { return this.get<DndContentSource[]>('sources'); }
-  getIconLibrary()                  { return this.get<IconLibraryEntry[]>('icons'); }
-  getClasses()                      { return this.get<DndClass[]>('classes'); }
-  getClass(index: string)           { return this.get<DndClass>(`classes/${index}`); }
-  getRaces()                        { return this.get<DndRace[]>('races'); }
-  getRace(index: string)            { return this.get<DndRace>(`races/${index}`); }
-  getBackgrounds()                  { return this.get<DndBackground[]>('backgrounds'); }
-  getBackground(index: string)      { return this.get<DndBackground>(`backgrounds/${index}`); }
-  getItems(campaignId?: string)     { return this.get<DndItem[]>(`items${campaignId ? `?campaignId=${campaignId}` : ''}`); }
-  getItem(index: string)            { return this.get<DndItem>(`items/${index}`); }
-  getSpells(campaignId?: string)    { return this.get<DndSpell[]>(`spells${campaignId ? `?campaignId=${campaignId}` : ''}`); }
-  getSpellLists()                   { return this.get<Record<string, string[]>>('spell-lists'); }
-  getSpell(index: string)           { return this.get<DndSpell>(`spells/${index}`); }
-  getFeats()                        { return this.get<DndFeat[]>('feats'); }
-  getFeat(index: string)            { return this.get<DndFeat>(`feats/${index}`); }
-  getMonsters(campaignId?: string)  { return this.get<DndMonster[]>(`monsters${campaignId ? `?campaignId=${campaignId}` : ''}`); }
-  getMonster(index: string)         { return this.get<DndMonster>(`monsters/${index}`); }
+  getSources() {
+    return this.get<DndContentSource[]>('sources');
+  }
+  getIconLibrary() {
+    return this.get<IconLibraryEntry[]>('icons');
+  }
+  getClasses() {
+    return this.get<DndClass[]>('classes');
+  }
+  getClass(index: string) {
+    return this.get<DndClass>(`classes/${index}`);
+  }
+  getRaces() {
+    return this.get<DndRace[]>('races');
+  }
+  getRace(index: string) {
+    return this.get<DndRace>(`races/${index}`);
+  }
+  getBackgrounds() {
+    return this.get<DndBackground[]>('backgrounds');
+  }
+  getBackground(index: string) {
+    return this.get<DndBackground>(`backgrounds/${index}`);
+  }
+  getItems(campaignId?: string) {
+    return this.get<DndItem[]>(`items${campaignId ? `?campaignId=${campaignId}` : ''}`);
+  }
+  getItem(index: string) {
+    return this.get<DndItem>(`items/${index}`);
+  }
+  getSpells(campaignId?: string) {
+    return this.get<DndSpell[]>(`spells${campaignId ? `?campaignId=${campaignId}` : ''}`);
+  }
+  getSpellLists() {
+    return this.get<Record<string, string[]>>('spell-lists');
+  }
+  getSpell(index: string) {
+    return this.get<DndSpell>(`spells/${index}`);
+  }
+  getFeats() {
+    return this.get<DndFeat[]>('feats');
+  }
+  getFeat(index: string) {
+    return this.get<DndFeat>(`feats/${index}`);
+  }
+  getMonsters(campaignId?: string) {
+    return this.get<DndMonster[]>(`monsters${campaignId ? `?campaignId=${campaignId}` : ''}`);
+  }
+  getMonster(index: string) {
+    return this.get<DndMonster>(`monsters/${index}`);
+  }
 }

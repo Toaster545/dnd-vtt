@@ -14,8 +14,14 @@ export interface DescriptionDialogData {
   template: `
     <h2 mat-dialog-title class="font-brand text-parchment">{{ data.title }}</h2>
     <mat-dialog-content class="!py-2">
-      <textarea class="field-input w-full" rows="8" [placeholder]="data.placeholder ?? ''"
-                [(ngModel)]="draft" name="description" autofocus></textarea>
+      <textarea
+        class="field-input w-full"
+        rows="8"
+        [placeholder]="data.placeholder ?? ''"
+        [(ngModel)]="draft"
+        name="description"
+        autofocus
+      ></textarea>
     </mat-dialog-content>
     <mat-dialog-actions align="end" class="!px-6 !pb-5 gap-2">
       <button class="btn-ghost" [mat-dialog-close]="undefined">Cancel</button>

@@ -1,7 +1,9 @@
 <app-main-layout [embedded]="embedded()">
   @if (!embedded()) {
     <app-page-header layoutHeader [title]="map()?.name ?? 'Battle Map'">
-      @if (controlsMap()) { <span class="toolbar-badge">DM View</span> }
+      @if (controlsMap()) {
+        <span class="toolbar-badge">DM View</span>
+      }
     </app-page-header>
   }
 
@@ -34,7 +36,9 @@
           (lightToolToggled)="toggleLightTool($event)"
         />
 
-        <div class="map-view-controls absolute top-2 right-2 flex gap-1 bg-surface/90 rounded p-1 border border-white/10">
+        <div
+          class="map-view-controls absolute top-2 right-2 flex gap-1 bg-surface/90 rounded p-1 border border-white/10"
+        >
           <button class="btn-icon w-8 h-8" (click)="zoomOut()" matTooltip="Zoom out">
             <mat-icon class="text-base">remove</mat-icon>
           </button>
@@ -49,21 +53,34 @@
             <mat-icon class="text-base">rotate_right</mat-icon>
           </button>
           <div class="w-px bg-white/10 mx-1"></div>
-          <button class="btn-icon w-8 h-8" (click)="resetView()" matTooltip="Reset zoom/pan/rotation">
+          <button
+            class="btn-icon w-8 h-8"
+            (click)="resetView()"
+            matTooltip="Reset zoom/pan/rotation"
+          >
             <mat-icon class="text-base">crop_free</mat-icon>
           </button>
           <button class="btn-icon w-8 h-8" (click)="fitMap()" matTooltip="Fit map">
             <mat-icon class="text-base">fit_screen</mat-icon>
           </button>
           @if (myToken()) {
-            <button class="btn-icon w-8 h-8" (click)="centerOnPlayerToken()" matTooltip="Center on my token">
+            <button
+              class="btn-icon w-8 h-8"
+              (click)="centerOnPlayerToken()"
+              matTooltip="Center on my token"
+            >
               <mat-icon class="text-base">my_location</mat-icon>
             </button>
           }
           <div class="w-px bg-white/10 mx-1"></div>
-          <button class="btn-icon w-8 h-8" (click)="toggleFullscreen()"
-                  [matTooltip]="isFullscreen() ? 'Exit fullscreen (Esc)' : 'Fullscreen'">
-            <mat-icon class="text-base">{{ isFullscreen() ? 'fullscreen_exit' : 'fullscreen' }}</mat-icon>
+          <button
+            class="btn-icon w-8 h-8"
+            (click)="toggleFullscreen()"
+            [matTooltip]="isFullscreen() ? 'Exit fullscreen (Esc)' : 'Fullscreen'"
+          >
+            <mat-icon class="text-base">{{
+              isFullscreen() ? 'fullscreen_exit' : 'fullscreen'
+            }}</mat-icon>
           </button>
         </div>
       }
@@ -71,8 +88,15 @@
       @if (!controlsMap() && ownedTokens().length > 1) {
         <div class="absolute bottom-3 left-3 z-10 bg-surface border border-white/10 rounded p-2">
           <label class="text-xs text-slate" for="companion-movement-token">Plan movement for</label>
-          <select id="companion-movement-token" class="field-input" [value]="controlledToken()?.id" (change)="controlledTokenId.set($any($event.target).value)">
-            @for (token of ownedTokens(); track token.id) { <option [value]="token.id">{{ token.label }}</option> }
+          <select
+            id="companion-movement-token"
+            class="field-input"
+            [value]="controlledToken()?.id"
+            (change)="controlledTokenId.set($any($event.target).value)"
+          >
+            @for (token of ownedTokens(); track token.id) {
+              <option [value]="token.id">{{ token.label }}</option>
+            }
           </select>
         </div>
       }
@@ -81,11 +105,15 @@
           <span class="spinner-lg"></span>
         </div>
       } @else if (error()) {
-        <div class="absolute inset-0 flex items-center justify-center text-danger text-sm px-4 text-center">
+        <div
+          class="absolute inset-0 flex items-center justify-center text-danger text-sm px-4 text-center"
+        >
           {{ error() }}
         </div>
       } @else if (!map()) {
-        <div class="absolute inset-0 flex items-center justify-center text-slate text-sm px-4 text-center">
+        <div
+          class="absolute inset-0 flex items-center justify-center text-slate text-sm px-4 text-center"
+        >
           No map selected. Ask your DM to select a map.
         </div>
       }
@@ -94,17 +122,29 @@
            They float over the map (rather than sitting in the flex row) so a collapsed
            column gives all of its width back to the map, and sit just under the
            view-controls cluster in the same top-right corner, matching its styling. -->
-      @if (map() && myCharacter() && ((showTurnOrder() && !showTurnColumn()) || !showSheetColumn())) {
-        <div class="absolute right-2 top-14 z-10 flex flex-col gap-1 bg-surface/90 rounded p-1 border border-white/10">
+      @if (
+        map() && myCharacter() && ((showTurnOrder() && !showTurnColumn()) || !showSheetColumn())
+      ) {
+        <div
+          class="absolute right-2 top-14 z-10 flex flex-col gap-1 bg-surface/90 rounded p-1 border border-white/10"
+        >
           @if (showTurnOrder() && !showTurnColumn()) {
-            <button type="button" class="btn-icon w-8 h-8 text-slate hover:text-parchment"
-                    (click)="toggleTurnColumn()" matTooltip="Show turn order">
+            <button
+              type="button"
+              class="btn-icon w-8 h-8 text-slate hover:text-parchment"
+              (click)="toggleTurnColumn()"
+              matTooltip="Show turn order"
+            >
               <mat-icon class="text-base">format_list_numbered</mat-icon>
             </button>
           }
           @if (!showSheetColumn()) {
-            <button type="button" class="btn-icon w-8 h-8 text-slate hover:text-parchment"
-                    (click)="toggleSheetColumn()" matTooltip="Show character sheet">
+            <button
+              type="button"
+              class="btn-icon w-8 h-8 text-slate hover:text-parchment"
+              (click)="toggleSheetColumn()"
+              matTooltip="Show character sheet"
+            >
               <mat-icon class="text-base">assignment_ind</mat-icon>
             </button>
           }
@@ -113,9 +153,15 @@
     </div>
 
     @if (controlsMap() && map()) {
-      <div appResizeHandle (resizeDrag)="onRightAsideResize($event)"
-           class="w-1.5 flex-shrink-0 hover:bg-gold/40 active:bg-gold/60 transition-colors"></div>
-      <aside [style.width.px]="rightAsideWidth()" class="border-l border-white/10 overflow-y-auto flex-shrink-0 bg-surface">
+      <div
+        appResizeHandle
+        (resizeDrag)="onRightAsideResize($event)"
+        class="w-1.5 flex-shrink-0 hover:bg-gold/40 active:bg-gold/60 transition-colors"
+      ></div>
+      <aside
+        [style.width.px]="rightAsideWidth()"
+        class="border-l border-white/10 overflow-y-auto flex-shrink-0 bg-surface"
+      >
         <div class="p-4 flex flex-col gap-4">
           @if (selectedLight(); as light) {
             <app-light-editor-panel
@@ -126,17 +172,31 @@
             />
           } @else if (activeLightTool() === 'place') {
             <div>
-              <h3 class="text-xs font-semibold text-slate uppercase tracking-wider mb-2">New Torch</h3>
+              <h3 class="text-xs font-semibold text-slate uppercase tracking-wider mb-2">
+                New Torch
+              </h3>
               <div class="flex flex-col gap-3">
                 <div class="field">
                   <label class="field-label">Bright radius (ft)</label>
-                  <input class="field-input" type="number" min="0" step="5"
-                         [value]="newLightBrightFt()" (input)="setNewLightRadius('bright', $any($event.target).value)" />
+                  <input
+                    class="field-input"
+                    type="number"
+                    min="0"
+                    step="5"
+                    [value]="newLightBrightFt()"
+                    (input)="setNewLightRadius('bright', $any($event.target).value)"
+                  />
                 </div>
                 <div class="field">
                   <label class="field-label">Dim radius (ft, beyond bright)</label>
-                  <input class="field-input" type="number" min="0" step="5"
-                         [value]="newLightDimFt()" (input)="setNewLightRadius('dim', $any($event.target).value)" />
+                  <input
+                    class="field-input"
+                    type="number"
+                    min="0"
+                    step="5"
+                    [value]="newLightDimFt()"
+                    (input)="setNewLightRadius('dim', $any($event.target).value)"
+                  />
                 </div>
                 <p class="text-xs text-slate">Click the map or a token to place it.</p>
               </div>
@@ -146,19 +206,30 @@
               <h3 class="text-xs font-semibold text-slate uppercase tracking-wider mb-2">Walls</h3>
               <div class="flex flex-col gap-2 text-xs text-slate">
                 @if (activeLightTool() === 'wall') {
-                  <p>Click to drop wall points; each click after the first adds a wall. Right-click,
-                    double-click or Esc to finish a run.</p>
+                  <p>
+                    Click to drop wall points; each click after the first adds a wall. Right-click,
+                    double-click or Esc to finish a run.
+                  </p>
                   <p>Points snap to grid corners. Hold <kbd>Shift</kbd> to place freely.</p>
                 } @else {
                   <p>Click a wall (highlighted red) to remove it.</p>
                 }
                 @if (!lighting().enabled) {
-                  <p class="text-gold/80">Darkness is off, so walls won't have a visible effect until you
-                    turn it on.</p>
+                  <p class="text-gold/80">
+                    Darkness is off, so walls won't have a visible effect until you turn it on.
+                  </p>
                 }
                 <div class="flex items-center justify-between mt-1">
-                  <span>{{ lighting().walls.length }} wall{{ lighting().walls.length === 1 ? '' : 's' }}</span>
-                  <button class="btn-outline text-xs px-2 py-1" [disabled]="!lighting().walls.length" (click)="clearWalls()">
+                  <span
+                    >{{ lighting().walls.length }} wall{{
+                      lighting().walls.length === 1 ? '' : 's'
+                    }}</span
+                  >
+                  <button
+                    class="btn-outline text-xs px-2 py-1"
+                    [disabled]="!lighting().walls.length"
+                    (click)="clearWalls()"
+                  >
                     Clear all
                   </button>
                 </div>
@@ -167,21 +238,32 @@
           }
           @if (lighting().enabled) {
             <div class="border-t border-white/10 pt-3">
-              <h3 class="text-xs font-semibold text-slate uppercase tracking-wider mb-2">Ambient Light</h3>
+              <h3 class="text-xs font-semibold text-slate uppercase tracking-wider mb-2">
+                Ambient Light
+              </h3>
               <div class="flex flex-col gap-3">
                 <div class="field">
                   <label class="field-label">Brightness ({{ lighting().ambient_level }}%)</label>
-                  <input type="range" min="0" max="100" step="5" class="w-full accent-gold"
-                         [value]="lighting().ambient_level"
-                         (input)="setAmbientLevel($any($event.target).value)"
-                         (change)="flushAmbient()" />
+                  <input
+                    type="range"
+                    min="0"
+                    max="100"
+                    step="5"
+                    class="w-full accent-gold"
+                    [value]="lighting().ambient_level"
+                    (input)="setAmbientLevel($any($event.target).value)"
+                    (change)="flushAmbient()"
+                  />
                 </div>
                 <div class="flex items-center gap-3">
                   <span class="field-label">Tint</span>
-                  <input type="color" class="h-8 w-14 rounded cursor-pointer border border-white/10 bg-transparent"
-                         matTooltip="Color of the darkness/moonlight wash outside torchlight."
-                         [value]="lighting().ambient_color"
-                         (change)="setAmbientColor($any($event.target).value)" />
+                  <input
+                    type="color"
+                    class="h-8 w-14 rounded cursor-pointer border border-white/10 bg-transparent"
+                    matTooltip="Color of the darkness/moonlight wash outside torchlight."
+                    [value]="lighting().ambient_color"
+                    (change)="setAmbientColor($any($event.target).value)"
+                  />
                 </div>
               </div>
             </div>
@@ -202,36 +284,66 @@
            to the map; its re-open control is a tab floating over the map's right edge
            (see the .absolute stack inside the map container above). -->
       @if (turnColumnVisible() || (myCharacter() && showSheetColumn())) {
-        <aside class="border-l border-white/10 flex-shrink-0 bg-surface flex min-h-0 overflow-hidden">
-
+        <aside
+          class="border-l border-white/10 flex-shrink-0 bg-surface flex min-h-0 overflow-hidden"
+        >
           @if (turnColumnVisible()) {
-            <div appResizeHandle (resizeDrag)="onTurnColResize($event)"
-                 class="w-1.5 flex-shrink-0 hover:bg-gold/40 active:bg-gold/60 transition-colors"></div>
-            <div [style.width.px]="turnColWidth()" class="flex-shrink-0 flex flex-col min-h-0 border-r border-white/10">
+            <div
+              appResizeHandle
+              (resizeDrag)="onTurnColResize($event)"
+              class="w-1.5 flex-shrink-0 hover:bg-gold/40 active:bg-gold/60 transition-colors"
+            ></div>
+            <div
+              [style.width.px]="turnColWidth()"
+              class="flex-shrink-0 flex flex-col min-h-0 border-r border-white/10"
+            >
               <div class="flex items-center gap-1 px-3 py-2 flex-shrink-0 border-b border-white/10">
                 @if (myCharacter()) {
-                  <button type="button" class="btn-icon w-6 h-6 flex-shrink-0 text-slate hover:text-parchment"
-                          (click)="toggleTurnColumn()" matTooltip="Collapse">
+                  <button
+                    type="button"
+                    class="btn-icon w-6 h-6 flex-shrink-0 text-slate hover:text-parchment"
+                    (click)="toggleTurnColumn()"
+                    matTooltip="Collapse"
+                  >
                     <mat-icon class="text-base">chevron_right</mat-icon>
                   </button>
                 }
-                <span class="text-xs font-semibold text-slate uppercase tracking-wider truncate">Turn Order</span>
+                <span class="text-xs font-semibold text-slate uppercase tracking-wider truncate"
+                  >Turn Order</span
+                >
               </div>
               <div class="flex-1 overflow-y-auto p-3">
-                <app-turn-order-panel [tokens]="turnOrder()" [currentTurnTokenId]="currentTurnTokenId()"
-                  [editable]="false" [showHeading]="false" />
+                <app-turn-order-panel
+                  [tokens]="turnOrder()"
+                  [currentTurnTokenId]="currentTurnTokenId()"
+                  [editable]="false"
+                  [showHeading]="false"
+                />
               </div>
             </div>
           }
 
           @if (myCharacter(); as ch) {
             @if (showSheetColumn()) {
-              <div appResizeHandle (resizeDrag)="onSheetResize($event)"
-                   class="w-1.5 flex-shrink-0 hover:bg-gold/40 active:bg-gold/60 transition-colors"></div>
-              <app-character-play-sheet [character]="ch" [compact]="true" (saved)="characterSaved.emit($event)"
-                [style.width.px]="sheetWidth()" class="flex-shrink-0 min-h-0">
-                <button sheetHeaderLeading type="button" class="btn-icon" (click)="toggleSheetColumn()"
-                        matTooltip="Collapse character sheet">
+              <div
+                appResizeHandle
+                (resizeDrag)="onSheetResize($event)"
+                class="w-1.5 flex-shrink-0 hover:bg-gold/40 active:bg-gold/60 transition-colors"
+              ></div>
+              <app-character-play-sheet
+                [character]="ch"
+                [compact]="true"
+                (saved)="characterSaved.emit($event)"
+                [style.width.px]="sheetWidth()"
+                class="flex-shrink-0 min-h-0"
+              >
+                <button
+                  sheetHeaderLeading
+                  type="button"
+                  class="btn-icon"
+                  (click)="toggleSheetColumn()"
+                  matTooltip="Collapse character sheet"
+                >
                   <mat-icon>chevron_right</mat-icon>
                 </button>
               </app-character-play-sheet>

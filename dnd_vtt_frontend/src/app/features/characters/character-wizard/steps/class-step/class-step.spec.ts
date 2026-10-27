@@ -10,19 +10,28 @@ describe('ClassStepComponent skill choices', () => {
     fixture.componentRef.setInput('classes', []);
     fixture.componentRef.setInput('characterLevel', 4);
     fixture.componentRef.setInput('baseAbilityScores', {
-      strength: 10, dexterity: 10, constitution: 10,
-      intelligence: 10, wisdom: 10, charisma: 10,
+      strength: 10,
+      dexterity: 10,
+      constitution: 10,
+      intelligence: 10,
+      wisdom: 10,
+      charisma: 10,
     });
     fixture.componentRef.setInput('species', 'elf');
     fixture.componentRef.setInput('speciesChoices', { elven_lineage: ['Drow'] });
     fixture.detectChanges();
 
     const drowFeat = {
-      index: 'drow-high-magic', name: 'Drow High Magic', description: '', category: 'general',
+      index: 'drow-high-magic',
+      name: 'Drow High Magic',
+      description: '',
+      category: 'general',
       prerequisite: { level: 4, species: ['elf'], speciesChoices: { elven_lineage: ['Drow'] } },
     } satisfies DndFeat;
     const woodFeat = {
-      ...drowFeat, index: 'wood-elf-magic', name: 'Wood Elf Magic',
+      ...drowFeat,
+      index: 'wood-elf-magic',
+      name: 'Wood Elf Magic',
       prerequisite: { level: 4, species: ['elf'], speciesChoices: { elven_lineage: ['Wood Elf'] } },
     } satisfies DndFeat;
 
@@ -34,25 +43,45 @@ describe('ClassStepComponent skill choices', () => {
     await TestBed.configureTestingModule({ imports: [ClassStepComponent] }).compileComponents();
     const fixture = TestBed.createComponent(ClassStepComponent);
     const grant = {
-      type: 'skill_choice', key: 'skills', name: 'Skill Proficiencies', choose: 2,
+      type: 'skill_choice',
+      key: 'skills',
+      name: 'Skill Proficiencies',
+      choose: 2,
       skills: ['Perception', 'Stealth', 'Survival'],
     } satisfies TraitGrant;
     const ranger = {
-      index: 'ranger', name: 'Ranger', levels: [{ level: 1, features: [], grants: [grant] }],
-      primary_abilities: ['dexterity', 'wisdom'], hit_die: 10,
-      saving_throws: ['strength', 'dexterity'], armor_training: [],
-      weapon_proficiencies: [], tool_proficiencies: [],
-      subclasses: [], subclass_level: 3, skill_choices: { count: 2, from: grant.skills },
+      index: 'ranger',
+      name: 'Ranger',
+      levels: [{ level: 1, features: [], grants: [grant] }],
+      primary_abilities: ['dexterity', 'wisdom'],
+      hit_die: 10,
+      saving_throws: ['strength', 'dexterity'],
+      armor_training: [],
+      weapon_proficiencies: [],
+      tool_proficiencies: [],
+      subclasses: [],
+      subclass_level: 3,
+      skill_choices: { count: 2, from: grant.skills },
       starting_equipment: { fixed: [], groups: [], gold: 0, goldAlternative: 0 },
     } as unknown as DndClass;
     fixture.componentRef.setInput('classes', [ranger]);
-    fixture.componentRef.setInput('selectedClasses', [{
-      cls: ranger, level: 1, subclass: '', skills: ['Survival'], traits: {},
-    }]);
+    fixture.componentRef.setInput('selectedClasses', [
+      {
+        cls: ranger,
+        level: 1,
+        subclass: '',
+        skills: ['Survival'],
+        traits: {},
+      },
+    ]);
     fixture.componentRef.setInput('characterLevel', 1);
     fixture.componentRef.setInput('baseAbilityScores', {
-      strength: 10, dexterity: 10, constitution: 10,
-      intelligence: 10, wisdom: 10, charisma: 10,
+      strength: 10,
+      dexterity: 10,
+      constitution: 10,
+      intelligence: 10,
+      wisdom: 10,
+      charisma: 10,
     });
     fixture.componentRef.setInput('unavailableSkills', ['Perception', 'Survival']);
     fixture.detectChanges();
@@ -62,7 +91,7 @@ describe('ClassStepComponent skill choices', () => {
     expect(fixture.componentInstance.skillConflict(grant, 'Survival')).toBe(true);
     const grantHeading = Array.from(
       (fixture.nativeElement as HTMLElement).querySelectorAll<HTMLButtonElement>('button'),
-    ).find(button => button.textContent?.includes('Skill Proficiencies'));
+    ).find((button) => button.textContent?.includes('Skill Proficiencies'));
     expect(grantHeading?.textContent).toContain('*');
     expect(grantHeading?.querySelector('.bg-danger')).toBeTruthy();
     fixture.componentInstance.toggleDraftSkill(grant, 'Perception');
@@ -75,25 +104,45 @@ describe('ClassStepComponent skill choices', () => {
     await TestBed.configureTestingModule({ imports: [ClassStepComponent] }).compileComponents();
     const fixture = TestBed.createComponent(ClassStepComponent);
     const grant = {
-      type: 'expertise_choice', key: 'scholar', name: 'Scholar', choose: 1,
+      type: 'expertise_choice',
+      key: 'scholar',
+      name: 'Scholar',
+      choose: 1,
       skills: ['Arcana', 'History', 'Investigation', 'Medicine', 'Nature', 'Religion'],
     } satisfies TraitGrant;
     const wizard = {
-      index: 'wizard', name: 'Wizard', levels: [{ level: 1, features: [], grants: [grant] }],
-      primary_abilities: ['intelligence'], hit_die: 6,
-      saving_throws: ['intelligence', 'wisdom'], armor_training: [],
-      weapon_proficiencies: [], tool_proficiencies: [],
-      subclasses: [], subclass_level: 3, skill_choices: { count: 2, from: [] },
+      index: 'wizard',
+      name: 'Wizard',
+      levels: [{ level: 1, features: [], grants: [grant] }],
+      primary_abilities: ['intelligence'],
+      hit_die: 6,
+      saving_throws: ['intelligence', 'wisdom'],
+      armor_training: [],
+      weapon_proficiencies: [],
+      tool_proficiencies: [],
+      subclasses: [],
+      subclass_level: 3,
+      skill_choices: { count: 2, from: [] },
       starting_equipment: { fixed: [], groups: [], gold: 0, goldAlternative: 0 },
     } as unknown as DndClass;
     fixture.componentRef.setInput('classes', [wizard]);
-    fixture.componentRef.setInput('selectedClasses', [{
-      cls: wizard, level: 1, subclass: '', skills: [], traits: { scholar: ['Athletics'] },
-    }]);
+    fixture.componentRef.setInput('selectedClasses', [
+      {
+        cls: wizard,
+        level: 1,
+        subclass: '',
+        skills: [],
+        traits: { scholar: ['Athletics'] },
+      },
+    ]);
     fixture.componentRef.setInput('characterLevel', 1);
     fixture.componentRef.setInput('baseAbilityScores', {
-      strength: 10, dexterity: 10, constitution: 10,
-      intelligence: 10, wisdom: 10, charisma: 10,
+      strength: 10,
+      dexterity: 10,
+      constitution: 10,
+      intelligence: 10,
+      wisdom: 10,
+      charisma: 10,
     });
     fixture.componentRef.setInput('proficientSkills', ['Arcana', 'Athletics', 'Insight']);
     fixture.detectChanges();

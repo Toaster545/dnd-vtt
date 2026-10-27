@@ -1,15 +1,76 @@
-:host { display: block; }
-h3, h4 { color: var(--color-gold, #c8a927); margin: 0 0 .35rem; }
-.muted, summary { color: var(--color-slate, #aaa); }
-summary { font-size: .8rem; cursor: pointer; }
-.row, .controls { display: flex; align-items: center; gap: .5rem; flex-wrap: wrap; }
-.row { justify-content: space-between; }
-.controls { max-width: 100%; }
-.controls select { max-width: 15rem; }
-.item { padding: .7rem .8rem; border: 1px solid #ffffff18; border-radius: .4rem; margin: .45rem 0; }
-.replication { padding: .85rem; border: 1px solid #c8a92740; border-radius: .6rem; }
-.active { border-color: #c8a92780; background: #c8a92710; }
-.amount { width: 5rem; }
-.rest-backdrop { position: fixed; inset: 0; z-index: 1000; background: #000a; display: grid; place-items: center; padding: 1rem; }
-.rest-dialog { background: var(--color-elevated, #202132); border: 1px solid #c8a92760; border-radius: .7rem; width: min(100%, 40rem); max-height: 90dvh; overflow: auto; padding: 1.3rem; }
-@media (max-width: 480px) { .rest-dialog { padding: .8rem; } .row { align-items: flex-start; } }
+:host {
+  display: block;
+}
+h3,
+h4 {
+  color: var(--color-gold, #c8a927);
+  margin: 0 0 0.35rem;
+}
+.muted,
+summary {
+  color: var(--color-slate, #aaa);
+}
+summary {
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+.row,
+.controls {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+.row {
+  justify-content: space-between;
+}
+.controls {
+  max-width: 100%;
+}
+.controls select {
+  max-width: 15rem;
+}
+.item {
+  padding: 0.7rem 0.8rem;
+  border: 1px solid #ffffff18;
+  border-radius: 0.4rem;
+  margin: 0.45rem 0;
+}
+.replication {
+  padding: 0.85rem;
+  border: 1px solid #c8a92740;
+  border-radius: 0.6rem;
+}
+.active {
+  border-color: #c8a92780;
+  background: #c8a92710;
+}
+.amount {
+  width: 5rem;
+}
+.rest-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: #000a;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+}
+.rest-dialog {
+  background: var(--color-elevated, #202132);
+  border: 1px solid #c8a92760;
+  border-radius: 0.7rem;
+  width: min(100%, 40rem);
+  max-height: 90dvh;
+  overflow: auto;
+  padding: 1.3rem;
+}
+@media (max-width: 480px) {
+  .rest-dialog {
+    padding: 0.8rem;
+  }
+  .row {
+    align-items: flex-start;
+  }
+}

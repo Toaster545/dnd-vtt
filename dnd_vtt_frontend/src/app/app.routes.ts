@@ -11,11 +11,12 @@ export const routes: Routes = [
     children: [
       {
         path: 'login',
-        loadComponent: () => import('./features/auth/login/login').then(m => m.LoginComponent),
+        loadComponent: () => import('./features/auth/login/login').then((m) => m.LoginComponent),
       },
       {
         path: 'register',
-        loadComponent: () => import('./features/auth/register/register').then(m => m.RegisterComponent),
+        loadComponent: () =>
+          import('./features/auth/register/register').then((m) => m.RegisterComponent),
       },
     ],
   },
@@ -27,17 +28,20 @@ export const routes: Routes = [
   {
     path: 'battle-map',
     canActivate: [authGuard, staleSessionGuard],
-    loadComponent: () => import('./features/battle-map/battle-map').then(m => m.BattleMapComponent),
+    loadComponent: () =>
+      import('./features/battle-map/battle-map').then((m) => m.BattleMapComponent),
   },
   {
     path: 'battle-map/:id',
     canActivate: [authGuard, staleSessionGuard],
-    loadComponent: () => import('./features/battle-map/battle-map').then(m => m.BattleMapComponent),
+    loadComponent: () =>
+      import('./features/battle-map/battle-map').then((m) => m.BattleMapComponent),
   },
   {
     path: 'encounters/:encounterId/player-view',
     canActivate: [authGuard, staleSessionGuard],
-    loadComponent: () => import('./features/player-view/player-view').then(m => m.PlayerViewComponent),
+    loadComponent: () =>
+      import('./features/player/player-view/player-view').then((m) => m.PlayerViewComponent),
     // Fully opaque — this screen is just the map, and the app-wide Settings background would
     // otherwise show through around it.
     data: { bgOverlay: 1 },
@@ -45,7 +49,7 @@ export const routes: Routes = [
   {
     path: 'home',
     canActivate: [authGuard, staleSessionGuard],
-    loadComponent: () => import('./features/shell/shell').then(m => m.ShellComponent),
+    loadComponent: () => import('./features/shell/shell').then((m) => m.ShellComponent),
     children: [
       {
         path: '',
@@ -54,38 +58,52 @@ export const routes: Routes = [
       },
       {
         path: 'dashboard',
-        loadComponent: () => import('./features/dashboard/dashboard').then(m => m.DashboardComponent),
+        loadComponent: () =>
+          import('./features/dashboard/dashboard').then((m) => m.DashboardComponent),
         data: { bgOverlay: 0.6 },
       },
       {
         path: 'characters',
-        loadComponent: () => import('./features/characters/characters').then(m => m.CharactersComponent),
+        loadComponent: () =>
+          import('./features/characters/characters').then((m) => m.CharactersComponent),
       },
       {
         path: 'campaign/current',
-        loadComponent: () => import('./features/player/current-player-route/current-player-route').then(m => m.CurrentPlayerRouteComponent),
+        loadComponent: () =>
+          import('./features/player/current-player-route/current-player-route').then(
+            (m) => m.CurrentPlayerRouteComponent,
+          ),
         data: { target: 'campaign', bgOverlay: 0.9 },
       },
       {
         path: 'campaign/current-session',
-        loadComponent: () => import('./features/player/current-player-route/current-player-route').then(m => m.CurrentPlayerRouteComponent),
+        loadComponent: () =>
+          import('./features/player/current-player-route/current-player-route').then(
+            (m) => m.CurrentPlayerRouteComponent,
+          ),
         data: { target: 'session', bgOverlay: 0.9 },
       },
       {
         path: 'campaign/current-encounter',
-        loadComponent: () => import('./features/player/current-player-route/current-player-route').then(m => m.CurrentPlayerRouteComponent),
+        loadComponent: () =>
+          import('./features/player/current-player-route/current-player-route').then(
+            (m) => m.CurrentPlayerRouteComponent,
+          ),
         data: { target: 'encounter', bgOverlay: 1 },
       },
       {
         path: 'campaign/current-map',
-        loadComponent: () => import('./features/player/current-player-route/current-player-route').then(m => m.CurrentPlayerRouteComponent),
+        loadComponent: () =>
+          import('./features/player/current-player-route/current-player-route').then(
+            (m) => m.CurrentPlayerRouteComponent,
+          ),
         data: { target: 'map', bgOverlay: 1 },
       },
       {
         path: 'characters/new',
         loadComponent: () =>
           import('./features/characters/character-wizard-page/character-wizard-page').then(
-            m => m.CharacterWizardPageComponent,
+            (m) => m.CharacterWizardPageComponent,
           ),
         data: { bgOverlay: 0.6 },
       },
@@ -93,74 +111,76 @@ export const routes: Routes = [
         path: 'characters/:id/edit',
         loadComponent: () =>
           import('./features/characters/character-wizard-page/character-wizard-page').then(
-            m => m.CharacterWizardPageComponent,
+            (m) => m.CharacterWizardPageComponent,
           ),
-        data: { bgOverlay: .9 },
+        data: { bgOverlay: 0.9 },
       },
       {
         path: 'characters/:id/level-up',
         canActivate: [levelUpPendingGuard],
         loadComponent: () =>
           import('./features/characters/character-level-up-page/character-level-up-page').then(
-            m => m.CharacterLevelUpPageComponent,
+            (m) => m.CharacterLevelUpPageComponent,
           ),
-        data: { bgOverlay: .9 },
+        data: { bgOverlay: 0.9 },
       },
       {
         path: 'characters/:id',
         loadComponent: () =>
           import('./features/characters/character-sheet-page/character-sheet-page').then(
-            m => m.CharacterSheetPageComponent,
+            (m) => m.CharacterSheetPageComponent,
           ),
         data: { bgOverlay: 0.9 },
       },
       {
         path: 'campaigns',
         loadComponent: () =>
-          import('./features/campaigns/campaigns').then(m => m.CampaignsComponent),
+          import('./features/campaigns/campaigns').then((m) => m.CampaignsComponent),
       },
       {
         path: 'campaigns/manage/:campaignId',
         loadComponent: () =>
-          import('./features/dm/dm-campaigns/dm-campaign-hub/dm-campaign-hub').then(m => m.DmCampaignHubComponent),
+          import('./features/dm/dm-campaigns/dm-campaign-hub/dm-campaign-hub').then(
+            (m) => m.DmCampaignHubComponent,
+          ),
         data: { bgOverlay: 0.9 },
       },
       {
         path: 'content-library',
         loadComponent: () =>
-          import('./features/create-content/create-content').then(m => m.CreateContentComponent),
+          import('./features/create-content/create-content').then((m) => m.CreateContentComponent),
       },
       {
         path: 'campaigns/manage/:campaignId/maps',
         loadComponent: () =>
           import('./features/dm/dm-campaigns/dm-campaign-maps/dm-campaign-maps').then(
-            m => m.DmCampaignMapsComponent,
+            (m) => m.DmCampaignMapsComponent,
           ),
-          data: { bgOverlay: 0.9 },
+        data: { bgOverlay: 0.9 },
       },
       {
         path: 'campaigns/manage/:campaignId/wiki',
-        loadComponent: () => import('./features/wiki/wiki.component').then(m => m.WikiComponent),
+        loadComponent: () => import('./features/wiki/wiki').then((m) => m.WikiComponent),
         data: { wikiDm: true, bgOverlay: 0.95 },
       },
       {
         path: 'campaigns/manage/:campaignId/wiki/:slug',
-        loadComponent: () => import('./features/wiki/wiki.component').then(m => m.WikiComponent),
+        loadComponent: () => import('./features/wiki/wiki').then((m) => m.WikiComponent),
         data: { wikiDm: true, bgOverlay: 0.95 },
       },
       {
         path: 'campaigns/manage/:campaignId/sessions/:sessionId',
         loadComponent: () =>
           import('./features/dm/dm-campaigns/dm-campaign-session/dm-campaign-session').then(
-            m => m.DmCampaignSessionComponent,
+            (m) => m.DmCampaignSessionComponent,
           ),
-          data: { bgOverlay: 0.9 },
+        data: { bgOverlay: 0.9 },
       },
       {
         path: 'campaigns/manage/:campaignId/sessions/:sessionId/encounters/:encounterId',
         loadComponent: () =>
           import('./features/dm/dm-campaigns/dm-encounter-play/dm-encounter-play').then(
-            m => m.DmEncounterPlayComponent,
+            (m) => m.DmEncounterPlayComponent,
           ),
         // Fully opaque — the app-wide Settings background would otherwise show through around
         // the map/roster; the session hub this is launched from keeps its own overlay.
@@ -170,25 +190,25 @@ export const routes: Routes = [
         path: 'campaigns/:campaignId',
         loadComponent: () =>
           import('./features/player/player-campaigns/player-campaign-hub/player-campaign-hub').then(
-            m => m.PlayerCampaignHubComponent,
+            (m) => m.PlayerCampaignHubComponent,
           ),
-          data: { bgOverlay: 0.9 },
+        data: { bgOverlay: 0.9 },
       },
       {
         path: 'campaigns/:campaignId/wiki',
-        loadComponent: () => import('./features/wiki/wiki.component').then(m => m.WikiComponent),
+        loadComponent: () => import('./features/wiki/wiki').then((m) => m.WikiComponent),
         data: { wikiDm: false, bgOverlay: 0.95 },
       },
       {
         path: 'campaigns/:campaignId/wiki/:slug',
-        loadComponent: () => import('./features/wiki/wiki.component').then(m => m.WikiComponent),
+        loadComponent: () => import('./features/wiki/wiki').then((m) => m.WikiComponent),
         data: { wikiDm: false, bgOverlay: 0.95 },
       },
       {
         path: 'campaigns/:campaignId/sessions/:sessionId',
         loadComponent: () =>
           import('./features/player/player-campaigns/player-campaign-session/player-campaign-session').then(
-            m => m.PlayerCampaignSessionComponent,
+            (m) => m.PlayerCampaignSessionComponent,
           ),
       },
     ],

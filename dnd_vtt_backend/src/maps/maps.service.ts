@@ -1,3 +1,4 @@
+import { CampaignAccessService } from '../campaigns/campaign-access.service';
 import {
   BadRequestException,
   ForbiddenException,
@@ -8,12 +9,14 @@ import { randomUUID } from 'crypto';
 import { existsSync, mkdirSync, writeFileSync } from 'fs';
 import { join, resolve, sep } from 'path';
 import { DatabaseService } from '../common/database.service';
+import { abilityModifier } from '../common/ability';
 import { ContentService } from '../content/content.service';
 import { TokensGateway } from './tokens.gateway';
 import type { RequestUser } from '../common/current-user.decorator';
 import { serializePlayerTokens } from './player-tokens';
 import { moveCost } from './movement';
 import { CompanionsService } from '../companions/companions.service';
+import { type TokenRow, toTokenRow } from './token-row';
 
 // A light-blocking wall segment, in fractional grid units (see applyV26).
 export interface MapWall {
@@ -33,6 +36,7 @@ export class MapsService {
     private gateway: TokensGateway,
     private content: ContentService,
     private companions: CompanionsService,
+    private access: CampaignAccessService,
   ) {}
 
   async findAll(campaignId: string, user: RequestUser) {
@@ -109,16 +113,12 @@ export class MapsService {
     return Promise.resolve(`/uploads/maps/${campaignId}/${filename}`);
   }
 
-  private async getTokensRaw(
-    mapId: string,
-  ): Promise<Record<string, unknown>[]> {
+  private async getTokensRaw(mapId: string): Promise<TokenRow[]> {
     const result = await this.db.execute(
       'SELECT * FROM map_tokens WHERE map_id = ?',
       [mapId],
     );
-    return this.companions.decorateTokens(
-      result.rows.map((r) => ({ ...r, is_player: !!r.is_player })),
-    );
+    return this.companions.decorateTokens(result.rows.map(toTokenRow));
   }
 
   async getTokens(mapId: string, user: RequestUser) {
@@ -433,7 +433,7 @@ export class MapsService {
     return plan;
   }
 
-  private planOf(token: Record<string, unknown>) {
+  private planOf(token: TokenRow) {
     return token.planned_x == null || token.planned_y == null
       ? null
       : { x: Number(token.planned_x), y: Number(token.planned_y) };
@@ -464,7 +464,7 @@ export class MapsService {
           companion.rows[0]?.character_id as string,
           user,
         );
-        return token as Record<string, unknown>;
+        return token as unknown as TokenRow;
       }
       if (!token.is_player || !token.character_id)
         throw new ForbiddenException();
@@ -474,7 +474,7 @@ export class MapsService {
       );
       if (!owns.rows[0]) throw new ForbiddenException();
     }
-    return token as Record<string, unknown>;
+    return token as unknown as TokenRow;
   }
 
   // A move during a token's turn stays pending — the token sits on its new square, but the
@@ -810,12 +810,8 @@ export class MapsService {
 
   private parseWalls(raw: unknown): MapWall[] {
     if (typeof raw !== 'string') return [];
-    try {
-      const parsed: unknown = JSON.parse(raw);
-      return Array.isArray(parsed) ? (parsed as MapWall[]) : [];
-    } catch {
-      return [];
-    }
+    const parsed = this.db.parseJson<unknown>(raw, []);
+    return Array.isArray(parsed) ? (parsed as MapWall[]) : [];
   }
 
   private async upsertMapLighting(mapId: string, enabled: boolean) {
@@ -921,22 +917,9 @@ export class MapsService {
     if (await this.isCampaignDm(campaignId, user)) {
       return { map, isDm: true };
     }
-    const membership = await this.db.execute(
-      `SELECT id FROM campaign_members
-       WHERE campaign_id = ? AND user_id = ? AND status = 'active'`,
-      [campaignId, user.id],
-    );
-    if (!membership.rows[0]) throw new ForbiddenException();
-    const visibleReference = await this.db.execute(
-      `SELECT e.id FROM encounters e
-       JOIN encounter_levels el ON el.encounter_id = e.id
-       JOIN sessions s ON s.id = e.session_id
-       WHERE el.map_id = ? AND s.campaign_id = ?
-         AND s.visible_to_players = 1 AND e.visible_to_players = 1
-       LIMIT 1`,
-      [mapId, campaignId],
-    );
-    if (!visibleReference.rows[0]) throw new ForbiddenException();
+    await this.access.assertActiveMember(campaignId, user.id);
+    if (!(await this.access.isMapRevealedToPlayers(mapId, campaignId)))
+      throw new ForbiddenException();
     return { map, isDm: false };
   }
 
@@ -965,7 +948,7 @@ export class MapsService {
       if (bonus == null) {
         const dex = monster.ability_scores?.dexterity;
         if (dex == null) return null;
-        bonus = Math.floor((dex - 10) / 2);
+        bonus = abilityModifier(dex);
       }
       return Math.floor(Math.random() * 20) + 1 + bonus;
     } catch {

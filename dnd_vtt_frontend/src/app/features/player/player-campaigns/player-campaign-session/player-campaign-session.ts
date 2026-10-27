@@ -10,7 +10,11 @@ import { SessionService } from '../../../../core/services/session.service';
 import { ContentService } from '../../../../core/services/content.service';
 import { AuthService } from '../../../../core/services/auth.service';
 import { BackgroundService } from '../../../../core/services/background.service';
-import { Encounter, MyEncounterLevel, PresentPlayer } from '../../../../core/models/encounter.model';
+import {
+  Encounter,
+  MyEncounterLevel,
+  PresentPlayer,
+} from '../../../../core/models/encounter.model';
 import { Character } from '../../../../core/models/character.model';
 import { PortraitSource } from '../../../../core/models/avatar.model';
 import { portraitSource } from '../../../../core/utils/avatar';
@@ -22,26 +26,31 @@ import { BattleMapComponent } from '../../../battle-map/battle-map';
 import { CharacterPlaySheetComponent } from '../../../characters/character-play-sheet/character-play-sheet';
 import { CharacterWizardComponent } from '../../../characters/character-wizard/character-wizard';
 import { PartyListComponent } from '../../../../shared/components/party-list/party-list';
-import { WikiEmbedComponent } from '../../../wiki/wiki-embed.component';
+import { WikiEmbedComponent } from '../../../wiki/wiki-embed';
 import { HubViewService } from '../../../../core/services/hub-view.service';
 import { ResizeHandleDirective } from '../../../../shared/directives/resize-handle.directive';
+import { toContentIndex } from '../../../../core/utils/content-index';
 
 const REJOIN_KEY = 'dnd-player-campaign-encounter';
-interface StoredRejoin { encounterId: string; }
+interface StoredRejoin {
+  encounterId: string;
+}
 
 // Character.race stores the race's display name (e.g. "Half-Elf"), not its content index (e.g.
 // "half-elf") — same conversion dm-campaign-session.ts/dm-campaign-hub.ts/character-play-sheet.ts
 // each do before calling ContentService.getRace(), which looks the race up by a case-sensitive
 // filename and 404s on a raw display name.
-function toContentIndex(name: string): string {
-  return name.toLowerCase().replace(/\s+/g, '-');
-}
-
 @Component({
   selector: 'app-player-campaign-session',
   imports: [
-    MatIconModule, MatTooltipModule, BattleMapComponent, CharacterPlaySheetComponent, CharacterWizardComponent,
-    PartyListComponent, WikiEmbedComponent, ResizeHandleDirective,
+    MatIconModule,
+    MatTooltipModule,
+    BattleMapComponent,
+    CharacterPlaySheetComponent,
+    CharacterWizardComponent,
+    PartyListComponent,
+    WikiEmbedComponent,
+    ResizeHandleDirective,
   ],
   templateUrl: './player-campaign-session.html',
   // Routed in via player-shell's <router-outlet> rather than embedded with an explicit sizing
@@ -53,16 +62,16 @@ function toContentIndex(name: string): string {
   host: { class: 'flex flex-col flex-1 min-h-0 overflow-hidden' },
 })
 export class PlayerCampaignSessionComponent implements OnInit, OnDestroy {
-  private route            = inject(ActivatedRoute);
-  private router            = inject(Router);
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
   private encounterService = inject(EncounterService);
   private characterService = inject(CharacterService);
-  private campaignService  = inject(CampaignService);
-  private sessionService   = inject(SessionService);
-  private contentService   = inject(ContentService);
-  private background       = inject(BackgroundService);
-  auth                     = inject(AuthService);
-  hubView                  = inject(HubViewService);
+  private campaignService = inject(CampaignService);
+  private sessionService = inject(SessionService);
+  private contentService = inject(ContentService);
+  private background = inject(BackgroundService);
+  auth = inject(AuthService);
+  hubView = inject(HubViewService);
 
   // Angular reuses this component instance across navigations to the same route config even when
   // :campaignId/:sessionId change (e.g. the live-alert banner in player-shell can send someone
@@ -71,7 +80,7 @@ export class PlayerCampaignSessionComponent implements OnInit, OnDestroy {
   campaignId!: string;
   sessionId!: string;
 
-  session      = signal<Session | null>(null);
+  session = signal<Session | null>(null);
   campaignName = signal<string | null>(null);
   encounters = signal<Encounter[]>([]);
 
@@ -79,9 +88,9 @@ export class PlayerCampaignSessionComponent implements OnInit, OnDestroy {
   readonly wikiTitles = computed(() =>
     [this.session()?.name, this.campaignName()].filter((n): n is string => !!n),
   );
-  members    = signal<CampaignMember[]>([]);
-  loading    = signal(true);
-  joiningId  = signal<string | null>(null);
+  members = signal<CampaignMember[]>([]);
+  loading = signal(true);
+  joiningId = signal<string | null>(null);
 
   // This campaign's DM-editable copy of the player's character — the only character this player
   // ever plays as inside this campaign (see campaign_members.character_id).
@@ -95,11 +104,11 @@ export class PlayerCampaignSessionComponent implements OnInit, OnDestroy {
   // active — kept in lockstep with PlayerCampaignHubComponent's identical fields/methods so the
   // Party list behaves the same whether opened from the campaign hub or the session hub.
   editingCharacter = signal<Character | null>(null);
-  showWizard       = signal(false);
-  sheetCharacter   = signal<Character | null>(null);
+  showWizard = signal(false);
+  sheetCharacter = signal<Character | null>(null);
   // Set only when the sheet was opened via the wizard's "View Sheet" button (as opposed to
   // viewMyCharacter) — routes closeCharacterSheet() back into the wizard instead of the session hub.
-  sheetFromWizard  = signal(false);
+  sheetFromWizard = signal(false);
 
   activeEncounter = signal<Encounter | null>(null);
   activeCharacter = signal<Character | null>(null);
@@ -132,7 +141,8 @@ export class PlayerCampaignSessionComponent implements OnInit, OnDestroy {
   characterHp = computed(() => {
     const map: Record<string, { hp: number; max_hp: number }> = {};
     for (const p of this.presentPlayers()) {
-      if (p.characterId && p.hp != null && p.max_hp != null) map[p.characterId] = { hp: p.hp, max_hp: p.max_hp };
+      if (p.characterId && p.hp != null && p.max_hp != null)
+        map[p.characterId] = { hp: p.hp, max_hp: p.max_hp };
     }
     return map;
   });
@@ -143,7 +153,11 @@ export class PlayerCampaignSessionComponent implements OnInit, OnDestroy {
     const map: Record<string, PortraitSource> = {};
     for (const p of this.presentPlayers()) {
       if (p.characterId) {
-        map[p.characterId] = portraitSource(p.portraitSeed || p.characterId, p.avatarRecipe, p.portraitImage);
+        map[p.characterId] = portraitSource(
+          p.portraitSeed || p.characterId,
+          p.avatarRecipe,
+          p.portraitImage,
+        );
       }
     }
     return map;
@@ -159,12 +173,12 @@ export class PlayerCampaignSessionComponent implements OnInit, OnDestroy {
   });
 
   ngOnInit() {
-    this.route.paramMap.subscribe(params => {
+    this.route.paramMap.subscribe((params) => {
       this.campaignId = params.get('campaignId')!;
-      this.sessionId  = params.get('sessionId')!;
+      this.sessionId = params.get('sessionId')!;
       void this.loadSession();
     });
-    this.route.queryParamMap.subscribe(params => {
+    this.route.queryParamMap.subscribe((params) => {
       this.pendingAutojoinId = params.get('autojoin');
       // On a fresh navigation loadSession() runs maybeAutojoin() itself once its data lands, so
       // only act here when we're NOT loading — that's the case where the session page was already
@@ -191,7 +205,7 @@ export class PlayerCampaignSessionComponent implements OnInit, OnDestroy {
       this.encounterService.getBySession(this.sessionId),
       this.sessionService.getById(this.sessionId),
     ]);
-    const me = hub.members.find(m => m.user_id === this.auth.profile()?.id);
+    const me = hub.members.find((m) => m.user_id === this.auth.profile()?.id);
     this.myCharacterId.set(me?.character_id ?? null);
     this.session.set(session);
     this.campaignName.set(hub.name);
@@ -201,7 +215,8 @@ export class PlayerCampaignSessionComponent implements OnInit, OnDestroy {
     void this.loadMyCharacter();
 
     const stored = this.loadStoredRejoin();
-    const stillActive = stored && encounters.find(e => e.id === stored.encounterId && e.status === 'active');
+    const stillActive =
+      stored && encounters.find((e) => e.id === stored.encounterId && e.status === 'active');
     if (stillActive) {
       await this.join(stillActive);
     } else {
@@ -268,7 +283,10 @@ export class PlayerCampaignSessionComponent implements OnInit, OnDestroy {
   // migration / setOwnRaceClassVisibility) — the DM always sees it regardless of this toggle.
   // Mirrors PlayerCampaignHubComponent.toggleRaceClassVisibility.
   async toggleRaceClassVisibility(member: CampaignMember) {
-    const hub = await this.campaignService.setOwnRaceClassVisibility(this.campaignId, !member.show_race_class);
+    const hub = await this.campaignService.setOwnRaceClassVisibility(
+      this.campaignId,
+      !member.show_race_class,
+    );
     this.members.set(hub.members);
   }
 
@@ -339,22 +357,28 @@ export class PlayerCampaignSessionComponent implements OnInit, OnDestroy {
       this.view.set('map');
       this.saveStoredRejoin({ encounterId: encounter.id! });
       this.announceSelf(encounter.id!, character);
-      this.presenceSub = this.encounterService.watchPresence(encounter.id!)
-        .subscribe(players => this.presentPlayers.set(players));
-      this.turnSub = this.encounterService.watchTurnState()
-        .subscribe(state => {
-          this.activeEncounter.update(e => e ? {
-            ...e, current_turn_token_id: state.current_turn_token_id, round_number: state.round_number,
-          } : e);
-          // Safety net for a level switch whose broadcast was missed (e.g. a dropped connection).
-          void this.refreshMyLevel(encounter.id!);
-        });
-      this.turnOrderSub = this.encounterService.watchTurnOrder(encounter.id!)
-        .subscribe(tokens => this.turnOrderTokens.set(tokens));
-      this.levelSub = this.encounterService.watchCharacterLevelChanged()
-        .subscribe(event => {
-          if (event.characterId === this.myCharacterId()) void this.refreshMyLevel(encounter.id!);
-        });
+      this.presenceSub = this.encounterService
+        .watchPresence(encounter.id!)
+        .subscribe((players) => this.presentPlayers.set(players));
+      this.turnSub = this.encounterService.watchTurnState().subscribe((state) => {
+        this.activeEncounter.update((e) =>
+          e
+            ? {
+                ...e,
+                current_turn_token_id: state.current_turn_token_id,
+                round_number: state.round_number,
+              }
+            : e,
+        );
+        // Safety net for a level switch whose broadcast was missed (e.g. a dropped connection).
+        void this.refreshMyLevel(encounter.id!);
+      });
+      this.turnOrderSub = this.encounterService
+        .watchTurnOrder(encounter.id!)
+        .subscribe((tokens) => this.turnOrderTokens.set(tokens));
+      this.levelSub = this.encounterService.watchCharacterLevelChanged().subscribe((event) => {
+        if (event.characterId === this.myCharacterId()) void this.refreshMyLevel(encounter.id!);
+      });
     } catch {
       this.clearStoredRejoin();
     } finally {
@@ -368,7 +392,8 @@ export class PlayerCampaignSessionComponent implements OnInit, OnDestroy {
     const request = ++this.levelRequest;
     try {
       const level = await this.encounterService.getMyLevel(encounterId);
-      if (request === this.levelRequest && this.activeEncounter()?.id === encounterId) this.myLevel.set(level);
+      if (request === this.levelRequest && this.activeEncounter()?.id === encounterId)
+        this.myLevel.set(level);
     } catch {
       // Keep showing the current level; the next token change retries.
     }

@@ -1,14 +1,19 @@
 <h2 class="font-brand text-xl text-parchment mb-1">Starting Equipment</h2>
-<p class="text-sm text-slate mb-4">Choose your class and background's starting gear, or take gold instead and buy your own.</p>
+<p class="text-sm text-slate mb-4">
+  Choose your class and background's starting gear, or take gold instead and buy your own.
+</p>
 
 <div class="grid grid-cols-5 gap-2 max-w-xl mb-6">
-  @for (coin of [
-    { label: 'CP', value: currency().cp },
-    { label: 'SP', value: currency().sp },
-    { label: 'EP', value: currency().ep },
-    { label: 'GP', value: currency().gp },
-    { label: 'PP', value: currency().pp }
-  ]; track coin.label) {
+  @for (
+    coin of [
+      { label: 'CP', value: currency().cp },
+      { label: 'SP', value: currency().sp },
+      { label: 'EP', value: currency().ep },
+      { label: 'GP', value: currency().gp },
+      { label: 'PP', value: currency().pp },
+    ];
+    track coin.label
+  ) {
     <div class="bg-elevated rounded-lg border border-white/10 text-center py-2">
       <div class="text-[10px] text-slate uppercase tracking-wide">{{ coin.label }}</div>
       <div class="font-brand text-lg text-gold mt-0.5">{{ coin.value }}</div>
@@ -50,22 +55,32 @@
   @for (item of visibleItems(); track item.index) {
     <button
       class="flex items-center justify-between px-4 py-3 rounded-md border transition-all cursor-pointer text-left w-full"
-      [class]="selectedItemIndices().has(item.index)
-        ? 'border-gold/60 bg-gold/5'
-        : 'border-white/10 hover:border-white/25'"
+      [class]="
+        selectedItemIndices().has(item.index)
+          ? 'border-gold/60 bg-gold/5'
+          : 'border-white/10 hover:border-white/25'
+      "
       (click)="itemToggled.emit(item.index)"
-      style="background: transparent; font-family: inherit;"
+      style="background: transparent; font-family: inherit"
     >
       <div class="flex items-center gap-3">
-        <span class="font-medium text-sm" [class]="selectedItemIndices().has(item.index) ? 'text-parchment' : 'text-slate'">{{ itemDisplayName(item) }}</span>
+        <span
+          class="font-medium text-sm"
+          [class]="selectedItemIndices().has(item.index) ? 'text-parchment' : 'text-slate'"
+          >{{ itemDisplayName(item) }}</span
+        >
         @if (selectedItemIndices().has(item.index)) {
           <span class="text-gold text-xs">✓</span>
         }
       </div>
       <div class="flex items-center gap-2 flex-shrink-0 ml-4 text-xs text-coal">
         <span>{{ item.category }}</span>
-        @if (item.damage) { <span>{{ item.damage }} {{ item.damage_type }}</span> }
-        @if (item.armor_class) { <span>AC {{ item.armor_class }}</span> }
+        @if (item.damage) {
+          <span>{{ item.damage }} {{ item.damage_type }}</span>
+        }
+        @if (item.armor_class) {
+          <span>AC {{ item.armor_class }}</span>
+        }
         <span>{{ item.cost }}</span>
       </div>
     </button>

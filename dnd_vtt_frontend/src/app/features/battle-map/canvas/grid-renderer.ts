@@ -8,22 +8,24 @@ import Konva from 'konva';
 // shape makes that a one-time bounded cost instead of one per gridline.
 export function drawGrid(layer: Konva.Layer, w: number, h: number, cellSize: number) {
   layer.destroyChildren();
-  layer.add(new Konva.Shape({
-    listening: false,
-    stroke: 'rgba(255,255,255,0.12)',
-    strokeWidth: 1,
-    sceneFunc: (context, shape) => {
-      context.beginPath();
-      for (let x = 0; x <= w; x += cellSize) {
-        context.moveTo(x, 0);
-        context.lineTo(x, h);
-      }
-      for (let y = 0; y <= h; y += cellSize) {
-        context.moveTo(0, y);
-        context.lineTo(w, y);
-      }
-      context.strokeShape(shape);
-    },
-  }));
+  layer.add(
+    new Konva.Shape({
+      listening: false,
+      stroke: 'rgba(255,255,255,0.12)',
+      strokeWidth: 1,
+      sceneFunc: (context, shape) => {
+        context.beginPath();
+        for (let x = 0; x <= w; x += cellSize) {
+          context.moveTo(x, 0);
+          context.lineTo(x, h);
+        }
+        for (let y = 0; y <= h; y += cellSize) {
+          context.moveTo(0, y);
+          context.lineTo(w, y);
+        }
+        context.strokeShape(shape);
+      },
+    }),
+  );
   layer.draw();
 }

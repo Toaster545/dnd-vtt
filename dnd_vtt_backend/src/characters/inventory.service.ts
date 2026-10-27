@@ -6,8 +6,6 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { randomInt, randomUUID } from 'crypto';
-import { readFileSync } from 'fs';
-import { join } from 'path';
 import { DatabaseService } from '../common/database.service';
 import { withCharacterLock } from '../common/character-lock';
 import { RequestUser } from '../common/current-user.decorator';
@@ -48,12 +46,7 @@ export class InventoryService {
   ) {}
 
   plans(): MagicPlan[] {
-    return JSON.parse(
-      readFileSync(
-        join(process.cwd(), 'content/plans/magic-item-plans.json'),
-        'utf8',
-      ),
-    ) as MagicPlan[];
+    return this.content.getMagicItemPlans();
   }
   private async character(
     id: string,

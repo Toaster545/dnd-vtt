@@ -1,3 +1,4 @@
+import { CampaignAccessService } from '../campaigns/campaign-access.service';
 import { randomUUID } from 'crypto';
 import { EncountersService } from './encounters.service';
 import { DatabaseService } from '../common/database.service';
@@ -31,6 +32,7 @@ describe('EncountersService levels', () => {
         typeof EncountersService
       >[1],
       {} as unknown as ConstructorParameters<typeof EncountersService>[2],
+      new CampaignAccessService(db),
     );
     dmId = randomUUID();
     await db.execute(

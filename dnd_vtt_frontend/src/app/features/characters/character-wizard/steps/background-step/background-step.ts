@@ -25,17 +25,17 @@ type ViewMode = 'list' | 'detail' | 'selected';
   templateUrl: './background-step.html',
 })
 export class BackgroundStepComponent implements OnInit {
-  readonly backgrounds        = input.required<DndBackground[]>();
-  readonly feats              = input<DndFeat[]>([]);
-  readonly selected           = input<BackgroundChoice | null>(null);
-  readonly baseAbilityScores  = input.required<Record<Ability, number>>();
-  readonly unavailableSkills  = input<string[]>([]);
-  readonly backgroundChosen   = output<BackgroundChoice>();
+  readonly backgrounds = input.required<DndBackground[]>();
+  readonly feats = input<DndFeat[]>([]);
+  readonly selected = input<BackgroundChoice | null>(null);
+  readonly baseAbilityScores = input.required<Record<Ability, number>>();
+  readonly unavailableSkills = input<string[]>([]);
+  readonly backgroundChosen = output<BackgroundChoice>();
 
-  viewMode           = signal<ViewMode>('list');
+  viewMode = signal<ViewMode>('list');
   browsingBackground = signal<DndBackground | null>(null);
-  draftTraits        = signal<Record<string, string[]>>({});
-  editingSkills      = signal(false);
+  draftTraits = signal<Record<string, string[]>>({});
+  editingSkills = signal(false);
   originFeatCollapsed = signal(false);
   private skillEditSnapshot: string[] | null | undefined;
 
@@ -90,7 +90,9 @@ export class BackgroundStepComponent implements OnInit {
     if (!background) return;
     this.backgroundChosen.emit({
       background,
-      traits: Object.fromEntries(Object.entries(this.draftTraits()).map(([key, values]) => [key, [...values]])),
+      traits: Object.fromEntries(
+        Object.entries(this.draftTraits()).map(([key, values]) => [key, [...values]]),
+      ),
     });
   }
 
@@ -111,7 +113,7 @@ export class BackgroundStepComponent implements OnInit {
     const saved = this.draftTraits()[BACKGROUND_SKILLS_KEY];
     const current = this.backgroundSkills(bg);
     this.skillEditSnapshot = saved ? [...saved] : null;
-    this.draftTraits.update(traits => ({
+    this.draftTraits.update((traits) => ({
       ...traits,
       [BACKGROUND_SKILLS_KEY]: [...current],
     }));
@@ -121,8 +123,13 @@ export class BackgroundStepComponent implements OnInit {
 
   updateSkill(index: number, skill: string) {
     const background = this.browsingBackground();
-    if (background && this.backgroundSkills(background)[index] !== skill && this.unavailableSkills().includes(skill)) return;
-    this.draftTraits.update(traits => {
+    if (
+      background &&
+      this.backgroundSkills(background)[index] !== skill &&
+      this.unavailableSkills().includes(skill)
+    )
+      return;
+    this.draftTraits.update((traits) => {
       const current = [...(traits[BACKGROUND_SKILLS_KEY] ?? [])];
       if (current.some((selected, i) => i !== index && selected === skill)) return traits;
       current[index] = skill;
@@ -136,13 +143,19 @@ export class BackgroundStepComponent implements OnInit {
   }
 
   backgroundSkillUnavailable(skill: string, index: number, bg: DndBackground): boolean {
-    return this.backgroundSkills(bg)[index] !== skill
-      && (this.unavailableSkills().includes(skill) || this.originFeatSelectedSkills(bg).includes(skill));
+    return (
+      this.backgroundSkills(bg)[index] !== skill &&
+      (this.unavailableSkills().includes(skill) ||
+        this.originFeatSelectedSkills(bg).includes(skill))
+    );
   }
 
   backgroundSkillConflict(skill: string, index: number, bg: DndBackground): boolean {
-    return this.backgroundSkills(bg)[index] === skill
-      && (this.unavailableSkills().includes(skill) || this.originFeatSelectedSkills(bg).includes(skill));
+    return (
+      this.backgroundSkills(bg)[index] === skill &&
+      (this.unavailableSkills().includes(skill) ||
+        this.originFeatSelectedSkills(bg).includes(skill))
+    );
   }
 
   hasBackgroundSkillConflict(bg: DndBackground): boolean {
@@ -150,8 +163,9 @@ export class BackgroundStepComponent implements OnInit {
   }
 
   conflictingBackgroundSkills(bg: DndBackground): string[] {
-    return this.backgroundSkills(bg)
-      .filter((skill, index) => this.backgroundSkillConflict(skill, index, bg));
+    return this.backgroundSkills(bg).filter((skill, index) =>
+      this.backgroundSkillConflict(skill, index, bg),
+    );
   }
 
   finishEditingSkills() {
@@ -161,7 +175,7 @@ export class BackgroundStepComponent implements OnInit {
 
   cancelEditingSkills() {
     const snapshot = this.skillEditSnapshot;
-    this.draftTraits.update(traits => {
+    this.draftTraits.update((traits) => {
       const next = { ...traits };
       if (snapshot) next[BACKGROUND_SKILLS_KEY] = [...snapshot];
       else delete next[BACKGROUND_SKILLS_KEY];
@@ -173,7 +187,7 @@ export class BackgroundStepComponent implements OnInit {
   }
 
   restoreDefaultSkills() {
-    this.draftTraits.update(traits => {
+    this.draftTraits.update((traits) => {
       const next = { ...traits };
       delete next[BACKGROUND_SKILLS_KEY];
       return next;
@@ -192,7 +206,7 @@ export class BackgroundStepComponent implements OnInit {
   }
 
   abilityChoiceGrant(bg: DndBackground): AbilityGrant | null {
-    const grant = bg.grants?.find(g => g.type === 'ability_choice');
+    const grant = bg.grants?.find((g) => g.type === 'ability_choice');
     return grant?.type === 'ability_choice' ? grant : null;
   }
 
@@ -211,9 +225,11 @@ export class BackgroundStepComponent implements OnInit {
     const fixedList = this.backgroundMagicInitiateList(bg);
     return (this.originFeat(bg)?.grants ?? [])
       .filter((grant): grant is ChoiceGrant => grant.type === 'choice')
-      .map((grant) => grant.key === 'magic_initiate_list' && fixedList
-        ? { ...grant, options: grant.options.filter((option) => option.name === fixedList) }
-        : grant);
+      .map((grant) =>
+        grant.key === 'magic_initiate_list' && fixedList
+          ? { ...grant, options: grant.options.filter((option) => option.name === fixedList) }
+          : grant,
+      );
   }
 
   private backgroundMagicInitiateList(bg: DndBackground): string | null {
@@ -221,22 +237,27 @@ export class BackgroundStepComponent implements OnInit {
   }
 
   originFeatSkillGrants(bg: DndBackground): SkillGrant[] {
-    return (this.originFeat(bg)?.grants ?? []).filter((grant): grant is SkillGrant => grant.type === 'skill_choice');
+    return (this.originFeat(bg)?.grants ?? []).filter(
+      (grant): grant is SkillGrant => grant.type === 'skill_choice',
+    );
   }
 
   private originFeatSelectedSkills(bg: DndBackground): string[] {
-    return this.originFeatSkillGrants(bg)
-      .flatMap(grant => this.draftTraits()[grant.key] ?? []);
+    return this.originFeatSkillGrants(bg).flatMap((grant) => this.draftTraits()[grant.key] ?? []);
   }
 
   originFeatChoicesLeft(bg: DndBackground): number {
-    return [...this.originFeatChoiceGrants(bg), ...this.originFeatSkillGrants(bg)]
-      .reduce((total, grant) => total + Math.max(0, grant.choose - (this.draftTraits()[grant.key]?.length ?? 0)), 0);
+    return [...this.originFeatChoiceGrants(bg), ...this.originFeatSkillGrants(bg)].reduce(
+      (total, grant) =>
+        total + Math.max(0, grant.choose - (this.draftTraits()[grant.key]?.length ?? 0)),
+      0,
+    );
   }
 
   originFeatHasSkillConflict(bg: DndBackground): boolean {
-    return this.originFeatSkillGrants(bg)
-      .some(grant => this.conflictingFeatSkills(bg, grant).length > 0);
+    return this.originFeatSkillGrants(bg).some(
+      (grant) => this.conflictingFeatSkills(bg, grant).length > 0,
+    );
   }
 
   featSkillSelected(grant: SkillGrant, skill: string): boolean {
@@ -252,26 +273,33 @@ export class BackgroundStepComponent implements OnInit {
   }
 
   conflictingFeatSkills(bg: DndBackground, grant: SkillGrant): string[] {
-    return (this.draftTraits()[grant.key] ?? [])
-      .filter(skill => this.featSkillConflict(bg, grant, skill));
+    return (this.draftTraits()[grant.key] ?? []).filter((skill) =>
+      this.featSkillConflict(bg, grant, skill),
+    );
   }
 
   private featSkillTakenElsewhere(bg: DndBackground, grant: SkillGrant, skill: string): boolean {
     const selectedByAnotherFeatGrant = this.originFeatSkillGrants(bg)
-      .filter(candidate => candidate.key !== grant.key)
-      .some(candidate => this.draftTraits()[candidate.key]?.includes(skill));
-    return this.unavailableSkills().includes(skill)
-      || this.backgroundSkills(bg).includes(skill)
-      || selectedByAnotherFeatGrant;
+      .filter((candidate) => candidate.key !== grant.key)
+      .some((candidate) => this.draftTraits()[candidate.key]?.includes(skill));
+    return (
+      this.unavailableSkills().includes(skill) ||
+      this.backgroundSkills(bg).includes(skill) ||
+      selectedByAnotherFeatGrant
+    );
   }
 
   toggleFeatSkill(bg: DndBackground, grant: SkillGrant, skill: string) {
     const selected = this.draftTraits()[grant.key] ?? [];
-    if (!selected.includes(skill) && (selected.length >= grant.choose || this.featSkillUnavailable(bg, grant, skill))) return;
+    if (
+      !selected.includes(skill) &&
+      (selected.length >= grant.choose || this.featSkillUnavailable(bg, grant, skill))
+    )
+      return;
     const next = selected.includes(skill)
-      ? selected.filter(candidate => candidate !== skill)
+      ? selected.filter((candidate) => candidate !== skill)
       : [...selected, skill];
-    this.draftTraits.update(traits => ({ ...traits, [grant.key]: next }));
+    this.draftTraits.update((traits) => ({ ...traits, [grant.key]: next }));
     this.syncDraft();
   }
 
@@ -284,13 +312,13 @@ export class BackgroundStepComponent implements OnInit {
   }
 
   toggleChoice(grant: ChoiceGrant, option: string) {
-    this.draftTraits.update(traits => {
+    this.draftTraits.update((traits) => {
       const current = traits[grant.key] ?? [];
       if (grant.choose === 1) {
         return { ...traits, [grant.key]: current.includes(option) ? [] : [option] };
       }
       if (current.includes(option)) {
-        return { ...traits, [grant.key]: current.filter(o => o !== option) };
+        return { ...traits, [grant.key]: current.filter((o) => o !== option) };
       }
       if (current.length >= grant.choose) return traits;
       return { ...traits, [grant.key]: [...current, option] };
@@ -303,7 +331,7 @@ export class BackgroundStepComponent implements OnInit {
   }
 
   abilityAllocated(grant: AbilityGrant, ability: string): number {
-    return (this.draftTraits()[grant.key] ?? []).filter(a => a === ability).length;
+    return (this.draftTraits()[grant.key] ?? []).filter((a) => a === ability).length;
   }
 
   choicesLeft(grant: AbilityGrant): number {
@@ -318,12 +346,15 @@ export class BackgroundStepComponent implements OnInit {
 
   increment(grant: AbilityGrant, ability: string) {
     if (!this.canIncrement(grant, ability)) return;
-    this.draftTraits.update(traits => ({ ...traits, [grant.key]: [...(traits[grant.key] ?? []), ability] }));
+    this.draftTraits.update((traits) => ({
+      ...traits,
+      [grant.key]: [...(traits[grant.key] ?? []), ability],
+    }));
     this.syncDraft();
   }
 
   decrement(grant: AbilityGrant, ability: string) {
-    this.draftTraits.update(traits => {
+    this.draftTraits.update((traits) => {
       const current = traits[grant.key] ?? [];
       const idx = current.lastIndexOf(ability);
       if (idx === -1) return traits;

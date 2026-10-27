@@ -1,6 +1,6 @@
 import { Component, inject, input, computed } from '@angular/core';
 import { UiScaleService } from '../../../core/services/ui-scale.service';
-import { TokenBorderPreviewComponent } from '../../avatar-creator-dialog/token-border-preview';
+import { TokenBorderPreviewComponent } from '../avatar-creator-dialog/token-border-preview';
 import { TokenBorder } from '../../../core/models/token-border.model';
 import { DEFAULT_TOKEN_BORDER, normalizeTokenBorder } from '../../../core/utils/token-border';
 

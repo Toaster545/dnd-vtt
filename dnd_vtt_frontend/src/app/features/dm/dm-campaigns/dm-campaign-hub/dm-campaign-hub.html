@@ -1,54 +1,108 @@
 @if (loading()) {
   <div class="flex justify-center mt-10"><span class="spinner-lg"></span></div>
 } @else if (showWizard()) {
-  <app-character-wizard class="flex flex-col flex-1 min-h-0"
+  <app-character-wizard
+    class="flex flex-col flex-1 min-h-0"
     [character]="editingCharacter()"
     (saved)="onCharacterSaved()"
     (cancelled)="onCharacterSaved()"
     (viewSheet)="onViewCharacterSheet($event)"
   />
 } @else if (sheetCharacter(); as sc) {
-  <app-character-play-sheet class="flex-1 min-h-0" [character]="sc" [isDm]="true" (saved)="onCharacterSheetSaved($event)">
-    <button sheetHeaderLeading class="btn-icon" (click)="closeCharacterSheet()" [matTooltip]="sheetFromWizard() ? 'Back to editor' : 'Back to campaign'">
+  <app-character-play-sheet
+    class="flex-1 min-h-0"
+    [character]="sc"
+    [isDm]="true"
+    (saved)="onCharacterSheetSaved($event)"
+  >
+    <button
+      sheetHeaderLeading
+      class="btn-icon"
+      (click)="closeCharacterSheet()"
+      [matTooltip]="sheetFromWizard() ? 'Back to editor' : 'Back to campaign'"
+    >
       <mat-icon>arrow_back</mat-icon>
     </button>
   </app-character-play-sheet>
 } @else if (campaign(); as c) {
-  <div class="flex-1 min-h-0 overflow-y-auto p-6 bg-cover bg-center"
-       [style.background-image]="c.background_url ? 'linear-gradient(rgba(13,14,22,0.88), rgba(13,14,22,0.88)), url(' + c.background_url + ')' : null">
+  <div
+    class="flex-1 min-h-0 overflow-y-auto p-6 bg-cover bg-center"
+    [style.background-image]="
+      c.background_url
+        ? 'linear-gradient(rgba(13,14,22,0.88), rgba(13,14,22,0.88)), url(' + c.background_url + ')'
+        : null
+    "
+  >
     <div class="flex items-center gap-2 mb-4">
       <button class="btn-icon" (click)="backToList()" matTooltip="Back to campaigns">
         <mat-icon>arrow_back</mat-icon>
       </button>
       <div class="flex-1 min-w-0">
         <h2 class="font-brand text-xl text-parchment m-0">{{ c.name }}</h2>
-        @if (c.description) { <p class="text-slate text-sm m-0 mt-0.5">{{ c.description }}</p> }
+        @if (c.description) {
+          <p class="text-slate text-sm m-0 mt-0.5">{{ c.description }}</p>
+        }
       </div>
-      <input #bgInput type="file" accept="image/*" class="hidden" (change)="onBackgroundFileChange($event)" />
-      <button class="btn-icon" (click)="bgInput.click()" [disabled]="uploadingBackground()" matTooltip="Set background image">
-        @if (uploadingBackground()) { <span class="spinner-sm"></span> } @else { <mat-icon>image</mat-icon> }
+      <input
+        #bgInput
+        type="file"
+        accept="image/*"
+        class="hidden"
+        (change)="onBackgroundFileChange($event)"
+      />
+      <button
+        class="btn-icon"
+        (click)="bgInput.click()"
+        [disabled]="uploadingBackground()"
+        matTooltip="Set background image"
+      >
+        @if (uploadingBackground()) {
+          <span class="spinner-sm"></span>
+        } @else {
+          <mat-icon>image</mat-icon>
+        }
       </button>
       @if (c.background_url) {
-        <button class="btn-icon text-danger/70 hover:text-danger" (click)="clearBackground()" matTooltip="Remove background image">
+        <button
+          class="btn-icon text-danger/70 hover:text-danger"
+          (click)="clearBackground()"
+          matTooltip="Remove background image"
+        >
           <mat-icon>hide_image</mat-icon>
         </button>
       }
       <button class="btn-icon" (click)="openDescriptionDialog()" matTooltip="Edit description">
         <mat-icon>edit_note</mat-icon>
       </button>
-      <button class="btn-outline text-sm gap-1.5" (click)="copyJoinCode()" matTooltip="Copy join code">
+      <button
+        class="btn-outline text-sm gap-1.5"
+        (click)="copyJoinCode()"
+        matTooltip="Copy join code"
+      >
         <mat-icon class="text-base">{{ copied() ? 'check' : 'content_copy' }}</mat-icon>
         Join code: <span class="font-mono text-gold">{{ c.join_code }}</span>
       </button>
-      <a class="btn-outline text-sm gap-1.5" [routerLink]="['/home/campaigns/manage', campaignId, 'maps']" matTooltip="Upload and manage battle maps">
+      <a
+        class="btn-outline text-sm gap-1.5"
+        [routerLink]="['/home/campaigns/manage', campaignId, 'maps']"
+        matTooltip="Upload and manage battle maps"
+      >
         <mat-icon class="text-base">map</mat-icon>
         Maps
       </a>
-      <a class="btn-outline text-sm gap-1.5" [routerLink]="['/home/campaigns/manage', campaignId, 'wiki']" matTooltip="Campaign wiki — lore, NPCs, locations">
+      <a
+        class="btn-outline text-sm gap-1.5"
+        [routerLink]="['/home/campaigns/manage', campaignId, 'wiki']"
+        matTooltip="Campaign wiki — lore, NPCs, locations"
+      >
         <mat-icon class="text-base">menu_book</mat-icon>
         Wiki
       </a>
-      <a class="btn-outline text-sm gap-1.5" [routerLink]="['/home/content-library']" matTooltip="Author monsters, equipment, and spells for your campaigns">
+      <a
+        class="btn-outline text-sm gap-1.5"
+        [routerLink]="['/home/content-library']"
+        matTooltip="Author monsters, equipment, and spells for your campaigns"
+      >
         <mat-icon class="text-base">auto_stories</mat-icon>
         Create
       </a>
@@ -76,11 +130,20 @@
               </div>
               <div class="field">
                 <label class="field-label">Description (optional)</label>
-                <textarea class="field-input" [(ngModel)]="newDescription" name="description" rows="3"></textarea>
+                <textarea
+                  class="field-input"
+                  [(ngModel)]="newDescription"
+                  name="description"
+                  rows="3"
+                ></textarea>
               </div>
               <div>
                 <button class="btn-primary" type="submit" [disabled]="!newName.trim() || saving()">
-                  @if (saving()) { <span class="spinner-sm"></span> } @else { Create Session }
+                  @if (saving()) {
+                    <span class="spinner-sm"></span>
+                  } @else {
+                    Create Session
+                  }
                 </button>
               </div>
             </form>
@@ -96,23 +159,44 @@
               >
                 <div class="flex-1 min-w-0">
                   <p class="text-parchment font-medium truncate m-0">{{ session.name }}</p>
-                  <p class="text-slate text-xs m-0 mt-0.5">{{ formatDate(session.created_at) }} @if (c.current_session_id === session.id) { · Current }</p>
+                  <p class="text-slate text-xs m-0 mt-0.5">
+                    {{ formatDate(session.created_at) }}
+                    @if (c.current_session_id === session.id) {
+                      · Current
+                    }
+                  </p>
                 </div>
-                <button class="btn-icon" [class.text-gold]="c.current_session_id === session.id"
-                        (click)="setCurrentSession(session, $event)" matTooltip="Set current session">
-                  <mat-icon>{{ c.current_session_id === session.id ? 'star' : 'star_outline' }}</mat-icon>
+                <button
+                  class="btn-icon"
+                  [class.text-gold]="c.current_session_id === session.id"
+                  (click)="setCurrentSession(session, $event)"
+                  matTooltip="Set current session"
+                >
+                  <mat-icon>{{
+                    c.current_session_id === session.id ? 'star' : 'star_outline'
+                  }}</mat-icon>
                 </button>
                 <button
                   class="btn-icon"
-                  [class]="session.visible_to_players ? 'text-gold' : 'text-slate hover:text-parchment'"
+                  [class]="
+                    session.visible_to_players ? 'text-gold' : 'text-slate hover:text-parchment'
+                  "
                   (click)="toggleSessionVisibility(session, $event)"
-                  [matTooltip]="session.visible_to_players ? 'Visible to players — click to hide' : 'Hidden from players — click to reveal'"
+                  [matTooltip]="
+                    session.visible_to_players
+                      ? 'Visible to players — click to hide'
+                      : 'Hidden from players — click to reveal'
+                  "
                 >
-                  <mat-icon>{{ session.visible_to_players ? 'visibility' : 'visibility_off' }}</mat-icon>
+                  <mat-icon>{{
+                    session.visible_to_players ? 'visibility' : 'visibility_off'
+                  }}</mat-icon>
                 </button>
-                <button class="btn-icon text-danger/70 hover:text-danger"
-                        (click)="deleteSession(session, $event)"
-                        matTooltip="Delete session">
+                <button
+                  class="btn-icon text-danger/70 hover:text-danger"
+                  (click)="deleteSession(session, $event)"
+                  matTooltip="Delete session"
+                >
                   <mat-icon>delete</mat-icon>
                 </button>
                 <mat-icon class="text-slate">chevron_right</mat-icon>
@@ -125,46 +209,79 @@
 
         <div class="flex items-center gap-1.5 mt-6 mb-3">
           <h3 class="font-brand text-base text-parchment m-0 flex-1">Party</h3>
-          <input class="field-input w-12 text-center px-1 py-1" type="number" min="1" max="20"
-                 [(ngModel)]="partyLevel" name="partyLevel" [disabled]="savingPartyLevel()"
-                 matTooltip="Party level" />
-          <button class="btn-outline text-xs px-2 py-1" (click)="applyPartyLevel()"
-                  [disabled]="savingPartyLevel()" matTooltip="Set every party member to this level">
+          <input
+            class="field-input w-12 text-center px-1 py-1"
+            type="number"
+            min="1"
+            max="20"
+            [(ngModel)]="partyLevel"
+            name="partyLevel"
+            [disabled]="savingPartyLevel()"
+            matTooltip="Party level"
+          />
+          <button
+            class="btn-outline text-xs px-2 py-1"
+            (click)="applyPartyLevel()"
+            [disabled]="savingPartyLevel()"
+            matTooltip="Set every party member to this level"
+          >
             Set
           </button>
-          <button class="btn-primary text-xs px-2 py-1 gap-1" (click)="levelPartyUp()"
-                  [disabled]="savingPartyLevel() || partyLevel >= 20"
-                  matTooltip="Level up the whole party by one">
+          <button
+            class="btn-primary text-xs px-2 py-1 gap-1"
+            (click)="levelPartyUp()"
+            [disabled]="savingPartyLevel() || partyLevel >= 20"
+            matTooltip="Level up the whole party by one"
+          >
             <mat-icon class="text-sm">trending_up</mat-icon>
             Level Up
           </button>
         </div>
 
-        <app-party-list [members]="c.members" [memberMaxHp]="memberMaxHp()" [showManagement]="true" [clickableRows]="true"
+        <app-party-list
+          [members]="c.members"
+          [memberMaxHp]="memberMaxHp()"
+          [showManagement]="true"
+          [clickableRows]="true"
           (rowClick)="openMember($event)"
           (viewCharacter)="viewMember($event)"
           (toggleEditAccess)="toggleEditAccess($event)"
           (togglePartyVisibility)="togglePartyVisibility($event)"
-          (removeMember)="removeMember($event.user_id, $event.username)" />
+          (removeMember)="removeMember($event.user_id, $event.username)"
+        />
 
         <div class="card p-2.5 mt-5">
-          <button type="button" class="flex items-center gap-2 w-full text-left"
-                  (click)="sourcesExpanded.set(!sourcesExpanded())">
-            <mat-icon class="text-base text-slate">{{ sourcesExpanded() ? 'expand_more' : 'chevron_right' }}</mat-icon>
+          <button
+            type="button"
+            class="flex items-center gap-2 w-full text-left"
+            (click)="sourcesExpanded.set(!sourcesExpanded())"
+          >
+            <mat-icon class="text-base text-slate">{{
+              sourcesExpanded() ? 'expand_more' : 'chevron_right'
+            }}</mat-icon>
             <span class="font-brand text-sm text-parchment flex-1">Allowed Sources</span>
             <span class="text-[10px] text-gold border border-gold/25 rounded px-1.5 py-0.5">
               {{ c.allowed_sources.length }} enabled
             </span>
           </button>
           @if (sourcesExpanded()) {
-            <p class="text-coal text-xs mt-3 mb-3">New and edited campaign characters must use only these sources.</p>
+            <p class="text-coal text-xs mt-3 mb-3">
+              New and edited campaign characters must use only these sources.
+            </p>
             <div class="flex flex-col gap-2">
               @for (source of sources(); track source.code) {
                 @if (source.player_options) {
-                  <label class="flex items-start gap-2" [class.opacity-60]="source.locked || savingSources()">
-                    <input type="checkbox" class="mt-0.5" [checked]="sourceAllowed(source)"
-                           [disabled]="source.locked || savingSources()"
-                           (change)="toggleAllowedSource(source)" />
+                  <label
+                    class="flex items-start gap-2"
+                    [class.opacity-60]="source.locked || savingSources()"
+                  >
+                    <input
+                      type="checkbox"
+                      class="mt-0.5"
+                      [checked]="sourceAllowed(source)"
+                      [disabled]="source.locked || savingSources()"
+                      (change)="toggleAllowedSource(source)"
+                    />
                     <span>
                       <span class="block text-parchment text-sm">{{ source.short_name }}</span>
                       <span class="block text-coal text-xs">{{ source.description }}</span>

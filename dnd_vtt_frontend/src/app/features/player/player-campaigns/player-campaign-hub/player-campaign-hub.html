@@ -1,61 +1,102 @@
 @if (loading()) {
   <div class="flex justify-center mt-10"><span class="spinner-lg"></span></div>
 } @else if (showWizard()) {
-  <app-character-wizard class="flex flex-col flex-1 min-h-0"
+  <app-character-wizard
+    class="flex flex-col flex-1 min-h-0"
     [character]="editingCharacter()"
     (saved)="onCharacterSaved()"
     (cancelled)="onCharacterSaved()"
     (viewSheet)="onViewCharacterSheet($event)"
   />
 } @else if (sheetCharacter(); as sc) {
-  <app-character-play-sheet class="flex-1 min-h-0" [character]="sc" (saved)="onCharacterSheetSaved($event)">
-    <button sheetHeaderLeading class="btn-icon" (click)="closeCharacterSheet()" [matTooltip]="sheetFromWizard() ? 'Back to editor' : 'Back to campaign'">
+  <app-character-play-sheet
+    class="flex-1 min-h-0"
+    [character]="sc"
+    (saved)="onCharacterSheetSaved($event)"
+  >
+    <button
+      sheetHeaderLeading
+      class="btn-icon"
+      (click)="closeCharacterSheet()"
+      [matTooltip]="sheetFromWizard() ? 'Back to editor' : 'Back to campaign'"
+    >
       <mat-icon>arrow_back</mat-icon>
     </button>
   </app-character-play-sheet>
 } @else if (campaign(); as c) {
-  <div class="flex-1 min-h-0 flex flex-col overflow-y-auto p-6 bg-cover bg-center"
-       [style.background-image]="c.background_url ? 'linear-gradient(rgba(13,14,22,0.88), rgba(13,14,22,0.88)), url(' + c.background_url + ')' : null">
+  <div
+    class="flex-1 min-h-0 flex flex-col overflow-y-auto p-6 bg-cover bg-center"
+    [style.background-image]="
+      c.background_url
+        ? 'linear-gradient(rgba(13,14,22,0.88), rgba(13,14,22,0.88)), url(' + c.background_url + ')'
+        : null
+    "
+  >
     <div class="flex items-center gap-2 mb-5 flex-shrink-0">
       <button class="btn-icon" (click)="backToList()" matTooltip="Back to campaigns">
         <mat-icon>arrow_back</mat-icon>
       </button>
       <div class="min-w-0">
         <h2 class="font-brand text-xl text-parchment m-0">{{ c.name }}</h2>
-        @if (c.description) { <p class="text-slate text-sm m-0 mt-0.5">{{ c.description }}</p> }
+        @if (c.description) {
+          <p class="text-slate text-sm m-0 mt-0.5">{{ c.description }}</p>
+        }
       </div>
       <div class="flex-1 flex items-center gap-1 ml-3">
         @if (myCharacterId()) {
-          <button class="btn-ghost text-sm" [class.bg-white/10]="!showSheet()" (click)="hubView.set('wiki')">
+          <button
+            class="btn-ghost text-sm"
+            [class.bg-white/10]="!showSheet()"
+            (click)="hubView.set('wiki')"
+          >
             <mat-icon class="text-base">menu_book</mat-icon> Wiki
           </button>
-          <button class="btn-ghost text-sm" [class.bg-white/10]="showSheet()" (click)="hubView.set('sheet')">
+          <button
+            class="btn-ghost text-sm"
+            [class.bg-white/10]="showSheet()"
+            (click)="hubView.set('sheet')"
+          >
             <mat-icon class="text-base">badge</mat-icon> Character
           </button>
         }
       </div>
-      <a class="btn-icon" [routerLink]="['/home/campaigns', campaignId, 'wiki']" matTooltip="Open full wiki">
+      <a
+        class="btn-icon"
+        [routerLink]="['/home/campaigns', campaignId, 'wiki']"
+        matTooltip="Open full wiki"
+      >
         <mat-icon>open_in_new</mat-icon>
       </a>
       @if (c.dm_id !== auth.profile()?.id) {
-        <button class="btn-outline text-xs text-danger" [disabled]="leaving()" (click)="leaveCampaign()">
+        <button
+          class="btn-outline text-xs text-danger"
+          [disabled]="leaving()"
+          (click)="leaveCampaign()"
+        >
           <mat-icon class="text-base">logout</mat-icon>
           {{ leaving() ? 'Leaving…' : 'Leave Campaign' }}
         </button>
       }
     </div>
-    @if (leaveError()) { <p class="text-danger text-sm -mt-3 mb-5">{{ leaveError() }}</p> }
+    @if (leaveError()) {
+      <p class="text-danger text-sm -mt-3 mb-5">{{ leaveError() }}</p>
+    }
 
     <!-- With the sheet showing, the grid is pinned to the page height (lg+) so the sheet scrolls
          internally like it does full-page; the wiki instead grows with its content and the page scrolls. -->
-    <div class="flex-1 flex flex-col lg:flex-row gap-6 lg:gap-0"
-         [class]="showSheet() ? 'lg:min-h-0' : ''"
-         [style.--hub-sidebar-w]="hubView.sidebarWidth() + 'px'">
+    <div
+      class="flex-1 flex flex-col lg:flex-row gap-6 lg:gap-0"
+      [class]="showSheet() ? 'lg:min-h-0' : ''"
+      [style.--hub-sidebar-w]="hubView.sidebarWidth() + 'px'"
+    >
       <div class="flex-1 min-w-0 flex flex-col">
         @if (showSheet()) {
           @if (myCharacter(); as mc) {
-            <app-character-play-sheet class="h-[80dvh] lg:h-full min-h-0 rounded-lg border border-white/10 bg-black/20 overflow-hidden"
-              [character]="mc" (saved)="onMyCharacterSaved($event)" />
+            <app-character-play-sheet
+              class="h-[80dvh] lg:h-full min-h-0 rounded-lg border border-white/10 bg-black/20 overflow-hidden"
+              [character]="mc"
+              (saved)="onMyCharacterSaved($event)"
+            />
           } @else {
             <div class="flex justify-center mt-10"><span class="spinner-lg"></span></div>
           }
@@ -65,37 +106,52 @@
       </div>
 
       <!-- Drag to resize the sidebar (lg+ only; below that the columns stack). -->
-      <div appResizeHandle (resizeDrag)="onSidebarResize($event)"
-           class="hidden lg:block w-1.5 ml-2 flex-shrink-0 rounded hover:bg-gold/40 active:bg-gold/60 transition-colors"></div>
+      <div
+        appResizeHandle
+        (resizeDrag)="onSidebarResize($event)"
+        class="hidden lg:block w-1.5 ml-2 flex-shrink-0 rounded hover:bg-gold/40 active:bg-gold/60 transition-colors"
+      ></div>
 
       <!-- lg:px-2 leaves room for the rows' -mx-2 hover background, which the sheet view's
            overflow-y-auto would otherwise clip (overflow-y forces overflow-x to clip too). -->
-      <div class="lg:flex-shrink-0 lg:w-[var(--hub-sidebar-w)] lg:px-2"
-           [class]="showSheet() ? 'lg:min-h-0 lg:overflow-y-auto' : ''">
+      <div
+        class="lg:flex-shrink-0 lg:w-[var(--hub-sidebar-w)] lg:px-2"
+        [class]="showSheet() ? 'lg:min-h-0 lg:overflow-y-auto' : ''"
+      >
         <h3 class="font-brand text-base text-parchment m-0 mb-3">Sessions</h3>
         <ul class="divide-y divide-white/8">
           @for (session of c.sessions; track session.id) {
             <li>
-              <a [routerLink]="['/home/campaigns', campaignId, 'sessions', session.id]"
-                 class="flex items-center py-3 px-2 -mx-2 gap-3 rounded cursor-pointer no-underline hover:bg-white/5 transition-colors">
+              <a
+                [routerLink]="['/home/campaigns', campaignId, 'sessions', session.id]"
+                class="flex items-center py-3 px-2 -mx-2 gap-3 rounded cursor-pointer no-underline hover:bg-white/5 transition-colors"
+              >
                 <div class="flex-1 min-w-0">
                   <p class="text-parchment font-medium truncate m-0">{{ session.name }}</p>
-                  @if (session.description) { <p class="text-slate text-xs m-0 mt-0.5">{{ session.description }}</p> }
+                  @if (session.description) {
+                    <p class="text-slate text-xs m-0 mt-0.5">{{ session.description }}</p>
+                  }
                 </div>
                 <mat-icon class="text-slate">chevron_right</mat-icon>
               </a>
             </li>
           } @empty {
-            <p class="text-slate text-sm py-4">Nothing revealed yet — check back once your DM starts the session.</p>
+            <p class="text-slate text-sm py-4">
+              Nothing revealed yet — check back once your DM starts the session.
+            </p>
           }
         </ul>
 
         <h3 class="font-brand text-base text-parchment m-0 mt-6 mb-3">Party</h3>
-        <app-party-list [members]="c.members" [currentUserId]="auth.profile()?.id ?? null" [showSelfControls]="true"
+        <app-party-list
+          [members]="c.members"
+          [currentUserId]="auth.profile()?.id ?? null"
+          [showSelfControls]="true"
           (toggleRaceClassVisibility)="toggleRaceClassVisibility($event)"
           (viewCharacter)="viewMyCharacter($event)"
           (editCharacter)="editMyCharacter($event)"
-          (levelUpCharacter)="levelUpMyCharacter($event)" />
+          (levelUpCharacter)="levelUpMyCharacter($event)"
+        />
       </div>
     </div>
   </div>

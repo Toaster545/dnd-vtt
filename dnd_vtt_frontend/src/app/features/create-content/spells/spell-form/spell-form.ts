@@ -1,19 +1,40 @@
-import { Component, inject, signal, computed, output, input, OnInit, WritableSignal } from '@angular/core';
+import {
+  Component,
+  inject,
+  signal,
+  computed,
+  output,
+  input,
+  OnInit,
+  WritableSignal,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { HttpErrorResponse } from '@angular/common/http';
 import { MatIconModule } from '@angular/material/icon';
 import { SpellService } from '../../../../core/services/spell.service';
 import { DndSpell } from '../../../../core/services/content.service';
+import { getErrorMessage } from '../../../../core/utils/error-message';
 
-interface ScalingRow { level: string; value: string; }
+interface ScalingRow {
+  level: string;
+  value: string;
+}
 
 const SCHOOLS = [
-  'Abjuration', 'Conjuration', 'Divination', 'Enchantment',
-  'Evocation', 'Illusion', 'Necromancy', 'Transmutation',
+  'Abjuration',
+  'Conjuration',
+  'Divination',
+  'Enchantment',
+  'Evocation',
+  'Illusion',
+  'Necromancy',
+  'Transmutation',
 ];
 
 function tagsFrom(raw: string): string[] {
-  return raw.split(',').map(s => s.trim()).filter(Boolean);
+  return raw
+    .split(',')
+    .map((s) => s.trim())
+    .filter(Boolean);
 }
 
 @Component({
@@ -24,11 +45,11 @@ function tagsFrom(raw: string): string[] {
 export class SpellFormComponent implements OnInit {
   private spellService = inject(SpellService);
 
-  readonly spell     = input<DndSpell | null>(null);
+  readonly spell = input<DndSpell | null>(null);
   // Set instead of `spell` to seed the form from an existing spell (official or homebrew)
   // without editing it — save() still creates a brand-new custom entry.
   readonly duplicateFrom = input<DndSpell | null>(null);
-  readonly saved     = output<DndSpell>();
+  readonly saved = output<DndSpell>();
   readonly cancelled = output<void>();
 
   readonly isEdit = computed(() => this.spell() != null);
@@ -37,39 +58,47 @@ export class SpellFormComponent implements OnInit {
   private originalIndex: string | null = null;
 
   saving = signal(false);
-  error  = signal<string | null>(null);
+  error = signal<string | null>(null);
 
-  name        = signal('');
-  level       = signal(0);
-  school      = signal('Evocation');
+  name = signal('');
+  level = signal(0);
+  school = signal('Evocation');
   castingTime = signal('1 action');
-  range       = signal('');
-  duration    = signal('');
-  ritual        = signal(false);
+  range = signal('');
+  duration = signal('');
+  ritual = signal(false);
   concentration = signal(false);
 
   componentV = signal(true);
   componentS = signal(true);
   componentM = signal(false);
-  material         = signal('');
-  materialCostCp   = signal<number | null>(null);
+  material = signal('');
+  materialCostCp = signal<number | null>(null);
   materialConsumed = signal(false);
 
-  showAdvanced  = signal(false);
-  savingThrows  = signal('');
-  damageTypes   = signal('');
-  areaTags      = signal('');
-  miscTags      = signal('');
-  scalingLabel  = signal('');
-  scalingRows   = signal<ScalingRow[]>([]);
+  showAdvanced = signal(false);
+  savingThrows = signal('');
+  damageTypes = signal('');
+  areaTags = signal('');
+  miscTags = signal('');
+  scalingLabel = signal('');
+  scalingRows = signal<ScalingRow[]>([]);
 
-  description     = signal('');
-  higherLevels    = signal('');
-  cantripUpgrade  = signal('');
+  description = signal('');
+  higherLevels = signal('');
+  cantripUpgrade = signal('');
 
-  readonly canSave = computed(() =>
-    !!(this.name().trim() && this.school().trim() && this.castingTime().trim() &&
-       this.range().trim() && this.duration().trim() && this.description().trim()));
+  readonly canSave = computed(
+    () =>
+      !!(
+        this.name().trim() &&
+        this.school().trim() &&
+        this.castingTime().trim() &&
+        this.range().trim() &&
+        this.duration().trim() &&
+        this.description().trim()
+      ),
+  );
 
   ngOnInit() {
     const editing = this.spell();
@@ -100,9 +129,19 @@ export class SpellFormComponent implements OnInit {
     this.miscTags.set((m.misc_tags ?? []).join(', '));
     if (m.scaling) {
       this.scalingLabel.set(m.scaling.label);
-      this.scalingRows.set(Object.entries(m.scaling.values).map(([level, value]) => ({ level, value })));
+      this.scalingRows.set(
+        Object.entries(m.scaling.values).map(([level, value]) => ({ level, value })),
+      );
     }
-    this.showAdvanced.set(!!(this.savingThrows() || this.damageTypes() || this.areaTags() || this.miscTags() || m.scaling));
+    this.showAdvanced.set(
+      !!(
+        this.savingThrows() ||
+        this.damageTypes() ||
+        this.areaTags() ||
+        this.miscTags() ||
+        m.scaling
+      ),
+    );
 
     this.description.set(s.description);
     this.higherLevels.set(s.higher_levels ?? '');
@@ -110,18 +149,24 @@ export class SpellFormComponent implements OnInit {
   }
 
   private updateAt<T>(list: WritableSignal<T[]>, i: number, patch: Partial<T>) {
-    list.update(rows => rows.map((r, idx) => (idx === i ? { ...r, ...patch } : r)));
+    list.update((rows) => rows.map((r, idx) => (idx === i ? { ...r, ...patch } : r)));
   }
   private addTo<T>(list: WritableSignal<T[]>, entry: T) {
-    list.update(rows => [...rows, entry]);
+    list.update((rows) => [...rows, entry]);
   }
   private removeAt<T>(list: WritableSignal<T[]>, i: number) {
-    list.update(rows => rows.filter((_, idx) => idx !== i));
+    list.update((rows) => rows.filter((_, idx) => idx !== i));
   }
 
-  updateScalingRow(i: number, patch: Partial<ScalingRow>) { this.updateAt(this.scalingRows, i, patch); }
-  addScalingRow() { this.addTo(this.scalingRows, { level: '', value: '' }); }
-  removeScalingRow(i: number) { this.removeAt(this.scalingRows, i); }
+  updateScalingRow(i: number, patch: Partial<ScalingRow>) {
+    this.updateAt(this.scalingRows, i, patch);
+  }
+  addScalingRow() {
+    this.addTo(this.scalingRows, { level: '', value: '' });
+  }
+  removeScalingRow(i: number) {
+    this.removeAt(this.scalingRows, i);
+  }
 
   private buildSpell(): Partial<Omit<DndSpell, 'index'>> {
     const components: string[] = [];
@@ -129,7 +174,7 @@ export class SpellFormComponent implements OnInit {
     if (this.componentS()) components.push('S');
     if (this.componentM()) components.push('M');
 
-    const scalingRows = this.scalingRows().filter(r => r.level.trim() && r.value.trim());
+    const scalingRows = this.scalingRows().filter((r) => r.level.trim() && r.value.trim());
 
     const spell: Partial<Omit<DndSpell, 'index'>> = {
       name: this.name().trim(),
@@ -153,12 +198,16 @@ export class SpellFormComponent implements OnInit {
         grants_condition_immunities: [],
         area_tags: tagsFrom(this.areaTags()),
         misc_tags: tagsFrom(this.miscTags()),
-        ...(scalingRows.length && this.scalingLabel().trim() ? {
-          scaling: {
-            label: this.scalingLabel().trim(),
-            values: Object.fromEntries(scalingRows.map(r => [r.level.trim(), r.value.trim()])),
-          },
-        } : {}),
+        ...(scalingRows.length && this.scalingLabel().trim()
+          ? {
+              scaling: {
+                label: this.scalingLabel().trim(),
+                values: Object.fromEntries(
+                  scalingRows.map((r) => [r.level.trim(), r.value.trim()]),
+                ),
+              },
+            }
+          : {}),
       },
       description: this.description().trim(),
     };
@@ -184,7 +233,7 @@ export class SpellFormComponent implements OnInit {
         : await this.spellService.createSpell(built);
       this.saved.emit(saved);
     } catch (e) {
-      const message = e instanceof HttpErrorResponse ? (e.error?.message ?? e.message) : 'Failed to save spell.';
+      const message = getErrorMessage(e, 'Failed to save spell.');
       this.error.set(Array.isArray(message) ? message.join(', ') : message);
     } finally {
       this.saving.set(false);

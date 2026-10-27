@@ -35,26 +35,35 @@ import { CharacterTokenDetailComponent } from './components/character-token-deta
 @Component({
   selector: 'app-dm-encounter-play',
   imports: [
-    FormsModule, MatIconModule, MatTooltipModule, BattleMapComponent, CharacterPlaySheetComponent, ResizeHandleDirective,
-    EncounterToolbarComponent, RosterPanelComponent, CustomTokenEditorComponent, MonsterTokenDetailComponent,
-    CharacterTokenDetailComponent, CompanionSheetComponent,
+    FormsModule,
+    MatIconModule,
+    MatTooltipModule,
+    BattleMapComponent,
+    CharacterPlaySheetComponent,
+    ResizeHandleDirective,
+    EncounterToolbarComponent,
+    RosterPanelComponent,
+    CustomTokenEditorComponent,
+    MonsterTokenDetailComponent,
+    CharacterTokenDetailComponent,
+    CompanionSheetComponent,
   ],
   templateUrl: './dm-encounter-play.html',
   host: { class: 'flex flex-col flex-1 min-h-0 overflow-hidden' },
 })
 export class DmEncounterPlayComponent implements OnInit, OnDestroy {
   private companionService = inject(CompanionService);
-  private route             = inject(ActivatedRoute);
-  private router            = inject(Router);
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
   private encounterService = inject(EncounterService);
-  private content          = inject(ContentService);
+  private content = inject(ContentService);
   private characterService = inject(CharacterService);
-  private campaignService  = inject(CampaignService);
-  private mapService       = inject(BattleMapService);
-  private auth              = inject(AuthService);
+  private campaignService = inject(CampaignService);
+  private mapService = inject(BattleMapService);
+  private auth = inject(AuthService);
 
   campaignId = this.route.snapshot.paramMap.get('campaignId')!;
-  sessionId  = this.route.snapshot.paramMap.get('sessionId')!;
+  sessionId = this.route.snapshot.paramMap.get('sessionId')!;
   encounterId = this.route.snapshot.paramMap.get('encounterId')!;
 
   isOwner = computed(() => {
@@ -63,9 +72,9 @@ export class DmEncounterPlayComponent implements OnInit, OnDestroy {
     return !!encounter && !!me && encounter.dm_id === me.id;
   });
 
-  monsters   = signal<DndMonster[]>([]);
+  monsters = signal<DndMonster[]>([]);
   characters = signal<Character[]>([]);
-  loading    = signal(true);
+  loading = signal(true);
 
   selected = signal<Encounter | null>(null);
   togglingStatus = signal(false);
@@ -79,14 +88,16 @@ export class DmEncounterPlayComponent implements OnInit, OnDestroy {
   private viewMapId = signal<string | null>(null);
   activeMapId = computed(() => {
     const wanted = this.viewMapId();
-    return wanted && this.levels().some(l => l.map_id === wanted) ? wanted : this.selected()?.map_id ?? null;
+    return wanted && this.levels().some((l) => l.map_id === wanted)
+      ? wanted
+      : (this.selected()?.map_id ?? null);
   });
   movingToken = signal(false);
   switchingPlayerLevel = signal(false);
   playerLevelError = signal<string | null>(null);
 
   levelName(mapId: string | null | undefined): string {
-    return this.levels().find(l => l.map_id === mapId)?.name ?? 'Unknown level';
+    return this.levels().find((l) => l.map_id === mapId)?.name ?? 'Unknown level';
   }
 
   // The level a character's player is currently shown — the DM's explicit choice, else the entry level.
@@ -96,8 +107,13 @@ export class DmEncounterPlayComponent implements OnInit, OnDestroy {
   }
 
   // Whichever token's detail panel is open — the one "Move to level" acts on.
-  selectedToken = computed(() =>
-    this.viewingCompanionToken() ?? this.viewingCustomToken() ?? this.viewingMonsterToken()?.token ?? this.viewingCharacterSummary()?.token ?? null
+  selectedToken = computed(
+    () =>
+      this.viewingCompanionToken() ??
+      this.viewingCustomToken() ??
+      this.viewingMonsterToken()?.token ??
+      this.viewingCharacterSummary()?.token ??
+      null,
   );
 
   presentPlayers = signal<PresentPlayer[]>([]);
@@ -106,19 +122,24 @@ export class DmEncounterPlayComponent implements OnInit, OnDestroy {
   // The whole party, connected or not — the DM can place a member's token before they join.
   // Connected players first; anyone present who isn't (yet) in the member list still shows.
   partyPlayers = computed<RosterPlayer[]>(() => {
-    const present = new Set(this.presentPlayers().map(p => p.characterId));
+    const present = new Set(this.presentPlayers().map((p) => p.characterId));
     const rows = new Map<string, RosterPlayer>();
     for (const m of this.members()) {
       if (m.status === 'removed' || !m.character_id) continue;
       rows.set(m.character_id, {
-        characterId: m.character_id, characterName: m.character_name, username: m.username,
+        characterId: m.character_id,
+        characterName: m.character_name,
+        username: m.username,
         present: present.has(m.character_id),
       });
     }
     for (const p of this.presentPlayers()) {
       if (!rows.has(p.characterId)) {
         rows.set(p.characterId, {
-          characterId: p.characterId, characterName: p.characterName, username: p.username, present: true,
+          characterId: p.characterId,
+          characterName: p.characterName,
+          username: p.username,
+          present: true,
         });
       }
     }
@@ -138,7 +159,7 @@ export class DmEncounterPlayComponent implements OnInit, OnDestroy {
   rosterWidth = signal(288);
 
   onRosterResize(dx: number) {
-    this.rosterWidth.update(w => Math.min(480, Math.max(220, w + dx)));
+    this.rosterWidth.update((w) => Math.min(480, Math.max(220, w + dx)));
   }
 
   private allCharactersById = computed(() => {
@@ -159,7 +180,8 @@ export class DmEncounterPlayComponent implements OnInit, OnDestroy {
   characterPortraits = computed(() => {
     const map: Record<string, PortraitSource> = {};
     for (const c of Object.values(this.allCharactersById())) {
-      if (c.id) map[c.id] = portraitSource(c.portrait_seed || c.id, c.avatar_recipe, c.portrait_image);
+      if (c.id)
+        map[c.id] = portraitSource(c.portrait_seed || c.id, c.avatar_recipe, c.portrait_image);
     }
     return map;
   });
@@ -179,48 +201,69 @@ export class DmEncounterPlayComponent implements OnInit, OnDestroy {
   hpAdjustAmount = signal(0);
   viewingCustomToken = signal<MapToken | null>(null);
 
-  showMonsterSearch  = signal(false);
+  showMonsterSearch = signal(false);
   monsterSearchQuery = signal('');
-  addingMonster      = signal(false);
+  addingMonster = signal(false);
 
   availableMonstersToAdd = computed(() => {
     const encounter = this.selected();
     const query = this.monsterSearchQuery().trim().toLowerCase();
     const existing = new Set(encounter?.monsters ?? []);
     return this.monsters()
-      .filter(m => !existing.has(m.index))
-      .filter(m => !query || m.name.toLowerCase().includes(query))
+      .filter((m) => !existing.has(m.index))
+      .filter((m) => !query || m.name.toLowerCase().includes(query))
       .sort((a, b) => a.name.localeCompare(b.name));
   });
 
   rosterMonsters = computed(() => {
     const encounter = this.selected();
     return (encounter?.monsters ?? [])
-      .map(index => this.monsterFor(index))
+      .map((index) => this.monsterFor(index))
       .filter((m): m is DndMonster => !!m);
   });
 
   rosterCharacters = computed(() => {
     const encounter = this.selected();
     return (encounter?.character_ids ?? [])
-      .map(id => this.characterFor(id))
+      .map((id) => this.characterFor(id))
       .filter((c): c is Character => !!c);
   });
 
   viewingCompanionToken = signal<MapToken | null>(null);
   companionsByOwner = signal<Record<string, Companion[]>>({});
-  rosterCompanions = computed(() => Object.values(this.companionsByOwner()).flat().filter(c => c.status !== 'dismissed' && c.stats.eligible));
+  rosterCompanions = computed(() =>
+    Object.values(this.companionsByOwner())
+      .flat()
+      .filter((c) => c.status !== 'dismissed' && c.stats.eligible),
+  );
   constructor() {
-    effect(cleanup => {
-      const ids = [...new Set([...this.partyPlayers().map(p => p.characterId), ...this.rosterCharacters().map(c => c.id!)])];
-      this.companionsByOwner.update(rows => Object.fromEntries(Object.entries(rows).filter(([id]) => ids.includes(id))));
-      const subscriptions = ids.map(id => this.companionService.watch(id).subscribe(data => this.companionsByOwner.update(rows => ({ ...rows, [id]: data.companions }))));
-      cleanup(() => subscriptions.forEach(s => s.unsubscribe()));
+    effect((cleanup) => {
+      const ids = [
+        ...new Set([
+          ...this.partyPlayers().map((p) => p.characterId),
+          ...this.rosterCharacters().map((c) => c.id!),
+        ]),
+      ];
+      this.companionsByOwner.update((rows) =>
+        Object.fromEntries(Object.entries(rows).filter(([id]) => ids.includes(id))),
+      );
+      const subscriptions = ids.map((id) =>
+        this.companionService
+          .watch(id)
+          .subscribe((data) =>
+            this.companionsByOwner.update((rows) => ({ ...rows, [id]: data.companions })),
+          ),
+      );
+      cleanup(() => subscriptions.forEach((s) => s.unsubscribe()));
     });
   }
   armCompanion(c: Companion) {
     const current = this.armedEntity();
-    this.armedEntity.set(current?.companionId === c.id ? null : { kind: 'companion', companionId: c.id, label: c.name, color: '#78ad95', size: 1 });
+    this.armedEntity.set(
+      current?.companionId === c.id
+        ? null
+        : { kind: 'companion', companionId: c.id, label: c.name, color: '#78ad95', size: 1 },
+    );
   }
 
   async ngOnInit() {
@@ -232,30 +275,34 @@ export class DmEncounterPlayComponent implements OnInit, OnDestroy {
       this.content.getSources(),
     ]);
     const allowed = new Set(campaign.allowed_sources);
-    this.monsters.set(monsters.filter(monster => campaignContentEnabled(monster, allowed, sources)));
+    this.monsters.set(
+      monsters.filter((monster) => campaignContentEnabled(monster, allowed, sources)),
+    );
     this.characters.set(characters);
     this.loading.set(false);
 
     this.selected.set(encounter);
     this.viewMapId.set(encounter.current_turn_map_id ?? null);
     void this.loadMembers();
-    this.presenceSub = this.encounterService.watchPresence(encounter.id!)
-      .subscribe(players => {
-        this.presentPlayers.set(players);
-        this.refreshPresentCharacters(players);
-        // Someone who joined the campaign after this page loaded.
-        const known = new Set(this.members().map(m => m.character_id));
-        if (players.some(p => !known.has(p.characterId))) void this.loadMembers();
-      });
-    this.turnOrderSub = this.encounterService.watchTurnOrder(encounter.id!)
-      .subscribe(tokens => this.turnOrderTokens.set(tokens));
+    this.presenceSub = this.encounterService.watchPresence(encounter.id!).subscribe((players) => {
+      this.presentPlayers.set(players);
+      this.refreshPresentCharacters(players);
+      // Someone who joined the campaign after this page loaded.
+      const known = new Set(this.members().map((m) => m.character_id));
+      if (players.some((p) => !known.has(p.characterId))) void this.loadMembers();
+    });
+    this.turnOrderSub = this.encounterService
+      .watchTurnOrder(encounter.id!)
+      .subscribe((tokens) => this.turnOrderTokens.set(tokens));
     // A player changing their HP (or anything else) on their own sheet — refetched so token HP
     // badges and the roster stay current. Only characters this page already fetched for itself;
     // the DM's own characters come from `characters()` and are updated where the DM edits them.
-    this.characterUpdatedSub = this.encounterService.watchCharacterUpdated().subscribe(event => {
-      if (event.campaignId !== this.campaignId || !this.extraCharacters()[event.characterId]) return;
+    this.characterUpdatedSub = this.encounterService.watchCharacterUpdated().subscribe((event) => {
+      if (event.campaignId !== this.campaignId || !this.extraCharacters()[event.characterId])
+        return;
       this.characterService.getCharacter(event.characterId).then(
-        character => this.extraCharacters.update(map => ({ ...map, [event.characterId]: character })),
+        (character) =>
+          this.extraCharacters.update((map) => ({ ...map, [event.characterId]: character })),
         () => {
           // Keep the last-known copy; the next character_updated push retries the fetch.
         },
@@ -264,7 +311,12 @@ export class DmEncounterPlayComponent implements OnInit, OnDestroy {
   }
 
   backToSession() {
-    void this.router.navigate(['/home/campaigns/manage', this.campaignId, 'sessions', this.sessionId]);
+    void this.router.navigate([
+      '/home/campaigns/manage',
+      this.campaignId,
+      'sessions',
+      this.sessionId,
+    ]);
   }
 
   // Pops the read-only player view out into its own browser window/tab so the DM can drag it onto
@@ -287,21 +339,29 @@ export class DmEncounterPlayComponent implements OnInit, OnDestroy {
     const members = await this.campaignService.getMembers(this.campaignId).catch(() => null);
     if (!members) return;
     this.members.set(members);
-    await this.loadCharacters(members.filter(m => m.status !== 'removed').map(m => m.character_id));
+    await this.loadCharacters(
+      members.filter((m) => m.status !== 'removed').map((m) => m.character_id),
+    );
   }
 
   private refreshPresentCharacters(players: PresentPlayer[]) {
-    return this.loadCharacters(players.map(p => p.characterId));
+    return this.loadCharacters(players.map((p) => p.characterId));
   }
 
   private async loadCharacters(characterIds: string[]) {
-    const ids = [...new Set(characterIds.filter(Boolean))]
-      .filter(id => !this.characters().some(c => c.id === id));
+    const ids = [...new Set(characterIds.filter(Boolean))].filter(
+      (id) => !this.characters().some((c) => c.id === id),
+    );
     if (!ids.length) return;
-    const fetched = await Promise.all(ids.map(id => this.characterService.getCharacter(id).catch(() => null)));
-    this.extraCharacters.update(map => {
+    const fetched = await Promise.all(
+      ids.map((id) => this.characterService.getCharacter(id).catch(() => null)),
+    );
+    this.extraCharacters.update((map) => {
       const next = { ...map };
-      ids.forEach((id, i) => { const c = fetched[i]; if (c) next[id] = c; });
+      ids.forEach((id, i) => {
+        const c = fetched[i];
+        if (c) next[id] = c;
+      });
       return next;
     });
   }
@@ -385,7 +445,9 @@ export class DmEncounterPlayComponent implements OnInit, OnDestroy {
     this.switchingPlayerLevel.set(true);
     this.playerLevelError.set(null);
     try {
-      this.selected.set(await this.encounterService.setPlayerLevel(encounter.id, token.character_id, token.map_id));
+      this.selected.set(
+        await this.encounterService.setPlayerLevel(encounter.id, token.character_id, token.map_id),
+      );
     } catch (e) {
       this.playerLevelError.set(getErrorMessage(e));
     } finally {
@@ -416,9 +478,11 @@ export class DmEncounterPlayComponent implements OnInit, OnDestroy {
     if (!encounter?.id || encounter.monsters.includes(monster.index)) return;
     this.addingMonster.set(true);
     try {
-      this.selected.set(await this.encounterService.update(encounter.id, {
-        monsters: [...encounter.monsters, monster.index],
-      }));
+      this.selected.set(
+        await this.encounterService.update(encounter.id, {
+          monsters: [...encounter.monsters, monster.index],
+        }),
+      );
     } finally {
       this.addingMonster.set(false);
     }
@@ -429,19 +493,22 @@ export class DmEncounterPlayComponent implements OnInit, OnDestroy {
     const encounter = this.selected();
     if (!encounter?.id || !encounter.monsters.includes(monster.index)) return;
     const armed = this.armedEntity();
-    if (armed?.kind === 'monster' && armed.monsterIndex === monster.index) this.armedEntity.set(null);
+    if (armed?.kind === 'monster' && armed.monsterIndex === monster.index)
+      this.armedEntity.set(null);
     this.addingMonster.set(true);
     try {
-      this.selected.set(await this.encounterService.update(encounter.id, {
-        monsters: encounter.monsters.filter(index => index !== monster.index),
-      }));
+      this.selected.set(
+        await this.encounterService.update(encounter.id, {
+          monsters: encounter.monsters.filter((index) => index !== monster.index),
+        }),
+      );
     } finally {
       this.addingMonster.set(false);
     }
   }
 
   monsterFor(index: string): DndMonster | undefined {
-    return this.monsters().find(m => m.index === index);
+    return this.monsters().find((m) => m.index === index);
   }
 
   characterFor(id: string): Character | undefined {
@@ -510,7 +577,16 @@ export class DmEncounterPlayComponent implements OnInit, OnDestroy {
     });
   }
 
-  private readonly palette = ['#3b82f6', '#22c55e', '#eab308', '#a855f7', '#ec4899', '#06b6d4', '#f97316', '#94a3b8'];
+  private readonly palette = [
+    '#3b82f6',
+    '#22c55e',
+    '#eab308',
+    '#a855f7',
+    '#ec4899',
+    '#06b6d4',
+    '#f97316',
+    '#94a3b8',
+  ];
   // A placed character token's color, picked automatically from its roster position. Players
   // style their own ring in the portrait dialog; this only colors the default ring and markers.
   private colorFor(characterId: string): string {
@@ -520,11 +596,20 @@ export class DmEncounterPlayComponent implements OnInit, OnDestroy {
 
   private rosterIds(): string[] {
     const fromRoster = this.selected()?.character_ids ?? [];
-    const fromPresence = this.partyPlayers().map(p => p.characterId);
+    const fromPresence = this.partyPlayers().map((p) => p.characterId);
     return [...new Set([...fromRoster, ...fromPresence])];
   }
 
-  private readonly monsterPalette = ['#e74c3c', '#f97316', '#c026d3', '#7c3aed', '#0891b2', '#65a30d', '#dc2626', '#78716c'];
+  private readonly monsterPalette = [
+    '#e74c3c',
+    '#f97316',
+    '#c026d3',
+    '#7c3aed',
+    '#0891b2',
+    '#65a30d',
+    '#dc2626',
+    '#78716c',
+  ];
 
   readonly colorForMonster = (monsterIndex: string): string => {
     const defined = this.monsterFor(monsterIndex)?.color;
@@ -535,8 +620,12 @@ export class DmEncounterPlayComponent implements OnInit, OnDestroy {
 
   private toggleArm(entity: PlacingEntity) {
     const current = this.armedEntity();
-    const same = !!current && current.kind === entity.kind
-      && (entity.kind === 'monster' ? current.monsterIndex === entity.monsterIndex : current.characterId === entity.characterId);
+    const same =
+      !!current &&
+      current.kind === entity.kind &&
+      (entity.kind === 'monster'
+        ? current.monsterIndex === entity.monsterIndex
+        : current.characterId === entity.characterId);
     this.armedEntity.set(same ? null : entity);
   }
 
@@ -549,15 +638,20 @@ export class DmEncounterPlayComponent implements OnInit, OnDestroy {
     // panel left open from the previous click would hide this one.
     this.closeTokenPanels();
     const seq = ++this.tokenClickSeq;
-    if (token.companion_id) { this.viewingCompanionToken.set(token); return; }
+    if (token.companion_id) {
+      this.viewingCompanionToken.set(token);
+      return;
+    }
     if (token.character_id) {
       // A player's campaign copy isn't among the DM's own characters, and is only preloaded while
       // that player is connected — fetch it on demand so their token always opens its panel.
       let character = this.characterFor(token.character_id);
       if (!character) {
-        character = await this.characterService.getCharacter(token.character_id).catch(() => undefined);
+        character = await this.characterService
+          .getCharacter(token.character_id)
+          .catch(() => undefined);
         if (!character || seq !== this.tokenClickSeq) return;
-        this.extraCharacters.update(map => ({ ...map, [token.character_id!]: character! }));
+        this.extraCharacters.update((map) => ({ ...map, [token.character_id!]: character! }));
       }
       this.viewingCharacterSummary.set({ token, character });
       return;
@@ -579,7 +673,10 @@ export class DmEncounterPlayComponent implements OnInit, OnDestroy {
   async setCharacterSummaryDarkvision(darkvision_ft: number | null) {
     const current = this.viewingCharacterSummary();
     if (!current) return;
-    const updated = await this.characterService.saveCharacter({ ...current.character, darkvision_ft });
+    const updated = await this.characterService.saveCharacter({
+      ...current.character,
+      darkvision_ft,
+    });
     this.viewingCharacterSummary.set({ ...current, character: updated });
   }
 
@@ -597,7 +694,9 @@ export class DmEncounterPlayComponent implements OnInit, OnDestroy {
   async setCustomTokenLabel(label: string) {
     const token = this.viewingCustomToken();
     if (!token || !label.trim()) return;
-    this.viewingCustomToken.set(await this.mapService.upsertToken({ ...token, label: label.trim() }));
+    this.viewingCustomToken.set(
+      await this.mapService.upsertToken({ ...token, label: label.trim() }),
+    );
   }
 
   async setCustomTokenColor(color: string) {
@@ -626,9 +725,9 @@ export class DmEncounterPlayComponent implements OnInit, OnDestroy {
   onCharacterSaved(character: Character) {
     this.viewingCharacter.set(character);
     if (character.id && this.extraCharacters()[character.id]) {
-      this.extraCharacters.update(map => ({ ...map, [character.id!]: character }));
+      this.extraCharacters.update((map) => ({ ...map, [character.id!]: character }));
     } else {
-      this.characters.update(list => list.map(c => c.id === character.id ? character : c));
+      this.characters.update((list) => list.map((c) => (c.id === character.id ? character : c)));
     }
   }
 

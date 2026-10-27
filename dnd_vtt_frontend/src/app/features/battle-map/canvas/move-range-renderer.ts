@@ -2,8 +2,18 @@ import Konva from 'konva';
 import { MapToken } from '../../../core/models/campaign.model';
 
 const FEET_PER_SQUARE = 5;
-const ORTHOGONAL: [number, number][] = [[1, 0], [-1, 0], [0, 1], [0, -1]];
-const DIAGONAL: [number, number][] = [[1, 1], [1, -1], [-1, 1], [-1, -1]];
+const ORTHOGONAL: [number, number][] = [
+  [1, 0],
+  [-1, 0],
+  [0, 1],
+  [0, -1],
+];
+const DIAGONAL: [number, number][] = [
+  [1, 1],
+  [1, -1],
+  [-1, 1],
+  [-1, -1],
+];
 
 // Tiles reachable from `token`'s current position this turn, highlighted whole-square rather than
 // as a circle. Movement cost follows the PHB "Diagonal movement" optional rule: an orthogonal step
@@ -27,10 +37,16 @@ export function renderMoveRange(
     const startCol = Math.floor(token.x + token.size / 2);
     const startRow = Math.floor(token.y + token.size / 2);
     for (const [col, row] of reachableTiles(startCol, startRow, rangeFt)) {
-      layer.add(new Konva.Rect({
-        x: col * cellSize, y: row * cellSize, width: cellSize, height: cellSize,
-        fill: token.color, opacity: 0.25,
-      }));
+      layer.add(
+        new Konva.Rect({
+          x: col * cellSize,
+          y: row * cellSize,
+          width: cellSize,
+          height: cellSize,
+          fill: token.color,
+          opacity: 0.25,
+        }),
+      );
     }
   }
   layer.draw();
@@ -43,7 +59,12 @@ function reachableTiles(startCol: number, startRow: number, rangeFt: number): [n
   const dist: [Map<string, number>, Map<string, number>] = [new Map(), new Map()];
   dist[0].set(key(startCol, startRow), 0);
 
-  interface Entry { col: number; row: number; parity: 0 | 1; cost: number }
+  interface Entry {
+    col: number;
+    row: number;
+    parity: 0 | 1;
+    cost: number;
+  }
   // Costs are only ever 5 or 10 ft and the frontier stays small (it can't grow past what `rangeFt`
   // affords), so a linear-scan priority queue is plenty here without pulling in a heap library.
   const frontier: Entry[] = [{ col: startCol, row: startRow, parity: 0, cost: 0 }];

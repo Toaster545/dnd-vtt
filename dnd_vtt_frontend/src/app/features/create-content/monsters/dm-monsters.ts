@@ -2,8 +2,12 @@ import { Component, inject, signal, computed, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { MonsterService } from '../../../core/services/monster.service';
-import { ContentService, DndContentSource, DndMonster } from '../../../core/services/content.service';
-import { ConfirmService } from '../../../shared/confirm.service';
+import {
+  ContentService,
+  DndContentSource,
+  DndMonster,
+} from '../../../core/services/content.service';
+import { ConfirmService } from '../../../shared/components/confirm-dialog/confirm.service';
 import { MonsterFormComponent } from './monster-form/monster-form';
 import { ContentDetailDialogComponent } from '../content-detail-dialog/content-detail-dialog';
 import { ContentSourceFilterComponent } from '../content-source-filter/content-source-filter';
@@ -16,8 +20,12 @@ type MonsterSort = 'name-asc' | 'name-desc' | 'source-asc' | 'cr-asc' | 'cr-desc
 @Component({
   selector: 'app-dm-monsters',
   imports: [
-    MonsterFormComponent, ContentDetailDialogComponent, ContentSourceFilterComponent, StatblockExportMenuComponent,
-    MatIconModule, FormsModule,
+    MonsterFormComponent,
+    ContentDetailDialogComponent,
+    ContentSourceFilterComponent,
+    StatblockExportMenuComponent,
+    MatIconModule,
+    FormsModule,
   ],
   templateUrl: './dm-monsters.html',
 })
@@ -26,12 +34,12 @@ export class DmMonstersComponent implements OnInit {
   private content = inject(ContentService);
   private confirm = inject(ConfirmService);
 
-  monsters        = signal<DndMonster[]>([]);
+  monsters = signal<DndMonster[]>([]);
   officialMonsters = signal<DndMonster[]>([]);
-  sources          = signal<DndContentSource[]>([]);
-  loading         = signal(true);
-  showForm        = signal(false);
-  editingMonster  = signal<DndMonster | null>(null);
+  sources = signal<DndContentSource[]>([]);
+  loading = signal(true);
+  showForm = signal(false);
+  editingMonster = signal<DndMonster | null>(null);
   duplicatingMonster = signal<DndMonster | null>(null);
   detailMonster = signal<DndMonster | null>(null);
 
@@ -46,23 +54,40 @@ export class DmMonstersComponent implements OnInit {
   filteredMonsters = computed(() => this.filter(this.monsters(), 'HOMEBREW'));
   filteredOfficial = computed(() => this.filter(this.officialMonsters(), 'XPHB'));
 
-  async ngOnInit() { await this.load(); }
+  async ngOnInit() {
+    await this.load();
+  }
 
   private filter(list: DndMonster[], fallbackSource: string): DndMonster[] {
     const q = this.search().trim().toLowerCase();
     const sources = this.sourceFilters();
-    const filtered = list.filter(monster =>
-      (!q || monster.name.toLowerCase().includes(q)) &&
-      (sources.length === 0 || sources.includes(monster.source?.code ?? fallbackSource)),
+    const filtered = list.filter(
+      (monster) =>
+        (!q || monster.name.toLowerCase().includes(q)) &&
+        (sources.length === 0 || sources.includes(monster.source?.code ?? fallbackSource)),
     );
     return filtered.sort((a, b) => {
       const byName = a.name.localeCompare(b.name);
       switch (this.sort()) {
-        case 'name-desc': return -byName;
-        case 'source-asc': return (a.source?.book ?? fallbackSource).localeCompare(b.source?.book ?? fallbackSource) || byName;
-        case 'cr-asc': return this.challengeRating(a.challenge_rating) - this.challengeRating(b.challenge_rating) || byName;
-        case 'cr-desc': return this.challengeRating(b.challenge_rating) - this.challengeRating(a.challenge_rating) || byName;
-        default: return byName;
+        case 'name-desc':
+          return -byName;
+        case 'source-asc':
+          return (
+            (a.source?.book ?? fallbackSource).localeCompare(b.source?.book ?? fallbackSource) ||
+            byName
+          );
+        case 'cr-asc':
+          return (
+            this.challengeRating(a.challenge_rating) - this.challengeRating(b.challenge_rating) ||
+            byName
+          );
+        case 'cr-desc':
+          return (
+            this.challengeRating(b.challenge_rating) - this.challengeRating(a.challenge_rating) ||
+            byName
+          );
+        default:
+          return byName;
       }
     });
   }
@@ -71,10 +96,12 @@ export class DmMonstersComponent implements OnInit {
     return this.missingArt().has(monster.index) ? null : monsterTokenUrl(monster.index);
   }
   onArtError(monster: DndMonster) {
-    this.missingArt.update(set => new Set(set).add(monster.index));
+    this.missingArt.update((set) => new Set(set).add(monster.index));
   }
 
-  setSourceFilters(codes: string[]) { this.sourceFilters.set(codes); }
+  setSourceFilters(codes: string[]) {
+    this.sourceFilters.set(codes);
+  }
 
   statblockFor(monster: DndMonster): () => string {
     return () => monsterStatblock(monster);
@@ -115,8 +142,12 @@ export class DmMonstersComponent implements OnInit {
     this.duplicatingMonster.set(null);
     this.showForm.set(true);
   }
-  openDetails(monster: DndMonster) { this.detailMonster.set(monster); }
-  closeDetails() { this.detailMonster.set(null); }
+  openDetails(monster: DndMonster) {
+    this.detailMonster.set(monster);
+  }
+  closeDetails() {
+    this.detailMonster.set(null);
+  }
   openDuplicate(monster: DndMonster, event: Event) {
     event.stopPropagation();
     this.editingMonster.set(null);
@@ -128,11 +159,16 @@ export class DmMonstersComponent implements OnInit {
     this.showForm.set(false);
     await this.load();
   }
-  onCancelled() { this.showForm.set(false); }
+  onCancelled() {
+    this.showForm.set(false);
+  }
 
   async onDelete(monster: DndMonster, event: Event) {
     event.stopPropagation();
-    const ok = await this.confirm.confirm(`Delete "${monster.name}"? This can't be undone.`, 'Delete monster');
+    const ok = await this.confirm.confirm(
+      `Delete "${monster.name}"? This can't be undone.`,
+      'Delete monster',
+    );
     if (!ok) return;
     await this.monsterService.deleteMonster(monster.index);
     await this.load();

@@ -1,5 +1,14 @@
 import { NgTemplateOutlet } from '@angular/common';
-import { Component, HostListener, computed, effect, input, output, signal, untracked } from '@angular/core';
+import {
+  Component,
+  HostListener,
+  computed,
+  effect,
+  input,
+  output,
+  signal,
+  untracked,
+} from '@angular/core';
 import type { DndSpell } from '../../../../../core/services/content.service';
 import type {
   ResolvedSpellOrigin,
@@ -61,8 +70,8 @@ const EMPTY_FILTERS: SpellFilters = {
   templateUrl: './spells-step.html',
 })
 export class SpellsStepComponent {
-  readonly spells      = input.required<DndSpell[]>();
-  readonly resolution  = input.required<SpellcastingResolution>();
+  readonly spells = input.required<DndSpell[]>();
+  readonly resolution = input.required<SpellcastingResolution>();
   readonly spellToggled = output<{ requirementKey: string; spellIndex: string }>();
 
   readonly globalFilterKey = 'all-spells';
@@ -76,28 +85,37 @@ export class SpellsStepComponent {
   private readonly previousRequirementComplete = new Map<string, boolean>();
   private readonly autoCollapsedRequirements = new Set<string>();
 
-  private readonly spellByIndex = computed(() =>
-    new Map(this.spells().map(spell => [spell.index, spell])));
+  private readonly spellByIndex = computed(
+    () => new Map(this.spells().map((spell) => [spell.index, spell])),
+  );
 
   readonly groups = computed<SpellSourceGroup[]>(() => {
     const result = this.resolution();
-    const sourceKeys = new Set(result.requirements.map(requirement => requirement.sourceKey));
-    return [...sourceKeys].map(key => {
-      const source = result.sources.find(candidate => candidate.key === key) ?? null;
-      const requirements = result.requirements.filter(requirement => requirement.sourceKey === key);
-      return {
-        key,
-        name: source?.name ?? requirements[0]?.sourceName ?? 'Spells',
-        source,
-        requirements,
-      };
-    }).filter(group => group.requirements.length > 0);
+    const sourceKeys = new Set(result.requirements.map((requirement) => requirement.sourceKey));
+    return [...sourceKeys]
+      .map((key) => {
+        const source = result.sources.find((candidate) => candidate.key === key) ?? null;
+        const requirements = result.requirements.filter(
+          (requirement) => requirement.sourceKey === key,
+        );
+        return {
+          key,
+          name: source?.name ?? requirements[0]?.sourceName ?? 'Spells',
+          source,
+          requirements,
+        };
+      })
+      .filter((group) => group.requirements.length > 0);
   });
 
   readonly grantedSpellGroups = computed<GrantedSpellGroup[]>(() => {
     const result = this.resolution();
-    const origins = [...result.known, ...result.spellbook, ...result.prepared, ...result.alwaysPrepared]
-      .filter(origin => origin.granted);
+    const origins = [
+      ...result.known,
+      ...result.spellbook,
+      ...result.prepared,
+      ...result.alwaysPrepared,
+    ].filter((origin) => origin.granted);
     const bySpell = new Map<string, ResolvedSpellOrigin[]>();
     for (const origin of origins) {
       bySpell.set(origin.spellIndex, [...(bySpell.get(origin.spellIndex) ?? []), origin]);
@@ -109,9 +127,14 @@ export class SpellsStepComponent {
         return {
           spell,
           origins: spellOrigins,
-          providers: [...new Set(spellOrigins.map(origin =>
-            origin.providedBy ?? origin.subclassName ?? origin.sourceName))],
-          alwaysPrepared: spellOrigins.some(origin => origin.category === 'always_prepared'),
+          providers: [
+            ...new Set(
+              spellOrigins.map(
+                (origin) => origin.providedBy ?? origin.subclassName ?? origin.sourceName,
+              ),
+            ),
+          ],
+          alwaysPrepared: spellOrigins.some((origin) => origin.category === 'always_prepared'),
         };
       })
       .filter((group): group is GrantedSpellGroup => group !== null)
@@ -119,35 +142,52 @@ export class SpellsStepComponent {
   });
 
   readonly globalErrors = computed(() =>
-    this.resolution().validationErrors.filter(error => !error.requirementKey));
+    this.resolution().validationErrors.filter((error) => !error.requirementKey),
+  );
 
   readonly availableLevels = computed(() => {
-    const eligible = new Set(this.resolution().requirements.flatMap(requirement => requirement.eligibleSpellIndices));
-    return [...new Set(this.spells()
-      .filter(spell => eligible.has(spell.index))
-      .map(spell => spell.level))].sort((a, b) => a - b);
+    const eligible = new Set(
+      this.resolution().requirements.flatMap((requirement) => requirement.eligibleSpellIndices),
+    );
+    return [
+      ...new Set(
+        this.spells()
+          .filter((spell) => eligible.has(spell.index))
+          .map((spell) => spell.level),
+      ),
+    ].sort((a, b) => a - b);
   });
 
   readonly availableSchools = computed(() => {
-    const eligible = new Set(this.resolution().requirements.flatMap(requirement => requirement.eligibleSpellIndices));
-    return [...new Set(this.spells()
-      .filter(spell => eligible.has(spell.index))
-      .map(spell => spell.school))].sort((a, b) => a.localeCompare(b));
+    const eligible = new Set(
+      this.resolution().requirements.flatMap((requirement) => requirement.eligibleSpellIndices),
+    );
+    return [
+      ...new Set(
+        this.spells()
+          .filter((spell) => eligible.has(spell.index))
+          .map((spell) => spell.school),
+      ),
+    ].sort((a, b) => a.localeCompare(b));
   });
 
   constructor() {
     effect(() => {
       const requirements = this.resolution().requirements;
       untracked(() => {
-        const activeKeys = new Set(requirements.map(requirement => requirement.key));
+        const activeKeys = new Set(requirements.map((requirement) => requirement.key));
         for (const requirement of requirements) {
           const complete = requirement.remaining === 0 && requirement.errors.length === 0;
           const previous = this.previousRequirementComplete.get(requirement.key);
-          if (previous === false && complete && !this.autoCollapsedRequirements.has(requirement.key)) {
-            this.collapsedRequirements.update(keys => new Set(keys).add(requirement.key));
+          if (
+            previous === false &&
+            complete &&
+            !this.autoCollapsedRequirements.has(requirement.key)
+          ) {
+            this.collapsedRequirements.update((keys) => new Set(keys).add(requirement.key));
             this.autoCollapsedRequirements.add(requirement.key);
           } else if (previous === true && !complete) {
-            this.collapsedRequirements.update(keys => {
+            this.collapsedRequirements.update((keys) => {
               const next = new Set(keys);
               next.delete(requirement.key);
               return next;
@@ -169,12 +209,15 @@ export class SpellsStepComponent {
       ...requirement.selectedSpellIndices,
     ]);
     return [...indexes]
-      .map(index => this.spellByIndex().get(index))
+      .map((index) => this.spellByIndex().get(index))
       .filter((spell): spell is DndSpell => !!spell)
-      .filter(spell => requirement.invalidSelectedSpellIndices.includes(spell.index)
-        || this.matchesSearch(spell, query)
-          && this.matchesFilters(spell, this.filterState(this.globalFilterKey))
-          && this.matchesFilters(spell, this.filterState(requirement.key)))
+      .filter(
+        (spell) =>
+          requirement.invalidSelectedSpellIndices.includes(spell.index) ||
+          (this.matchesSearch(spell, query) &&
+            this.matchesFilters(spell, this.filterState(this.globalFilterKey)) &&
+            this.matchesFilters(spell, this.filterState(requirement.key))),
+      )
       .sort((a, b) => a.level - b.level || a.name.localeCompare(b.name));
   }
 
@@ -199,11 +242,15 @@ export class SpellsStepComponent {
   }
 
   isDuplicateConflict(requirement: SpellSelectionRequirement, index: string): boolean {
-    return requirement.errors.some(error => error.code === 'duplicate_spell' && error.spellIndex === index);
+    return requirement.errors.some(
+      (error) => error.code === 'duplicate_spell' && error.spellIndex === index,
+    );
   }
 
   isUnavailable(requirement: SpellSelectionRequirement, index: string): boolean {
-    return !this.isSelected(requirement, index) && requirement.unavailableSpellIndices.includes(index);
+    return (
+      !this.isSelected(requirement, index) && requirement.unavailableSpellIndices.includes(index)
+    );
   }
 
   unavailableSource(requirement: SpellSelectionRequirement, index: string): string {
@@ -211,9 +258,11 @@ export class SpellsStepComponent {
   }
 
   canToggle(requirement: SpellSelectionRequirement, index: string): boolean {
-    return this.isSelected(requirement, index)
-      || !this.isUnavailable(requirement, index)
-        && requirement.validSelectedSpellIndices.length < requirement.required;
+    return (
+      this.isSelected(requirement, index) ||
+      (!this.isUnavailable(requirement, index) &&
+        requirement.validSelectedSpellIndices.length < requirement.required)
+    );
   }
 
   toggle(requirement: SpellSelectionRequirement, index: string): void {
@@ -244,11 +293,13 @@ export class SpellsStepComponent {
     const boldPattern = /\*\*([\s\S]+?)\*\*/g;
     let cursor = 0;
     for (const match of description.matchAll(boldPattern)) {
-      if (match.index > cursor) segments.push({ text: description.slice(cursor, match.index), bold: false });
+      if (match.index > cursor)
+        segments.push({ text: description.slice(cursor, match.index), bold: false });
       segments.push({ text: match[1], bold: true });
       cursor = match.index + match[0].length;
     }
-    if (cursor < description.length) segments.push({ text: description.slice(cursor), bold: false });
+    if (cursor < description.length)
+      segments.push({ text: description.slice(cursor), bold: false });
     return segments.length ? segments : [{ text: description, bold: false }];
   }
 
@@ -257,9 +308,10 @@ export class SpellsStepComponent {
   }
 
   toggleGroup(key: string): void {
-    this.collapsedGroups.update(keys => {
+    this.collapsedGroups.update((keys) => {
       const next = new Set(keys);
-      if (next.has(key)) next.delete(key); else next.add(key);
+      if (next.has(key)) next.delete(key);
+      else next.add(key);
       return next;
     });
   }
@@ -269,15 +321,16 @@ export class SpellsStepComponent {
   }
 
   toggleRequirement(key: string): void {
-    this.collapsedRequirements.update(keys => {
+    this.collapsedRequirements.update((keys) => {
       const next = new Set(keys);
-      if (next.has(key)) next.delete(key); else next.add(key);
+      if (next.has(key)) next.delete(key);
+      else next.add(key);
       return next;
     });
   }
 
   groupHasOutstanding(group: SpellSourceGroup): boolean {
-    return group.requirements.some(requirement => requirement.remaining > 0);
+    return group.requirements.some((requirement) => requirement.remaining > 0);
   }
 
   filterState(scope: string): SpellFilters {
@@ -297,7 +350,7 @@ export class SpellsStepComponent {
   }
 
   toggleFilters(scope: string): void {
-    this.openFilterScope.update(open => open === scope ? null : scope);
+    this.openFilterScope.update((open) => (open === scope ? null : scope));
   }
 
   closeFilters(): void {
@@ -305,19 +358,29 @@ export class SpellsStepComponent {
   }
 
   availableLevelsFor(scope: string): number[] {
-    const requirement = this.resolution().requirements.find(candidate => candidate.key === scope);
+    const requirement = this.resolution().requirements.find((candidate) => candidate.key === scope);
     if (!requirement) return this.availableLevels();
     const eligible = new Set(requirement.eligibleSpellIndices);
-    return [...new Set(this.spells().filter(spell => eligible.has(spell.index)).map(spell => spell.level))]
-      .sort((a, b) => a - b);
+    return [
+      ...new Set(
+        this.spells()
+          .filter((spell) => eligible.has(spell.index))
+          .map((spell) => spell.level),
+      ),
+    ].sort((a, b) => a - b);
   }
 
   availableSchoolsFor(scope: string): string[] {
-    const requirement = this.resolution().requirements.find(candidate => candidate.key === scope);
+    const requirement = this.resolution().requirements.find((candidate) => candidate.key === scope);
     if (!requirement) return this.availableSchools();
     const eligible = new Set(requirement.eligibleSpellIndices);
-    return [...new Set(this.spells().filter(spell => eligible.has(spell.index)).map(spell => spell.school))]
-      .sort((a, b) => a.localeCompare(b));
+    return [
+      ...new Set(
+        this.spells()
+          .filter((spell) => eligible.has(spell.index))
+          .map((spell) => spell.school),
+      ),
+    ].sort((a, b) => a.localeCompare(b));
   }
 
   setSearch(event: Event): void {
@@ -338,19 +401,25 @@ export class SpellsStepComponent {
   }
 
   setCastingTimeFilter(scope: string, event: Event): void {
-    this.updateFilters(scope, { castingTime: (event.target as HTMLSelectElement).value as CastingTimeFilter });
+    this.updateFilters(scope, {
+      castingTime: (event.target as HTMLSelectElement).value as CastingTimeFilter,
+    });
   }
 
   setConcentrationFilter(scope: string, event: Event): void {
-    this.updateFilters(scope, { concentration: (event.target as HTMLSelectElement).value as BooleanFilter });
+    this.updateFilters(scope, {
+      concentration: (event.target as HTMLSelectElement).value as BooleanFilter,
+    });
   }
 
   setRitualFilter(scope: string, event: Event): void {
-    this.updateFilters(scope, { ritual: (event.target as HTMLSelectElement).value as BooleanFilter });
+    this.updateFilters(scope, {
+      ritual: (event.target as HTMLSelectElement).value as BooleanFilter,
+    });
   }
 
   resetFilters(scope: string): void {
-    this.filtersByScope.update(current => ({ ...current, [scope]: { ...EMPTY_FILTERS } }));
+    this.filtersByScope.update((current) => ({ ...current, [scope]: { ...EMPTY_FILTERS } }));
   }
 
   levelLabel(level: number): string {
@@ -358,23 +427,29 @@ export class SpellsStepComponent {
   }
 
   accessLabels(spell: DndSpell): string[] {
-    return [...new Set((spell.access ?? []).map(access => {
-      const provider = access.parent_name
-        ? `${access.parent_name} — ${access.provider_name}`
-        : access.provider_name;
-      return access.detail ? `${provider} (${access.detail})` : provider;
-    }))];
+    return [
+      ...new Set(
+        (spell.access ?? []).map((access) => {
+          const provider = access.parent_name
+            ? `${access.parent_name} — ${access.provider_name}`
+            : access.provider_name;
+          return access.detail ? `${provider} (${access.detail})` : provider;
+        }),
+      ),
+    ];
   }
 
   private matchesSearch(spell: DndSpell, query: string): boolean {
-    return !query
-      || spell.name.toLowerCase().includes(query)
-      || spell.school.toLowerCase().includes(query)
-      || String(spell.level).includes(query);
+    return (
+      !query ||
+      spell.name.toLowerCase().includes(query) ||
+      spell.school.toLowerCase().includes(query) ||
+      String(spell.level).includes(query)
+    );
   }
 
   private updateFilters(scope: string, patch: Partial<SpellFilters>): void {
-    this.filtersByScope.update(current => ({
+    this.filtersByScope.update((current) => ({
       ...current,
       [scope]: { ...(current[scope] ?? EMPTY_FILTERS), ...patch },
     }));
@@ -383,8 +458,10 @@ export class SpellsStepComponent {
   private matchesFilters(spell: DndSpell, filters: SpellFilters): boolean {
     if (filters.level !== null && spell.level !== filters.level) return false;
     if (filters.school && spell.school !== filters.school) return false;
-    if (filters.castingTime && this.castingTimeCategory(spell.casting_time) !== filters.castingTime) return false;
-    if (filters.concentration && spell.concentration !== (filters.concentration === 'yes')) return false;
+    if (filters.castingTime && this.castingTimeCategory(spell.casting_time) !== filters.castingTime)
+      return false;
+    if (filters.concentration && spell.concentration !== (filters.concentration === 'yes'))
+      return false;
     if (filters.ritual && spell.ritual !== (filters.ritual === 'yes')) return false;
     return this.matchesRange(spell.range, filters.range);
   }
@@ -403,7 +480,8 @@ export class SpellsStepComponent {
     if (filter === 'self') return normalized.startsWith('self');
     if (filter === 'touch') return normalized.startsWith('touch');
     const distance = this.rangeInFeet(normalized);
-    if (filter === 'special') return distance === null && !normalized.startsWith('self') && !normalized.startsWith('touch');
+    if (filter === 'special')
+      return distance === null && !normalized.startsWith('self') && !normalized.startsWith('touch');
     if (distance === null) return false;
     if (filter === 'long') return distance > 120;
     return distance <= Number(filter);

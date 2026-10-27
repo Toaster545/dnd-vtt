@@ -1,7 +1,10 @@
 import Konva from 'konva';
 import { MapFog } from '../../../core/models/campaign.model';
 
-interface Cell { col: number; row: number; }
+interface Cell {
+  col: number;
+  row: number;
+}
 
 // Cell the pointer is currently over, floored like token placement — fog tools target whole
 // cells, not free positions like the measure tool does.
@@ -78,7 +81,7 @@ export class FogTool {
   // Sends only the cells touched since the last flush, then clears them.
   private flushPaint() {
     if (this.fogPaintCells.size === 0) return;
-    const cells = [...this.fogPaintCells].map(key => {
+    const cells = [...this.fogPaintCells].map((key) => {
       const [col, row] = key.split(',').map(Number);
       return { col, row };
     });
@@ -127,7 +130,7 @@ export class FogTool {
         listening: false,
         width,
         height,
-        sceneFunc: context => {
+        sceneFunc: (context) => {
           context.beginPath();
           for (const key of hidden) {
             const [col, row] = key.split(',').map(Number);
@@ -145,12 +148,17 @@ export class FogTool {
       const maxCol = Math.max(this.rectStart.col, this.rectEnd.col);
       const minRow = Math.min(this.rectStart.row, this.rectEnd.row);
       const maxRow = Math.max(this.rectStart.row, this.rectEnd.row);
-      layer.add(new Konva.Rect({
-        x: minCol * cellSize, y: minRow * cellSize,
-        width: (maxCol - minCol + 1) * cellSize, height: (maxRow - minRow + 1) * cellSize,
-        stroke: '#f5d67a', strokeWidth: 2,
-        fill: revealingRectPreview ? 'rgba(245, 214, 122, 0.15)' : 'rgba(0, 0, 0, 0.5)',
-      }));
+      layer.add(
+        new Konva.Rect({
+          x: minCol * cellSize,
+          y: minRow * cellSize,
+          width: (maxCol - minCol + 1) * cellSize,
+          height: (maxRow - minRow + 1) * cellSize,
+          stroke: '#f5d67a',
+          strokeWidth: 2,
+          fill: revealingRectPreview ? 'rgba(245, 214, 122, 0.15)' : 'rgba(0, 0, 0, 0.5)',
+        }),
+      );
     }
     layer.draw();
   }

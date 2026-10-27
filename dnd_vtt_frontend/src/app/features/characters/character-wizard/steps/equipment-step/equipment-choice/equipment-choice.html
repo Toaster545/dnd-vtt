@@ -2,29 +2,44 @@
   <div class="mb-6">
     <div class="flex items-center gap-2 mb-2">
       <p class="text-xs font-bold text-slate uppercase tracking-wide flex-1">{{ label() }}</p>
-      @if (complete()) { <span class="text-success text-xs">✓</span> }
+      @if (complete()) {
+        <span class="text-success text-xs">✓</span>
+      }
     </div>
 
     <div class="flex gap-1.5 mb-3">
       <button
         class="px-2.5 py-1 rounded text-xs border transition-all"
-        [class]="mode() === 'gear' ? 'border-gold/60 bg-gold/10 text-parchment' : 'border-white/15 text-slate hover:border-white/30'"
+        [class]="
+          mode() === 'gear'
+            ? 'border-gold/60 bg-gold/10 text-parchment'
+            : 'border-white/15 text-slate hover:border-white/30'
+        "
         (click)="setMode('gear')"
-        style="font-family: inherit;"
-      >Take Starting Gear</button>
+        style="font-family: inherit"
+      >
+        Take Starting Gear
+      </button>
       <button
         class="px-2.5 py-1 rounded text-xs border transition-all"
-        [class]="mode() === 'gold' ? 'border-gold/60 bg-gold/10 text-parchment' : 'border-white/15 text-slate hover:border-white/30'"
+        [class]="
+          mode() === 'gold'
+            ? 'border-gold/60 bg-gold/10 text-parchment'
+            : 'border-white/15 text-slate hover:border-white/30'
+        "
         (click)="setMode('gold')"
-        style="font-family: inherit;"
-      >Take {{ equip.goldAlternative }} gp Instead</button>
+        style="font-family: inherit"
+      >
+        Take {{ equip.goldAlternative }} gp Instead
+      </button>
     </div>
 
     @if (mode() === 'gold') {
-      <p class="text-xs text-coal">You'll start with {{ equip.goldAlternative }} gp to spend on your own equipment.</p>
+      <p class="text-xs text-coal">
+        You'll start with {{ equip.goldAlternative }} gp to spend on your own equipment.
+      </p>
     } @else {
       <div class="flex flex-col gap-3 max-w-xl">
-
         @if (equip.fixed.length) {
           <div class="flex flex-wrap gap-1.5">
             @for (ref of equip.fixed; track ref.key) {
@@ -42,10 +57,16 @@
                   @let picked = catPick(ref) === opt.index;
                   <button
                     class="px-2.5 py-1 rounded text-xs border transition-all"
-                    [class]="picked ? 'border-gold/60 bg-gold/10 text-parchment' : 'border-white/15 text-slate hover:border-white/30'"
+                    [class]="
+                      picked
+                        ? 'border-gold/60 bg-gold/10 text-parchment'
+                        : 'border-white/15 text-slate hover:border-white/30'
+                    "
                     (click)="pickCategory(ref, opt.index)"
-                    style="font-family: inherit;"
-                  >{{ itemDisplayName(opt) }}</button>
+                    style="font-family: inherit"
+                  >
+                    {{ itemDisplayName(opt) }}
+                  </button>
                 }
               </div>
             </div>
@@ -64,15 +85,29 @@
                 @let isPicked = picked === opt.key;
                 <button
                   class="group flex items-start justify-between px-3 py-1.5 rounded border transition-all text-left w-full"
-                  [class]="isPicked ? 'border-gold/50 bg-gold/5 cursor-pointer' : 'border-white/10 hover:border-white/30 hover:bg-white/5 cursor-pointer'"
+                  [class]="
+                    isPicked
+                      ? 'border-gold/50 bg-gold/5 cursor-pointer'
+                      : 'border-white/10 hover:border-white/30 hover:bg-white/5 cursor-pointer'
+                  "
                   (click)="pickGroupOption(group, opt.key)"
-                  style="font-family: inherit;"
+                  style="font-family: inherit"
                 >
                   <div class="flex items-center gap-2">
-                    @if (isPicked) { <span class="text-gold text-xs">✓</span> }
-                    <span class="text-sm" [class]="isPicked ? 'text-parchment' : 'text-slate group-hover:text-parchment'">{{ opt.label }}</span>
+                    @if (isPicked) {
+                      <span class="text-gold text-xs">✓</span>
+                    }
+                    <span
+                      class="text-sm"
+                      [class]="
+                        isPicked ? 'text-parchment' : 'text-slate group-hover:text-parchment'
+                      "
+                      >{{ opt.label }}</span
+                    >
                   </div>
-                  @if (opt.gold) { <span class="text-xs text-coal ml-4 flex-shrink-0">+{{ opt.gold }} gp</span> }
+                  @if (opt.gold) {
+                    <span class="text-xs text-coal ml-4 flex-shrink-0">+{{ opt.gold }} gp</span>
+                  }
                 </button>
               }
             </div>
@@ -87,10 +122,16 @@
                         @let catIsPicked = catPick(ref) === catOpt.index;
                         <button
                           class="px-2.5 py-1 rounded text-xs border transition-all"
-                          [class]="catIsPicked ? 'border-gold/60 bg-gold/10 text-parchment' : 'border-white/15 text-slate hover:border-white/30'"
+                          [class]="
+                            catIsPicked
+                              ? 'border-gold/60 bg-gold/10 text-parchment'
+                              : 'border-white/15 text-slate hover:border-white/30'
+                          "
                           (click)="pickCategory(ref, catOpt.index)"
-                          style="font-family: inherit;"
-                        >{{ itemDisplayName(catOpt) }}</button>
+                          style="font-family: inherit"
+                        >
+                          {{ itemDisplayName(catOpt) }}
+                        </button>
                       }
                     </div>
                   </div>

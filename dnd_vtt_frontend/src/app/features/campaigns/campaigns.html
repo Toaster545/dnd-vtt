@@ -12,14 +12,22 @@
     @if (showForm()) {
       <div class="card card-body mb-5">
         <div class="flex gap-1 mb-4 border border-white/10 rounded p-0.5 w-fit">
-          <button type="button" class="px-3 py-1 rounded text-sm"
-                  [class]="mode() === 'join' ? 'bg-gold/15 text-gold' : 'text-slate hover:text-parchment'"
-                  (click)="mode.set('join')">
+          <button
+            type="button"
+            class="px-3 py-1 rounded text-sm"
+            [class]="mode() === 'join' ? 'bg-gold/15 text-gold' : 'text-slate hover:text-parchment'"
+            (click)="mode.set('join')"
+          >
             Join
           </button>
-          <button type="button" class="px-3 py-1 rounded text-sm"
-                  [class]="mode() === 'create' ? 'bg-gold/15 text-gold' : 'text-slate hover:text-parchment'"
-                  (click)="mode.set('create')">
+          <button
+            type="button"
+            class="px-3 py-1 rounded text-sm"
+            [class]="
+              mode() === 'create' ? 'bg-gold/15 text-gold' : 'text-slate hover:text-parchment'
+            "
+            (click)="mode.set('create')"
+          >
             Create
           </button>
         </div>
@@ -29,20 +37,30 @@
 
           @if (characters().length === 0) {
             <p class="text-slate text-sm">
-              You don't have any characters yet — create one in the <strong class="text-parchment">Characters</strong> tab first.
+              You don't have any characters yet — create one in the
+              <strong class="text-parchment">Characters</strong> tab first.
             </p>
           } @else {
             <div class="field mb-4">
               <label class="field-label">Campaign join code</label>
-              <input class="field-input uppercase tracking-widest" [ngModel]="joinCode"
-                     (ngModelChange)="onJoinCodeChange($event)" name="joinCode" maxlength="6" placeholder="ABC123" />
+              <input
+                class="field-input uppercase tracking-widest"
+                [ngModel]="joinCode"
+                (ngModelChange)="onJoinCodeChange($event)"
+                name="joinCode"
+                maxlength="6"
+                placeholder="ABC123"
+              />
               @if (previewingJoin()) {
                 <p class="text-slate text-xs mt-2">Checking campaign rules…</p>
               } @else if (joinPreview(); as preview) {
                 <p class="text-parchment text-sm mt-2 mb-1">{{ preview.campaign_name }}</p>
                 <div class="flex flex-wrap gap-1">
                   @for (code of preview.allowed_sources; track code) {
-                    <span class="text-[10px] text-gold border border-gold/25 rounded px-1.5 py-0.5">{{ sourceLabel(code) }}</span>
+                    <span
+                      class="text-[10px] text-gold border border-gold/25 rounded px-1.5 py-0.5"
+                      >{{ sourceLabel(code) }}</span
+                    >
                   }
                 </div>
               }
@@ -53,31 +71,46 @@
               <div class="flex flex-col gap-1.5">
                 @for (character of characters(); track character.id) {
                   @let compatibility = characterCompatibility(character.id);
-                  <button type="button"
+                  <button
+                    type="button"
                     class="flex items-center gap-2 px-3 py-2 rounded border text-left text-sm w-full"
-                    [class]="compatibility?.compatible === false
-                      ? 'border-danger/25 bg-danger/5 cursor-not-allowed opacity-70'
-                      : selectedCharacterId() === character.id
-                        ? 'border-gold/50 bg-gold/5 cursor-pointer'
-                        : 'border-white/10 hover:border-white/30 cursor-pointer'"
+                    [class]="
+                      compatibility?.compatible === false
+                        ? 'border-danger/25 bg-danger/5 cursor-not-allowed opacity-70'
+                        : selectedCharacterId() === character.id
+                          ? 'border-gold/50 bg-gold/5 cursor-pointer'
+                          : 'border-white/10 hover:border-white/30 cursor-pointer'
+                    "
                     [disabled]="compatibility?.compatible === false"
                     (click)="selectCharacter(character.id!)"
-                    style="font-family: inherit;"
+                    style="font-family: inherit"
                   >
-                    <span class="w-4 h-4 rounded-full border flex items-center justify-center shrink-0 text-[9px]"
-                      [class]="selectedCharacterId() === character.id ? 'bg-gold border-gold text-canvas font-bold' : 'border-slate/50 text-transparent'">●</span>
+                    <span
+                      class="w-4 h-4 rounded-full border flex items-center justify-center shrink-0 text-[9px]"
+                      [class]="
+                        selectedCharacterId() === character.id
+                          ? 'bg-gold border-gold text-canvas font-bold'
+                          : 'border-slate/50 text-transparent'
+                      "
+                      >●</span
+                    >
                     <span class="min-w-0 flex-1">
                       <span class="text-parchment">{{ character.name }}</span>
-                      <span class="text-coal text-xs ml-2">Level {{ character.level }} {{ classLabel(character) }}</span>
+                      <span class="text-coal text-xs ml-2"
+                        >Level {{ character.level }} {{ classLabel(character) }}</span
+                      >
                       @if (compatibility?.reason) {
-                        <span class="block text-danger text-xs mt-0.5">{{ compatibility!.reason }}</span>
+                        <span class="block text-danger text-xs mt-0.5">{{
+                          compatibility!.reason
+                        }}</span>
                       }
                     </span>
                   </button>
                 }
               </div>
               <p class="text-coal text-xs mt-2">
-                A DM-editable copy of this character is made for the campaign — your original stays untouched.
+                A DM-editable copy of this character is made for the campaign — your original stays
+                untouched.
               </p>
             </div>
 
@@ -85,8 +118,16 @@
               <p class="text-danger text-sm mb-3">{{ joinError() }}</p>
             }
 
-            <button class="btn-primary" [disabled]="!selectedCharacterId() || !joinPreview() || joining()" (click)="join()">
-              @if (joining()) { <span class="spinner-sm"></span> } @else { Join Campaign }
+            <button
+              class="btn-primary"
+              [disabled]="!selectedCharacterId() || !joinPreview() || joining()"
+              (click)="join()"
+            >
+              @if (joining()) {
+                <span class="spinner-sm"></span>
+              } @else {
+                Join Campaign
+              }
             </button>
           }
         } @else {
@@ -98,26 +139,45 @@
             </div>
             <div class="field">
               <label class="field-label">Description (optional)</label>
-              <textarea class="field-input" [(ngModel)]="newDescription" name="description" rows="3"></textarea>
+              <textarea
+                class="field-input"
+                [(ngModel)]="newDescription"
+                name="description"
+                rows="3"
+              ></textarea>
             </div>
             <div class="field">
-              <button type="button" class="flex items-center gap-2 w-full text-left py-1"
-                      (click)="createSourcesExpanded.set(!createSourcesExpanded())">
-                <mat-icon class="text-base text-slate">{{ createSourcesExpanded() ? 'expand_more' : 'chevron_right' }}</mat-icon>
+              <button
+                type="button"
+                class="flex items-center gap-2 w-full text-left py-1"
+                (click)="createSourcesExpanded.set(!createSourcesExpanded())"
+              >
+                <mat-icon class="text-base text-slate">{{
+                  createSourcesExpanded() ? 'expand_more' : 'chevron_right'
+                }}</mat-icon>
                 <span class="field-label m-0 flex-1">Allowed character sources</span>
                 <span class="text-[10px] text-gold border border-gold/25 rounded px-1.5 py-0.5">
                   {{ allowedSources().size }} enabled
                 </span>
               </button>
-              <p class="text-coal text-xs mt-1 mb-2">Characters using sources not selected here cannot join. You can change this later.</p>
+              <p class="text-coal text-xs mt-1 mb-2">
+                Characters using sources not selected here cannot join. You can change this later.
+              </p>
               @if (createSourcesExpanded()) {
                 <div class="flex flex-col gap-2 mt-2">
                   @for (source of sources(); track source.code) {
                     @if (source.player_options) {
-                      <label class="flex items-start gap-2 rounded border border-white/10 p-2"
-                             [class.opacity-70]="source.locked">
-                        <input type="checkbox" class="mt-0.5" [checked]="sourceAllowed(source)"
-                               [disabled]="source.locked" (change)="toggleAllowedSource(source)" />
+                      <label
+                        class="flex items-start gap-2 rounded border border-white/10 p-2"
+                        [class.opacity-70]="source.locked"
+                      >
+                        <input
+                          type="checkbox"
+                          class="mt-0.5"
+                          [checked]="sourceAllowed(source)"
+                          [disabled]="source.locked"
+                          (change)="toggleAllowedSource(source)"
+                        />
                         <span>
                           <span class="block text-parchment text-sm">{{ source.name }}</span>
                           <span class="block text-coal text-xs">{{ source.description }}</span>
@@ -130,7 +190,11 @@
             </div>
             <div>
               <button class="btn-primary" type="submit" [disabled]="!newName.trim() || saving()">
-                @if (saving()) { <span class="spinner-sm"></span> } @else { Create Campaign }
+                @if (saving()) {
+                  <span class="spinner-sm"></span>
+                } @else {
+                  Create Campaign
+                }
               </button>
             </div>
           </form>
@@ -146,45 +210,77 @@
       @for (campaign of campaigns(); track campaign.id) {
         <div
           class="relative rounded-lg overflow-hidden border border-transparent bg-cover bg-center bg-elevated min-h-20 hover:border-white/10"
-          [style.background-image]="campaign.background_url ? 'linear-gradient(to bottom, rgba(13,14,22,0.25), rgba(13,14,22,0.92)), url(' + campaign.background_url + ')' : null"
+          [style.background-image]="
+            campaign.background_url
+              ? 'linear-gradient(to bottom, rgba(13,14,22,0.25), rgba(13,14,22,0.92)), url(' +
+                campaign.background_url +
+                ')'
+              : null
+          "
         >
-          <a [routerLink]="campaignLink(campaign)" class="flex flex-col justify-end h-full min-h-30 p-5 cursor-pointer no-underline">
+          <a
+            [routerLink]="campaignLink(campaign)"
+            class="flex flex-col justify-end h-full min-h-30 p-5 cursor-pointer no-underline"
+          >
             <div class="flex items-center gap-2">
               <p class="text-parchment font-brand text-2xl m-0">{{ campaign.name }}</p>
               @if (campaign.is_owner) {
                 <span class="toolbar-badge text-[10px]">DM</span>
               }
             </div>
-            @if (campaign.description) { <p class="text-slate text-sm m-0 mt-1 max-w-2xl">{{ campaign.description }}</p> }
+            @if (campaign.description) {
+              <p class="text-slate text-sm m-0 mt-1 max-w-2xl">{{ campaign.description }}</p>
+            }
             <div class="flex flex-wrap gap-1 mt-2">
               @for (code of campaign.allowed_sources; track code) {
-                <span class="text-[10px] text-slate border border-white/10 rounded px-1.5 py-0.5">{{ sourceLabel(code) }}</span>
+                <span class="text-[10px] text-slate border border-white/10 rounded px-1.5 py-0.5">{{
+                  sourceLabel(code)
+                }}</span>
               }
             </div>
             @if (campaign.is_owner) {
               <p class="text-slate text-xs m-0 mt-2">
-                Join code <span class="text-gold font-mono">{{ campaign.join_code }}</span>
-                · {{ formatDate(campaign.created_at) }}
+                Join code <span class="text-gold font-mono">{{ campaign.join_code }}</span> ·
+                {{ formatDate(campaign.created_at) }}
               </p>
             }
           </a>
 
           @if (campaign.is_owner) {
             <div class="absolute top-3 right-3 flex items-center gap-1">
-              <input #bgInput type="file" accept="image/*" class="hidden" (change)="onBackgroundFileChange(campaign, $event)" />
-              <button class="btn-icon bg-canvas/50 hover:bg-canvas/70" (click)="bgInput.click()"
-                      [disabled]="uploadingBackgroundId() === campaign.id" matTooltip="Set banner image">
-                @if (uploadingBackgroundId() === campaign.id) { <span class="spinner-sm"></span> } @else { <mat-icon>image</mat-icon> }
+              <input
+                #bgInput
+                type="file"
+                accept="image/*"
+                class="hidden"
+                (change)="onBackgroundFileChange(campaign, $event)"
+              />
+              <button
+                class="btn-icon bg-canvas/50 hover:bg-canvas/70"
+                (click)="bgInput.click()"
+                [disabled]="uploadingBackgroundId() === campaign.id"
+                matTooltip="Set banner image"
+              >
+                @if (uploadingBackgroundId() === campaign.id) {
+                  <span class="spinner-sm"></span>
+                } @else {
+                  <mat-icon>image</mat-icon>
+                }
               </button>
               @if (campaign.background_url) {
-                <button class="btn-icon bg-canvas/50 hover:bg-canvas/70 text-danger/70 hover:text-danger"
-                        (click)="clearBackground(campaign, $event)" matTooltip="Remove banner image">
+                <button
+                  class="btn-icon bg-canvas/50 hover:bg-canvas/70 text-danger/70 hover:text-danger"
+                  (click)="clearBackground(campaign, $event)"
+                  matTooltip="Remove banner image"
+                >
                   <mat-icon>hide_image</mat-icon>
                 </button>
               }
-              <button class="btn-icon bg-canvas/50 hover:bg-canvas/70 text-danger/70 hover:text-danger"
-                      (click)="deleteCampaign(campaign, $event)"
-                      matTooltip="Delete campaign">
+              <button
+                class="btn-icon bg-canvas/50 hover:bg-canvas/70 text-danger/70 hover:text-danger"
+                (click)="deleteCampaign(campaign, $event)"
+                matTooltip="Delete campaign"
+              >
                 <mat-icon>delete</mat-icon>
               </button>
             </div>

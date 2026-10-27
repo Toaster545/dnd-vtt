@@ -23,7 +23,9 @@ export function tokensAsPlayersSee(tokens: MapToken[]): MapToken[] {
         character_id: token.is_player ? token.character_id : undefined,
         // Monster art names the monster as plainly as its label, so it goes with the name.
         image_url:
-          token.monster_index && nameVisible ? monsterTokenUrl(token.monster_index) : token.image_url,
+          token.monster_index && nameVisible
+            ? monsterTokenUrl(token.monster_index)
+            : token.image_url,
         initiative: token.initiative ?? null,
         turn_start_x: token.turn_start_x ?? null,
         turn_start_y: token.turn_start_y ?? null,

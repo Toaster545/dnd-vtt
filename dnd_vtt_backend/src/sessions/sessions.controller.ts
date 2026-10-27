@@ -15,6 +15,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { SessionsService } from './sessions.service';
 import { CreateSessionDto } from './dto/create-session.dto';
 import { UpdateSessionDto } from './dto/update-session.dto';
+import { SetVisibleDto } from '../common/set-visible.dto';
 import { JwtGuard } from '../auth/jwt.guard';
 import { CurrentUser } from '../common/current-user.decorator';
 import type { RequestUser } from '../common/current-user.decorator';
@@ -66,7 +67,7 @@ export class SessionsController {
   @Patch(':id/visibility')
   setVisibility(
     @Param('id') id: string,
-    @Body() body: { visible: boolean },
+    @Body() body: SetVisibleDto,
     @CurrentUser() user: RequestUser,
   ) {
     return this.sessions.setVisibility(id, user.id, body.visible);

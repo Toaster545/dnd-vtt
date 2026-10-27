@@ -19,12 +19,14 @@ const skilled = {
   name: 'Skilled',
   description: 'Gain proficiency in three skills of your choice.',
   category: 'origin',
-  grants: [{
-    type: 'skill_choice',
-    key: 'origin_feat:skilled_skills',
-    name: 'Skill Proficiencies',
-    choose: 3,
-  }],
+  grants: [
+    {
+      type: 'skill_choice',
+      key: 'origin_feat:skilled_skills',
+      name: 'Skill Proficiencies',
+      choose: 3,
+    },
+  ],
 } satisfies DndFeat;
 
 const magicInitiate = {
@@ -32,23 +34,31 @@ const magicInitiate = {
   name: 'Magic Initiate',
   description: 'Choose a spell list.',
   category: 'origin',
-  grants: [{
-    type: 'choice',
-    key: 'magic_initiate_list',
-    name: 'Spell List',
-    choose: 1,
-    options: [{ name: 'Cleric' }, { name: 'Druid' }, { name: 'Wizard' }],
-  }],
+  grants: [
+    {
+      type: 'choice',
+      key: 'magic_initiate_list',
+      name: 'Spell List',
+      choose: 1,
+      options: [{ name: 'Cleric' }, { name: 'Druid' }, { name: 'Wizard' }],
+    },
+  ],
 } satisfies DndFeat;
 
 describe('BackgroundStepComponent', () => {
   it('opens the skill editor with both background defaults selected', async () => {
-    await TestBed.configureTestingModule({ imports: [BackgroundStepComponent] }).compileComponents();
+    await TestBed.configureTestingModule({
+      imports: [BackgroundStepComponent],
+    }).compileComponents();
     const fixture = TestBed.createComponent(BackgroundStepComponent);
     fixture.componentRef.setInput('backgrounds', [merchant]);
     fixture.componentRef.setInput('baseAbilityScores', {
-      strength: 10, dexterity: 10, constitution: 10,
-      intelligence: 10, wisdom: 10, charisma: 10,
+      strength: 10,
+      dexterity: 10,
+      constitution: 10,
+      intelligence: 10,
+      wisdom: 10,
+      charisma: 10,
     });
     fixture.componentInstance.openFromList(merchant);
     fixture.detectChanges();
@@ -64,21 +74,27 @@ describe('BackgroundStepComponent', () => {
 
     const values = Array.from(
       root.querySelectorAll<HTMLSelectElement>('select'),
-      select => select.value,
+      (select) => select.value,
     );
     expect(values).toEqual(['Animal Handling', 'Persuasion']);
   });
 
   it('shows the origin feat description by default and saves its required skill choices', async () => {
-    await TestBed.configureTestingModule({ imports: [BackgroundStepComponent] }).compileComponents();
+    await TestBed.configureTestingModule({
+      imports: [BackgroundStepComponent],
+    }).compileComponents();
     const fixture = TestBed.createComponent(BackgroundStepComponent);
     const background = { ...merchant, feature: 'Origin Feat: Skilled' };
     fixture.componentRef.setInput('backgrounds', [background]);
     fixture.componentRef.setInput('feats', [skilled]);
     fixture.componentRef.setInput('unavailableSkills', ['Perception']);
     fixture.componentRef.setInput('baseAbilityScores', {
-      strength: 10, dexterity: 10, constitution: 10,
-      intelligence: 10, wisdom: 10, charisma: 10,
+      strength: 10,
+      dexterity: 10,
+      constitution: 10,
+      intelligence: 10,
+      wisdom: 10,
+      charisma: 10,
     });
     fixture.componentInstance.openFromList(background);
     fixture.detectChanges();
@@ -93,11 +109,17 @@ describe('BackgroundStepComponent', () => {
     for (const skill of ['Athletics', 'Arcana', 'History']) {
       fixture.componentInstance.toggleFeatSkill(background, grant, skill);
     }
-    expect(fixture.componentInstance.draftTraits()[grant.key]).toEqual(['Athletics', 'Arcana', 'History']);
+    expect(fixture.componentInstance.draftTraits()[grant.key]).toEqual([
+      'Athletics',
+      'Arcana',
+      'History',
+    ]);
   });
 
   it('identifies an existing background skill conflict without preventing its removal', async () => {
-    await TestBed.configureTestingModule({ imports: [BackgroundStepComponent] }).compileComponents();
+    await TestBed.configureTestingModule({
+      imports: [BackgroundStepComponent],
+    }).compileComponents();
     const fixture = TestBed.createComponent(BackgroundStepComponent);
     const background = {
       ...merchant,
@@ -107,33 +129,47 @@ describe('BackgroundStepComponent', () => {
     fixture.componentRef.setInput('selected', { background, traits: {} });
     fixture.componentRef.setInput('unavailableSkills', ['Survival']);
     fixture.componentRef.setInput('baseAbilityScores', {
-      strength: 10, dexterity: 10, constitution: 10,
-      intelligence: 10, wisdom: 10, charisma: 10,
+      strength: 10,
+      dexterity: 10,
+      constitution: 10,
+      intelligence: 10,
+      wisdom: 10,
+      charisma: 10,
     });
     fixture.detectChanges();
     fixture.componentInstance.editSelected();
     fixture.detectChanges();
 
     expect(fixture.componentInstance.conflictingBackgroundSkills(background)).toEqual(['Survival']);
-    expect((fixture.nativeElement as HTMLElement).textContent)
-      .toContain('Survival already selected by another proficiency source');
+    expect((fixture.nativeElement as HTMLElement).textContent).toContain(
+      'Survival already selected by another proficiency source',
+    );
   });
 
   it('locks a background Magic Initiate choice to its specified spell list', async () => {
-    await TestBed.configureTestingModule({ imports: [BackgroundStepComponent] }).compileComponents();
+    await TestBed.configureTestingModule({
+      imports: [BackgroundStepComponent],
+    }).compileComponents();
     const fixture = TestBed.createComponent(BackgroundStepComponent);
     const background = { ...merchant, feature: 'Origin Feat: Magic Initiate (Wizard)' };
     fixture.componentRef.setInput('backgrounds', [background]);
     fixture.componentRef.setInput('feats', [magicInitiate]);
     fixture.componentRef.setInput('baseAbilityScores', {
-      strength: 10, dexterity: 10, constitution: 10,
-      intelligence: 10, wisdom: 10, charisma: 10,
+      strength: 10,
+      dexterity: 10,
+      constitution: 10,
+      intelligence: 10,
+      wisdom: 10,
+      charisma: 10,
     });
 
     fixture.componentInstance.openFromList(background);
 
     expect(fixture.componentInstance.draftTraits()['magic_initiate_list']).toEqual(['Wizard']);
-    expect(fixture.componentInstance.originFeatChoiceGrants(background)[0].options.map(option => option.name))
-      .toEqual(['Wizard']);
+    expect(
+      fixture.componentInstance
+        .originFeatChoiceGrants(background)[0]
+        .options.map((option) => option.name),
+    ).toEqual(['Wizard']);
   });
 });

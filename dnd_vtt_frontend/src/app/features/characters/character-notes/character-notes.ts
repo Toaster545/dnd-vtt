@@ -5,7 +5,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { WikiService } from '../../../core/services/wiki.service';
 import { WikiPage } from '../../../core/models/wiki.model';
-import { WikiEditorPage, WikiLiveEditorComponent } from '../../wiki/wiki-live-editor.component';
+import { WikiEditorPage, WikiLiveEditorComponent } from '../../wiki/wiki-live-editor';
 
 const AUTOSAVE_MS = 1500;
 

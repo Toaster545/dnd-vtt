@@ -79,15 +79,23 @@ $crop-mark-offset: 0.5mm;
   overflow: hidden;
   break-inside: avoid;
 
-  &.border-thin { border: 1.5pt solid; }
-  &.border-heavy { border: 3pt solid; }
+  &.border-thin {
+    border: 1.5pt solid;
+  }
+  &.border-heavy {
+    border: 3pt solid;
+  }
   &.border-ornate {
     border: 4pt double;
     outline: 0.75pt solid currentColor;
     outline-offset: -6pt;
   }
-  &.border-dotted { border: 1.5pt dotted; }
-  &.border-none { border: none; }
+  &.border-dotted {
+    border: 1.5pt dotted;
+  }
+  &.border-none {
+    border: none;
+  }
 }
 
 // Uniform back face: paper background with a rarity/custom-colored outline and just the item's

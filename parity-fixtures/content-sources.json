@@ -1,0 +1,99 @@
+{
+  "note": "enabled/allowed codes -> which player-option source codes end up available. Core XPHB is locked (always on); EFA/XGE/TCE are opt-in. Compared via backend normalizePlayerSources and frontend characterContentEnabled.",
+  "cases": [
+    {
+      "name": "nothing requested",
+      "input": {
+        "enabled": []
+      },
+      "expected": {
+        "XPHB": true,
+        "EFA": false,
+        "XGE": false,
+        "TCE": false
+      }
+    },
+    {
+      "name": "EFA only",
+      "input": {
+        "enabled": [
+          "EFA"
+        ]
+      },
+      "expected": {
+        "XPHB": true,
+        "EFA": true,
+        "XGE": false,
+        "TCE": false
+      }
+    },
+    {
+      "name": "XGE and TCE",
+      "input": {
+        "enabled": [
+          "XGE",
+          "TCE"
+        ]
+      },
+      "expected": {
+        "XPHB": true,
+        "EFA": false,
+        "XGE": true,
+        "TCE": true
+      }
+    },
+    {
+      "name": "all",
+      "input": {
+        "enabled": [
+          "EFA",
+          "XGE",
+          "TCE"
+        ]
+      },
+      "expected": {
+        "XPHB": true,
+        "EFA": true,
+        "XGE": true,
+        "TCE": true
+      }
+    },
+    {
+      "name": "garbage ignored",
+      "input": {
+        "enabled": [
+          "BOGUS",
+          "TCE"
+        ]
+      },
+      "expected": {
+        "XPHB": true,
+        "EFA": false,
+        "XGE": false,
+        "TCE": true
+      }
+    }
+  ],
+  "sources": [
+    {
+      "code": "XPHB",
+      "locked": true,
+      "player_options": true
+    },
+    {
+      "code": "EFA",
+      "locked": false,
+      "player_options": true
+    },
+    {
+      "code": "XGE",
+      "locked": false,
+      "player_options": true
+    },
+    {
+      "code": "TCE",
+      "locked": false,
+      "player_options": true
+    }
+  ]
+}
