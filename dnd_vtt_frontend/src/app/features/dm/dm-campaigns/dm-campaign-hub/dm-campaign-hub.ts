@@ -22,10 +22,7 @@ import { CharacterWizardComponent } from '../../../characters/character-wizard/c
 import { CharacterPlaySheetComponent } from '../../../characters/character-play-sheet/character-play-sheet';
 import { DescriptionDialogComponent } from '../../../../shared/components/description-dialog/description-dialog';
 import { getErrorMessage } from '../../../../core/utils/error-message';
-
-function toContentIndex(name: string): string {
-  return name.toLowerCase().replace(/\s+/g, '-');
-}
+import { toContentIndex } from '../../../../core/utils/content-index';
 
 @Component({
   selector: 'app-dm-campaign-hub',

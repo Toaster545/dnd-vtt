@@ -27,3 +27,7 @@ dnd_vtt_backend/uploads/campaigns/
 dnd_vtt_backend/uploads/wiki/
 dnd_vtt_backend/uploads/monster-tokens/
 dnd_vtt_backend/uploads/item-art/
+
+# Stray local artifacts
+*.deb
+/dnd_vtt_frontend/probe.cjs

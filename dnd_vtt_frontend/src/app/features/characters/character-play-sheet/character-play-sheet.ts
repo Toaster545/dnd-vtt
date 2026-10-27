@@ -87,6 +87,7 @@ import {
 } from '../../../shared/components/character-portrait/character-portrait';
 import { Router } from '@angular/router';
 import { getErrorMessage } from '../../../core/utils/error-message';
+import { toContentIndex } from '../../../core/utils/content-index';
 
 // The fields load() resolves content from — a change to any of them means refetching.
 function contentKey(char: Character): string {
@@ -100,10 +101,6 @@ function contentKey(char: Character): string {
     char.level,
     (char.classes ?? []).map((c) => [c.name, c.level, c.subclass ?? '', c.choices ?? {}]),
   ]);
-}
-
-function toIndex(name: string): string {
-  return name.toLowerCase().replace(/\s+/g, '-');
 }
 
 interface ResolvedClass {
@@ -1142,10 +1139,10 @@ export class CharacterPlaySheetComponent {
         );
     const [race, bg, items, spells, spellLists, feats, monsters, sources] = await Promise.all([
       char.race
-        ? this.content.getRace(toIndex(char.race)).catch(() => null)
+        ? this.content.getRace(toContentIndex(char.race)).catch(() => null)
         : Promise.resolve(null),
       char.background
-        ? this.content.getBackground(toIndex(char.background)).catch(() => null)
+        ? this.content.getBackground(toContentIndex(char.background)).catch(() => null)
         : Promise.resolve(null),
       itemsPromise,
       this.content.getSpells(campaignId),
@@ -1156,7 +1153,7 @@ export class CharacterPlaySheetComponent {
     ]);
 
     const classDataList = await Promise.all(
-      classEntries.map((c) => this.content.getClass(toIndex(c.name)).catch(() => null)),
+      classEntries.map((c) => this.content.getClass(toContentIndex(c.name)).catch(() => null)),
     );
     if (seq !== this.loadSeq) return;
 

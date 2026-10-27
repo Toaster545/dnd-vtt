@@ -1,0 +1,10 @@
+{
+  "cases": [
+    { "name": "level 1 d8 +0", "input": { "level": 1, "hitDie": 8, "conMod": 0 }, "expected": 8 },
+    { "name": "level 1 d12 +3", "input": { "level": 1, "hitDie": 12, "conMod": 3 }, "expected": 15 },
+    { "name": "level 5 d8 +2", "input": { "level": 5, "hitDie": 8, "conMod": 2 }, "expected": 38 },
+    { "name": "level 3 d6 -1", "input": { "level": 3, "hitDie": 6, "conMod": -1 }, "expected": 11 },
+    { "name": "level 20 d10 +1", "input": { "level": 20, "hitDie": 10, "conMod": 1 }, "expected": 144 },
+    { "name": "floors at 1", "input": { "level": 1, "hitDie": 6, "conMod": -10 }, "expected": 1 }
+  ]
+}

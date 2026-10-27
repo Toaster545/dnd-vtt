@@ -14,16 +14,13 @@ import { AuthService } from '../../core/services/auth.service';
 import { portraitDataUri, portraitSource } from '../../core/utils/avatar';
 import { levelUpPending } from '../../core/utils/level-up';
 import { CharacterPortraitComponent } from '../../shared/components/character-portrait/character-portrait';
+import { toContentIndex } from '../../core/utils/content-index';
 
 type DashboardCharacter = Character & { campaign_name?: string; edit_unlocked?: boolean };
 type CampaignCopy = DashboardCharacter & { campaign_name: string; edit_unlocked: boolean };
 
 interface LevelUpAlert {
   character: CampaignCopy;
-}
-
-function toContentIndex(name: string): string {
-  return name.toLowerCase().replace(/\s+/g, '-');
 }
 
 function lastTouched(c: Character): number {

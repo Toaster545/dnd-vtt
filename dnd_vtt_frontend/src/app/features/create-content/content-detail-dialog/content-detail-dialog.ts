@@ -8,6 +8,7 @@ import {
 } from '../../../core/services/content.service';
 import { monsterSpeedText } from '../../../core/utils/monster-speed';
 import { monsterTokenUrl } from '../../../core/utils/monster-token';
+import { abilityModifier } from '../../../core/models/character.model';
 
 @Component({
   selector: 'app-content-detail-dialog',
@@ -32,7 +33,7 @@ export class ContentDetailDialogComponent {
   readonly artFailedFor = signal<string | null>(null);
 
   modifier(score: number): string {
-    const value = Math.floor((score - 10) / 2);
+    const value = abilityModifier(score);
     return value >= 0 ? `+${value}` : `${value}`;
   }
 

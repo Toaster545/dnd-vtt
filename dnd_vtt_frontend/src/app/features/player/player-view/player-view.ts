@@ -13,13 +13,10 @@ import { TokenBorder } from '../../../core/models/token-border.model';
 import { normalizeTokenBorder } from '../../../core/utils/token-border';
 import { tokensAsPlayersSee } from '../../../core/utils/player-perspective';
 import { BattleMapComponent } from '../../battle-map/battle-map';
+import { toContentIndex } from '../../../core/utils/content-index';
 
 // Character.race stores the race's display name ("Half-Elf"), not its content index ("half-elf")
 // — same conversion player-campaign-session.ts does before ContentService.getRace().
-function toContentIndex(name: string): string {
-  return name.toLowerCase().replace(/\s+/g, '-');
-}
-
 // A read-only, chrome-free window showing what the players see on the battle map — meant to be
 // popped out (window.open, see DmEncounterPlayComponent.openPlayerView) onto a second monitor for
 // the table. It's opened from the DM's screen, so it runs signed in as the DM: the server sends

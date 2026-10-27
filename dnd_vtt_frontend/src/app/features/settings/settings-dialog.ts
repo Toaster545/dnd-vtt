@@ -23,9 +23,7 @@ interface UserEditForm {
 // Settings, opened as a MatDialog overlay (see ShellComponent/DashboardComponent goToSettings())
 // rather than routed to, so it always floats on top of whatever page the user was on and closes
 // via the default backdrop-click behavior. An account section every user sees, plus an admin-only
-// section gated on the same auth.isAdmin() signal adminGuard itself checks
-// (see core/guards/admin.guard.ts) rather than duplicating role logic — more admin-only settings
-// should be added under that guard.
+// section gated on the auth.isAdmin() signal — more admin-only settings should be added under it.
 @Component({
   selector: 'app-settings-dialog',
   imports: [FormsModule, MatDialogModule, MatIconModule, MatTooltipModule],

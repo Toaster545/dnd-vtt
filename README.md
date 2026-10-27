@@ -71,7 +71,7 @@ dnd-vtt/
 └── dnd_vtt_frontend/       # Angular app
     └── src/app/
         ├── core/
-        │   ├── guards/     # authGuard, adminGuard
+        │   ├── guards/     # authGuard, homeRedirectGuard, staleSessionGuard
         │   ├── interceptors/ # auth interceptor (injects Bearer token)
         │   ├── models/     # TypeScript interfaces
         │   └── services/   # auth, character, character-stats, battle-map, content, session, socket
@@ -82,7 +82,7 @@ dnd-vtt/
             ├── admin/      # map-manager (DM only)
             ├── dashboard/  # home screen
             ├── player/     # player-facing area: join an encounter by code, play own character
-            └── dm/         # DM-only area (gated by adminGuard)
+            └── dm/         # DM-only area (gated per endpoint on the backend by campaign ownership)
                 ├── dm-create/       # session/encounter management + character wizard
                 │   ├── dm-encounters/                          # build an encounter's roster
                 │   └── dm-characters/character-wizard/steps/   # one component per wizard step

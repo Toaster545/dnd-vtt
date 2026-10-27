@@ -27,16 +27,9 @@ import {
 } from '../content/content-sources';
 import type { CharacterData } from './character-data';
 import { stringArray, recordArray } from '../common/arrays';
-
-// Mirrors the frontend's itemDisplayName (content.service.ts) — a magic weapon/armor's own
-// `name` is stored plain ("Longsword"), so the "+N" stamped onto a granted item's equipment
-// entry is derived from `enhancement_bonus` here rather than baked into the content file.
-function itemDisplayName(item: Record<string, unknown>): string {
-  const name = typeof item.name === 'string' ? item.name : '';
-  const bonus = item.enhancement_bonus;
-  if (typeof bonus !== 'number' || bonus === 0) return name;
-  return `${name} ${bonus > 0 ? '+' : ''}${bonus}`;
-}
+import { abilityModifier } from '../common/ability';
+import { itemDisplayName } from '../common/item-display-name';
+import { averageHp } from './average-hp';
 
 type FreeCastState = {
   used: number;
@@ -574,11 +567,8 @@ export class CharactersService {
       return null;
     }
     const scores = data.ability_scores ?? {};
-    const conMod = Math.floor((Number(scores.constitution ?? 10) - 10) / 2);
-    return Math.max(
-      1,
-      hitDie + conMod + (level - 1) * (Math.floor(hitDie / 2) + 1 + conMod),
-    );
+    const conMod = abilityModifier(Number(scores.constitution ?? 10));
+    return averageHp(level, hitDie, conMod);
   }
 
   private changed(current: unknown, next: unknown): boolean {

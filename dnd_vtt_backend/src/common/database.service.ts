@@ -2,7 +2,10 @@ import { dbPath as configuredDbPath } from '../config';
 import { Injectable, OnModuleInit, Logger } from '@nestjs/common';
 import { createClient, Client, ResultSet } from '@libsql/client';
 import { MIGRATIONS } from './migrations';
-import { MigrationContext } from './migrations/migration';
+import {
+  MigrationContext,
+  assertMigrationsOrdered,
+} from './migrations/migration';
 import { dirname } from 'path';
 import { existsSync, mkdirSync } from 'fs';
 
@@ -52,6 +55,7 @@ export class DatabaseService implements OnModuleInit {
       (await this.db.execute(`PRAGMA user_version`)).rows[0]?.user_version ?? 0,
     );
 
+    // Pre-versioning databases (before PRAGMA user_version was used) already have the v1 schema.
     // Tables exist but predate versioning → treat as v1
     if (version === 0) {
       const info = await this.db.execute(`PRAGMA table_info(profiles)`);
@@ -65,8 +69,20 @@ export class DatabaseService implements OnModuleInit {
       executeMany: (statements) => this.executeMany(statements),
       parseJson: (value, fallback) => this.parseJson(value, fallback),
     };
+    assertMigrationsOrdered(MIGRATIONS);
     for (const migration of MIGRATIONS) {
-      if (version < migration.version) await migration.up(ctx);
+      if (version >= migration.version) continue;
+      await migration.up(ctx);
+      const stamped = Number(
+        (await this.db.execute(`PRAGMA user_version`)).rows[0]?.user_version ??
+          0,
+      );
+      if (stamped !== migration.version) {
+        throw new Error(
+          `Migration v${migration.version} did not stamp PRAGMA user_version (found ${stamped})`,
+        );
+      }
+      version = migration.version;
     }
   }
 }

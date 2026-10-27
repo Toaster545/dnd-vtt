@@ -10,6 +10,7 @@ import {
   CompanionResponse,
 } from '../../../core/models/companion.model';
 import { getErrorMessage } from '../../../core/utils/error-message';
+import { abilityModifier } from '../../../core/models/character.model';
 
 // Older server responses omit the presentation flag; their action keys are stable.
 const BASIC_ACTION_KEYS = new Set([
@@ -126,7 +127,7 @@ export class CompanionSheetComponent {
     return action.basic ?? BASIC_ACTION_KEYS.has(action.key);
   }
   modifier(n: number) {
-    return Math.floor((n - 10) / 2);
+    return abilityModifier(n);
   }
   signed(n: number) {
     return n >= 0 ? `+${n}` : `${n}`;

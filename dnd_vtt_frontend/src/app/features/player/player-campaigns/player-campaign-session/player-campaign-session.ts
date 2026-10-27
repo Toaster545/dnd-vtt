@@ -29,6 +29,7 @@ import { PartyListComponent } from '../../../../shared/components/party-list/par
 import { WikiEmbedComponent } from '../../../wiki/wiki-embed';
 import { HubViewService } from '../../../../core/services/hub-view.service';
 import { ResizeHandleDirective } from '../../../../shared/directives/resize-handle.directive';
+import { toContentIndex } from '../../../../core/utils/content-index';
 
 const REJOIN_KEY = 'dnd-player-campaign-encounter';
 interface StoredRejoin {
@@ -39,10 +40,6 @@ interface StoredRejoin {
 // "half-elf") — same conversion dm-campaign-session.ts/dm-campaign-hub.ts/character-play-sheet.ts
 // each do before calling ContentService.getRace(), which looks the race up by a case-sensitive
 // filename and 404s on a raw display name.
-function toContentIndex(name: string): string {
-  return name.toLowerCase().replace(/\s+/g, '-');
-}
-
 @Component({
   selector: 'app-player-campaign-session',
   imports: [

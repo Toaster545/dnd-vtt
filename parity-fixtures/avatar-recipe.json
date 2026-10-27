@@ -1,0 +1,282 @@
+{
+  "cases": [
+    {
+      "name": "null",
+      "input": null,
+      "expected": null
+    },
+    {
+      "name": "string",
+      "input": "x",
+      "expected": null
+    },
+    {
+      "name": "array",
+      "input": [],
+      "expected": null
+    },
+    {
+      "name": "wrong schema version",
+      "input": {
+        "schemaVersion": 2,
+        "styleId": "lorelei",
+        "styleVersion": 1,
+        "seed": "safe-seed",
+        "parts": {
+          "face": [
+            "variant01"
+          ],
+          "eyes": [
+            "variant01"
+          ],
+          "eyebrows": [
+            "variant01"
+          ],
+          "nose": [
+            "variant01"
+          ],
+          "mouth": [
+            "happy01"
+          ],
+          "hair": [
+            "variant01"
+          ],
+          "facialHair": [],
+          "faceDetails": [],
+          "piercings": [],
+          "accessories": []
+        },
+        "colors": {
+          "hair": "#000000",
+          "eyes": "#000000",
+          "eyebrows": "#000000",
+          "mouth": "#000000",
+          "details": "#000000",
+          "piercings": "#000000",
+          "accessories": "#000000",
+          "skin": "#FFFFFF"
+        }
+      },
+      "expected": null
+    },
+    {
+      "name": "unknown style",
+      "input": {
+        "schemaVersion": 1,
+        "styleId": "nope",
+        "styleVersion": 1,
+        "seed": "safe-seed",
+        "parts": {
+          "face": [
+            "variant01"
+          ],
+          "eyes": [
+            "variant01"
+          ],
+          "eyebrows": [
+            "variant01"
+          ],
+          "nose": [
+            "variant01"
+          ],
+          "mouth": [
+            "happy01"
+          ],
+          "hair": [
+            "variant01"
+          ],
+          "facialHair": [],
+          "faceDetails": [],
+          "piercings": [],
+          "accessories": []
+        },
+        "colors": {
+          "hair": "#000000",
+          "eyes": "#000000",
+          "eyebrows": "#000000",
+          "mouth": "#000000",
+          "details": "#000000",
+          "piercings": "#000000",
+          "accessories": "#000000",
+          "skin": "#FFFFFF"
+        }
+      },
+      "expected": null
+    },
+    {
+      "name": "wrong style version",
+      "input": {
+        "schemaVersion": 1,
+        "styleId": "lorelei",
+        "styleVersion": 99,
+        "seed": "safe-seed",
+        "parts": {
+          "face": [
+            "variant01"
+          ],
+          "eyes": [
+            "variant01"
+          ],
+          "eyebrows": [
+            "variant01"
+          ],
+          "nose": [
+            "variant01"
+          ],
+          "mouth": [
+            "happy01"
+          ],
+          "hair": [
+            "variant01"
+          ],
+          "facialHair": [],
+          "faceDetails": [],
+          "piercings": [],
+          "accessories": []
+        },
+        "colors": {
+          "hair": "#000000",
+          "eyes": "#000000",
+          "eyebrows": "#000000",
+          "mouth": "#000000",
+          "details": "#000000",
+          "piercings": "#000000",
+          "accessories": "#000000",
+          "skin": "#FFFFFF"
+        }
+      },
+      "expected": null
+    },
+    {
+      "name": "unsafe seed",
+      "input": {
+        "schemaVersion": 1,
+        "styleId": "lorelei",
+        "styleVersion": 1,
+        "seed": "has space!",
+        "parts": {
+          "face": [
+            "variant01"
+          ],
+          "eyes": [
+            "variant01"
+          ],
+          "eyebrows": [
+            "variant01"
+          ],
+          "nose": [
+            "variant01"
+          ],
+          "mouth": [
+            "happy01"
+          ],
+          "hair": [
+            "variant01"
+          ],
+          "facialHair": [],
+          "faceDetails": [],
+          "piercings": [],
+          "accessories": []
+        },
+        "colors": {
+          "hair": "#000000",
+          "eyes": "#000000",
+          "eyebrows": "#000000",
+          "mouth": "#000000",
+          "details": "#000000",
+          "piercings": "#000000",
+          "accessories": "#000000",
+          "skin": "#FFFFFF"
+        }
+      },
+      "expected": null
+    },
+    {
+      "name": "valid recipe normalized",
+      "input": {
+        "schemaVersion": 1,
+        "styleId": "lorelei",
+        "styleVersion": 1,
+        "seed": "safe-seed",
+        "parts": {
+          "face": [
+            "variant01"
+          ],
+          "eyes": [
+            "variant01"
+          ],
+          "eyebrows": [
+            "variant01"
+          ],
+          "nose": [
+            "variant01"
+          ],
+          "mouth": [
+            "happy01"
+          ],
+          "hair": [
+            "variant01"
+          ],
+          "facialHair": [],
+          "faceDetails": [],
+          "piercings": [],
+          "accessories": []
+        },
+        "colors": {
+          "hair": "#000000",
+          "eyes": "#000000",
+          "eyebrows": "#000000",
+          "mouth": "#000000",
+          "details": "#000000",
+          "piercings": "#000000",
+          "accessories": "#000000",
+          "skin": "#FFFFFF"
+        }
+      },
+      "expected": {
+        "schemaVersion": 1,
+        "styleId": "lorelei",
+        "styleVersion": 1,
+        "seed": "safe-seed",
+        "parts": {
+          "face": [
+            "variant01"
+          ],
+          "eyes": [
+            "variant01"
+          ],
+          "eyebrows": [
+            "variant01"
+          ],
+          "nose": [
+            "variant01"
+          ],
+          "mouth": [
+            "happy01"
+          ],
+          "hair": [
+            "variant01"
+          ],
+          "facialHair": [],
+          "faceDetails": [],
+          "piercings": [],
+          "accessories": [],
+          "ears": [],
+          "horns": [],
+          "scars": [],
+          "tattoos": []
+        },
+        "colors": {
+          "hair": "#000000",
+          "eyes": "#000000",
+          "eyebrows": "#000000",
+          "mouth": "#000000",
+          "details": "#000000",
+          "piercings": "#000000",
+          "accessories": "#000000",
+          "skin": "#ffffff"
+        }
+      }
+    }
+  ]
+}

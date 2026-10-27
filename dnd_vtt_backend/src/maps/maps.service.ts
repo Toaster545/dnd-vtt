@@ -9,6 +9,7 @@ import { randomUUID } from 'crypto';
 import { existsSync, mkdirSync, writeFileSync } from 'fs';
 import { join, resolve, sep } from 'path';
 import { DatabaseService } from '../common/database.service';
+import { abilityModifier } from '../common/ability';
 import { ContentService } from '../content/content.service';
 import { TokensGateway } from './tokens.gateway';
 import type { RequestUser } from '../common/current-user.decorator';
@@ -809,12 +810,8 @@ export class MapsService {
 
   private parseWalls(raw: unknown): MapWall[] {
     if (typeof raw !== 'string') return [];
-    try {
-      const parsed: unknown = JSON.parse(raw);
-      return Array.isArray(parsed) ? (parsed as MapWall[]) : [];
-    } catch {
-      return [];
-    }
+    const parsed = this.db.parseJson<unknown>(raw, []);
+    return Array.isArray(parsed) ? (parsed as MapWall[]) : [];
   }
 
   private async upsertMapLighting(mapId: string, enabled: boolean) {
@@ -951,7 +948,7 @@ export class MapsService {
       if (bonus == null) {
         const dex = monster.ability_scores?.dexterity;
         if (dex == null) return null;
-        bonus = Math.floor((dex - 10) / 2);
+        bonus = abilityModifier(dex);
       }
       return Math.floor(Math.random() * 20) + 1 + bonus;
     } catch {

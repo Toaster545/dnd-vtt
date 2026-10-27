@@ -7,6 +7,7 @@ import {
 } from '@nestjs/common';
 import { randomInt, randomUUID } from 'crypto';
 import { DatabaseService } from '../common/database.service';
+import { abilityModifier } from '../common/ability';
 import { RequestUser } from '../common/current-user.decorator';
 import { withCharacterLock } from '../common/character-lock';
 import {
@@ -393,7 +394,7 @@ export class CompanionsService {
             0,
             randomInt(1, 9) +
               randomInt(1, 9) +
-              Math.floor(((owner.ability_scores?.intelligence ?? 10) - 10) / 2),
+              abilityModifier(owner.ability_scores?.intelligence ?? 10),
           );
           if (body.target !== 'other')
             state.damage = Math.max(0, state.damage - healed);
@@ -440,7 +441,7 @@ export class CompanionsService {
           1,
           Math.max(0, stats.hit_dice - state.hit_dice_used),
         );
-        const con = Math.floor((stats.ability_scores.constitution - 10) / 2);
+        const con = abilityModifier(stats.ability_scores.constitution);
         const healed = Array.from({ length: count }, () =>
           Math.max(0, randomInt(1, stats.hit_die + 1) + con),
         ).reduce((a, b) => a + b, 0);
@@ -458,7 +459,7 @@ export class CompanionsService {
         const uses = { ...(owner.resource_uses ?? {}) };
         const max = Math.max(
           1,
-          Math.floor(((owner.ability_scores?.intelligence ?? 10) - 10) / 2),
+          abilityModifier(owner.ability_scores?.intelligence ?? 10),
         );
         if ((uses['battle-smith-arcane-jolt'] ?? 0) >= max)
           throw new ConflictException('No Arcane Jolt uses remaining.');

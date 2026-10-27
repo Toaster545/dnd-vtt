@@ -72,6 +72,15 @@ jobs:
         working-directory: dnd_vtt_frontend
         run: npm run format:check
 
+      - name: Avatar compiler tests
+        working-directory: dnd_vtt_frontend
+        run: npm run avatars:test
+
+      # The compiled avatar manifests are committed; fail if packs changed without a rebuild.
+      - name: Verify generated avatar files are up to date
+        working-directory: dnd_vtt_frontend
+        run: npm run avatars:build && git diff --exit-code -- '*.generated.ts'
+
       - name: Lint frontend
         working-directory: dnd_vtt_frontend
         run: npm run lint

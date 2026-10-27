@@ -7,10 +7,6 @@ about **consistency**, not features or bugs.
 Findings were checked against the tree on branch `code-refactor` (commit `a0d549b`). Counts are from
 grep/prettier runs at that point and will drift.
 
-> **Relationship to [MAINTAINABILITY_ISSUES.md](./MAINTAINABILITY_ISSUES.md):** that file is an older
-> audit. Several of its claims are now out of date (see [section 7](#7-stale-claims-in-maintainability_issuesmd)).
-> This document does not repeat its still-valid items (monolith services, `Record<string, unknown>`
-> overuse, localStorage, testing gaps) except where there is new detail.
 
 ## Priority summary
 
@@ -315,6 +311,8 @@ exporting a `Migration` object registered in `migrations/index.ts`. The doc also
 
 Because CLAUDE.md is loaded into every AI-assisted session, stale instructions here compound.
 
+**Status: fixed.** CLAUDE.md now describes `migrations/vNNN.ts`, the real module list, `start:prod`/`lint:check`, current frontend services/models, and no longer mentions the removed Open5e/Dnd5e services or `adminGuard`.
+
 ### 4.2 Migration conventions are implicit
 
 - Versions are 1–36 with **no v22** (`index.ts` comment: "There is deliberately no v22; see v023"). The
@@ -330,6 +328,8 @@ Because CLAUDE.md is loaded into every AI-assisted session, stale instructions h
 - Pre-versioning detection (`version === 0 && table profiles exists → 1`) is hard-coded in the runner
   and is not documented anywhere else.
 
+**Status: mostly fixed.** The runner now throws if a migration does not stamp `PRAGMA user_version` to its own version, and `assertMigrationsOrdered()` (`migrations/migration.ts`) rejects a registry that is out of order or duplicated (the v22 gap stays allowed; CLAUDE.md says never to add it). Pre-versioning detection is commented in the runner. **Not done:** v035 still reads `content/items/` at migration time (changing a shipped migration is riskier than documenting it; noted in CLAUDE.md).
+
 ### 4.3 Version/skew statements
 
 - `CLAUDE.md`, `README.md` and `docs/mobile/implementation-audit.md` all say "Angular 22". The
@@ -339,12 +339,16 @@ Because CLAUDE.md is loaded into every AI-assisted session, stale instructions h
 - Root `.gitignore` lists `/package-lock.json`, but the root has a `package-lock.json` file on disk
   (untracked), while the two sub-projects commit theirs. Pick one.
 
+**Status: not changed.** The root lockfile is gitignored on purpose (root only holds dev scripts); it is simply a local file. Angular 22 is correct in the repo; the memory index is outside the repo.
+
 ### 4.4 Several sources of "what's planned"
 
 `TODO.md` (checklist with personal headings), `PLAN_SPLIT_MONOLITHS.md`, `MAINTAINABILITY_ISSUES.md`,
 `docs/mobile/*.md`, and `dnd_vtt_backend/content/AUDIT.md` + `content/plans/` all describe work in
 progress, in different formats, with no index. `TODO.md` contains an empty `- [ ] ` bullet and
 items checked off twice ("Showing feat ability score improvements…" appears in both Bugs and General).
+
+**Status: partly fixed.** The empty bullets and the duplicated checked item were removed from `TODO.md`. Still no single index of planned work.
 
 ---
 
@@ -362,6 +366,8 @@ items checked off twice ("Showing feat ability score improvements…" appears in
   is unreachable. `test/app.e2e-spec.ts` only passes because it boots `AppModule` without `main.ts`;
   it tests behaviour the deployed app does not have.
 
+**Status: fixed.** `open5e.service.ts`, `dnd5e.service.ts` and the frontend `admin.guard.ts` are deleted (and references in `README.md` / `settings-dialog.ts` removed); the backend scaffold went with 1.7.
+
 ### 5.2 Files that should not be in version control
 
 Tracked at the repo root or in the frontend:
@@ -377,12 +383,16 @@ Additionally, `custom-avatar-assets.generated.ts` / `*-manifest.generated.ts` ar
 `avatar-assets/compile.mjs` and committed. That is a defensible choice, but there is no check (CI or
 pre-commit) that they are up to date with `avatar-assets/packs/`.
 
+**Status: fixed.** The five stray files are untracked (`git rm --cached`; `probe.cjs` deleted) and ignored via `.gitignore` (`*.deb`, `probe.cjs`; `test-results/` was already ignored in the frontend). `campaign-rewards-import.json` is **left in place** because it may be data you still want: delete it if not. CI now rebuilds the avatar manifests and fails on a `*.generated.ts` diff.
+
 ### 5.3 CI covers some things, not others
 
 `ci.yml` runs backend tests/build/lint, frontend lint/tests/build, and Playwright. It does not run
 backend e2e (`test:e2e`), a Prettier check, or `npm run avatars:test`. Note also the CI comment that
 `npm run lint` in the backend uses `eslint --fix` — so a developer running `npm run lint` locally
 mutates files while CI uses a different (non-fixing) command; the two scripts are not equivalent.
+
+**Status: fixed.** CI runs backend e2e, the frontend `format:check`, and now `avatars:test` plus the generated-files check. The backend has `lint:check` for the non-mutating variant.
 
 ---
 
@@ -413,3 +423,5 @@ directory directly instead of going through `ContentService` like every other co
 (`ITEM_ART_PATH`, `readdirSync` at `content.service.ts:377`), and `inventory.service.ts:52` reads
 `content/plans/magic-item-plans.json` itself with a cwd-relative `readFileSync` instead of going
 through `ContentService` (every other content file is loaded there).
+
+**Status: partly fixed.** `src/content/content-schema.spec.ts` now enforces kebab-case `index` matching the file name for every entity, and snake_case-only top-level keys for spells/monsters. The casing rule (SRD fields snake_case, `TraitGrant`/effect vocabulary camelCase) is documented in CLAUDE.md rather than renamed, since renaming keys would need a data migration across classes/feats/races/items and frontend readers. The magic-item plans file now loads through `ContentService.getMagicItemPlans()` (cached). `BackgroundsController` is left as is: it lists *uploaded* images in `uploads/backgrounds/`, not SRD content. The item-art directory scan in `ContentService` is also kept, as it reads the gitignored uploads folder.

@@ -28,10 +28,7 @@ import {
   EncounterFormDialogData,
 } from './encounter-form-dialog/encounter-form-dialog';
 import { getErrorMessage } from '../../../../core/utils/error-message';
-
-function toContentIndex(name: string): string {
-  return name.toLowerCase().replace(/\s+/g, '-');
-}
+import { toContentIndex } from '../../../../core/utils/content-index';
 
 @Component({
   selector: 'app-dm-campaign-session',
