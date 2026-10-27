@@ -1,3 +1,4 @@
+import { CampaignAccessService } from '../campaigns/campaign-access.service';
 import { Optional } from '@nestjs/common';
 import { CompanionsService } from '../companions/companions.service';
 import {
@@ -41,6 +42,7 @@ export class EncountersService {
     private db: DatabaseService,
     private presence: EncounterPresenceGateway,
     private tokensGateway: TokensGateway,
+    private access: CampaignAccessService,
     @Optional() private companions?: CompanionsService,
   ) {}
 
@@ -103,12 +105,8 @@ export class EncountersService {
     return row ? (await this.withLevels([this.deserialize(row)]))[0] : null;
   }
 
-  private async assertActiveMember(campaignId: string, userId: string) {
-    const membership = await this.db.execute(
-      `SELECT id FROM campaign_members WHERE campaign_id = ? AND user_id = ? AND status = 'active'`,
-      [campaignId, userId],
-    );
-    if (membership.rows.length === 0) throw new ForbiddenException();
+  private assertActiveMember(campaignId: string, userId: string) {
+    return this.access.assertActiveMember(campaignId, userId);
   }
 
   async findOne(id: string, dmId: string) {

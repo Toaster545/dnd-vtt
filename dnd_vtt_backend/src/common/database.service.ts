@@ -1,3 +1,4 @@
+import { dbPath as configuredDbPath } from '../config';
 import { Injectable, OnModuleInit, Logger } from '@nestjs/common';
 import { createClient, Client, ResultSet } from '@libsql/client';
 import { MIGRATIONS } from './migrations';
@@ -11,7 +12,7 @@ export class DatabaseService implements OnModuleInit {
   private db: Client;
 
   async onModuleInit() {
-    const dbPath = process.env.DB_PATH ?? './data/dnd.db';
+    const dbPath = configuredDbPath();
     const dir = dirname(dbPath);
     if (!existsSync(dir)) mkdirSync(dir, { recursive: true });
 

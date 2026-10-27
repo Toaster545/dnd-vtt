@@ -7,6 +7,7 @@ import { AdminGuard } from './admin.guard';
 import { DatabaseService } from '../common/database.service';
 import { SocketAuthService } from './socket-auth.service';
 import { resolveJwtSecret } from './jwt-secret';
+import { CampaignAccessService } from '../campaigns/campaign-access.service';
 
 @Module({
   imports: [
@@ -24,12 +25,14 @@ import { resolveJwtSecret } from './jwt-secret';
     AdminGuard,
     SocketAuthService,
     DatabaseService,
+    CampaignAccessService,
   ],
   exports: [
     JwtGuard,
     AdminGuard,
     SocketAuthService,
     DatabaseService,
+    CampaignAccessService,
     JwtModule,
   ],
 })

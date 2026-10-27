@@ -12,6 +12,11 @@ import {
 } from '@nestjs/common';
 import { EncountersService } from './encounters.service';
 import { CreateEncounterDto } from './dto/create-encounter.dto';
+import {
+  SetPlayerLevelDto,
+  UpdateEncounterDto,
+} from './dto/update-encounter.dto';
+import { SetVisibleDto } from '../common/set-visible.dto';
 import { JwtGuard } from '../auth/jwt.guard';
 import { CurrentUser } from '../common/current-user.decorator';
 import type { RequestUser } from '../common/current-user.decorator';
@@ -61,7 +66,7 @@ export class EncountersController {
   setPlayerLevel(
     @Param('id') id: string,
     @Param('characterId') characterId: string,
-    @Body() body: { map_id: string },
+    @Body() body: SetPlayerLevelDto,
     @CurrentUser() user: RequestUser,
   ) {
     return this.encounters.setPlayerLevel(
@@ -80,10 +85,10 @@ export class EncountersController {
   @Put(':id')
   update(
     @Param('id') id: string,
-    @Body() body: Record<string, unknown>,
+    @Body() body: UpdateEncounterDto,
     @CurrentUser() user: RequestUser,
   ) {
-    return this.encounters.update(id, user.id, body);
+    return this.encounters.update(id, user.id, { ...body });
   }
 
   @Delete(':id')
@@ -114,7 +119,7 @@ export class EncountersController {
   @Patch(':id/visibility')
   setVisibility(
     @Param('id') id: string,
-    @Body() body: { visible: boolean },
+    @Body() body: SetVisibleDto,
     @CurrentUser() user: RequestUser,
   ) {
     return this.encounters.setVisibility(id, user.id, body.visible);

@@ -1,3 +1,4 @@
+import { CampaignAccessService } from '../campaigns/campaign-access.service';
 import type { Server, Socket } from 'socket.io';
 import { EncounterPresenceGateway } from './encounter-presence.gateway';
 import type { DatabaseService } from '../common/database.service';
@@ -84,7 +85,11 @@ describe('EncounterPresenceGateway avatar recipes', () => {
       user: jest.fn(() => ({ id: 'player-1', role: 'player' })),
       install: jest.fn(),
     } as unknown as SocketAuthService;
-    const gateway = new EncounterPresenceGateway(db, socketAuth);
+    const gateway = new EncounterPresenceGateway(
+      db,
+      socketAuth,
+      new CampaignAccessService(db),
+    );
     gateway.server = { to: jest.fn(() => ({ emit })) } as unknown as Server;
     const client = {
       id: 'socket-1',

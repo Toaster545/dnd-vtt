@@ -1,3 +1,4 @@
+import { CampaignAccessService } from '../campaigns/campaign-access.service';
 import {
   BadRequestException,
   ForbiddenException,
@@ -34,6 +35,7 @@ export class MapsService {
     private gateway: TokensGateway,
     private content: ContentService,
     private companions: CompanionsService,
+    private access: CampaignAccessService,
   ) {}
 
   async findAll(campaignId: string, user: RequestUser) {
@@ -918,22 +920,9 @@ export class MapsService {
     if (await this.isCampaignDm(campaignId, user)) {
       return { map, isDm: true };
     }
-    const membership = await this.db.execute(
-      `SELECT id FROM campaign_members
-       WHERE campaign_id = ? AND user_id = ? AND status = 'active'`,
-      [campaignId, user.id],
-    );
-    if (!membership.rows[0]) throw new ForbiddenException();
-    const visibleReference = await this.db.execute(
-      `SELECT e.id FROM encounters e
-       JOIN encounter_levels el ON el.encounter_id = e.id
-       JOIN sessions s ON s.id = e.session_id
-       WHERE el.map_id = ? AND s.campaign_id = ?
-         AND s.visible_to_players = 1 AND e.visible_to_players = 1
-       LIMIT 1`,
-      [mapId, campaignId],
-    );
-    if (!visibleReference.rows[0]) throw new ForbiddenException();
+    await this.access.assertActiveMember(campaignId, user.id);
+    if (!(await this.access.isMapRevealedToPlayers(mapId, campaignId)))
+      throw new ForbiddenException();
     return { map, isDm: false };
   }
 

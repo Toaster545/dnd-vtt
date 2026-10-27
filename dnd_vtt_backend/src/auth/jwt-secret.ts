@@ -1,17 +1,11 @@
+import { isDevRun } from '../config';
+
 const DEV_FALLBACK_SECRET = 'change-me';
 const PLACEHOLDER_SECRETS = new Set([
   DEV_FALLBACK_SECRET,
   'change-this-to-a-long-random-string',
   'some-long-random-string',
 ]);
-
-function isDevRun(env: NodeJS.ProcessEnv): boolean {
-  return (
-    env.DEV_BYPASS === 'true' ||
-    env.NODE_ENV === 'development' ||
-    env.NODE_ENV === 'test'
-  );
-}
 
 /**
  * Resolves the JWT signing secret. Only an explicit dev/test run (DEV_BYPASS=true or

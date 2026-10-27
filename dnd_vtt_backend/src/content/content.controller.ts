@@ -18,6 +18,7 @@ import { CreateItemDto, CreateItemsBulkDto } from './dto/create-item.dto';
 import { CreateSpellDto } from './dto/create-spell.dto';
 import { SetItemImageOverrideDto } from './dto/set-item-image-override.dto';
 import { JwtGuard } from '../auth/jwt.guard';
+import { Public } from '../auth/public.decorator';
 import { CurrentUser } from '../common/current-user.decorator';
 import type { RequestUser } from '../common/current-user.decorator';
 
@@ -55,40 +56,63 @@ function withSpellDefaults(dto: CreateSpellDto) {
   };
 }
 
+// Guarded by default like every other controller; the static game-content reads below are
+// opted out with @Public().
 @Controller('content')
+@UseGuards(JwtGuard)
 export class ContentController {
   constructor(private readonly content: ContentService) {}
 
-  @Get('sources') getSources() {
+  @Public()
+  @Get('sources')
+  getSources() {
     return this.content.getSources();
   }
 
-  @Get('icons') getIconLibrary() {
+  @Public()
+  @Get('icons')
+  getIconLibrary() {
     return this.content.getIconLibrary();
   }
 
-  @Get('classes') getClasses() {
+  @Public()
+  @Get('classes')
+  getClasses() {
     return this.content.getClasses();
   }
-  @Get('classes/:index') getClass(@Param('index') i: string) {
+  @Public()
+  @Get('classes/:index')
+  getClass(@Param('index') i: string) {
     return this.content.getClass(i);
   }
-  @Get('races') getRaces() {
+  @Public()
+  @Get('races')
+  getRaces() {
     return this.content.getRaces();
   }
-  @Get('races/:index') getRace(@Param('index') i: string) {
+  @Public()
+  @Get('races/:index')
+  getRace(@Param('index') i: string) {
     return this.content.getRace(i);
   }
-  @Get('backgrounds') getBackgrounds() {
+  @Public()
+  @Get('backgrounds')
+  getBackgrounds() {
     return this.content.getBackgrounds();
   }
-  @Get('backgrounds/:index') getBackground(@Param('index') i: string) {
+  @Public()
+  @Get('backgrounds/:index')
+  getBackground(@Param('index') i: string) {
     return this.content.getBackground(i);
   }
-  @Get('feats') getFeats() {
+  @Public()
+  @Get('feats')
+  getFeats() {
     return this.content.getFeats();
   }
-  @Get('feats/:index') getFeat(@Param('index') i: string) {
+  @Public()
+  @Get('feats/:index')
+  getFeat(@Param('index') i: string) {
     return this.content.getFeat(i);
   }
 
@@ -97,7 +121,6 @@ export class ContentController {
   // merges in that campaign's DM's library alongside the static SRD set. `mine` must be
   // registered before `:index`, or Nest's routing would swallow it as an index param.
   @Get('monsters')
-  @UseGuards(JwtGuard)
   getMonsters(
     @Query('campaignId') campaignId: string | undefined,
     @CurrentUser() user: RequestUser,
@@ -105,15 +128,15 @@ export class ContentController {
     return this.content.getMonsters(campaignId, user);
   }
   @Get('monsters/mine')
-  @UseGuards(JwtGuard)
   listMyMonsters(@CurrentUser() user: RequestUser) {
     return this.content.listMine('monsters', user);
   }
-  @Get('monsters/:index') getMonster(@Param('index') i: string) {
+  @Public()
+  @Get('monsters/:index')
+  getMonster(@Param('index') i: string) {
     return this.content.getMonster(i);
   }
   @Post('monsters')
-  @UseGuards(JwtGuard)
   createMonster(
     @CurrentUser() user: RequestUser,
     @Body() dto: CreateMonsterDto,
@@ -121,7 +144,6 @@ export class ContentController {
     return this.content.createCustom('monsters', user, { ...dto });
   }
   @Put('monsters/:index')
-  @UseGuards(JwtGuard)
   updateMonster(
     @Param('index') index: string,
     @CurrentUser() user: RequestUser,
@@ -130,7 +152,6 @@ export class ContentController {
     return this.content.updateCustom('monsters', index, user, { ...dto });
   }
   @Delete('monsters/:index')
-  @UseGuards(JwtGuard)
   deleteMonster(
     @Param('index') index: string,
     @CurrentUser() user: RequestUser,
@@ -140,7 +161,6 @@ export class ContentController {
 
   // ── Items ─────────────────────────────────────────────────────────────────────────────────
   @Get('items')
-  @UseGuards(JwtGuard)
   getItems(
     @Query('campaignId') campaignId: string | undefined,
     @CurrentUser() user: RequestUser,
@@ -148,22 +168,21 @@ export class ContentController {
     return this.content.getItems(campaignId, user);
   }
   @Get('items/mine')
-  @UseGuards(JwtGuard)
   listMyItems(@CurrentUser() user: RequestUser) {
     return this.content.listMine('items', user);
   }
-  @Get('items/:index') getItem(@Param('index') i: string) {
+  @Public()
+  @Get('items/:index')
+  getItem(@Param('index') i: string) {
     return this.content.getItem(i);
   }
   @Post('items')
-  @UseGuards(JwtGuard)
   createItem(@CurrentUser() user: RequestUser, @Body() dto: CreateItemDto) {
     return this.content.createCustom('items', user, { ...dto });
   }
   // Bulk JSON import — body is `{ "items": [...] }`, each entry validated like a single
   // CreateItemDto.
   @Post('items/bulk')
-  @UseGuards(JwtGuard)
   createItemsBulk(
     @CurrentUser() user: RequestUser,
     @Body() dto: CreateItemsBulkDto,
@@ -175,7 +194,6 @@ export class ContentController {
     );
   }
   @Put('items/:index')
-  @UseGuards(JwtGuard)
   updateItem(
     @Param('index') index: string,
     @CurrentUser() user: RequestUser,
@@ -184,12 +202,10 @@ export class ContentController {
     return this.content.updateCustom('items', index, user, { ...dto });
   }
   @Delete('items/:index')
-  @UseGuards(JwtGuard)
   deleteItem(@Param('index') index: string, @CurrentUser() user: RequestUser) {
     return this.content.deleteCustom('items', index, user);
   }
   @Post('items/:index/image')
-  @UseGuards(JwtGuard)
   @UseInterceptors(FileInterceptor('file'))
   uploadItemImage(
     @Param('index') index: string,
@@ -201,7 +217,6 @@ export class ContentController {
   // Lets a DM swap an official SRD item's picture (e.g. a better icon-library pick) without
   // forking the whole item into their own custom library — see item_image_overrides.
   @Put('items/:index/image-override')
-  @UseGuards(JwtGuard)
   setItemImageOverride(
     @Param('index') index: string,
     @CurrentUser() user: RequestUser,
@@ -210,7 +225,6 @@ export class ContentController {
     return this.content.setItemImageOverride(index, user, dto.image_url);
   }
   @Delete('items/:index/image-override')
-  @UseGuards(JwtGuard)
   clearItemImageOverride(
     @Param('index') index: string,
     @CurrentUser() user: RequestUser,
@@ -219,12 +233,13 @@ export class ContentController {
   }
 
   // ── Spells ────────────────────────────────────────────────────────────────────────────────
-  @Get('spell-lists') getSpellLists() {
+  @Public()
+  @Get('spell-lists')
+  getSpellLists() {
     return this.content.getSpellLists();
   }
 
   @Get('spells')
-  @UseGuards(JwtGuard)
   getSpells(
     @Query('campaignId') campaignId: string | undefined,
     @CurrentUser() user: RequestUser,
@@ -232,20 +247,19 @@ export class ContentController {
     return this.content.getSpells(campaignId, user);
   }
   @Get('spells/mine')
-  @UseGuards(JwtGuard)
   listMySpells(@CurrentUser() user: RequestUser) {
     return this.content.listMine('spells', user);
   }
-  @Get('spells/:index') getSpell(@Param('index') i: string) {
+  @Public()
+  @Get('spells/:index')
+  getSpell(@Param('index') i: string) {
     return this.content.getSpell(i);
   }
   @Post('spells')
-  @UseGuards(JwtGuard)
   createSpell(@CurrentUser() user: RequestUser, @Body() dto: CreateSpellDto) {
     return this.content.createCustom('spells', user, withSpellDefaults(dto));
   }
   @Put('spells/:index')
-  @UseGuards(JwtGuard)
   updateSpell(
     @Param('index') index: string,
     @CurrentUser() user: RequestUser,
@@ -259,7 +273,6 @@ export class ContentController {
     );
   }
   @Delete('spells/:index')
-  @UseGuards(JwtGuard)
   deleteSpell(@Param('index') index: string, @CurrentUser() user: RequestUser) {
     return this.content.deleteCustom('spells', index, user);
   }

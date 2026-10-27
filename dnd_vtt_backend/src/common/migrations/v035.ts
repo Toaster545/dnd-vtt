@@ -1,3 +1,4 @@
+import { dbPath } from '../../config';
 import { Migration } from './migration';
 import {
   ItemDefinition,
@@ -24,10 +25,7 @@ export const migrateV35: Migration = {
     // SQLite makes a consistent backup, including committed WAL contents.
     if (rows.length) {
       const backup =
-        resolve(process.env.DB_PATH ?? './data/dnd.db') +
-        '.pre-inventory-' +
-        Date.now() +
-        '.bak';
+        resolve(dbPath()) + '.pre-inventory-' + Date.now() + '.bak';
       await ctx.execute(`VACUUM INTO '${backup.replace(/'/g, "''")}'`);
     }
     const statements: { sql: string; args?: any[] }[] = [

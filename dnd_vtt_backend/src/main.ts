@@ -1,3 +1,4 @@
+import { corsOptions, isDevBypass } from './config';
 import { NestFactory } from '@nestjs/core';
 import { Logger, ValidationPipe } from '@nestjs/common';
 import { NestExpressApplication } from '@nestjs/platform-express';
@@ -8,7 +9,7 @@ import { AppModule } from './app.module';
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
-  if (process.env.DEV_BYPASS === 'true') {
+  if (isDevBypass()) {
     Logger.warn(
       'DEV_BYPASS=true: the bearer token "dev" is accepted as admin. Do not expose this server publicly.',
       'Bootstrap',
@@ -20,13 +21,7 @@ async function bootstrap() {
   // — a .dd2vtt dungeon import can carry thousands of segments).
   app.useBodyParser('json', { limit: '1mb' });
 
-  const origins = (
-    process.env.CORS_ORIGINS ??
-    'http://localhost:4200,https://dnd.mathomelab.ca,https://localhost,capacitor://localhost'
-  )
-    .split(',')
-    .map((o) => o.trim());
-  app.enableCors({ origin: origins, credentials: true });
+  app.enableCors(corsOptions());
 
   app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
 
@@ -42,13 +37,12 @@ async function bootstrap() {
   const server = app.getHttpAdapter().getInstance();
 
   // Register directly on the raw Express instance to guarantee order
-  const staticOpts =
-    process.env.DEV_BYPASS === 'true'
-      ? {
-          setHeaders: (res: express.Response) =>
-            res.setHeader('Cache-Control', 'no-store'),
-        }
-      : {};
+  const staticOpts = isDevBypass()
+    ? {
+        setHeaders: (res: express.Response) =>
+          res.setHeader('Cache-Control', 'no-store'),
+      }
+    : {};
 
   // Raw battle maps contain everything hidden by fog. They are served only through authenticated
   // map endpoints; other intentionally-public campaign/session assets keep their legacy URLs.
