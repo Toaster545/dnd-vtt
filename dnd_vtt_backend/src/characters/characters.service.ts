@@ -1,4 +1,9 @@
 import { InventoryService } from './inventory.service';
+import {
+  CHARACTER_COLUMN_KEYS,
+  CharacterRepository,
+} from './character-repository';
+import { CharacterRestService } from './character-rest.service';
 import { Optional } from '@nestjs/common';
 import { CompanionsService } from '../companions/companions.service';
 import { withCharacterLock } from '../common/character-lock';
@@ -16,31 +21,12 @@ import { DatabaseService } from '../common/database.service';
 import type { RequestUser } from '../common/current-user.decorator';
 import { ContentService } from '../content/content.service';
 import { EncounterPresenceGateway } from '../encounters/encounter-presence.gateway';
-import { parseAvatarRecipe } from '../common/avatar-recipe';
-import { parsePortraitImage } from '../common/portrait-image';
-import { parseTokenBorder } from '../common/token-border';
 import {
-  EBERRON_SOURCE_CODE,
-  disallowedSources,
   normalizePlayerSources,
   sourceDefinition,
-  sourceName,
 } from '../content/content-sources';
-
-function stringArray(value: unknown): string[] {
-  return Array.isArray(value)
-    ? value.filter((entry): entry is string => typeof entry === 'string')
-    : [];
-}
-
-function recordArray(value: unknown): Record<string, unknown>[] {
-  return Array.isArray(value)
-    ? value.filter(
-        (entry): entry is Record<string, unknown> =>
-          !!entry && typeof entry === 'object' && !Array.isArray(entry),
-      )
-    : [];
-}
+import type { CharacterData } from './character-data';
+import { stringArray, recordArray } from '../common/arrays';
 
 // Mirrors the frontend's itemDisplayName (content.service.ts) — a magic weapon/armor's own
 // `name` is stored plain ("Longsword"), so the "+N" stamped onto a granted item's equipment
@@ -226,22 +212,6 @@ const LEVEL_UP_EDITABLE_FIELDS = [
   'languages',
 ] as const;
 
-// Columns deserialize() layers onto the data blob — must be stripped back out before rewriting
-// the blob, or they'd get persisted as (duplicate, stale) keys inside `data` itself.
-const CHARACTER_COLUMN_KEYS = new Set([
-  'id',
-  'user_id',
-  'name',
-  'race',
-  'class',
-  'level',
-  'campaign_id',
-  'creation_status',
-  'draft_step',
-  'created_at',
-  'updated_at',
-]);
-
 @Injectable()
 export class CharactersService {
   constructor(
@@ -250,7 +220,33 @@ export class CharactersService {
     private presence: EncounterPresenceGateway,
     @Optional() private companions?: CompanionsService,
     @Optional() private inventory?: InventoryService,
-  ) {}
+    @Optional() repository?: CharacterRepository,
+    @Optional() rest?: CharacterRestService,
+  ) {
+    this.repository =
+      repository ?? new CharacterRepository(db, presence, inventory);
+    this.rest =
+      rest ?? new CharacterRestService(this.repository, companions, inventory);
+  }
+
+  private readonly repository: CharacterRepository;
+  private readonly rest: CharacterRestService;
+
+  findOne(id: string, userId: string) {
+    return this.repository.findOne(id, userId);
+  }
+
+  findOneReadable(id: string, user: RequestUser) {
+    return this.repository.findOneReadable(id, user);
+  }
+
+  completeRest(id: string, user: RequestUser, body: Record<string, unknown>) {
+    return this.rest.completeRest(id, user, body);
+  }
+
+  restoreLife(id: string, user: RequestUser, body: Record<string, unknown>) {
+    return this.rest.restoreLife(id, user, body);
+  }
 
   // Template characters only — campaign copies (campaign_id set) are DM-editable clones fetched
   // through the campaigns endpoints instead, so they don't clutter the list a player picks from
@@ -260,7 +256,7 @@ export class CharactersService {
       'SELECT * FROM characters WHERE user_id = ? AND campaign_id IS NULL ORDER BY created_at DESC',
       [userId],
     );
-    return Promise.all(result.rows.map((r) => this.deserialize(r)));
+    return Promise.all(result.rows.map((r) => this.repository.deserialize(r)));
   }
 
   // Campaign copies only — the per-campaign clones created when a player joins (see
@@ -283,53 +279,11 @@ export class CharactersService {
     );
     return Promise.all(
       result.rows.map(async (r) => ({
-        ...(await this.deserialize(r)),
+        ...(await this.repository.deserialize(r)),
         campaign_name: r.campaign_name,
         edit_unlocked: !!r.edit_unlocked,
       })),
     );
-  }
-
-  async findOne(id: string, userId: string) {
-    const result = await this.db.execute(
-      'SELECT * FROM characters WHERE id = ?',
-      [id],
-    );
-    const row = result.rows[0];
-    if (!row) throw new NotFoundException('Character not found');
-    if (row.user_id !== userId) throw new ForbiddenException();
-    return this.deserialize(row);
-  }
-
-  // Same lookup, but the DM owning a character's campaign can read/edit it too, not just their
-  // own account's characters — a DM needs to see and manage whatever character copy a player
-  // actually brings into their campaign, not just characters created under the DM's own login.
-  async findOneReadable(id: string, user: RequestUser) {
-    const result = await this.db.execute(
-      'SELECT * FROM characters WHERE id = ?',
-      [id],
-    );
-    const row = result.rows[0];
-    if (!row) throw new NotFoundException('Character not found');
-    if (row.user_id === user.id) return this.deserialize(row);
-    if (
-      row.campaign_id &&
-      (await this.isCampaignOwner(row.campaign_id as string, user.id))
-    ) {
-      return this.deserialize(row);
-    }
-    throw new ForbiddenException();
-  }
-
-  private async isCampaignOwner(
-    campaignId: string,
-    userId: string,
-  ): Promise<boolean> {
-    const result = await this.db.execute(
-      'SELECT id FROM campaigns WHERE id = ? AND dm_id = ?',
-      [campaignId, userId],
-    );
-    return result.rows.length > 0;
   }
 
   async create(
@@ -341,8 +295,8 @@ export class CharactersService {
     const id = randomUUID();
     const now = new Date().toISOString();
     const { name, race, class: cls, level, ...rest } = body;
-    const data = this.normalizeCharacterAvatar(
-      this.normalizeCharacterSources(rest, cls),
+    const data = this.repository.normalizeCharacterAvatar(
+      this.repository.normalizeCharacterSources(rest, cls),
     );
     await this.db.execute(
       `INSERT INTO characters
@@ -374,10 +328,7 @@ export class CharactersService {
     user: RequestUser,
     body: Record<string, unknown>,
   ) {
-    const existing = (await this.findOne(id, user.id)) as Record<
-      string,
-      unknown
-    >;
+    const existing = await this.findOne(id, user.id);
     if (existing.campaign_id) {
       throw new ForbiddenException('Campaign characters cannot be drafts.');
     }
@@ -394,10 +345,7 @@ export class CharactersService {
   }
 
   async completeDraft(id: string, user: RequestUser) {
-    const character = (await this.findOne(id, user.id)) as Record<
-      string,
-      unknown
-    >;
+    const character = await this.findOne(id, user.id);
     if (character.campaign_id) {
       throw new ForbiddenException('Campaign characters cannot be drafts.');
     }
@@ -447,17 +395,14 @@ export class CharactersService {
     user: RequestUser,
     body: Record<string, unknown>,
   ) {
-    const existing = (await this.findOneReadable(id, user)) as Record<
-      string,
-      unknown
-    >;
+    const existing = await this.findOneReadable(id, user);
     if (
       existing.campaign_id &&
       (this.changed(existing.spell_choices, body.spell_choices) ||
         this.changed(existing.spells, body.spells)) &&
-      (await this.isCharacterInActiveEncounter(
+      (await this.repository.isCharacterInActiveEncounter(
         id,
-        existing.campaign_id as string,
+        existing.campaign_id,
       ))
     ) {
       throw new ConflictException(
@@ -471,18 +416,19 @@ export class CharactersService {
     // uses, equip/prepare toggles) is always player-writable — see PLAYER_EDITABLE_FIELDS.
     const isOwningDm =
       !!existing.campaign_id &&
-      (await this.isCampaignOwner(existing.campaign_id as string, user.id));
+      (await this.repository.isCampaignOwner(existing.campaign_id, user.id));
     if (existing.campaign_id && !isOwningDm) {
-      const unlocked = await this.hasEditAccess(
-        existing.campaign_id as string,
+      const unlocked = await this.repository.hasEditAccess(
+        existing.campaign_id,
         user.id,
       );
       if (!unlocked)
         return this.updatePlayerEditableFields(id, existing, body, user);
     }
     const { name, race, class: cls, level, ...rest } = body;
-    const data = this.normalizeCharacterAvatar(
-      this.normalizeCharacterSources(rest, cls),
+    const data = this.repository.normalizeCharacterAvatar(
+      // `rest` is unvalidated request input; the blob is replaced wholesale, as before.
+      this.repository.normalizeCharacterSources(rest, cls),
     );
     if (this.inventory)
       Object.assign(data, await this.inventory.decorate(id, {}));
@@ -491,7 +437,7 @@ export class CharactersService {
     if (existing.pact_weapon !== undefined)
       data.pact_weapon = existing.pact_weapon;
     else delete data.pact_weapon;
-    const pactWeapon = data.pact_weapon as Record<string, unknown> | undefined;
+    const pactWeapon = data.pact_weapon ?? undefined;
     if (
       pactWeapon?.mode === 'bonded' &&
       !recordArray(data.equipment).some((entry) =>
@@ -503,8 +449,8 @@ export class CharactersService {
       delete data.pact_weapon;
     }
     if (existing.campaign_id) {
-      await this.assertCampaignSources(
-        existing.campaign_id as string,
+      await this.repository.assertCampaignSources(
+        existing.campaign_id,
         data.enabled_sources,
       );
     }
@@ -520,7 +466,7 @@ export class CharactersService {
         id,
       ],
     );
-    await this.notifyUpdated(id);
+    await this.repository.notifyUpdated(id);
     return this.findOneReadable(id, user);
   }
 
@@ -534,10 +480,7 @@ export class CharactersService {
     body: Record<string, unknown>,
   ) {
     return this.withCharacterLock(id, async () => {
-      const existing = (await this.findOneReadable(id, user)) as Record<
-        string,
-        unknown
-      >;
+      const existing = await this.findOneReadable(id, user);
       // Owning player only — the owning DM keeps the full update() path.
       if (existing.user_id !== user.id) throw new ForbiddenException();
       if (!existing.campaign_id)
@@ -573,15 +516,15 @@ export class CharactersService {
           );
       }
 
-      await this.assertCampaignSources(
-        existing.campaign_id as string,
+      await this.repository.assertCampaignSources(
+        existing.campaign_id,
         data.enabled_sources,
       );
       if (
         this.changed(existing.spell_choices, body.spell_choices) &&
-        (await this.isCharacterInActiveEncounter(
+        (await this.repository.isCharacterInActiveEncounter(
           id,
-          existing.campaign_id as string,
+          existing.campaign_id,
         ))
       ) {
         throw new ConflictException(
@@ -594,11 +537,11 @@ export class CharactersService {
         'portrait_image' in body ||
         'token_border' in body ||
         'portrait_use_token' in body
-          ? this.normalizeCharacterAvatar(data)
+          ? this.repository.normalizeCharacterAvatar(data)
           : data;
       normalized.applied_level = level;
 
-      await this.writeCharacterData(id, normalized);
+      await this.repository.writeCharacterData(id, normalized);
       return this.findOneReadable(id, user);
     });
   }
@@ -606,10 +549,7 @@ export class CharactersService {
   // Highest level the player has already resolved. Explicit `applied_level` wins; otherwise fall
   // back to the same average-HP staleness signal the dashboard uses — a stored max_hp that still
   // matches the average for the current level (or an explicit override) means nothing's pending.
-  private levelUpBaseline(
-    data: Record<string, unknown>,
-    level: number,
-  ): number {
+  private levelUpBaseline(data: CharacterData, level: number): number {
     if (data.applied_level != null) return Number(data.applied_level);
     if (data.max_hp_overridden) return level;
     const suggested = this.estimateAverageMaxHp(data, level);
@@ -620,10 +560,11 @@ export class CharactersService {
   // Mirrors averageHpFormula in the frontend's character-effects.ts (primary-class hit die, no
   // feat per-level bonuses) — only used to decide "did the level change since the last save".
   private estimateAverageMaxHp(
-    data: Record<string, unknown>,
+    data: CharacterData,
     level: number,
   ): number | null {
-    const raw = recordArray(data.classes)[0]?.name ?? data.class;
+    const classes = data.classes ?? [];
+    const raw = classes[0]?.name ?? data.class;
     if (typeof raw !== 'string' || !raw.trim()) return null;
     const primaryName = raw.toLowerCase().replace(/\s+/g, '-');
     let hitDie: number;
@@ -632,7 +573,7 @@ export class CharactersService {
     } catch {
       return null;
     }
-    const scores = (data.ability_scores ?? {}) as Record<string, unknown>;
+    const scores = data.ability_scores ?? {};
     const conMod = Math.floor((Number(scores.constitution ?? 10) - 10) / 2);
     return Math.max(
       1,
@@ -647,44 +588,27 @@ export class CharactersService {
     );
   }
 
-  private async isCharacterInActiveEncounter(
-    characterId: string,
-    campaignId: string,
-  ): Promise<boolean> {
-    const result = await this.db.execute(
-      `SELECT e.id
-       FROM encounters e
-       JOIN sessions s ON s.id = e.session_id
-       WHERE e.status = 'active' AND s.campaign_id = ?
-         AND EXISTS (
-           SELECT 1 FROM json_each(e.character_ids) roster
-           WHERE roster.value = ?
-         )
-       LIMIT 1`,
-      [campaignId, characterId],
-    );
-    return result.rows.length > 0;
-  }
-
   async castSpell(
     id: string,
     user: RequestUser,
     body: Record<string, unknown>,
   ) {
     return this.withCharacterLock(id, async () => {
-      const character = (await this.findOneReadable(id, user)) as Record<
-        string,
-        unknown
-      >;
-      const spellIndex = this.requiredString(body.spellIndex, 'spellIndex');
-      const sourceKey = this.requiredString(body.sourceKey, 'sourceKey');
-      const method = this.requiredString(body.method, 'method');
+      const character = await this.findOneReadable(id, user);
+      const spellIndex = this.repository.requiredString(
+        body.spellIndex,
+        'spellIndex',
+      );
+      const sourceKey = this.repository.requiredString(
+        body.sourceKey,
+        'sourceKey',
+      );
+      const method = this.repository.requiredString(body.method, 'method');
       const spell = await this.content.getSpell(spellIndex);
       const spellLevel = Number(spell.level ?? 0);
       const concentration = !!spell.concentration;
       const replaceConcentration = body.replaceConcentration === true;
-      const currentConcentration = character.active_concentration as
-        Record<string, unknown> | null | undefined;
+      const currentConcentration = character.active_concentration;
 
       if (
         concentration &&
@@ -697,7 +621,7 @@ export class CharactersService {
         );
       }
 
-      const data = this.characterData(character);
+      const data = this.repository.characterData(character);
       let resourceLabel = 'No slot';
       let castLevel = spellLevel;
 
@@ -713,7 +637,7 @@ export class CharactersService {
       ) {
         if (spellLevel === 0)
           throw new BadRequestException('Cantrips do not expend spell slots.');
-        const poolKey = this.requiredString(body.poolKey, 'poolKey');
+        const poolKey = this.repository.requiredString(body.poolKey, 'poolKey');
         const slotLevel = Number(body.slotLevel);
         if (!Number.isInteger(slotLevel) || slotLevel < spellLevel)
           throw new BadRequestException(
@@ -761,7 +685,7 @@ export class CharactersService {
         castLevel = slotLevel;
         resourceLabel = `${pool.name}, level ${slotLevel}`;
       } else if (method === 'free') {
-        const freeCastKey = this.requiredString(
+        const freeCastKey = this.repository.requiredString(
           body.freeCastKey,
           'freeCastKey',
         );
@@ -800,13 +724,13 @@ export class CharactersService {
       data.active_concentration = concentration
         ? {
             spellIndex,
-            name: spell.name,
+            name: String(spell.name),
             sourceKey,
             startedAt: new Date().toISOString(),
           }
         : (currentConcentration ?? null);
 
-      await this.writeCharacterData(id, data);
+      await this.repository.writeCharacterData(id, data);
       return {
         character: await this.findOneReadable(id, user),
         cast: {
@@ -834,32 +758,32 @@ export class CharactersService {
       await this.inventory.grant(
         id,
         user,
-        this.requiredString(body.itemIndex, 'itemIndex'),
+        this.repository.requiredString(body.itemIndex, 'itemIndex'),
         Number(body.quantity ?? 1),
       );
       return this.findOneReadable(id, user);
     }
     return this.withCharacterLock(id, async () => {
-      const character = (await this.findOneReadable(id, user)) as Record<
-        string,
-        unknown
-      >;
+      const character = await this.findOneReadable(id, user);
       if (
         !character.campaign_id ||
-        !(await this.isCampaignOwner(character.campaign_id as string, user.id))
+        !(await this.repository.isCampaignOwner(character.campaign_id, user.id))
       ) {
         throw new ForbiddenException('Only the campaign DM can grant items.');
       }
-      const itemIndex = this.requiredString(body.itemIndex, 'itemIndex');
+      const itemIndex = this.repository.requiredString(
+        body.itemIndex,
+        'itemIndex',
+      );
       const quantity = Number(body.quantity ?? 1);
       if (!Number.isInteger(quantity) || quantity < 1) {
         throw new BadRequestException('quantity must be a positive integer.');
       }
       const item = await this.content.getItem(itemIndex);
 
-      const data = this.characterData(character);
+      const data = this.repository.characterData(character);
       const equipment = Array.isArray(data.equipment)
-        ? [...(data.equipment as Record<string, unknown>[])]
+        ? [...data.equipment]
         : [];
       const existingIndex = equipment.findIndex(
         (entry) => entry.itemIndex === itemIndex,
@@ -879,7 +803,7 @@ export class CharactersService {
         });
       }
       data.equipment = equipment;
-      await this.writeCharacterData(id, data);
+      await this.repository.writeCharacterData(id, data);
       return this.findOneReadable(id, user);
     });
   }
@@ -907,28 +831,15 @@ export class CharactersService {
     await this.inventory!.operate(id, instanceId, user, body);
     return this.findOneReadable(id, user);
   }
-  async completeRest(
-    id: string,
-    user: RequestUser,
-    body: Record<string, unknown>,
-  ) {
-    await this.inventory!.rest(id, user, body);
-    if (!body.correction) await this.companions?.notifyRestCompleted(id);
-    return this.findOneReadable(id, user);
-  }
-
   async updatePactWeapon(
     id: string,
     user: RequestUser,
     body: Record<string, unknown>,
   ) {
     return this.withCharacterLock(id, async () => {
-      const character = (await this.findOneReadable(id, user)) as Record<
-        string,
-        unknown
-      >;
-      const data = this.characterData(character);
-      const action = this.requiredString(body.action, 'action');
+      const character = await this.findOneReadable(id, user);
+      const data = this.repository.characterData(character);
+      const action = this.repository.requiredString(body.action, 'action');
       if (!['conjure', 'bond', 'dismiss'].includes(action)) {
         throw new BadRequestException(
           'action must be conjure, bond, or dismiss.',
@@ -936,7 +847,7 @@ export class CharactersService {
       }
       if (action === 'dismiss') {
         delete data.pact_weapon;
-        await this.writeCharacterData(id, data);
+        await this.repository.writeCharacterData(id, data);
         return this.findOneReadable(id, user);
       }
       if (!this.hasPactOfTheBlade(character)) {
@@ -945,7 +856,10 @@ export class CharactersService {
         );
       }
 
-      const itemIndex = this.requiredString(body.itemIndex, 'itemIndex');
+      const itemIndex = this.repository.requiredString(
+        body.itemIndex,
+        'itemIndex',
+      );
       const carried =
         action === 'bond'
           ? recordArray(data.equipment).find((entry) =>
@@ -985,12 +899,14 @@ export class CharactersService {
 
       data.pact_weapon = {
         itemIndex,
-        ...(carried?.instanceId ? { instanceId: carried.instanceId } : {}),
+        ...(typeof carried?.instanceId === 'string'
+          ? { instanceId: carried.instanceId }
+          : {}),
         name: typeof item.name === 'string' ? item.name : itemIndex,
         mode: action === 'bond' ? 'bonded' : 'conjured',
         createdAt: new Date().toISOString(),
       };
-      await this.writeCharacterData(id, data);
+      await this.repository.writeCharacterData(id, data);
       return this.findOneReadable(id, user);
     });
   }
@@ -1008,17 +924,17 @@ export class CharactersService {
         'Item removal now uses an individual item. Refresh the character sheet.',
       );
     return this.withCharacterLock(id, async () => {
-      const character = (await this.findOneReadable(id, user)) as Record<
-        string,
-        unknown
-      >;
+      const character = await this.findOneReadable(id, user);
       if (
         !character.campaign_id ||
-        !(await this.isCampaignOwner(character.campaign_id as string, user.id))
+        !(await this.repository.isCampaignOwner(character.campaign_id, user.id))
       ) {
         throw new ForbiddenException('Only the campaign DM can remove items.');
       }
-      const itemIndex = this.requiredString(body.itemIndex, 'itemIndex');
+      const itemIndex = this.repository.requiredString(
+        body.itemIndex,
+        'itemIndex',
+      );
       let requestedQuantity: number | undefined;
       if (body.quantity !== undefined) {
         requestedQuantity = Number(body.quantity);
@@ -1027,9 +943,9 @@ export class CharactersService {
         }
       }
 
-      const data = this.characterData(character);
+      const data = this.repository.characterData(character);
       const equipment = Array.isArray(data.equipment)
-        ? [...(data.equipment as Record<string, unknown>[])]
+        ? [...data.equipment]
         : [];
       const index = equipment.findIndex(
         (entry) => entry.itemIndex === itemIndex,
@@ -1051,8 +967,7 @@ export class CharactersService {
         };
       }
       data.equipment = equipment;
-      const pactWeapon = data.pact_weapon as
-        Record<string, unknown> | undefined;
+      const pactWeapon = data.pact_weapon ?? undefined;
       if (
         pactWeapon?.mode === 'bonded' &&
         pactWeapon.itemIndex === itemIndex &&
@@ -1060,7 +975,7 @@ export class CharactersService {
       ) {
         delete data.pact_weapon;
       }
-      await this.writeCharacterData(id, data);
+      await this.repository.writeCharacterData(id, data);
       return this.findOneReadable(id, user);
     });
   }
@@ -1078,24 +993,24 @@ export class CharactersService {
     body: Record<string, unknown>,
   ) {
     return this.withCharacterLock(id, async () => {
-      const character = (await this.findOneReadable(id, user)) as Record<
-        string,
-        unknown
-      >;
+      const character = await this.findOneReadable(id, user);
       if (
         !character.campaign_id ||
-        !(await this.isCampaignOwner(character.campaign_id as string, user.id))
+        !(await this.repository.isCampaignOwner(character.campaign_id, user.id))
       ) {
         throw new ForbiddenException('Only the campaign DM can grant spells.');
       }
-      const spellIndex = this.requiredString(body.spellIndex, 'spellIndex');
+      const spellIndex = this.repository.requiredString(
+        body.spellIndex,
+        'spellIndex',
+      );
       const sourceName =
         typeof body.sourceName === 'string' && body.sourceName.trim()
           ? body.sourceName.trim()
           : 'DM Gift';
       const spell = await this.content.getSpell(spellIndex);
 
-      const data = this.characterData(character);
+      const data = this.repository.characterData(character);
       const spellSourceCode = (spell as Record<string, unknown>).source;
       const sourceCode =
         spellSourceCode && typeof spellSourceCode === 'object'
@@ -1106,25 +1021,29 @@ export class CharactersService {
         sourceDefinition(sourceCode)?.player_options
       ) {
         data.enabled_sources = normalizePlayerSources([
-          ...stringArray(data.enabled_sources),
+          ...(data.enabled_sources ?? []),
           sourceCode,
         ]);
-        await this.assertCampaignSources(
-          character.campaign_id as string,
+        await this.repository.assertCampaignSources(
+          character.campaign_id,
           data.enabled_sources,
         );
       }
       const grantedSpells = Array.isArray(data.granted_spells)
-        ? [...(data.granted_spells as Record<string, unknown>[])]
+        ? [...data.granted_spells]
         : [];
       if (grantedSpells.some((entry) => entry.spellIndex === spellIndex)) {
         throw new ConflictException(
           `${String(spell.name)} has already been granted to this character.`,
         );
       }
-      grantedSpells.push({ spellIndex, name: spell.name, sourceName });
+      grantedSpells.push({
+        spellIndex,
+        name: String(spell.name),
+        sourceName,
+      });
       data.granted_spells = grantedSpells;
-      await this.writeCharacterData(id, data);
+      await this.repository.writeCharacterData(id, data);
       return this.findOneReadable(id, user);
     });
   }
@@ -1136,21 +1055,21 @@ export class CharactersService {
     body: Record<string, unknown>,
   ) {
     return this.withCharacterLock(id, async () => {
-      const character = (await this.findOneReadable(id, user)) as Record<
-        string,
-        unknown
-      >;
+      const character = await this.findOneReadable(id, user);
       if (
         !character.campaign_id ||
-        !(await this.isCampaignOwner(character.campaign_id as string, user.id))
+        !(await this.repository.isCampaignOwner(character.campaign_id, user.id))
       ) {
         throw new ForbiddenException('Only the campaign DM can remove spells.');
       }
-      const spellIndex = this.requiredString(body.spellIndex, 'spellIndex');
+      const spellIndex = this.repository.requiredString(
+        body.spellIndex,
+        'spellIndex',
+      );
 
-      const data = this.characterData(character);
+      const data = this.repository.characterData(character);
       const grantedSpells = Array.isArray(data.granted_spells)
-        ? [...(data.granted_spells as Record<string, unknown>[])]
+        ? [...data.granted_spells]
         : [];
       const index = grantedSpells.findIndex(
         (entry) => entry.spellIndex === spellIndex,
@@ -1162,7 +1081,7 @@ export class CharactersService {
       }
       grantedSpells.splice(index, 1);
       data.granted_spells = grantedSpells;
-      await this.writeCharacterData(id, data);
+      await this.repository.writeCharacterData(id, data);
       return this.findOneReadable(id, user);
     });
   }
@@ -1178,11 +1097,8 @@ export class CharactersService {
         'Rest type must be short_rest or long_rest.',
       );
     return this.withCharacterLock(id, async () => {
-      const character = (await this.findOneReadable(id, user)) as Record<
-        string,
-        unknown
-      >;
-      const data = this.characterData(character);
+      const character = await this.findOneReadable(id, user);
+      const data = this.repository.characterData(character);
       const slotUses = this.recordOfRecords(data.spell_slot_uses);
       if (type === 'long_rest') {
         data.spell_slot_uses = {};
@@ -1205,82 +1121,17 @@ export class CharactersService {
         }
         data.spell_free_cast_uses = freeCasts;
       }
-      await this.writeCharacterData(id, data);
-      return this.findOneReadable(id, user);
-    });
-  }
-
-  async restoreLife(
-    id: string,
-    user: RequestUser,
-    body: Record<string, unknown>,
-  ) {
-    const type = body.type;
-    if (type !== 'short_rest' && type !== 'long_rest')
-      throw new BadRequestException(
-        'Rest type must be short_rest or long_rest.',
-      );
-    return this.withCharacterLock(id, async () => {
-      const character = (await this.findOneReadable(id, user)) as Record<
-        string,
-        unknown
-      >;
-      const data = this.characterData(character);
-      const classes =
-        Array.isArray(data.classes) && data.classes.length
-          ? (data.classes as { level: number }[])
-          : [{ level: Number(character.level ?? 1) }];
-
-      let totalHitDice = 0;
-
-      for (const cls of classes) {
-        const level = cls.level;
-        totalHitDice += level;
-      }
-
-      if (type === 'long_rest') {
-        data.current_hp = data.max_hp;
-        if (String(character.race).toLowerCase() === 'human') {
-          data.heroic_inspiration = true;
-        }
-        const recoveredDice = Math.trunc(totalHitDice / 2);
-        data.hit_dice_used = Math.max(
-          0,
-          Number(data.hit_dice_used ?? 0) - recoveredDice,
-        );
-      } else {
-        const hitDiceUsed = Number(body.hitDiceUsed ?? 0);
-        const healed = Number(body.healed ?? 0);
-        if (!Number.isInteger(hitDiceUsed) || hitDiceUsed < 0)
-          throw new BadRequestException('Invalid hitDiceUsed');
-        if (!Number.isInteger(healed) || healed < 0)
-          throw new BadRequestException('Invalid healed amount');
-
-        const existingUsed = Number(data.hit_dice_used ?? 0);
-        const available = Math.max(0, totalHitDice - existingUsed);
-        if (hitDiceUsed > available)
-          throw new BadRequestException('Not enough hit dice available');
-
-        data.hit_dice_used = existingUsed + hitDiceUsed;
-        const currentHp = Number(data.current_hp ?? 0);
-        const maxHp = Number(data.max_hp ?? 0);
-        data.current_hp = Math.min(maxHp, currentHp + healed);
-      }
-      await this.writeCharacterData(id, data);
-      if (body.type === 'long_rest') await this.companions?.longRest(id);
+      await this.repository.writeCharacterData(id, data);
       return this.findOneReadable(id, user);
     });
   }
 
   async endConcentration(id: string, user: RequestUser) {
     return this.withCharacterLock(id, async () => {
-      const character = (await this.findOneReadable(id, user)) as Record<
-        string,
-        unknown
-      >;
-      const data = this.characterData(character);
+      const character = await this.findOneReadable(id, user);
+      const data = this.repository.characterData(character);
       data.active_concentration = null;
-      await this.writeCharacterData(id, data);
+      await this.repository.writeCharacterData(id, data);
       return this.findOneReadable(id, user);
     });
   }
@@ -1292,52 +1143,15 @@ export class CharactersService {
     return withCharacterLock(id, work);
   }
 
-  private characterData(
-    character: Record<string, unknown>,
-  ): Record<string, unknown> {
-    const data: Record<string, unknown> = {};
-    for (const [key, value] of Object.entries(character)) {
-      if (!CHARACTER_COLUMN_KEYS.has(key)) data[key] = value;
-    }
-    return data;
-  }
-
-  private async writeCharacterData(id: string, data: Record<string, unknown>) {
-    if (this.inventory)
-      Object.assign(data, await this.inventory.decorate(id, {}));
-    await this.db.execute(
-      'UPDATE characters SET data=?, updated_at=? WHERE id=?',
-      [JSON.stringify(data), new Date().toISOString(), id],
-    );
-    await this.notifyUpdated(id);
-  }
-
-  // Only campaign copies are ever on a battle map — a template character has no one to tell.
-  private async notifyUpdated(id: string) {
-    const result = await this.db.execute(
-      'SELECT campaign_id FROM characters WHERE id = ?',
-      [id],
-    );
-    const campaignId = result.rows[0]?.campaign_id;
-    if (typeof campaignId === 'string') {
-      this.presence.notifyCharacterUpdated(campaignId, id);
-    }
-  }
-
-  private requiredString(value: unknown, field: string): string {
-    if (typeof value !== 'string' || !value.trim())
-      throw new BadRequestException(`${field} is required.`);
-    return value;
-  }
-
-  private hasPactOfTheBlade(character: Record<string, unknown>): boolean {
-    return recordArray(character.classes).some((entry) => {
+  private hasPactOfTheBlade(character: CharacterData): boolean {
+    const classes = character.classes ?? [];
+    return classes.some((entry) => {
       if (String(entry.name).toLowerCase() !== 'warlock') return false;
       const choices =
         entry.choices &&
         typeof entry.choices === 'object' &&
         !Array.isArray(entry.choices)
-          ? (entry.choices as Record<string, unknown>)
+          ? entry.choices
           : {};
       return Object.values(choices).some((selection) =>
         stringArray(selection).includes('Pact of the Blade'),
@@ -1365,7 +1179,7 @@ export class CharactersService {
       : {};
   }
 
-  resolveSlotPools(character: Record<string, unknown>): {
+  resolveSlotPools(character: CharacterData): {
     key: string;
     name: string;
     type: 'slot' | 'pact' | 'restricted';
@@ -1375,7 +1189,7 @@ export class CharactersService {
   }[] {
     const entries =
       Array.isArray(character.classes) && character.classes.length
-        ? (character.classes as Record<string, unknown>[])
+        ? character.classes
         : [
             {
               name: character.class,
@@ -1477,7 +1291,7 @@ export class CharactersService {
     return pools;
   }
 
-  private resolveDragonmarkSlotPool(character: Record<string, unknown>): {
+  private resolveDragonmarkSlotPool(character: CharacterData): {
     key: string;
     name: string;
     type: 'restricted';
@@ -1572,17 +1386,6 @@ export class CharactersService {
     };
   }
 
-  private async hasEditAccess(
-    campaignId: string,
-    userId: string,
-  ): Promise<boolean> {
-    const result = await this.db.execute(
-      `SELECT edit_unlocked FROM campaign_members WHERE campaign_id = ? AND user_id = ? AND status = 'active'`,
-      [campaignId, userId],
-    );
-    return !!result.rows[0]?.edit_unlocked;
-  }
-
   private async updatePlayerEditableFields(
     id: string,
     existing: Record<string, unknown>,
@@ -1604,7 +1407,7 @@ export class CharactersService {
       'portrait_image' in body ||
       'token_border' in body ||
       'portrait_use_token' in body
-        ? this.normalizeCharacterAvatar(data)
+        ? this.repository.normalizeCharacterAvatar(data)
         : data;
 
     // `name` is a characters-table column, not a data-blob key, so it can't ride through
@@ -1622,7 +1425,7 @@ export class CharactersService {
       `UPDATE characters SET name=?, data=?, updated_at=? WHERE id=?`,
       [name, JSON.stringify(normalized), new Date().toISOString(), id],
     );
-    await this.notifyUpdated(id);
+    await this.repository.notifyUpdated(id);
     return this.findOneReadable(id, user);
   }
 
@@ -1630,103 +1433,6 @@ export class CharactersService {
     await this.findOne(id, userId);
     await this.db.execute('DELETE FROM characters WHERE id = ?', [id]);
     return { deleted: true };
-  }
-
-  private async deserialize(row: Record<string, unknown>) {
-    const data = this.normalizeCharacterSources(
-      this.db.parseJson<Record<string, unknown>>(row.data as string, {}),
-      row.class,
-    );
-    return {
-      ...data,
-      ...(this.inventory
-        ? await this.inventory.decorate(String(row.id), {})
-        : {}),
-      id: row.id,
-      user_id: row.user_id,
-      name: row.name,
-      race: row.race,
-      class: row.class,
-      level: row.level,
-      campaign_id: row.campaign_id ?? null,
-      creation_status: row.creation_status ?? 'complete',
-      draft_step: Number(row.draft_step ?? 0),
-      created_at: row.created_at,
-      updated_at: row.updated_at,
-    };
-  }
-
-  private normalizeCharacterSources(
-    data: Record<string, unknown>,
-    primaryClass: unknown,
-  ): Record<string, unknown> {
-    const required = new Set<string>();
-    if (String(primaryClass).toLowerCase() === 'artificer') {
-      required.add(EBERRON_SOURCE_CODE);
-    }
-    const classes = recordArray(data.classes);
-    if (
-      classes.some((entry) => String(entry.name).toLowerCase() === 'artificer')
-    ) {
-      required.add(EBERRON_SOURCE_CODE);
-    }
-    const spellEntries = [
-      ...recordArray(data.spells),
-      ...recordArray(data.granted_spells),
-    ];
-    if (
-      spellEntries.some((entry) => entry.spellIndex === 'homunculus-servant')
-    ) {
-      required.add(EBERRON_SOURCE_CODE);
-    }
-    return {
-      ...data,
-      enabled_sources: normalizePlayerSources([
-        ...stringArray(data.enabled_sources),
-        ...required,
-      ]),
-    };
-  }
-
-  private normalizeCharacterAvatar(
-    data: Record<string, unknown>,
-  ): Record<string, unknown> {
-    const normalized = { ...data };
-    if (Object.prototype.hasOwnProperty.call(normalized, 'avatar_recipe')) {
-      if (normalized.avatar_recipe == null) {
-        delete normalized.avatar_recipe;
-      } else {
-        const recipe = parseAvatarRecipe(normalized.avatar_recipe);
-        if (!recipe) throw new BadRequestException('Invalid avatar recipe');
-        normalized.avatar_recipe = recipe;
-      }
-    }
-    // An uploaded portrait takes precedence over the recipe when both are present; the recipe is
-    // kept so switching back to the built avatar restores the player's last design.
-    if (Object.prototype.hasOwnProperty.call(normalized, 'portrait_image')) {
-      if (normalized.portrait_image == null) {
-        delete normalized.portrait_image;
-      } else {
-        const image = parsePortraitImage(normalized.portrait_image);
-        if (!image) throw new BadRequestException('Invalid portrait image');
-        normalized.portrait_image = image;
-      }
-    }
-    if (Object.prototype.hasOwnProperty.call(normalized, 'token_border')) {
-      if (normalized.token_border == null) {
-        delete normalized.token_border;
-      } else {
-        const border = parseTokenBorder(normalized.token_border);
-        if (!border) throw new BadRequestException('Invalid token border');
-        normalized.token_border = border;
-      }
-    }
-    if (
-      Object.prototype.hasOwnProperty.call(normalized, 'portrait_use_token')
-    ) {
-      normalized.portrait_use_token = !!normalized.portrait_use_token;
-    }
-    return normalized;
   }
 
   uploadPortrait(userId: string, file: Express.Multer.File | undefined) {
@@ -1742,28 +1448,5 @@ export class CharactersService {
     const filename = `${randomUUID()}.${extension}`;
     writeFileSync(join(dir, filename), file.buffer);
     return { url: `/uploads/portraits/${owner}/${filename}` };
-  }
-
-  private async assertCampaignSources(
-    campaignId: string,
-    enabledSources: unknown,
-  ) {
-    const result = await this.db.execute(
-      'SELECT data FROM campaigns WHERE id = ?',
-      [campaignId],
-    );
-    const campaignData = this.db.parseJson<Record<string, unknown>>(
-      result.rows[0]?.data as string,
-      {},
-    );
-    const disallowed = disallowedSources(
-      enabledSources,
-      campaignData.allowed_sources,
-    );
-    if (disallowed.length) {
-      throw new BadRequestException(
-        `This campaign doesn't allow ${disallowed.map(sourceName).join(', ')}.`,
-      );
-    }
   }
 }

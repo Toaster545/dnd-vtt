@@ -14,6 +14,7 @@ import { EncounterPresenceGateway } from './encounter-presence.gateway';
 import type { RequestUser } from '../common/current-user.decorator';
 import { serializePlayerTokens } from '../maps/player-tokens';
 import { TokensGateway } from '../maps/tokens.gateway';
+import { toTokenRow } from '../maps/token-row';
 
 export interface EncounterLevel {
   map_id: string;
@@ -593,17 +594,14 @@ export class EncountersService {
         seen.add(characterId);
         return true;
       })
-      .map((t) => ({
-        ...(t as Record<string, unknown>),
-        is_player: !!t.is_player,
-      })) as (Record<string, unknown> & { is_player: boolean })[];
+      .map(toTokenRow);
     return this.companions ? this.companions.decorateTokens(rows) : rows;
   }
 
   private async getTurnOrderIds(encounterId: string): Promise<string[]> {
     return (await this.turnOrderTokens(encounterId))
       .filter((t) => !t.companion_id)
-      .map((t) => t.id as string);
+      .map((t) => t.id);
   }
 
   async nextTurn(id: string, dmId: string) {
@@ -718,7 +716,7 @@ export class EncountersService {
       );
       await this.tokensGateway.broadcastTokens(
         level.map_id,
-        tokens.rows.map((r) => ({ ...r, is_player: !!r.is_player })),
+        tokens.rows.map(toTokenRow),
       );
     }
     this.presence.broadcastTurnState(id, {

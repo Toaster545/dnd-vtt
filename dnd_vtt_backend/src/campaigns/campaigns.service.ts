@@ -22,22 +22,10 @@ import {
 import { parseAvatarRecipe } from '../common/avatar-recipe';
 import { parsePortraitImage } from '../common/portrait-image';
 import { parseTokenBorder } from '../common/token-border';
+import type { CharacterData } from '../characters/character-data';
+import type { CampaignData } from './campaign-data';
 import { EncounterPresenceGateway } from '../encounters/encounter-presence.gateway';
-
-function stringArray(value: unknown): string[] {
-  return Array.isArray(value)
-    ? value.filter((entry): entry is string => typeof entry === 'string')
-    : [];
-}
-
-function recordArray(value: unknown): Record<string, unknown>[] {
-  return Array.isArray(value)
-    ? value.filter(
-        (entry): entry is Record<string, unknown> =>
-          !!entry && typeof entry === 'object' && !Array.isArray(entry),
-      )
-    : [];
-}
+import { stringArray } from '../common/arrays';
 
 @Injectable()
 export class CampaignsService {
@@ -270,10 +258,7 @@ export class CampaignsService {
     }
     if (dto.allowed_sources !== undefined) {
       const allowedSources = normalizePlayerSources(dto.allowed_sources);
-      const data = this.db.parseJson<Record<string, unknown>>(
-        campaign.data as string,
-        {},
-      );
+      const data = this.db.parseJson<CampaignData>(campaign.data as string, {});
       fields.push('data = ?');
       args.push(
         JSON.stringify({
@@ -359,7 +344,7 @@ export class CampaignsService {
     // Mark how far the copy's build actually goes. If it's being levelled up to meet the party,
     // the levels above the source character's own are unfilled — applied_level below the copy's
     // level is the "a level-up is pending" signal the player then acts on.
-    const copyData = this.db.parseJson<Record<string, unknown>>(
+    const copyData = this.db.parseJson<CharacterData>(
       source.data as string,
       {},
     );
@@ -589,10 +574,7 @@ export class CampaignsService {
     for (const row of affected.rows) {
       const previousLevel = Number(row.level ?? 1);
       if (level > previousLevel) anyLevelledUp = true;
-      const data = this.db.parseJson<Record<string, unknown>>(
-        row.data as string,
-        {},
-      );
+      const data = this.db.parseJson<CharacterData>(row.data as string, {});
       // Level up: pin applied_level to the old level so exactly the new band reads as pending
       // (unless the player was already behind, in which case keep the lower value). Level down
       // or unchanged: nothing to apply, so keep it in step with the new level.
@@ -654,7 +636,7 @@ export class CampaignsService {
     viewer: { id: string; isOwner: boolean },
     allowedSources: string[],
   ) {
-    const data = this.db.parseJson<Record<string, unknown>>(
+    const data = this.db.parseJson<CharacterData>(
       row.character_data as string,
       {},
     );
@@ -699,10 +681,7 @@ export class CampaignsService {
   }
 
   private deserialize(row: Record<string, unknown>) {
-    const data = this.db.parseJson<Record<string, unknown>>(
-      row.data as string,
-      {},
-    );
+    const data = this.db.parseJson<CampaignData>(row.data as string, {});
     return {
       ...data,
       allowed_sources: normalizePlayerSources(data.allowed_sources),
@@ -719,16 +698,16 @@ export class CampaignsService {
   }
 
   private enabledSources(
-    data: Record<string, unknown>,
+    data: CharacterData,
     characterClass: unknown,
   ): string[] {
     const enabled = Array.isArray(data.enabled_sources)
       ? stringArray(data.enabled_sources)
       : [...DEFAULT_PLAYER_SOURCES];
-    const classes = recordArray(data.classes);
+    const classes = data.classes ?? [];
     const spellEntries = [
-      ...recordArray(data.spells),
-      ...recordArray(data.granted_spells),
+      ...(data.spells ?? []),
+      ...(data.granted_spells ?? []),
     ];
     if (
       String(characterClass).toLowerCase() === 'artificer' ||
@@ -746,11 +725,11 @@ export class CampaignsService {
     character: Record<string, unknown>,
     campaign: Record<string, unknown>,
   ) {
-    const characterData = this.db.parseJson<Record<string, unknown>>(
+    const characterData = this.db.parseJson<CharacterData>(
       character.data as string,
       {},
     );
-    const campaignData = this.db.parseJson<Record<string, unknown>>(
+    const campaignData = this.db.parseJson<CampaignData>(
       campaign.data as string,
       {},
     );

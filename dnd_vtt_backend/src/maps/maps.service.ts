@@ -14,6 +14,7 @@ import type { RequestUser } from '../common/current-user.decorator';
 import { serializePlayerTokens } from './player-tokens';
 import { moveCost } from './movement';
 import { CompanionsService } from '../companions/companions.service';
+import { type TokenRow, toTokenRow } from './token-row';
 
 // A light-blocking wall segment, in fractional grid units (see applyV26).
 export interface MapWall {
@@ -109,16 +110,12 @@ export class MapsService {
     return Promise.resolve(`/uploads/maps/${campaignId}/${filename}`);
   }
 
-  private async getTokensRaw(
-    mapId: string,
-  ): Promise<Record<string, unknown>[]> {
+  private async getTokensRaw(mapId: string): Promise<TokenRow[]> {
     const result = await this.db.execute(
       'SELECT * FROM map_tokens WHERE map_id = ?',
       [mapId],
     );
-    return this.companions.decorateTokens(
-      result.rows.map((r) => ({ ...r, is_player: !!r.is_player })),
-    );
+    return this.companions.decorateTokens(result.rows.map(toTokenRow));
   }
 
   async getTokens(mapId: string, user: RequestUser) {
@@ -433,7 +430,7 @@ export class MapsService {
     return plan;
   }
 
-  private planOf(token: Record<string, unknown>) {
+  private planOf(token: TokenRow) {
     return token.planned_x == null || token.planned_y == null
       ? null
       : { x: Number(token.planned_x), y: Number(token.planned_y) };
@@ -464,7 +461,7 @@ export class MapsService {
           companion.rows[0]?.character_id as string,
           user,
         );
-        return token as Record<string, unknown>;
+        return token as unknown as TokenRow;
       }
       if (!token.is_player || !token.character_id)
         throw new ForbiddenException();
@@ -474,7 +471,7 @@ export class MapsService {
       );
       if (!owns.rows[0]) throw new ForbiddenException();
     }
-    return token as Record<string, unknown>;
+    return token as unknown as TokenRow;
   }
 
   // A move during a token's turn stays pending — the token sits on its new square, but the

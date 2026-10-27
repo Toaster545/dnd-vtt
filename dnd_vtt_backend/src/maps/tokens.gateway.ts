@@ -13,6 +13,7 @@ import { SocketAuthService } from '../auth/socket-auth.service';
 import { serializePlayerTokens } from './player-tokens';
 import { Optional } from '@nestjs/common';
 import { CompanionsService } from '../companions/companions.service';
+import type { TokenRow } from './token-row';
 
 interface Measurement {
   shape: 'line' | 'cone' | 'sphere';
@@ -62,7 +63,7 @@ export class TokensGateway implements OnGatewayInit, OnGatewayDisconnect {
     void client.leave(`map:${mapId}:player`);
   }
 
-  async broadcastTokens(mapId: string, tokens: Record<string, unknown>[]) {
+  async broadcastTokens(mapId: string, tokens: TokenRow[]) {
     if (this.companions) tokens = await this.companions.decorateTokens(tokens);
     this.server.to(`map:${mapId}:dm`).emit('tokens_updated', tokens);
     this.server

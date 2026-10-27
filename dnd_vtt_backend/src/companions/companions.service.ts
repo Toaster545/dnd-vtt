@@ -19,6 +19,7 @@ import {
 } from './companion-rules';
 import { parsePortraitImage } from '../common/portrait-image';
 import { CompanionsGateway } from './companions.gateway';
+import type { TokenRow } from '../maps/token-row';
 
 @Injectable()
 export class CompanionsService {
@@ -62,8 +63,8 @@ export class CompanionsService {
   }
 
   // Tokens are views of the saved companion, never a second HP store.
-  async decorateTokens(tokens: Record<string, unknown>[]) {
-    const result: Record<string, unknown>[] = [];
+  async decorateTokens(tokens: TokenRow[]) {
+    const result: TokenRow[] = [];
     for (const token of tokens) {
       if (!token.companion_id) {
         result.push(token);
