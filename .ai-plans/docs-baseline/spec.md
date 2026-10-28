@@ -19,7 +19,7 @@ the app. This is also the first end-to-end test of the /pipeline workflow.
 - R10 `docs/CHANGELOG.md` has a "Documentation baseline" entry; `docs/decisions/` records only decisions evidenced in code/git history.
 
 ## Acceptance criteria
-- A1 Every doc starts with a one-line purpose and `Last updated: YYYY-MM-DD (commit <sha>)`, and each section ends with `Sources:` paths. (R1-R10)
+- A1 Every doc starts with a one-line purpose and `Last updated: YYYY-MM-DD (commit <sha>)`, and each section of content docs ends with `Sources:` paths (pure index files are exempt). (R1-R10)
 - A2 Every relative link in `docs/` resolves to an existing file/heading. (R1-R10)
 - A3 A reviewer spot-check of >= 10 factual claims per area (routes, env vars, table names, file paths, commands) finds no false statements. (R3-R8)
 - A4 Every backend module under `dnd_vtt_backend/src/` and every feature folder under `dnd_vtt_frontend/src/app/features/` is covered by at least one doc or listed in "Not yet documented". (R3, R4, R7)
@@ -54,3 +54,6 @@ the app. This is also the first end-to-end test of the /pipeline workflow.
 ## Open items
 - User's documentation guidelines are pending; expect a rework pass later.
 - The root README.md (299 lines) and CLAUDE.md overlap with docs/overview.md; documenter links rather than duplicates.
+
+## Amendments after the run (user decisions)
+- Documented up to = last code commit + its own date. Index files are exempt from per-section Sources:.
