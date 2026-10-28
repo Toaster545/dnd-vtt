@@ -1,5 +1,9 @@
 # Mobile architecture
 
+Purpose: how the mobile implementation relates to the single Angular app and NestJS backend.
+
+Last updated: 2026-10-28 (commit 00cb49a)
+
 The mobile implementation remains one Angular application and one NestJS backend. The breakpoint at 1024 CSS pixels changes navigation and presentation, not domain services or authorization.
 
 ```text
@@ -27,12 +31,14 @@ The DM selects `campaigns.current_session_id`; starting an encounter selects its
 ## Trust boundaries
 
 - Access JWT: 15 minutes, memory only.
-- Web refresh: rotating 30-day opaque credential in a Secure, HttpOnly, SameSite=Strict cookie.
+- Web refresh: rotating 30-day opaque credential in an HttpOnly, SameSite=Strict cookie (`dnd_refresh_token`, path `/api/auth`); the `Secure` flag is set only when `isProduction()` is true.
 - Native refresh: returned only to native login/refresh and stored through Capacitor Keychain/Keystore secure storage.
 - Socket.IO: JWT-authenticated handshake; campaign/map/encounter rooms are authorized from SQLite records.
-- Maps: raw files are not public. DM images and fog-masked player rasters require authenticated endpoints. Player serialization removes hidden tokens, monster fields, HP/stat data, and unrevealed names.
+- Maps: raw files are not public (`/uploads/maps` returns 404 in `main.ts`). DM images and fog-masked player rasters require authenticated endpoints. Player serialization removes hidden tokens, monster fields, HP/stat data, and unrevealed names.
 - PWA cache: versioned application shell and static assets only. There is no API, upload, or authenticated-image data group.
 
 ## Reconnect model
 
-Socket authentication is refreshed whenever the access credential rotates. Map subscriptions rejoin and refetch canonical state after reconnect. Native app resume refreshes authentication and player context. The UI exposes offline and reconnecting states globally.
+Socket authentication is refreshed whenever the access credential rotates. Map subscriptions rejoin and refetch canonical state after reconnect. Native app resume refreshes authentication and player context. The UI exposes offline and reconnecting states globally. (unverified: the reconnect, resume and global offline-state behaviour was not traced in code in this pass.)
+
+Sources: `dnd_vtt_backend/src/auth/auth.controller.ts` (`REFRESH_COOKIE`, `REFRESH_MAX_AGE_MS`), `dnd_vtt_backend/src/auth/auth.module.ts` (`expiresIn: '15m'`), `dnd_vtt_backend/src/auth/socket-auth.service.ts`, `dnd_vtt_backend/src/main.ts`, `dnd_vtt_backend/src/player/player.controller.ts` (`bootstrap`), `dnd_vtt_backend/src/encounters/encounters.service.ts` (`ConflictException`), `dnd_vtt_frontend/src/app/app.routes.ts` (`campaign/current*`), `dnd_vtt_frontend/src/app/core/services/auth-token.service.ts`, `dnd_vtt_frontend/ngsw-config.json`, `dnd_vtt_frontend/src/app/features/shell/shell.scss` (`max-width: 1023px`). Cross-references: [auth](../architecture/auth.md), [realtime](../architecture/realtime.md).
