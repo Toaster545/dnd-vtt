@@ -18,6 +18,22 @@ Documented up to: 00cb49a91332c16055f404118cf1e48d95e372e4 (2026-10-26)
 | [architecture/frontend-core.md](architecture/frontend-core.md) | Every `core/` service, model, util and avatar file with a one-line purpose |
 | [architecture/frontend-ui.md](architecture/frontend-ui.md) | `shared/` layout, components and directives; SCSS/Tailwind/Material styling; PWA service worker; Capacitor pointers |
 
+### Features
+
+| Doc | Purpose |
+|---|---|
+| [features/README.md](features/README.md) | Index mapping each feature doc to its frontend folders and backend modules |
+| [features/accounts-and-settings.md](features/accounts-and-settings.md) | Register, sign in, Settings dialog (appearance, PWA install, admin user management) |
+| [features/shell-and-dashboard.md](features/shell-and-dashboard.md) | Post-login shell, tabs, live encounter and level-up alerts, dashboard |
+| [features/campaigns.md](features/campaigns.md) | Campaign list and join flow, DM hub, DM maps page, player hub, "current game" routes |
+| [features/sessions-and-encounters.md](features/sessions-and-encounters.md) | Session pages, encounter form, DM encounter play, player join and rejoin, table screen |
+| [features/battle-map.md](features/battle-map.md) | Konva battle map: tokens, fog, lighting, walls, measuring, move range, player perspective |
+| [features/characters.md](features/characters.md) | Character list, play sheet, rests, inventory, spells, portraits, private notes |
+| [features/character-wizard.md](features/character-wizard.md) | Character wizard steps, autosaved drafts, live preview, level-up mode |
+| [features/companions.md](features/companions.md) | Primal Companion and Steel Defender |
+| [features/wiki.md](features/wiki.md) | Campaign wiki: routes, embed, live-preview editor, organisation, visibility |
+| [features/content-library.md](features/content-library.md) | Official content browser and homebrew monsters, items and spells |
+
 ### Data model
 
 | Doc | Purpose |
@@ -42,6 +58,15 @@ Documented up to: 00cb49a91332c16055f404118cf1e48d95e372e4 (2026-10-26)
 | [api/player.md](api/player.md) | `/api/player/bootstrap` |
 | [api/backgrounds.md](api/backgrounds.md) | `/api/backgrounds`: list of app background images |
 
+### Operations
+
+| Doc | Purpose |
+|---|---|
+| [operations/configuration.md](operations/configuration.md) | Environment variable names for the backend, scripts, frontend build and tests, with purpose, default and required-or-not |
+| [operations/deployment.md](operations/deployment.md) | Build and start, PM2 app `dnd-vtt`, Cloudflare Tunnel exposure, GitHub Actions CI, deploy and Android workflows |
+| [operations/scripts.md](operations/scripts.md) | npm scripts (root, backend, frontend), `dnd_vtt_backend/scripts/`, avatar compiler, parity fixtures |
+| [operations/troubleshooting.md](operations/troubleshooting.md) | Startup, dev bypass, unbuilt frontend, CORS, migration backups, stale session and CI failures, each traced to code |
+
 ### Mobile (existing docs, kept as written)
 
 These predate the documenter layout and have not yet been checked against the code in this pass; they do not carry the `Last updated` header.
@@ -59,8 +84,6 @@ These predate the documenter layout and have not yet been checked against the co
 Outside the scope of the pass that produced this index; each will get its own doc and an entry in the table above.
 
 - `CHANGELOG.md` (no baseline entry yet)
-- `docs/features/`: one file per user-facing feature. Until then the frontend feature folders under `src/app/features/` are only listed (routes and folder map) in [architecture/frontend.md](architecture/frontend.md#folder-map-of-srcapp), not described
-- `operations/`: configuration, deployment (Cloudflare Tunnel, PM2), scripts, troubleshooting
 - `decisions/`: architecture decision records
 - Verification of the `mobile/` docs against the code
 
