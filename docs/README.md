@@ -9,6 +9,11 @@ Documented up to: 00cb49a91332c16055f404118cf1e48d95e372e4 (2026-10-26)
 | Doc | Purpose |
 |---|---|
 | [overview.md](overview.md) | What the app is, tech stack, repo layout, and the commands to run, build, test and lint |
+| [architecture/backend.md](architecture/backend.md) | NestJS modules, bootstrapping (`main.ts`), request flow, shared helpers and conventions |
+| [architecture/auth.md](architecture/auth.md) | JWT access and refresh tokens, `JwtGuard`, `AdminGuard`, `@Public()`, roles, `DEV_BYPASS`, socket auth |
+| [architecture/storage.md](architecture/storage.md) | `DatabaseService` (SQLite), migrations and the no-v022 rule, uploads, content JSON loading |
+| [architecture/realtime.md](architecture/realtime.md) | socket.io gateways: rooms, client and server events, authentication |
+| [architecture/content.md](architecture/content.md) | Static game content (layout, loading, caching), content sources, homebrew, content endpoints |
 
 ### Mobile (existing docs, kept as written)
 
@@ -27,7 +32,6 @@ These predate the documenter layout and have not yet been checked against the co
 Outside the scope of the pass that produced this index; each will get its own doc and an entry in the table above.
 
 - `CHANGELOG.md` (no baseline entry yet)
-- Backend architecture: modules, auth and guards, storage and migrations, socket.io gateways, content service
 - Frontend architecture: routing, `core/`, `shared/`, features, styling
 - `data-model.md`: SQLite tables, the JSON character `data` blob, migrations
 - `api/`: REST endpoints and socket events per module
