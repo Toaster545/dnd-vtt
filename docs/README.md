@@ -15,6 +15,30 @@ Documented up to: 00cb49a91332c16055f404118cf1e48d95e372e4 (2026-10-26)
 | [architecture/realtime.md](architecture/realtime.md) | socket.io gateways: rooms, client and server events, authentication |
 | [architecture/content.md](architecture/content.md) | Static game content (layout, loading, caching), content sources, homebrew, content endpoints |
 
+### Data model
+
+| Doc | Purpose |
+|---|---|
+| [data-model.md](data-model.md) | Every SQLite table after migrations v001–v036 (key columns, relationships, defining migration) and the shape of the character and campaign JSON `data` blobs |
+
+### API
+
+| Doc | Purpose |
+|---|---|
+| [api/README.md](api/README.md) | Index of the REST docs, shared conventions (prefix, auth, validation, errors) and the pointer to socket events |
+| [api/auth.md](api/auth.md) | `/api/auth`: register, login, refresh, logout, current profile |
+| [api/users.md](api/users.md) | `/api/users`: admin-only account management |
+| [api/campaigns.md](api/campaigns.md) | `/api/campaigns`: CRUD, join codes, members, party level, current session |
+| [api/sessions.md](api/sessions.md) | `/api/sessions`: CRUD, background upload, visibility |
+| [api/encounters.md](api/encounters.md) | `/api/encounters`: CRUD, start/stop, turns, visibility, per-player levels |
+| [api/maps.md](api/maps.md) | `/api/maps`: maps, tokens, movement, fog of war, lighting |
+| [api/characters.md](api/characters.md) | `/api/characters`: CRUD, drafts, inventory, spells, rests, level-up, access rules |
+| [api/companions.md](api/companions.md) | `/api/characters/:characterId/companions` |
+| [api/content.md](api/content.md) | `/api/content`: static game content and homebrew monsters, items, spells |
+| [api/wiki.md](api/wiki.md) | `/api/wiki`: pages, search, graph, uploads, character notes |
+| [api/player.md](api/player.md) | `/api/player/bootstrap` |
+| [api/backgrounds.md](api/backgrounds.md) | `/api/backgrounds`: list of app background images |
+
 ### Mobile (existing docs, kept as written)
 
 These predate the documenter layout and have not yet been checked against the code in this pass; they do not carry the `Last updated` header.
@@ -33,8 +57,6 @@ Outside the scope of the pass that produced this index; each will get its own do
 
 - `CHANGELOG.md` (no baseline entry yet)
 - Frontend architecture: routing, `core/`, `shared/`, features, styling
-- `data-model.md`: SQLite tables, the JSON character `data` blob, migrations
-- `api/`: REST endpoints and socket events per module
 - `features/`: one file per user-facing feature
 - `operations/`: configuration, deployment (Cloudflare Tunnel, PM2), scripts, troubleshooting
 - `decisions/`: architecture decision records
