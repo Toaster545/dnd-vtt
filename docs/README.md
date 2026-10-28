@@ -67,9 +67,16 @@ Documented up to: 00cb49a91332c16055f404118cf1e48d95e372e4 (2026-10-26)
 | [operations/scripts.md](operations/scripts.md) | npm scripts (root, backend, frontend), `dnd_vtt_backend/scripts/`, avatar compiler, parity fixtures |
 | [operations/troubleshooting.md](operations/troubleshooting.md) | Startup, dev bypass, unbuilt frontend, CORS, migration backups, stale session and CI failures, each traced to code |
 
-### Mobile (existing docs, kept as written)
+### Changelog and decisions
 
-These predate the documenter layout and have not yet been checked against the code in this pass; they do not carry the `Last updated` header.
+| Doc | Purpose |
+|---|---|
+| [CHANGELOG.md](CHANGELOG.md) | What changed, newest first; starts with the documentation baseline |
+| [decisions/README.md](decisions/README.md) | Index of architecture decision records 0001–0008 (SQLite, migrations, single origin, no v022, JSON character blob, token model, PWA/Capacitor, standalone components) |
+
+### Mobile
+
+Kept from before the documenter layout; verified against the code at commit 00cb49a (corrections and `(unverified)` marks are in each file).
 
 | Doc | Purpose |
 |---|---|
@@ -78,14 +85,6 @@ These predate the documenter layout and have not yet been checked against the co
 | [mobile/pwa-installation.md](mobile/pwa-installation.md) | PWA installation and validation |
 | [mobile/testing.md](mobile/testing.md) | Mobile test plan and evidence (dated 2026-08-16) |
 | [mobile/implementation-audit.md](mobile/implementation-audit.md) | Mobile, PWA and Capacitor implementation audit (dated 2026-08-16) |
-
-## Not yet documented
-
-Outside the scope of the pass that produced this index; each will get its own doc and an entry in the table above.
-
-- `CHANGELOG.md` (no baseline entry yet)
-- `decisions/`: architecture decision records
-- Verification of the `mobile/` docs against the code
 
 ## Working documents
 

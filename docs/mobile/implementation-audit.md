@@ -1,6 +1,10 @@
 # Mobile, PWA, and Capacitor implementation audit
 
-Date: 2026-08-16
+Purpose: pre-implementation audit of the app taken on 2026-08-16, kept as a historical record.
+
+Last updated: 2026-10-28 (commit 00cb49a)
+
+Date: 2026-08-16. The body below is the original text, kept apart from this Date line (the original date, 2026-08-16, is retained here as historical). It describes the code before the mobile work and is **partly superseded**; see [Status at commit 00cb49a](#status-at-commit-00cb49a) for statements that are no longer true.
 
 ## Repository and toolchain
 
@@ -65,3 +69,23 @@ Date: 2026-08-16
 4. Add Angular PWA shell caching only, install/update/offline UX, local fonts, and icons.
 5. Gate Capacitor work on web/PWA acceptance; then add matching Capacitor 8 packages, Android/iOS projects, native lifecycle handling, secure native refresh storage, and explicit origins.
 6. Add authorization/unit/E2E/PWA/native-critical coverage, CI gates, developer documentation, and real-device release checks.
+
+## Status at commit 00cb49a
+
+Statements above that the code at commit 00cb49a contradicts (checked); everything not listed was not re-verified.
+
+| Original statement | Current state |
+|---|---|
+| "seven-day JWT", "no refresh/logout endpoint" | Access JWT `expiresIn: '15m'`; `POST /api/auth/refresh` and `POST /api/auth/logout` exist. |
+| "no authoritative current-session pointer" | `campaigns.current_session_id` added by migration `v021`. |
+| "no player bootstrap/current-context aggregate" | `GET /api/player/bootstrap` exists. |
+| "No manifest, Angular service worker, install/update UI, offline state, Capacitor configuration, or native projects" | `public/manifest.webmanifest`, `ngsw-config.json`, `capacitor.config.ts`, `dnd_vtt_frontend/android/` and `dnd_vtt_frontend/ios/` exist. |
+| "Selected native identity: app name `D&D VTT`" | `capacitor.config.ts` and the manifest use `NatOne`; the app ID is unchanged. |
+| "Raw uploaded maps are served by the public `/uploads` static mount" | `main.ts` answers `/uploads/maps` with 404 before the static mount. |
+| "CI currently runs backend unit tests, backend lint, and frontend lint. It does not run builds, frontend unit tests, browser E2E, PWA checks" | `ci.yml` also runs backend e2e and build, frontend format check, avatar tests, unit tests, build, PWA artifact check, and Playwright (`mobile-tests`). |
+| "No Playwright/Cypress browser suite exists" | `dnd_vtt_frontend/playwright.config.ts` and `e2e/*.spec.ts` exist. |
+| "Session `findOneForUser` verifies membership but does not enforce `visible_to_players`" | `sessions.service.ts` throws `ForbiddenException` when `!session.visible_to_players` for non-owners (unverified for the exact caller path). |
+| "Browser tokens ... stored in Local Storage" | Access token is held in memory; web refresh uses an HttpOnly cookie ([architecture.md](architecture.md#trust-boundaries)). (unverified: no leftover Local Storage use was searched.) |
+| Test counts (93 frontend, 156 backend) | Not re-run; (unverified). |
+
+Sources: `dnd_vtt_backend/src/auth/auth.module.ts`, `dnd_vtt_backend/src/auth/auth.controller.ts`, `dnd_vtt_backend/src/common/migrations/v021.ts`, `dnd_vtt_backend/src/player/player.controller.ts`, `dnd_vtt_backend/src/main.ts`, `dnd_vtt_backend/src/sessions/sessions.service.ts`, `dnd_vtt_frontend/capacitor.config.ts`, `dnd_vtt_frontend/public/manifest.webmanifest`, `dnd_vtt_frontend/ngsw-config.json`, `dnd_vtt_frontend/playwright.config.ts`, `.github/workflows/ci.yml`.
