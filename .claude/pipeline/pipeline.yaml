@@ -1,0 +1,109 @@
+# Pipeline configuration for /pipeline. Re-read at the start of every stage, so edits apply
+# immediately (even mid-run). Paths are relative to the repo root (~/apps/dnd).
+#
+# gate:    ask  = stop and show the stage result, continue only when the user approves
+#          auto = continue straight to the next stage
+# enabled: false = skip the stage entirely (mark it 'skipped' in state.json)
+# profiles: named overrides merged over `stages`/`git`; use `/pipeline --profile <name> <request>`
+# model:   passed to the subagent when it is spawned (sonnet | opus | haiku)
+# effort:  low | medium | high | xhigh  (omit to use the default)
+# extra:   free text appended to that stage's prompt; the quickest way to tune behaviour
+#          without editing an agent file
+
+run_dir: .ai-plans              # each run lives in <run_dir>/<slug>/ (spec.md, state.json, reports)
+
+git:
+  commit: per_task              # per_task | end | off   (never pushes, whatever this says)
+  branch: "pipeline/{slug}"     # created at start; set to "" to stay on the current branch
+  require_clean_tree: true      # refuse to start with uncommitted changes (local-coder needs this)
+
+stages:
+  ideation:                     # runs in the MAIN session so it can ask you questions
+    enabled: true
+    gate: ask
+    prompt: .claude/pipeline/ideation.md
+    max_question_rounds: 3
+    questions_per_round: 4
+    explore_code: true          # cheap grep/read of the code before asking, to avoid obvious questions
+    extra: ""
+
+  split:
+    enabled: true
+    gate: ask
+    agent: task-splitter
+    model: sonnet
+    effort: medium
+    output_dir: cline-tasks     # task files go to <output_dir>/<slug>/
+    extra: ""
+
+  execute:
+    enabled: true
+    gate: auto                  # after ALL tasks pass review
+    coder:
+      agent: local-coder        # runs the task on the local Qwen model and verifies Done-when
+      model: sonnet             # model of the *dispatcher* agent (the Qwen model is picked by task Mode)
+      claude_for_keep_tasks: true   # tasks marked "Keep for Claude" are implemented by `fixer` instead
+    review:
+      agent: reviewer           # checks the result against the spec AND the task
+      model: sonnet
+      effort: medium
+      extra: ""
+    fix:
+      agent: fixer
+      model: sonnet
+      effort: medium
+      max_attempts: 2           # fix -> re-review cycles per task before stopping for the user
+      on_exhausted: stop        # stop | skip_task
+    on_local_fail: fix          # fix = fixer takes over from the local model's partial work | rerun | stop
+
+  tests:
+    enabled: true
+    gate: auto
+    agent: test-writer
+    model: sonnet
+    effort: medium
+    max_attempts: 2
+    kinds: [unit, integration]  # integration = backend e2e (supertest) and/or multi-service specs
+    extra: ""
+
+  docs:
+    enabled: true
+    gate: ask
+    agent: documenter
+    model: sonnet
+    guidelines: docs/GUIDELINES.md   # your documentation rules; passed to the documenter if the file exists
+    extra: ""
+
+# Commands the pipeline uses to verify work. Run from the repo root.
+checks:
+  backend_build: "cd dnd_vtt_backend && npm run build"
+  backend_unit:  "cd dnd_vtt_backend && npm test -- --silent"
+  backend_e2e:   "cd dnd_vtt_backend && npm run test:e2e"
+  backend_lint:  "cd dnd_vtt_backend && npm run lint:check"
+  frontend_unit: "cd dnd_vtt_frontend && npx ng test --watch=false"
+  frontend_format: "cd dnd_vtt_frontend && npm run format:check"
+
+# Named overrides, deep-merged over the settings above (lists are replaced, not merged).
+profiles:
+  docs-only:                     # /pipeline --profile docs-only "document X"
+    git:
+      commit: per_task           # one commit per docs area
+    stages:
+      split:   { enabled: false }
+      execute: { enabled: false }
+      tests:   { enabled: false }
+      docs:
+        gate: ask
+        mode: areas              # `areas` = run the documenter once per entry below, review each
+        marker_rule: "Do not change the Documented up to line of docs/README.md unless you documented newer CODE commits; its date is the date of that commit, not today."
+        review: { agent: reviewer, model: sonnet, effort: medium }
+        fix:    { agent: fixer, model: sonnet, max_attempts: 2 }
+        check_script: .claude/pipeline/check-docs.py   # run by the orchestrator after every area (args: base_sha)
+        areas:
+          - { id: overview,  prompt: "docs/README.md index and docs/overview.md (stack, layout, commands)." }
+          - { id: backend,   prompt: "docs/architecture/: backend, auth, storage, realtime, content. Cover every module under dnd_vtt_backend/src." }
+          - { id: data-api,  prompt: "docs/data-model.md and docs/api/ (one file per backend module plus README index); every route and every table." }
+          - { id: frontend,  prompt: "docs/architecture/: frontend, frontend-core, frontend-ui. Every folder under dnd_vtt_frontend/src/app." }
+          - { id: features,  prompt: "docs/features/ one file per user-facing feature plus README index; cover every folder under src/app/features." }
+          - { id: operations, prompt: "docs/operations/: configuration (env var NAMES only), deployment, scripts, troubleshooting." }
+          - { id: finish,    prompt: "Verify existing docs/mobile/*, add docs/decisions/ ADRs only for decisions evidenced in code or git history (cite commits), docs/CHANGELOG.md baseline entry, final index tidy." }

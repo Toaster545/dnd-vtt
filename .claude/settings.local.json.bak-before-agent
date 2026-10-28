@@ -1,0 +1,37 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm --version)",
+      "Bash(npx --version)",
+      "Read(//usr/local/bin/**)",
+      "Read(//home/mathieu/.nvm/**)",
+      "Read(//usr/bin/**)",
+      "Read(//opt/**)",
+      "Bash(command -v nvm)",
+      "Bash(git -C /home/mathieu/apps/dnd rm --cached ../.claude/settings.local.json)",
+      "Bash(git -C /home/mathieu/apps/dnd status --short)",
+      "Bash(git remote *)",
+      "Bash(git add *)",
+      "Bash(git -C /home/mathieu/apps/dnd branch -a)",
+      "Bash(git -C /home/mathieu/apps/dnd remote -v)",
+      "Bash(git -C /home/mathieu/apps/dnd log --oneline -3)",
+      "Bash(git branch *)",
+      "Bash(git push *)",
+      "Bash(git pull *)",
+      "Bash(git merge *)",
+      "Bash(git checkout *)",
+      "Bash(git commit *)",
+      "Bash(git mv *)",
+      "Bash(git rm *)",
+      "Bash(python3 -c \"import json; json.load\\(open\\('/home/mathieu/apps/dnd/dnd_vtt_backend/content/classes/fighter.json'\\)\\)\")",
+      "WebSearch",
+      "Bash(systemctl list-units *)",
+      "Bash(systemctl --user list-units --type=service --all)",
+      "Read(//etc/systemd/**)",
+      "Read(//home/mathieu/.config/**)",
+      "Bash(gh auth *)",
+      "Bash(git fetch *)",
+      "Bash(python3 -m json.tool)"
+    ]
+  }
+}
