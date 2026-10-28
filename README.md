@@ -104,7 +104,7 @@ A single Cloudflare Tunnel forwards `yourdomain.com → localhost:3000`.
 
 ### Prerequisites
 
-- Node.js 18+
+- Node.js 22+
 
 ### 1. Install dependencies
 
@@ -127,6 +127,8 @@ JWT_SECRET=some-long-random-string
 CORS_ORIGINS=http://localhost:4200,https://yourdomain.com
 DB_PATH=./data/dnd.db
 ```
+
+Replace `some-long-random-string` with a real random secret: that placeholder is rejected outside dev mode and the backend refuses to start.
 
 The SQLite database and schema are created automatically on first run at `data/dnd.db`.
 

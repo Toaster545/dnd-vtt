@@ -4,13 +4,15 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project
 
+Detailed documentation index: `docs/README.md`.
+
 A self-hosted D&D 5e Virtual Tabletop. Angular 22 frontend + NestJS backend, SQLite (`@libsql/client`) storage,
 Konva.js battle-map canvas, socket.io for live token sync. Designed to run on one machine and be exposed via a
 Cloudflare Tunnel — no cloud services, no separate frontend host.
 
 ## Commands
 
-Run from the repo root (`dnd_vtt/`), which just shells out to the two subprojects:
+Run from the repo root (`dnd/`), which just shells out to the two subprojects:
 
 ```bash
 npm run dev          # runs backend (start:dev) and frontend (watch) concurrently
@@ -26,7 +28,7 @@ npm run start         # nest start, no dev bypass (not production mode)
 npm run start:prod    # NODE_ENV=production node dist/main (what root `npm start` runs)
 npm run build         # nest build -> dist/
 npm run lint          # eslint --fix (mutates files)
-npm run lint:check    # eslint without --fix (what CI runs)
+npm run lint:check    # eslint without --fix (CI runs `npx eslint` directly, not this script)
 npm test              # jest unit tests (*.spec.ts, colocated in src/)
 npm test -- characters/characters.service.spec  # run a single test file
 npm run test:e2e      # jest e2e tests, config in test/jest-e2e.json
@@ -56,7 +58,7 @@ port 3000 instead of rebuilding on every change.
 then reaches into the raw Express instance to register static file serving in a specific order so that
 Nest's routing doesn't intercept SPA fallback:
 
-1. `/uploads/**` — static-served uploaded map images
+1. `/uploads/**` — static-served uploads (`/uploads/maps` is blocked with a 404)
 2. static assets from `dnd_vtt_frontend/dist/dnd-app/browser/`
 3. everything else that isn't `/api` or `/socket.io` falls through to `index.html` (SPA fallback)
 
@@ -108,8 +110,9 @@ sourced from the Feats content and filtered to a `category` (e.g. a class's Figh
 feature) — see `fighter.json`/`paladin.json`/`ranger.json` for the pattern.
 
 **Real-time tokens.** `MapsModule` exposes both REST endpoints (map/token CRUD, admin-only for mutation)
-and a socket.io gateway (`tokens.gateway.ts`) that broadcasts token position changes to all connected
-clients on the same port as the REST API (no separate WS server/port).
+and a socket.io gateway (`tokens.gateway.ts`) that broadcasts token, fog, lighting and measure/level events to connected
+clients on the same port as the REST API (no separate WS server/port). There are three gateways in total
+(`TokensGateway`, `EncounterPresenceGateway`, `CompanionsGateway`); see `docs/architecture/realtime.md`.
 
 **Modules:** `auth`, `characters`, `content`, `maps` (+ `tokens.gateway`), `sessions`, `encounters`,
 `campaigns`, `wiki`, `companions`, `users`, `player`, `backgrounds` — one Nest module each, following the standard controller/service/module triplet.
@@ -183,13 +186,13 @@ dnd_vtt_frontend/
       campaigns/          # campaign list (CampaignsComponent decides DM vs player link)
       dm/dm-campaigns/     # dm-campaign-hub, dm-campaign-maps, dm-campaign-session, dm-encounter-play
       player/player-campaigns/  # player-campaign-hub, player-campaign-session
-      characters/          # character-play-sheet, character-wizard/steps/*, character-preview
+      characters/          # character-play-sheet, character-wizard/steps/*
       battle-map/            # Konva canvas + toolbar/add-token-panel/turn-order-panel
       create-content/          # monsters (monster-form)
     shared/
       layout/            # main-layout, app-header, page-header
       components/          # party-list, description-dialog, ...
-      directives/, pipes/
+      directives/
     app.routes.ts
 ```
 
