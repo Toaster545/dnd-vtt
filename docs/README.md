@@ -14,6 +14,9 @@ Documented up to: 00cb49a91332c16055f404118cf1e48d95e372e4 (2026-10-26)
 | [architecture/storage.md](architecture/storage.md) | `DatabaseService` (SQLite), migrations and the no-v022 rule, uploads, content JSON loading |
 | [architecture/realtime.md](architecture/realtime.md) | socket.io gateways: rooms, client and server events, authentication |
 | [architecture/content.md](architecture/content.md) | Static game content (layout, loading, caching), content sources, homebrew, content endpoints |
+| [architecture/frontend.md](architecture/frontend.md) | Angular bootstrapping, lazy routes and the `home` shell, guards, HTTP interceptor, state approach, folder map of `src/app/` |
+| [architecture/frontend-core.md](architecture/frontend-core.md) | Every `core/` service, model, util and avatar file with a one-line purpose |
+| [architecture/frontend-ui.md](architecture/frontend-ui.md) | `shared/` layout, components and directives; SCSS/Tailwind/Material styling; PWA service worker; Capacitor pointers |
 
 ### Data model
 
@@ -56,8 +59,7 @@ These predate the documenter layout and have not yet been checked against the co
 Outside the scope of the pass that produced this index; each will get its own doc and an entry in the table above.
 
 - `CHANGELOG.md` (no baseline entry yet)
-- Frontend architecture: routing, `core/`, `shared/`, features, styling
-- `features/`: one file per user-facing feature
+- `docs/features/`: one file per user-facing feature. Until then the frontend feature folders under `src/app/features/` are only listed (routes and folder map) in [architecture/frontend.md](architecture/frontend.md#folder-map-of-srcapp), not described
 - `operations/`: configuration, deployment (Cloudflare Tunnel, PM2), scripts, troubleshooting
 - `decisions/`: architecture decision records
 - Verification of the `mobile/` docs against the code
