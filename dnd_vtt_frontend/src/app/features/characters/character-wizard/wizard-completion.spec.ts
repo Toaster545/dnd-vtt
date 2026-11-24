@@ -91,7 +91,10 @@ describe('character wizard completion indicators', () => {
   it('checks every background grant and all six ability assignments', () => {
     const background = {
       grants: [
-        { type: 'ability_choice', key: 'abilities', name: 'Abilities', points: 3 },
+        {
+          type: 'ability_choice', key: 'abilities', name: 'Abilities', points: 3,
+          abilities: ['strength', 'constitution', 'wisdom'],
+        },
         { type: 'choice', key: 'tool', name: 'Tool', choose: 1, options: [] },
       ],
     } as unknown as DndBackground;
@@ -103,6 +106,22 @@ describe('character wizard completion indicators', () => {
       background,
       traits: { abilities: ['strength', 'strength', 'constitution'], tool: ['Dice Set'] },
     })).toBe(true);
+    expect(isBackgroundSelectionComplete({
+      background,
+      traits: {
+        abilities: ['dexterity', 'dexterity', 'wisdom'],
+        background_ability_options: ['dexterity', 'intelligence', 'wisdom'],
+        tool: ['Dice Set'],
+      },
+    })).toBe(true);
+    expect(isBackgroundSelectionComplete({
+      background,
+      traits: {
+        abilities: ['dexterity', 'dexterity', 'wisdom'],
+        background_ability_options: ['dexterity', 'wisdom'],
+        tool: ['Dice Set'],
+      },
+    })).toBe(false);
 
     expect(areAbilityAssignmentsComplete({
       strength: 15, dexterity: 14, constitution: 13,

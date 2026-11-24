@@ -1,6 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { describe, expect, it } from 'vitest';
 import { DndBackground, DndFeat } from '../../../../../core/services/content.service';
+import { BACKGROUND_CUSTOM_NAME_KEY } from '../../../../../core/utils/background-name';
 import { BackgroundStepComponent } from './background-step';
 
 const merchant = {
@@ -135,5 +136,24 @@ describe('BackgroundStepComponent', () => {
     expect(fixture.componentInstance.draftTraits()['magic_initiate_list']).toEqual(['Wizard']);
     expect(fixture.componentInstance.originFeatChoiceGrants(background)[0].options.map(option => option.name))
       .toEqual(['Wizard']);
+  });
+
+  it('stores a custom display name while retaining the selected base background', async () => {
+    await TestBed.configureTestingModule({ imports: [BackgroundStepComponent] }).compileComponents();
+    const fixture = TestBed.createComponent(BackgroundStepComponent);
+    fixture.componentRef.setInput('backgrounds', [merchant]);
+    fixture.componentRef.setInput('baseAbilityScores', {
+      strength: 10, dexterity: 10, constitution: 10,
+      intelligence: 10, wisdom: 10, charisma: 10,
+    });
+    fixture.componentInstance.openFromList(merchant);
+
+    fixture.componentInstance.startEditingName(merchant);
+    fixture.componentInstance.updateNameDraft('Traveling Trader');
+    fixture.componentInstance.saveCustomName(merchant);
+
+    expect(fixture.componentInstance.browsingBackground()).toBe(merchant);
+    expect(fixture.componentInstance.draftTraits()[BACKGROUND_CUSTOM_NAME_KEY]).toEqual(['Traveling Trader']);
+    expect(fixture.componentInstance.displayName(merchant)).toBe('Traveling Trader');
   });
 });

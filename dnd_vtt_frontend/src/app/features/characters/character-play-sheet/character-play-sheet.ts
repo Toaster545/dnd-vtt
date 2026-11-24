@@ -30,6 +30,7 @@ import { AvatarCreatorDialogComponent, AvatarCreatorResult } from '../../../shar
 import { equippedItems, attunementActive, reachableGrants, resolveCharacterFeatPicks } from '../../../core/utils/character-effects';
 import { characterContentEnabled } from '../../../core/utils/content-sources';
 import { resolveBackgroundOriginFeat } from '../../../core/utils/background-origin-feat';
+import { backgroundDisplayName, hasCustomBackgroundName } from '../../../core/utils/background-name';
 import {
   describeSpellUpcast, isSpellAttackAction, resolveSpellAttackDamage,
   resolveSpellcasting, ResolvedSpellOrigin, ResolvedSpellSlotPool, ResolvedSpellCategory,
@@ -312,6 +313,15 @@ export class CharacterPlaySheetComponent {
   insufficientFundsDenom = signal<keyof Currency | null>(null);
 
   localChar       = signal<Character | null>(null);
+  backgroundHeading = computed(() => {
+    const char = this.localChar();
+    if (!char?.background) return null;
+    return {
+      name: backgroundDisplayName(char.background, char.background_choices),
+      baseName: char.background,
+      customized: hasCustomBackgroundName(char.background, char.background_choices),
+    };
+  });
   raceData        = signal<DndRace | null>(null);
   bgData          = signal<DndBackground | null>(null);
   itemsAll        = signal<DndItem[]>([]);

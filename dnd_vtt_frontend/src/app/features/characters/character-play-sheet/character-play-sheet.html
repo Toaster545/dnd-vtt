@@ -66,7 +66,9 @@
               Level {{ char.level }} {{ char.race }}
               @if (char.subrace) { ({{ char.subrace }}) }
               &nbsp;·&nbsp; {{ char.class }}@if (char.subclass) { — {{ char.subclass }} }
-              @if (char.background) { &nbsp;·&nbsp; {{ char.background }} }
+              @if (backgroundHeading(); as background) {
+                &nbsp;·&nbsp; {{ background.name }}@if (background.customized) { (based on {{ background.baseName }}) }
+              }
             </p>
           }
         </div>

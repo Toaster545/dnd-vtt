@@ -2,6 +2,7 @@ import { ABILITIES, Character, SKILLS } from '../models/character.model';
 import { DndMonster } from '../services/content.service';
 import { CharacterAction } from '../services/character-actions.service';
 import { ComputedStats, WeaponAttack } from '../services/character-stats.service';
+import { backgroundDisplayName, hasCustomBackgroundName } from './background-name';
 
 // Exports monsters and characters as an Obsidian "Fantasy Statblocks" plugin block — a
 // ```statblock fenced code block whose body is YAML in the plugin's 5e schema (name, ac, hp,
@@ -250,13 +251,18 @@ export function characterStatblock(input: CharacterStatblockInput): string {
         ]
       : undefined;
 
+  const backgroundName = backgroundDisplayName(char.background, char.background_choices);
+  const backgroundLabel = hasCustomBackgroundName(char.background, char.background_choices)
+    ? `${backgroundName} (based on ${char.background})`
+    : backgroundName;
+
   return fence({
     name: char.name,
     size: input.size || 'Medium',
     type: 'humanoid',
     // The plugin renders subtype in parentheses after the type — the closest slot it has for
     // "who this is" on a PC, since `cr` would print as a Challenge rating.
-    subtype: [raceLabel, classLabel, char.background].filter(Boolean).join(', '),
+    subtype: [raceLabel, classLabel, backgroundLabel].filter(Boolean).join(', '),
     alignment: char.alignment,
     ac: stats.computed_ac,
     hp: char.max_hp,

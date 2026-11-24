@@ -136,7 +136,9 @@ export interface Character {
   level: number;         // total character level
   classes?: { name: string; level: number; subclass?: string; choices?: Record<string, string[]>; skills?: string[] }[]; // multiclass
   background: string;
-  background_choices?: Record<string, string[]>; // background trait picks, incl. ability score increase
+  // Background trait picks, including ability increases and the reserved character-local
+  // `background_ability_options` and `background_custom_name` customization fields.
+  background_choices?: Record<string, string[]>;
   languages?: string[]; // Common plus the character's selected/feature-granted languages
   alignment: string;
 
