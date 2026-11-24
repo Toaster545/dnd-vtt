@@ -31,7 +31,13 @@ export class AuthService {
       this.tokens.setAccessToken('dev');
       // Set a stub admin profile immediately so guards never block,
       // then replace it with real data from the backend in the background.
-      this._profile.set({ id: 'dev', email: '', username: 'Dev DM', role: 'admin', created_at: '' });
+      this._profile.set({
+        id: 'dev',
+        email: '',
+        username: 'Dev DM',
+        role: 'admin',
+        created_at: '',
+      });
       this.ready = Promise.resolve();
       this.loadProfile();
     } else {
@@ -40,9 +46,7 @@ export class AuthService {
   }
 
   async signUp(email: string, password: string, username: string) {
-    await firstValueFrom(
-      this.http.post(`${API}/auth/register`, { email, password, username })
-    );
+    await firstValueFrom(this.http.post(`${API}/auth/register`, { email, password, username }));
   }
 
   async signIn(email: string, password: string) {
@@ -51,7 +55,7 @@ export class AuthService {
         email,
         password,
         client_type: this.tokens.isNative ? 'native' : 'web',
-      })
+      }),
     );
     await this.tokens.acceptSession(res);
     this._profile.set(res.profile);
@@ -75,9 +79,7 @@ export class AuthService {
 
   private async loadProfile(): Promise<void> {
     try {
-      const profile = await firstValueFrom(
-        this.http.get<UserProfile>(`${API}/auth/me`)
-      );
+      const profile = await firstValueFrom(this.http.get<UserProfile>(`${API}/auth/me`));
       this._profile.set(profile);
     } catch {
       await this.tokens.clear();

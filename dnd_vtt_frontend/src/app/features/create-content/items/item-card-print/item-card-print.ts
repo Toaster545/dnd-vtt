@@ -1,4 +1,13 @@
-import { Component, DestroyRef, computed, effect, inject, input, output, signal } from '@angular/core';
+import {
+  Component,
+  DestroyRef,
+  computed,
+  effect,
+  inject,
+  input,
+  output,
+  signal,
+} from '@angular/core';
 import { DOCUMENT, NgTemplateOutlet } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
@@ -57,7 +66,7 @@ function chunk<T>(items: T[], size: number): T[][] {
 
 // Both edges of every card, since with a gap between cards each one needs its own pair of cuts.
 function cardEdges(count: number, size: number): number[] {
-  return Array.from({ length: count }, (_, i) => i * (size + CARD_GAP_MM)).flatMap(start => [
+  return Array.from({ length: count }, (_, i) => i * (size + CARD_GAP_MM)).flatMap((start) => [
     start,
     start + size,
   ]);
@@ -73,19 +82,19 @@ export class ItemCardPrintComponent {
   readonly items = input.required<DndItem[]>();
   readonly closed = output<void>();
 
-  colorMode   = signal<ColorMode>('rarity');
+  colorMode = signal<ColorMode>('rarity');
   customColor = signal('#8b3fd6');
   borderStyle = signal<BorderStyle>('ornate');
-  font        = signal<CardFont>('fantasy');
-  paperSize   = signal<PaperSize>('letter');
-  fontScale   = signal(1.15);
+  font = signal<CardFont>('fantasy');
+  paperSize = signal<PaperSize>('letter');
+  fontScale = signal(1.15);
   readonly fontScales = FONT_SCALES;
 
   showDescription = signal(true);
-  showCostWeight  = signal(true);
-  showExtras      = signal(true);
-  showImage       = signal(true);
-  printBacks      = signal(false);
+  showCostWeight = signal(true);
+  showExtras = signal(true);
+  showImage = signal(true);
+  printBacks = signal(false);
 
   pages = computed(() => chunk(this.items(), CARDS_PER_PAGE));
   totalPrintedPages = computed(() => this.pages().length * (this.printBacks() ? 2 : 1));
@@ -121,7 +130,7 @@ export class ItemCardPrintComponent {
   // each back directly behind its matching front card instead of mirrored across the row. A short
   // final row is padded with empty slots first, or its backs would land behind the wrong column.
   backCards(page: DndItem[]): (DndItem | null)[] {
-    return chunk(page, CARD_COLUMNS).flatMap(row => {
+    return chunk(page, CARD_COLUMNS).flatMap((row) => {
       const padded: (DndItem | null)[] = [...row];
       while (padded.length < CARD_COLUMNS) padded.push(null);
       return padded.reverse();
@@ -130,9 +139,12 @@ export class ItemCardPrintComponent {
 
   fontFamily(): string {
     switch (this.font()) {
-      case 'sans': return 'system-ui, sans-serif';
-      case 'fantasy': return '"Cinzel", serif';
-      default: return 'Georgia, "Times New Roman", serif';
+      case 'sans':
+        return 'system-ui, sans-serif';
+      case 'fantasy':
+        return '"Cinzel", serif';
+      default:
+        return 'Georgia, "Times New Roman", serif';
     }
   }
 
@@ -151,6 +163,10 @@ export class ItemCardPrintComponent {
       : 'Requires attunement';
   }
 
-  print() { window.print(); }
-  close() { this.closed.emit(); }
+  print() {
+    window.print();
+  }
+  close() {
+    this.closed.emit();
+  }
 }

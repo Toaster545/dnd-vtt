@@ -23,7 +23,9 @@
   </div>
   <div class="text-center flex-1">
     <div class="text-[10px] text-slate uppercase tracking-widest">HP</div>
-    <div class="font-brand text-xl text-parchment">{{ character().current_hp }} / {{ character().max_hp }}</div>
+    <div class="font-brand text-xl text-parchment">
+      {{ character().current_hp }} / {{ character().max_hp }}
+    </div>
   </div>
 </div>
 
@@ -43,6 +45,4 @@
   />
 </div>
 
-<button class="btn-primary w-full text-sm" (click)="openSheet.emit()">
-  Open Character Sheet
-</button>
+<button class="btn-primary w-full text-sm" (click)="openSheet.emit()">Open Character Sheet</button>

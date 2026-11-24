@@ -24,6 +24,10 @@ jobs:
         working-directory: dnd_vtt_backend
         run: npm test
 
+      - name: Run backend e2e tests
+        working-directory: dnd_vtt_backend
+        run: npm run test:e2e
+
       - name: Build backend
         working-directory: dnd_vtt_backend
         run: npm run build
@@ -63,6 +67,19 @@ jobs:
       - name: Install frontend dependencies
         working-directory: dnd_vtt_frontend
         run: npm ci
+
+      - name: Check frontend formatting
+        working-directory: dnd_vtt_frontend
+        run: npm run format:check
+
+      - name: Avatar compiler tests
+        working-directory: dnd_vtt_frontend
+        run: npm run avatars:test
+
+      # The compiled avatar manifests are committed; fail if packs changed without a rebuild.
+      - name: Verify generated avatar files are up to date
+        working-directory: dnd_vtt_frontend
+        run: npm run avatars:build && git diff --exit-code -- '*.generated.ts'
 
       - name: Lint frontend
         working-directory: dnd_vtt_frontend

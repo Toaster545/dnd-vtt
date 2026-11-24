@@ -1,8 +1,16 @@
 import { Component, input, output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import {
-  Ability, ABILITIES, ABILITY_SHORT, STANDARD_ARRAY, abilityModifier,
-  ScoreMethod, POINT_BUY_BUDGET, POINT_BUY_MIN, POINT_BUY_MAX, POINT_BUY_COST,
+  Ability,
+  ABILITIES,
+  ABILITY_SHORT,
+  STANDARD_ARRAY,
+  abilityModifier,
+  ScoreMethod,
+  POINT_BUY_BUDGET,
+  POINT_BUY_MIN,
+  POINT_BUY_MAX,
+  POINT_BUY_COST,
 } from '../../../../../core/models/character.model';
 
 @Component({
@@ -11,19 +19,19 @@ import {
   templateUrl: './abilities-step.html',
 })
 export class AbilitiesStepComponent {
-  readonly assignments        = input.required<Record<Ability, number | null>>();
-  readonly bonusScores        = input.required<Record<Ability, number>>();
-  readonly finalScores        = input.required<Record<Ability, number>>();
-  readonly method              = input.required<ScoreMethod>();
-  readonly assignmentChanged  = output<{ ability: Ability; value: number | null }>();
-  readonly methodChanged      = output<ScoreMethod>();
+  readonly assignments = input.required<Record<Ability, number | null>>();
+  readonly bonusScores = input.required<Record<Ability, number>>();
+  readonly finalScores = input.required<Record<Ability, number>>();
+  readonly method = input.required<ScoreMethod>();
+  readonly assignmentChanged = output<{ ability: Ability; value: number | null }>();
+  readonly methodChanged = output<ScoreMethod>();
 
-  readonly abilities      = ABILITIES;
-  readonly abilityShort   = ABILITY_SHORT;
-  readonly standardArray  = STANDARD_ARRAY;
+  readonly abilities = ABILITIES;
+  readonly abilityShort = ABILITY_SHORT;
+  readonly standardArray = STANDARD_ARRAY;
   readonly pointBuyBudget = POINT_BUY_BUDGET;
-  readonly pointBuyMin    = POINT_BUY_MIN;
-  readonly pointBuyMax    = POINT_BUY_MAX;
+  readonly pointBuyMin = POINT_BUY_MIN;
+  readonly pointBuyMax = POINT_BUY_MAX;
 
   readonly methods: { value: ScoreMethod; label: string }[] = [
     { value: 'standard', label: 'Standard Array' },
@@ -41,11 +49,10 @@ export class AbilitiesStepComponent {
 
   optionsFor(ab: Ability): number[] {
     const current = this.assignments()[ab];
-    const usedElsewhere = ABILITIES
-      .filter(a => a !== ab)
-      .map(a => this.assignments()[a])
+    const usedElsewhere = ABILITIES.filter((a) => a !== ab)
+      .map((a) => this.assignments()[a])
       .filter((v): v is number => v !== null);
-    return STANDARD_ARRAY.filter(v => v === current || !usedElsewhere.includes(v));
+    return STANDARD_ARRAY.filter((v) => v === current || !usedElsewhere.includes(v));
   }
 
   isValueAssigned(v: number): boolean {

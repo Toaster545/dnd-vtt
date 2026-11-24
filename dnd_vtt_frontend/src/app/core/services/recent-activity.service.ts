@@ -44,7 +44,7 @@ export class RecentActivityService {
     try {
       const value = JSON.parse(localStorage.getItem(key) ?? '{}') as unknown;
       return value && typeof value === 'object' && !Array.isArray(value)
-        ? value as Record<string, number>
+        ? (value as Record<string, number>)
         : {};
     } catch {
       return {};

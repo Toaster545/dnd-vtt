@@ -1,0 +1,22 @@
+{
+  "index": "hat-of-disguise",
+  "name": "Hat of Disguise",
+  "type": "magic",
+  "category": "Wondrous Item",
+  "damage": null,
+  "damage_type": null,
+  "properties": [],
+  "weight": 0,
+  "cost": "Magic item",
+  "image_url": "/icons/magic-hat.svg",
+  "description": "While wearing this hat, you can use an action to cast Disguise Self from it at will. The spell ends if the hat is removed.",
+  "rarity": "uncommon",
+  "requires_attunement": true,
+  "source": {
+    "code": "DMG",
+    "book": "Dungeon Master’s Guide",
+    "edition": 2014,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

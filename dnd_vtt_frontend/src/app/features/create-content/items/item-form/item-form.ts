@@ -1,22 +1,45 @@
 import { Component, inject, signal, computed, output, input, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { HttpErrorResponse } from '@angular/common/http';
 import { MatIconModule } from '@angular/material/icon';
 import { ItemService } from '../../../../core/services/item.service';
-import { ActionActivation, DndItem, IconLibraryEntry } from '../../../../core/services/content.service';
+import {
+  ActionActivation,
+  DndItem,
+  IconLibraryEntry,
+} from '../../../../core/services/content.service';
 import { IconPickerDialogComponent } from '../icon-picker-dialog/icon-picker-dialog';
+import { getErrorMessage } from '../../../../core/utils/error-message';
 
 const TYPES = ['weapon', 'armor', 'gear', 'consumable'];
 const WEAPON_CATEGORIES = ['Simple Melee', 'Simple Ranged', 'Martial Melee', 'Martial Ranged'];
 const ARMOR_CATEGORIES = ['Light Armor', 'Medium Armor', 'Heavy Armor', 'Shield'];
 const GEAR_CATEGORIES = [
-  'Adventuring Gear', 'Tool', 'Wondrous Item', 'Ring', 'Rod', 'Staff', 'Wand', 'Ammunition', 'Trade Good',
+  'Adventuring Gear',
+  'Tool',
+  'Wondrous Item',
+  'Ring',
+  'Rod',
+  'Staff',
+  'Wand',
+  'Ammunition',
+  'Trade Good',
 ];
 const CONSUMABLE_CATEGORIES = ['Potion', 'Scroll', 'Poison', 'Food & Drink'];
 const CURRENCIES = ['cp', 'sp', 'ep', 'gp', 'pp'] as const;
 const DAMAGE_TYPES = [
-  'acid', 'bludgeoning', 'cold', 'fire', 'force', 'lightning', 'necrotic',
-  'piercing', 'poison', 'psychic', 'radiant', 'slashing', 'thunder',
+  'acid',
+  'bludgeoning',
+  'cold',
+  'fire',
+  'force',
+  'lightning',
+  'necrotic',
+  'piercing',
+  'poison',
+  'psychic',
+  'radiant',
+  'slashing',
+  'thunder',
 ];
 const DICE_COUNTS = [1, 2, 3, 4];
 const DIE_FACES = ['4', '6', '8', '10', '12', '20'];
@@ -24,14 +47,15 @@ const MASTERY_PROPERTIES = ['Cleave', 'Graze', 'Nick', 'Push', 'Sap', 'Slow', 'T
 // Weapon mastery properties are a fixed 2024-rules vocabulary with fixed rules text — the
 // description is derived from the property, never freeform per-item.
 const MASTERY_DESCRIPTIONS: Record<string, string> = {
-  Cleave: "Hit lets you make a free attack against another creature within 5 ft. of the original target.",
+  Cleave:
+    'Hit lets you make a free attack against another creature within 5 ft. of the original target.',
   Graze: 'On a miss, you still deal damage to the target equal to your relevant ability modifier.',
   Nick: "The extra attack granted by this weapon's Light property doesn't require a bonus action.",
   Push: 'Hit pushes the target up to 10 ft. away from you.',
-  Sap: "Hit gives the target disadvantage on its next attack roll before the start of your next turn.",
+  Sap: 'Hit gives the target disadvantage on its next attack roll before the start of your next turn.',
   Slow: "Hit reduces the target's speed by 10 ft. until the start of your next turn.",
   Topple: 'Hit can knock the target prone (target makes a Constitution save).',
-  Vex: "Hit grants advantage on your next attack roll against that target before the end of your next turn.",
+  Vex: 'Hit grants advantage on your next attack roll against that target before the end of your next turn.',
 };
 const RARITIES = ['common', 'uncommon', 'rare', 'very rare', 'legendary', 'artifact'];
 const CHARGE_RECOVERIES = ['dawn', 'short_rest', 'long_rest'] as const;
@@ -45,7 +69,13 @@ interface ItemActionEntry {
 }
 
 function slugify(name: string): string {
-  return name.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || 'action';
+  return (
+    name
+      .trim()
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '') || 'action'
+  );
 }
 
 interface PropertyDef {
@@ -70,7 +100,10 @@ const WEAPON_PROPERTIES: PropertyDef[] = [
 ];
 
 function tagsFrom(raw: string): string[] {
-  return raw.split(',').map(s => s.trim()).filter(Boolean);
+  return raw
+    .split(',')
+    .map((s) => s.trim())
+    .filter(Boolean);
 }
 
 @Component({
@@ -81,12 +114,12 @@ function tagsFrom(raw: string): string[] {
 export class ItemFormComponent implements OnInit {
   private itemService = inject(ItemService);
 
-  readonly item      = input<DndItem | null>(null);
+  readonly item = input<DndItem | null>(null);
   // Set instead of `item` to seed the form from an existing item (official or homebrew) without
   // editing it — save() still creates a brand-new custom entry.
   readonly duplicateFrom = input<DndItem | null>(null);
-  readonly saved      = output<DndItem>();
-  readonly cancelled  = output<void>();
+  readonly saved = output<DndItem>();
+  readonly cancelled = output<void>();
 
   readonly isEdit = computed(() => this.item() != null);
   readonly types = TYPES;
@@ -106,53 +139,61 @@ export class ItemFormComponent implements OnInit {
   private originalIndex: string | null = null;
 
   saving = signal(false);
-  error  = signal<string | null>(null);
+  error = signal<string | null>(null);
 
-  name       = signal('');
-  type       = signal('weapon');
-  category   = signal('');
+  name = signal('');
+  type = signal('weapon');
+  category = signal('');
   categoryIsCustom = signal(false);
-  diceCount  = signal(1);
+  diceCount = signal(1);
   // 'flat' means the weapon deals a fixed amount of damage with no die (e.g. a Blowgun's "1"),
   // stored via diceCount alone; otherwise this holds the die's face count ('4', '6', ...).
-  dieFace    = signal('6');
+  dieFace = signal('6');
   damageType = signal('');
   armorClass = signal('');
   selectedProperties = signal<Set<string>>(new Set());
-  propertyParams      = signal<Record<string, string>>({});
+  propertyParams = signal<Record<string, string>>({});
   // Non-weapon items (armor, gear, consumables) describe their properties as free-form tags
   // (e.g. "Stealth Disadvantage", "Restores 2d4+2 HP") rather than the closed weapon vocabulary.
   looseProperties = signal('');
-  weight     = signal(0);
+  weight = signal(0);
   costAmount = signal(0);
-  costUnit   = signal<typeof CURRENCIES[number] | 'custom'>('gp');
+  costUnit = signal<(typeof CURRENCIES)[number] | 'custom'>('gp');
   costCustom = signal('');
   description = signal('');
 
-  hasMastery       = signal(false);
-  masteryProperty    = signal('');
+  hasMastery = signal(false);
+  masteryProperty = signal('');
   readonly masteryDescription = computed(() => MASTERY_DESCRIPTIONS[this.masteryProperty()] ?? '');
 
-  imageUrl       = signal<string | null>(null);
+  imageUrl = signal<string | null>(null);
   uploadingImage = signal(false);
-  imageError     = signal<string | null>(null);
+  imageError = signal<string | null>(null);
   showIconPicker = signal(false);
 
-  rarity           = signal('');
-  enhancementBonus       = signal<number | null>(null);
-  requiresAttunement    = signal(false);
+  rarity = signal('');
+  enhancementBonus = signal<number | null>(null);
+  requiresAttunement = signal(false);
   attunementRestriction = signal('');
-  hasCharges       = signal(false);
-  chargesMax       = signal(1);
-  chargesRecovery  = signal<typeof CHARGE_RECOVERIES[number] | 'custom'>('dawn');
+  hasCharges = signal(false);
+  chargesMax = signal(1);
+  chargesRecovery = signal<(typeof CHARGE_RECOVERIES)[number] | 'custom'>('dawn');
   chargesRecoveryCustom = signal('');
-  actions          = signal<ItemActionEntry[]>([]);
+  actions = signal<ItemActionEntry[]>([]);
 
-  readonly canSave = computed(() =>
-    !!(this.name().trim() && this.type().trim() && this.category().trim() &&
-       (this.costUnit() !== 'custom' || this.costCustom().trim()) &&
-       (!this.hasCharges() || this.chargesRecovery() !== 'custom' || this.chargesRecoveryCustom().trim()) &&
-       this.description().trim()));
+  readonly canSave = computed(
+    () =>
+      !!(
+        this.name().trim() &&
+        this.type().trim() &&
+        this.category().trim() &&
+        (this.costUnit() !== 'custom' || this.costCustom().trim()) &&
+        (!this.hasCharges() ||
+          this.chargesRecovery() !== 'custom' ||
+          this.chargesRecoveryCustom().trim()) &&
+        this.description().trim()
+      ),
+  );
 
   ngOnInit() {
     const editing = this.item();
@@ -183,21 +224,28 @@ export class ItemFormComponent implements OnInit {
     this.enhancementBonus.set(i.enhancement_bonus ?? null);
     if (i.requires_attunement) {
       this.requiresAttunement.set(true);
-      this.attunementRestriction.set(typeof i.requires_attunement === 'string' ? i.requires_attunement : '');
+      this.attunementRestriction.set(
+        typeof i.requires_attunement === 'string' ? i.requires_attunement : '',
+      );
     }
     if (i.charges) {
       this.hasCharges.set(true);
       this.chargesMax.set(i.charges.max);
       if ((CHARGE_RECOVERIES as readonly string[]).includes(i.charges.recovery)) {
-        this.chargesRecovery.set(i.charges.recovery as typeof CHARGE_RECOVERIES[number]);
+        this.chargesRecovery.set(i.charges.recovery as (typeof CHARGE_RECOVERIES)[number]);
       } else {
         this.chargesRecovery.set('custom');
         this.chargesRecoveryCustom.set(i.charges.recovery);
       }
     }
-    this.actions.set((i.actions ?? []).map(a => ({
-      key: a.key, name: a.name, description: a.description ?? '', activation: a.activation,
-    })));
+    this.actions.set(
+      (i.actions ?? []).map((a) => ({
+        key: a.key,
+        name: a.name,
+        description: a.description ?? '',
+        activation: a.activation,
+      })),
+    );
   }
 
   async onImageFileChange(event: Event) {
@@ -211,7 +259,7 @@ export class ItemFormComponent implements OnInit {
       const updated = await this.itemService.uploadImage(this.originalIndex, file);
       this.imageUrl.set(updated.image_url ?? null);
     } catch (e) {
-      const message = e instanceof HttpErrorResponse ? (e.error?.message ?? e.message) : 'Failed to upload image.';
+      const message = getErrorMessage(e, 'Failed to upload image.');
       this.imageError.set(Array.isArray(message) ? message.join(', ') : message);
     } finally {
       this.uploadingImage.set(false);
@@ -228,13 +276,16 @@ export class ItemFormComponent implements OnInit {
   }
 
   addAction() {
-    this.actions.update(list => [...list, { key: '', name: '', description: '', activation: 'action' }]);
+    this.actions.update((list) => [
+      ...list,
+      { key: '', name: '', description: '', activation: 'action' },
+    ]);
   }
   removeAction(i: number) {
-    this.actions.update(list => list.filter((_, idx) => idx !== i));
+    this.actions.update((list) => list.filter((_, idx) => idx !== i));
   }
   updateAction(i: number, patch: Partial<ItemActionEntry>) {
-    this.actions.update(list => list.map((a, idx) => (idx === i ? { ...a, ...patch } : a)));
+    this.actions.update((list) => list.map((a, idx) => (idx === i ? { ...a, ...patch } : a)));
   }
 
   onTypeChange(next: string) {
@@ -247,10 +298,14 @@ export class ItemFormComponent implements OnInit {
 
   categoryOptions(): string[] {
     switch (this.type()) {
-      case 'weapon': return WEAPON_CATEGORIES;
-      case 'armor': return ARMOR_CATEGORIES;
-      case 'consumable': return CONSUMABLE_CATEGORIES;
-      default: return GEAR_CATEGORIES;
+      case 'weapon':
+        return WEAPON_CATEGORIES;
+      case 'armor':
+        return ARMOR_CATEGORIES;
+      case 'consumable':
+        return CONSUMABLE_CATEGORIES;
+      default:
+        return GEAR_CATEGORIES;
     }
   }
 
@@ -270,7 +325,8 @@ export class ItemFormComponent implements OnInit {
 
   toggleProperty(key: string) {
     const set = new Set(this.selectedProperties());
-    if (set.has(key)) set.delete(key); else set.add(key);
+    if (set.has(key)) set.delete(key);
+    else set.add(key);
     this.selectedProperties.set(set);
   }
 
@@ -279,7 +335,7 @@ export class ItemFormComponent implements OnInit {
   }
 
   setPropertyParam(key: string, value: string) {
-    this.propertyParams.update(p => ({ ...p, [key]: value }));
+    this.propertyParams.update((p) => ({ ...p, [key]: value }));
   }
 
   private parseDamage(raw: string) {
@@ -299,7 +355,7 @@ export class ItemFormComponent implements OnInit {
     const m = raw.trim().match(/^(\d+(?:\.\d+)?)\s*(cp|sp|ep|gp|pp)$/i);
     if (m) {
       this.costAmount.set(+m[1]);
-      this.costUnit.set(m[2].toLowerCase() as typeof CURRENCIES[number]);
+      this.costUnit.set(m[2].toLowerCase() as (typeof CURRENCIES)[number]);
     } else {
       this.costUnit.set('custom');
       this.costCustom.set(raw);
@@ -307,7 +363,9 @@ export class ItemFormComponent implements OnInit {
   }
 
   private buildCost(): string {
-    return this.costUnit() === 'custom' ? this.costCustom().trim() : `${this.costAmount()} ${this.costUnit()}`;
+    return this.costUnit() === 'custom'
+      ? this.costCustom().trim()
+      : `${this.costAmount()} ${this.costUnit()}`;
   }
 
   private parseProperties(raw: string[]) {
@@ -318,7 +376,7 @@ export class ItemFormComponent implements OnInit {
       if (!m) continue;
       const base = m[1].trim();
       const paren = m[2]?.trim();
-      const def = WEAPON_PROPERTIES.find(p => p.key.toLowerCase() === base.toLowerCase());
+      const def = WEAPON_PROPERTIES.find((p) => p.key.toLowerCase() === base.toLowerCase());
       if (!def) continue;
       selected.add(def.key);
       if (def.param === 'range' && paren) params[def.key] = paren.replace(/^range\s*/i, '');
@@ -329,7 +387,9 @@ export class ItemFormComponent implements OnInit {
   }
 
   private buildDamage(): string {
-    return this.dieFace() === 'flat' ? String(this.diceCount()) : `${this.diceCount()}d${this.dieFace()}`;
+    return this.dieFace() === 'flat'
+      ? String(this.diceCount())
+      : `${this.diceCount()}d${this.dieFace()}`;
   }
 
   private buildProperties(): string[] {
@@ -349,7 +409,8 @@ export class ItemFormComponent implements OnInit {
       name: this.name().trim(),
       type: this.type(),
       category: this.category().trim(),
-      properties: this.type() === 'weapon' ? this.buildProperties() : tagsFrom(this.looseProperties()),
+      properties:
+        this.type() === 'weapon' ? this.buildProperties() : tagsFrom(this.looseProperties()),
       weight: this.weight(),
       cost: this.buildCost(),
       description: this.description().trim(),
@@ -373,12 +434,15 @@ export class ItemFormComponent implements OnInit {
     if (this.hasCharges()) {
       built.charges = {
         max: this.chargesMax(),
-        recovery: this.chargesRecovery() === 'custom' ? this.chargesRecoveryCustom().trim() : this.chargesRecovery(),
+        recovery:
+          this.chargesRecovery() === 'custom'
+            ? this.chargesRecoveryCustom().trim()
+            : this.chargesRecovery(),
       };
     }
-    const actions = this.actions().filter(a => a.name.trim());
+    const actions = this.actions().filter((a) => a.name.trim());
     if (actions.length) {
-      built.actions = actions.map(a => ({
+      built.actions = actions.map((a) => ({
         key: a.key || slugify(a.name),
         name: a.name.trim(),
         description: a.description.trim() || undefined,
@@ -399,7 +463,7 @@ export class ItemFormComponent implements OnInit {
         : await this.itemService.createItem(built);
       this.saved.emit(saved);
     } catch (e) {
-      const message = e instanceof HttpErrorResponse ? (e.error?.message ?? e.message) : 'Failed to save item.';
+      const message = getErrorMessage(e, 'Failed to save item.');
       this.error.set(Array.isArray(message) ? message.join(', ') : message);
     } finally {
       this.saving.set(false);

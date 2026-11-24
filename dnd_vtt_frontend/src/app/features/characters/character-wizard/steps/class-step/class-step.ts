@@ -1,7 +1,13 @@
 import { Component, OnInit, input, output, signal, computed } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { UpperCasePipe } from '@angular/common';
-import { DndClass, TraitGrant, TraitOption, DndItem, DndFeat } from '../../../../../core/services/content.service';
+import {
+  DndClass,
+  TraitGrant,
+  TraitOption,
+  DndItem,
+  DndFeat,
+} from '../../../../../core/services/content.service';
 import { Ability, ABILITIES } from '../../../../../core/models/character.model';
 import { resolveProgressiveChoiceLimit } from '../../../../../core/utils/progressive-choice';
 import { collectTraitEffects, reachableGrants } from '../../../../../core/utils/character-effects';
@@ -22,38 +28,38 @@ type ViewMode = 'list' | 'my-classes' | 'detail';
   templateUrl: './class-step.html',
 })
 export class ClassStepComponent implements OnInit {
-  readonly classes           = input.required<DndClass[]>();
-  readonly items             = input<DndItem[]>([]);
-  readonly feats             = input<DndFeat[]>([]);
-  readonly species           = input('');
-  readonly speciesChoices    = input<Record<string, string[]>>({});
-  readonly selectedClasses   = input<ClassEntry[]>([]);
-  readonly characterLevel    = input.required<number>();
+  readonly classes = input.required<DndClass[]>();
+  readonly items = input<DndItem[]>([]);
+  readonly feats = input<DndFeat[]>([]);
+  readonly species = input('');
+  readonly speciesChoices = input<Record<string, string[]>>({});
+  readonly selectedClasses = input<ClassEntry[]>([]);
+  readonly characterLevel = input.required<number>();
   // Lower bound for editable levels — grant rows at or below this render read-only (their picks
   // are already locked in). 0 = no bound, the normal create/edit case. Set by the Level-Up flow
   // to the character's previously-applied level so only the new level(s) are editable.
-  readonly minEditableLevel  = input(0);
+  readonly minEditableLevel = input(0);
   readonly baseAbilityScores = input.required<Record<Ability, number>>();
-  readonly proficientSkills  = input<string[]>([]);
+  readonly proficientSkills = input<string[]>([]);
   readonly unavailableSkills = input<string[]>([]);
   readonly externalFeatIndices = input<string[]>([]);
-  readonly classAdded        = output<ClassEntry>();
-  readonly classRemoved      = output<string>();
+  readonly classAdded = output<ClassEntry>();
+  readonly classRemoved = output<string>();
 
   readonly abilities = ABILITIES;
 
-  viewMode      = signal<ViewMode>('list');
+  viewMode = signal<ViewMode>('list');
   browsingClass = signal<DndClass | null>(null);
   fromMyClasses = signal(false);
 
-  draftLevel      = signal(1);
-  draftSubclass   = signal('');
-  draftSkills     = signal<string[]>([]);
-  draftTraits     = signal<Record<string, string[]>>({});
+  draftLevel = signal(1);
+  draftSubclass = signal('');
+  draftSkills = signal<string[]>([]);
+  draftTraits = signal<Record<string, string[]>>({});
   collapsedGrants = signal<Set<string>>(new Set());
   // Explicit ASI/Feat toggle state per grant key — separate from draftTraits because
   // switching to "Take a Feat" before picking one has no data to derive the mode from.
-  abilityMode     = signal<Record<string, 'asi' | 'feat'>>({});
+  abilityMode = signal<Record<string, 'asi' | 'feat'>>({});
 
   // When the browsed class is (or would be) the character's only class, its level
   // always tracks the overall character level rather than the draft snapshot —
@@ -61,7 +67,7 @@ export class ClassStepComponent implements OnInit {
   effectiveLevel = computed(() => {
     const cls = this.browsingClass();
     if (!cls) return this.draftLevel();
-    const isMulticlass = this.selectedClasses().some(e => e.cls.index !== cls.index);
+    const isMulticlass = this.selectedClasses().some((e) => e.cls.index !== cls.index);
     return isMulticlass ? this.draftLevel() : this.characterLevel();
   });
 
@@ -82,15 +88,25 @@ export class ClassStepComponent implements OnInit {
   // All collapsible (choice-shaped) grant keys for a class, across every level and every
   // subclass — used to start the Class Traits section fully collapsed when a class is opened.
   private grantKeys(cls: DndClass): string[] {
-    const fromLevels = (levels: { grants?: TraitGrant[] }[]) => levels.flatMap(l => (l.grants ?? [])
-      .filter((g): g is Extract<TraitGrant, { key: string }> =>
-        g.type === 'choice' || g.type === 'skill_choice' || g.type === 'expertise_choice' || g.type === 'weapon_mastery' || g.type === 'ability_choice' || g.type === 'feat_pick')
-      .map(g => g.key));
-    return [...fromLevels(cls.levels), ...cls.subclasses.flatMap(s => fromLevels(s.levels))];
+    const fromLevels = (levels: { grants?: TraitGrant[] }[]) =>
+      levels.flatMap((l) =>
+        (l.grants ?? [])
+          .filter(
+            (g): g is Extract<TraitGrant, { key: string }> =>
+              g.type === 'choice' ||
+              g.type === 'skill_choice' ||
+              g.type === 'expertise_choice' ||
+              g.type === 'weapon_mastery' ||
+              g.type === 'ability_choice' ||
+              g.type === 'feat_pick',
+          )
+          .map((g) => g.key),
+      );
+    return [...fromLevels(cls.levels), ...cls.subclasses.flatMap((s) => fromLevels(s.levels))];
   }
 
   private openDetail(cls: DndClass) {
-    const existing  = this.selectedClasses().find(e => e.cls.index === cls.index);
+    const existing = this.selectedClasses().find((e) => e.cls.index === cls.index);
     const remaining = this.remainingLevels(cls);
     this.draftLevel.set(existing?.level ?? remaining);
     this.draftSubclass.set(existing?.subclass ?? '');
@@ -104,12 +120,14 @@ export class ClassStepComponent implements OnInit {
 
   back() {
     this.browsingClass.set(null);
-    const target: ViewMode = this.fromMyClasses() || this.selectedClasses().length > 0
-      ? 'my-classes' : 'list';
+    const target: ViewMode =
+      this.fromMyClasses() || this.selectedClasses().length > 0 ? 'my-classes' : 'list';
     this.viewMode.set(target);
   }
 
-  goToList() { this.viewMode.set('list'); }
+  goToList() {
+    this.viewMode.set('list');
+  }
 
   // Pushes the current draft up to the parent (which autosaves the character on any change),
   // without leaving the detail view — called after every user edit below so picks are never
@@ -143,11 +161,11 @@ export class ClassStepComponent implements OnInit {
   }
 
   isAdded(cls: DndClass): boolean {
-    return this.selectedClasses().some(e => e.cls.index === cls.index);
+    return this.selectedClasses().some((e) => e.cls.index === cls.index);
   }
 
   entryFor(cls: DndClass): ClassEntry | undefined {
-    return this.selectedClasses().find(e => e.cls.index === cls.index);
+    return this.selectedClasses().find((e) => e.cls.index === cls.index);
   }
 
   isCurrentAdded(): boolean {
@@ -157,7 +175,7 @@ export class ClassStepComponent implements OnInit {
 
   remainingLevels(cls: DndClass): number {
     const othersTotal = this.selectedClasses()
-      .filter(e => e.cls.index !== cls.index)
+      .filter((e) => e.cls.index !== cls.index)
       .reduce((sum, e) => sum + e.level, 0);
     return Math.max(1, this.characterLevel() - othersTotal);
   }
@@ -174,26 +192,38 @@ export class ClassStepComponent implements OnInit {
     return grant.key === 'skills' ? this.draftSkills() : (this.draftTraits()[grant.key] ?? []);
   }
 
-  skillTakenElsewhere(grant: Extract<TraitGrant, { type: 'skill_choice' }>, skill: string): boolean {
+  skillTakenElsewhere(
+    grant: Extract<TraitGrant, { type: 'skill_choice' }>,
+    skill: string,
+  ): boolean {
     const initial = grant.key === 'skills' ? [] : this.draftSkills();
     const cls = this.browsingClass();
-    const skillKeys = new Set([
-      ...(cls?.levels ?? []),
-      ...(cls?.subclasses.flatMap(subclass => subclass.levels) ?? []),
-    ].flatMap(level => (level.grants ?? [])
-      .filter((candidate): candidate is Extract<TraitGrant, { type: 'skill_choice' }> => candidate.type === 'skill_choice')
-      .map(candidate => candidate.key)));
+    const skillKeys = new Set(
+      [
+        ...(cls?.levels ?? []),
+        ...(cls?.subclasses.flatMap((subclass) => subclass.levels) ?? []),
+      ].flatMap((level) =>
+        (level.grants ?? [])
+          .filter(
+            (candidate): candidate is Extract<TraitGrant, { type: 'skill_choice' }> =>
+              candidate.type === 'skill_choice',
+          )
+          .map((candidate) => candidate.key),
+      ),
+    );
     const later = Object.entries(this.draftTraits())
       .filter(([key]) => key !== grant.key && skillKeys.has(key))
       .flatMap(([, picks]) => picks);
     const otherClasses = this.selectedClasses()
-      .filter(entry => entry.cls.index !== cls?.index)
-      .flatMap(entry => [
+      .filter((entry) => entry.cls.index !== cls?.index)
+      .flatMap((entry) => [
         ...entry.skills,
         ...reachableGrants(entry.cls, entry.subclass, entry.level)
-          .filter((candidate): candidate is Extract<TraitGrant, { type: 'skill_choice' }> =>
-            candidate.type === 'skill_choice' && candidate.key !== 'skills')
-          .flatMap(candidate => entry.traits[candidate.key] ?? []),
+          .filter(
+            (candidate): candidate is Extract<TraitGrant, { type: 'skill_choice' }> =>
+              candidate.type === 'skill_choice' && candidate.key !== 'skills',
+          )
+          .flatMap((candidate) => entry.traits[candidate.key] ?? []),
       ]);
     return [...this.unavailableSkills(), ...otherClasses, ...initial, ...later].includes(skill);
   }
@@ -203,18 +233,22 @@ export class ClassStepComponent implements OnInit {
   }
 
   conflictingSkills(grant: Extract<TraitGrant, { type: 'skill_choice' }>): string[] {
-    return this.skillSelections(grant).filter(skill => this.skillConflict(grant, skill));
+    return this.skillSelections(grant).filter((skill) => this.skillConflict(grant, skill));
   }
 
   toggleDraftSkill(grant: Extract<TraitGrant, { type: 'skill_choice' }>, skill: string) {
     const selections = this.skillSelections(grant);
-    if (!selections.includes(skill) && (selections.length >= grant.choose || this.skillTakenElsewhere(grant, skill))) return;
+    if (
+      !selections.includes(skill) &&
+      (selections.length >= grant.choose || this.skillTakenElsewhere(grant, skill))
+    )
+      return;
 
     const next = selections.includes(skill)
-      ? selections.filter(selected => selected !== skill)
+      ? selections.filter((selected) => selected !== skill)
       : [...selections, skill];
     if (grant.key === 'skills') this.draftSkills.set(next);
-    else this.draftTraits.update(traits => ({ ...traits, [grant.key]: next }));
+    else this.draftTraits.update((traits) => ({ ...traits, [grant.key]: next }));
     this.syncDraft();
   }
 
@@ -222,26 +256,45 @@ export class ClassStepComponent implements OnInit {
     const cls = this.browsingClass();
     const laterClassSkills = [
       ...(cls?.levels ?? []),
-      ...(cls?.subclasses.flatMap(subclass => subclass.levels) ?? []),
-    ].flatMap(level => (level.grants ?? [])
-      .filter((grant): grant is Extract<TraitGrant, { type: 'skill_choice' }> => grant.type === 'skill_choice')
-      .flatMap(grant => grant.key === 'skills' ? this.draftSkills() : (this.draftTraits()[grant.key] ?? [])));
-    const proficient = [...new Set([...this.proficientSkills(), ...this.draftSkills(), ...laterClassSkills])];
+      ...(cls?.subclasses.flatMap((subclass) => subclass.levels) ?? []),
+    ].flatMap((level) =>
+      (level.grants ?? [])
+        .filter(
+          (grant): grant is Extract<TraitGrant, { type: 'skill_choice' }> =>
+            grant.type === 'skill_choice',
+        )
+        .flatMap((grant) =>
+          grant.key === 'skills' ? this.draftSkills() : (this.draftTraits()[grant.key] ?? []),
+        ),
+    );
+    const proficient = [
+      ...new Set([...this.proficientSkills(), ...this.draftSkills(), ...laterClassSkills]),
+    ];
     const eligible = grant.skills
-      ? proficient.filter(skill => grant.skills?.includes(skill))
+      ? proficient.filter((skill) => grant.skills?.includes(skill))
       : proficient;
     // Keep stale/ineligible saved picks visible so the player can always remove them.
     return [...new Set([...eligible, ...(this.draftTraits()[grant.key] ?? [])])].sort();
   }
 
-  expertiseTakenElsewhere(grant: Extract<TraitGrant, { type: 'expertise_choice' }>, skill: string): boolean {
+  expertiseTakenElsewhere(
+    grant: Extract<TraitGrant, { type: 'expertise_choice' }>,
+    skill: string,
+  ): boolean {
     const cls = this.browsingClass();
-    const keys = new Set([
-      ...(cls?.levels ?? []),
-      ...(cls?.subclasses.flatMap(subclass => subclass.levels) ?? []),
-    ].flatMap(level => (level.grants ?? [])
-      .filter((candidate): candidate is Extract<TraitGrant, { type: 'expertise_choice' }> => candidate.type === 'expertise_choice')
-      .map(candidate => candidate.key)));
+    const keys = new Set(
+      [
+        ...(cls?.levels ?? []),
+        ...(cls?.subclasses.flatMap((subclass) => subclass.levels) ?? []),
+      ].flatMap((level) =>
+        (level.grants ?? [])
+          .filter(
+            (candidate): candidate is Extract<TraitGrant, { type: 'expertise_choice' }> =>
+              candidate.type === 'expertise_choice',
+          )
+          .map((candidate) => candidate.key),
+      ),
+    );
     return Object.entries(this.draftTraits())
       .filter(([key]) => key !== grant.key && keys.has(key))
       .some(([, picks]) => picks.includes(skill));
@@ -249,14 +302,17 @@ export class ClassStepComponent implements OnInit {
 
   toggleExpertise(grant: Extract<TraitGrant, { type: 'expertise_choice' }>, skill: string) {
     const selected = this.draftTraits()[grant.key] ?? [];
-    if (!selected.includes(skill) &&
-        (!this.expertiseOptions(grant).includes(skill) ||
-         selected.length >= grant.choose ||
-         this.expertiseTakenElsewhere(grant, skill))) return;
+    if (
+      !selected.includes(skill) &&
+      (!this.expertiseOptions(grant).includes(skill) ||
+        selected.length >= grant.choose ||
+        this.expertiseTakenElsewhere(grant, skill))
+    )
+      return;
     const next = selected.includes(skill)
-      ? selected.filter(candidate => candidate !== skill)
+      ? selected.filter((candidate) => candidate !== skill)
       : [...selected, skill];
-    this.draftTraits.update(traits => ({ ...traits, [grant.key]: next }));
+    this.draftTraits.update((traits) => ({ ...traits, [grant.key]: next }));
     this.syncDraft();
   }
 
@@ -273,14 +329,14 @@ export class ClassStepComponent implements OnInit {
   }
 
   visibleLevels(cls: DndClass): number[] {
-    const subLevels = new Set(this.chosenSubclass(cls)?.levels.map(l => l.level) ?? []);
+    const subLevels = new Set(this.chosenSubclass(cls)?.levels.map((l) => l.level) ?? []);
     return cls.levels
-      .filter(l => l.features.length > 0 || (l.grants?.length ?? 0) > 0 || subLevels.has(l.level))
-      .map(l => l.level);
+      .filter((l) => l.features.length > 0 || (l.grants?.length ?? 0) > 0 || subLevels.has(l.level))
+      .map((l) => l.level);
   }
 
   private chosenSubclass(cls: DndClass) {
-    return cls.subclasses.find(s => s.name === this.draftSubclass());
+    return cls.subclasses.find((s) => s.name === this.draftSubclass());
   }
 
   // A single render-ready list for a level: the base class's own grants (its structured
@@ -289,15 +345,20 @@ export class ClassStepComponent implements OnInit {
   // appended and tagged — so subclass traits go through the exact same choice/collapse/
   // indicator UI as base class traits instead of a separate plain-text block.
   levelGrants(cls: DndClass, level: number): { grant: TraitGrant; fromSubclass: boolean }[] {
-    const toGrants = (lvl: { grants?: TraitGrant[]; features: string[] } | undefined): TraitGrant[] =>
-      lvl?.grants?.length ? lvl.grants : (lvl?.features ?? []).map(name => ({ type: 'feature', name }) as TraitGrant);
+    const toGrants = (
+      lvl: { grants?: TraitGrant[]; features: string[] } | undefined,
+    ): TraitGrant[] =>
+      lvl?.grants?.length
+        ? lvl.grants
+        : (lvl?.features ?? []).map((name) => ({ type: 'feature', name }) as TraitGrant);
 
-    const base = toGrants(cls.levels.find(l => l.level === level))
-      .filter(g => !this.isSubclassPlaceholder(cls, level, g))
-      .map(grant => ({ grant, fromSubclass: false }));
+    const base = toGrants(cls.levels.find((l) => l.level === level))
+      .filter((g) => !this.isSubclassPlaceholder(cls, level, g))
+      .map((grant) => ({ grant, fromSubclass: false }));
 
-    const subGrants = toGrants(this.chosenSubclass(cls)?.levels.find(l => l.level === level))
-      .map(grant => ({ grant, fromSubclass: true }));
+    const subGrants = toGrants(this.chosenSubclass(cls)?.levels.find((l) => l.level === level)).map(
+      (grant) => ({ grant, fromSubclass: true }),
+    );
 
     return [...base, ...subGrants];
   }
@@ -307,7 +368,7 @@ export class ClassStepComponent implements OnInit {
   // subclass's actual feature is available to show instead, so it isn't shown twice.
   private isSubclassPlaceholder(cls: DndClass, level: number, grant: TraitGrant): boolean {
     if (grant.type !== 'feature' || !/feature$/i.test(grant.name)) return false;
-    const sub = this.chosenSubclass(cls)?.levels.find(l => l.level === level);
+    const sub = this.chosenSubclass(cls)?.levels.find((l) => l.level === level);
     return !!sub && ((sub.grants?.length ?? 0) > 0 || sub.features.length > 0);
   }
 
@@ -342,7 +403,8 @@ export class ClassStepComponent implements OnInit {
         if (grant.allowFeat && this.grantMode(grant) === 'feat') {
           const feat = this.pickedFeatFor(grant);
           if (!feat) return 1;
-          const needsAbilityPick = (feat.abilityIncrease?.abilities.length ?? 0) > 1 && !this.selectedFeatAbility(grant);
+          const needsAbilityPick =
+            (feat.abilityIncrease?.abilities.length ?? 0) > 1 && !this.selectedFeatAbility(grant);
           return needsAbilityPick ? 1 : 0;
         }
         return grant.points - (this.draftTraits()[grant.key]?.length ?? 0);
@@ -359,33 +421,58 @@ export class ClassStepComponent implements OnInit {
 
   availableTraitOptions(grant: Extract<TraitGrant, { type: 'choice' }>): TraitOption[] {
     const allSelections = new Set(Object.values(this.draftTraits()).flat());
-    const options: TraitOption[] = grant.key === 'magic_item_plans'
-      ? grant.options.flatMap(option => option.name !== 'Common Magic Item' ? [option] : [
-        ...(this.traitSelected(grant, option.name) ? [option] : []), ...this.items()
-        .filter(item => item.rarity?.toLowerCase() === 'common' && !item.cursed && !item.variant
-          && !/potion|scroll/i.test(item.category) && item.type !== 'consumable')
-        .map(item => ({ name: `Common Magic Item: ${item.index}`, description: `${item.name}: ${item.description}` }))])
-      : grant.options;
-    return options.filter(option => {
+    const options: TraitOption[] =
+      grant.key === 'magic_item_plans'
+        ? grant.options.flatMap((option) =>
+            option.name !== 'Common Magic Item'
+              ? [option]
+              : [
+                  ...(this.traitSelected(grant, option.name) ? [option] : []),
+                  ...this.items()
+                    .filter(
+                      (item) =>
+                        item.rarity?.toLowerCase() === 'common' &&
+                        !item.cursed &&
+                        !item.variant &&
+                        !/potion|scroll/i.test(item.category) &&
+                        item.type !== 'consumable',
+                    )
+                    .map((item) => ({
+                      name: `Common Magic Item: ${item.index}`,
+                      description: `${item.name}: ${item.description}`,
+                    })),
+                ],
+          )
+        : grant.options;
+    return options.filter((option) => {
       if (this.traitSelected(grant, option.name)) return true;
       const prerequisite = option.prerequisite;
       if (!prerequisite) return true;
       if (prerequisite.level && this.effectiveLevel() < prerequisite.level) return false;
-      return (prerequisite.selections ?? []).every(selection => allSelections.has(selection));
+      return (prerequisite.selections ?? []).every((selection) => allSelections.has(selection));
     });
   }
 
-  abilityAllocated(grant: Extract<TraitGrant, { type: 'ability_choice' }>, ability: Ability): number {
-    return (this.draftTraits()[grant.key] ?? []).filter(a => a === ability).length;
+  abilityAllocated(
+    grant: Extract<TraitGrant, { type: 'ability_choice' }>,
+    ability: Ability,
+  ): number {
+    return (this.draftTraits()[grant.key] ?? []).filter((a) => a === ability).length;
   }
 
   // Sum of every point already spent on this ability, across every ability_choice grant on
   // every selected class (the currently browsed class's live draft plus other classes' saved
   // picks) — used to enforce the 20 cap regardless of which specific grant contributes it.
   private totalAssigned(ability: Ability): number {
-    const keysFor = (cls: DndClass) => cls.levels.flatMap(l => (l.grants ?? [])
-      .filter((g): g is Extract<TraitGrant, { type: 'ability_choice' }> => g.type === 'ability_choice')
-      .map(g => g.key));
+    const keysFor = (cls: DndClass) =>
+      cls.levels.flatMap((l) =>
+        (l.grants ?? [])
+          .filter(
+            (g): g is Extract<TraitGrant, { type: 'ability_choice' }> =>
+              g.type === 'ability_choice',
+          )
+          .map((g) => g.key),
+      );
 
     let total = 0;
     const browsing = this.browsingClass();
@@ -393,19 +480,22 @@ export class ClassStepComponent implements OnInit {
       const isBrowsing = browsing?.index === entry.cls.index;
       const traits = isBrowsing ? this.draftTraits() : entry.traits;
       for (const key of keysFor(entry.cls)) {
-        total += (traits[key] ?? []).filter(a => a === ability).length;
+        total += (traits[key] ?? []).filter((a) => a === ability).length;
       }
     }
     // Browsing a class not yet added (e.g. previewing before confirming the first class).
-    if (browsing && !this.selectedClasses().some(e => e.cls.index === browsing.index)) {
+    if (browsing && !this.selectedClasses().some((e) => e.cls.index === browsing.index)) {
       for (const key of keysFor(browsing)) {
-        total += (this.draftTraits()[key] ?? []).filter(a => a === ability).length;
+        total += (this.draftTraits()[key] ?? []).filter((a) => a === ability).length;
       }
     }
     return total;
   }
 
-  canIncrementAbility(grant: Extract<TraitGrant, { type: 'ability_choice' }>, ability: Ability): boolean {
+  canIncrementAbility(
+    grant: Extract<TraitGrant, { type: 'ability_choice' }>,
+    ability: Ability,
+  ): boolean {
     if (this.choicesLeft(grant) <= 0) return false;
     if (this.abilityAllocated(grant, ability) >= 2) return false;
     const base = this.baseAbilityScores()[ability] ?? 10;
@@ -414,12 +504,15 @@ export class ClassStepComponent implements OnInit {
 
   incrementAbility(grant: Extract<TraitGrant, { type: 'ability_choice' }>, ability: Ability) {
     if (!this.canIncrementAbility(grant, ability)) return;
-    this.draftTraits.update(traits => ({ ...traits, [grant.key]: [...(traits[grant.key] ?? []), ability] }));
+    this.draftTraits.update((traits) => ({
+      ...traits,
+      [grant.key]: [...(traits[grant.key] ?? []), ability],
+    }));
     this.syncDraft();
   }
 
   decrementAbility(grant: Extract<TraitGrant, { type: 'ability_choice' }>, ability: Ability) {
-    this.draftTraits.update(traits => {
+    this.draftTraits.update((traits) => {
       const current = traits[grant.key] ?? [];
       const idx = current.lastIndexOf(ability);
       if (idx === -1) return traits;
@@ -453,11 +546,13 @@ export class ClassStepComponent implements OnInit {
 
   pickedFeatFor(grant: { key: string }): DndFeat | null {
     const index = this.selectedFeat(grant);
-    return index ? this.feats().find(f => f.index === index) ?? null : null;
+    return index ? (this.feats().find((f) => f.index === index) ?? null) : null;
   }
 
   featChoiceGrants(feat: DndFeat | null): Extract<TraitGrant, { type: 'choice' }>[] {
-    return (feat?.grants ?? []).filter((grant): grant is Extract<TraitGrant, { type: 'choice' }> => grant.type === 'choice');
+    return (feat?.grants ?? []).filter(
+      (grant): grant is Extract<TraitGrant, { type: 'choice' }> => grant.type === 'choice',
+    );
   }
 
   featChoiceKey(parent: { key: string }, grant: { key: string }): string {
@@ -469,14 +564,19 @@ export class ClassStepComponent implements OnInit {
   }
 
   toggleFeatChoice(
-    parent: { key: string }, grant: Extract<TraitGrant, { type: 'choice' }>, option: string, unlocked = true,
+    parent: { key: string },
+    grant: Extract<TraitGrant, { type: 'choice' }>,
+    option: string,
+    unlocked = true,
   ): void {
     if (!unlocked) return;
     const key = this.featChoiceKey(parent, grant);
-    this.draftTraits.update(traits => {
+    this.draftTraits.update((traits) => {
       const current = traits[key] ?? [];
-      if (current.includes(option)) return { ...traits, [key]: current.filter(value => value !== option) };
-      if (current.length >= grant.choose) return grant.choose === 1 ? { ...traits, [key]: [option] } : traits;
+      if (current.includes(option))
+        return { ...traits, [key]: current.filter((value) => value !== option) };
+      if (current.length >= grant.choose)
+        return grant.choose === 1 ? { ...traits, [key]: [option] } : traits;
       return { ...traits, [key]: [...current, option] };
     });
     this.syncDraft();
@@ -487,16 +587,19 @@ export class ClassStepComponent implements OnInit {
   }
 
   selectFeatAbility(grant: { key: string }, ability: string) {
-    this.draftTraits.update(traits => ({ ...traits, [this.featAbilityKey(grant)]: [ability] }));
+    this.draftTraits.update((traits) => ({ ...traits, [this.featAbilityKey(grant)]: [ability] }));
     this.syncDraft();
   }
 
   setAbilityMode(grant: { key: string }, mode: 'asi' | 'feat') {
-    this.abilityMode.update(m => ({ ...m, [grant.key]: mode }));
-    this.draftTraits.update(traits => {
+    this.abilityMode.update((m) => ({ ...m, [grant.key]: mode }));
+    this.draftTraits.update((traits) => {
       const next = { ...traits };
       if (mode === 'feat') delete next[grant.key];
-      else { delete next[this.featKey(grant)]; delete next[this.featAbilityKey(grant)]; }
+      else {
+        delete next[this.featKey(grant)];
+        delete next[this.featAbilityKey(grant)];
+      }
       return next;
     });
     this.syncDraft();
@@ -508,12 +611,14 @@ export class ClassStepComponent implements OnInit {
   // Fighter who already has the Fighting Style feature qualifies for a Fighting Style feat too.
   availableFeats(grant: { key: string; feats?: string[] }): DndFeat[] {
     const taken = this.alreadyTakenElsewhere(grant.key);
-    const pool = this.feats().filter(f => this.qualifiesForFeat(f) && (f.repeatable || !taken.has(f.index)));
-    return grant.feats?.length ? pool.filter(f => grant.feats!.includes(f.index)) : pool;
+    const pool = this.feats().filter(
+      (f) => this.qualifiesForFeat(f) && (f.repeatable || !taken.has(f.index)),
+    );
+    return grant.feats?.length ? pool.filter((f) => grant.feats!.includes(f.index)) : pool;
   }
 
   selectFeat(grant: { key: string }, featIndex: string) {
-    this.draftTraits.update(traits => {
+    this.draftTraits.update((traits) => {
       const next = { ...traits, [grant.key]: [], [this.featKey(grant)]: [featIndex] };
       delete next[this.featAbilityKey(grant)];
       return next;
@@ -521,26 +626,35 @@ export class ClassStepComponent implements OnInit {
     this.syncDraft();
   }
 
-  availableFeatPicks(grant: { key: string; category: 'origin' | 'general' | 'fighting_style' | 'epic'; feats?: string[]; excludeKey?: string }): DndFeat[] {
+  availableFeatPicks(grant: {
+    key: string;
+    category: 'origin' | 'general' | 'fighting_style' | 'epic';
+    feats?: string[];
+    excludeKey?: string;
+  }): DndFeat[] {
     const taken = this.alreadyTakenElsewhere(grant.key);
-    let pool = this.feats().filter(f =>
-      f.category === grant.category && this.qualifiesForFeat(f) && (f.repeatable || !taken.has(f.index)));
-    if (grant.feats?.length) pool = pool.filter(f => grant.feats!.includes(f.index));
+    let pool = this.feats().filter(
+      (f) =>
+        f.category === grant.category &&
+        this.qualifiesForFeat(f) &&
+        (f.repeatable || !taken.has(f.index)),
+    );
+    if (grant.feats?.length) pool = pool.filter((f) => grant.feats!.includes(f.index));
     if (grant.excludeKey) {
       const excluded = new Set(this.draftTraits()[grant.excludeKey] ?? []);
-      pool = pool.filter(f => !excluded.has(f.index));
+      pool = pool.filter((f) => !excluded.has(f.index));
     }
     return pool;
   }
 
   pickedFeatsForGrant(grant: { key: string }): DndFeat[] {
     const selected = new Set(this.draftTraits()[grant.key] ?? []);
-    return this.feats().filter(feat => selected.has(feat.index));
+    return this.feats().filter((feat) => selected.has(feat.index));
   }
 
   private armorTraining(): string[] {
     return [
-      ...this.selectedClasses().flatMap(e => e.cls.armor_training),
+      ...this.selectedClasses().flatMap((e) => e.cls.armor_training),
       ...(this.browsingClass()?.armor_training ?? []),
     ];
   }
@@ -548,10 +662,17 @@ export class ClassStepComponent implements OnInit {
   // Subclass features and feats can grant armor training through the same structured effect.
   private armorProficiencyTagsFromEffects(): string[] {
     const browsing = this.browsingClass();
-    const sources = this.selectedClasses().map(entry => browsing?.index === entry.cls.index
-      ? { data: browsing, choices: this.draftTraits(), level: this.effectiveLevel(), subclass: this.draftSubclass() }
-      : { data: entry.cls, choices: entry.traits, level: entry.level, subclass: entry.subclass });
-    if (browsing && !sources.some(source => source.data.index === browsing.index)) {
+    const sources = this.selectedClasses().map((entry) =>
+      browsing?.index === entry.cls.index
+        ? {
+            data: browsing,
+            choices: this.draftTraits(),
+            level: this.effectiveLevel(),
+            subclass: this.draftSubclass(),
+          }
+        : { data: entry.cls, choices: entry.traits, level: entry.level, subclass: entry.subclass },
+    );
+    if (browsing && !sources.some((source) => source.data.index === browsing.index)) {
       sources.push({
         data: browsing,
         choices: this.draftTraits(),
@@ -560,12 +681,12 @@ export class ClassStepComponent implements OnInit {
       });
     }
     return collectTraitEffects(sources, this.feats())
-      .filter(eff => eff.type === 'armor_proficiency')
-      .flatMap(eff => eff.tags ?? []);
+      .filter((eff) => eff.type === 'armor_proficiency')
+      .flatMap((eff) => eff.tags ?? []);
   }
 
   private hasArmorProficiency(kind: 'light' | 'medium' | 'heavy' | 'shield'): boolean {
-    const fromClasses = this.armorTraining().some(t => {
+    const fromClasses = this.armorTraining().some((t) => {
       const lower = t.toLowerCase();
       return lower.includes('all armor') || lower.includes(kind);
     });
@@ -578,13 +699,14 @@ export class ClassStepComponent implements OnInit {
   private allFeatPickEntries(): { grantKey: string; featIndex: string }[] {
     const out: { grantKey: string; featIndex: string }[] = [];
     const scan = (cls: DndClass, traits: Record<string, string[]>) => {
-      const levels = [...cls.levels, ...cls.subclasses.flatMap(s => s.levels)];
-      for (const grant of levels.flatMap(l => l.grants ?? [])) {
+      const levels = [...cls.levels, ...cls.subclasses.flatMap((s) => s.levels)];
+      for (const grant of levels.flatMap((l) => l.grants ?? [])) {
         if (grant.type === 'ability_choice') {
           const featIndex = traits[`${grant.key}:feat`]?.[0];
           if (featIndex) out.push({ grantKey: grant.key, featIndex });
         } else if (grant.type === 'feat_pick') {
-          for (const featIndex of traits[grant.key] ?? []) out.push({ grantKey: grant.key, featIndex });
+          for (const featIndex of traits[grant.key] ?? [])
+            out.push({ grantKey: grant.key, featIndex });
         }
       }
     };
@@ -592,7 +714,7 @@ export class ClassStepComponent implements OnInit {
     for (const entry of this.selectedClasses()) {
       scan(entry.cls, browsing?.index === entry.cls.index ? this.draftTraits() : entry.traits);
     }
-    if (browsing && !this.selectedClasses().some(e => e.cls.index === browsing.index)) {
+    if (browsing && !this.selectedClasses().some((e) => e.cls.index === browsing.index)) {
       scan(browsing, this.draftTraits());
     }
     return out;
@@ -604,22 +726,30 @@ export class ClassStepComponent implements OnInit {
   private alreadyTakenElsewhere(excludeGrantKey: string): Set<string> {
     return new Set([
       ...this.externalFeatIndices(),
-      ...this.allFeatPickEntries().filter(e => e.grantKey !== excludeGrantKey).map(e => e.featIndex),
+      ...this.allFeatPickEntries()
+        .filter((e) => e.grantKey !== excludeGrantKey)
+        .map((e) => e.featIndex),
     ]);
   }
 
   private activeFeatIndices(): Set<string> {
-    return new Set([...this.externalFeatIndices(), ...this.allFeatPickEntries().map(entry => entry.featIndex)]);
+    return new Set([
+      ...this.externalFeatIndices(),
+      ...this.allFeatPickEntries().map((entry) => entry.featIndex),
+    ]);
   }
 
   private hasSpellcasting(): boolean {
-    return this.selectedClasses().some(e => !!e.cls.spellcasting_ability) || !!this.browsingClass()?.spellcasting_ability;
+    return (
+      this.selectedClasses().some((e) => !!e.cls.spellcasting_ability) ||
+      !!this.browsingClass()?.spellcasting_ability
+    );
   }
 
   private currentClassIndices(): Set<string> {
     const browsing = this.browsingClass();
     return new Set([
-      ...this.selectedClasses().map(e => e.cls.index),
+      ...this.selectedClasses().map((e) => e.cls.index),
       ...(browsing ? [browsing.index] : []),
     ]);
   }
@@ -627,10 +757,13 @@ export class ClassStepComponent implements OnInit {
   // Whether the character already has a named class feature (e.g. "Fighting Style") — used to
   // gate feats whose prerequisite is having that feature, not an ability score/armor/spell check.
   private hasFeature(name: string): boolean {
-    const grantedBy = (cls: DndClass, level: number) => cls.levels.some(l => l.level <= level && l.features.includes(name));
+    const grantedBy = (cls: DndClass, level: number) =>
+      cls.levels.some((l) => l.level <= level && l.features.includes(name));
     const browsing = this.browsingClass();
     if (browsing && grantedBy(browsing, this.effectiveLevel())) return true;
-    return this.selectedClasses().some(e => e.cls.index !== browsing?.index && grantedBy(e.cls, e.level));
+    return this.selectedClasses().some(
+      (e) => e.cls.index !== browsing?.index && grantedBy(e.cls, e.level),
+    );
   }
 
   // "...for which you qualify" — per the 2024 rules, a feat choice that doesn't name a specific
@@ -645,24 +778,42 @@ export class ClassStepComponent implements OnInit {
     if (p.abilities?.length) {
       const min = p.min ?? 13;
       const scores = this.baseAbilityScores();
-      if (!p.abilities.some(a => (scores[a as Ability] ?? 10) >= min)) return false;
+      if (!p.abilities.some((a) => (scores[a as Ability] ?? 10) >= min)) return false;
     }
     if (p.armorProficiency && !this.hasArmorProficiency(p.armorProficiency)) return false;
     if (p.spellcasting && !this.hasSpellcasting()) return false;
-    if (p.classes?.length && !p.classes.some(c => this.currentClassIndices().has(c))) return false;
+    if (p.classes?.length && !p.classes.some((c) => this.currentClassIndices().has(c)))
+      return false;
     if (p.species?.length && !p.species.includes(this.species())) return false;
-    if (p.speciesChoices && !Object.entries(p.speciesChoices).every(
-      ([key, values]) => values.some(value => (this.speciesChoices()[key] ?? []).includes(value)),
-    )) return false;
+    if (
+      p.speciesChoices &&
+      !Object.entries(p.speciesChoices).every(([key, values]) =>
+        values.some((value) => (this.speciesChoices()[key] ?? []).includes(value)),
+      )
+    )
+      return false;
     if (p.feature && !this.hasFeature(p.feature)) return false;
     const activeFeatIndices = this.activeFeatIndices();
-    if (p.feats?.length && !p.feats.every(index => activeFeatIndices.has(index))) return false;
+    if (p.feats?.length && !p.feats.every((index) => activeFeatIndices.has(index))) return false;
     if (p.featTags?.length) {
-      const activeFeats = this.feats().filter(candidate => activeFeatIndices.has(candidate.index));
-      if (!p.featTags.every(tag => activeFeats.some(candidate => candidate.tags?.includes(tag)))) return false;
+      const activeFeats = this.feats().filter((candidate) =>
+        activeFeatIndices.has(candidate.index),
+      );
+      if (
+        !p.featTags.every((tag) => activeFeats.some((candidate) => candidate.tags?.includes(tag)))
+      )
+        return false;
     }
-    if (feat.exclusiveGroup && this.feats().some(candidate =>
-      candidate.index !== feat.index && candidate.exclusiveGroup === feat.exclusiveGroup && activeFeatIndices.has(candidate.index))) return false;
+    if (
+      feat.exclusiveGroup &&
+      this.feats().some(
+        (candidate) =>
+          candidate.index !== feat.index &&
+          candidate.exclusiveGroup === feat.exclusiveGroup &&
+          activeFeatIndices.has(candidate.index),
+      )
+    )
+      return false;
     return true;
   }
 
@@ -671,9 +822,10 @@ export class ClassStepComponent implements OnInit {
   }
 
   toggleGrantCollapsed(key: string) {
-    this.collapsedGrants.update(set => {
+    this.collapsedGrants.update((set) => {
       const next = new Set(set);
-      if (next.has(key)) next.delete(key); else next.add(key);
+      if (next.has(key)) next.delete(key);
+      else next.add(key);
       return next;
     });
   }
@@ -685,8 +837,8 @@ export class ClassStepComponent implements OnInit {
   private weaponMasteryPicksElsewhere(excludeGrantKey: string): Set<string> {
     const out = new Set<string>();
     const scan = (cls: DndClass, traits: Record<string, string[]>) => {
-      const levels = [...cls.levels, ...cls.subclasses.flatMap(s => s.levels)];
-      for (const grant of levels.flatMap(l => l.grants ?? [])) {
+      const levels = [...cls.levels, ...cls.subclasses.flatMap((s) => s.levels)];
+      for (const grant of levels.flatMap((l) => l.grants ?? [])) {
         if (grant.type === 'weapon_mastery' && grant.key !== excludeGrantKey) {
           for (const weapon of traits[grant.key] ?? []) out.add(weapon);
         }
@@ -696,7 +848,7 @@ export class ClassStepComponent implements OnInit {
     for (const entry of this.selectedClasses()) {
       scan(entry.cls, browsing?.index === entry.cls.index ? this.draftTraits() : entry.traits);
     }
-    if (browsing && !this.selectedClasses().some(e => e.cls.index === browsing.index)) {
+    if (browsing && !this.selectedClasses().some((e) => e.cls.index === browsing.index)) {
       scan(browsing, this.draftTraits());
     }
     return out;
@@ -704,23 +856,29 @@ export class ClassStepComponent implements OnInit {
 
   weaponMasteryOptions(grant: { key: string; proficiency: string[] }): DndItem[] {
     const excluded = this.weaponMasteryPicksElsewhere(grant.key);
-    return this.items().filter(it =>
-      it.type === 'weapon' && it.mastery &&
-      weaponMatchesAnyProficiency(it, grant.proficiency) &&
-      !excluded.has(it.name),
+    return this.items().filter(
+      (it) =>
+        it.type === 'weapon' &&
+        it.mastery &&
+        weaponMatchesAnyProficiency(it, grant.proficiency) &&
+        !excluded.has(it.name),
     );
   }
 
-  toggleTrait(grant: TraitGrant & { choose: number; key: string }, option: string, unlocked: boolean) {
+  toggleTrait(
+    grant: TraitGrant & { choose: number; key: string },
+    option: string,
+    unlocked: boolean,
+  ) {
     if (!unlocked) return;
-    this.draftTraits.update(traits => {
+    this.draftTraits.update((traits) => {
       const current = traits[grant.key] ?? [];
       const limit = grant.type === 'choice' ? this.choiceLimit(grant) : grant.choose;
       if (limit === 1) {
         return { ...traits, [grant.key]: current.includes(option) ? [] : [option] };
       }
       if (current.includes(option)) {
-        return { ...traits, [grant.key]: current.filter(o => o !== option) };
+        return { ...traits, [grant.key]: current.filter((o) => o !== option) };
       }
       if (current.length >= limit) return traits;
       return { ...traits, [grant.key]: [...current, option] };

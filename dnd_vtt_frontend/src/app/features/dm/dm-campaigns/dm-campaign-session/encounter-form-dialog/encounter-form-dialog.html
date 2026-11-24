@@ -1,11 +1,17 @@
-<h2 mat-dialog-title class="font-brand text-parchment">{{ editingId() ? 'Edit Encounter' : 'New Encounter' }}</h2>
-<mat-dialog-content class="!py-2" style="width: min(1200px, 95vw);">
+<h2 mat-dialog-title class="font-brand text-parchment">
+  {{ editingId() ? 'Edit Encounter' : 'New Encounter' }}
+</h2>
+<mat-dialog-content class="!py-2" style="width: min(1200px, 95vw)">
   <form id="encounter-form" (ngSubmit)="save()" class="flex flex-col gap-4">
     @if (!editingId() && pastEncounters().length) {
       <div class="field">
         <label class="field-label">Start from an existing encounter (optional)</label>
-        <select class="field-input" [ngModel]="templateId()" (ngModelChange)="applyTemplate($event)"
-                [ngModelOptions]="{ standalone: true }">
+        <select
+          class="field-input"
+          [ngModel]="templateId()"
+          (ngModelChange)="applyTemplate($event)"
+          [ngModelOptions]="{ standalone: true }"
+        >
           <option value="">— blank encounter —</option>
           @if (pastEncounterGroups().thisCampaign.length) {
             <optgroup label="This campaign">
@@ -23,10 +29,14 @@
           }
         </select>
         <p class="text-xs text-slate mt-1 mb-0">
-          Copies its monsters, characters and map into a new encounter for this session — the original is left as is.
+          Copies its monsters, characters and map into a new encounter for this session — the
+          original is left as is.
         </p>
         @if (templateMapDropped()) {
-          <p class="text-xs text-gold mt-1 mb-0">Some of that encounter's maps belong to another campaign — pick or upload replacements below.</p>
+          <p class="text-xs text-gold mt-1 mb-0">
+            Some of that encounter's maps belong to another campaign — pick or upload replacements
+            below.
+          </p>
         }
       </div>
     }
@@ -42,29 +52,55 @@
         <label class="field-label">Levels</label>
         <div class="flex flex-wrap items-center gap-1 mb-1">
           @for (draft of levelDrafts(); track $index; let i = $index) {
-            <div class="flex items-center rounded border text-xs"
-                 [class]="i === activeLevel() ? 'border-gold/50 bg-gold/5' : 'border-white/10'">
-              <button type="button" class="px-2 py-1 cursor-pointer bg-transparent border-0 text-left max-w-40 truncate"
-                      [class]="i === activeLevel() ? 'text-gold' : 'text-parchment'"
-                      style="font-family: inherit;" (click)="selectLevel(i)">
+            <div
+              class="flex items-center rounded border text-xs"
+              [class]="i === activeLevel() ? 'border-gold/50 bg-gold/5' : 'border-white/10'"
+            >
+              <button
+                type="button"
+                class="px-2 py-1 cursor-pointer bg-transparent border-0 text-left max-w-40 truncate"
+                [class]="i === activeLevel() ? 'text-gold' : 'text-parchment'"
+                style="font-family: inherit"
+                (click)="selectLevel(i)"
+              >
                 {{ i + 1 }}. {{ levelLabel(i) }}
               </button>
               @if (i === activeLevel() && levelDrafts().length > 1) {
-                <button type="button" class="btn-icon !w-6 !h-6" [disabled]="i === 0" (click)="moveLevel(i, -1)" matTooltip="Move up">
+                <button
+                  type="button"
+                  class="btn-icon !w-6 !h-6"
+                  [disabled]="i === 0"
+                  (click)="moveLevel(i, -1)"
+                  matTooltip="Move up"
+                >
                   <mat-icon class="text-sm">chevron_left</mat-icon>
                 </button>
-                <button type="button" class="btn-icon !w-6 !h-6" [disabled]="i === levelDrafts().length - 1"
-                        (click)="moveLevel(i, 1)" matTooltip="Move down">
+                <button
+                  type="button"
+                  class="btn-icon !w-6 !h-6"
+                  [disabled]="i === levelDrafts().length - 1"
+                  (click)="moveLevel(i, 1)"
+                  matTooltip="Move down"
+                >
                   <mat-icon class="text-sm">chevron_right</mat-icon>
                 </button>
-                <button type="button" class="btn-icon !w-6 !h-6" (click)="removeLevel(i)" matTooltip="Remove level">
+                <button
+                  type="button"
+                  class="btn-icon !w-6 !h-6"
+                  (click)="removeLevel(i)"
+                  matTooltip="Remove level"
+                >
                   <mat-icon class="text-sm">close</mat-icon>
                 </button>
               }
             </div>
           }
-          <button type="button" class="btn-ghost text-xs px-2 py-1" (click)="addLevel()"
-                  matTooltip="Add another dungeon level — each player sees the level their own token is on">
+          <button
+            type="button"
+            class="btn-ghost text-xs px-2 py-1"
+            (click)="addLevel()"
+            matTooltip="Add another dungeon level — each player sees the level their own token is on"
+          >
             <mat-icon class="text-sm">add</mat-icon> Level
           </button>
         </div>
@@ -74,14 +110,20 @@
 
         @if (levelDrafts().length > 1) {
           <label class="field-label" for="level-name">Level {{ activeLevel() + 1 }} name</label>
-          <input id="level-name" class="field-input mb-3" maxlength="60"
-                 [ngModel]="levelName()" (ngModelChange)="levelName.set($event)"
-                 [ngModelOptions]="{ standalone: true }"
-                 [placeholder]="levelMapLabel(activeLevel())" />
+          <input
+            id="level-name"
+            class="field-input mb-3"
+            maxlength="60"
+            [ngModel]="levelName()"
+            (ngModelChange)="levelName.set($event)"
+            [ngModelOptions]="{ standalone: true }"
+            [placeholder]="levelMapLabel(activeLevel())"
+          />
         }
 
         <label class="field-label">
-          {{ existingMap() ? 'Replace map' : 'Map (optional)' }} — PNG, JPEG, WebP, or DungeonDraft (.dd2vtt) export
+          {{ existingMap() ? 'Replace map' : 'Map (optional)' }} — PNG, JPEG, WebP, or DungeonDraft
+          (.dd2vtt) export
         </label>
 
         @if (existingMap() && !mapFile()) {
@@ -89,9 +131,16 @@
             <mat-icon class="text-slate">map</mat-icon>
             <div class="min-w-0 flex-1">
               <p class="text-parchment text-sm m-0 truncate">{{ existingMap()!.name }}</p>
-              <p class="text-coal text-xs m-0">{{ existingMap()!.grid_size }} px/cell · current map</p>
+              <p class="text-coal text-xs m-0">
+                {{ existingMap()!.grid_size }} px/cell · current map
+              </p>
             </div>
-            <button type="button" class="btn-icon shrink-0" (click)="clearMapSelection()" matTooltip="Remove map">
+            <button
+              type="button"
+              class="btn-icon shrink-0"
+              (click)="clearMapSelection()"
+              matTooltip="Remove map"
+            >
               <mat-icon class="text-base">close</mat-icon>
             </button>
           </div>
@@ -100,11 +149,17 @@
         @if (campaignMaps().length) {
           <div class="mb-2">
             <label class="field-label">Choose an uploaded map</label>
-            <select class="field-input" [ngModel]="existingMap()?.id ?? ''"
-                    (ngModelChange)="onExistingMapSelect($event)" [ngModelOptions]="{ standalone: true }">
+            <select
+              class="field-input"
+              [ngModel]="existingMap()?.id ?? ''"
+              (ngModelChange)="onExistingMapSelect($event)"
+              [ngModelOptions]="{ standalone: true }"
+            >
               <option value="">— none —</option>
               @for (map of campaignMaps(); track map.id) {
-                <option [value]="map.id" [disabled]="otherLevelMapIds().has(map.id!)">{{ map.name }} — {{ map.grid_size }}px/cell</option>
+                <option [value]="map.id" [disabled]="otherLevelMapIds().has(map.id!)">
+                  {{ map.name }} — {{ map.grid_size }}px/cell
+                </option>
               }
             </select>
           </div>
@@ -113,12 +168,19 @@
         <p class="text-xs text-slate mb-1">…or upload a new one</p>
         <!-- Re-created per level so a file picked for one level doesn't stay shown on another. -->
         @for (level of [activeLevel()]; track level) {
-          <input class="field-input" type="file" accept=".dd2vtt,image/png,image/jpeg,image/webp"
-                 [disabled]="parsingFile()" (change)="onFileChange($event)" />
+          <input
+            class="field-input"
+            type="file"
+            accept=".dd2vtt,image/png,image/jpeg,image/webp"
+            [disabled]="parsingFile()"
+            (change)="onFileChange($event)"
+          />
         }
 
         @if (parsingFile()) {
-          <p class="text-slate text-xs mt-1"><span class="spinner-sm"></span> Processing map file…</p>
+          <p class="text-slate text-xs mt-1">
+            <span class="spinner-sm"></span> Processing map file…
+          </p>
         }
 
         @if (uploadError()) {
@@ -128,10 +190,18 @@
         @if (mapKind() === 'image') {
           <div class="field mt-2">
             <label class="field-label">Vertical Grid Squares</label>
-            <input class="field-input" type="number" min="1" max="200"
-                   [(ngModel)]="verticalSquares" name="verticalSquares" (ngModelChange)="recomputeImageGrid()" />
+            <input
+              class="field-input"
+              type="number"
+              min="1"
+              max="200"
+              [(ngModel)]="verticalSquares"
+              name="verticalSquares"
+              (ngModelChange)="recomputeImageGrid()"
+            />
             <p class="text-xs text-slate mt-1 mb-0">
-              How many grid squares tall the map is — the pixel grid size is worked out from the image.
+              How many grid squares tall the map is — the pixel grid size is worked out from the
+              image.
             </p>
           </div>
         }
@@ -139,11 +209,17 @@
         @if (imagePreviewUrl()) {
           <p class="text-xs text-coal mt-2">
             {{ mapCols() }} × {{ mapRows() }} cells · {{ pixelsPerGrid() }} px/cell
-            @if (mapKind() === 'dd2vtt') { (from file) }
-            @else if (mapKind() === 'image') { (computed) }
+            @if (mapKind() === 'dd2vtt') {
+              (from file)
+            } @else if (mapKind() === 'image') {
+              (computed)
+            }
           </p>
         }
-        <div #previewContainer class="w-full h-80 mt-2 rounded border border-white/10 bg-black/20"></div>
+        <div
+          #previewContainer
+          class="w-full h-80 mt-2 rounded border border-white/10 bg-black/20"
+        ></div>
       </div>
 
       <!-- Right: characters (top) + monsters (search + scrollable list) -->
@@ -152,19 +228,35 @@
           <label class="field-label">Characters</label>
           <div class="flex flex-col gap-1 max-h-48 overflow-y-auto pr-1">
             @for (character of data.characters; track character.id) {
-              <button type="button"
+              <button
+                type="button"
                 class="flex items-center gap-2 px-3 py-1.5 rounded border text-left text-sm w-full cursor-pointer"
-                [class]="isCharacterSelected(character.id!) ? 'border-gold/50 bg-gold/5' : 'border-white/10 hover:border-white/30'"
+                [class]="
+                  isCharacterSelected(character.id!)
+                    ? 'border-gold/50 bg-gold/5'
+                    : 'border-white/10 hover:border-white/30'
+                "
                 (click)="toggleCharacter(character.id!)"
-                style="font-family: inherit;"
+                style="font-family: inherit"
               >
-                <span class="w-4 h-4 rounded-full border flex items-center justify-center shrink-0 text-[9px]"
-                  [class]="isCharacterSelected(character.id!) ? 'bg-gold border-gold text-canvas font-bold' : 'border-slate/50 text-transparent'">●</span>
+                <span
+                  class="w-4 h-4 rounded-full border flex items-center justify-center shrink-0 text-[9px]"
+                  [class]="
+                    isCharacterSelected(character.id!)
+                      ? 'bg-gold border-gold text-canvas font-bold'
+                      : 'border-slate/50 text-transparent'
+                  "
+                  >●</span
+                >
                 <span class="text-parchment">{{ character.name }}</span>
-                <span class="text-coal text-xs">Level {{ character.level }} {{ character.class }}</span>
+                <span class="text-coal text-xs"
+                  >Level {{ character.level }} {{ character.class }}</span
+                >
               </button>
             } @empty {
-              <p class="text-slate text-sm">No characters yet — create one under the Characters tab first.</p>
+              <p class="text-slate text-sm">
+                No characters yet — create one under the Characters tab first.
+              </p>
             }
           </div>
         </div>
@@ -180,14 +272,26 @@
           />
           <div class="flex flex-col gap-1 max-h-56 overflow-y-auto pr-1">
             @for (monster of filteredMonsters(); track monster.index) {
-              <button type="button"
+              <button
+                type="button"
                 class="flex items-center gap-2 px-3 py-1.5 rounded border text-left text-sm w-full cursor-pointer"
-                [class]="isMonsterSelected(monster.index) ? 'border-gold/50 bg-gold/5' : 'border-white/10 hover:border-white/30'"
+                [class]="
+                  isMonsterSelected(monster.index)
+                    ? 'border-gold/50 bg-gold/5'
+                    : 'border-white/10 hover:border-white/30'
+                "
                 (click)="toggleMonster(monster.index)"
-                style="font-family: inherit;"
+                style="font-family: inherit"
               >
-                <span class="w-4 h-4 rounded-full border flex items-center justify-center shrink-0 text-[9px]"
-                  [class]="isMonsterSelected(monster.index) ? 'bg-gold border-gold text-canvas font-bold' : 'border-slate/50 text-transparent'">●</span>
+                <span
+                  class="w-4 h-4 rounded-full border flex items-center justify-center shrink-0 text-[9px]"
+                  [class]="
+                    isMonsterSelected(monster.index)
+                      ? 'bg-gold border-gold text-canvas font-bold'
+                      : 'border-slate/50 text-transparent'
+                  "
+                  >●</span
+                >
                 <span class="text-parchment">{{ monster.name }}</span>
                 <span class="text-coal text-xs">CR {{ monster.challenge_rating }}</span>
               </button>
@@ -201,14 +305,28 @@
 
     <div class="field">
       <label class="field-label">Recap / summary (shown to players once revealed)</label>
-      <textarea class="field-input" [(ngModel)]="summary" name="summary" rows="3"
-                 placeholder="What happened in this encounter…"></textarea>
+      <textarea
+        class="field-input"
+        [(ngModel)]="summary"
+        name="summary"
+        rows="3"
+        placeholder="What happened in this encounter…"
+      ></textarea>
     </div>
   </form>
 </mat-dialog-content>
 <mat-dialog-actions align="end" class="!px-6 !pb-5 gap-2">
   <button class="btn-ghost" type="button" (click)="cancel()">Cancel</button>
-  <button class="btn-primary" type="submit" form="encounter-form" [disabled]="!name.trim() || saving()">
-    @if (saving()) { <span class="spinner-sm"></span> } @else { {{ editingId() ? 'Save Changes' : 'Create Encounter' }} }
+  <button
+    class="btn-primary"
+    type="submit"
+    form="encounter-form"
+    [disabled]="!name.trim() || saving()"
+  >
+    @if (saving()) {
+      <span class="spinner-sm"></span>
+    } @else {
+      {{ editingId() ? 'Save Changes' : 'Create Encounter' }}
+    }
   </button>
 </mat-dialog-actions>

@@ -7,12 +7,14 @@
   </div>
 
   <div class="flex flex-col gap-6 max-w-2xl">
-
     <!-- Upload card -->
     <div class="card">
       <div class="card-header border-b border-white/10">
         <h3 class="font-brand text-parchment m-0">Upload Map</h3>
-        <p class="text-sm text-slate mt-1 mb-0">Upload a PNG or JPEG battle map image — from Dungeondraft, another map tool, or any image you have.</p>
+        <p class="text-sm text-slate mt-1 mb-0">
+          Upload a PNG or JPEG battle map image — from Dungeondraft, another map tool, or any image
+          you have.
+        </p>
       </div>
       <div class="card-body flex flex-col gap-4">
         @if (error()) {
@@ -20,14 +22,23 @@
         }
         <div class="field">
           <label class="field-label">Map Name</label>
-          <input class="field-input" [(ngModel)]="newMapName" placeholder="e.g. Goblin Cave Level 1" />
+          <input
+            class="field-input"
+            [(ngModel)]="newMapName"
+            placeholder="e.g. Goblin Cave Level 1"
+          />
         </div>
         <div>
           <p class="field-label mb-2">Map Image (PNG/JPEG/WebP)</p>
           <label class="btn-outline cursor-pointer inline-flex">
             <mat-icon class="text-base">upload_file</mat-icon>
             Choose File
-            <input type="file" accept="image/png,image/webp,image/jpeg" (change)="onFileChange($event)" class="hidden" />
+            <input
+              type="file"
+              accept="image/png,image/webp,image/jpeg"
+              (change)="onFileChange($event)"
+              class="hidden"
+            />
           </label>
           @if (selectedFile) {
             <span class="ml-3 text-sm text-slate">{{ selectedFile.name }}</span>
@@ -35,29 +46,52 @@
         </div>
         <div class="field">
           <label class="field-label">Vertical Grid Squares</label>
-          <input class="field-input" type="number" [(ngModel)]="verticalSquares" min="1" max="200" />
+          <input
+            class="field-input"
+            type="number"
+            [(ngModel)]="verticalSquares"
+            min="1"
+            max="200"
+          />
           <p class="text-xs text-slate mt-1 mb-0">
-            How many grid squares tall the map is. The pixel grid size is worked out
-            automatically from the image.
+            How many grid squares tall the map is. The pixel grid size is worked out automatically
+            from the image.
           </p>
         </div>
         @if (previewUrl && imgWidth) {
           <div class="field">
             <p class="field-label mb-2">Grid Preview</p>
-            <div class="relative rounded overflow-hidden border border-white/10 max-w-sm"
-                 [style.aspect-ratio]="previewAspectRatio">
-              <img [src]="previewUrl" alt="Map preview" class="absolute inset-0 w-full h-full object-cover" />
-              <div class="absolute inset-0 pointer-events-none" [style.background-image]="gridOverlayBackground"></div>
+            <div
+              class="relative rounded overflow-hidden border border-white/10 max-w-sm"
+              [style.aspect-ratio]="previewAspectRatio"
+            >
+              <img
+                [src]="previewUrl"
+                alt="Map preview"
+                class="absolute inset-0 w-full h-full object-cover"
+              />
+              <div
+                class="absolute inset-0 pointer-events-none"
+                [style.background-image]="gridOverlayBackground"
+              ></div>
             </div>
             <p class="text-xs text-slate mt-2 mb-0">
-              {{ imgWidth }}×{{ imgHeight }}px → {{ gridSize }}px cells, ≈{{ horizontalSquares }} squares wide.
+              {{ imgWidth }}×{{ imgHeight }}px → {{ gridSize }}px cells, ≈{{ horizontalSquares }}
+              squares wide.
             </p>
           </div>
         }
         <div>
-          <button class="btn-primary" (click)="upload()"
-                  [disabled]="uploading() || !selectedFile || !newMapName || !gridSize">
-            @if (uploading()) { <span class="spinner-sm"></span> } @else { Upload Map }
+          <button
+            class="btn-primary"
+            (click)="upload()"
+            [disabled]="uploading() || !selectedFile || !newMapName || !gridSize"
+          >
+            @if (uploading()) {
+              <span class="spinner-sm"></span>
+            } @else {
+              Upload Map
+            }
           </button>
         </div>
       </div>
@@ -81,8 +115,10 @@
                 <div class="p-3">
                   <p class="font-medium text-parchment text-sm truncate m-0">{{ map.name }}</p>
                   <p class="text-xs text-slate m-0 mt-0.5">Grid: {{ map.grid_size }}px</p>
-                  <button class="btn-ghost text-sm mt-2 w-full justify-center"
-                          [routerLink]="['/battle-map', map.id]">
+                  <button
+                    class="btn-ghost text-sm mt-2 w-full justify-center"
+                    [routerLink]="['/battle-map', map.id]"
+                  >
                     Open in VTT
                   </button>
                 </div>
@@ -92,6 +128,5 @@
         }
       </div>
     </div>
-
   </div>
 </div>

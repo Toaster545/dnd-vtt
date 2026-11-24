@@ -48,11 +48,13 @@ export class PartyListComponent {
   // Falls back to the character id as the DiceBear seed for members created before portraits
   // existed — still deterministic per-character, just not one the player ever explicitly picked.
   portraitFor(member: CampaignMember): string {
-    return portraitDataUri(portraitSource(
-      member.character_portrait_seed || member.character_id,
-      member.character_avatar_recipe,
-      member.character_portrait_image,
-    ));
+    return portraitDataUri(
+      portraitSource(
+        member.character_portrait_seed || member.character_id,
+        member.character_avatar_recipe,
+        member.character_portrait_image,
+      ),
+    );
   }
 
   // Prefers the live-recomputed value passed in via memberMaxHp — falls back to the stored value

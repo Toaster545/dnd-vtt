@@ -12,7 +12,10 @@ const BUTTON_SCALE_BY = 1.2;
 // Konva is used in the app; the battle map is the only place that is.
 Konva.dragButtons = [0];
 
-interface Point { x: number; y: number; }
+interface Point {
+  x: number;
+  y: number;
+}
 
 function clampScale(scale: number): number {
   return Math.min(MAX_SCALE, Math.max(MIN_SCALE, scale));
@@ -50,16 +53,19 @@ export class StageView {
   };
   private readonly onMiddlePanEnd = () => this.endMiddlePan();
 
-  constructor(private stage: Konva.Stage, private canPan: () => boolean) {
+  constructor(
+    private stage: Konva.Stage,
+    private canPan: () => boolean,
+  ) {
     this.stage.draggable(canPan());
-    stage.on('wheel', e => this.onWheel(e));
-    stage.on('touchmove', e => this.onTouchMove(e));
+    stage.on('wheel', (e) => this.onWheel(e));
+    stage.on('touchmove', (e) => this.onTouchMove(e));
     stage.on('touchend touchcancel', () => this.onTouchEnd());
     // Middle-click always pans the camera, regardless of which tool (fog brush, measure, place
     // torch) is currently armed for the left button — the DM doesn't have to switch back to the
     // Select/move tool just to reposition the view mid-task. Listened for at the stage level (not
     // gated by `canPan`/`draggable`) so it works no matter what's currently under the pointer.
-    stage.on('mousedown', e => this.startMiddlePan(e));
+    stage.on('mousedown', (e) => this.startMiddlePan(e));
   }
 
   private startMiddlePan(e: Konva.KonvaEventObject<MouseEvent>) {
@@ -99,7 +105,9 @@ export class StageView {
   }
 
   centerOn(worldPoint: Point) {
-    this.stage.position(this.screenPositionFor(worldPoint, this.screenCenter(), this.stage.scaleX()));
+    this.stage.position(
+      this.screenPositionFor(worldPoint, this.screenCenter(), this.stage.scaleX()),
+    );
     this.stage.batchDraw();
   }
 
@@ -120,7 +128,9 @@ export class StageView {
     // Re-anchored on the screen center so rotating doesn't fling the map out of view.
     const worldCenter = this.screenToWorld(this.screenCenter());
     this.stage.rotation(this.stage.rotation() + deg);
-    this.stage.position(this.screenPositionFor(worldCenter, this.screenCenter(), this.stage.scaleX()));
+    this.stage.position(
+      this.screenPositionFor(worldCenter, this.screenCenter(), this.stage.scaleX()),
+    );
     this.stage.batchDraw();
   }
 
@@ -183,7 +193,8 @@ export class StageView {
   // zoom or rotation change instead of the view jumping.
   private screenPositionFor(worldPoint: Point, screenPoint: Point, scale: number): Point {
     const angle = (this.stage.rotation() * Math.PI) / 180;
-    const sx = worldPoint.x * scale, sy = worldPoint.y * scale;
+    const sx = worldPoint.x * scale,
+      sy = worldPoint.y * scale;
     const rx = sx * Math.cos(angle) - sy * Math.sin(angle);
     const ry = sx * Math.sin(angle) + sy * Math.cos(angle);
     return { x: screenPoint.x - rx, y: screenPoint.y - ry };

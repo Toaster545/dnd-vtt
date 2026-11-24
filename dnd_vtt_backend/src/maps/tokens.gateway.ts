@@ -1,3 +1,6 @@
+import { CampaignAccessService } from '../campaigns/campaign-access.service';
+import { wsGuard } from '../common/ws-guard';
+import { corsOptions } from '../config';
 import {
   WebSocketGateway,
   WebSocketServer,
@@ -13,6 +16,7 @@ import { SocketAuthService } from '../auth/socket-auth.service';
 import { serializePlayerTokens } from './player-tokens';
 import { Optional } from '@nestjs/common';
 import { CompanionsService } from '../companions/companions.service';
+import type { TokenRow } from './token-row';
 
 interface Measurement {
   shape: 'line' | 'cone' | 'sphere';
@@ -23,15 +27,7 @@ interface Measurement {
 }
 
 @WebSocketGateway({
-  cors: {
-    origin: (
-      process.env.CORS_ORIGINS ??
-      'http://localhost:4200,https://dnd.mathomelab.ca,https://localhost,capacitor://localhost'
-    )
-      .split(',')
-      .map((origin) => origin.trim()),
-    credentials: true,
-  },
+  cors: corsOptions(),
 })
 export class TokensGateway implements OnGatewayInit, OnGatewayDisconnect {
   @WebSocketServer() server: Server;
@@ -39,6 +35,7 @@ export class TokensGateway implements OnGatewayInit, OnGatewayDisconnect {
   constructor(
     private db: DatabaseService,
     private socketAuth: SocketAuthService,
+    private access: CampaignAccessService,
     @Optional() private companions?: CompanionsService,
   ) {}
 
@@ -62,7 +59,7 @@ export class TokensGateway implements OnGatewayInit, OnGatewayDisconnect {
     void client.leave(`map:${mapId}:player`);
   }
 
-  async broadcastTokens(mapId: string, tokens: Record<string, unknown>[]) {
+  async broadcastTokens(mapId: string, tokens: TokenRow[]) {
     if (this.companions) tokens = await this.companions.decorateTokens(tokens);
     this.server.to(`map:${mapId}:dm`).emit('tokens_updated', tokens);
     this.server
@@ -160,36 +157,8 @@ export class TokensGateway implements OnGatewayInit, OnGatewayDisconnect {
     }
   }
 
-  private async mapRole(
-    client: Socket,
-    mapId: string,
-  ): Promise<'dm' | 'player'> {
+  private mapRole(client: Socket, mapId: string): Promise<'dm' | 'player'> {
     const user = this.socketAuth.user(client);
-    const mapResult = await this.db.execute(
-      `SELECT campaign_id FROM battle_maps WHERE id = ?`,
-      [mapId],
-    );
-    const map = mapResult.rows[0];
-    if (!map) throw new Error('Map not found');
-    const campaign = await this.db.execute(
-      `SELECT dm_id FROM campaigns WHERE id = ?`,
-      [map.campaign_id],
-    );
-    if (campaign.rows[0]?.dm_id === user.id) return 'dm';
-    const membership = await this.db.execute(
-      `SELECT id FROM campaign_members
-       WHERE campaign_id = ? AND user_id = ? AND status = 'active'`,
-      [map.campaign_id, user.id],
-    );
-    const visible = await this.db.execute(
-      `SELECT e.id FROM encounters e
-       JOIN encounter_levels el ON el.encounter_id = e.id
-       JOIN sessions s ON s.id = e.session_id
-       WHERE el.map_id = ? AND s.campaign_id = ?
-         AND e.visible_to_players = 1 AND s.visible_to_players = 1 LIMIT 1`,
-      [mapId, map.campaign_id],
-    );
-    if (!membership.rows[0] || !visible.rows[0]) throw new Error('Forbidden');
-    return 'player';
+    return wsGuard(() => this.access.socketMapRole(mapId, user.id));
   }
 }

@@ -26,16 +26,14 @@ export class SpellService {
 
   async updateSpell(spell: Partial<DndSpell> & { index: string }): Promise<DndSpell> {
     const updated = await firstValueFrom(
-      this.http.put<DndSpell>(`${API}/content/spells/${encodeURIComponent(spell.index)}`, spell)
+      this.http.put<DndSpell>(`${API}/content/spells/${encodeURIComponent(spell.index)}`, spell),
     );
     this.content.invalidateContent('spells', updated.index);
     return updated;
   }
 
   async deleteSpell(index: string): Promise<void> {
-    await firstValueFrom(
-      this.http.delete(`${API}/content/spells/${encodeURIComponent(index)}`)
-    );
+    await firstValueFrom(this.http.delete(`${API}/content/spells/${encodeURIComponent(index)}`));
     this.content.invalidateContent('spells', index);
   }
 }

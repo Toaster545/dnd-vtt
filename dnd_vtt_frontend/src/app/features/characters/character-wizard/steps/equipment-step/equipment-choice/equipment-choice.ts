@@ -1,8 +1,22 @@
 import { Component, input, output } from '@angular/core';
-import { DndItem, EquipmentGroup, EquipmentItemRef, EquipmentOption, StartingEquipment, itemDisplayName } from '../../../../../../core/services/content.service';
 import {
-  categoryOptions, categoryPick, equipmentMode, groupOptionKey, isEquipmentComplete,
-  resolveStartingEquipment, withCategoryPick, withGroupOption, withMode,
+  DndItem,
+  EquipmentGroup,
+  EquipmentItemRef,
+  EquipmentOption,
+  StartingEquipment,
+  itemDisplayName,
+} from '../../../../../../core/services/content.service';
+import {
+  categoryOptions,
+  categoryPick,
+  equipmentMode,
+  groupOptionKey,
+  isEquipmentComplete,
+  resolveStartingEquipment,
+  withCategoryPick,
+  withGroupOption,
+  withMode,
 } from '../../../../../../core/utils/starting-equipment';
 
 // One source's (class's or background's) "(a) gear or (b) gold" starting-equipment picker —
@@ -15,9 +29,9 @@ import {
 export class EquipmentChoiceComponent {
   readonly itemDisplayName = itemDisplayName;
 
-  readonly label   = input.required<string>();
-  readonly equip   = input.required<StartingEquipment | null>();
-  readonly items   = input.required<DndItem[]>();
+  readonly label = input.required<string>();
+  readonly equip = input.required<StartingEquipment | null>();
+  readonly items = input.required<DndItem[]>();
   readonly choices = input<Record<string, string[]>>({});
   readonly changed = output<Record<string, string[]>>();
 
@@ -39,7 +53,7 @@ export class EquipmentChoiceComponent {
 
   pickedOption(group: EquipmentGroup): EquipmentOption | null {
     const key = this.groupOption(group);
-    return group.options.find(o => o.key === key) ?? null;
+    return group.options.find((o) => o.key === key) ?? null;
   }
 
   catPick(ref: EquipmentItemRef): string | null {
@@ -56,7 +70,10 @@ export class EquipmentChoiceComponent {
   }
 
   refLabel(ref: EquipmentItemRef): string {
-    if ('item' in ref) return this.itemName(ref.item) + (ref.quantity && ref.quantity > 1 ? ` (${ref.quantity})` : '');
+    if ('item' in ref)
+      return (
+        this.itemName(ref.item) + (ref.quantity && ref.quantity > 1 ? ` (${ref.quantity})` : '')
+      );
     return ref.label;
   }
 
@@ -67,7 +84,7 @@ export class EquipmentChoiceComponent {
   }
 
   itemName(index: string): string {
-    const item = this.items().find(it => it.index === index);
+    const item = this.items().find((it) => it.index === index);
     return item ? itemDisplayName(item) : index;
   }
 

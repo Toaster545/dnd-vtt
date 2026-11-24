@@ -24,7 +24,7 @@ export class StagePointerTools {
     private measurementTool: MeasurementTool,
     private config: StagePointerToolsConfig,
   ) {
-    stage.on('mousedown touchstart', e => this.onDown(e));
+    stage.on('mousedown touchstart', (e) => this.onDown(e));
     stage.on('mousemove touchmove', () => this.onMove());
     stage.on('mouseup touchend', () => this.onUp());
   }

@@ -6,13 +6,21 @@ export default defineConfig({
   retries: process.env['CI'] ? 2 : 0,
   reporter: process.env['CI'] ? 'github' : 'list',
   use: { baseURL: 'http://127.0.0.1:3100', trace: 'retain-on-failure' },
-  webServer: process.env['PW_EXTERNAL_SERVER'] ? undefined : {
-    command: 'npm --prefix ../dnd_vtt_backend run start',
-    url: 'http://127.0.0.1:3100/',
-    reuseExistingServer: !process.env['CI'],
-    timeout: 120_000,
-    env: { ...process.env, PORT: '3100', DB_PATH: '../dnd_vtt_frontend/test-results/e2e.db' },
-  },
+  webServer: process.env['PW_EXTERNAL_SERVER']
+    ? undefined
+    : {
+        command: 'npm --prefix ../dnd_vtt_backend run start',
+        url: 'http://127.0.0.1:3100/',
+        reuseExistingServer: !process.env['CI'],
+        timeout: 120_000,
+        env: {
+          ...process.env,
+          PORT: '3100',
+          // CI has no .env; the backend refuses to start without a non-placeholder secret.
+          JWT_SECRET: process.env['JWT_SECRET'] ?? 'e2e-only-secret-not-for-real-use-0123456789',
+          DB_PATH: '../dnd_vtt_frontend/test-results/e2e.db',
+        },
+      },
   projects: [
     { name: 'desktop-chromium', use: { ...devices['Desktop Chrome'] } },
     { name: 'phone', use: { ...devices['Pixel 7'] } },

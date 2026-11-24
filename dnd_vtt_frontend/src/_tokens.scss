@@ -21,69 +21,82 @@
 //    dark schemes' bright accents, white for Silver's dark accent.
 
 @function rgb-triplet($hex) {
-  @return #{color.channel($hex, "red")} #{color.channel($hex, "green")} #{color.channel($hex, "blue")};
+  @return #{color.channel($hex, 'red')} #{color.channel($hex, 'green')}
+    #{color.channel($hex, 'blue')};
 }
 
 $dark-common: (
-  text-primary:   #ede9df,
+  text-primary: #ede9df,
   text-secondary: #bcbcbc,
-  text-disabled:  #787877,
-  outline:        rgba(255, 255, 255, 0.08),
+  text-disabled: #787877,
+  outline: rgba(255, 255, 255, 0.08),
   outline-strong: rgba(255, 255, 255, 0.18),
-  on-accent:      #000000,
-  scheme:         dark,
-  shadow-sm:      0 1px 4px  rgba(0, 0, 0, 0.50),
-  shadow-md:      0 3px 12px rgba(0, 0, 0, 0.60),
-  shadow-lg:      0 8px 28px rgba(0, 0, 0, 0.75),
+  on-accent: #000000,
+  scheme: dark,
+  shadow-sm: 0 1px 4px rgba(0, 0, 0, 0.5),
+  shadow-md: 0 3px 12px rgba(0, 0, 0, 0.6),
+  shadow-lg: 0 8px 28px rgba(0, 0, 0, 0.75),
 );
 
-$theme-gold: map.merge((
-  accent:              #c9a227,
-  accent-bright:        #f5d67a,
-  accent-dim:           #a07c18,
-  accent-container:     #3a2c00,
-  accent-on-container:  #f5d67a,
-  bg-base:              #0d0e16,
-  bg-surface:           #171822,
-  bg-raised:            #1e2033,
-  bg-overlay:           #252641,
-), $dark-common);
+$theme-gold: map.merge(
+  (
+    accent: #c9a227,
+    accent-bright: #f5d67a,
+    accent-dim: #a07c18,
+    accent-container: #3a2c00,
+    accent-on-container: #f5d67a,
+    bg-base: #0d0e16,
+    bg-surface: #171822,
+    bg-raised: #1e2033,
+    bg-overlay: #252641,
+  ),
+  $dark-common
+);
 
-$theme-crimson: map.merge((
-  accent:              #c9524a,
-  accent-bright:        #e0837a,
-  accent-dim:           #9e3a34,
-  accent-container:     #3a1218,
-  accent-on-container:  #f2a8b3,
-  bg-base:              #160d0e,
-  bg-surface:           #221417,
-  bg-raised:            #2b1a1e,
-  bg-overlay:           #341f24,
-), $dark-common);
+$theme-crimson: map.merge(
+  (
+    accent: #c9524a,
+    accent-bright: #e0837a,
+    accent-dim: #9e3a34,
+    accent-container: #3a1218,
+    accent-on-container: #f2a8b3,
+    bg-base: #160d0e,
+    bg-surface: #221417,
+    bg-raised: #2b1a1e,
+    bg-overlay: #341f24,
+  ),
+  $dark-common
+);
 
-$theme-emerald: map.merge((
-  accent:              #2f9e6a,
-  accent-bright:        #6fd9a4,
-  accent-dim:           #1f7a4f,
-  accent-container:     #0d3a24,
-  accent-on-container:  #a8ecc7,
-  bg-base:              #0a140f,
-  bg-surface:           #10201a,
-  bg-raised:            #162a22,
-  bg-overlay:           #1c352b,
-), $dark-common);
+$theme-emerald: map.merge(
+  (
+    accent: #2f9e6a,
+    accent-bright: #6fd9a4,
+    accent-dim: #1f7a4f,
+    accent-container: #0d3a24,
+    accent-on-container: #a8ecc7,
+    bg-base: #0a140f,
+    bg-surface: #10201a,
+    bg-raised: #162a22,
+    bg-overlay: #1c352b,
+  ),
+  $dark-common
+);
 
-$theme-royal-blue: map.merge((
-  accent:              #4a7fe0,
-  accent-bright:        #8bb0f0,
-  accent-dim:           #34599c,
-  accent-container:     #10234a,
-  accent-on-container:  #b9d3f7,
-  bg-base:              #0a0f1e,
-  bg-surface:           #101a2e,
-  bg-raised:            #16233a,
-  bg-overlay:           #1c2d49,
-), $dark-common);
+$theme-royal-blue: map.merge(
+  (
+    accent: #4a7fe0,
+    accent-bright: #8bb0f0,
+    accent-dim: #34599c,
+    accent-container: #10234a,
+    accent-on-container: #b9d3f7,
+    bg-base: #0a0f1e,
+    bg-surface: #101a2e,
+    bg-raised: #16233a,
+    bg-overlay: #1c2d49,
+  ),
+  $dark-common
+);
 
 // Light grey/white scheme. Unlike the dark schemes, its `accent` must read
 // well as *text* directly on the light page background (see the ~120
@@ -91,25 +104,25 @@ $theme-royal-blue: map.merge((
 // pale tint — which in turn means its `on-accent` (for accent-filled
 // surfaces like `.btn-primary`) flips to white instead of black.
 $theme-silver: (
-  accent:              #4a5361,
-  accent-bright:        #2b3038,
-  accent-dim:           #363c44,
-  accent-container:     #e4e6e9,
-  accent-on-container:  #2b2f35,
-  bg-base:              #f2f1ee,
-  bg-surface:           #ffffff,
-  bg-raised:            #e8e7e3,
-  bg-overlay:           #dedcd7,
-  text-primary:         #23262b,
-  text-secondary:       #5f6369,
-  text-disabled:        #a8a6a1,
-  outline:              rgba(0, 0, 0, 0.08),
-  outline-strong:       rgba(0, 0, 0, 0.18),
-  on-accent:            #ffffff,
-  scheme:               light,
-  shadow-sm:            0 1px 4px  rgba(0, 0, 0, 0.10),
-  shadow-md:            0 3px 12px rgba(0, 0, 0, 0.14),
-  shadow-lg:            0 8px 28px rgba(0, 0, 0, 0.20),
+  accent: #4a5361,
+  accent-bright: #2b3038,
+  accent-dim: #363c44,
+  accent-container: #e4e6e9,
+  accent-on-container: #2b2f35,
+  bg-base: #f2f1ee,
+  bg-surface: #ffffff,
+  bg-raised: #e8e7e3,
+  bg-overlay: #dedcd7,
+  text-primary: #23262b,
+  text-secondary: #5f6369,
+  text-disabled: #a8a6a1,
+  outline: rgba(0, 0, 0, 0.08),
+  outline-strong: rgba(0, 0, 0, 0.18),
+  on-accent: #ffffff,
+  scheme: light,
+  shadow-sm: 0 1px 4px rgba(0, 0, 0, 0.1),
+  shadow-md: 0 3px 12px rgba(0, 0, 0, 0.14),
+  shadow-lg: 0 8px 28px rgba(0, 0, 0, 0.2),
 );
 
 $themes: (
@@ -124,46 +137,42 @@ $themes: (
 //    Core brand colors. Everything else derives from these. These are
 //    intentionally scheme-invariant (unlike accent/bg/text/outline above).
 
-$crimson:           #8b1a1a;   // danger/destructive accent (secondary use)
+$crimson: #8b1a1a; // danger/destructive accent (secondary use)
 
-$error:             #e05252;
-$error-on:          #ffffff;
+$error: #e05252;
+$error-on: #ffffff;
 
-$success:           #4caf82;
+$success: #4caf82;
 
 // Small identity accent for subclass headings and source labels. Change this one value to
 // adjust the subclass accent application-wide.
 $subclass-accent: #b89cc4;
 
-
 // ── Typography ─────────────────────────────────────────────────
 
-$font-brand: 'Cinzel, serif';      // titles, wizard headings, toolbar name
-$font-body:  'Nunito, sans-serif'; // all UI text, labels, body copy
-
+$font-brand: 'Cinzel, serif'; // titles, wizard headings, toolbar name
+$font-body: 'Nunito, sans-serif'; // all UI text, labels, body copy
 
 // ── Spacing ────────────────────────────────────────────────────
 //    Use these in component SCSS as var(--space-N) for consistency.
 
-$space-1:   0.25rem;   //  4px
-$space-2:   0.5rem;    //  8px
-$space-3:   0.75rem;   // 12px
-$space-4:   1rem;      // 16px
-$space-6:   1.5rem;    // 24px
-$space-8:   2rem;      // 32px
-$space-12:  3rem;      // 48px
-
+$space-1: 0.25rem; //  4px
+$space-2: 0.5rem; //  8px
+$space-3: 0.75rem; // 12px
+$space-4: 1rem; // 16px
+$space-6: 1.5rem; // 24px
+$space-8: 2rem; // 32px
+$space-12: 3rem; // 48px
 
 // ── Shape ──────────────────────────────────────────────────────
 
-$radius-sm:  4px;
-$radius-md:  8px;
-$radius-lg:  8px;
-$radius-xl:  8px;
+$radius-sm: 4px;
+$radius-md: 8px;
+$radius-lg: 8px;
+$radius-xl: 8px;
 
-$radius-button:   6px;    // ← toolbar buttons, flat/outlined/text buttons
-$radius-nav-item: 6px;    // ← sidenav list item active indicator
-
+$radius-button: 6px; // ← toolbar buttons, flat/outlined/text buttons
+$radius-nav-item: 6px; // ← sidenav list item active indicator
 
 // ══════════════════════════════════════════════════════════════
 //  theme-vars($t) — every custom property that differs between
@@ -175,30 +184,30 @@ $radius-nav-item: 6px;    // ← sidenav list item active indicator
 // ══════════════════════════════════════════════════════════════
 
 @mixin theme-vars($t) {
-  --dnd-gold:              #{map.get($t, accent)};
-  --dnd-gold-bright:       #{map.get($t, accent-bright)};
-  --dnd-gold-dim:          #{map.get($t, accent-dim)};
-  --dnd-gold-container:    #{map.get($t, accent-container)};
+  --dnd-gold: #{map.get($t, accent)};
+  --dnd-gold-bright: #{map.get($t, accent-bright)};
+  --dnd-gold-dim: #{map.get($t, accent-dim)};
+  --dnd-gold-container: #{map.get($t, accent-container)};
   --dnd-gold-on-container: #{map.get($t, accent-on-container)};
-  --dnd-gold-rgb:          #{rgb-triplet(map.get($t, accent))};
-  --dnd-on-accent:         #{map.get($t, on-accent)};
+  --dnd-gold-rgb: #{rgb-triplet(map.get($t, accent))};
+  --dnd-on-accent: #{map.get($t, on-accent)};
 
-  --dnd-bg-base:           #{map.get($t, bg-base)};
-  --dnd-bg-surface:        #{map.get($t, bg-surface)};
-  --dnd-bg-raised:         #{map.get($t, bg-raised)};
-  --dnd-bg-overlay:        #{map.get($t, bg-overlay)};
-  --dnd-canvas-rgb:        #{rgb-triplet(map.get($t, bg-base))};
-  --dnd-surface-rgb:       #{rgb-triplet(map.get($t, bg-surface))};
+  --dnd-bg-base: #{map.get($t, bg-base)};
+  --dnd-bg-surface: #{map.get($t, bg-surface)};
+  --dnd-bg-raised: #{map.get($t, bg-raised)};
+  --dnd-bg-overlay: #{map.get($t, bg-overlay)};
+  --dnd-canvas-rgb: #{rgb-triplet(map.get($t, bg-base))};
+  --dnd-surface-rgb: #{rgb-triplet(map.get($t, bg-surface))};
 
-  --dnd-text:              #{map.get($t, text-primary)};
-  --dnd-text-muted:        #{map.get($t, text-secondary)};
-  --dnd-text-disabled:     #{map.get($t, text-disabled)};
-  --dnd-text-rgb:          #{rgb-triplet(map.get($t, text-primary))};
-  --dnd-slate-rgb:         #{rgb-triplet(map.get($t, text-secondary))};
-  --dnd-coal-rgb:          #{rgb-triplet(map.get($t, text-disabled))};
+  --dnd-text: #{map.get($t, text-primary)};
+  --dnd-text-muted: #{map.get($t, text-secondary)};
+  --dnd-text-disabled: #{map.get($t, text-disabled)};
+  --dnd-text-rgb: #{rgb-triplet(map.get($t, text-primary))};
+  --dnd-slate-rgb: #{rgb-triplet(map.get($t, text-secondary))};
+  --dnd-coal-rgb: #{rgb-triplet(map.get($t, text-disabled))};
 
-  --dnd-outline:           #{map.get($t, outline)};
-  --dnd-outline-strong:    #{map.get($t, outline-strong)};
+  --dnd-outline: #{map.get($t, outline)};
+  --dnd-outline-strong: #{map.get($t, outline-strong)};
 
   --shadow-sm: #{map.get($t, shadow-sm)};
   --shadow-md: #{map.get($t, shadow-md)};
@@ -206,41 +215,41 @@ $radius-nav-item: 6px;    // ← sidenav list item active indicator
 
   color-scheme: #{map.get($t, scheme)};
 
-  --mat-sys-primary:               var(--dnd-gold);
-  --mat-sys-primary-container:     var(--dnd-gold-container);
-  --mat-sys-on-primary-container:  var(--dnd-gold-on-container);
-  --mat-sys-on-primary:            var(--dnd-on-accent);
+  --mat-sys-primary: var(--dnd-gold);
+  --mat-sys-primary-container: var(--dnd-gold-container);
+  --mat-sys-on-primary-container: var(--dnd-gold-on-container);
+  --mat-sys-on-primary: var(--dnd-on-accent);
 
-  --mat-sys-secondary:             var(--dnd-gold-on-container);
-  --mat-sys-secondary-container:   var(--dnd-bg-raised);
-  --mat-sys-on-secondary:          var(--dnd-on-accent);
-  --mat-sys-on-secondary-container:var(--dnd-text);
+  --mat-sys-secondary: var(--dnd-gold-on-container);
+  --mat-sys-secondary-container: var(--dnd-bg-raised);
+  --mat-sys-on-secondary: var(--dnd-on-accent);
+  --mat-sys-on-secondary-container: var(--dnd-text);
 
-  --mat-sys-background:            var(--dnd-bg-base);
+  --mat-sys-background: var(--dnd-bg-base);
 
-  --mat-sys-surface:               var(--dnd-bg-surface);
-  --mat-sys-surface-variant:       var(--dnd-bg-raised);
-  --mat-sys-surface-container:     var(--dnd-bg-surface);
+  --mat-sys-surface: var(--dnd-bg-surface);
+  --mat-sys-surface-variant: var(--dnd-bg-raised);
+  --mat-sys-surface-container: var(--dnd-bg-surface);
   --mat-sys-surface-container-low: var(--dnd-bg-base);
-  --mat-sys-surface-container-high:var(--dnd-bg-raised);
-  --mat-sys-surface-bright:        var(--dnd-bg-overlay);
-  --mat-sys-inverse-on-surface:    var(--dnd-bg-base);
-  --mat-sys-inverse-primary:       var(--dnd-gold-container);
+  --mat-sys-surface-container-high: var(--dnd-bg-raised);
+  --mat-sys-surface-bright: var(--dnd-bg-overlay);
+  --mat-sys-inverse-on-surface: var(--dnd-bg-base);
+  --mat-sys-inverse-primary: var(--dnd-gold-container);
 
-  --mat-sys-on-background:         var(--dnd-text);
-  --mat-sys-on-surface:            var(--dnd-text);
-  --mat-sys-on-surface-variant:    var(--dnd-text-muted);
-  --mat-sys-inverse-surface:       var(--dnd-text);
+  --mat-sys-on-background: var(--dnd-text);
+  --mat-sys-on-surface: var(--dnd-text);
+  --mat-sys-on-surface-variant: var(--dnd-text-muted);
+  --mat-sys-inverse-surface: var(--dnd-text);
 
-  --mat-sys-outline:               var(--dnd-outline-strong);
-  --mat-sys-outline-variant:       var(--dnd-outline);
+  --mat-sys-outline: var(--dnd-outline-strong);
+  --mat-sys-outline-variant: var(--dnd-outline);
 
   // Error/tertiary containers are derived (not stored per-theme) so they
   // automatically land as a dark tint on dark schemes and a light tint on
   // Silver, without hand-authoring a 5th set of hex values.
-  --mat-sys-error-container:       color-mix(in srgb, #{$error} 16%, var(--dnd-bg-base));
-  --mat-sys-on-error-container:    #{$error};
-  --mat-sys-tertiary-container:    color-mix(in srgb, #{$success} 16%, var(--dnd-bg-base));
+  --mat-sys-error-container: color-mix(in srgb, #{$error} 16%, var(--dnd-bg-base));
+  --mat-sys-on-error-container: #{$error};
+  --mat-sys-tertiary-container: color-mix(in srgb, #{$success} 16%, var(--dnd-bg-base));
   --mat-sys-on-tertiary-container: #{$success};
 }
 
@@ -258,35 +267,35 @@ $radius-nav-item: 6px;    // ← sidenav list item active indicator
   //    The theme-dependent subset comes from theme-vars() above;
   //    everything below is shared across schemes.
 
-  --mat-sys-tertiary:              #{$success};
-  --mat-sys-on-tertiary:           #000000;
+  --mat-sys-tertiary: #{$success};
+  --mat-sys-on-tertiary: #000000;
 
-  --mat-sys-error:                 #{$error};
-  --mat-sys-on-error:              #{$error-on};
+  --mat-sys-error: #{$error};
+  --mat-sys-on-error: #{$error-on};
 
-  --mat-sys-scrim:                 rgba(0, 0, 0, 0.60);
-  --mat-sys-shadow:                rgba(0, 0, 0, 0.80);
+  --mat-sys-scrim: rgba(0, 0, 0, 0.6);
+  --mat-sys-shadow: rgba(0, 0, 0, 0.8);
 
   // ── Brand CSS custom properties ──────────────────────────
   //    Available in all component SCSS files and inline styles.
 
   // Colors
-  --dnd-crimson:        #{$crimson};
-  --dnd-error:          #{$error};
-  --dnd-success:        #{$success};
+  --dnd-crimson: #{$crimson};
+  --dnd-error: #{$error};
+  --dnd-success: #{$success};
   --dnd-subclass-accent: #{$subclass-accent};
 
   // Typography
-  --dnd-font-brand:     #{$font-brand};
-  --dnd-font-body:      #{$font-body};
+  --dnd-font-brand: #{$font-brand};
+  --dnd-font-body: #{$font-body};
 
   // Spacing
-  --space-1:  #{$space-1};
-  --space-2:  #{$space-2};
-  --space-3:  #{$space-3};
-  --space-4:  #{$space-4};
-  --space-6:  #{$space-6};
-  --space-8:  #{$space-8};
+  --space-1: #{$space-1};
+  --space-2: #{$space-2};
+  --space-3: #{$space-3};
+  --space-4: #{$space-4};
+  --space-6: #{$space-6};
+  --space-8: #{$space-8};
   --space-12: #{$space-12};
 
   // Shape
@@ -300,13 +309,13 @@ $radius-nav-item: 6px;    // ← sidenav list item active indicator
   //    Override with $radius-button and $radius-nav-item above.
 
   // Buttons (filled, text, outlined, icon)
-  --mdc-filled-button-container-shape:    #{$radius-button};
-  --mdc-text-button-container-shape:      #{$radius-button};
-  --mdc-outlined-button-container-shape:  #{$radius-button};
+  --mdc-filled-button-container-shape: #{$radius-button};
+  --mdc-text-button-container-shape: #{$radius-button};
+  --mdc-outlined-button-container-shape: #{$radius-button};
   --mdc-protected-button-container-shape: #{$radius-button};
-  --mdc-icon-button-state-layer-shape:    #{$radius-button};
-  --mat-sys-corner-full:                  #{$radius-button};
+  --mdc-icon-button-state-layer-shape: #{$radius-button};
+  --mat-sys-corner-full: #{$radius-button};
 
   // Sidenav / nav-list active indicator
-  --mat-list-active-indicator-shape:      #{$radius-nav-item};
+  --mat-list-active-indicator-shape: #{$radius-nav-item};
 }

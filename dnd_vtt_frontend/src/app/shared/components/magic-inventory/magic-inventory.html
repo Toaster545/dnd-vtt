@@ -1,116 +1,318 @@
-@if (error()) { <p role="alert" class="text-danger text-sm">{{ error() }}</p> }
+@if (error()) {
+  <p role="alert" class="text-danger text-sm">{{ error() }}</p>
+}
 @if (!restOnly()) {
   @if (options(); as opts) {
     @if (opts.limit) {
       <section class="replication">
         <div class="row">
-          <div><h4>Replicate Magic Item</h4><span class="muted">{{ active().length }} / {{ opts.limit }} active</span></div>
-          <div class="controls"><button class="btn-outline text-xs" (click)="begin()">Long Rest</button>
-          @if (isDm()) { <button class="btn-outline text-xs" (click)="begin(true)">DM correction</button> }</div>
+          <div>
+            <h4>Replicate Magic Item</h4>
+            <span class="muted">{{ active().length }} / {{ opts.limit }} active</span>
+          </div>
+          <div class="controls">
+            <button class="btn-outline text-xs" (click)="begin()">Long Rest</button>
+            @if (isDm()) {
+              <button class="btn-outline text-xs" (click)="begin(true)">DM correction</button>
+            }
+          </div>
         </div>
         @for (entry of active(); track entry.instanceId) {
-          <p class="text-sm my-1">{{ entry.name }} <span class="muted">· {{ entry.holderName }}</span></p>
+          <p class="text-sm my-1">
+            {{ entry.name }} <span class="muted">· {{ entry.holderName }}</span>
+          </p>
         }
-        <details class="mt-2"><summary>Learned plans</summary>
+        <details class="mt-2">
+          <summary>Learned plans</summary>
           @for (plan of opts.plans; track plan.id) {
-            <p class="text-xs my-1">{{ plan.name }} @if (!plan.supported) { <span class="muted">· {{ plan.name === 'Common Magic Item' ? 'Choose a specific item in class choices' : 'Not supported in this release' }}</span> }</p>
+            <p class="text-xs my-1">
+              {{ plan.name }}
+              @if (!plan.supported) {
+                <span class="muted"
+                  >·
+                  {{
+                    plan.name === 'Common Magic Item'
+                      ? 'Choose a specific item in class choices'
+                      : 'Not supported in this release'
+                  }}</span
+                >
+              }
+            </p>
           }
         </details>
       </section>
     }
   }
-  <input class="field-input w-full my-3" aria-label="Search equipment" placeholder="Search equipment…" [ngModel]="search()" (ngModelChange)="search.set($event)" />
+  <input
+    class="field-input w-full my-3"
+    aria-label="Search equipment"
+    placeholder="Search equipment…"
+    [ngModel]="search()"
+    (ngModelChange)="search.set($event)"
+  />
   @for (row of rows(); track row.entry.instanceId ?? $index) {
     <section class="item">
       <div class="row">
-        <div><strong>{{ row.entry.name }}</strong> @if (row.entry.quantity > 1) { <span class="muted">× {{ row.entry.quantity }}</span> }
-          @if (row.entry.origin) { <div class="muted text-xs">Replicated · {{ row.entry.origin.planName }}</div> }
+        <div>
+          <strong>{{ row.entry.name }}</strong>
+          @if (row.entry.quantity > 1) {
+            <span class="muted">× {{ row.entry.quantity }}</span>
+          }
+          @if (row.entry.origin) {
+            <div class="muted text-xs">Replicated · {{ row.entry.origin.planName }}</div>
+          }
         </div>
         <div class="controls">
           @if (row.item?.requires_attunement && !row.entry.needsBase) {
-            <button class="btn-outline text-xs" [class.active]="row.entry.attuned" [disabled]="busy()" (click)="action(row.entry, row.entry.attuned ? 'unattune' : 'attune')">{{ row.entry.attuned ? 'Attuned' : 'Attune' }}</button>
+            <button
+              class="btn-outline text-xs"
+              [class.active]="row.entry.attuned"
+              [disabled]="busy()"
+              (click)="action(row.entry, row.entry.attuned ? 'unattune' : 'attune')"
+            >
+              {{ row.entry.attuned ? 'Attuned' : 'Attune' }}
+            </button>
           }
-          <button class="btn-outline text-xs" [class.active]="row.entry.equipped" [disabled]="busy() || row.entry.needsBase || row.entry.unresolved" (click)="action(row.entry, 'equip', {equipped: !row.entry.equipped})">{{ row.entry.equipped ? 'Equipped' : 'Equip' }}</button>
+          <button
+            class="btn-outline text-xs"
+            [class.active]="row.entry.equipped"
+            [disabled]="busy() || row.entry.needsBase || row.entry.unresolved"
+            (click)="action(row.entry, 'equip', { equipped: !row.entry.equipped })"
+          >
+            {{ row.entry.equipped ? 'Equipped' : 'Equip' }}
+          </button>
         </div>
       </div>
       @if (row.entry.needsBase) {
-        <label class="text-xs">Needs weapon selection
-          <select class="field-input" [(ngModel)]="repairs[row.entry.instanceId!]" aria-label="Base weapon">
+        <label class="text-xs"
+          >Needs weapon selection
+          <select
+            class="field-input"
+            [(ngModel)]="repairs[row.entry.instanceId!]"
+            aria-label="Base weapon"
+          >
             <option value="">Choose a weapon</option>
-            @for (base of bases(row.entry); track base.index) { <option [value]="base.index">{{ base.name }}</option> }
+            @for (base of bases(row.entry); track base.index) {
+              <option [value]="base.index">{{ base.name }}</option>
+            }
           </select>
         </label>
-        <button class="btn-outline text-xs" [disabled]="busy() || !repairs[row.entry.instanceId!]" (click)="action(row.entry, 'repair', {baseItemIndex: repairs[row.entry.instanceId!]})">Save weapon</button>
+        <button
+          class="btn-outline text-xs"
+          [disabled]="busy() || !repairs[row.entry.instanceId!]"
+          (click)="action(row.entry, 'repair', { baseItemIndex: repairs[row.entry.instanceId!] })"
+        >
+          Save weapon
+        </button>
       }
-      @if (row.entry.unresolved) { <p class="text-xs text-danger">This item’s definition is unavailable. Its saved state has been preserved.</p> }
-      <details class="mt-2"><summary>Details</summary>
+      @if (row.entry.unresolved) {
+        <p class="text-xs text-danger">
+          This item’s definition is unavailable. Its saved state has been preserved.
+        </p>
+      }
+      <details class="mt-2">
+        <summary>Details</summary>
         @if (row.item; as item) {
           <p class="muted text-sm">{{ item.description }}</p>
-          <p class="muted text-xs">{{ item.properties.join(' · ') }} @if (item.damage) { · {{ item.damage }} {{ item.damage_type }} } @if (item.rarity) { · {{ item.rarity }} }</p>
+          <p class="muted text-xs">
+            {{ item.properties.join(' · ') }}
+            @if (item.damage) {
+              · {{ item.damage }} {{ item.damage_type }}
+            }
+            @if (item.rarity) {
+              · {{ item.rarity }}
+            }
+          </p>
           @if (item.charges; as charges) {
-            <div class="controls"><span class="text-sm">{{ charges.max - (row.entry.chargesUsed ?? 0) }} / {{ charges.max }} charges · {{ charges.recovery }}</span>
-              <button class="btn-outline text-xs" [disabled]="busy() || (row.entry.chargesUsed ?? 0) >= charges.max" (click)="action(row.entry, 'use')">Use charge</button>
-              @if (!charges.restore) { <input type="number" class="field-input amount" min="0" [max]="charges.max" [(ngModel)]="recovery[row.entry.instanceId!]" aria-label="Charges recovered" /> }
-              <button class="btn-outline text-xs" [disabled]="busy()" (click)="recover(row.entry, item)">Recover</button>
+            <div class="controls">
+              <span class="text-sm"
+                >{{ charges.max - (row.entry.chargesUsed ?? 0) }} / {{ charges.max }} charges ·
+                {{ charges.recovery }}</span
+              >
+              <button
+                class="btn-outline text-xs"
+                [disabled]="busy() || (row.entry.chargesUsed ?? 0) >= charges.max"
+                (click)="action(row.entry, 'use')"
+              >
+                Use charge
+              </button>
+              @if (!charges.restore) {
+                <input
+                  type="number"
+                  class="field-input amount"
+                  min="0"
+                  [max]="charges.max"
+                  [(ngModel)]="recovery[row.entry.instanceId!]"
+                  aria-label="Charges recovered"
+                />
+              }
+              <button
+                class="btn-outline text-xs"
+                [disabled]="busy()"
+                (click)="recover(row.entry, item)"
+              >
+                Recover
+              </button>
             </div>
           }
-          @for (ability of item.actions ?? []; track ability.key) { <p class="text-xs muted">{{ ability.name }}: {{ ability.description }}</p> }
+          @for (ability of item.actions ?? []; track ability.key) {
+            <p class="text-xs muted">{{ ability.name }}: {{ ability.description }}</p>
+          }
         }
         <div class="controls mt-3">
           @if (canBond() && row.item?.type === 'weapon' && row.item?.category?.includes('Melee')) {
-            <button class="btn-outline text-xs" [disabled]="busy()" (click)="bond.emit(row.entry)">Bond as Pact Weapon</button>
+            <button class="btn-outline text-xs" [disabled]="busy()" (click)="bond.emit(row.entry)">
+              Bond as Pact Weapon
+            </button>
           }
           @if (options()?.targets?.length) {
-            <select class="field-input" [(ngModel)]="targets[row.entry.instanceId!]" aria-label="Give item to party member">
+            <select
+              class="field-input"
+              [(ngModel)]="targets[row.entry.instanceId!]"
+              aria-label="Give item to party member"
+            >
               <option value="">Give to…</option>
-              @for (target of options()!.targets; track target.id) { <option [value]="target.id">{{ target.name }}</option> }
+              @for (target of options()!.targets; track target.id) {
+                <option [value]="target.id">{{ target.name }}</option>
+              }
             </select>
-            <button class="btn-outline text-xs" [disabled]="busy() || !targets[row.entry.instanceId!]" (click)="action(row.entry, 'transfer', {targetId: targets[row.entry.instanceId!]})">Give item</button>
+            <button
+              class="btn-outline text-xs"
+              [disabled]="busy() || !targets[row.entry.instanceId!]"
+              (click)="action(row.entry, 'transfer', { targetId: targets[row.entry.instanceId!] })"
+            >
+              Give item
+            </button>
           }
-          @if (isDm()) { <button class="btn-outline text-xs text-danger" [disabled]="busy()" (click)="remove(row.entry)">Remove</button> }
+          @if (isDm()) {
+            <button
+              class="btn-outline text-xs text-danger"
+              [disabled]="busy()"
+              (click)="remove(row.entry)"
+            >
+              Remove
+            </button>
+          }
         </div>
       </details>
     </section>
-  } @empty { <p class="muted text-sm">No equipment matches.</p> }
+  } @empty {
+    <p class="muted text-sm">No equipment matches.</p>
+  }
   @for (entry of externalAttunements(); track entry.instanceId) {
-    <div class="item row"><span class="text-sm">{{ entry.name }} - Attuned, held elsewhere</span><button class="btn-outline text-xs" [disabled]="busy()" (click)="action(entry, 'unattune')">End attunement</button></div>
+    <div class="item row">
+      <span class="text-sm">{{ entry.name }} - Attuned, held elsewhere</span
+      ><button class="btn-outline text-xs" [disabled]="busy()" (click)="action(entry, 'unattune')">
+        End attunement
+      </button>
+    </div>
   }
 }
 @if (editingRest()) {
   <div class="rest-backdrop" role="presentation">
-    <section class="rest-dialog" role="dialog" aria-modal="true" aria-labelledby="rest-heading" cdkTrapFocus [cdkTrapFocusAutoCapture]="true" (keydown.escape)="cancel()">
-      <h3 id="rest-heading">{{ correction() ? 'Correct replicated items' : 'Complete Long Rest' }}</h3>
-      @if (!correction()) { <p class="muted text-sm">Restore rest resources and review any items you want to create. Existing creations stay unless replaced.</p> }
+    <section
+      class="rest-dialog"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="rest-heading"
+      cdkTrapFocus
+      [cdkTrapFocusAutoCapture]="true"
+      (keydown.escape)="cancel()"
+    >
+      <h3 id="rest-heading">
+        {{ correction() ? 'Correct replicated items' : 'Complete Long Rest' }}
+      </h3>
+      @if (!correction()) {
+        <p class="muted text-sm">
+          Restore rest resources and review any items you want to create. Existing creations stay
+          unless replaced.
+        </p>
+      }
       @if (options(); as opts) {
         @for (plan of opts.plans; track plan.id) {
           <section class="item">
-            <label class="flex gap-2 items-center"><input type="checkbox" [disabled]="!plan.supported || busy()" [ngModel]="!!selections()[plan.id]" (ngModelChange)="togglePlan(plan, $event)" />{{ plan.name }}</label>
-            @if (!plan.supported) { <p class="muted text-xs">{{ plan.name === 'Common Magic Item' ? 'Choose a specific Common item in class choices first.' : 'Not supported in this release.' }}</p> }
+            <label class="flex gap-2 items-center"
+              ><input
+                type="checkbox"
+                [disabled]="!plan.supported || busy()"
+                [ngModel]="!!selections()[plan.id]"
+                (ngModelChange)="togglePlan(plan, $event)"
+              />{{ plan.name }}</label
+            >
+            @if (!plan.supported) {
+              <p class="muted text-xs">
+                {{
+                  plan.name === 'Common Magic Item'
+                    ? 'Choose a specific Common item in class choices first.'
+                    : 'Not supported in this release.'
+                }}
+              </p>
+            }
             @if (selections()[plan.id]) {
               @if (plan.bases.length) {
-                <select class="field-input w-full mt-2" aria-label="Weapon to create" [ngModel]="selections()[plan.id].baseItemIndex ?? ''" (ngModelChange)="choose(plan, 'baseItemIndex', $event)">
+                <select
+                  class="field-input w-full mt-2"
+                  aria-label="Weapon to create"
+                  [ngModel]="selections()[plan.id].baseItemIndex ?? ''"
+                  (ngModelChange)="choose(plan, 'baseItemIndex', $event)"
+                >
                   <option value="">Choose base weapon…</option>
-                  @for (base of plan.bases; track base.index) { <option [value]="base.index">{{ base.name }}</option> }
+                  @for (base of plan.bases; track base.index) {
+                    <option [value]="base.index">{{ base.name }}</option>
+                  }
                 </select>
               }
               <p class="text-sm">Create: {{ preview(plan) }}</p>
-              @if (planItem(plan)?.requires_attunement) { <label class="text-xs"><input type="checkbox" [ngModel]="selections()[plan.id].attune ?? false" (ngModelChange)="choose(plan, 'attune', $event)" /> Attune immediately</label> }
+              @if (planItem(plan)?.requires_attunement) {
+                <label class="text-xs"
+                  ><input
+                    type="checkbox"
+                    [ngModel]="selections()[plan.id].attune ?? false"
+                    (ngModelChange)="choose(plan, 'attune', $event)"
+                  />
+                  Attune immediately</label
+                >
+              }
             }
           </section>
         }
         @if (selectedCount()) {
           <p class="text-sm">{{ selectedCount() }} / {{ opts.limit }} creations</p>
-          <label class="text-sm"><input type="checkbox" [ngModel]="toolsConfirmed()" (ngModelChange)="toolsConfirmed.set($event)" /> I have my Tinker’s Tools in hand.</label>
+          <label class="text-sm"
+            ><input
+              type="checkbox"
+              [ngModel]="toolsConfirmed()"
+              (ngModelChange)="toolsConfirmed.set($event)"
+            />
+            I have my Tinker’s Tools in hand.</label
+          >
           @if (replacements().length) {
             <p class="text-xs text-gold">These existing creations will end:</p>
-            @for (entry of replacements(); track entry.instanceId) { <p class="text-xs">{{ entry.name }} · {{ entry.holderName }}</p> }
+            @for (entry of replacements(); track entry.instanceId) {
+              <p class="text-xs">{{ entry.name }} · {{ entry.holderName }}</p>
+            }
           }
         }
-      } @else { <p class="muted">Loading plans…</p> }
-      @if (error()) { <p role="alert" class="text-danger text-sm">{{ error() }}</p> }
+      } @else {
+        <p class="muted">Loading plans…</p>
+      }
+      @if (error()) {
+        <p role="alert" class="text-danger text-sm">{{ error() }}</p>
+      }
       <div class="controls mt-4">
         <button class="btn-outline" [disabled]="busy()" (click)="cancel()">Cancel</button>
-        <button class="btn-primary" [disabled]="busy() || !options() || selectedCount() > (options()?.limit ?? 0) || (selectedCount() > 0 && !toolsConfirmed())" (click)="finish()">{{ busy() ? 'Saving…' : correction() ? 'Apply correction' : 'Complete Long Rest' }}</button>
+        <button
+          class="btn-primary"
+          [disabled]="
+            busy() ||
+            !options() ||
+            selectedCount() > (options()?.limit ?? 0) ||
+            (selectedCount() > 0 && !toolsConfirmed())
+          "
+          (click)="finish()"
+        >
+          {{ busy() ? 'Saving…' : correction() ? 'Apply correction' : 'Complete Long Rest' }}
+        </button>
       </div>
     </section>
   </div>

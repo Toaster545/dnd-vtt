@@ -1,10 +1,13 @@
+import { isDevBypass } from '../config';
 import {
   CanActivate,
   ExecutionContext,
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
+import { Reflector } from '@nestjs/core';
 import { JwtService } from '@nestjs/jwt';
+import { IS_PUBLIC_KEY } from './public.decorator';
 import type { Request } from 'express';
 import type { Row } from '@libsql/client';
 import { DatabaseService } from '../common/database.service';
@@ -21,11 +24,19 @@ function toRequestUser(row: Row): RequestUser {
 @Injectable()
 export class JwtGuard implements CanActivate {
   constructor(
+    private reflector: Reflector,
     private jwt: JwtService,
     private db: DatabaseService,
   ) {}
 
   async canActivate(ctx: ExecutionContext): Promise<boolean> {
+    if (
+      this.reflector.getAllAndOverride<boolean | undefined>(IS_PUBLIC_KEY, [
+        ctx.getHandler(),
+        ctx.getClass(),
+      ])
+    )
+      return true;
     const req = ctx.switchToHttp().getRequest<Request>();
     const auth = req.headers['authorization'];
     if (!auth?.startsWith('Bearer ')) throw new UnauthorizedException();
@@ -33,7 +44,7 @@ export class JwtGuard implements CanActivate {
     const token = auth.slice(7);
 
     // Dev bypass: accept the literal token "dev" outside of production
-    if (token === 'dev' && process.env.DEV_BYPASS === 'true') {
+    if (token === 'dev' && isDevBypass()) {
       const result = await this.db.execute(
         "SELECT id, email, username, role FROM profiles WHERE role = 'admin' LIMIT 1",
       );

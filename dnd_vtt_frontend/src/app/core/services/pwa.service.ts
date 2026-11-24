@@ -14,9 +14,10 @@ export class PwaService {
   readonly online = signal(navigator.onLine);
   readonly installAvailable = signal(false);
   readonly installed = signal(
-    Capacitor.isNativePlatform()
-      || (typeof window.matchMedia === 'function' && window.matchMedia('(display-mode: standalone)').matches)
-      || (navigator as Navigator & { standalone?: boolean }).standalone === true,
+    Capacitor.isNativePlatform() ||
+      (typeof window.matchMedia === 'function' &&
+        window.matchMedia('(display-mode: standalone)').matches) ||
+      (navigator as Navigator & { standalone?: boolean }).standalone === true,
   );
   readonly reconnecting = signal(false);
   private installEvent?: InstallPromptEvent;
@@ -45,7 +46,10 @@ export class PwaService {
     }
     if (this.updates?.isEnabled) {
       this.updates.versionUpdates.subscribe((event) => {
-        if (event.type === 'VERSION_READY' && window.confirm('A new NatOne version is ready. Reload now?')) {
+        if (
+          event.type === 'VERSION_READY' &&
+          window.confirm('A new NatOne version is ready. Reload now?')
+        ) {
           void this.updates?.activateUpdate().then(() => document.location.reload());
         }
       });

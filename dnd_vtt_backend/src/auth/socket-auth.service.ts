@@ -1,3 +1,4 @@
+import { isDevBypass } from '../config';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import type { Socket } from 'socket.io';
@@ -37,7 +38,7 @@ export class SocketAuthService {
         throw new UnauthorizedException();
       }
       let userId: string;
-      if (token === 'dev' && process.env.DEV_BYPASS === 'true') {
+      if (token === 'dev' && isDevBypass()) {
         const admin = await this.db.execute(
           `SELECT id FROM profiles WHERE role = 'admin' LIMIT 1`,
         );

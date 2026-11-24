@@ -23,16 +23,24 @@ type Tab = 'dashboard' | 'characters' | 'campaigns' | 'content-library';
 // URL in syncActiveTabFromUrl, not which view renders.
 @Component({
   selector: 'app-shell',
-  imports: [MatIconModule, MatTooltipModule, RouterOutlet, RouterLink, RouterLinkActive, MainLayoutComponent, AppHeaderComponent],
+  imports: [
+    MatIconModule,
+    MatTooltipModule,
+    RouterOutlet,
+    RouterLink,
+    RouterLinkActive,
+    MainLayoutComponent,
+    AppHeaderComponent,
+  ],
   templateUrl: './shell.html',
   styleUrl: './shell.scss',
 })
 export class ShellComponent implements OnInit, OnDestroy {
-  private router           = inject(Router);
-  private campaignService  = inject(CampaignService);
+  private router = inject(Router);
+  private campaignService = inject(CampaignService);
   private characterService = inject(CharacterService);
   private encounterService = inject(EncounterService);
-  private dialog           = inject(MatDialog);
+  private dialog = inject(MatDialog);
   auth = inject(AuthService);
   activeTab = signal<Tab>('dashboard');
 
@@ -49,16 +57,16 @@ export class ShellComponent implements OnInit, OnDestroy {
 
   async ngOnInit() {
     this.syncActiveTabFromUrl(this.router.url);
-    this.router.events.pipe(filter(e => e instanceof NavigationEnd)).subscribe(e => {
+    this.router.events.pipe(filter((e) => e instanceof NavigationEnd)).subscribe((e) => {
       this.syncActiveTabFromUrl((e as NavigationEnd).urlAfterRedirects);
     });
 
     const campaigns = await this.campaignService.getAll();
-    this.myJoinedCampaignIds = new Set(campaigns.filter(c => !c.is_owner).map(c => c.id));
-    this.startedSub = this.encounterService.watchEncounterStarted().subscribe(event => {
+    this.myJoinedCampaignIds = new Set(campaigns.filter((c) => !c.is_owner).map((c) => c.id));
+    this.startedSub = this.encounterService.watchEncounterStarted().subscribe((event) => {
       if (this.myJoinedCampaignIds.has(event.campaignId)) this.liveAlert.set(event);
     });
-    this.leveledSub = this.encounterService.watchPartyLeveled().subscribe(event => {
+    this.leveledSub = this.encounterService.watchPartyLeveled().subscribe((event) => {
       if (this.myJoinedCampaignIds.has(event.campaignId)) void this.onPartyLeveled(event);
     });
   }
@@ -73,7 +81,7 @@ export class ShellComponent implements OnInit, OnDestroy {
   private async onPartyLeveled(event: PartyLeveledEvent) {
     try {
       const copies = await this.characterService.getMyCampaignCopies();
-      const mine = copies.find(character => character.campaign_id === event.campaignId);
+      const mine = copies.find((character) => character.campaign_id === event.campaignId);
       if (!mine?.id) return;
       if (mine.applied_level != null && mine.applied_level >= mine.level) return;
       this.levelUpAlert.set({
@@ -105,10 +113,9 @@ export class ShellComponent implements OnInit, OnDestroy {
     const alert = this.liveAlert();
     if (!alert) return;
     this.liveAlert.set(null);
-    void this.router.navigate(
-      ['/home/campaigns', alert.campaignId, 'sessions', alert.sessionId],
-      { queryParams: { autojoin: alert.encounterId } },
-    );
+    void this.router.navigate(['/home/campaigns', alert.campaignId, 'sessions', alert.sessionId], {
+      queryParams: { autojoin: alert.encounterId },
+    });
   }
 
   private syncActiveTabFromUrl(url: string) {
@@ -135,6 +142,10 @@ export class ShellComponent implements OnInit, OnDestroy {
   }
 
   goToSettings() {
-    this.dialog.open(SettingsDialogComponent, { width: '700px', maxWidth: '95vw', maxHeight: '85vh' });
+    this.dialog.open(SettingsDialogComponent, {
+      width: '700px',
+      maxWidth: '95vw',
+      maxHeight: '85vh',
+    });
   }
 }

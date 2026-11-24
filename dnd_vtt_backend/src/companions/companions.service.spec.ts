@@ -1,3 +1,4 @@
+import { CampaignAccessService } from '../campaigns/campaign-access.service';
 import {
   BadRequestException,
   ConflictException,
@@ -162,8 +163,20 @@ describe('persistent companions', () => {
       presence,
       service,
     );
-    encounters = new EncountersService(db, presence, gateway, service);
-    maps = new MapsService(db, gateway, new ContentService(), service);
+    encounters = new EncountersService(
+      db,
+      presence,
+      gateway,
+      new CampaignAccessService(db),
+      service,
+    );
+    maps = new MapsService(
+      db,
+      gateway,
+      new ContentService(),
+      service,
+      new CampaignAccessService(db),
+    );
   });
   afterEach(() => cleanup());
   const setupEncounter = async () => {

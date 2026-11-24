@@ -237,7 +237,11 @@ export interface PlacingEntity {
 
 export interface UniversalVTTData {
   format: number;
-  resolution: { map_origin: { x: number; y: number }; map_size: { x: number; y: number }; pixels_per_grid: number };
+  resolution: {
+    map_origin: { x: number; y: number };
+    map_size: { x: number; y: number };
+    pixels_per_grid: number;
+  };
   portals: Portal[];
   environment: { baked_lighting: boolean; ambient_light: string };
   lights: Light[];

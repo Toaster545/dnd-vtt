@@ -2,7 +2,10 @@ import { Component, input, output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 
-export interface StatBlockEntry { name: string; description: string; }
+export interface StatBlockEntry {
+  name: string;
+  description: string;
+}
 
 // Renders/edits one repeatable list of {name, description} entries — traits, actions,
 // reactions, and legendary actions all share this exact shape in the monster JSON schema.
@@ -12,10 +15,10 @@ export interface StatBlockEntry { name: string; description: string; }
   templateUrl: './entry-list.html',
 })
 export class EntryListComponent {
-  readonly title       = input.required<string>();
+  readonly title = input.required<string>();
   readonly placeholder = input('');
-  readonly required    = input(false);
-  readonly entries     = input.required<StatBlockEntry[]>();
+  readonly required = input(false);
+  readonly entries = input.required<StatBlockEntry[]>();
   readonly entriesChange = output<StatBlockEntry[]>();
 
   add() {

@@ -3,8 +3,13 @@
 }
 
 @if (showForm()) {
-  <app-spell-form class="flex flex-col flex-1 min-h-0"
-    [spell]="editingSpell()" [duplicateFrom]="duplicatingSpell()" (saved)="onSaved()" (cancelled)="onCancelled()" />
+  <app-spell-form
+    class="flex flex-col flex-1 min-h-0"
+    [spell]="editingSpell()"
+    [duplicateFrom]="duplicatingSpell()"
+    (saved)="onSaved()"
+    (cancelled)="onCancelled()"
+  />
 } @else {
   <div class="flex-1 overflow-auto p-6">
     <div class="flex flex-wrap items-center mb-5 gap-3">
@@ -14,21 +19,37 @@
         [selected]="sourceFilters()"
         (selectedChange)="setSourceFilters($event)"
       />
-      <select class="field-input w-52" [ngModel]="accessFilter()" (ngModelChange)="accessFilter.set($event)" name="accessFilter">
+      <select
+        class="field-input w-52"
+        [ngModel]="accessFilter()"
+        (ngModelChange)="accessFilter.set($event)"
+        name="accessFilter"
+      >
         <option value="all">All spell access</option>
-        @for (option of accessOptions(); track option.key) { <option [value]="option.key">{{ option.label }}</option> }
+        @for (option of accessOptions(); track option.key) {
+          <option [value]="option.key">{{ option.label }}</option>
+        }
       </select>
-      <select class="field-input w-40" [ngModel]="sort()" (ngModelChange)="sort.set($event)" name="sort">
+      <select
+        class="field-input w-40"
+        [ngModel]="sort()"
+        (ngModelChange)="sort.set($event)"
+        name="sort"
+      >
         <option value="name-asc">Name A–Z</option>
         <option value="name-desc">Name Z–A</option>
         <option value="level-asc">Level low–high</option>
         <option value="level-desc">Level high–low</option>
         <option value="source-asc">Source A–Z</option>
       </select>
-      <input class="field-input w-56" [ngModel]="search()" (ngModelChange)="onSearchChange($event)" placeholder="Search spells…" name="search" />
-      <button class="btn-primary" (click)="openCreate()">
-        <mat-icon>add</mat-icon> New Spell
-      </button>
+      <input
+        class="field-input w-56"
+        [ngModel]="search()"
+        (ngModelChange)="onSearchChange($event)"
+        placeholder="Search spells…"
+        name="search"
+      />
+      <button class="btn-primary" (click)="openCreate()"><mat-icon>add</mat-icon> New Spell</button>
     </div>
 
     @if (loading()) {
@@ -39,19 +60,35 @@
       <h3 class="text-xs font-semibold text-gold uppercase tracking-wide mb-2">Your Homebrew</h3>
       @if (filteredSpells().length === 0) {
         <p class="text-slate text-sm mb-5">
-          {{ spells().length === 0 ? 'No spells yet. Create your first one above.' : 'No matches.' }}
+          {{
+            spells().length === 0 ? 'No spells yet. Create your first one above.' : 'No matches.'
+          }}
         </p>
       } @else {
         <ul class="divide-y divide-white/8 mb-5">
           @for (s of filteredSpells(); track s.index) {
-            <li class="flex items-center p-3 gap-3 cursor-pointer hover:bg-white/5" (click)="openEdit(s)">
+            <li
+              class="flex items-center p-3 gap-3 cursor-pointer hover:bg-white/5"
+              (click)="openEdit(s)"
+            >
               <div class="flex-1 min-w-0">
                 <p class="text-parchment font-medium truncate m-0">{{ s.name }}</p>
-                <p class="text-slate text-xs m-0 mt-0.5">{{ s.level === 0 ? 'Cantrip' : 'Level ' + s.level }} · {{ s.school }}</p>
+                <p class="text-slate text-xs m-0 mt-0.5">
+                  {{ s.level === 0 ? 'Cantrip' : 'Level ' + s.level }} · {{ s.school }}
+                </p>
               </div>
               <div class="flex items-center gap-1.5">
-                <span class="text-xs text-slate border border-white/10 rounded px-2 py-0.5" [title]="accessLabel(s)">{{ accessLabel(s) }}</span>
-                <button class="btn-icon" type="button" (click)="openDuplicate(s, $event)" title="Duplicate">
+                <span
+                  class="text-xs text-slate border border-white/10 rounded px-2 py-0.5"
+                  [title]="accessLabel(s)"
+                  >{{ accessLabel(s) }}</span
+                >
+                <button
+                  class="btn-icon"
+                  type="button"
+                  (click)="openDuplicate(s, $event)"
+                  title="Duplicate"
+                >
                   <mat-icon class="text-base">content_copy</mat-icon>
                 </button>
                 <button class="btn-icon" type="button" (click)="onDelete(s, $event)" title="Delete">
@@ -63,9 +100,17 @@
         </ul>
       }
 
-      <button class="flex items-center gap-1.5 w-full text-left mb-2" type="button" (click)="officialExpanded.set(!officialExpanded())">
-        <mat-icon class="text-base text-slate">{{ officialExpanded() ? 'expand_more' : 'chevron_right' }}</mat-icon>
-        <h3 class="text-xs font-semibold text-slate uppercase tracking-wide m-0">Published Content · {{ filteredOfficial().length }}</h3>
+      <button
+        class="flex items-center gap-1.5 w-full text-left mb-2"
+        type="button"
+        (click)="officialExpanded.set(!officialExpanded())"
+      >
+        <mat-icon class="text-base text-slate">{{
+          officialExpanded() ? 'expand_more' : 'chevron_right'
+        }}</mat-icon>
+        <h3 class="text-xs font-semibold text-slate uppercase tracking-wide m-0">
+          Published Content · {{ filteredOfficial().length }}
+        </h3>
       </button>
       @if (officialExpanded()) {
         @if (filteredOfficial().length === 0) {
@@ -73,15 +118,31 @@
         } @else {
           <ul class="divide-y divide-white/8">
             @for (s of filteredOfficial(); track s.index) {
-              <li class="flex items-center p-3 gap-3 cursor-pointer hover:bg-white/5" (click)="openDetails(s)">
+              <li
+                class="flex items-center p-3 gap-3 cursor-pointer hover:bg-white/5"
+                (click)="openDetails(s)"
+              >
                 <div class="flex-1 min-w-0">
                   <p class="text-parchment font-medium truncate m-0">{{ s.name }}</p>
-                  <p class="text-slate text-xs m-0 mt-0.5">{{ s.level === 0 ? 'Cantrip' : 'Level ' + s.level }} · {{ s.school }}</p>
-                  <p class="text-coal text-[10px] m-0 mt-0.5">{{ s.source?.book || 'Player\'s Handbook' }}</p>
+                  <p class="text-slate text-xs m-0 mt-0.5">
+                    {{ s.level === 0 ? 'Cantrip' : 'Level ' + s.level }} · {{ s.school }}
+                  </p>
+                  <p class="text-coal text-[10px] m-0 mt-0.5">
+                    {{ s.source?.book || "Player's Handbook" }}
+                  </p>
                 </div>
                 <div class="flex items-center gap-1.5">
-                  <span class="text-xs text-slate border border-white/10 rounded px-2 py-0.5" [title]="accessLabel(s)">{{ accessLabel(s) }}</span>
-                  <button class="btn-icon" type="button" (click)="openDuplicate(s, $event)" title="Duplicate as homebrew">
+                  <span
+                    class="text-xs text-slate border border-white/10 rounded px-2 py-0.5"
+                    [title]="accessLabel(s)"
+                    >{{ accessLabel(s) }}</span
+                  >
+                  <button
+                    class="btn-icon"
+                    type="button"
+                    (click)="openDuplicate(s, $event)"
+                    title="Duplicate as homebrew"
+                  >
                     <mat-icon class="text-base">content_copy</mat-icon>
                   </button>
                 </div>

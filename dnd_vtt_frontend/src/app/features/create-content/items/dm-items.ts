@@ -2,21 +2,34 @@ import { Component, inject, signal, computed, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { ItemService } from '../../../core/services/item.service';
-import { ContentService, DndContentSource, DndItem, itemDisplayName } from '../../../core/services/content.service';
-import { ConfirmService } from '../../../shared/confirm.service';
+import {
+  ContentService,
+  DndContentSource,
+  DndItem,
+  itemDisplayName,
+} from '../../../core/services/content.service';
+import { ConfirmService } from '../../../shared/components/confirm-dialog/confirm.service';
 import { ItemFormComponent } from './item-form/item-form';
 import { ContentDetailDialogComponent } from '../content-detail-dialog/content-detail-dialog';
 import { ContentSourceFilterComponent } from '../content-source-filter/content-source-filter';
 import { ItemCardPrintComponent } from './item-card-print/item-card-print';
 import { IconPickerDialogComponent } from './icon-picker-dialog/icon-picker-dialog';
 import { IconLibraryEntry } from '../../../core/services/content.service';
-import { HttpErrorResponse } from '@angular/common/http';
+import { getErrorMessage } from '../../../core/utils/error-message';
 
 type ItemSort = 'name-asc' | 'name-desc' | 'source-asc' | 'type-asc';
 
 @Component({
   selector: 'app-dm-items',
-  imports: [ItemFormComponent, ContentDetailDialogComponent, ContentSourceFilterComponent, ItemCardPrintComponent, IconPickerDialogComponent, MatIconModule, FormsModule],
+  imports: [
+    ItemFormComponent,
+    ContentDetailDialogComponent,
+    ContentSourceFilterComponent,
+    ItemCardPrintComponent,
+    IconPickerDialogComponent,
+    MatIconModule,
+    FormsModule,
+  ],
   templateUrl: './dm-items.html',
 })
 export class DmItemsComponent implements OnInit {
@@ -31,12 +44,12 @@ export class DmItemsComponent implements OnInit {
     return url.startsWith('/icons/');
   }
 
-  items          = signal<DndItem[]>([]);
-  officialItems  = signal<DndItem[]>([]);
-  sources        = signal<DndContentSource[]>([]);
-  loading        = signal(true);
-  showForm       = signal(false);
-  editingItem    = signal<DndItem | null>(null);
+  items = signal<DndItem[]>([]);
+  officialItems = signal<DndItem[]>([]);
+  sources = signal<DndContentSource[]>([]);
+  loading = signal(true);
+  showForm = signal(false);
+  editingItem = signal<DndItem | null>(null);
   duplicatingItem = signal<DndItem | null>(null);
   detailItem = signal<DndItem | null>(null);
   editingImageFor = signal<DndItem | null>(null);
@@ -54,34 +67,46 @@ export class DmItemsComponent implements OnInit {
   importMessage = signal<string | null>(null);
   importError = signal<string | null>(null);
 
-  filteredItems    = computed(() => this.filter(this.items(), 'HOMEBREW'));
+  filteredItems = computed(() => this.filter(this.items(), 'HOMEBREW'));
   filteredOfficial = computed(() => this.filter(this.officialItems(), 'XPHB'));
   itemsToPrint = computed(() => {
     const selected = this.selectedForPrint();
-    return [...this.items(), ...this.officialItems()].filter(i => selected.has(i.index));
+    return [...this.items(), ...this.officialItems()].filter((i) => selected.has(i.index));
   });
 
-  async ngOnInit() { await this.load(); }
+  async ngOnInit() {
+    await this.load();
+  }
 
   private filter(list: DndItem[], fallbackSource: string): DndItem[] {
     const q = this.search().trim().toLowerCase();
     const sources = this.sourceFilters();
-    const filtered = list.filter(item =>
-      (!q || item.name.toLowerCase().includes(q)) &&
-      (sources.length === 0 || sources.includes(item.source?.code ?? fallbackSource)),
+    const filtered = list.filter(
+      (item) =>
+        (!q || item.name.toLowerCase().includes(q)) &&
+        (sources.length === 0 || sources.includes(item.source?.code ?? fallbackSource)),
     );
     return filtered.sort((a, b) => {
       const byName = a.name.localeCompare(b.name);
       switch (this.sort()) {
-        case 'name-desc': return -byName;
-        case 'source-asc': return (a.source?.book ?? fallbackSource).localeCompare(b.source?.book ?? fallbackSource) || byName;
-        case 'type-asc': return a.type.localeCompare(b.type) || a.category.localeCompare(b.category) || byName;
-        default: return byName;
+        case 'name-desc':
+          return -byName;
+        case 'source-asc':
+          return (
+            (a.source?.book ?? fallbackSource).localeCompare(b.source?.book ?? fallbackSource) ||
+            byName
+          );
+        case 'type-asc':
+          return a.type.localeCompare(b.type) || a.category.localeCompare(b.category) || byName;
+        default:
+          return byName;
       }
     });
   }
 
-  setSourceFilters(codes: string[]) { this.sourceFilters.set(codes); }
+  setSourceFilters(codes: string[]) {
+    this.sourceFilters.set(codes);
+  }
 
   onSearchChange(v: string) {
     this.search.set(v);
@@ -113,8 +138,12 @@ export class DmItemsComponent implements OnInit {
     this.duplicatingItem.set(null);
     this.showForm.set(true);
   }
-  openDetails(item: DndItem) { this.detailItem.set(item); }
-  closeDetails() { this.detailItem.set(null); }
+  openDetails(item: DndItem) {
+    this.detailItem.set(item);
+  }
+  closeDetails() {
+    this.detailItem.set(null);
+  }
   openDuplicate(item: DndItem, event: Event) {
     event.stopPropagation();
     this.editingItem.set(null);
@@ -126,18 +155,23 @@ export class DmItemsComponent implements OnInit {
     this.showForm.set(false);
     await this.load();
   }
-  onCancelled() { this.showForm.set(false); }
+  onCancelled() {
+    this.showForm.set(false);
+  }
 
   async onDelete(item: DndItem, event: Event) {
     event.stopPropagation();
-    const ok = await this.confirm.confirm(`Delete "${item.name}"? This can't be undone.`, 'Delete item');
+    const ok = await this.confirm.confirm(
+      `Delete "${item.name}"? This can't be undone.`,
+      'Delete item',
+    );
     if (!ok) return;
     await this.itemService.deleteItem(item.index);
     await this.load();
   }
 
   togglePrintMode() {
-    this.printMode.update(v => !v);
+    this.printMode.update((v) => !v);
     this.selectedForPrint.set(new Set());
   }
 
@@ -147,7 +181,8 @@ export class DmItemsComponent implements OnInit {
 
   toggleSelectedForPrint(item: DndItem) {
     const set = new Set(this.selectedForPrint());
-    if (set.has(item.index)) set.delete(item.index); else set.add(item.index);
+    if (set.has(item.index)) set.delete(item.index);
+    else set.add(item.index);
     this.selectedForPrint.set(set);
   }
 
@@ -164,7 +199,9 @@ export class DmItemsComponent implements OnInit {
     if (!item) return;
     this.editingImageFor.set(null);
     const updated = await this.itemService.setImageOverride(item.index, icon.url);
-    this.officialItems.update(items => items.map(i => i.index === updated.index ? updated : i));
+    this.officialItems.update((items) =>
+      items.map((i) => (i.index === updated.index ? updated : i)),
+    );
   }
 
   async onImageReset() {
@@ -172,7 +209,9 @@ export class DmItemsComponent implements OnInit {
     if (!item) return;
     this.editingImageFor.set(null);
     const updated = await this.itemService.clearImageOverride(item.index);
-    this.officialItems.update(items => items.map(i => i.index === updated.index ? updated : i));
+    this.officialItems.update((items) =>
+      items.map((i) => (i.index === updated.index ? updated : i)),
+    );
   }
 
   openPrintView() {
@@ -212,9 +251,9 @@ export class DmItemsComponent implements OnInit {
       await this.load();
     } catch (e) {
       if (e instanceof SyntaxError) {
-        this.importError.set('That file isn\'t valid JSON.');
+        this.importError.set("That file isn't valid JSON.");
       } else {
-        const message = e instanceof HttpErrorResponse ? (e.error?.message ?? e.message) : e instanceof Error ? e.message : 'Failed to import items.';
+        const message = getErrorMessage(e, 'Failed to import items.');
         this.importError.set(Array.isArray(message) ? message.join(', ') : message);
       }
     } finally {

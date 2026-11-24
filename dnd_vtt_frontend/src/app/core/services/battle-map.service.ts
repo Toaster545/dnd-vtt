@@ -4,9 +4,20 @@ import { firstValueFrom, Observable } from 'rxjs';
 import type { Socket } from 'socket.io-client';
 import { environment } from '../../../environments/environment';
 import { SocketService } from './socket.service';
-import { BattleMap, MapFog, MapLight, MapLighting, MapToken, MapWall, Measurement } from '../models/campaign.model';
+import {
+  BattleMap,
+  MapFog,
+  MapLight,
+  MapLighting,
+  MapToken,
+  MapWall,
+  Measurement,
+} from '../models/campaign.model';
 
-interface FogCellsDelta { cells: string[]; revealed: boolean; }
+interface FogCellsDelta {
+  cells: string[];
+  revealed: boolean;
+}
 
 const API = environment.apiUrl;
 
@@ -23,7 +34,10 @@ export class BattleMapService {
   // ever arrive (tokens/fog/lighting freeze) until the page is hard-refreshed. Returns the
   // `'connect'` listener so the caller can `off()` it on teardown.
   private joinMapRoom(socket: Socket, mapId: string, onRejoin: () => void): () => void {
-    const rejoin = () => { socket.emit('join_map', mapId); onRejoin(); };
+    const rejoin = () => {
+      socket.emit('join_map', mapId);
+      onRejoin();
+    };
     socket.on('connect', rejoin);
     this.socketService.connect();
     if (socket.connected) rejoin();
@@ -50,7 +64,7 @@ export class BattleMapService {
     const form = new FormData();
     form.append('file', file);
     const res = await firstValueFrom(
-      this.http.post<{ url: string }>(`${API}/maps/upload?campaignId=${campaignId}`, form)
+      this.http.post<{ url: string }>(`${API}/maps/upload?campaignId=${campaignId}`, form),
     );
     return res.url;
   }
@@ -60,9 +74,7 @@ export class BattleMapService {
   }
 
   async upsertToken(token: MapToken): Promise<MapToken> {
-    return firstValueFrom(
-      this.http.post<MapToken>(`${API}/maps/${token.map_id}/tokens`, token)
-    );
+    return firstValueFrom(this.http.post<MapToken>(`${API}/maps/${token.map_id}/tokens`, token));
   }
 
   async deleteToken(tokenId: string, mapId: string): Promise<void> {
@@ -83,7 +95,7 @@ export class BattleMapService {
   // turn. Owner-or-DM only.
   getTokenPlan(mapId: string, tokenId: string): Promise<{ x: number; y: number } | null> {
     return firstValueFrom(
-      this.http.get<{ x: number; y: number } | null>(`${API}/maps/${mapId}/tokens/${tokenId}/plan`)
+      this.http.get<{ x: number; y: number } | null>(`${API}/maps/${mapId}/tokens/${tokenId}/plan`),
     );
   }
 
@@ -95,19 +107,21 @@ export class BattleMapService {
   // Moves a token to another map of the campaign — another level of a multi-level encounter.
   async moveTokenToMap(token: MapToken, targetMapId: string): Promise<MapToken> {
     return firstValueFrom(
-      this.http.post<MapToken>(`${API}/maps/${token.map_id}/tokens/${token.id}/move`, { target_map_id: targetMapId })
+      this.http.post<MapToken>(`${API}/maps/${token.map_id}/tokens/${token.id}/move`, {
+        target_map_id: targetMapId,
+      }),
     );
   }
 
   async rerollInitiative(mapId: string, tokenId: string): Promise<MapToken> {
     return firstValueFrom(
-      this.http.post<MapToken>(`${API}/maps/${mapId}/tokens/${tokenId}/reroll-initiative`, {})
+      this.http.post<MapToken>(`${API}/maps/${mapId}/tokens/${tokenId}/reroll-initiative`, {}),
     );
   }
 
   // WebSocket subscription for live token updates
   watchTokens(mapId: string): Observable<MapToken[]> {
-    return new Observable(observer => {
+    return new Observable((observer) => {
       const socket = this.socketService.socket;
       // Named so `off` below only removes this subscription's own listener — `socket` is a
       // singleton shared with other live features (e.g. encounter presence), so tearing down one
@@ -115,10 +129,16 @@ export class BattleMapService {
       const handleUpdate = (tokens: MapToken[]) => observer.next(tokens);
 
       const rejoin = this.joinMapRoom(socket, mapId, () => {
-        this.getTokens(mapId).then(tokens => observer.next(tokens));
+        this.getTokens(mapId).then((tokens) => observer.next(tokens));
       });
       socket.on('tokens_updated', handleUpdate);
-      const refreshCompanions = () => { this.getTokens(mapId).then(handleUpdate).catch(() => { /* Retry on the next update or reconnect. */ }); };
+      const refreshCompanions = () => {
+        this.getTokens(mapId)
+          .then(handleUpdate)
+          .catch(() => {
+            /* Retry on the next update or reconnect. */
+          });
+      };
       socket.on('companions_updated', refreshCompanions);
       socket.on('character_updated', refreshCompanions);
 
@@ -141,9 +161,10 @@ export class BattleMapService {
   // WebSocket subscription for other viewers' live measurements, keyed by their socket id so
   // several people can measure at once without clobbering each other.
   watchMeasurements(): Observable<{ senderId: string; measurement: Measurement | null }> {
-    return new Observable(observer => {
+    return new Observable((observer) => {
       const socket = this.socketService.socket;
-      const handleUpdate = (event: { senderId: string; measurement: Measurement | null }) => observer.next(event);
+      const handleUpdate = (event: { senderId: string; measurement: Measurement | null }) =>
+        observer.next(event);
 
       this.socketService.connect();
       socket.on('measure', handleUpdate);
@@ -159,14 +180,16 @@ export class BattleMapService {
   }
 
   async setFogEnabled(mapId: string, enabled: boolean): Promise<MapFog> {
-    return firstValueFrom(
-      this.http.post<MapFog>(`${API}/maps/${mapId}/fog/toggle`, { enabled })
-    );
+    return firstValueFrom(this.http.post<MapFog>(`${API}/maps/${mapId}/fog/toggle`, { enabled }));
   }
 
-  async paintFog(mapId: string, cells: { col: number; row: number }[], revealed: boolean): Promise<MapFog> {
+  async paintFog(
+    mapId: string,
+    cells: { col: number; row: number }[],
+    revealed: boolean,
+  ): Promise<MapFog> {
     return firstValueFrom(
-      this.http.post<MapFog>(`${API}/maps/${mapId}/fog/paint`, { cells, revealed })
+      this.http.post<MapFog>(`${API}/maps/${mapId}/fog/paint`, { cells, revealed }),
     );
   }
 
@@ -180,7 +203,7 @@ export class BattleMapService {
   // Deltas that land before the (re)join fetch resolves are queued and replayed on top of it —
   // add/delete per cell is idempotent, so replaying one the fetch already includes is harmless.
   watchFog(mapId: string): Observable<MapFog> {
-    return new Observable(observer => {
+    return new Observable((observer) => {
       const socket = this.socketService.socket;
       let current: MapFog | null = null;
       let pending: FogCellsDelta[] = [];
@@ -230,45 +253,41 @@ export class BattleMapService {
 
   async setLightingEnabled(mapId: string, enabled: boolean): Promise<MapLighting> {
     return firstValueFrom(
-      this.http.post<MapLighting>(`${API}/maps/${mapId}/lighting/toggle`, { enabled })
+      this.http.post<MapLighting>(`${API}/maps/${mapId}/lighting/toggle`, { enabled }),
     );
   }
 
   async upsertLight(mapId: string, light: Partial<MapLight>): Promise<MapLight> {
-    return firstValueFrom(
-      this.http.post<MapLight>(`${API}/maps/${mapId}/lighting/lights`, light)
-    );
+    return firstValueFrom(this.http.post<MapLight>(`${API}/maps/${mapId}/lighting/lights`, light));
   }
 
   // Replaces the map's entire wall set; the resulting lighting state comes back and is also
   // broadcast to every viewer via lighting_updated.
   async setWalls(mapId: string, walls: MapWall[]): Promise<MapLighting> {
     return firstValueFrom(
-      this.http.put<MapLighting>(`${API}/maps/${mapId}/lighting/walls`, { walls })
+      this.http.put<MapLighting>(`${API}/maps/${mapId}/lighting/walls`, { walls }),
     );
   }
 
   async setAmbientLight(mapId: string, level: number, color: string): Promise<MapLighting> {
     return firstValueFrom(
-      this.http.put<MapLighting>(`${API}/maps/${mapId}/lighting/ambient`, { level, color })
+      this.http.put<MapLighting>(`${API}/maps/${mapId}/lighting/ambient`, { level, color }),
     );
   }
 
   async deleteLight(mapId: string, lightId: string): Promise<void> {
-    await firstValueFrom(
-      this.http.delete<void>(`${API}/maps/${mapId}/lighting/lights/${lightId}`)
-    );
+    await firstValueFrom(this.http.delete<void>(`${API}/maps/${mapId}/lighting/lights/${lightId}`));
   }
 
   // WebSocket subscription for live lighting updates — same join/leave-the-map-room lifecycle as
   // watchFog/watchTokens; independent of fog, its own socket event.
   watchLighting(mapId: string): Observable<MapLighting> {
-    return new Observable(observer => {
+    return new Observable((observer) => {
       const socket = this.socketService.socket;
       const handleUpdate = (lighting: MapLighting) => observer.next(lighting);
 
       const rejoin = this.joinMapRoom(socket, mapId, () => {
-        this.getLighting(mapId).then(lighting => observer.next(lighting));
+        this.getLighting(mapId).then((lighting) => observer.next(lighting));
       });
       socket.on('lighting_updated', handleUpdate);
 

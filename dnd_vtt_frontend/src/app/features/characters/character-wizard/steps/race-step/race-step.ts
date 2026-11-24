@@ -13,8 +13,15 @@ export interface RaceChoice {
 type ViewMode = 'list' | 'detail' | 'selected';
 
 const STANDARD_LANGUAGES = [
-  'Common Sign Language', 'Draconic', 'Dwarvish', 'Elvish', 'Giant',
-  'Gnomish', 'Goblin', 'Halfling', 'Orc',
+  'Common Sign Language',
+  'Draconic',
+  'Dwarvish',
+  'Elvish',
+  'Giant',
+  'Gnomish',
+  'Goblin',
+  'Halfling',
+  'Orc',
 ];
 
 const LANGUAGE_GRANT: Extract<TraitGrant, { type: 'choice' }> = {
@@ -22,8 +29,9 @@ const LANGUAGE_GRANT: Extract<TraitGrant, { type: 'choice' }> = {
   key: 'languages',
   name: 'Languages',
   choose: 2,
-  description: 'Every character knows Common. Choose two additional languages from the Standard Languages list.',
-  options: STANDARD_LANGUAGES.map(name => ({ name })),
+  description:
+    'Every character knows Common. Choose two additional languages from the Standard Languages list.',
+  options: STANDARD_LANGUAGES.map((name) => ({ name })),
 };
 
 const SIZE_KEY = 'size';
@@ -33,18 +41,18 @@ const SIZE_KEY = 'size';
   templateUrl: './race-step.html',
 })
 export class RaceStepComponent implements OnInit {
-  readonly races    = input.required<DndRace[]>();
-  readonly feats    = input<DndFeat[]>([]);
+  readonly races = input.required<DndRace[]>();
+  readonly feats = input<DndFeat[]>([]);
   readonly selected = input<RaceChoice | null>(null);
   readonly unavailableSkills = input<string[]>([]);
   readonly raceChosen = output<RaceChoice>();
   readonly languageGrant = LANGUAGE_GRANT;
 
-  viewMode      = signal<ViewMode>('list');
-  browsingRace  = signal<DndRace | null>(null);
+  viewMode = signal<ViewMode>('list');
+  browsingRace = signal<DndRace | null>(null);
 
-  draftSubrace    = signal<Subrace | null>(null);
-  draftTraits     = signal<Record<string, string[]>>({});
+  draftSubrace = signal<Subrace | null>(null);
+  draftTraits = signal<Record<string, string[]>>({});
   collapsedGrants = signal<Set<string>>(new Set());
 
   ngOnInit() {
@@ -66,13 +74,17 @@ export class RaceStepComponent implements OnInit {
 
   private openDetail(race: DndRace) {
     const existing = this.selected()?.race.index === race.index ? this.selected() : null;
-    this.draftSubrace.set(existing?.subrace ?? (race.subraces.length === 1 ? race.subraces[0] : null));
+    this.draftSubrace.set(
+      existing?.subrace ?? (race.subraces.length === 1 ? race.subraces[0] : null),
+    );
     this.draftTraits.set(existing?.traits ? { ...existing.traits } : {});
-    this.collapsedGrants.set(new Set([
-      LANGUAGE_GRANT.key,
-      ...((race.size_options?.length ?? 0) > 1 ? [SIZE_KEY] : []),
-      ...this.grantKeys(race),
-    ]));
+    this.collapsedGrants.set(
+      new Set([
+        LANGUAGE_GRANT.key,
+        ...((race.size_options?.length ?? 0) > 1 ? [SIZE_KEY] : []),
+        ...this.grantKeys(race),
+      ]),
+    );
     this.browsingRace.set(race);
     this.viewMode.set('detail');
   }
@@ -96,7 +108,9 @@ export class RaceStepComponent implements OnInit {
     this.raceChosen.emit({
       race,
       subrace: this.draftSubrace(),
-      traits: Object.fromEntries(Object.entries(this.draftTraits()).map(([key, values]) => [key, [...values]])),
+      traits: Object.fromEntries(
+        Object.entries(this.draftTraits()).map(([key, values]) => [key, [...values]]),
+      ),
     });
   }
 
@@ -117,19 +131,26 @@ export class RaceStepComponent implements OnInit {
   // A race's own traits, rendered the same way class features are: its structured `grants` if
   // present, otherwise each legacy trait string promoted to a plain feature grant.
   raceGrants(race: DndRace): TraitGrant[] {
-    return race.grants?.length ? race.grants : race.traits.map(name => ({ type: 'feature', name }) as TraitGrant);
+    return race.grants?.length
+      ? race.grants
+      : race.traits.map((name) => ({ type: 'feature', name }) as TraitGrant);
   }
 
   subraceGrants(sub: Subrace): TraitGrant[] {
-    return sub.grants?.length ? sub.grants : sub.traits.map(name => ({ type: 'feature', name }) as TraitGrant);
+    return sub.grants?.length
+      ? sub.grants
+      : sub.traits.map((name) => ({ type: 'feature', name }) as TraitGrant);
   }
 
   private grantKeys(race: DndRace): string[] {
-    const choiceKeys = (grants?: TraitGrant[]) => (grants ?? [])
-      .filter((g): g is Extract<TraitGrant, { key: string }> =>
-        g.type === 'choice' || g.type === 'skill_choice' || g.type === 'feat_pick')
-      .map(g => g.key);
-    return [...choiceKeys(race.grants), ...race.subraces.flatMap(s => choiceKeys(s.grants))];
+    const choiceKeys = (grants?: TraitGrant[]) =>
+      (grants ?? [])
+        .filter(
+          (g): g is Extract<TraitGrant, { key: string }> =>
+            g.type === 'choice' || g.type === 'skill_choice' || g.type === 'feat_pick',
+        )
+        .map((g) => g.key);
+    return [...choiceKeys(race.grants), ...race.subraces.flatMap((s) => choiceKeys(s.grants))];
   }
 
   traitSelected(grant: TraitGrant & { key: string }, option: string): boolean {
@@ -137,7 +158,8 @@ export class RaceStepComponent implements OnInit {
   }
 
   choicesLeft(grant: TraitGrant): number {
-    if (grant.type !== 'choice' && grant.type !== 'skill_choice' && grant.type !== 'feat_pick') return 0;
+    if (grant.type !== 'choice' && grant.type !== 'skill_choice' && grant.type !== 'feat_pick')
+      return 0;
     return Math.max(0, grant.choose - (this.draftTraits()[grant.key]?.length ?? 0));
   }
 
@@ -145,14 +167,21 @@ export class RaceStepComponent implements OnInit {
     return grant.skills?.length ? grant.skills : Object.keys(SKILLS);
   }
 
-  private skillTakenElsewhere(grant: Extract<TraitGrant, { type: 'skill_choice' }>, skill: string): boolean {
+  private skillTakenElsewhere(
+    grant: Extract<TraitGrant, { type: 'skill_choice' }>,
+    skill: string,
+  ): boolean {
     const race = this.browsingRace();
     const skillKeys = [...(race?.grants ?? []), ...(this.draftSubrace()?.grants ?? [])]
-      .filter((candidate): candidate is Extract<TraitGrant, { type: 'skill_choice' }> =>
-        candidate.type === 'skill_choice' && candidate.key !== grant.key)
-      .map(candidate => candidate.key);
-    return this.unavailableSkills().includes(skill)
-      || skillKeys.some(key => this.draftTraits()[key]?.includes(skill));
+      .filter(
+        (candidate): candidate is Extract<TraitGrant, { type: 'skill_choice' }> =>
+          candidate.type === 'skill_choice' && candidate.key !== grant.key,
+      )
+      .map((candidate) => candidate.key);
+    return (
+      this.unavailableSkills().includes(skill) ||
+      skillKeys.some((key) => this.draftTraits()[key]?.includes(skill))
+    );
   }
 
   skillUnavailable(grant: Extract<TraitGrant, { type: 'skill_choice' }>, skill: string): boolean {
@@ -164,22 +193,30 @@ export class RaceStepComponent implements OnInit {
   }
 
   conflictingSkills(grant: Extract<TraitGrant, { type: 'skill_choice' }>): string[] {
-    return (this.draftTraits()[grant.key] ?? []).filter(skill => this.skillConflict(grant, skill));
+    return (this.draftTraits()[grant.key] ?? []).filter((skill) =>
+      this.skillConflict(grant, skill),
+    );
   }
 
   availableFeats(grant: Extract<TraitGrant, { type: 'feat_pick' }>): DndFeat[] {
     return this.feats()
-      .filter(feat => feat.category === grant.category && (!grant.feats?.length || grant.feats.includes(feat.index)))
+      .filter(
+        (feat) =>
+          feat.category === grant.category &&
+          (!grant.feats?.length || grant.feats.includes(feat.index)),
+      )
       .sort((a, b) => a.name.localeCompare(b.name));
   }
 
   pickedFeats(grant: Extract<TraitGrant, { type: 'feat_pick' }>): DndFeat[] {
     const selected = new Set(this.draftTraits()[grant.key] ?? []);
-    return this.feats().filter(feat => selected.has(feat.index));
+    return this.feats().filter((feat) => selected.has(feat.index));
   }
 
   featChoiceGrants(feat: DndFeat): Extract<TraitGrant, { type: 'choice' }>[] {
-    return (feat.grants ?? []).filter((choice): choice is Extract<TraitGrant, { type: 'choice' }> => choice.type === 'choice');
+    return (feat.grants ?? []).filter(
+      (choice): choice is Extract<TraitGrant, { type: 'choice' }> => choice.type === 'choice',
+    );
   }
 
   featChoiceKey(parent: { key: string }, grant: { key: string }): string {
@@ -190,19 +227,28 @@ export class RaceStepComponent implements OnInit {
     return this.draftTraits()[this.featChoiceKey(parent, grant)]?.includes(option) ?? false;
   }
 
-  toggleFeatChoice(parent: { key: string }, grant: Extract<TraitGrant, { type: 'choice' }>, option: string): void {
+  toggleFeatChoice(
+    parent: { key: string },
+    grant: Extract<TraitGrant, { type: 'choice' }>,
+    option: string,
+  ): void {
     const key = this.featChoiceKey(parent, grant);
-    this.draftTraits.update(traits => {
+    this.draftTraits.update((traits) => {
       const current = traits[key] ?? [];
-      if (current.includes(option)) return { ...traits, [key]: current.filter(value => value !== option) };
-      if (current.length >= grant.choose) return grant.choose === 1 ? { ...traits, [key]: [option] } : traits;
+      if (current.includes(option))
+        return { ...traits, [key]: current.filter((value) => value !== option) };
+      if (current.length >= grant.choose)
+        return grant.choose === 1 ? { ...traits, [key]: [option] } : traits;
       return { ...traits, [key]: [...current, option] };
     });
     this.syncDraft();
   }
 
   selectedSize(race: DndRace): string {
-    return this.draftTraits()[SIZE_KEY]?.[0] ?? (race.size_options?.length === 1 ? race.size_options[0] : '');
+    return (
+      this.draftTraits()[SIZE_KEY]?.[0] ??
+      (race.size_options?.length === 1 ? race.size_options[0] : '')
+    );
   }
 
   sizeGrant(race: DndRace): Extract<TraitGrant, { type: 'choice' }> | null {
@@ -212,8 +258,8 @@ export class RaceStepComponent implements OnInit {
       key: SIZE_KEY,
       name: 'Size',
       choose: 1,
-      description: 'Choose your character\'s size.',
-      options: race.size_options!.map(name => ({ name })),
+      description: "Choose your character's size.",
+      options: race.size_options!.map((name) => ({ name })),
     };
   }
 
@@ -226,22 +272,23 @@ export class RaceStepComponent implements OnInit {
   }
 
   toggleGrantCollapsed(key: string) {
-    this.collapsedGrants.update(set => {
+    this.collapsedGrants.update((set) => {
       const next = new Set(set);
-      if (next.has(key)) next.delete(key); else next.add(key);
+      if (next.has(key)) next.delete(key);
+      else next.add(key);
       return next;
     });
   }
 
   toggleTrait(grant: TraitGrant & { choose: number; key: string }, option: string) {
     if (grant.type === 'skill_choice' && this.skillUnavailable(grant, option)) return;
-    this.draftTraits.update(traits => {
+    this.draftTraits.update((traits) => {
       const current = traits[grant.key] ?? [];
       if (grant.choose === 1) {
         return { ...traits, [grant.key]: current.includes(option) ? [] : [option] };
       }
       if (current.includes(option)) {
-        return { ...traits, [grant.key]: current.filter(o => o !== option) };
+        return { ...traits, [grant.key]: current.filter((o) => o !== option) };
       }
       if (current.length >= grant.choose) return traits;
       return { ...traits, [grant.key]: [...current, option] };

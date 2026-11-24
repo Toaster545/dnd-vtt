@@ -40,7 +40,8 @@ export class MonsterTokenDetailComponent {
     const entries = Object.entries(this.monster().saving_throws ?? {});
     return entries
       .map(([ability, bonus]) => {
-        const short = ABILITY_SHORT[ability.toLowerCase() as Ability] ?? ability.slice(0, 3).toUpperCase();
+        const short =
+          ABILITY_SHORT[ability.toLowerCase() as Ability] ?? ability.slice(0, 3).toUpperCase();
         return `${short} ${bonus >= 0 ? '+' : ''}${bonus}`;
       })
       .join(', ');
@@ -63,6 +64,6 @@ export class MonsterTokenDetailComponent {
         entries: m.legendary_actions ?? [],
       },
     ];
-    return sections.filter(section => section.entries.length);
+    return sections.filter((section) => section.entries.length);
   }
 }

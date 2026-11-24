@@ -5,14 +5,18 @@ export class PortraitCache {
   private readonly limit = 200;
   private images = new Map<string, HTMLImageElement>();
 
-  resolve(sources: Record<string, PortraitSource>, onLoaded: () => void): Record<string, HTMLImageElement> {
+  resolve(
+    sources: Record<string, PortraitSource>,
+    onLoaded: () => void,
+  ): Record<string, HTMLImageElement> {
     const resolved: Record<string, HTMLImageElement> = {};
     for (const [characterId, source] of Object.entries(sources)) {
-      const identity = source.kind === 'legacy'
-        ? `legacy:${source.seed}`
-        : source.kind === 'image'
-          ? `image:${source.url}`
-          : `recipe:${avatarRecipeKey(source.recipe)}`;
+      const identity =
+        source.kind === 'legacy'
+          ? `legacy:${source.seed}`
+          : source.kind === 'image'
+            ? `image:${source.url}`
+            : `recipe:${avatarRecipeKey(source.recipe)}`;
       const cacheKey = `${characterId}:${identity}`;
       let img = this.images.get(cacheKey);
       if (!img) {

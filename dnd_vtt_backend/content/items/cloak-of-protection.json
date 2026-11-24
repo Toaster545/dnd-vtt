@@ -1,0 +1,28 @@
+{
+  "index": "cloak-of-protection",
+  "name": "Cloak of Protection",
+  "type": "magic",
+  "category": "Wondrous Item",
+  "damage": null,
+  "damage_type": null,
+  "properties": [],
+  "weight": 0,
+  "cost": "Magic item",
+  "image_url": "/icons/cloak.svg",
+  "description": "You gain a +1 bonus to AC and saving throws while you wear this cloak.",
+  "rarity": "uncommon",
+  "requires_attunement": true,
+  "effects": [
+    {
+      "type": "ac_bonus",
+      "value": 1
+    }
+  ],
+  "source": {
+    "code": "DMG",
+    "book": "Dungeon Master’s Guide",
+    "edition": 2014,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

@@ -8,7 +8,8 @@ import { CharacterService } from '../../core/services/character.service';
 import { ContentService, DndContentSource } from '../../core/services/content.service';
 import { Campaign, CampaignJoinPreview } from '../../core/models/campaign.model';
 import { Character } from '../../core/models/character.model';
-import { ConfirmService } from '../../shared/confirm.service';
+import { ConfirmService } from '../../shared/components/confirm-dialog/confirm.service';
+import { getErrorMessage } from '../../core/utils/error-message';
 
 type NewCampaignMode = 'join' | 'create';
 
@@ -25,31 +26,31 @@ type NewCampaignMode = 'join' | 'create';
   host: { class: 'flex flex-col flex-1 min-h-0 overflow-hidden' },
 })
 export class CampaignsComponent implements OnInit {
-  private campaignService  = inject(CampaignService);
+  private campaignService = inject(CampaignService);
   private characterService = inject(CharacterService);
-  private contentService   = inject(ContentService);
-  private confirm          = inject(ConfirmService);
-  private route            = inject(ActivatedRoute);
+  private contentService = inject(ContentService);
+  private confirm = inject(ConfirmService);
+  private route = inject(ActivatedRoute);
 
-  campaigns  = signal<Campaign[]>([]);
+  campaigns = signal<Campaign[]>([]);
   characters = signal<Character[]>([]);
-  sources    = signal<DndContentSource[]>([]);
-  loading    = signal(true);
+  sources = signal<DndContentSource[]>([]);
+  loading = signal(true);
 
   showForm = signal(false);
-  mode     = signal<NewCampaignMode>('join');
+  mode = signal<NewCampaignMode>('join');
 
   // Create
-  newName        = '';
+  newName = '';
   newDescription = '';
-  saving         = signal(false);
+  saving = signal(false);
   allowedSources = signal(new Set(['XPHB']));
   createSourcesExpanded = signal(false);
 
   // Join
-  joining      = signal(false);
-  joinError    = signal<string | null>(null);
-  joinPreview  = signal<CampaignJoinPreview | null>(null);
+  joining = signal(false);
+  joinError = signal<string | null>(null);
+  joinPreview = signal<CampaignJoinPreview | null>(null);
   previewingJoin = signal(false);
   selectedCharacterId = signal<string | null>(null);
   joinCode = '';
@@ -71,11 +72,13 @@ export class CampaignsComponent implements OnInit {
     this.campaigns.set(campaigns);
     this.characters.set(characters);
     this.sources.set(sources);
-    this.allowedSources.set(new Set(
-      sources
-        .filter(source => source.player_options && (source.default_enabled || source.locked))
-        .map(source => source.code),
-    ));
+    this.allowedSources.set(
+      new Set(
+        sources
+          .filter((source) => source.player_options && (source.default_enabled || source.locked))
+          .map((source) => source.code),
+      ),
+    );
     this.loading.set(false);
   }
 
@@ -108,12 +111,14 @@ export class CampaignsComponent implements OnInit {
   }
 
   sourceLabel(code: string): string {
-    return this.sources().find(source => source.code === code)?.short_name ?? code;
+    return this.sources().find((source) => source.code === code)?.short_name ?? code;
   }
 
   characterCompatibility(characterId?: string) {
     if (!characterId) return undefined;
-    return this.joinPreview()?.characters.find(character => character.character_id === characterId);
+    return this.joinPreview()?.characters.find(
+      (character) => character.character_id === characterId,
+    );
   }
 
   async onJoinCodeChange(value: string) {
@@ -127,7 +132,9 @@ export class CampaignsComponent implements OnInit {
       const preview = await this.campaignService.previewJoin(requestedCode);
       if (this.joinCode.trim() !== requestedCode) return;
       this.joinPreview.set(preview);
-      if (this.characterCompatibility(this.selectedCharacterId() ?? undefined)?.compatible === false) {
+      if (
+        this.characterCompatibility(this.selectedCharacterId() ?? undefined)?.compatible === false
+      ) {
         this.selectedCharacterId.set(null);
       }
     } catch (error) {
@@ -142,21 +149,23 @@ export class CampaignsComponent implements OnInit {
     if (!this.newName.trim()) return;
     this.saving.set(true);
     try {
-      await this.campaignService.create(
-        this.newName.trim(),
-        this.newDescription.trim(),
-        [...this.allowedSources()],
-      );
-      this.newName        = '';
+      await this.campaignService.create(this.newName.trim(), this.newDescription.trim(), [
+        ...this.allowedSources(),
+      ]);
+      this.newName = '';
       this.newDescription = '';
-      this.allowedSources.set(new Set(
-        this.sources()
-          .filter(source => source.player_options && (source.default_enabled || source.locked))
-          .map(source => source.code),
-      ));
+      this.allowedSources.set(
+        new Set(
+          this.sources()
+            .filter((source) => source.player_options && (source.default_enabled || source.locked))
+            .map((source) => source.code),
+        ),
+      );
       this.showForm.set(false);
       await this.load();
-    } finally { this.saving.set(false); }
+    } finally {
+      this.saving.set(false);
+    }
   }
 
   async join() {
@@ -178,15 +187,19 @@ export class CampaignsComponent implements OnInit {
   }
 
   private errorMessage(error: unknown, fallback: string): string {
-    const response = error as { error?: { message?: string | string[] } };
-    const message = response?.error?.message;
-    return Array.isArray(message) ? message.join(' ') : message || fallback;
+    return getErrorMessage(error, fallback);
   }
 
   async deleteCampaign(campaign: Campaign, event: Event) {
     event.stopPropagation();
     event.preventDefault();
-    if (!await this.confirm.confirm(`Delete "${campaign.name}"? This cannot be undone.`, 'Delete Campaign')) return;
+    if (
+      !(await this.confirm.confirm(
+        `Delete "${campaign.name}"? This cannot be undone.`,
+        'Delete Campaign',
+      ))
+    )
+      return;
     await this.campaignService.remove(campaign.id);
     await this.load();
   }
@@ -213,7 +226,9 @@ export class CampaignsComponent implements OnInit {
   }
 
   campaignLink(campaign: Campaign): string[] {
-    return campaign.is_owner ? ['/home/campaigns/manage', campaign.id] : ['/home/campaigns', campaign.id];
+    return campaign.is_owner
+      ? ['/home/campaigns/manage', campaign.id]
+      : ['/home/campaigns', campaign.id];
   }
 
   classLabel(c: Character): string {
@@ -222,6 +237,10 @@ export class CampaignsComponent implements OnInit {
 
   formatDate(iso?: string): string {
     if (!iso) return '';
-    return new Date(iso).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
+    return new Date(iso).toLocaleDateString(undefined, {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+    });
   }
 }

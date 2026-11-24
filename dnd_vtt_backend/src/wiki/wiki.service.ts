@@ -27,16 +27,37 @@ export class WikiService {
 
   async tree(campaignId: string, user: RequestUser) {
     const { isDm } = await this.assertAccess(campaignId, user);
+    await this.ensureCharacterNotes(campaignId, user);
     const result = await this.db.execute(
-      `SELECT p.id, p.title, p.slug, p.folder, p.visibility, p.updated_at,
-              e.username AS updated_by_name
+      `SELECT p.id, p.title, p.slug, p.folder, p.visibility, p.owner_id, p.character_id,
+              p.updated_at, e.username AS updated_by_name
          FROM wiki_pages p
          LEFT JOIN profiles e ON e.id = p.updated_by
-        WHERE p.campaign_id = ?${isDm ? '' : ` AND p.visibility = 'shared'`}
+        WHERE p.campaign_id = ? AND ${visibleSql('p', isDm)}
         ORDER BY p.folder COLLATE NOCASE, p.title COLLATE NOCASE`,
-      [campaignId],
+      [campaignId, user.id],
     );
     return result.rows;
+  }
+
+  /** Where to find the caller's private notes page for one of their campaign characters. */
+  async characterNotes(characterId: string, user: RequestUser) {
+    const result = await this.db.execute(
+      `SELECT user_id, campaign_id FROM characters WHERE id = ?`,
+      [characterId],
+    );
+    const character = result.rows[0];
+    if (!character || !character.campaign_id || character.user_id !== user.id)
+      throw new NotFoundException('Character not found');
+
+    const campaignId = character.campaign_id as string;
+    await this.assertAccess(campaignId, user);
+    await this.ensureCharacterNotes(campaignId, user);
+    const page = await this.db.execute(
+      `SELECT slug FROM wiki_pages WHERE character_id = ?`,
+      [characterId],
+    );
+    return { campaignId, slug: page.rows[0].slug as string };
   }
 
   async getPage(campaignId: string, slug: string, user: RequestUser) {
@@ -50,17 +71,17 @@ export class WikiService {
       [campaignId, slug],
     );
     const page = result.rows[0];
-    // 404 rather than 403 for dm_only pages so their existence doesn't leak to players.
-    if (!page || (page.visibility === 'dm_only' && !isDm))
+    // 404 rather than 403 for hidden pages so their existence doesn't leak.
+    if (!page || !canSee(page, isDm, user.id))
       throw new NotFoundException('Wiki page not found');
 
     const backlinks = await this.db.execute(
       `SELECT s.id, s.title, s.slug, s.folder
          FROM wiki_page_links l
          JOIN wiki_pages s ON s.id = l.source_page_id
-        WHERE l.target_page_id = ?${isDm ? '' : ` AND s.visibility = 'shared'`}
+        WHERE l.target_page_id = ? AND ${visibleSql('s', isDm)}
         ORDER BY s.title COLLATE NOCASE`,
-      [page.id],
+      [page.id, user.id],
     );
 
     return { page, backlinks: backlinks.rows };
@@ -76,20 +97,20 @@ export class WikiService {
          FROM wiki_pages_fts f
          JOIN wiki_pages p ON p.id = f.page_id
         WHERE f.campaign_id = ? AND wiki_pages_fts MATCH ?
-          ${isDm ? '' : ` AND p.visibility = 'shared'`}
+          AND ${visibleSql('p', isDm)}
         ORDER BY rank
         LIMIT 30`,
-      [campaignId, match],
+      [campaignId, match, user.id],
     );
     return result.rows;
   }
 
   async graph(campaignId: string, user: RequestUser) {
     const { isDm } = await this.assertAccess(campaignId, user);
-    const vis = isDm ? '' : ` AND visibility = 'shared'`;
     const nodes = await this.db.execute(
-      `SELECT id, title, slug, folder FROM wiki_pages WHERE campaign_id = ?${vis}`,
-      [campaignId],
+      `SELECT p.id, p.title, p.slug, p.folder FROM wiki_pages p
+        WHERE p.campaign_id = ? AND ${visibleSql('p', isDm)}`,
+      [campaignId, user.id],
     );
     const edges = await this.db.execute(
       `SELECT DISTINCT l.source_page_id AS source, l.target_page_id AS target
@@ -97,8 +118,8 @@ export class WikiService {
          JOIN wiki_pages s ON s.id = l.source_page_id
          JOIN wiki_pages t ON t.id = l.target_page_id
         WHERE s.campaign_id = ? AND l.target_page_id IS NOT NULL
-          ${isDm ? '' : ` AND s.visibility = 'shared' AND t.visibility = 'shared'`}`,
-      [campaignId],
+          AND ${visibleSql('s', isDm)} AND ${visibleSql('t', isDm)}`,
+      [campaignId, user.id, user.id],
     );
     return { nodes: nodes.rows, edges: edges.rows };
   }
@@ -163,6 +184,9 @@ export class WikiService {
 
     const campaignId = page.campaign_id as string;
     const { isDm } = await this.assertAccess(campaignId, user);
+    // Private pages don't exist as far as anyone but their owner is concerned, the DM included.
+    if (!canSee(page, isDm, user.id))
+      throw new NotFoundException('Wiki page not found');
     // DM edits anything; players may edit shared pages but never touch dm_only ones.
     if (page.visibility === 'dm_only' && !isDm) throw new ForbiddenException();
     if (
@@ -184,10 +208,11 @@ export class WikiService {
         ? normalizeFolder(dto.folder)
         : (page.folder as string);
     const body = dto.body !== undefined ? dto.body : (page.body as string);
-    // Only the DM can move a page in or out of dm_only visibility.
-    const visibility = isDm
-      ? (dto.visibility ?? (page.visibility as string))
-      : (page.visibility as string);
+    // Only the DM can move a page in or out of dm_only visibility; private pages never change.
+    const visibility =
+      isDm && !page.owner_id
+        ? (dto.visibility ?? (page.visibility as string))
+        : (page.visibility as string);
     const now = new Date().toISOString();
 
     const stmts: Batch[] = [
@@ -205,7 +230,8 @@ export class WikiService {
       ...this.reindexStmts(id, campaignId, title, body),
     ];
 
-    if (renamed) {
+    // A private page is invisible to others, so a rename must not rewrite their pages' links.
+    if (renamed && !page.owner_id) {
       // Obsidian-style: rewrite every `[[Old Title]]` in other pages to the new title so the
       // links (and their backlinks) survive the rename instead of going red.
       const others = await this.db.execute(
@@ -251,6 +277,12 @@ export class WikiService {
     if (!page) throw new NotFoundException('Wiki page not found');
 
     const { isDm } = await this.assertAccess(page.campaign_id as string, user);
+    if (!canSee(page, isDm, user.id))
+      throw new NotFoundException('Wiki page not found');
+    if (page.character_id)
+      throw new BadRequestException(
+        "A character's notes page can't be deleted; it goes away with the character.",
+      );
     if (!isDm && page.author_id !== user.id) throw new ForbiddenException();
 
     // Inbound links drop to unresolved automatically (wiki_page_links.target_page_id
@@ -293,6 +325,74 @@ export class WikiService {
   }
 
   // ── helpers ────────────────────────────────────────────────────────────────
+
+  private ensuring = new Map<string, Promise<void>>();
+
+  /**
+   * Give each of the user's characters in this campaign its private notes page, if it doesn't
+   * have one yet. Idempotent; concurrent calls for the same user+campaign share one run so a
+   * double page load can't create two pages.
+   */
+  private ensureCharacterNotes(
+    campaignId: string,
+    user: RequestUser,
+  ): Promise<void> {
+    const key = `${campaignId}:${user.id}`;
+    const inflight = this.ensuring.get(key);
+    if (inflight) return inflight;
+    const run = this.createMissingCharacterNotes(campaignId, user).finally(() =>
+      this.ensuring.delete(key),
+    );
+    this.ensuring.set(key, run);
+    return run;
+  }
+
+  private async createMissingCharacterNotes(
+    campaignId: string,
+    user: RequestUser,
+  ): Promise<void> {
+    const missing = await this.db.execute(
+      `SELECT c.id, c.name FROM characters c
+        WHERE c.campaign_id = ? AND c.user_id = ?
+          AND NOT EXISTS (SELECT 1 FROM wiki_pages w WHERE w.character_id = c.id)`,
+      [campaignId, user.id],
+    );
+    for (const character of missing.rows) {
+      const title = `${character.name as string} – Notes`;
+      const slug = await this.uniqueSlug(
+        campaignId,
+        slugify(title) || 'character-notes',
+      );
+      const id = randomUUID();
+      const now = new Date().toISOString();
+      await this.db.executeMany([
+        {
+          sql: `INSERT INTO wiki_pages
+                  (id, campaign_id, title, slug, folder, body, visibility, author_id, updated_by,
+                   owner_id, character_id, created_at, updated_at)
+                VALUES (?, ?, ?, ?, 'Character Notes', '', 'shared', ?, ?, ?, ?, ?, ?)`,
+          args: [
+            id,
+            campaignId,
+            title,
+            slug,
+            user.id,
+            user.id,
+            user.id,
+            character.id,
+            now,
+            now,
+          ],
+        },
+        {
+          sql: `INSERT INTO wiki_page_versions (id, page_id, title, folder, body, editor_id, created_at)
+                VALUES (?, ?, ?, 'Character Notes', '', ?, ?)`,
+          args: [randomUUID(), id, title, user.id, now],
+        },
+        ...this.reindexStmts(id, campaignId, title, ''),
+      ]);
+    }
+  }
 
   /** DELETE + rebuild this page's outgoing link rows and its FTS row. */
   private reindexStmts(
@@ -378,6 +478,25 @@ export class WikiService {
     if (membership.rows.length === 0) throw new ForbiddenException();
     return { isDm: false };
   }
+}
+
+/**
+ * SQL predicate (one `?` for the viewing user's id) for pages `alias` that the viewer may see:
+ * their own private pages, plus every public page they could see before (all for the DM, only
+ * `shared` ones for players). Private pages are never visible to anyone else, DM included.
+ */
+function visibleSql(alias: string, isDm: boolean): string {
+  const open = isDm ? '1' : `${alias}.visibility = 'shared'`;
+  return `(${alias}.owner_id = ? OR (${alias}.owner_id IS NULL AND ${open}))`;
+}
+
+function canSee(
+  page: Record<string, unknown>,
+  isDm: boolean,
+  userId: string,
+): boolean {
+  if (page.owner_id) return page.owner_id === userId;
+  return isDm || page.visibility === 'shared';
 }
 
 /** Collapse `/foo//bar/` to `foo/bar`; empty means the wiki root. */

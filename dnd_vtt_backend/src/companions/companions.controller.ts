@@ -4,6 +4,7 @@ import { CurrentUser } from '../common/current-user.decorator';
 import type { RequestUser } from '../common/current-user.decorator';
 import { CharactersService } from '../characters/characters.service';
 import { CompanionsService } from './companions.service';
+import { CreateCompanionDto, UpdateCompanionDto } from './dto/companion.dto';
 
 @Controller('characters/:characterId/companions')
 @UseGuards(JwtGuard)
@@ -23,12 +24,12 @@ export class CompanionsController {
   async create(
     @Param('characterId') id: string,
     @CurrentUser() user: RequestUser,
-    @Body() body: Record<string, unknown>,
+    @Body() body: CreateCompanionDto,
   ) {
     return this.withSlots(
       id,
       user,
-      await this.companions.create(id, user, body),
+      await this.companions.create(id, user, { ...body }),
     );
   }
   @Post(':id')
@@ -36,13 +37,13 @@ export class CompanionsController {
     @Param('characterId') characterId: string,
     @Param('id') id: string,
     @CurrentUser() user: RequestUser,
-    @Body() body: Record<string, unknown>,
+    @Body() body: UpdateCompanionDto,
   ) {
     const result = await this.companions.update(
       characterId,
       id,
       user,
-      body,
+      { ...body },
       (owner) =>
         this.characters
           .resolveSlotPools(owner)

@@ -18,9 +18,9 @@ export class AppHeaderComponent {
 
   activeTab = input<'dashboard' | 'characters' | 'campaigns' | 'content-library' | null>(null);
 
-  selectCharacters     = output<void>();
-  selectCampaigns      = output<void>();
+  selectCharacters = output<void>();
+  selectCampaigns = output<void>();
   selectContentLibrary = output<void>();
-  selectDashboard      = output<void>();
-  selectSettings       = output<void>();
+  selectDashboard = output<void>();
+  selectSettings = output<void>();
 }

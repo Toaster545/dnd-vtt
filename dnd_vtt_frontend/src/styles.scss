@@ -15,11 +15,16 @@
 
 // Keep minimal Material theme for MatDialog, MatSnackBar, MatTooltip tokens
 html {
-  @include mat.theme((
-    color: mat.$violet-palette,
-    typography: (brand-family: t.$font-brand, plain-family: t.$font-body),
-    density: 0,
-  ));
+  @include mat.theme(
+    (
+      color: mat.$violet-palette,
+      typography: (
+        brand-family: t.$font-brand,
+        plain-family: t.$font-body,
+      ),
+      density: 0,
+    )
+  );
   @include t.apply();
 }
 
@@ -54,8 +59,13 @@ mat-icon.mat-icon {
 }
 
 @layer base {
-  *, *::before, *::after { box-sizing: border-box; }
-  html, body {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+  html,
+  body {
     margin: 0;
     padding: 0;
     height: 100%;
@@ -65,10 +75,23 @@ mat-icon.mat-icon {
   }
 }
 
-button, a, input, select, textarea { touch-action: manipulation; }
+button,
+a,
+input,
+select,
+textarea {
+  touch-action: manipulation;
+}
 @media (max-width: 1023px) {
-  button, [role='button'], input, select { min-height: 44px; }
-  .mat-mdc-dialog-container { max-width: calc(100vw - 1rem); }
+  button,
+  [role='button'],
+  input,
+  select {
+    min-height: 44px;
+  }
+  .mat-mdc-dialog-container {
+    max-width: calc(100vw - 1rem);
+  }
 }
 
 // App-wide default strength for the background darkening overlay below. Overridden per page by
@@ -84,7 +107,11 @@ button, a, input, select, textarea { touch-action: manipulation; }
   inset: 0;
   z-index: -1;
   pointer-events: none;
-  background-color: color-mix(in srgb, var(--dnd-bg-base) calc(var(--app-bg-overlay-alpha) * 100%), transparent);
+  background-color: color-mix(
+    in srgb,
+    var(--dnd-bg-base) calc(var(--app-bg-overlay-alpha) * 100%),
+    transparent
+  );
   transition: background-color 0.15s ease;
 }
 
@@ -265,8 +292,20 @@ textarea.field-input {
 
 .bg-image-parchment {
   background-image:
-    repeating-linear-gradient(135deg, rgba(237, 233, 223, 0.035) 0px, rgba(237, 233, 223, 0.035) 2px, transparent 2px, transparent 14px),
-    repeating-linear-gradient(45deg, rgba(237, 233, 223, 0.025) 0px, rgba(237, 233, 223, 0.025) 2px, transparent 2px, transparent 14px),
+    repeating-linear-gradient(
+      135deg,
+      rgba(237, 233, 223, 0.035) 0px,
+      rgba(237, 233, 223, 0.035) 2px,
+      transparent 2px,
+      transparent 14px
+    ),
+    repeating-linear-gradient(
+      45deg,
+      rgba(237, 233, 223, 0.025) 0px,
+      rgba(237, 233, 223, 0.025) 2px,
+      transparent 2px,
+      transparent 14px
+    ),
     radial-gradient(ellipse at top, rgba(201, 162, 39, 0.09), transparent 60%);
 }
 
@@ -275,7 +314,10 @@ textarea.field-input {
     linear-gradient(rgba(0, 0, 0, 0.35) 1px, transparent 1px),
     linear-gradient(90deg, rgba(0, 0, 0, 0.35) 1px, transparent 1px),
     radial-gradient(ellipse at center, rgba(78, 77, 73, 0.25), transparent 70%);
-  background-size: 16px 12px, 16px 12px, 100% 100%;
+  background-size:
+    16px 12px,
+    16px 12px,
+    100% 100%;
 }
 
 .bg-image-starfield {
@@ -286,15 +328,30 @@ textarea.field-input {
     radial-gradient(1px 1px at 200px 60px, rgba(237, 233, 223, 0.35), transparent),
     radial-gradient(1.5px 1.5px at 260px 200px, rgba(237, 233, 223, 0.45), transparent),
     radial-gradient(ellipse at top, rgba(37, 38, 65, 0.6), transparent 70%);
-  background-size: 90px 70px, 90px 70px, 90px 70px, 90px 70px, 90px 70px, 100% 100%;
+  background-size:
+    90px 70px,
+    90px 70px,
+    90px 70px,
+    90px 70px,
+    90px 70px,
+    100% 100%;
 }
 
 body.bg-image-stone {
-  background-size: 48px 32px, 48px 32px, 100% 100%;
+  background-size:
+    48px 32px,
+    48px 32px,
+    100% 100%;
 }
 
 body.bg-image-starfield {
-  background-size: 280px 220px, 280px 220px, 280px 220px, 280px 220px, 280px 220px, 100% 100%;
+  background-size:
+    280px 220px,
+    280px 220px,
+    280px 220px,
+    280px 220px,
+    280px 220px,
+    100% 100%;
 }
 
 body[class*='bg-image-']:not(.bg-image-none) {

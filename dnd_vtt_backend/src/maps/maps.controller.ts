@@ -18,6 +18,20 @@ import { MapsService } from './maps.service';
 import { JwtGuard } from '../auth/jwt.guard';
 import { CurrentUser } from '../common/current-user.decorator';
 import type { RequestUser } from '../common/current-user.decorator';
+import { SetEnabledDto } from '../common/set-enabled.dto';
+import { CreateMapDto } from './dto/create-map.dto';
+import { UpsertTokenDto } from './dto/upsert-token.dto';
+import {
+  MoveTokenDto,
+  SetTokenColorDto,
+  SetTokenPlanDto,
+} from './dto/token-actions.dto';
+import { PaintFogDto } from './dto/fog.dto';
+import {
+  SetAmbientLightDto,
+  SetWallsDto,
+  UpsertLightDto,
+} from './dto/lighting.dto';
 
 @Controller('maps')
 @UseGuards(JwtGuard)
@@ -54,11 +68,8 @@ export class MapsController {
   }
 
   @Post()
-  create(
-    @Body() body: Record<string, unknown>,
-    @CurrentUser() user: RequestUser,
-  ) {
-    return this.maps.create(body, user);
+  create(@Body() body: CreateMapDto, @CurrentUser() user: RequestUser) {
+    return this.maps.create({ ...body }, user);
   }
 
   @Post('upload')
@@ -81,17 +92,17 @@ export class MapsController {
   @Post(':id/tokens')
   upsertToken(
     @Param('id') id: string,
-    @Body() body: Record<string, unknown>,
+    @Body() body: UpsertTokenDto,
     @CurrentUser() user: RequestUser,
   ) {
-    return this.maps.upsertToken(id, body, user);
+    return this.maps.upsertToken(id, { ...body }, user);
   }
 
   @Post(':id/tokens/:tokenId/color')
   setTokenColor(
     @Param('id') mapId: string,
     @Param('tokenId') tokenId: string,
-    @Body() body: { color: string },
+    @Body() body: SetTokenColorDto,
     @CurrentUser() user: RequestUser,
   ) {
     return this.maps.setTokenColor(mapId, tokenId, body.color, user);
@@ -128,7 +139,7 @@ export class MapsController {
   setTokenPlan(
     @Param('id') mapId: string,
     @Param('tokenId') tokenId: string,
-    @Body() body: { x: number; y: number },
+    @Body() body: SetTokenPlanDto,
     @CurrentUser() user: RequestUser,
   ) {
     return this.maps.setTokenPlan(mapId, tokenId, body, user);
@@ -156,7 +167,7 @@ export class MapsController {
   moveToken(
     @Param('id') mapId: string,
     @Param('tokenId') tokenId: string,
-    @Body() body: { target_map_id: string },
+    @Body() body: MoveTokenDto,
     @CurrentUser() user: RequestUser,
   ) {
     return this.maps.moveTokenToMap(tokenId, mapId, body.target_map_id, user);
@@ -179,19 +190,19 @@ export class MapsController {
   @Post(':id/fog/toggle')
   setFogEnabled(
     @Param('id') id: string,
-    @Body() body: { enabled: boolean },
+    @Body() body: SetEnabledDto,
     @CurrentUser() user: RequestUser,
   ) {
-    return this.maps.setFogEnabled(id, !!body.enabled, user);
+    return this.maps.setFogEnabled(id, body.enabled, user);
   }
 
   @Post(':id/fog/paint')
   paintFog(
     @Param('id') id: string,
-    @Body() body: { cells: { col: number; row: number }[]; revealed: boolean },
+    @Body() body: PaintFogDto,
     @CurrentUser() user: RequestUser,
   ) {
-    return this.maps.paintFog(id, body.cells ?? [], !!body.revealed, user);
+    return this.maps.paintFog(id, body.cells, body.revealed, user);
   }
 
   @Post(':id/fog/reset')
@@ -207,37 +218,37 @@ export class MapsController {
   @Post(':id/lighting/toggle')
   setLightingEnabled(
     @Param('id') id: string,
-    @Body() body: { enabled: boolean },
+    @Body() body: SetEnabledDto,
     @CurrentUser() user: RequestUser,
   ) {
-    return this.maps.setLightingEnabled(id, !!body.enabled, user);
+    return this.maps.setLightingEnabled(id, body.enabled, user);
   }
 
   @Put(':id/lighting/walls')
   setWalls(
     @Param('id') id: string,
-    @Body() body: { walls: unknown },
+    @Body() body: SetWallsDto,
     @CurrentUser() user: RequestUser,
   ) {
-    return this.maps.setWalls(id, body?.walls, user);
+    return this.maps.setWalls(id, body.walls, user);
   }
 
   @Put(':id/lighting/ambient')
   setAmbientLight(
     @Param('id') id: string,
-    @Body() body: { level: number; color: string },
+    @Body() body: SetAmbientLightDto,
     @CurrentUser() user: RequestUser,
   ) {
-    return this.maps.setAmbientLight(id, body?.level, body?.color, user);
+    return this.maps.setAmbientLight(id, body.level, body.color, user);
   }
 
   @Post(':id/lighting/lights')
   upsertLight(
     @Param('id') id: string,
-    @Body() body: Record<string, unknown>,
+    @Body() body: UpsertLightDto,
     @CurrentUser() user: RequestUser,
   ) {
-    return this.maps.upsertLight(id, body, user);
+    return this.maps.upsertLight(id, { ...body }, user);
   }
 
   @Delete(':id/lighting/lights/:lightId')

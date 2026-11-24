@@ -52,9 +52,13 @@ export class CharacterService {
   // Per-campaign copies (campaign_id set), each with a `campaign_name` and `edit_unlocked`
   // (campaign_members.edit_unlocked) tacked on — the counterpart to getMyCharacters()'s portable
   // templates. Powers the player's "Characters" tab.
-  async getMyCampaignCopies(): Promise<(Character & { campaign_name: string; edit_unlocked: boolean })[]> {
+  async getMyCampaignCopies(): Promise<
+    (Character & { campaign_name: string; edit_unlocked: boolean })[]
+  > {
     return firstValueFrom(
-      this.http.get<(Character & { campaign_name: string; edit_unlocked: boolean })[]>(`${API}/characters/copies`)
+      this.http.get<(Character & { campaign_name: string; edit_unlocked: boolean })[]>(
+        `${API}/characters/copies`,
+      ),
     );
   }
 
@@ -65,24 +69,28 @@ export class CharacterService {
   async saveCharacter(character: Character): Promise<Character> {
     if (character.id) {
       return firstValueFrom(
-        this.http.put<Character>(`${API}/characters/${character.id}`, character)
+        this.http.put<Character>(`${API}/characters/${character.id}`, character),
       );
     } else {
-      return firstValueFrom(
-        this.http.post<Character>(`${API}/characters`, character)
-      );
+      return firstValueFrom(this.http.post<Character>(`${API}/characters`, character));
     }
   }
 
   async createDraft(character: Character, draftStep: number): Promise<Character> {
     return firstValueFrom(
-      this.http.post<Character>(`${API}/characters/drafts`, { ...character, draft_step: draftStep }),
+      this.http.post<Character>(`${API}/characters/drafts`, {
+        ...character,
+        draft_step: draftStep,
+      }),
     );
   }
 
   async updateDraft(id: string, character: Character, draftStep: number): Promise<Character> {
     return firstValueFrom(
-      this.http.patch<Character>(`${API}/characters/${id}/draft`, { ...character, draft_step: draftStep }),
+      this.http.patch<Character>(`${API}/characters/${id}/draft`, {
+        ...character,
+        draft_step: draftStep,
+      }),
     );
   }
 
@@ -96,13 +104,13 @@ export class CharacterService {
 
   async castSpell(id: string, command: SpellCastCommand): Promise<SpellCastResponse> {
     return firstValueFrom(
-      this.http.post<SpellCastResponse>(`${API}/characters/${id}/cast`, command)
+      this.http.post<SpellCastResponse>(`${API}/characters/${id}/cast`, command),
     );
   }
 
   async restoreSpellcasting(id: string, type: 'short_rest' | 'long_rest'): Promise<Character> {
     return firstValueFrom(
-      this.http.post<Character>(`${API}/characters/${id}/spell-rest`, { type })
+      this.http.post<Character>(`${API}/characters/${id}/spell-rest`, { type }),
     );
   }
 
@@ -113,31 +121,25 @@ export class CharacterService {
     healed?: number,
   ): Promise<Character> {
     const body: Record<string, unknown> = { type, hitDiceUsed, healed };
-    return firstValueFrom(
-      this.http.post<Character>(`${API}/characters/${id}/life-rest`, body)
-    );
+    return firstValueFrom(this.http.post<Character>(`${API}/characters/${id}/life-rest`, body));
   }
 
   async endConcentration(id: string): Promise<Character> {
-    return firstValueFrom(
-      this.http.patch<Character>(`${API}/characters/${id}/concentration`, {})
-    );
+    return firstValueFrom(this.http.patch<Character>(`${API}/characters/${id}/concentration`, {}));
   }
 
   // Self-serve Level-Up: apply the choices for a level the DM granted (HP, class/subclass
   // features, ASI/feat, spells) even on a DM-locked campaign copy. One-shot — the backend 409s
   // once the character's `applied_level` has caught up to its `level`.
   async applyLevelUp(id: string, character: Character): Promise<Character> {
-    return firstValueFrom(
-      this.http.post<Character>(`${API}/characters/${id}/level-up`, character)
-    );
+    return firstValueFrom(this.http.post<Character>(`${API}/characters/${id}/level-up`, character));
   }
 
   // DM-only: grants (or stacks more of) an item from the SRD/custom item catalog onto a party
   // member's campaign copy. The backend rejects this unless the caller DMs that character's campaign.
   async grantItem(id: string, itemIndex: string, quantity: number): Promise<Character> {
     return firstValueFrom(
-      this.http.post<Character>(`${API}/characters/${id}/grant-item`, { itemIndex, quantity })
+      this.http.post<Character>(`${API}/characters/${id}/grant-item`, { itemIndex, quantity }),
     );
   }
 
@@ -145,33 +147,50 @@ export class CharacterService {
   // to a full removal too.
   async revokeItem(id: string, itemIndex: string, quantity?: number): Promise<Character> {
     return firstValueFrom(
-      this.http.post<Character>(`${API}/characters/${id}/revoke-item`, { itemIndex, quantity })
+      this.http.post<Character>(`${API}/characters/${id}/revoke-item`, { itemIndex, quantity }),
     );
   }
 
   async inventoryOptions(id: string): Promise<InventoryOptions> {
-    return firstValueFrom(this.http.get<InventoryOptions>(`${API}/characters/${id}/inventory-options`));
+    return firstValueFrom(
+      this.http.get<InventoryOptions>(`${API}/characters/${id}/inventory-options`),
+    );
   }
-  async inventoryOperation(id: string, instanceId: string, body: Record<string, unknown>): Promise<Character> {
-    return firstValueFrom(this.http.post<Character>(`${API}/characters/${id}/inventory/${instanceId}`, body));
+  async inventoryOperation(
+    id: string,
+    instanceId: string,
+    body: Record<string, unknown>,
+  ): Promise<Character> {
+    return firstValueFrom(
+      this.http.post<Character>(`${API}/characters/${id}/inventory/${instanceId}`, body),
+    );
   }
   async completeRest(id: string, body: Record<string, unknown>): Promise<Character> {
     return firstValueFrom(this.http.post<Character>(`${API}/characters/${id}/rest`, body));
   }
 
   async updateReplicatedItem(
-    id: string, action: 'create' | 'dismiss' | 'toggle', itemIndex: string,
+    id: string,
+    action: 'create' | 'dismiss' | 'toggle',
+    itemIndex: string,
   ): Promise<Character> {
     return firstValueFrom(
-      this.http.post<Character>(`${API}/characters/${id}/replicate-item`, { action, itemIndex })
+      this.http.post<Character>(`${API}/characters/${id}/replicate-item`, { action, itemIndex }),
     );
   }
 
   async updatePactWeapon(
-    id: string, action: 'conjure' | 'bond' | 'dismiss', itemIndex?: string, instanceId?: string,
+    id: string,
+    action: 'conjure' | 'bond' | 'dismiss',
+    itemIndex?: string,
+    instanceId?: string,
   ): Promise<Character> {
     return firstValueFrom(
-      this.http.post<Character>(`${API}/characters/${id}/pact-weapon`, { action, itemIndex, instanceId })
+      this.http.post<Character>(`${API}/characters/${id}/pact-weapon`, {
+        action,
+        itemIndex,
+        instanceId,
+      }),
     );
   }
 
@@ -180,21 +199,26 @@ export class CharacterService {
   // Spells tab (defaults to "DM Gift" on the backend when omitted).
   async grantSpell(id: string, spellIndex: string, sourceName?: string): Promise<Character> {
     return firstValueFrom(
-      this.http.post<Character>(`${API}/characters/${id}/grant-spell`, { spellIndex, sourceName })
+      this.http.post<Character>(`${API}/characters/${id}/grant-spell`, { spellIndex, sourceName }),
     );
   }
 
   async revokeSpell(id: string, spellIndex: string): Promise<Character> {
     return firstValueFrom(
-      this.http.post<Character>(`${API}/characters/${id}/revoke-spell`, { spellIndex })
+      this.http.post<Character>(`${API}/characters/${id}/revoke-spell`, { spellIndex }),
     );
   }
 }
 
 export interface InventoryPlan {
-  id: string; name: string; itemIndex?: string; supported: boolean;
+  id: string;
+  name: string;
+  itemIndex?: string;
+  supported: boolean;
   bases: { index: string; name: string }[];
 }
 export interface InventoryOptions {
-  plans: InventoryPlan[]; limit: number; targets: { id: string; name: string }[];
+  plans: InventoryPlan[];
+  limit: number;
+  targets: { id: string; name: string }[];
 }

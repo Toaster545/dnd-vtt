@@ -1,3 +1,6 @@
+import { corsOptions } from '../config';
+import { CampaignAccessService } from '../campaigns/campaign-access.service';
+import { wsGuard } from '../common/ws-guard';
 import {
   WebSocketGateway,
   WebSocketServer,
@@ -8,6 +11,7 @@ import {
   OnGatewayConnection,
   OnGatewayInit,
 } from '@nestjs/websockets';
+import { WsException } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { DatabaseService } from '../common/database.service';
 import { SocketAuthService } from '../auth/socket-auth.service';
@@ -34,15 +38,7 @@ interface PresentPlayer {
 // purely in-memory/ephemeral, same as `TokensGateway`'s rooms; there's nothing to persist since
 // "who's here right now" only means anything while sockets are actually connected.
 @WebSocketGateway({
-  cors: {
-    origin: (
-      process.env.CORS_ORIGINS ??
-      'http://localhost:4200,https://dnd.mathomelab.ca,https://localhost,capacitor://localhost'
-    )
-      .split(',')
-      .map((origin) => origin.trim()),
-    credentials: true,
-  },
+  cors: corsOptions(),
 })
 export class EncounterPresenceGateway
   implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
@@ -54,6 +50,7 @@ export class EncounterPresenceGateway
   constructor(
     private db: DatabaseService,
     private socketAuth: SocketAuthService,
+    private access: CampaignAccessService,
   ) {}
 
   afterInit(server: Server) {
@@ -111,7 +108,8 @@ export class EncounterPresenceGateway
       [encounter.campaign_id, user.id, data.characterId],
     );
     const character = characterResult.rows[0];
-    if (!character) throw new Error('Character is not active in this campaign');
+    if (!character)
+      throw new WsException('Character is not active in this campaign');
     const characterData = this.db.parseJson<Record<string, unknown>>(
       character.data as string,
       {},
@@ -236,37 +234,14 @@ export class EncounterPresenceGateway
       .emit('character_updated', { campaignId, characterId });
   }
 
-  private async assertEncounterAccess(
+  private assertEncounterAccess(
     client: Socket,
     encounterId: string,
     requireActive = false,
   ) {
     const user = this.socketAuth.user(client);
-    const result = await this.db.execute(
-      `SELECT e.*, s.campaign_id, s.visible_to_players AS session_visible,
-              c.dm_id AS campaign_dm_id
-       FROM encounters e
-       JOIN sessions s ON s.id = e.session_id
-       JOIN campaigns c ON c.id = s.campaign_id
-       WHERE e.id = ?`,
-      [encounterId],
+    return wsGuard(() =>
+      this.access.encounterFor(encounterId, user.id, requireActive),
     );
-    const encounter = result.rows[0];
-    if (!encounter) throw new Error('Encounter not found');
-    if (encounter.campaign_dm_id === user.id) return encounter;
-    const membership = await this.db.execute(
-      `SELECT id FROM campaign_members
-       WHERE campaign_id = ? AND user_id = ? AND status = 'active'`,
-      [encounter.campaign_id, user.id],
-    );
-    if (
-      !membership.rows[0] ||
-      !encounter.session_visible ||
-      !encounter.visible_to_players ||
-      (requireActive && encounter.status !== 'active')
-    ) {
-      throw new Error('Forbidden');
-    }
-    return encounter;
   }
 }

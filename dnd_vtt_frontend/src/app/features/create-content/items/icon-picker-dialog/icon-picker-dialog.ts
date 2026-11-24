@@ -1,4 +1,13 @@
-import { Component, HostListener, OnInit, computed, inject, input, output, signal } from '@angular/core';
+import {
+  Component,
+  HostListener,
+  OnInit,
+  computed,
+  inject,
+  input,
+  output,
+  signal,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { ContentService, IconLibraryEntry } from '../../../../core/services/content.service';
@@ -24,16 +33,19 @@ export class IconPickerDialogComponent implements OnInit {
   categories = computed(() => {
     const seen = new Map<string, string>();
     for (const icon of this.icons()) seen.set(icon.category, icon.categoryLabel);
-    return [...seen.entries()].map(([value, label]) => ({ value, label })).sort((a, b) => a.label.localeCompare(b.label));
+    return [...seen.entries()]
+      .map(([value, label]) => ({ value, label }))
+      .sort((a, b) => a.label.localeCompare(b.label));
   });
 
   // Spaces and hyphens are ignored so "battleaxe" (the item's spelling) still finds "Battle Axe".
   filtered = computed(() => {
     const q = normalize(this.search());
     const category = this.categoryFilter();
-    return this.icons().filter(icon =>
-      (!category || icon.category === category) &&
-      (!q || normalize(icon.label).includes(q) || normalize(icon.author).includes(q)),
+    return this.icons().filter(
+      (icon) =>
+        (!category || icon.category === category) &&
+        (!q || normalize(icon.label).includes(q) || normalize(icon.author).includes(q)),
     );
   });
 

@@ -23,7 +23,9 @@ export class CharacterTokenDetailComponent {
 
   portraitUri(): string {
     const c = this.character();
-    return portraitDataUri(portraitSource(c.portrait_seed || c.id!, c.avatar_recipe, c.portrait_image));
+    return portraitDataUri(
+      portraitSource(c.portrait_seed || c.id!, c.avatar_recipe, c.portrait_image),
+    );
   }
 
   classLabel(): string {

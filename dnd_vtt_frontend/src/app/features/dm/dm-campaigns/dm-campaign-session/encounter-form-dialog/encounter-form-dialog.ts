@@ -1,4 +1,14 @@
-import { Component, ElementRef, ViewChild, inject, signal, computed, effect, OnDestroy, OnInit } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  ViewChild,
+  inject,
+  signal,
+  computed,
+  effect,
+  OnDestroy,
+  OnInit,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -42,8 +52,18 @@ interface LevelDraft {
 
 function emptyLevel(): LevelDraft {
   return {
-    name: '', existingMap: null, mapFile: null, mapKind: null, pixelsPerGrid: 0, mapCols: 0, mapRows: 0,
-    imagePreviewUrl: null, verticalSquares: 20, dd2vttWalls: [], imgNaturalWidth: 0, imgNaturalHeight: 0,
+    name: '',
+    existingMap: null,
+    mapFile: null,
+    mapKind: null,
+    pixelsPerGrid: 0,
+    mapCols: 0,
+    mapRows: 0,
+    imagePreviewUrl: null,
+    verticalSquares: 20,
+    dd2vttWalls: [],
+    imgNaturalWidth: 0,
+    imgNaturalHeight: 0,
   };
 }
 
@@ -59,13 +79,13 @@ function emptyLevel(): LevelDraft {
 export class EncounterFormDialogComponent implements OnInit, OnDestroy {
   @ViewChild('previewContainer') previewContainer?: ElementRef<HTMLDivElement>;
 
-  private dialogRef       = inject<MatDialogRef<EncounterFormDialogComponent, boolean>>(MatDialogRef);
-  readonly data           = inject<EncounterFormDialogData>(MAT_DIALOG_DATA);
+  private dialogRef = inject<MatDialogRef<EncounterFormDialogComponent, boolean>>(MatDialogRef);
+  readonly data = inject<EncounterFormDialogData>(MAT_DIALOG_DATA);
   private encounterService = inject(EncounterService);
-  private mapService       = inject(BattleMapService);
-  private sessionService   = inject(SessionService);
+  private mapService = inject(BattleMapService);
+  private sessionService = inject(SessionService);
 
-  saving    = signal(false);
+  saving = signal(false);
   editingId = signal<string | null>(this.data.encounter?.id ?? null);
 
   name = this.data.encounter?.name ?? '';
@@ -74,12 +94,12 @@ export class EncounterFormDialogComponent implements OnInit, OnDestroy {
   // All maps already uploaded to this campaign — offered as a picker so an encounter can reuse
   // one instead of forcing a fresh upload every time. Loaded once in ngOnInit.
   campaignMaps = signal<BattleMap[]>([]);
-  uploadError     = signal<string | null>(null);
-  parsingFile     = signal(false);
+  uploadError = signal<string | null>(null);
+  parsingFile = signal(false);
   imagePreviewUrl = signal<string | null>(null);
-  pixelsPerGrid   = signal(0);
-  mapCols         = signal(0);
-  mapRows         = signal(0);
+  pixelsPerGrid = signal(0);
+  mapCols = signal(0);
+  mapRows = signal(0);
   // Which kind of file supplied the current preview — 'dd2vtt' has exact grid metadata baked in;
   // 'image' is a plain PNG/JPEG/WebP where the grid is derived from `verticalSquares` below (same
   // approach as DmCampaignMapsComponent) since there's no embedded resolution to read.
@@ -99,21 +119,24 @@ export class EncounterFormDialogComponent implements OnInit, OnDestroy {
   // The selected level's name, live like the map editor signals above.
   levelName = signal('');
   // Maps already used by another level, so the same floor can't be picked twice.
-  otherLevelMapIds = computed(() => new Set(
-    this.levelDrafts()
-      .filter((_, i) => i !== this.activeLevel())
-      .map(d => d.existingMap?.id)
-      .filter((id): id is string => !!id),
-  ));
+  otherLevelMapIds = computed(
+    () =>
+      new Set(
+        this.levelDrafts()
+          .filter((_, i) => i !== this.activeLevel())
+          .map((d) => d.existingMap?.id)
+          .filter((id): id is string => !!id),
+      ),
+  );
 
   selectedMonsterIndices = signal<Set<string>>(new Set(this.data.encounter?.monsters ?? []));
-  selectedCharacterIds   = signal<Set<string>>(new Set(this.data.encounter?.character_ids ?? []));
+  selectedCharacterIds = signal<Set<string>>(new Set(this.data.encounter?.character_ids ?? []));
 
   // Create mode only: every encounter this DM has made (any session, any campaign), offered as a
   // starting point. Picking one pre-fills the form; saving still creates a *new* encounter in this
   // session, so the original (and its recap/status) is left untouched.
-  pastEncounters    = signal<Encounter[]>([]);
-  templateId        = signal('');
+  pastEncounters = signal<Encounter[]>([]);
+  templateId = signal('');
   templateMapDropped = signal(false);
   // session_id -> session name for this campaign's sessions; anything missing is from another campaign.
   private sessionNames = signal<Record<string, string>>({});
@@ -123,7 +146,8 @@ export class EncounterFormDialogComponent implements OnInit, OnDestroy {
     const other: { encounter: Encounter; label: string }[] = [];
     for (const encounter of this.pastEncounters()) {
       const sessionName = encounter.session_id ? names[encounter.session_id] : undefined;
-      if (sessionName !== undefined) thisCampaign.push({ encounter, label: `${encounter.name} — ${sessionName}` });
+      if (sessionName !== undefined)
+        thisCampaign.push({ encounter, label: `${encounter.name} — ${sessionName}` });
       else other.push({ encounter, label: encounter.name });
     }
     return { thisCampaign, other };
@@ -133,7 +157,7 @@ export class EncounterFormDialogComponent implements OnInit, OnDestroy {
   filteredMonsters = computed(() => {
     const query = this.monsterSearchQuery().trim().toLowerCase();
     if (!query) return this.data.monsters;
-    return this.data.monsters.filter(m => m.name.toLowerCase().includes(query));
+    return this.data.monsters.filter((m) => m.name.toLowerCase().includes(query));
   });
 
   private stage?: Konva.Stage;
@@ -163,21 +187,33 @@ export class EncounterFormDialogComponent implements OnInit, OnDestroy {
     await this.loadLevels(this.encounterLevels(this.data.encounter));
   }
 
-  private encounterLevels(encounter: Encounter | null | undefined): Pick<EncounterLevel, 'map_id' | 'custom_name'>[] {
+  private encounterLevels(
+    encounter: Encounter | null | undefined,
+  ): Pick<EncounterLevel, 'map_id' | 'custom_name'>[] {
     if (encounter?.levels?.length) return encounter.levels;
     return encounter?.map_id ? [{ map_id: encounter.map_id }] : [];
   }
 
   // Seeds the level tabs from existing levels (edit mode, or a template). Returns whether any
   // of their maps couldn't be found among this campaign's maps.
-  private async loadLevels(levels: Pick<EncounterLevel, 'map_id' | 'custom_name'>[]): Promise<boolean> {
-    const found = levels.flatMap(level => {
-      const map = this.campaignMaps().find(m => m.id === level.map_id);
+  private async loadLevels(
+    levels: Pick<EncounterLevel, 'map_id' | 'custom_name'>[],
+  ): Promise<boolean> {
+    const found = levels.flatMap((level) => {
+      const map = this.campaignMaps().find((m) => m.id === level.map_id);
       return map ? [{ map, name: level.custom_name ?? '' }] : [];
     });
-    this.levelDrafts.set(found.length
-      ? found.map(({ map, name }) => ({ ...emptyLevel(), name, existingMap: map, pixelsPerGrid: map.grid_size, imagePreviewUrl: map.image_url }))
-      : [emptyLevel()]);
+    this.levelDrafts.set(
+      found.length
+        ? found.map(({ map, name }) => ({
+            ...emptyLevel(),
+            name,
+            existingMap: map,
+            pixelsPerGrid: map.grid_size,
+            imagePreviewUrl: map.image_url,
+          }))
+        : [emptyLevel()],
+    );
     this.activeLevel.set(0);
     this.clearMapSelection();
     this.levelName.set(found[0]?.name ?? '');
@@ -206,7 +242,7 @@ export class EncounterFormDialogComponent implements OnInit, OnDestroy {
 
   private storeActiveLevel() {
     const draft = this.snapshotLevel();
-    this.levelDrafts.update(list => list.map((d, i) => i === this.activeLevel() ? draft : d));
+    this.levelDrafts.update((list) => list.map((d, i) => (i === this.activeLevel() ? draft : d)));
   }
 
   private restoreLevel(draft: LevelDraft) {
@@ -242,17 +278,23 @@ export class EncounterFormDialogComponent implements OnInit, OnDestroy {
 
   addLevel() {
     this.storeActiveLevel();
-    this.levelDrafts.update(list => [...list, emptyLevel()]);
+    this.levelDrafts.update((list) => [...list, emptyLevel()]);
     this.activeLevel.set(this.levelDrafts().length - 1);
     this.restoreLevel(emptyLevel());
   }
 
   removeLevel(index: number) {
-    if (this.levelDrafts().length === 1) { this.clearMapSelection(); return; }
+    if (this.levelDrafts().length === 1) {
+      this.clearMapSelection();
+      return;
+    }
     this.storeActiveLevel();
     const remaining = this.levelDrafts().filter((_, i) => i !== index);
     this.levelDrafts.set(remaining);
-    const next = Math.min(this.activeLevel() > index ? this.activeLevel() - 1 : this.activeLevel(), remaining.length - 1);
+    const next = Math.min(
+      this.activeLevel() > index ? this.activeLevel() - 1 : this.activeLevel(),
+      remaining.length - 1,
+    );
     this.activeLevel.set(next);
     this.showLevel(remaining[next]);
   }
@@ -263,7 +305,7 @@ export class EncounterFormDialogComponent implements OnInit, OnDestroy {
     const target = index + delta;
     if (target < 0 || target >= this.levelDrafts().length) return;
     this.storeActiveLevel();
-    this.levelDrafts.update(list => {
+    this.levelDrafts.update((list) => {
       const next = [...list];
       [next[index], next[target]] = [next[target], next[index]];
       return next;
@@ -297,7 +339,7 @@ export class EncounterFormDialogComponent implements OnInit, OnDestroy {
       this.encounterService.getAll(),
       this.sessionService.getAllForCampaign(this.data.campaignId),
     ]);
-    return { encounters, sessionNames: Object.fromEntries(sessions.map(s => [s.id, s.name])) };
+    return { encounters, sessionNames: Object.fromEntries(sessions.map((s) => [s.id, s.name])) };
   }
 
   // Copies the picked encounter's name, monsters, characters and map into the form. The recap is
@@ -306,13 +348,13 @@ export class EncounterFormDialogComponent implements OnInit, OnDestroy {
   async applyTemplate(id: string) {
     this.templateId.set(id);
     this.templateMapDropped.set(false);
-    const source = this.pastEncounters().find(e => e.id === id);
+    const source = this.pastEncounters().find((e) => e.id === id);
     if (!source) return;
     this.name = source.name;
-    const monsterIndices = new Set(this.data.monsters.map(m => m.index));
-    this.selectedMonsterIndices.set(new Set(source.monsters.filter(i => monsterIndices.has(i))));
-    const characterIds = new Set(this.data.characters.map(c => c.id));
-    this.selectedCharacterIds.set(new Set(source.character_ids.filter(i => characterIds.has(i))));
+    const monsterIndices = new Set(this.data.monsters.map((m) => m.index));
+    this.selectedMonsterIndices.set(new Set(source.monsters.filter((i) => monsterIndices.has(i))));
+    const characterIds = new Set(this.data.characters.map((c) => c.id));
+    this.selectedCharacterIds.set(new Set(source.character_ids.filter((i) => characterIds.has(i))));
     this.templateMapDropped.set(await this.loadLevels(this.encounterLevels(source)));
   }
 
@@ -345,8 +387,11 @@ export class EncounterFormDialogComponent implements OnInit, OnDestroy {
   // Dropdown's (ngModelChange) handler — resolves the picked id back to a BattleMap and reuses
   // selectExistingMap, or clears the selection entirely for the "— none —" option.
   onExistingMapSelect(id: string) {
-    if (!id) { this.clearMapSelection(); return; }
-    const map = this.campaignMaps().find(m => m.id === id);
+    if (!id) {
+      this.clearMapSelection();
+      return;
+    }
+    const map = this.campaignMaps().find((m) => m.id === id);
     if (map) void this.selectExistingMap(map);
   }
 
@@ -400,7 +445,8 @@ export class EncounterFormDialogComponent implements OnInit, OnDestroy {
 
   private async loadDd2vtt(file: File) {
     const data: UniversalVTTData = JSON.parse(await file.text());
-    if (!data.image || !data.resolution?.pixels_per_grid) throw new Error('missing image/grid data');
+    if (!data.image || !data.resolution?.pixels_per_grid)
+      throw new Error('missing image/grid data');
 
     this.mapKind.set('dd2vtt');
     this.dd2vttWalls = wallsFromUniversalVtt(data);
@@ -458,12 +504,20 @@ export class EncounterFormDialogComponent implements OnInit, OnDestroy {
 
     const img = new Image();
     img.onload = () => {
-      const scale = Math.min(container.clientWidth / img.width, container.clientHeight / img.height, 1);
+      const scale = Math.min(
+        container.clientWidth / img.width,
+        container.clientHeight / img.height,
+        1,
+      );
       const w = img.width * scale;
       const h = img.height * scale;
 
       if (!this.stage) {
-        this.stage = new Konva.Stage({ container, width: container.clientWidth, height: container.clientHeight });
+        this.stage = new Konva.Stage({
+          container,
+          width: container.clientWidth,
+          height: container.clientHeight,
+        });
         this.imageLayer = new Konva.Layer();
         this.gridLayer = new Konva.Layer();
         this.stage.add(this.imageLayer, this.gridLayer);
@@ -480,23 +534,25 @@ export class EncounterFormDialogComponent implements OnInit, OnDestroy {
       // Single shape drawing the whole grid itself — see the identical fix/comment on
       // BattleMapComponent.drawGrid; one Konva.Line per gridline could freeze the tab on browsers
       // with canvas anti-fingerprinting protection.
-      this.gridLayer!.add(new Konva.Shape({
-        listening: false,
-        stroke: 'rgba(255,255,255,0.35)',
-        strokeWidth: 1,
-        sceneFunc: (context, shape) => {
-          context.beginPath();
-          for (let x = 0; x <= w; x += cell) {
-            context.moveTo(x, 0);
-            context.lineTo(x, h);
-          }
-          for (let y = 0; y <= h; y += cell) {
-            context.moveTo(0, y);
-            context.lineTo(w, y);
-          }
-          context.strokeShape(shape);
-        },
-      }));
+      this.gridLayer!.add(
+        new Konva.Shape({
+          listening: false,
+          stroke: 'rgba(255,255,255,0.35)',
+          strokeWidth: 1,
+          sceneFunc: (context, shape) => {
+            context.beginPath();
+            for (let x = 0; x <= w; x += cell) {
+              context.moveTo(x, 0);
+              context.lineTo(x, h);
+            }
+            for (let y = 0; y <= h; y += cell) {
+              context.moveTo(0, y);
+              context.lineTo(w, y);
+            }
+            context.strokeShape(shape);
+          },
+        }),
+      );
       this.gridLayer!.draw();
     };
     img.src = url;
@@ -507,9 +563,10 @@ export class EncounterFormDialogComponent implements OnInit, OnDestroy {
   }
 
   toggleMonster(index: string) {
-    this.selectedMonsterIndices.update(set => {
+    this.selectedMonsterIndices.update((set) => {
       const next = new Set(set);
-      if (next.has(index)) next.delete(index); else next.add(index);
+      if (next.has(index)) next.delete(index);
+      else next.add(index);
       return next;
     });
   }
@@ -519,9 +576,10 @@ export class EncounterFormDialogComponent implements OnInit, OnDestroy {
   }
 
   toggleCharacter(id: string) {
-    this.selectedCharacterIds.update(set => {
+    this.selectedCharacterIds.update((set) => {
       const next = new Set(set);
-      if (next.has(id)) next.delete(id); else next.add(id);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
       return next;
     });
   }
@@ -531,7 +589,7 @@ export class EncounterFormDialogComponent implements OnInit, OnDestroy {
     this.saving.set(true);
     try {
       this.storeActiveLevel();
-      const drafts = this.levelDrafts().filter(d => d.existingMap || d.mapFile);
+      const drafts = this.levelDrafts().filter((d) => d.existingMap || d.mapFile);
       const map_ids: string[] = [];
       const level_names: Record<string, string> = {};
       for (const [i, draft] of drafts.entries()) {
@@ -545,8 +603,9 @@ export class EncounterFormDialogComponent implements OnInit, OnDestroy {
           campaign_id: this.data.campaignId,
           // A freshly uploaded level's map takes the level's name, so it's recognisable in the
           // campaign's map list too; unnamed levels fall back to "<encounter> — Level n".
-          name: draft.name.trim()
-            || (drafts.length > 1 ? `${this.name.trim()} — Level ${i + 1}` : this.name.trim()),
+          name:
+            draft.name.trim() ||
+            (drafts.length > 1 ? `${this.name.trim()} — Level ${i + 1}` : this.name.trim()),
           image_url,
           grid_size: draft.pixelsPerGrid || 50,
         });

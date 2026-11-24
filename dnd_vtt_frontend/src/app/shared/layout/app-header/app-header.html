@@ -4,23 +4,39 @@
     [class.active]="activeTab() === 'dashboard'"
     (click)="selectDashboard.emit()"
     matTooltip="Dashboard"
-  >NatOne</button>
+  >
+    NatOne
+  </button>
 
   <nav class="flex gap-1 bg-black/20 rounded-full p-1">
-    <button class="tab-pill" [class.active]="activeTab() === 'characters'" (click)="selectCharacters.emit()">
+    <button
+      class="tab-pill"
+      [class.active]="activeTab() === 'characters'"
+      (click)="selectCharacters.emit()"
+    >
       <mat-icon class="text-base">badge</mat-icon> Characters
     </button>
-    <button class="tab-pill" [class.active]="activeTab() === 'campaigns'" (click)="selectCampaigns.emit()">
+    <button
+      class="tab-pill"
+      [class.active]="activeTab() === 'campaigns'"
+      (click)="selectCampaigns.emit()"
+    >
       <mat-icon class="text-base">groups</mat-icon> Campaigns
     </button>
-    <button class="tab-pill" [class.active]="activeTab() === 'content-library'" (click)="selectContentLibrary.emit()">
+    <button
+      class="tab-pill"
+      [class.active]="activeTab() === 'content-library'"
+      (click)="selectContentLibrary.emit()"
+    >
       <mat-icon class="text-base">auto_stories</mat-icon> Content Library
     </button>
   </nav>
 
   <div class="flex items-center gap-2 ml-auto">
     <span class="text-sm text-slate">{{ auth.profile()?.username }}</span>
-    @if (auth.isAdmin()) { <span class="toolbar-badge">Admin</span> }
+    @if (auth.isAdmin()) {
+      <span class="toolbar-badge">Admin</span>
+    }
     <button class="btn-icon" (click)="selectSettings.emit()" matTooltip="Settings">
       <mat-icon>settings</mat-icon>
     </button>

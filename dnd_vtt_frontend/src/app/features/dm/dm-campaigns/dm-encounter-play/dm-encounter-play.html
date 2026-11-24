@@ -2,9 +2,19 @@
   <div class="flex justify-center mt-10"><span class="spinner-lg"></span></div>
 } @else if (selected(); as encounter) {
   @if (viewingCharacter(); as char) {
-    <app-character-play-sheet [character]="char" [isDm]="true" [compact]="true" (saved)="onCharacterSaved($event)" class="block flex-1 min-h-0">
+    <app-character-play-sheet
+      [character]="char"
+      [isDm]="true"
+      [compact]="true"
+      (saved)="onCharacterSaved($event)"
+      class="block flex-1 min-h-0"
+    >
       <div sheetHeaderLeading class="flex items-center gap-1">
-        <button class="btn-icon" (click)="closeCharacterView()" [matTooltip]="'Back to ' + encounter.name">
+        <button
+          class="btn-icon"
+          (click)="closeCharacterView()"
+          [matTooltip]="'Back to ' + encounter.name"
+        >
           <mat-icon>arrow_back</mat-icon>
         </button>
       </div>
@@ -29,10 +39,18 @@
       />
 
       <div class="flex flex-1 overflow-hidden">
-        <aside [style.width.px]="rosterWidth()" class="border-r border-white/10 overflow-y-auto flex-shrink-0 p-4">
+        <aside
+          [style.width.px]="rosterWidth()"
+          class="border-r border-white/10 overflow-y-auto flex-shrink-0 p-4"
+        >
           @if (viewingCompanionToken(); as pet) {
-            <button class="btn-outline mb-3" (click)="viewingCompanionToken.set(null)">Back to roster</button>
-            <app-companion-sheet [characterId]="pet.companion_owner_id!" [selectedId]="pet.companion_id!" />
+            <button class="btn-outline mb-3" (click)="viewingCompanionToken.set(null)">
+              Back to roster
+            </button>
+            <app-companion-sheet
+              [characterId]="pet.companion_owner_id!"
+              [selectedId]="pet.companion_id!"
+            />
           } @else if (viewingCustomToken(); as tok) {
             <app-custom-token-editor
               [token]="tok"
@@ -84,10 +102,17 @@
               (removeMonster)="removeMonsterFromEncounter($event)"
             />
             @if (rosterCompanions().length) {
-              <h3 class="text-xs font-semibold text-slate uppercase tracking-wider mt-4 mb-2">Companions</h3>
+              <h3 class="text-xs font-semibold text-slate uppercase tracking-wider mt-4 mb-2">
+                Companions
+              </h3>
               @for (pet of rosterCompanions(); track pet.id) {
-                <button class="btn-outline w-full mb-2 text-left" [class.text-gold]="armedEntity()?.companionId === pet.id" (click)="armCompanion(pet)">
-                  {{ pet.name }} · {{ pet.stats.current_hp }}/{{ pet.stats.max_hp }} HP · AC {{ pet.stats.armor_class }}
+                <button
+                  class="btn-outline w-full mb-2 text-left"
+                  [class.text-gold]="armedEntity()?.companionId === pet.id"
+                  (click)="armCompanion(pet)"
+                >
+                  {{ pet.name }} · {{ pet.stats.current_hp }}/{{ pet.stats.max_hp }} HP · AC
+                  {{ pet.stats.armor_class }}
                 </button>
               }
               <p class="text-xs text-slate">Select a companion, then click the map to place it.</p>
@@ -100,32 +125,47 @@
                 <label class="field-label">Player's level</label>
                 @if (playerLevelFor(tok.character_id) === tok.map_id) {
                   <p class="flex items-center gap-1 text-sm text-gold m-0">
-                    <mat-icon class="text-base">visibility</mat-icon> {{ tok.label }} is seeing this level
+                    <mat-icon class="text-base">visibility</mat-icon> {{ tok.label }} is seeing this
+                    level
                   </p>
                 } @else {
                   <p class="text-xs text-slate mt-0 mb-2">
-                    {{ tok.label }} is currently on <span class="text-parchment">{{ levelName(playerLevelFor(tok.character_id)) }}</span>.
+                    {{ tok.label }} is currently on
+                    <span class="text-parchment">{{
+                      levelName(playerLevelFor(tok.character_id))
+                    }}</span
+                    >.
                   </p>
-                  <button class="btn-primary text-xs px-2 py-1 w-full" [disabled]="switchingPlayerLevel()"
-                          (click)="showTokenLevelToPlayer(tok)">
-                    <mat-icon class="text-base">stairs</mat-icon> Show {{ levelName(tok.map_id) }} to {{ tok.label }}
+                  <button
+                    class="btn-primary text-xs px-2 py-1 w-full"
+                    [disabled]="switchingPlayerLevel()"
+                    (click)="showTokenLevelToPlayer(tok)"
+                  >
+                    <mat-icon class="text-base">stairs</mat-icon> Show
+                    {{ levelName(tok.map_id) }} to {{ tok.label }}
                   </button>
                 }
                 @if (playerLevelError(); as err) {
                   <p class="text-danger text-xs mt-1 mb-0">{{ err }}</p>
                 }
                 <p class="text-xs text-slate mt-2 mb-0">
-                  A character is on one level at a time — placing them on another level moves their token
-                  there, and their player follows.
+                  A character is on one level at a time — placing them on another level moves their
+                  token there, and their player follows.
                 </p>
               </div>
             } @else if (levels().length > 1) {
               <div class="field mt-4 pt-4 border-t border-white/10">
                 <label class="field-label">Move to level</label>
-                <select class="field-input" [disabled]="movingToken()"
-                        [ngModel]="tok.map_id" (ngModelChange)="moveSelectedTokenToLevel($event)">
+                <select
+                  class="field-input"
+                  [disabled]="movingToken()"
+                  [ngModel]="tok.map_id"
+                  (ngModelChange)="moveSelectedTokenToLevel($event)"
+                >
                   @for (level of levels(); track level.map_id) {
-                    <option [value]="level.map_id">{{ level.name }}{{ level.map_id === tok.map_id ? ' (here)' : '' }}</option>
+                    <option [value]="level.map_id">
+                      {{ level.name }}{{ level.map_id === tok.map_id ? ' (here)' : '' }}
+                    </option>
                   }
                 </select>
                 <p class="text-xs text-slate mt-1 mb-0">Keeps its position, HP and initiative.</p>
@@ -134,17 +174,27 @@
           }
         </aside>
 
-        <div appResizeHandle (resizeDrag)="onRosterResize($event)"
-             class="w-1.5 flex-shrink-0 hover:bg-gold/40 active:bg-gold/60 transition-colors"></div>
+        <div
+          appResizeHandle
+          (resizeDrag)="onRosterResize($event)"
+          class="w-1.5 flex-shrink-0 hover:bg-gold/40 active:bg-gold/60 transition-colors"
+        ></div>
 
         @if (activeMapId(); as mapId) {
-          <app-battle-map [mapIdInput]="mapId" [embedded]="true" [canControl]="isOwner()" [placingEntity]="armedEntity()"
-            [characterHp]="characterHp()" [characterPortraits]="characterPortraits()"
+          <app-battle-map
+            [mapIdInput]="mapId"
+            [embedded]="true"
+            [canControl]="isOwner()"
+            [placingEntity]="armedEntity()"
+            [characterHp]="characterHp()"
+            [characterPortraits]="characterPortraits()"
             [characterTokenBorders]="characterTokenBorders()"
             [currentTurnTokenId]="encounter.current_turn_token_id ?? null"
             [turnOrderTokens]="turnOrderTokens()"
-            (tokenClicked)="onTokenClicked($event)" (currentTurnTokenChanged)="currentTurnToken.set($event)"
-            class="flex-1 min-w-0" />
+            (tokenClicked)="onTokenClicked($event)"
+            (currentTurnTokenChanged)="currentTurnToken.set($event)"
+            class="flex-1 min-w-0"
+          />
         } @else {
           <div class="flex-1 flex items-center justify-center text-slate text-sm">
             No map attached to this encounter.

@@ -1,8 +1,33 @@
 import { Injectable } from '@angular/core';
-import { ATTUNEMENT_SLOT_LIMIT, Character, Ability, ABILITIES, SKILLS, abilityModifier, proficiencyBonus } from '../models/character.model';
-import { DndBackground, DndClass, DndFeat, DndItem, DndRace, itemDisplayName } from './content.service';
 import {
-  ClassChoiceSource, RaceChoiceSource, activeEffects, activeMagicItems, attunementActive, averageHpFormula, baseArmorClass, collectFeatEffects, collectTraitEffects, equippedItems, resolveCharacterFeatPicks,
+  ATTUNEMENT_SLOT_LIMIT,
+  Character,
+  Ability,
+  ABILITIES,
+  SKILLS,
+  abilityModifier,
+  proficiencyBonus,
+} from '../models/character.model';
+import {
+  DndBackground,
+  DndClass,
+  DndFeat,
+  DndItem,
+  DndRace,
+  itemDisplayName,
+} from './content.service';
+import {
+  ClassChoiceSource,
+  RaceChoiceSource,
+  activeEffects,
+  activeMagicItems,
+  attunementActive,
+  averageHpFormula,
+  baseArmorClass,
+  collectFeatEffects,
+  collectTraitEffects,
+  equippedItems,
+  resolveCharacterFeatPicks,
   unarmoredDefenseBonus,
 } from '../utils/character-effects';
 import { weaponMatchesAnyProficiency } from '../utils/weapon-proficiency';
@@ -66,16 +91,22 @@ function classGrantsProficiency(weapon: DndItem, classData: DndClass): boolean {
 }
 
 function isProficientWithWeapon(
-  weapon: DndItem, classesForFeats: ClassChoiceSource[], feats: DndFeat[], race: RaceChoiceSource | null,
+  weapon: DndItem,
+  classesForFeats: ClassChoiceSource[],
+  feats: DndFeat[],
+  race: RaceChoiceSource | null,
 ): boolean {
   if (classesForFeats.some(({ data }) => classGrantsProficiency(weapon, data))) return true;
   // A feat granting a whole weapon category (e.g. Martial Weapon Training's `tags: ['martial']`)
   // rather than the fixed `value` count of specific weapons some feats describe but never let
   // the player actually name (e.g. Weapon Master) — only category-tagged grants are resolvable
   // to "is the character proficient with THIS weapon" generically.
-  const categoryGrants = collectTraitEffects(classesForFeats, feats, race)
-    .filter(e => e.type === 'weapon_proficiency' && e.tags?.length);
-  return categoryGrants.some(e => e.tags!.some(tag => weapon.category.toLowerCase().startsWith(tag.toLowerCase())));
+  const categoryGrants = collectTraitEffects(classesForFeats, feats, race).filter(
+    (e) => e.type === 'weapon_proficiency' && e.tags?.length,
+  );
+  return categoryGrants.some((e) =>
+    e.tags!.some((tag) => weapon.category.toLowerCase().startsWith(tag.toLowerCase())),
+  );
 }
 
 // Melee uses Strength, ranged uses Dexterity, and Finesse weapons use whichever is better.
@@ -88,19 +119,26 @@ function isMagicWeapon(weapon: DndItem): boolean {
   if (weapon.magical_weapon !== undefined) return weapon.magical_weapon;
   // Use catalog metadata, not names or descriptions. Magic weapons need not have a +N.
   // Attunement gates an item's bonuses below, not its identity as a magic weapon.
-  return !!weapon.enhancement_bonus || !!weapon.requires_attunement
-    || ['common', 'uncommon', 'rare', 'very rare', 'legendary', 'artifact'].includes(weapon.rarity?.toLowerCase() ?? '');
+  return (
+    !!weapon.enhancement_bonus ||
+    !!weapon.requires_attunement ||
+    ['common', 'uncommon', 'rare', 'very rare', 'legendary', 'artifact'].includes(
+      weapon.rarity?.toLowerCase() ?? '',
+    )
+  );
 }
 
 function weaponDistance(weapon: DndItem): string {
   const isMelee = weapon.category.includes('Melee');
-  const rangeProperty = weapon.properties.find(property => /(?:Ammunition|Thrown).*?\d+\s*\/\s*\d+/i.test(property));
+  const rangeProperty = weapon.properties.find((property) =>
+    /(?:Ammunition|Thrown).*?\d+\s*\/\s*\d+/i.test(property),
+  );
   const range = rangeProperty?.match(/(\d+)\s*\/\s*(\d+)/);
   const distance = range ? `${range[1]}/${range[2]} ft.` : '';
 
   if (!isMelee) return distance;
 
-  const reach = weapon.properties.some(property => property.toLowerCase() === 'reach')
+  const reach = weapon.properties.some((property) => property.toLowerCase() === 'reach')
     ? '10 ft. reach'
     : '5 ft. reach';
   return rangeProperty?.toLowerCase().startsWith('thrown') && distance
@@ -111,93 +149,138 @@ function weaponDistance(weapon: DndItem): string {
 @Injectable({ providedIn: 'root' })
 export class CharacterStatsService {
   compute(
-    char: Character, classData: DndClass | null, raceData: DndRace | null,
-    feats: DndFeat[] = [], classesForFeats: ClassChoiceSource[] = [], items: DndItem[] = [],
+    char: Character,
+    classData: DndClass | null,
+    raceData: DndRace | null,
+    feats: DndFeat[] = [],
+    classesForFeats: ClassChoiceSource[] = [],
+    items: DndItem[] = [],
     backgroundData: DndBackground | null = null,
   ): ComputedStats {
     const prof = proficiencyBonus(char.level);
     const scores = char.ability_scores;
 
-    const raceForFeats: RaceChoiceSource | null = raceData ? {
-      data: raceData,
-      choices: char.race_choices ?? {},
-      subrace: char.subrace,
-      characterLevel: char.level,
-    } : null;
+    const raceForFeats: RaceChoiceSource | null = raceData
+      ? {
+          data: raceData,
+          choices: char.race_choices ?? {},
+          subrace: char.subrace,
+          characterLevel: char.level,
+        }
+      : null;
     const equipment = char.equipment;
     const allEffects = [
       ...collectTraitEffects(classesForFeats, feats, raceForFeats),
-      ...collectFeatEffects(resolveBackgroundOriginFeat(backgroundData, feats), char.background_choices ?? {}),
-      ...activeMagicItems(equipment, items).flatMap(item => item.effects ?? []),
+      ...collectFeatEffects(
+        resolveBackgroundOriginFeat(backgroundData, feats),
+        char.background_choices ?? {},
+      ),
+      ...activeMagicItems(equipment, items).flatMap((item) => item.effects ?? []),
     ];
 
     const attunement_slot_limit = Math.max(
       ATTUNEMENT_SLOT_LIMIT,
       ...allEffects
-        .filter(effect => effect.type === 'attunement_slot_override')
-        .map(effect => effect.value ?? ATTUNEMENT_SLOT_LIMIT),
+        .filter((effect) => effect.type === 'attunement_slot_override')
+        .map((effect) => effect.value ?? ATTUNEMENT_SLOT_LIMIT),
     );
 
     // A worn/held item's own score-altering magic (Gauntlets of Ogre Power's flat set, a Belt of
     // Giant Strength's `minimum`) — resolved before every other stat below, since ability
     // modifiers feed AC, attack/damage, saves, skills, and spellcasting DC alike.
     const abilityScoreEffects = activeEffects(
-      allEffects.filter(effect => effect.type === 'ability_score_bonus'), equipment, items,
+      allEffects.filter((effect) => effect.type === 'ability_score_bonus'),
+      equipment,
+      items,
     );
-    const mods = ABILITIES.reduce((acc, ab) => {
-      const relevant = abilityScoreEffects.filter(effect => effect.ability === ab);
-      const bonused = (scores[ab] ?? 10) + relevant.reduce((sum, effect) => sum + (effect.value ?? 0), 0);
-      const score = Math.max(bonused, ...relevant.map(effect => effect.minimum).filter((m): m is number => m != null));
-      return { ...acc, [ab]: abilityModifier(score) };
-    }, {} as Record<Ability, number>);
+    const mods = ABILITIES.reduce(
+      (acc, ab) => {
+        const relevant = abilityScoreEffects.filter((effect) => effect.ability === ab);
+        const bonused =
+          (scores[ab] ?? 10) + relevant.reduce((sum, effect) => sum + (effect.value ?? 0), 0);
+        const score = Math.max(
+          bonused,
+          ...relevant.map((effect) => effect.minimum).filter((m): m is number => m != null),
+        );
+        return { ...acc, [ab]: abilityModifier(score) };
+      },
+      {} as Record<Ability, number>,
+    );
 
     const hit_die = classData?.hit_die ?? 8;
     const hpBonusPerLevel = allEffects
-      .filter(effect => effect.type === 'hp_bonus_per_level')
+      .filter((effect) => effect.type === 'hp_bonus_per_level')
       .reduce((sum, effect) => sum + (effect.value ?? 0), 0);
-    const suggested_max_hp = averageHpFormula(char.level, hit_die, mods.constitution, hpBonusPerLevel);
+    const suggested_max_hp = averageHpFormula(
+      char.level,
+      hit_die,
+      mods.constitution,
+      hpBonusPerLevel,
+    );
 
     const saveProfSet = new Set(classData?.saving_throws ?? []);
-    for (const effect of allEffects.filter(effect => effect.type === 'saving_throw_proficiency')) {
+    for (const effect of allEffects.filter(
+      (effect) => effect.type === 'saving_throw_proficiency',
+    )) {
       for (const ability of effect.tags ?? []) saveProfSet.add(ability);
     }
     // Resilient-pattern feats grant save proficiency in whichever ability their abilityIncrease
     // increased (the player-chosen one, when the feat offers more than one option).
-    for (const { feat, ability } of resolveCharacterFeatPicks(classesForFeats, feats, raceForFeats)) {
+    for (const { feat, ability } of resolveCharacterFeatPicks(
+      classesForFeats,
+      feats,
+      raceForFeats,
+    )) {
       const inc = feat.abilityIncrease;
       if (!inc?.grantsSaveProficiency) continue;
       const granted = inc.abilities.length === 1 ? inc.abilities[0] : ability;
       if (granted) saveProfSet.add(granted);
     }
     const savingThrowAbilityBonus = allEffects
-      .filter(effect => effect.type === 'saving_throw_ability_bonus')
+      .filter((effect) => effect.type === 'saving_throw_ability_bonus')
       .reduce((sum, effect) => {
         if (!effect.ability) return sum;
         const modifier = mods[effect.ability];
         return sum + Math.max(effect.minimum ?? modifier, modifier);
       }, 0);
-    const saving_throw_bonuses = ABILITIES.reduce((acc, ab) => ({
-      ...acc, [ab]: mods[ab] + (saveProfSet.has(ab) ? prof : 0) + savingThrowAbilityBonus,
-    }), {} as Record<Ability, number>);
+    const saving_throw_bonuses = ABILITIES.reduce(
+      (acc, ab) => ({
+        ...acc,
+        [ab]: mods[ab] + (saveProfSet.has(ab) ? prof : 0) + savingThrowAbilityBonus,
+      }),
+      {} as Record<Ability, number>,
+    );
 
-    const conditionalAcBonus = activeEffects(allEffects.filter(e => e.type === 'ac_bonus'), equipment, items)
-      .reduce((sum, e) => sum + (e.value ?? 0), 0);
+    const conditionalAcBonus = activeEffects(
+      allEffects.filter((e) => e.type === 'ac_bonus'),
+      equipment,
+      items,
+    ).reduce((sum, e) => sum + (e.value ?? 0), 0);
     const unarmoredBonus = unarmoredDefenseBonus(
-      activeEffects(allEffects.filter(e => e.type === 'unarmored_defense'), equipment, items),
+      activeEffects(
+        allEffects.filter((e) => e.type === 'unarmored_defense'),
+        equipment,
+        items,
+      ),
       mods,
     );
-    const computed_ac = baseArmorClass(equipment, items, mods.dexterity) + conditionalAcBonus + unarmoredBonus;
+    const computed_ac =
+      baseArmorClass(equipment, items, mods.dexterity) + conditionalAcBonus + unarmoredBonus;
 
     const untrainedSkillBonus = allEffects
-      .filter(effect => effect.type === 'untrained_skill_bonus')
-      .reduce((sum, effect) =>
-        sum + (effect.tags?.includes('half_proficiency') ? Math.floor(prof / 2) : (effect.value ?? 0)), 0);
+      .filter((effect) => effect.type === 'untrained_skill_bonus')
+      .reduce(
+        (sum, effect) =>
+          sum +
+          (effect.tags?.includes('half_proficiency') ? Math.floor(prof / 2) : (effect.value ?? 0)),
+        0,
+      );
     const skill_bonuses = Object.fromEntries(
       Object.entries(SKILLS).map(([skill, ability]) => {
-        const proficient = !!(char.skills?.[skill]);
-        const expert   = !!(char.expertise?.[skill]);
+        const proficient = !!char.skills?.[skill];
+        const expert = !!char.expertise?.[skill];
         const abilityBonuses = allEffects
-          .filter(effect => effect.type === 'skill_ability_bonus' && effect.tags?.includes(skill))
+          .filter((effect) => effect.type === 'skill_ability_bonus' && effect.tags?.includes(skill))
           .reduce((sum, effect) => {
             if (!effect.ability) return sum;
             const modifier = mods[effect.ability];
@@ -205,7 +288,9 @@ export class CharacterStatsService {
           }, 0);
         return [
           skill,
-          mods[ability] + (expert ? prof * 2 : proficient ? prof : untrainedSkillBonus) + abilityBonuses,
+          mods[ability] +
+            (expert ? prof * 2 : proficient ? prof : untrainedSkillBonus) +
+            abilityBonuses,
         ];
       }),
     );
@@ -214,7 +299,9 @@ export class CharacterStatsService {
     const passive_investigation = 10 + (skill_bonuses['Investigation'] ?? mods.intelligence);
     const passive_insight = 10 + (skill_bonuses['Insight'] ?? mods.wisdom);
 
-    const unarmedBonus = allEffects.filter(e => e.type === 'unarmed_bonus').reduce((n,e) => n + (e.value ?? 0), 0);
+    const unarmedBonus = allEffects
+      .filter((e) => e.type === 'unarmed_bonus')
+      .reduce((n, e) => n + (e.value ?? 0), 0);
     const unarmed_attack: WeaponAttack = {
       itemIndex: 'unarmed-strike',
       name: 'Unarmed Strike',
@@ -222,56 +309,104 @@ export class CharacterStatsService {
       attack_bonus: mods.strength + prof + unarmedBonus,
       damage_dice: '1',
       damage_bonus: mods.strength + unarmedBonus,
-      damage_type: ['bludgeoning', ...new Set(allEffects.filter(e => e.type === 'unarmed_damage_type_option').flatMap(e => e.tags ?? []))].join(' / '),
+      damage_type: [
+        'bludgeoning',
+        ...new Set(
+          allEffects
+            .filter((e) => e.type === 'unarmed_damage_type_option')
+            .flatMap((e) => e.tags ?? []),
+        ),
+      ].join(' / '),
     };
 
-    const hasPactOfTheBlade = classesForFeats.some(({ data, choices }) =>
-      data.index === 'warlock'
-      && Object.values(choices).some(selection => selection.includes('Pact of the Blade')));
+    const hasPactOfTheBlade = classesForFeats.some(
+      ({ data, choices }) =>
+        data.index === 'warlock' &&
+        Object.values(choices).some((selection) => selection.includes('Pact of the Blade')),
+    );
     const pactState = hasPactOfTheBlade ? char.pact_weapon : undefined;
-    const bondedWeaponIsCarried = pactState?.mode !== 'bonded'
-      || char.equipment.some(entry => pactState.instanceId ? entry.instanceId === pactState.instanceId : entry.itemIndex === pactState.itemIndex);
+    const bondedWeaponIsCarried =
+      pactState?.mode !== 'bonded' ||
+      char.equipment.some((entry) =>
+        pactState.instanceId
+          ? entry.instanceId === pactState.instanceId
+          : entry.itemIndex === pactState.itemIndex,
+      );
     const pactWeaponIndex = pactState && bondedWeaponIsCarried ? pactState.itemIndex : undefined;
     const attackWeapons = equippedItems(equipment, items);
-    const pactWeapon = pactState?.instanceId ? char.equipment.find(e => e.instanceId === pactState.instanceId)?.resolvedItem : pactWeaponIndex ? items.find(item => item.index === pactWeaponIndex) : undefined;
-    if (pactWeapon && !attackWeapons.some(item => pactState?.instanceId ? item.instanceId === pactState.instanceId : item.index === pactWeapon.index)) {
+    const pactWeapon = pactState?.instanceId
+      ? char.equipment.find((e) => e.instanceId === pactState.instanceId)?.resolvedItem
+      : pactWeaponIndex
+        ? items.find((item) => item.index === pactWeaponIndex)
+        : undefined;
+    if (
+      pactWeapon &&
+      !attackWeapons.some((item) =>
+        pactState?.instanceId
+          ? item.instanceId === pactState.instanceId
+          : item.index === pactWeapon.index,
+      )
+    ) {
       attackWeapons.push(pactWeapon);
     }
 
     const weaponAbilityOptions = activeEffects(
-      allEffects.filter(effect => effect.type === 'weapon_ability_option' && effect.ability), equipment, items,
+      allEffects.filter((effect) => effect.type === 'weapon_ability_option' && effect.ability),
+      equipment,
+      items,
     );
     const weapon_attacks: WeaponAttack[] = attackWeapons
-      .filter(it => it.type === 'weapon')
-      .map(weapon => {
-        const isPactWeapon = pactState?.instanceId ? weapon.instanceId === pactState.instanceId : weapon.index === pactWeaponIndex;
+      .filter((it) => it.type === 'weapon')
+      .map((weapon) => {
+        const isPactWeapon = pactState?.instanceId
+          ? weapon.instanceId === pactState.instanceId
+          : weapon.index === pactWeaponIndex;
         const baseAbilityMod = isPactWeapon ? mods.charisma : weaponAbilityMod(weapon, mods);
         // These features offer a choice; use the best eligible modifier, as with Finesse.
         // Apply it once to both rolls, without altering proficiency or item enhancement.
-        const abilityMod = Math.max(baseAbilityMod, ...weaponAbilityOptions
-          .filter(effect => !effect.weaponFilter || (effect.weaponFilter === 'magic' && (isPactWeapon || isMagicWeapon(weapon))))
-          .map(effect => mods[effect.ability!]));
-        const proficient = isPactWeapon || isProficientWithWeapon(weapon, classesForFeats, feats, raceForFeats);
+        const abilityMod = Math.max(
+          baseAbilityMod,
+          ...weaponAbilityOptions
+            .filter(
+              (effect) =>
+                !effect.weaponFilter ||
+                (effect.weaponFilter === 'magic' && (isPactWeapon || isMagicWeapon(weapon))),
+            )
+            .map((effect) => mods[effect.ability!]),
+        );
+        const proficient =
+          isPactWeapon || isProficientWithWeapon(weapon, classesForFeats, feats, raceForFeats);
         const isRanged = weapon.category.includes('Ranged');
-        const isThrown = weapon.properties.some(p => p.startsWith('Thrown'));
+        const isThrown = weapon.properties.some((p) => p.startsWith('Thrown'));
 
         const rangedAttackBonus = isRanged
-          ? activeEffects(allEffects.filter(e => e.type === 'ranged_attack_bonus'), equipment, items)
-              .reduce((sum, e) => sum + (e.value ?? 0), 0)
+          ? activeEffects(
+              allEffects.filter((e) => e.type === 'ranged_attack_bonus'),
+              equipment,
+              items,
+            ).reduce((sum, e) => sum + (e.value ?? 0), 0)
           : 0;
         const meleeDamageBonus = !isRanged
-          ? activeEffects(allEffects.filter(e => e.type === 'melee_damage_bonus'), equipment, items)
-              .reduce((sum, e) => sum + (e.value ?? 0), 0)
+          ? activeEffects(
+              allEffects.filter((e) => e.type === 'melee_damage_bonus'),
+              equipment,
+              items,
+            ).reduce((sum, e) => sum + (e.value ?? 0), 0)
           : 0;
         const thrownDamageBonus = isThrown
-          ? activeEffects(allEffects.filter(e => e.type === 'thrown_damage_bonus'), equipment, items)
-              .reduce((sum, e) => sum + (e.value ?? 0), 0)
+          ? activeEffects(
+              allEffects.filter((e) => e.type === 'thrown_damage_bonus'),
+              equipment,
+              items,
+            ).reduce((sum, e) => sum + (e.value ?? 0), 0)
           : 0;
         // The weapon's own +N (or cursed -N) applies to both the attack roll and the damage
         // roll, on top of any character-wide bonus above — that's what makes a +1 weapon a +1
         // weapon rather than just a name. Dormant (equipped but not attuned, for a weapon that
         // requires it) instead of applied.
-        const enhancementBonus = attunementActive(weapon, equipment) ? (weapon.enhancement_bonus ?? 0) : 0;
+        const enhancementBonus = attunementActive(weapon, equipment)
+          ? (weapon.enhancement_bonus ?? 0)
+          : 0;
 
         return {
           itemIndex: weapon.index,
@@ -284,7 +419,7 @@ export class CharacterStatsService {
           damage_bonus: abilityMod + meleeDamageBonus + thrownDamageBonus + enhancementBonus,
           damage_type: isPactWeapon
             ? [weapon.damage_type, 'necrotic', 'psychic', 'radiant'].filter(Boolean).join(' / ')
-            : weapon.damage_type ?? null,
+            : (weapon.damage_type ?? null),
           is_pact_weapon: isPactWeapon,
           mastery: weapon.mastery,
         };
@@ -294,27 +429,33 @@ export class CharacterStatsService {
     // A spellcasting focus item's own +N (Arcane Grimoire, Amulet of the Devout, etc.) — only
     // counts while equipped and attuned, same gating as every other item effect.
     const spellAttackItemBonus = allEffects
-      .filter(effect => effect.type === 'spell_attack_bonus')
+      .filter((effect) => effect.type === 'spell_attack_bonus')
       .reduce((sum, effect) => sum + (effect.value ?? 0), 0);
     const spellSaveDcItemBonus = allEffects
-      .filter(effect => effect.type === 'spell_save_dc_bonus')
+      .filter((effect) => effect.type === 'spell_save_dc_bonus')
       .reduce((sum, effect) => sum + (effect.value ?? 0), 0);
-    const spell_attack_bonus = spellcastingAbility != null
-      ? prof + mods[spellcastingAbility] + spellAttackItemBonus : null;
-    const spell_save_dc = spellcastingAbility != null
-      ? 8 + prof + mods[spellcastingAbility] + spellSaveDcItemBonus : null;
+    const spell_attack_bonus =
+      spellcastingAbility != null ? prof + mods[spellcastingAbility] + spellAttackItemBonus : null;
+    const spell_save_dc =
+      spellcastingAbility != null
+        ? 8 + prof + mods[spellcastingAbility] + spellSaveDcItemBonus
+        : null;
 
     const initiativeAbilityBonus = allEffects
-      .filter(effect => effect.type === 'initiative_ability_bonus')
+      .filter((effect) => effect.type === 'initiative_ability_bonus')
       .reduce((sum, effect) => {
         if (!effect.ability) return sum;
         const modifier = mods[effect.ability];
         return sum + Math.max(effect.minimum ?? modifier, modifier);
       }, 0);
-    const initiativeProficiencyBonus = allEffects.some(effect => effect.type === 'initiative_proficiency_bonus')
+    const initiativeProficiencyBonus = allEffects.some(
+      (effect) => effect.type === 'initiative_proficiency_bonus',
+    )
       ? prof
       : 0;
-    const initiative_advantage = allEffects.some(effect => effect.type === 'initiative_advantage');
+    const initiative_advantage = allEffects.some(
+      (effect) => effect.type === 'initiative_advantage',
+    );
 
     return {
       proficiency_bonus: prof,
@@ -334,9 +475,15 @@ export class CharacterStatsService {
       spell_attack_bonus,
       spell_save_dc,
       attunement_slot_limit,
-      darkvision_ft: (char.darkvision_ft ?? raceData?.darkvision_ft ?? 0) + allEffects.filter(e => e.type === 'darkvision_extension').reduce((n,e) => n + (e.value ?? 0), 0),
+      darkvision_ft:
+        (char.darkvision_ft ?? raceData?.darkvision_ft ?? 0) +
+        allEffects
+          .filter((e) => e.type === 'darkvision_extension')
+          .reduce((n, e) => n + (e.value ?? 0), 0),
     };
   }
 
-  fmt(n: number): string { return n >= 0 ? `+${n}` : `${n}`; }
+  fmt(n: number): string {
+    return n >= 0 ? `+${n}` : `${n}`;
+  }
 }

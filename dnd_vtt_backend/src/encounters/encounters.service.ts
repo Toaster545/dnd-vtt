@@ -1,3 +1,4 @@
+import { CampaignAccessService } from '../campaigns/campaign-access.service';
 import { Optional } from '@nestjs/common';
 import { CompanionsService } from '../companions/companions.service';
 import {
@@ -14,6 +15,7 @@ import { EncounterPresenceGateway } from './encounter-presence.gateway';
 import type { RequestUser } from '../common/current-user.decorator';
 import { serializePlayerTokens } from '../maps/player-tokens';
 import { TokensGateway } from '../maps/tokens.gateway';
+import { toTokenRow } from '../maps/token-row';
 
 export interface EncounterLevel {
   map_id: string;
@@ -40,6 +42,7 @@ export class EncountersService {
     private db: DatabaseService,
     private presence: EncounterPresenceGateway,
     private tokensGateway: TokensGateway,
+    private access: CampaignAccessService,
     @Optional() private companions?: CompanionsService,
   ) {}
 
@@ -102,12 +105,8 @@ export class EncountersService {
     return row ? (await this.withLevels([this.deserialize(row)]))[0] : null;
   }
 
-  private async assertActiveMember(campaignId: string, userId: string) {
-    const membership = await this.db.execute(
-      `SELECT id FROM campaign_members WHERE campaign_id = ? AND user_id = ? AND status = 'active'`,
-      [campaignId, userId],
-    );
-    if (membership.rows.length === 0) throw new ForbiddenException();
+  private assertActiveMember(campaignId: string, userId: string) {
+    return this.access.assertActiveMember(campaignId, userId);
   }
 
   async findOne(id: string, dmId: string) {
@@ -593,17 +592,14 @@ export class EncountersService {
         seen.add(characterId);
         return true;
       })
-      .map((t) => ({
-        ...(t as Record<string, unknown>),
-        is_player: !!t.is_player,
-      })) as (Record<string, unknown> & { is_player: boolean })[];
+      .map(toTokenRow);
     return this.companions ? this.companions.decorateTokens(rows) : rows;
   }
 
   private async getTurnOrderIds(encounterId: string): Promise<string[]> {
     return (await this.turnOrderTokens(encounterId))
       .filter((t) => !t.companion_id)
-      .map((t) => t.id as string);
+      .map((t) => t.id);
   }
 
   async nextTurn(id: string, dmId: string) {
@@ -718,7 +714,7 @@ export class EncountersService {
       );
       await this.tokensGateway.broadcastTokens(
         level.map_id,
-        tokens.rows.map((r) => ({ ...r, is_player: !!r.is_player })),
+        tokens.rows.map(toTokenRow),
       );
     }
     this.presence.broadcastTurnState(id, {

@@ -1,5 +1,6 @@
 @if (ready()) {
-  <app-character-wizard class="flex flex-col flex-1 min-h-0"
+  <app-character-wizard
+    class="flex flex-col flex-1 min-h-0"
     [character]="character()"
     (saved)="onSaved()"
     (cancelled)="onCancelled()"

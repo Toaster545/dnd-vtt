@@ -23,7 +23,9 @@ export class SocketService {
     this.socket.auth = { token: this.tokens.accessToken() };
     this.socket.connect();
   }
-  disconnect() { this.socket.disconnect(); }
+  disconnect() {
+    this.socket.disconnect();
+  }
 
   refreshAuthentication() {
     this.socket.auth = { token: this.tokens.accessToken() };

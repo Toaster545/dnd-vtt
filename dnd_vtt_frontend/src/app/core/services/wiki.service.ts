@@ -24,6 +24,13 @@ export class WikiService {
     );
   }
 
+  /** Find (creating on first use) the owner's private notes page for a campaign character. */
+  characterNotes(characterId: string): Promise<{ campaignId: string; slug: string }> {
+    return firstValueFrom(
+      this.http.get<{ campaignId: string; slug: string }>(`${API}/wiki/character/${characterId}`),
+    );
+  }
+
   page(campaignId: string, slug: string): Promise<WikiPageResponse> {
     return firstValueFrom(
       this.http.get<WikiPageResponse>(`${API}/wiki/${campaignId}/page/${slug}`),
@@ -47,9 +54,7 @@ export class WikiService {
   }
 
   update(id: string, patch: UpdateWikiPagePayload): Promise<WikiPageResponse> {
-    return firstValueFrom(
-      this.http.put<WikiPageResponse>(`${API}/wiki/${id}`, patch),
-    );
+    return firstValueFrom(this.http.put<WikiPageResponse>(`${API}/wiki/${id}`, patch));
   }
 
   remove(id: string): Promise<void> {

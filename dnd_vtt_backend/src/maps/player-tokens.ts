@@ -1,3 +1,5 @@
+import type { TokenRow } from './token-row';
+
 // Where scripts/download-monster-tokens.mjs saves each monster's token art. A monster without
 // downloaded art just 404s here, and the battle map falls back to the plain colored circle.
 export function monsterTokenImageUrl(monsterIndex: string) {
@@ -9,12 +11,12 @@ export function monsterTokenImageUrl(monsterIndex: string) {
 // tokens to a player — REST, the per-map socket broadcast, and the encounter-wide turn order.
 // A monster's token art names the monster as plainly as its label does, so players only get
 // image_url while the name is visible; the DM's client derives it from monster_index instead.
-export function serializePlayerTokens(tokens: Record<string, unknown>[]) {
+export function serializePlayerTokens(tokens: TokenRow[]) {
   return tokens
     .filter((token) => !!token.visible_to_players)
     .map((token) => ({
-      id: token.id as string,
-      map_id: token.map_id as string,
+      id: token.id,
+      map_id: token.map_id,
       label: token.name_visible_to_players ? token.label : 'Unknown',
       color: token.color,
       x: Number(token.x),
@@ -34,7 +36,7 @@ export function serializePlayerTokens(tokens: Record<string, unknown>[]) {
         token.companion_id && token.name_visible_to_players
           ? (token.image_url as string | undefined)
           : token.monster_index && token.name_visible_to_players
-            ? monsterTokenImageUrl(token.monster_index as string)
+            ? monsterTokenImageUrl(token.monster_index)
             : undefined,
       initiative: token.initiative ?? null,
       turn_start_x: token.turn_start_x ?? null,

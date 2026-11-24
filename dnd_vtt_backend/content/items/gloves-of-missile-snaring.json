@@ -1,0 +1,22 @@
+{
+  "index": "gloves-of-missile-snaring",
+  "name": "Gloves of Missile Snaring",
+  "type": "magic",
+  "category": "Wondrous Item",
+  "damage": null,
+  "damage_type": null,
+  "properties": [],
+  "weight": 0,
+  "cost": "Magic item",
+  "image_url": "/icons/glowing-hands.svg",
+  "description": "When a ranged weapon attack hits you, you can use your reaction to reduce the damage by 1d10 + your Dexterity modifier, provided you have a free hand. If the damage is reduced to 0, you can catch the missile if it is small enough to hold.",
+  "rarity": "uncommon",
+  "requires_attunement": true,
+  "source": {
+    "code": "DMG",
+    "book": "Dungeon Master’s Guide",
+    "edition": 2014,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

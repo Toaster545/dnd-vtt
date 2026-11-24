@@ -10,5 +10,10 @@ import { PlacingEntity } from '../../../../core/models/campaign.model';
 export class AddTokenPanelComponent {
   readonly embedded = input(false);
   readonly placingEntity = input<PlacingEntity | null>(null);
-  readonly newToken = input.required<{ label: string; color: string; size: number; is_player: boolean }>();
+  readonly newToken = input.required<{
+    label: string;
+    color: string;
+    size: number;
+    is_player: boolean;
+  }>();
 }

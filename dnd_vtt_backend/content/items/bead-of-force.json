@@ -1,0 +1,22 @@
+{
+  "index": "bead-of-force",
+  "name": "Bead of Force",
+  "type": "magic",
+  "category": "Wondrous Item",
+  "damage": null,
+  "damage_type": null,
+  "properties": [],
+  "weight": 0,
+  "cost": "Magic item",
+  "image_url": "/icons/pouch-with-beads.svg",
+  "description": "This small black sphere can be thrown up to 60 feet or used as a thrown weapon. It explodes on impact, dealing 5d4 force damage (Dexterity save DC 15 for half) to creatures in a 10-foot radius, and traps creatures that fail in a sphere of force for 1 minute. Single use.",
+  "rarity": "rare",
+  "requires_attunement": false,
+  "source": {
+    "code": "DMG",
+    "book": "Dungeon Master’s Guide",
+    "edition": 2014,
+    "srd_5_2_1": false,
+    "rules_text": "reference-only"
+  }
+}

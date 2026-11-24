@@ -24,7 +24,10 @@ export class SessionService {
     );
   }
 
-  update(id: string, patch: { description?: string; background_url?: string | null }): Promise<Session> {
+  update(
+    id: string,
+    patch: { description?: string; background_url?: string | null },
+  ): Promise<Session> {
     return firstValueFrom(this.http.patch<Session>(`${API}/sessions/${id}`, patch));
   }
 
@@ -35,7 +38,9 @@ export class SessionService {
   }
 
   setVisibility(id: string, visible: boolean): Promise<Session> {
-    return firstValueFrom(this.http.patch<Session>(`${API}/sessions/${id}/visibility`, { visible }));
+    return firstValueFrom(
+      this.http.patch<Session>(`${API}/sessions/${id}/visibility`, { visible }),
+    );
   }
 
   remove(id: string): Promise<void> {

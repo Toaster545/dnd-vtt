@@ -23,6 +23,8 @@ import {
   type SpellAccessReference,
 } from './spell-access';
 
+import type { MagicPlan } from '../characters/inventory-rules';
+
 const CONTENT_PATH = join(process.cwd(), 'content');
 // Illustrations from scripts/download-item-art.mjs (personal use, gitignored like monster tokens).
 const ITEM_ART_PATH = join(process.cwd(), 'uploads', 'item-art');
@@ -84,6 +86,23 @@ export class ContentService {
 
   getSources() {
     return CONTENT_SOURCES;
+  }
+
+  // Magic-item grant plans (content/plans/magic-item-plans.json), cached like every other file.
+  getMagicItemPlans(): MagicPlan[] {
+    const key = 'magic-item-plans';
+    if (!this.cache.has(key)) {
+      this.cache.set(
+        key,
+        JSON.parse(
+          readFileSync(
+            join(CONTENT_PATH, 'plans', 'magic-item-plans.json'),
+            'utf-8',
+          ),
+        ),
+      );
+    }
+    return this.cache.get(key) as MagicPlan[];
   }
 
   // Curated game-icons.net (CC BY 3.0) SVGs a DM can pick as an item image instead of uploading

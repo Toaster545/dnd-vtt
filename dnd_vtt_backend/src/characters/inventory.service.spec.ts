@@ -332,6 +332,36 @@ describe('authoritative inventory', () => {
     ).rejects.toThrow('different plans');
   });
 
+  it('lets the owner of a character outside any campaign add and remove items, but nobody else', async () => {
+    const id = randomUUID();
+    await db.execute(
+      'INSERT INTO characters(id,user_id,name,race,class,level,data) VALUES(?,?,?,?,?,?,?)',
+      [
+        id,
+        owner.id,
+        'Solo',
+        'Human',
+        'Fighter',
+        1,
+        JSON.stringify({ equipment }),
+      ],
+    );
+    await expect(service.grant(id, dm, 'tinkers-tools', 1)).rejects.toThrow();
+    await service.grant(id, owner, 'tinkers-tools', 2);
+    const held = (
+      (await service.decorate(id, {})) as { equipment: ItemInstance[] }
+    ).equipment;
+    expect(held.reduce((n, e) => n + e.quantity, 0)).toBe(3);
+    await expect(
+      service.operate(id, held[0].instanceId, dm, { action: 'remove' }),
+    ).rejects.toThrow();
+    await service.operate(id, held[0].instanceId, owner, { action: 'remove' });
+    const left = (
+      (await service.decorate(id, {})) as { equipment: ItemInstance[] }
+    ).equipment;
+    expect(left.some((e) => e.instanceId === held[0].instanceId)).toBe(false);
+  });
+
   it('does not allow stale full-sheet saves to recreate or overwrite item state', async () => {
     const content = new ContentService(db);
     const chars = new CharactersService(

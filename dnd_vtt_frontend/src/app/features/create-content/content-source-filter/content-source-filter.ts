@@ -17,7 +17,10 @@ export class ContentSourceFilterComponent {
     const count = this.selected().length;
     if (count === 0) return 'All sources';
     if (count === 1) {
-      return this.sources().find(source => source.code === this.selected()[0])?.short_name ?? '1 source';
+      return (
+        this.sources().find((source) => source.code === this.selected()[0])?.short_name ??
+        '1 source'
+      );
     }
     return `${count} sources`;
   });

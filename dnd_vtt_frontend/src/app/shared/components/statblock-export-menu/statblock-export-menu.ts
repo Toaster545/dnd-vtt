@@ -11,8 +11,13 @@ import { statblockFileName, statblockNote } from '../../../core/utils/statblock-
   selector: 'app-statblock-export-menu',
   imports: [MatIconModule, MatMenuModule, MatTooltipModule],
   template: `
-    <button class="btn-icon" type="button" [matMenuTriggerFor]="menu"
-      (click)="$event.stopPropagation()" matTooltip="Export to Obsidian">
+    <button
+      class="btn-icon"
+      type="button"
+      [matMenuTriggerFor]="menu"
+      (click)="$event.stopPropagation()"
+      matTooltip="Export to Obsidian"
+    >
       <mat-icon class="text-base">{{ copied() ? 'check' : 'ios_share' }}</mat-icon>
     </button>
     <mat-menu #menu="matMenu">

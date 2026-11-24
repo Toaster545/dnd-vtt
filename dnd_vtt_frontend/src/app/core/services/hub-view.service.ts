@@ -1,4 +1,5 @@
 import { Injectable, signal } from '@angular/core';
+import { persistWidth, readStoredWidth } from '../utils/storage-keys';
 
 export type HubView = 'wiki' | 'sheet';
 
@@ -14,7 +15,9 @@ const DEFAULT_SIDEBAR = 360;
 @Injectable({ providedIn: 'root' })
 export class HubViewService {
   readonly current = signal<HubView>(this.readStored());
-  readonly sidebarWidth = signal<number>(this.readStoredWidth());
+  readonly sidebarWidth = signal<number>(
+    readStoredWidth(SIDEBAR_WIDTH_KEY, MIN_SIDEBAR, MAX_SIDEBAR, DEFAULT_SIDEBAR),
+  );
 
   set(view: HubView): void {
     this.current.set(view);
@@ -28,20 +31,7 @@ export class HubViewService {
   setSidebarWidth(width: number): void {
     const clamped = Math.min(MAX_SIDEBAR, Math.max(MIN_SIDEBAR, width));
     this.sidebarWidth.set(clamped);
-    try {
-      localStorage.setItem(SIDEBAR_WIDTH_KEY, String(Math.round(clamped)));
-    } catch {
-      /* ignore */
-    }
-  }
-
-  private readStoredWidth(): number {
-    try {
-      const n = Number(localStorage.getItem(SIDEBAR_WIDTH_KEY));
-      return n >= MIN_SIDEBAR && n <= MAX_SIDEBAR ? n : DEFAULT_SIDEBAR;
-    } catch {
-      return DEFAULT_SIDEBAR;
-    }
+    persistWidth(SIDEBAR_WIDTH_KEY, clamped);
   }
 
   private readStored(): HubView {

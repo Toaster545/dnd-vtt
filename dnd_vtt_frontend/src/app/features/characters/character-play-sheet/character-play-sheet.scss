@@ -1,7 +1,11 @@
 // container-type lets the rules below react to the sheet's own rendered width rather than the
 // viewport — so the fluid sizing also kicks in when the sheet is embedded in a narrow panel
 // (e.g. the in-encounter side panel) on a wide screen.
-:host { display: block; height: 100%; container-type: inline-size; }
+:host {
+  display: block;
+  height: 100%;
+  container-type: inline-size;
+}
 
 // Wizard preview (see CharacterPlaySheetComponent.preview): controls that onPreviewClick swallows
 // shouldn't advertise themselves as clickable.
@@ -34,8 +38,8 @@
   // rather than hanging from the top at visibly different heights.
   align-items: center;
   justify-content: flex-start;
-  gap: clamp(.5rem, 1.6cqw, 1rem);
-  padding: clamp(.6rem, 2cqw, 1.25rem) clamp(.75rem, 2.4cqw, 1.5rem);
+  gap: clamp(0.5rem, 1.6cqw, 1rem);
+  padding: clamp(0.6rem, 2cqw, 1.25rem) clamp(0.75rem, 2.4cqw, 1.5rem);
 }
 
 // Uniform height + centered contents so the label/number pair in every tile lands on the same
@@ -62,7 +66,7 @@
 }
 
 .sheet-header p {
-  font-size: clamp(.7rem, 1.6cqw, .875rem);
+  font-size: clamp(0.7rem, 1.6cqw, 0.875rem);
 }
 
 // Flattened into .sheet-header's own flex row instead of being its own nested flex container:
@@ -88,7 +92,7 @@
 
 .sheet-stat > :first-child,
 .sheet-hp-summary > :first-child {
-  font-size: clamp(.5rem, 1cqw, .625rem);
+  font-size: clamp(0.5rem, 1cqw, 0.625rem);
 }
 
 .sheet-stat > :last-child {
@@ -100,16 +104,16 @@
 }
 
 .sheet-stat-conditions > :last-child {
-  font-size: clamp(.65rem, 1.2cqw, .75rem);
+  font-size: clamp(0.65rem, 1.2cqw, 0.75rem);
 }
 
 .sheet-rest-actions {
-  gap: .25rem;
+  gap: 0.25rem;
 }
 
 .sheet-rest-actions .btn-outline {
-  padding: clamp(.02rem, .2cqw, .1rem) clamp(.3rem, .85cqw, .5rem);
-  font-size: clamp(.6rem, 1.05cqw, .7rem);
+  padding: clamp(0.02rem, 0.2cqw, 0.1rem) clamp(0.3rem, 0.85cqw, 0.5rem);
+  font-size: clamp(0.6rem, 1.05cqw, 0.7rem);
   line-height: 1;
 }
 
@@ -117,17 +121,17 @@
 // so the HP block doesn't tower over the other combat-strip tiles — the glyph, not a full
 // icon-button hit area, is the target.
 .btn-icon.sheet-hp-btn {
-  width: clamp(.85rem, 2cqw, 1rem);
-  height: clamp(.85rem, 2cqw, 1rem);
+  width: clamp(0.85rem, 2cqw, 1rem);
+  height: clamp(0.85rem, 2cqw, 1rem);
   min-height: 0;
-  font-size: clamp(.7rem, 1.5cqw, .85rem);
+  font-size: clamp(0.7rem, 1.5cqw, 0.85rem);
   line-height: 1;
   border-radius: 3px;
 }
 
 .sheet-hp-input {
   width: clamp(1.9rem, 4cqw, 2.4rem);
-  padding: .05rem .15rem;
+  padding: 0.05rem 0.15rem;
 }
 
 .sheet-hp-summary > :nth-child(2) {
@@ -135,7 +139,7 @@
 }
 
 .sheet-hp-summary > :nth-child(3) {
-  font-size: clamp(.65rem, 1.2cqw, .75rem);
+  font-size: clamp(0.65rem, 1.2cqw, 0.75rem);
 }
 
 .sheet-hp-bar {
@@ -143,19 +147,19 @@
 }
 
 .sheet-tabs button {
-  padding: clamp(.5rem, 1.6cqw, .875rem) clamp(.5rem, 1.8cqw, 1.25rem);
-  gap: clamp(.35rem, 1cqw, .5rem);
-  font-size: clamp(.72rem, 1.4cqw, .875rem);
+  padding: clamp(0.5rem, 1.6cqw, 0.875rem) clamp(0.5rem, 1.8cqw, 1.25rem);
+  gap: clamp(0.35rem, 1cqw, 0.5rem);
+  font-size: clamp(0.72rem, 1.4cqw, 0.875rem);
 }
 
 .sheet-tabs button > span:first-child {
-  width: clamp(.9rem, 1.8cqw, 1.25rem);
-  height: clamp(.9rem, 1.8cqw, 1.25rem);
-  font-size: clamp(.55rem, 1cqw, .75rem);
+  width: clamp(0.9rem, 1.8cqw, 1.25rem);
+  height: clamp(0.9rem, 1.8cqw, 1.25rem);
+  font-size: clamp(0.55rem, 1cqw, 0.75rem);
 }
 
 .sheet-body {
-  padding: clamp(.75rem, 2.4cqw, 1.5rem);
+  padding: clamp(0.75rem, 2.4cqw, 1.5rem);
 }
 
 // Feature / trait / action rows on the Stats and Actions tabs render collapsed: only the name
@@ -173,7 +177,7 @@
 // Centering (so the rotation below pivots in place rather than swiveling) comes from the global
 // `mat-icon.mat-icon` rule in styles.scss — this just adds the rotation affordance itself.
 .detail-chevron {
-  transition: transform .15s ease;
+  transition: transform 0.15s ease;
 }
 
 .detail-disclosure[open] > summary .detail-chevron {
@@ -193,69 +197,95 @@
 }
 
 @keyframes sheet-pane-in-right {
-  from { opacity: 0; transform: translateX(clamp(0.75rem, 6%, 2.5rem)); }
-  to   { opacity: 1; transform: translateX(0); }
+  from {
+    opacity: 0;
+    transform: translateX(clamp(0.75rem, 6%, 2.5rem));
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 
 @keyframes sheet-pane-in-left {
-  from { opacity: 0; transform: translateX(clamp(-2.5rem, -6%, -0.75rem)); }
-  to   { opacity: 1; transform: translateX(0); }
+  from {
+    opacity: 0;
+    transform: translateX(clamp(-2.5rem, -6%, -0.75rem));
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 
-.sheet-pane.slide-from-right { animation: sheet-pane-in-right 0.2s ease-out; }
-.sheet-pane.slide-from-left  { animation: sheet-pane-in-left 0.2s ease-out; }
+.sheet-pane.slide-from-right {
+  animation: sheet-pane-in-right 0.2s ease-out;
+}
+.sheet-pane.slide-from-left {
+  animation: sheet-pane-in-left 0.2s ease-out;
+}
 
 @media (prefers-reduced-motion: reduce) {
   .sheet-pane.slide-from-right,
-  .sheet-pane.slide-from-left { animation: none; }
+  .sheet-pane.slide-from-left {
+    animation: none;
+  }
 }
 
 // The header animates its box metrics (never its flex structure) so the collapse driven by
 // onBodyScroll() is smooth and fully reversible. Off-mobile the .is-hidden class is never
 // applied (onBodyScroll still runs, but the media query below is what gives it any effect).
 .sheet-header {
-  transition: max-height .25s ease, padding .25s ease, opacity .2s ease, border-width .25s ease;
+  transition:
+    max-height 0.25s ease,
+    padding 0.25s ease,
+    opacity 0.2s ease,
+    border-width 0.25s ease;
 }
 
 // Phone-only stand-in for the tab bar; the real bar is hidden at this width.
-.sheet-tab-indicator { display: none; }
+.sheet-tab-indicator {
+  display: none;
+}
 
 // --- Phone layout -------------------------------------------------------------------------
 // The sheet fills the screen on a phone, so give as much of it as possible to the tab
 // content: swap the tab bar for a slim swipe indicator (the body already changes tabs on a
 // horizontal swipe, see appSwipeTabs) and let the header collapse away on downward scroll.
 @media (max-width: 640px) {
-  .sheet-tabs { display: none; }
+  .sheet-tabs {
+    display: none;
+  }
 
   .sheet-tab-indicator {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: .5rem;
-    padding: .4rem 1rem;
+    gap: 0.5rem;
+    padding: 0.4rem 1rem;
     border-bottom: 1px solid rgb(var(--dnd-text-rgb) / 0.1);
     flex-shrink: 0;
   }
 
   .sheet-tab-indicator-label {
     font-family: Cinzel, serif;
-    font-size: .8rem;
-    letter-spacing: .08em;
+    font-size: 0.8rem;
+    letter-spacing: 0.08em;
     text-transform: uppercase;
     color: rgb(var(--dnd-gold-rgb));
   }
 
   .sheet-tab-indicator-dots {
     display: inline-flex;
-    gap: .3rem;
+    gap: 0.3rem;
   }
 
   .sheet-tab-indicator-dots .dot {
-    width: .375rem;
-    height: .375rem;
+    width: 0.375rem;
+    height: 0.375rem;
     border-radius: 9999px;
     background: rgb(var(--dnd-text-rgb) / 0.25);
-    transition: background .15s ease;
+    transition: background 0.15s ease;
   }
 
   .sheet-tab-indicator-dots .dot.active {

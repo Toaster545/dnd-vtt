@@ -10,7 +10,6 @@
 - [X] Maneuvers not showing up as actions
 - [X] Showing feat ability score improvements right below the chosen feat
 - [ ] Center on my token not working
-- [ ] 
 
 
 ## General
@@ -34,7 +33,6 @@
 - [x] players can hide race
 - [ ] custom equipment/spells/monsters (Creation Tools or Customization Tools)
 - [ ] Fullscreen for ios mode
-- [X] Showing feat ability score improvements right below the chosen feat
 - [X] Viewing character sheet directly in encounter
 - [X] HP when leveling up
 
@@ -49,7 +47,6 @@
     - [ ] customize campaign
         - [x] Add background image
         - [X] Change color scheme
-    - [ ] 
 - [x] Encounters
     - [x] Add Turns
     - [x] Measuring and player movement
@@ -60,7 +57,6 @@
 - [ ] Dashboard
     - [ ] Latest campaign and character
     - [ ] Updates to character (leveling up)
-    - [ ] 
 - [ ] Monster Creation
     - [ ] Add Monster Icons
 - [x] Auto deployement pipeline

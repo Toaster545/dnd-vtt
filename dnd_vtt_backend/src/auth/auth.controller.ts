@@ -1,3 +1,4 @@
+import { isProduction } from '../config';
 import {
   Body,
   Controller,
@@ -99,7 +100,7 @@ export class AuthController {
     if (result.client_type === 'native') return result;
     response.cookie(REFRESH_COOKIE, result.refresh_token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
+      secure: isProduction(),
       sameSite: 'strict',
       path: '/api/auth',
       maxAge: REFRESH_MAX_AGE_MS,

@@ -17,6 +17,7 @@ import { JoinCampaignDto } from './dto/join-campaign.dto';
 import { UpdateCampaignDto } from './dto/update-campaign.dto';
 import { SetEditAccessDto } from './dto/set-edit-access.dto';
 import { SetPartyVisibilityDto } from './dto/set-party-visibility.dto';
+import { SetCurrentSessionDto } from './dto/set-current-session.dto';
 import { SetPartyLevelDto } from './dto/set-party-level.dto';
 import { SetRaceClassVisibilityDto } from './dto/set-race-class-visibility.dto';
 import { JwtGuard } from '../auth/jwt.guard';
@@ -68,7 +69,7 @@ export class CampaignsController {
   @Patch(':id/current-session')
   setCurrentSession(
     @Param('id') id: string,
-    @Body() body: { session_id: string | null },
+    @Body() body: SetCurrentSessionDto,
     @CurrentUser() user: RequestUser,
   ) {
     return this.campaigns.setCurrentSession(id, user.id, body.session_id);
