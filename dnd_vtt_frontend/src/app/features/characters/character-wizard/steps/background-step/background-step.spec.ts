@@ -175,12 +175,18 @@ describe('BackgroundStepComponent', () => {
   });
 
   it('stores a custom display name while retaining the selected base background', async () => {
-    await TestBed.configureTestingModule({ imports: [BackgroundStepComponent] }).compileComponents();
+    await TestBed.configureTestingModule({
+      imports: [BackgroundStepComponent],
+    }).compileComponents();
     const fixture = TestBed.createComponent(BackgroundStepComponent);
     fixture.componentRef.setInput('backgrounds', [merchant]);
     fixture.componentRef.setInput('baseAbilityScores', {
-      strength: 10, dexterity: 10, constitution: 10,
-      intelligence: 10, wisdom: 10, charisma: 10,
+      strength: 10,
+      dexterity: 10,
+      constitution: 10,
+      intelligence: 10,
+      wisdom: 10,
+      charisma: 10,
     });
     fixture.componentInstance.openFromList(merchant);
 
@@ -189,7 +195,9 @@ describe('BackgroundStepComponent', () => {
     fixture.componentInstance.saveCustomName(merchant);
 
     expect(fixture.componentInstance.browsingBackground()).toBe(merchant);
-    expect(fixture.componentInstance.draftTraits()[BACKGROUND_CUSTOM_NAME_KEY]).toEqual(['Traveling Trader']);
+    expect(fixture.componentInstance.draftTraits()[BACKGROUND_CUSTOM_NAME_KEY]).toEqual([
+      'Traveling Trader',
+    ]);
     expect(fixture.componentInstance.displayName(merchant)).toBe('Traveling Trader');
   });
 });

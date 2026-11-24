@@ -19,8 +19,10 @@ describe('background name customization', () => {
   it('falls back to the base name for blank, equivalent, or invalid values', () => {
     expect(backgroundDisplayName('Sage', { [BACKGROUND_CUSTOM_NAME_KEY]: ['   '] })).toBe('Sage');
     expect(backgroundDisplayName('Sage', { [BACKGROUND_CUSTOM_NAME_KEY]: ['sage'] })).toBe('Sage');
-    expect(backgroundDisplayName('Sage', {
-      [BACKGROUND_CUSTOM_NAME_KEY]: ['x'.repeat(BACKGROUND_CUSTOM_NAME_MAX_LENGTH + 1)],
-    })).toBe('Sage');
+    expect(
+      backgroundDisplayName('Sage', {
+        [BACKGROUND_CUSTOM_NAME_KEY]: ['x'.repeat(BACKGROUND_CUSTOM_NAME_MAX_LENGTH + 1)],
+      }),
+    ).toBe('Sage');
   });
 });
