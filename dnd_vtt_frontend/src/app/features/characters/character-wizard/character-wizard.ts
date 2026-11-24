@@ -46,6 +46,7 @@ import {
 import { resolveBackgroundSkills } from '../../../core/utils/background-skills';
 import { ACTIVE_DRAFT_KEY, ACTIVE_DRAFT_STEP_KEY } from '../../../core/utils/storage-keys';
 import { resolveBackgroundOriginFeat } from '../../../core/utils/background-origin-feat';
+import { resolveBackgroundAbilityBonuses } from '../../../core/utils/background-abilities';
 import {
   isPortraitImageUrl,
   normalizeAvatarRecipe,
@@ -329,8 +330,7 @@ export class CharacterWizardComponent implements OnInit, OnDestroy {
   }
 
   backgroundAbilityBonus = computed(() => {
-    const bg = this.selectedBackground();
-    return this.sumAbilityChoicePicks(bg ? [bg] : [], this.backgroundTraits());
+    return resolveBackgroundAbilityBonuses(this.selectedBackground(), this.backgroundTraits());
   });
 
   // A feat taken in place of an ASI (or via feat_pick) can itself carry a +1 ability increase;

@@ -44,7 +44,26 @@
     (click)="editSelected()"
     style="font-family: inherit"
   >
-    <span class="font-medium text-sm text-parchment">{{ sel.background.name }}</span>
+    <span class="flex items-center gap-2 min-w-0">
+      <span class="min-w-0">
+        <span class="font-medium text-sm text-parchment block">{{
+          displayName(sel.background, sel.traits)
+        }}</span>
+        @if (nameCustomized(sel.background, sel.traits)) {
+          <span class="text-[11px] text-coal block">Based on {{ sel.background.name }}</span>
+        }
+      </span>
+      @if (abilitiesCustomized(sel.background, sel.traits)) {
+        <span class="text-[10px] text-gold border border-gold/30 rounded px-1.5 py-0.5"
+          >Customized abilities</span
+        >
+      }
+      @if (nameCustomized(sel.background, sel.traits)) {
+        <span class="text-[10px] text-gold border border-gold/30 rounded px-1.5 py-0.5"
+          >Renamed</span
+        >
+      }
+    </span>
     <span class="text-xs text-coal flex-shrink-0 ml-4">Edit →</span>
   </button>
   <button class="btn-outline text-sm" (click)="goToList()">Choose a Different Background</button>
@@ -59,7 +78,56 @@
   <div class="flex items-start justify-between mb-5">
     <div>
       <button class="btn-ghost text-sm mb-2" (click)="back()">← Back</button>
-      <h2 class="font-brand text-2xl text-parchment m-0">{{ bg.name }}</h2>
+      @if (editingName()) {
+        <div class="flex flex-wrap items-center gap-2 max-w-xl">
+          <input
+            class="field-input text-lg font-brand min-w-56"
+            [ngModel]="nameDraft()"
+            (ngModelChange)="updateNameDraft($event)"
+            [ngModelOptions]="{ standalone: true }"
+            [attr.maxlength]="80"
+            aria-label="Custom background name"
+            (keydown.enter)="saveCustomName(bg)"
+            (keydown.escape)="cancelEditingName()"
+          />
+          <button
+            type="button"
+            class="btn-outline text-xs px-2 py-1"
+            [disabled]="!customNameValid()"
+            (click)="saveCustomName(bg)"
+          >
+            Save
+          </button>
+          <button type="button" class="btn-ghost text-xs px-2 py-1" (click)="cancelEditingName()">
+            Cancel
+          </button>
+          @if (nameCustomized(bg)) {
+            <button
+              type="button"
+              class="btn-ghost text-xs px-2 py-1"
+              (click)="restoreDefaultName(bg)"
+            >
+              Use {{ bg.name }}
+            </button>
+          }
+        </div>
+      } @else {
+        <div class="flex items-center gap-2">
+          <h2 class="font-brand text-2xl text-parchment m-0">{{ displayName(bg) }}</h2>
+          <button
+            type="button"
+            class="btn-icon w-7 h-7"
+            aria-label="Rename background"
+            title="Rename this background for this character"
+            (click)="startEditingName(bg)"
+          >
+            <mat-icon class="text-base">edit</mat-icon>
+          </button>
+        </div>
+        @if (nameCustomized(bg)) {
+          <p class="text-xs text-gold mt-0.5 mb-0">Based on {{ bg.name }}</p>
+        }
+      }
       @if (bg.description) {
         <p class="text-sm text-slate mt-1 max-w-xl">{{ bg.description }}</p>
       }
@@ -361,56 +429,146 @@
     <!-- Ability Scores -->
     @if (grant) {
       <div>
-        <p class="text-xs font-bold text-slate uppercase tracking-wide mb-2">
-          {{ grant.name }}
-          @if (choicesLeft(grant) > 0) {
-            <span class="text-gold font-normal normal-case ml-1"
-              >({{ choicesLeft(grant) }} left)</span
+        <div class="flex items-center justify-between gap-3 mb-2 max-w-sm">
+          <p class="text-xs font-bold text-slate uppercase tracking-wide m-0">
+            {{ grant.name }}
+            @if (!editingAbilities() && choicesLeft(grant) > 0) {
+              <span class="text-gold font-normal normal-case ml-1"
+                >({{ choicesLeft(grant) }} left)</span
+              >
+            }
+            @if (!editingAbilities() && choicesLeft(grant) === 0) {
+              <span class="text-success font-normal normal-case ml-1">✓</span>
+            }
+            @if (!editingAbilities() && abilitiesCustomized(bg)) {
+              <span class="text-gold font-normal normal-case ml-1">(customized)</span>
+            }
+          </p>
+          @if (!editingAbilities()) {
+            <button
+              type="button"
+              class="btn-outline text-xs px-2 py-1"
+              (click)="startEditingAbilities(bg)"
             >
-          }
-          @if (choicesLeft(grant) === 0) {
-            <span class="text-success font-normal normal-case ml-1">✓</span>
-          }
-        </p>
-        @if (grant.description) {
-          <p class="text-xs text-coal mb-2">{{ grant.description }}</p>
-        }
-        <div class="flex flex-col gap-1.5 max-w-sm">
-          @for (ability of grant.abilities ?? []; track ability) {
-            @let allocated = abilityAllocated(grant, ability);
-            @let base = baseScoreFor(ability);
-            <div
-              class="flex items-center justify-between px-3 py-1.5 rounded border border-white/8"
-            >
-              <span class="text-sm text-slate capitalize">{{ ability }}</span>
-              <div class="flex items-center gap-3">
-                <span class="text-xs text-coal">
-                  {{ base }}
-                  @if (allocated > 0) {
-                    <span class="text-gold">→ {{ base + allocated }}</span>
-                  }
-                </span>
-                <button
-                  class="btn-icon w-6 h-6 text-sm"
-                  [disabled]="allocated === 0"
-                  (click)="decrement(grant, ability)"
-                  style="font-family: inherit"
-                >
-                  −
-                </button>
-                <span class="text-sm text-parchment w-4 text-center">{{ allocated }}</span>
-                <button
-                  class="btn-icon w-6 h-6 text-sm"
-                  [disabled]="!canIncrement(grant, ability)"
-                  (click)="increment(grant, ability)"
-                  style="font-family: inherit"
-                >
-                  +
-                </button>
-              </div>
-            </div>
+              Customize
+            </button>
           }
         </div>
+
+        @if (editingAbilities()) {
+          <div class="rounded border border-gold/25 bg-gold/5 p-3 max-w-md">
+            <div class="flex items-center justify-between gap-3 mb-2">
+              <p class="text-xs text-slate m-0">
+                Choose exactly three eligible abilities. Abilities with assigned points stay locked.
+              </p>
+              <span
+                class="text-xs"
+                [class]="currentAbilityOptions(bg).length === 3 ? 'text-success' : 'text-gold'"
+              >
+                {{ currentAbilityOptions(bg).length }} / 3
+              </span>
+            </div>
+            <div class="flex flex-wrap gap-1.5">
+              @for (ability of allAbilities; track ability) {
+                @let selectedAbility = abilityOptionSelected(bg, ability);
+                @let canToggle = canToggleAbilityOption(bg, ability);
+                <button
+                  type="button"
+                  class="px-2.5 py-1 rounded text-xs border capitalize transition-all"
+                  [class]="
+                    selectedAbility
+                      ? 'border-gold/60 bg-gold/10 text-parchment'
+                      : canToggle
+                        ? 'border-white/15 text-slate hover:border-white/30 hover:text-parchment'
+                        : 'border-white/8 text-coal cursor-not-allowed'
+                  "
+                  [disabled]="!canToggle"
+                  [title]="
+                    selectedAbility && !canToggle
+                      ? 'Remove assigned bonus points from this ability first'
+                      : ''
+                  "
+                  (click)="toggleAbilityOption(bg, ability)"
+                >
+                  {{ ability }}
+                </button>
+              }
+            </div>
+            <div class="flex flex-wrap gap-2 mt-3">
+              <button
+                type="button"
+                class="btn-outline text-xs px-2 py-1"
+                [disabled]="currentAbilityOptions(bg).length !== 3"
+                (click)="finishEditingAbilities(bg)"
+              >
+                Done
+              </button>
+              <button
+                type="button"
+                class="btn-ghost text-xs px-2 py-1"
+                (click)="cancelEditingAbilities()"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                class="btn-ghost text-xs px-2 py-1"
+                [disabled]="!canRestoreDefaultAbilities(bg)"
+                [title]="
+                  canRestoreDefaultAbilities(bg)
+                    ? ''
+                    : 'Remove bonus points assigned outside the default abilities first'
+                "
+                (click)="restoreDefaultAbilities(bg)"
+              >
+                Defaults
+              </button>
+            </div>
+          </div>
+        } @else {
+          <p class="text-xs text-coal mb-1">
+            Eligible: <span class="capitalize">{{ currentAbilityOptions(bg).join(', ') }}</span>
+          </p>
+          @if (grant.description) {
+            <p class="text-xs text-coal mb-2">{{ grant.description }}</p>
+          }
+          <div class="flex flex-col gap-1.5 max-w-sm">
+            @for (ability of grant.abilities ?? []; track ability) {
+              @let allocated = abilityAllocated(grant, ability);
+              @let base = baseScoreFor(ability);
+              <div
+                class="flex items-center justify-between px-3 py-1.5 rounded border border-white/8"
+              >
+                <span class="text-sm text-slate capitalize">{{ ability }}</span>
+                <div class="flex items-center gap-3">
+                  <span class="text-xs text-coal">
+                    {{ base }}
+                    @if (allocated > 0) {
+                      <span class="text-gold">→ {{ base + allocated }}</span>
+                    }
+                  </span>
+                  <button
+                    class="btn-icon w-6 h-6 text-sm"
+                    [disabled]="allocated === 0"
+                    (click)="decrement(grant, ability)"
+                    style="font-family: inherit"
+                  >
+                    −
+                  </button>
+                  <span class="text-sm text-parchment w-4 text-center">{{ allocated }}</span>
+                  <button
+                    class="btn-icon w-6 h-6 text-sm"
+                    [disabled]="!canIncrement(grant, ability)"
+                    (click)="increment(grant, ability)"
+                    style="font-family: inherit"
+                  >
+                    +
+                  </button>
+                </div>
+              </div>
+            }
+          </div>
+        }
       </div>
     }
   </div>
@@ -418,7 +576,11 @@
   <!-- Footer actions -->
   <div class="flex items-center justify-between pt-5 mt-5 border-t border-white/10 max-w-2xl">
     <button class="btn-ghost" (click)="back()">&#8592; Back</button>
-    <button class="btn-primary" (click)="confirmBackground()">
+    <button
+      class="btn-primary"
+      [disabled]="editingAbilities() || editingName()"
+      (click)="confirmBackground()"
+    >
       {{ isCurrentSelected() ? 'Done' : 'Select This Background' }}
     </button>
   </div>

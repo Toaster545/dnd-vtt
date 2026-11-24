@@ -18,6 +18,11 @@ import { reachableGrants } from '../../../core/utils/character-effects';
 import { resolveProgressiveChoiceLimit } from '../../../core/utils/progressive-choice';
 import { isEquipmentComplete, isStructuredEquipment } from '../../../core/utils/starting-equipment';
 import { resolveBackgroundOriginFeat } from '../../../core/utils/background-origin-feat';
+import {
+  BACKGROUND_ABILITY_OPTIONS_KEY,
+  isValidBackgroundAbilityOptions,
+  resolveBackgroundAbilities,
+} from '../../../core/utils/background-abilities';
 
 type Choices = Record<string, string[]>;
 
@@ -156,7 +161,21 @@ export function isBackgroundSelectionComplete(
 ): boolean {
   if (!selection) return false;
   const backgroundComplete = (selection.background.grants ?? []).every((grant) => {
-    if (grant.type === 'ability_choice') return picked(selection.traits, grant.key) >= grant.points;
+    if (grant.type === 'ability_choice') {
+      const choices = selection.traits[grant.key] ?? [];
+      if (choices.length !== grant.points) return false;
+      if (
+        choices.some((ability) => choices.filter((candidate) => candidate === ability).length > 2)
+      )
+        return false;
+
+      const customized = selection.traits[BACKGROUND_ABILITY_OPTIONS_KEY];
+      if (customized && !isValidBackgroundAbilityOptions(customized)) return false;
+      const eligible = resolveBackgroundAbilities(selection.background, selection.traits);
+      return (
+        eligible.length === 0 || choices.every((ability) => eligible.includes(ability as Ability))
+      );
+    }
     return simpleGrantComplete(grant, selection.traits);
   });
   const originFeat = resolveBackgroundOriginFeat(selection.background, feats);

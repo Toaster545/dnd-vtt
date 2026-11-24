@@ -104,8 +104,11 @@
               @if (char.subclass) {
                 — {{ char.subclass }}
               }
-              @if (char.background) {
-                &nbsp;·&nbsp; {{ char.background }}
+              @if (backgroundHeading(); as background) {
+                &nbsp;·&nbsp; {{ background.name }}
+                @if (background.customized) {
+                  (based on {{ background.baseName }})
+                }
               }
             </p>
           }
@@ -492,13 +495,19 @@
                     <div class="flex flex-col gap-1.5 flex-shrink-0">
                       @for (ab of abilities; track ab) {
                         <div
-                          class="bg-elevated rounded-lg border border-white/10 text-center w-[72px] py-2.5"
+                          class="bg-elevated rounded-lg border border-white/10 text-center w-[72px] h-16 py-1.5"
                         >
                           <div class="text-xs text-slate uppercase tracking-widest font-semibold">
                             {{ abilityShort[ab] }}
                           </div>
-                          <div class="font-brand text-2xl text-gold font-bold leading-none mt-1">
+                          <div class="font-brand text-2xl text-gold font-bold leading-none mt-0.5">
                             {{ fmt(s.ability_modifiers[ab]) }}
+                          </div>
+                          <div
+                            class="text-[10px] leading-none text-coal font-normal tabular-nums"
+                            [title]="'Ability score: ' + char.ability_scores[ab]"
+                          >
+                            ({{ char.ability_scores[ab] }})
                           </div>
                         </div>
                       }

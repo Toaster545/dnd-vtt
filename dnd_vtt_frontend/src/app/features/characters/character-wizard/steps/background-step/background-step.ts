@@ -2,12 +2,25 @@ import { Component, OnInit, input, output, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { DndBackground, DndFeat, TraitGrant } from '../../../../../core/services/content.service';
-import { Ability, SKILLS } from '../../../../../core/models/character.model';
+import { ABILITIES, Ability, SKILLS } from '../../../../../core/models/character.model';
 import { resolveBackgroundOriginFeat } from '../../../../../core/utils/background-origin-feat';
+import {
+  BACKGROUND_ABILITY_OPTIONS_KEY,
+  defaultBackgroundAbilities,
+  hasCustomizedBackgroundAbilities,
+  isValidBackgroundAbilityOptions,
+  resolveBackgroundAbilities,
+} from '../../../../../core/utils/background-abilities';
 import {
   BACKGROUND_SKILLS_KEY,
   resolveBackgroundSkills,
 } from '../../../../../core/utils/background-skills';
+import {
+  BACKGROUND_CUSTOM_NAME_KEY,
+  BACKGROUND_CUSTOM_NAME_MAX_LENGTH,
+  backgroundDisplayName,
+  hasCustomBackgroundName,
+} from '../../../../../core/utils/background-name';
 
 export interface BackgroundChoice {
   background: DndBackground;
@@ -36,10 +49,15 @@ export class BackgroundStepComponent implements OnInit {
   browsingBackground = signal<DndBackground | null>(null);
   draftTraits = signal<Record<string, string[]>>({});
   editingSkills = signal(false);
+  editingAbilities = signal(false);
+  editingName = signal(false);
+  nameDraft = signal('');
   originFeatCollapsed = signal(false);
   private skillEditSnapshot: string[] | null | undefined;
+  private abilityEditSnapshot: string[] | null | undefined;
 
   readonly allSkills = Object.keys(SKILLS);
+  readonly allAbilities = ABILITIES;
 
   ngOnInit() {
     if (this.selected()) this.viewMode.set('selected');
@@ -63,14 +81,20 @@ export class BackgroundStepComponent implements OnInit {
     }
     this.draftTraits.set(traits);
     this.editingSkills.set(false);
+    this.editingAbilities.set(false);
+    this.editingName.set(false);
+    this.nameDraft.set(backgroundDisplayName(bg.name, traits));
     this.originFeatCollapsed.set(false);
     this.skillEditSnapshot = undefined;
+    this.abilityEditSnapshot = undefined;
     this.browsingBackground.set(bg);
     this.viewMode.set('detail');
   }
 
   back() {
     this.editingSkills.set(false);
+    this.editingAbilities.set(false);
+    this.editingName.set(false);
     this.browsingBackground.set(null);
     this.viewMode.set(this.selected() ? 'selected' : 'list');
   }
@@ -80,6 +104,7 @@ export class BackgroundStepComponent implements OnInit {
   }
 
   confirmBackground() {
+    if (this.editingAbilities() || this.editingName()) return;
     this.syncDraft();
     this.browsingBackground.set(null);
     this.viewMode.set('selected');
@@ -103,6 +128,59 @@ export class BackgroundStepComponent implements OnInit {
 
   isBackgroundSelected(bg: DndBackground): boolean {
     return this.selected()?.background.index === bg.index;
+  }
+
+  displayName(bg: DndBackground, traits = this.draftTraits()): string {
+    return backgroundDisplayName(bg.name, traits);
+  }
+
+  nameCustomized(bg: DndBackground, traits = this.draftTraits()): boolean {
+    return hasCustomBackgroundName(bg.name, traits);
+  }
+
+  startEditingName(bg: DndBackground) {
+    this.nameDraft.set(this.displayName(bg));
+    this.editingName.set(true);
+  }
+
+  updateNameDraft(value: string) {
+    this.nameDraft.set(value);
+  }
+
+  customNameValid(): boolean {
+    const name = this.nameDraft().trim();
+    return name.length > 0 && name.length <= BACKGROUND_CUSTOM_NAME_MAX_LENGTH;
+  }
+
+  saveCustomName(bg: DndBackground) {
+    if (!this.customNameValid()) return;
+    const name = this.nameDraft().trim();
+    this.draftTraits.update((traits) => {
+      const next = { ...traits };
+      if (name.localeCompare(bg.name.trim(), undefined, { sensitivity: 'accent' }) === 0) {
+        delete next[BACKGROUND_CUSTOM_NAME_KEY];
+      } else {
+        next[BACKGROUND_CUSTOM_NAME_KEY] = [name];
+      }
+      return next;
+    });
+    this.editingName.set(false);
+    this.syncDraft();
+  }
+
+  cancelEditingName() {
+    this.editingName.set(false);
+  }
+
+  restoreDefaultName(bg: DndBackground) {
+    this.draftTraits.update((traits) => {
+      const next = { ...traits };
+      delete next[BACKGROUND_CUSTOM_NAME_KEY];
+      return next;
+    });
+    this.nameDraft.set(bg.name);
+    this.editingName.set(false);
+    this.syncDraft();
   }
 
   backgroundSkills(bg: DndBackground): string[] {
@@ -207,7 +285,108 @@ export class BackgroundStepComponent implements OnInit {
 
   abilityChoiceGrant(bg: DndBackground): AbilityGrant | null {
     const grant = bg.grants?.find((g) => g.type === 'ability_choice');
-    return grant?.type === 'ability_choice' ? grant : null;
+    if (grant?.type !== 'ability_choice') return null;
+    return { ...grant, abilities: this.currentAbilityOptions(bg) };
+  }
+
+  currentAbilityOptions(bg: DndBackground): Ability[] {
+    const raw = this.draftTraits()[BACKGROUND_ABILITY_OPTIONS_KEY];
+    if (this.editingAbilities() && raw) {
+      return raw.filter((ability): ability is Ability => ABILITIES.includes(ability as Ability));
+    }
+    return resolveBackgroundAbilities(bg, this.draftTraits());
+  }
+
+  abilitiesCustomized(bg: DndBackground, traits = this.draftTraits()): boolean {
+    return hasCustomizedBackgroundAbilities(bg, traits);
+  }
+
+  startEditingAbilities(bg: DndBackground) {
+    const saved = this.draftTraits()[BACKGROUND_ABILITY_OPTIONS_KEY];
+    this.abilityEditSnapshot = saved ? [...saved] : null;
+    this.draftTraits.update((traits) => ({
+      ...traits,
+      [BACKGROUND_ABILITY_OPTIONS_KEY]: [...resolveBackgroundAbilities(bg, traits)],
+    }));
+    this.editingAbilities.set(true);
+  }
+
+  abilityOptionSelected(bg: DndBackground, ability: Ability): boolean {
+    return this.currentAbilityOptions(bg).includes(ability);
+  }
+
+  canToggleAbilityOption(bg: DndBackground, ability: Ability): boolean {
+    const selected = this.abilityOptionSelected(bg, ability);
+    if (selected) {
+      const grant = bg.grants?.find((candidate) => candidate.type === 'ability_choice');
+      return grant?.type !== 'ability_choice' || this.abilityAllocated(grant, ability) === 0;
+    }
+    return this.currentAbilityOptions(bg).length < 3;
+  }
+
+  toggleAbilityOption(bg: DndBackground, ability: Ability) {
+    if (!this.canToggleAbilityOption(bg, ability)) return;
+    this.draftTraits.update((traits) => {
+      const current = [
+        ...(traits[BACKGROUND_ABILITY_OPTIONS_KEY] ?? resolveBackgroundAbilities(bg, traits)),
+      ];
+      return {
+        ...traits,
+        [BACKGROUND_ABILITY_OPTIONS_KEY]: current.includes(ability)
+          ? current.filter((option) => option !== ability)
+          : [...current, ability],
+      };
+    });
+  }
+
+  finishEditingAbilities(bg: DndBackground) {
+    const current = this.draftTraits()[BACKGROUND_ABILITY_OPTIONS_KEY];
+    if (!isValidBackgroundAbilityOptions(current)) return;
+    const defaults = defaultBackgroundAbilities(bg);
+    this.draftTraits.update((traits) => {
+      if (
+        defaults.length !== current.length ||
+        current.some((ability) => !defaults.includes(ability as Ability))
+      ) {
+        return traits;
+      }
+      const next = { ...traits };
+      delete next[BACKGROUND_ABILITY_OPTIONS_KEY];
+      return next;
+    });
+    this.editingAbilities.set(false);
+    this.abilityEditSnapshot = undefined;
+    this.syncDraft();
+  }
+
+  cancelEditingAbilities() {
+    const snapshot = this.abilityEditSnapshot;
+    this.draftTraits.update((traits) => {
+      const next = { ...traits };
+      if (snapshot) next[BACKGROUND_ABILITY_OPTIONS_KEY] = [...snapshot];
+      else delete next[BACKGROUND_ABILITY_OPTIONS_KEY];
+      return next;
+    });
+    this.editingAbilities.set(false);
+    this.abilityEditSnapshot = undefined;
+    this.syncDraft();
+  }
+
+  canRestoreDefaultAbilities(bg: DndBackground): boolean {
+    const grant = bg.grants?.find((candidate) => candidate.type === 'ability_choice');
+    if (grant?.type !== 'ability_choice') return true;
+    const defaults = defaultBackgroundAbilities(bg);
+    return (this.draftTraits()[grant.key] ?? []).every((ability) =>
+      defaults.includes(ability as Ability),
+    );
+  }
+
+  restoreDefaultAbilities(bg: DndBackground) {
+    if (!this.canRestoreDefaultAbilities(bg)) return;
+    this.draftTraits.update((traits) => ({
+      ...traits,
+      [BACKGROUND_ABILITY_OPTIONS_KEY]: [...defaultBackgroundAbilities(bg)],
+    }));
   }
 
   // Skill/tool picks (e.g. Soldier's "choose 2 skills" / "choose one kind of gaming set") —
